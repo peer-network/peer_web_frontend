@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/your-username/your-repo.git', credentialsId: 'your-credentials-id'
+                git url: 'https://github.com/RR-Nair/peer_web_frontend.git', credentialsId: 'RR-Nair'
             }
         }
         stage('Test') {
