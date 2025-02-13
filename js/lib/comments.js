@@ -91,10 +91,10 @@ function createComment(postid, content) {
             }
         }
     `;
-  const mutation2 = `mutation CreateComment {
+  const mutation2 = `mutation CreateComment($input: CreateCommentInput!) {
                       createComment(
                           action: COMMENT
-                          input: $input }
+                          input: $input
                       ) {
                           status
                           ResponseCode
