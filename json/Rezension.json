@@ -1,0 +1,38 @@
+{
+    "@context": "https://schema.org/",
+    "@type": "Review",
+    "itemReviewed": {
+        "@type": "JewelryStore",
+        "image": "http://dreigold.de/images/Banner.png",
+        "name": "DREIGOLD",
+        "priceRange": "$$$",
+        "telephone": "69519969",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Bleibtreustraße 40",
+            "addressLocality": "Charlottenburg",
+            "addressRegion": "Berlin",
+            "postalCode": "10623",
+            "addressCountry": "DE"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 52.5026629,
+            "longitude": 13.3197585
+        }
+    },
+    "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+    },
+    "name": "Goldschmiede DREIGOLD",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Krampitz"
+    },
+    "reviewBody": "Grossartiges Handwerk und eine begnadete Künstlerin. Unbedingt zu empfehlen!",
+    "publisher": {
+        "@type": "Person",
+        "name": "Peter Krampitz"
+    }
+}
