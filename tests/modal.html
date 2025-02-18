@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modales Popup</title>
+    <link rel="stylesheet" href="modal.css">
+</head>
+<body>
+    <button id="openModalInfo">Informationsmodal</button>
+    <button id="openModalWarning">Warnungsmodal</button>
+    <button id="openModalError">Fehlermodal</button>
+    
+    <script>
+        document.getElementById("openModalInfo").addEventListener("click", async () => {
+            const result = await createModal({
+                title: "Information",
+                message: "Das ist eine Informationsnachricht.",
+                buttons: ["OK"],
+                type: "info",
+            });
+    
+            console.log("Gedrückter Button-Index:", result);
+        });
+    
+        document.getElementById("openModalWarning").addEventListener("click", async () => {
+            const result = await createModal({
+                title: "Warnung",
+                message: "Das ist eine Warnung.",
+                buttons: ["Fortfahren", "Abbrechen"],
+                type: "warning",
+            });
+    
+            console.log("Gedrückter Button-Index:", result);
+        });
+    
+        document.getElementById("openModalError").addEventListener("click", async () => {
+            const result = await createModal({
+                title: "Fehler",
+                message: "Ein Fehler ist aufgetreten.",
+                buttons: ["Schließen"],
+                type: "error",
+            });
+    
+            console.log("Gedrückter Button-Index:", result);
+        });
+    </script>
+    
+
+
+
+    <script src="modal.js"></script>
+</body>
+</html>

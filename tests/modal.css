@@ -1,0 +1,130 @@
+/* Modal-Container */
+.modal-container {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    backdrop-filter: blur(1.5px);
+    transition: opacity,backdrop-filter 0.3s ease;
+}
+
+.modal-container.modal-show {
+    display: flex;
+    animation: modal-fadeIn 0.3s ease-out;
+}
+
+.modal-container.modal-fade-out {
+    animation: modal-fadeOut 0.3s ease-out forwards;
+}
+
+.modal-content {
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    animation: modal-scale-in 0.3s ease-out;
+}
+
+/* Typen */
+.modal-content.info {
+    background-color: #d9edf7;
+    /* Blau für Information */
+    color: #31708f;
+}
+
+.modal-content.warning {
+    background-color: #fcf8e3;
+    /* Gelb für Warnung */
+    color: #8a6d3b;
+}
+
+.modal-content.error {
+    background-color: #f2dede;
+    /* Rot für Fehler */
+    color: #a94442;
+}
+
+.modal-close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: black;
+}
+
+.modal-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.modal-message {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.modal-button:hover {
+    background-color: #0056b3;
+}
+
+/* Animationen */
+@keyframes modal-fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modal-fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes modal-scale-in {
+    from {
+        transform: scale(0.8);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}

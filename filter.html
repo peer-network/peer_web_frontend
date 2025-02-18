@@ -1,0 +1,50 @@
+<form id="filter" class="filterContainer">
+    <menu class="filter">
+        <div class="center">
+            <img class="icon" src="svg/filterApply.svg" alt="apply Filter">&nbsp;apply filter
+        </div>
+        <div class="filterGroup">
+            <input checked id="filterImage" type="checkbox" name="image">
+            <label for="filterImage" class="filterButton" title="Fotos"><img src="svg/filterImage.svg" alt="Image filter"></label>
+            <input checked id="filterNotes" type="checkbox" name="text">
+            <label for="filterNotes" class="filterButton" title="Notes" name="notes"><img src="svg/filterNotes.svg" alt="Notes filter"></label>
+            <input checked id="filterAdio" type="checkbox" name="audio">
+            <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter"></label>
+        </div>
+        <div class="filterGroup">
+            <input checked id="filterVideo" type="checkbox" name="video">
+            <label for="filterVideo" class="filterButton" title="Video"><img src="svg/filterVideo.svg" alt="Video filter"></label>
+            <input checked id="filterPodcast" type="checkbox" name="podcast">
+            <label for="filterPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast filter"></label>
+            <input checked id="filterFickFuck" type="checkbox" name="local">
+            <label for="filterFickFuck" class="filterButton" title="local"><img src="svg/filterFickFuck.svg" alt="Local filter"></label>
+        </div>
+        <div class="filterGroup">
+            <input checked id="filterPolls" class="filterButton" type="checkbox" name="polls">
+            <label for="filterPolls" class="filterButton" title="Polls"><img src="svg/filterPolls.svg" alt="Polls filter"></label>
+            <input checked id="filterQuiz" type="checkbox" name="quiz">
+            <label for="filterQuiz" class="filterButton" title="Quiz"><img src="svg/filterQuiz.svg" alt="Quiz filter"></label>
+            <input checked id="filterEvent" type="checkbox" name="event">
+            <label for="filterEvent" class="filterButton" title="Event"><img src="svg/filterEvent.svg" alt="Event filter"></label>
+        </div>
+    </menu>
+    <!-- <label for="advancedFilter" style="color: white;">advanced filter</label> -->
+    <select id="advancedFilter" class="dark-select">
+        <option class="none" name="" disabled selected>advanced filter</option>
+        <option value="1">was soll hier stehen?</option>
+        <option value="2">und wie siehts aus</option>
+        <option value="2">miau</option>
+        <option value="2">wuff</option>
+    </select>
+
+    <div class="menu">
+        <div class="menu-item aktive">
+            <img class="icon" src="svg/paid.svg">
+            <p>paid&nbsp;content</p>
+        </div>
+        <div class="menu-item">
+            <img class="icon" src="svg/free.svg">
+            <p>free&nbsp;content</p>
+        </div>
+    </div>
+</form>
