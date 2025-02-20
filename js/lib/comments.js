@@ -27,46 +27,57 @@ async function likeComment(commentId) {
   };
 
   // 4. fetch aufrufen
-  fetch("https://peer-network.eu/graphql", requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
+  return fetch("https://peer-network.eu/graphql", requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+      if (result.data.likeComment.status == "error") {
+        throw new Error(result.data.likeComment.ResponseCode);
+      } else {
+        return true;
+      }
+    })
+    .catch((error) => {
+      Merror("Like failed", error);
+      console.log("error", error);
+      return false;
+    });
 }
-async function addComment(postid, content) {
-  const accessToken = getCookie("authToken");
+// async function addComment(postid, content) {
+//   const accessToken = getCookie("authToken");
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
+//   // Create headers
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
 
-  // 2. GraphQL Body erstellen
-  var graphql = JSON.stringify({
-    query: `mutation LikeComment {
-              likeComment(commentid: "${commentId}") {
-                  status
-                  ResponseCode
-              }
-          }`,
-    variables: {},
-  });
+//   // 2. GraphQL Body erstellen
+//   var graphql = JSON.stringify({
+//     query: `mutation LikeComment {
+//               likeComment(commentid: "${commentId}") {
+//                   status
+//                   ResponseCode
+//               }
+//           }`,
+//     variables: {},
+//   });
 
-  // 3. Request-Options definieren
-  var requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
+//   // 3. Request-Options definieren
+//   var requestOptions = {
+//     method: "POST",
+//     headers: headers,
+//     body: graphql,
+//     redirect: "follow",
+//   };
 
-  // 4. fetch aufrufen
-  fetch("https://peer-network.eu/graphql", requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
-}
-function createComment(postid, content) {
+//   // 4. fetch aufrufen
+//   fetch("https://peer-network.eu/graphql", requestOptions)
+//     .then((response) => response.text())
+//     .then((result) => console.log(result))
+//     .catch((error) => console.log("error", error));
+// }
+async function createComment(postid, content, parentId = null) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -104,12 +115,12 @@ function createComment(postid, content) {
   const variables = {
     input: {
       postid: postid,
-      parentid: null,
+      parentid: parentId,
       content: content,
     },
   };
 
-  fetch(url, {
+  return fetch(url, {
     method: "POST",
     headers: headers,
     body: JSON.stringify({
@@ -120,8 +131,10 @@ function createComment(postid, content) {
     .then((response) => response.json())
     .then((data) => {
       console.log("Antwort:", data);
+      return data;
     })
     .catch((error) => {
       console.error("Fehler:", error);
+      return error;
     });
 }
