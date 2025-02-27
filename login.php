@@ -7,6 +7,8 @@ include 'phpheader.php';
 <head>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
     <link rel="stylesheet" href="css/modal.css">
+
+    <script src="js/lib/const.js?<?php echo filemtime('js/lib/const.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
     <!-- <script src="sw_instal.min.js" async></script> -->
@@ -62,6 +64,9 @@ include 'phpheader.php';
         </div>
         <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
     </form>
+
+    <input type="checkbox" id="disclaimer" name="disclaimer" class="checkbox">
+    <label for="disclaimer" class="disclaimer-container"><img src="img/DISLAIMER.png" alt="disclaimer-image" class="disclaimer" width="3240" height="1650"></label>
 
 </body>
 

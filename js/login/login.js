@@ -1,6 +1,4 @@
 async function loginRequest(email, password) {
-  const url = "https://peer-network.eu/graphql";
-
   // Create headers
   const headers = new Headers({
     "Content-Type": "application/json",
@@ -32,7 +30,7 @@ async function loginRequest(email, password) {
 
   try {
     // Send the request and handle the response
-    const response = await fetch(url, requestOptions);
+    const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
     // Check for errors in response
@@ -80,7 +78,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     if (result.status === "success" && result.ResponseCode === "Login successful") {
       window.location.href = "/dashboard.php";
     } else {
-      displayValidationMessage(result.ResponseCode || "Fehler bei der Registrierung.");
+      displayValidationMessage(result.ResponseCode || "Fehler beim Login.");
     }
   } catch (error) {
     console.error("Error during login request:", error);

@@ -27,7 +27,7 @@ async function likeComment(commentId) {
   };
 
   // 4. fetch aufrufen
-  return fetch("https://peer-network.eu/graphql", requestOptions)
+  return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
@@ -43,40 +43,7 @@ async function likeComment(commentId) {
       return false;
     });
 }
-// async function addComment(postid, content) {
-//   const accessToken = getCookie("authToken");
 
-//   // Create headers
-//   const headers = new Headers({
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${accessToken}`,
-//   });
-
-//   // 2. GraphQL Body erstellen
-//   var graphql = JSON.stringify({
-//     query: `mutation LikeComment {
-//               likeComment(commentid: "${commentId}") {
-//                   status
-//                   ResponseCode
-//               }
-//           }`,
-//     variables: {},
-//   });
-
-//   // 3. Request-Options definieren
-//   var requestOptions = {
-//     method: "POST",
-//     headers: headers,
-//     body: graphql,
-//     redirect: "follow",
-//   };
-
-//   // 4. fetch aufrufen
-//   fetch("https://peer-network.eu/graphql", requestOptions)
-//     .then((response) => response.text())
-//     .then((result) => console.log(result))
-//     .catch((error) => console.log("error", error));
-// }
 async function createComment(postid, content, parentId = null) {
   const accessToken = getCookie("authToken");
 
@@ -85,24 +52,8 @@ async function createComment(postid, content, parentId = null) {
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  const url = "https://peer-network.eu/graphql";
-  const mutation = `
-        mutation CreateComment($input: CreateCommentInput!) {
-            createComment(input: $input) {
-                status
-                ResponseCode
-                affectedRows {
-                    commentid
-                    userid
-                    postid
-                    parentid
-                    content
-                    createdat
-                }
-            }
-        }
-    `;
-  const mutation2 = `mutation CreateComment($input: CreateCommentInput!) {
+
+  const mutation = `mutation CreateComment($input: CreateCommentInput!) {
                       createComment(
                           action: COMMENT
                           input: $input
@@ -120,11 +71,11 @@ async function createComment(postid, content, parentId = null) {
     },
   };
 
-  return fetch(url, {
+  return fetch(GraphGL, {
     method: "POST",
     headers: headers,
     body: JSON.stringify({
-      query: mutation2,
+      query: mutation,
       variables: variables,
     }),
   })
@@ -138,3 +89,64 @@ async function createComment(postid, content, parentId = null) {
       return error;
     });
 }
+async function fetchChildComments(parentId) {
+  // Definiere den GraphQL-Query mit einer Variablen
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  const query = `
+  query Parentcomments($parent: ID!) {
+    parentcomments(parent: $parent) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            commentid
+            userid
+            postid
+            parentid
+            content
+            amountlikes
+            isliked
+            createdat
+            user {
+                id
+                username
+                img
+                isfollowed
+                isfollowing
+            }
+        }
+    }
+  }`;
+  // Setze die Variable für den Request
+  const variables = { parent: parentId };
+
+  // Ersetze die URL mit der deines GraphQL-Endpunkts
+  return fetch(GraphGL, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({ query, variables }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Antwort vom Server:", data);
+      if (data.data.parentcomments.status === "error") {
+        throw new Error(data.data.parentcomments.ResponseCode);
+      } else {
+        return data.data.parentcomments.affectedRows;
+      }
+    })
+    .catch((error) => {
+      console.error("Fehler:", error);
+      return null;
+    });
+}
+
+// Beispielaufruf der Funktion
+// fetchParentcomments("c85fa56c-262b-464d-a165-3dca9b767605");

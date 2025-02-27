@@ -41,7 +41,7 @@ async function fetchHelloData(userid = null) {
   };
 
   try {
-    const response = await fetch("https://peer-network.eu/graphql", requestOptions);
+    const response = await fetch(GraphGL, requestOptions);
     const result_1 = await response.json();
     console.log(result_1);
     return result_1;
@@ -78,7 +78,7 @@ async function hello() {
 
   try {
     // Send the request and handle the response
-    const response = await fetch("https://peer-network.eu/graphql", requestOptions);
+    const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
     // Check for errors in response

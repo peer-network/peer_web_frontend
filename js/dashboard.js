@@ -1,46 +1,51 @@
+// :TODO VIEWS
+
 let mostliked = [];
 function commentToDom(c, append = true) {
+  const userID = getCookie("userID");
+
   const comment = document.createElement("div");
   comment.classList.add("comment");
-  comment.setAttribute("commentid", c.commentid);
+  comment.id = c.commentid;
   const postID = document.getElementById("addComment").getAttribute("postID");
   // Benutzerbild <img src="userImage" alt="user image">
   const img = document.createElement("img");
 
   img.src = c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
-  img.addEventListener(
-    "click",
-    function handleCommentClick(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      const clickedElement = event.currentTarget.parentElement;
+  if (!c.parentid)
+    img.addEventListener(
+      "click",
+      function handleCommentClick(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const clickedElement = event.currentTarget.parentElement;
 
-      // Ein Attribut auslesen, z. B. 'data-id'
-      const attributeValue = clickedElement.getAttribute("postID");
-      const parentId = event.currentTarget.parentElement.getAttribute("commentid");
-      createModal({
-        title: "Comment",
-        message: "Please enter your comment:",
-        buttons: ["send", "quit"],
-        type: "info",
-        textarea: true,
-      }).then((result) => {
-        // result hat das Format { button: <index>, value: <textarea Inhalt> }
-        if (result !== null && result.button == 0 && result.value !== "") {
-          createComment(postID, result.value, parentId).then((result) => {
-            if (result.data.createComment.status === "success") {
-              commentToDom(result.data.createComment.affectedRows[0], false);
-            }
-          });
-        }
-        console.log("Ergebnis:", result);
-      });
-      console.log("User clicked Comment: " + event.currentTarget.parentElement.getAttribute("commentid"));
-      // window.location.href = "profile.html?user=" + c.user.id;
-    },
-    { capture: true }
-  );
+        // Ein Attribut auslesen, z. B. 'data-id'
+        const attributeValue = clickedElement.getAttribute("postID");
+        const parentId = event.currentTarget.parentElement.id;
+        createModal({
+          title: "Comment",
+          message: "Please enter your comment:",
+          buttons: ["send", "quit"],
+          type: "info",
+          textarea: true,
+        }).then((result) => {
+          // result hat das Format { button: <index>, value: <textarea Inhalt> }
+          if (result !== null && result.button == 0 && result.value !== "") {
+            createComment(postID, result.value, parentId).then((result) => {
+              if (result.data.createComment.status === "success") {
+                commentToDom(result.data.createComment.affectedRows[0], false);
+              }
+            });
+          }
+          console.log("Ergebnis:", result);
+        });
+        console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
+        // window.location.href = "profile.html?user=" + c.user.id;
+      },
+      { capture: true }
+    );
   // Benutzername <span>userName</span>
   const userNameSpan = document.createElement("span");
   userNameSpan.classList.add("commentUser");
@@ -69,24 +74,26 @@ function commentToDom(c, append = true) {
   const likeContainer = document.createElement("div");
   likeContainer.classList.add("likeComment");
   const svgLike = document.createElementNS(svgNS, "svg");
-  svgLike.setAttribute("id", c.commentid);
+  // svgLike.setAttribute("id", c.commentid);
 
   if (c.isliked) {
     // svgLike.addEventListener("click", function () {
     //   dislikePost(objekt.id);
     // });
     svgLike.classList.add("fill-red"); // Rot hinzufügen
-  } else {
+  } else if (c.user.id !== userID) {
     svgLike.addEventListener(
       "click",
       function handleLikeClick(event) {
         event.stopPropagation();
         event.preventDefault();
+        // svgLike.removeEventListener("click", handleLikeClick);
         likeComment(c.commentid).then((result) => {
           if (result) {
             c.isliked = true;
             c.amountlikes++;
             let e = document.getElementById(c.commentid);
+            e = e.querySelector(":scope > * > svg");
             e.classList.add("fill-red");
 
             // Prüfen, ob das <span> "K" oder "M" enthält
@@ -97,11 +104,10 @@ function commentToDom(c, append = true) {
               currentCount++;
               e.nextElementSibling.textContent = formatNumber(currentCount);
             }
-            svgLike.removeEventListener("click", handleLikeClick);
           }
         });
       },
-      { capture: true }
+      { capture: true, once: true }
     );
   }
   const useLike = document.createElementNS(svgNS, "use");
@@ -130,8 +136,15 @@ function commentToDom(c, append = true) {
   // comment.appendChild(commentUser);
   comment.appendChild(commentParagraph);
   comment.appendChild(likeContainer);
-  if (append) comments.appendChild(comment);
-  else comments.insertBefore(comment, comments.firstChild);
+  if (c.parentid) {
+    const parent = document.getElementById(c.parentid);
+    comment.classList.add("comment-reply");
+    parent.insertAdjacentElement("afterend", comment);
+    // else parent.insertBefore(comment, comments.firstChild);
+  } else {
+    if (append) comments.appendChild(comment);
+    else comments.insertBefore(comment, comments.firstChild);
+  }
   // if (objekt.contenttype === "audio") createTemporaryAudioElement(document.getElementById(objekt.media));
 }
 
@@ -155,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   closeComments.addEventListener("click", () => {
     togglePopup("cardClicked");
+    cancelTimeout();
     document.getElementById("header").classList.remove("none");
   });
   const addComment = document.getElementById("addComment");
@@ -337,27 +351,55 @@ document.addEventListener("DOMContentLoaded", () => {
   //   // Aktuelle Scroll-Position speichern
   //   lastScrollPosition = currentScrollTop;
   // });
+  // let lastScrollTop = 0;
+
+  // window.addEventListener(
+  //   "scroll",
+  //   function () {
+  //     let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+  //     if (currentScroll > lastScrollTop) {
+  //       // Runter gescrollt
+  //       header.classList.add("none");
+  //       // console.log("Runter gescrollt");
+  //     } else {
+  //       // Hoch gescrollt
+  //       header.classList.remove("none");
+  //       // console.log("Hoch gescrollt");
+  //     }
+
+  //     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Für negative Werte korrigieren
+  //   },
+  //   false
+  // );
   let lastScrollTop = 0;
+
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+  }
 
   window.addEventListener(
     "scroll",
-    function () {
+    debounce(function () {
       let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
       if (currentScroll > lastScrollTop) {
         // Runter gescrollt
         header.classList.add("none");
-        // console.log("Runter gescrollt");
       } else {
         // Hoch gescrollt
         header.classList.remove("none");
-        // console.log("Hoch gescrollt");
       }
 
-      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Für negative Werte korrigieren
-    },
-    false
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    }, 100) // 100 Millisekunden Verzögerung
   );
+
   // Liste der Dropzonen und Input-Elemente
   const zones = [
     {
@@ -585,6 +627,7 @@ function appendPost(json) {
 }
 
 async function postsLaden() {
+  const UserID = getCookie("userID");
   if (postsLaden.offset === undefined) {
     postsLaden.offset = 0; // Initialwert
   }
@@ -729,10 +772,11 @@ async function postsLaden() {
       //   dislikePost(objekt.id);
       // });
       svgLike.classList.add("fill-red"); // Rot hinzufügen
-    } else {
+    } else if (objekt.user.id !== UserID) {
       svgLike.addEventListener(
         "click",
         function handleLikeClick(event) {
+          // event.currentTarget.removeEventListener("click", handleLikeClick);
           event.stopPropagation();
           event.preventDefault();
           likePost(objekt.id).then((success) => {
@@ -749,10 +793,9 @@ async function postsLaden() {
                 e.nextElementSibling.textContent = formatNumber(currentCount);
               }
             }
-            svgLike.removeEventListener("click", handleLikeClick);
           });
         },
-        { capture: true }
+        { capture: true, once: true }
       );
     }
     const useLike = document.createElementNS(svgNS, "use");
@@ -764,7 +807,6 @@ async function postsLaden() {
     likeContainer.appendChild(spanLike);
     socialDiv.appendChild(likeContainer);
 
-    // Drittes SVG-Icon mit #post-comment
     const commentContainer = document.createElement("div");
     const svgComment = document.createElementNS(svgNS, "svg");
     const useComment = document.createElementNS(svgNS, "use");
@@ -822,9 +864,20 @@ function togglePopup(popup) {
   const imageContainer = document.getElementById("comment-img-container");
   imageContainer.innerHTML = "";
 }
+let timerId = null;
+function cancelTimeout() {
+  clearTimeout(timerId);
+}
+
+async function viewed(object) {
+  viewPost(object.id);
+  object.isviewed = true;
+  console.log(object.id);
+}
 
 async function postClicked(objekt) {
-  // document.querySelector("#main").classList.add("noscroll");
+  const UserID = getCookie("userID");
+  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 3000);
   togglePopup("cardClicked");
   document.getElementById("header").classList.add("none");
   const imageContainer = document.getElementById("comment-img-container");
@@ -905,14 +958,19 @@ async function postClicked(objekt) {
   const comments = document.getElementById("comments");
   document.getElementById("comment-sum").innerText = objekt.amountcomments;
   document.getElementById("addComment").setAttribute("postID", objekt.id);
-
+  document.getElementById("postViews").innerText = objekt.amountviews;
   comments.innerHTML = "";
-
   objekt.comments
     .slice()
     .reverse()
     .forEach(function (c) {
       commentToDom(c);
+      fetchChildComments(c.commentid).then((result) => {
+        if (!result) return;
+        result.slice().forEach(function (c2) {
+          commentToDom(c2, true);
+        });
+      });
     });
   mostliked.sort((a, b) => b.liked - a.liked);
   console.log(mostliked);
@@ -928,6 +986,7 @@ async function postClicked(objekt) {
   topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
   mostlikedcontainer.appendChild(topcommenter);
 }
+
 function timeAgo(datetime) {
   const now = Date.now(); // Aktuelle Zeit in Millisekunden
   const timestamp = new Date(datetime.replace(" ", "T")).getTime(); // ISO-konforme Umwandlung
@@ -1251,7 +1310,7 @@ async function fetchTags(searchStr) {
   const variables = { searchstr: searchStr };
 
   try {
-    const response = await fetch("https://peer-network.eu/graphql", {
+    const response = await fetch(GraphGL, {
       method: "POST",
       headers: headers,
       body: JSON.stringify({ query, variables }),
