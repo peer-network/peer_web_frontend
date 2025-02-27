@@ -28,7 +28,7 @@ async function registerUser(email, password, username) {
 
   try {
     // API-Anfrage an den GraphQL-Server
-    const response = await fetch("https://peer-network.eu/graphql", {
+    const response = await fetch(GraphGL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -103,30 +103,28 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren
 async function verifyUser2(userid) {
-  // GraphQL-Mutation zur Verifizierung eines Benutzers
+  // Definiere den GraphQL-Mutation-Query mit einer Variablen
   const query = `
-    mutation VerifiedAccount($userid: String!) {
-        verifiedAccount(userid: $userid) {
-            status
-            ResponseCode
-        }
+    mutation VerifiedAccount($userId: ID!) {
+      verifiedAccount(userid: $userId) {
+        status
+        ResponseCode
+      }
     }
-`;
+  `;
 
-  // API-Anfrage an den GraphQL-Server
-  fetch("https://peer-network.eu/graphql", {
+  // Setze die Variable für den Request
+  const variables = { userId: userid };
+
+  // Ersetze die URL mit der deines GraphQL-Endpunkts
+  fetch(GraphGL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      query: query,
-      variables: {
-        userid: userid, // Übergabe der dynamischen Benutzer-ID (userid)
-      },
-    }),
+    body: JSON.stringify({ query, variables }),
   })
-    .then((response) => response.json()) // Antwort in JSON umwandeln
+    .then((response) => response.json())
     .then((data) => {
       console.log("Mutation result:", data);
       // Ergebnis der Mutation verarbeiten

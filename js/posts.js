@@ -74,7 +74,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null) {
     redirect: "follow",
   };
 
-  return fetch("https://peer-network.eu/graphql", requestOptions)
+  return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
@@ -85,7 +85,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null) {
       throw error;
     });
 }
-function likePost(postid) {
+function viewPost(postid) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -95,10 +95,11 @@ function likePost(postid) {
   });
 
   var graphql = JSON.stringify({
-    query: `mutation LikePost {
-        likePost(postid: "${postid}") {
+    query: `mutation ResolveActionPost {
+        resolveActionPost(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
+          affectedRows
         }
       }`,
 
@@ -112,12 +113,63 @@ function likePost(postid) {
     redirect: "follow",
   };
 
-  return fetch("https://peer-network.eu/graphql", requestOptions)
+  return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      if (result.data.likePost.status == "error") {
-        throw new Error(result.data.likePost.ResponseCode);
+      if (result.data.resolveActionPost.status == "error") {
+        throw new Error(result.data.resolveActionPost.ResponseCode);
+      } else {
+        return true;
+      }
+    })
+    .catch((error) => {
+      Merror("Like failed", error);
+      console.log("error", error);
+      return false;
+    });
+}
+
+function likePost(postid) {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+  //   mutation ResolveActionPost {
+  //     resolveActionPost(postid: null, action: LIKE) {
+  //         status
+  //         ResponseCode
+  //         affectedRows
+  //     }
+  // }
+  var graphql = JSON.stringify({
+    query: `mutation ResolveActionPost {
+        resolveActionPost(postid: "${postid}", action: LIKE) {
+          status
+          ResponseCode
+          affectedRows
+        }
+      }`,
+
+    variables: {},
+  });
+
+  var requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  return fetch(GraphGL, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+      if (result.data.resolveActionPost.status == "error") {
+        throw new Error(result.data.resolveActionPost.ResponseCode);
       } else {
         return true;
       }
@@ -154,7 +206,7 @@ async function dislikePost(postid) {
     redirect: "follow",
   };
 
-  fetch("https://peer-network.eu/graphql", requestOptions)
+  fetch(GraphGL, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log("error", error));
@@ -208,7 +260,6 @@ async function fetchPostData(postId) {
     });
 }
 async function sendCreatePost(variables) {
-  const url = "https://peer-network.eu/graphql"; // GraphQL-Endpunkt
   const accessToken = getCookie("authToken");
 
   if (!accessToken) {
@@ -227,6 +278,7 @@ async function sendCreatePost(variables) {
         input: {
           title: $title
           media: $media
+          cover: null
           mediadescription: $mediadescription
           contenttype: $contenttype
           tags: $tags
@@ -247,7 +299,7 @@ async function sendCreatePost(variables) {
   // };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(GraphGL, {
       method: "POST",
       headers: headers,
       body: JSON.stringify({

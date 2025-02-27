@@ -1,3 +1,153 @@
+// :TODO VIEWS
+
+let mostliked = [];
+function commentToDom(c, append = true) {
+  const userID = getCookie("userID");
+
+  const comment = document.createElement("div");
+  comment.classList.add("comment");
+  comment.id = c.commentid;
+  const postID = document.getElementById("addComment").getAttribute("postID");
+  // Benutzerbild <img src="userImage" alt="user image">
+  const img = document.createElement("img");
+
+  img.src = c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
+  img.alt = "user image";
+  if (!c.parentid)
+    img.addEventListener(
+      "click",
+      function handleCommentClick(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        const clickedElement = event.currentTarget.parentElement;
+
+        // Ein Attribut auslesen, z. B. 'data-id'
+        const attributeValue = clickedElement.getAttribute("postID");
+        const parentId = event.currentTarget.parentElement.id;
+        createModal({
+          title: "Comment",
+          message: "Please enter your comment:",
+          buttons: ["send", "quit"],
+          type: "info",
+          textarea: true,
+        }).then((result) => {
+          // result hat das Format { button: <index>, value: <textarea Inhalt> }
+          if (result !== null && result.button == 0 && result.value !== "") {
+            createComment(postID, result.value, parentId).then((result) => {
+              if (result.data.createComment.status === "success") {
+                commentToDom(result.data.createComment.affectedRows[0], false);
+              }
+            });
+          }
+          console.log("Ergebnis:", result);
+        });
+        console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
+        // window.location.href = "profile.html?user=" + c.user.id;
+      },
+      { capture: true }
+    );
+  // Benutzername <span>userName</span>
+  const userNameSpan = document.createElement("span");
+  userNameSpan.classList.add("commentUser");
+  userNameSpan.textContent = c.user.username;
+
+  // Kommentar-Text <p>commentText</p>
+  const commentParagraph = document.createElement("p");
+  commentParagraph.textContent = c.content;
+
+  const existingEntry = mostliked.find((entry) => entry.key === c.commentid);
+
+  if (existingEntry) {
+    // Wenn der Eintrag existiert, erhöhe den liked-Wert
+    existingEntry.liked += c.amountlikes;
+  } else {
+    // Wenn der Eintrag nicht existiert, füge einen neuen hinzu
+    mostliked.push({
+      key: c.commentid,
+      liked: c.amountlikes,
+      img: c.user.img,
+      name: c.user.username,
+    });
+  }
+
+  const svgNS = "http://www.w3.org/2000/svg";
+  const likeContainer = document.createElement("div");
+  likeContainer.classList.add("likeComment");
+  const svgLike = document.createElementNS(svgNS, "svg");
+  // svgLike.setAttribute("id", c.commentid);
+
+  if (c.isliked) {
+    // svgLike.addEventListener("click", function () {
+    //   dislikePost(objekt.id);
+    // });
+    svgLike.classList.add("fill-red"); // Rot hinzufügen
+  } else if (c.user.id !== userID) {
+    svgLike.addEventListener(
+      "click",
+      function handleLikeClick(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        // svgLike.removeEventListener("click", handleLikeClick);
+        likeComment(c.commentid).then((result) => {
+          if (result) {
+            c.isliked = true;
+            c.amountlikes++;
+            let e = document.getElementById(c.commentid);
+            e = e.querySelector(":scope > * > svg");
+            e.classList.add("fill-red");
+
+            // Prüfen, ob das <span> "K" oder "M" enthält
+            if (e.nextElementSibling.textContent.includes("K") || e.nextElementSibling.textContent.includes("M")) {
+              return; // Wenn ja, wird das Hochzählen übersprungen
+            } else {
+              let currentCount = parseInt(e.nextElementSibling.textContent);
+              currentCount++;
+              e.nextElementSibling.textContent = formatNumber(currentCount);
+            }
+          }
+        });
+      },
+      { capture: true, once: true }
+    );
+  }
+  const useLike = document.createElementNS(svgNS, "use");
+  useLike.setAttribute("href", "#post-like");
+  svgLike.appendChild(useLike);
+  likeContainer.appendChild(svgLike);
+  const spanLike = document.createElement("span");
+  spanLike.textContent = formatNumber(c.amountlikes ? c.amountlikes : 0);
+  likeContainer.appendChild(spanLike);
+
+  const commentDate = document.createElement("span");
+  commentDate.textContent = "  •  " + timeAgo(c.createdat);
+  commentDate.classList.add("commentDate");
+  likeContainer.appendChild(commentDate);
+
+  const commentHeader = document.createElement("div");
+
+  // Zusammenfügen der Elemente
+  comment.appendChild(img);
+  commentHeader.appendChild(userNameSpan);
+  commentHeader.appendChild(commentDate);
+  commentHeader.classList.add("commentNameTime");
+
+  comment.appendChild(commentHeader);
+
+  // comment.appendChild(commentUser);
+  comment.appendChild(commentParagraph);
+  comment.appendChild(likeContainer);
+  if (c.parentid) {
+    const parent = document.getElementById(c.parentid);
+    comment.classList.add("comment-reply");
+    parent.insertAdjacentElement("afterend", comment);
+    // else parent.insertBefore(comment, comments.firstChild);
+  } else {
+    if (append) comments.appendChild(comment);
+    else comments.insertBefore(comment, comments.firstChild);
+  }
+  // if (objekt.contenttype === "audio") createTemporaryAudioElement(document.getElementById(objekt.media));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
   hello();
@@ -13,10 +163,13 @@ document.addEventListener("DOMContentLoaded", () => {
   //     fileInput.accept = event.target.value;
   //   }
   // });
+
   const closeComments = document.getElementById("closeComments");
 
   closeComments.addEventListener("click", () => {
     togglePopup("cardClicked");
+    cancelTimeout();
+    document.getElementById("header").classList.remove("none");
   });
   const addComment = document.getElementById("addComment");
   addComment.addEventListener("click", (event) => {
@@ -33,7 +186,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }).then((result) => {
       // result hat das Format { button: <index>, value: <textarea Inhalt> }
       if (result !== null && result.button == 0 && result.value !== "") {
-        createComment(attributeValue, result.value);
+        createComment(attributeValue, result.value).then((result) => {
+          if (result.data.createComment.status === "success") {
+            commentToDom(result.data.createComment.affectedRows[0], false);
+          }
+        });
       }
       console.log("Ergebnis:", result);
     });
@@ -194,27 +351,55 @@ document.addEventListener("DOMContentLoaded", () => {
   //   // Aktuelle Scroll-Position speichern
   //   lastScrollPosition = currentScrollTop;
   // });
+  // let lastScrollTop = 0;
+
+  // window.addEventListener(
+  //   "scroll",
+  //   function () {
+  //     let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+  //     if (currentScroll > lastScrollTop) {
+  //       // Runter gescrollt
+  //       header.classList.add("none");
+  //       // console.log("Runter gescrollt");
+  //     } else {
+  //       // Hoch gescrollt
+  //       header.classList.remove("none");
+  //       // console.log("Hoch gescrollt");
+  //     }
+
+  //     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Für negative Werte korrigieren
+  //   },
+  //   false
+  // );
   let lastScrollTop = 0;
+
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+  }
 
   window.addEventListener(
     "scroll",
-    function () {
+    debounce(function () {
       let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
       if (currentScroll > lastScrollTop) {
         // Runter gescrollt
         header.classList.add("none");
-        // console.log("Runter gescrollt");
       } else {
         // Hoch gescrollt
         header.classList.remove("none");
-        // console.log("Hoch gescrollt");
       }
 
-      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Für negative Werte korrigieren
-    },
-    false
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    }, 100) // 100 Millisekunden Verzögerung
   );
+
   // Liste der Dropzonen und Input-Elemente
   const zones = [
     {
@@ -442,6 +627,7 @@ function appendPost(json) {
 }
 
 async function postsLaden() {
+  const UserID = getCookie("userID");
   if (postsLaden.offset === undefined) {
     postsLaden.offset = 0; // Initialwert
   }
@@ -586,10 +772,11 @@ async function postsLaden() {
       //   dislikePost(objekt.id);
       // });
       svgLike.classList.add("fill-red"); // Rot hinzufügen
-    } else {
+    } else if (objekt.user.id !== UserID) {
       svgLike.addEventListener(
         "click",
         function handleLikeClick(event) {
+          // event.currentTarget.removeEventListener("click", handleLikeClick);
           event.stopPropagation();
           event.preventDefault();
           likePost(objekt.id).then((success) => {
@@ -606,10 +793,9 @@ async function postsLaden() {
                 e.nextElementSibling.textContent = formatNumber(currentCount);
               }
             }
-            svgLike.removeEventListener("click", handleLikeClick);
           });
         },
-        { capture: true }
+        { capture: true, once: true }
       );
     }
     const useLike = document.createElementNS(svgNS, "use");
@@ -621,7 +807,6 @@ async function postsLaden() {
     likeContainer.appendChild(spanLike);
     socialDiv.appendChild(likeContainer);
 
-    // Drittes SVG-Icon mit #post-comment
     const commentContainer = document.createElement("div");
     const svgComment = document.createElementNS(svgNS, "svg");
     const useComment = document.createElementNS(svgNS, "use");
@@ -679,10 +864,22 @@ function togglePopup(popup) {
   const imageContainer = document.getElementById("comment-img-container");
   imageContainer.innerHTML = "";
 }
+let timerId = null;
+function cancelTimeout() {
+  clearTimeout(timerId);
+}
+
+async function viewed(object) {
+  viewPost(object.id);
+  object.isviewed = true;
+  console.log(object.id);
+}
 
 async function postClicked(objekt) {
-  // document.querySelector("#main").classList.add("noscroll");
+  const UserID = getCookie("userID");
+  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 3000);
   togglePopup("cardClicked");
+  document.getElementById("header").classList.add("none");
   const imageContainer = document.getElementById("comment-img-container");
   // imageContainer.innerHTML = "";
 
@@ -757,115 +954,23 @@ async function postClicked(objekt) {
   const text = document.getElementById("comment-text");
   text.innerText = objekt.mediadescription;
 
-  // console.log(objekt.id );
-  // console.log(objekt.media );
   let mostliked = [];
   const comments = document.getElementById("comments");
   document.getElementById("comment-sum").innerText = objekt.amountcomments;
   document.getElementById("addComment").setAttribute("postID", objekt.id);
-
+  document.getElementById("postViews").innerText = objekt.amountviews;
   comments.innerHTML = "";
   objekt.comments
     .slice()
     .reverse()
     .forEach(function (c) {
-      const comment = document.createElement("div");
-      comment.classList.add("comment");
-
-      // Benutzerbild <img src="userImage" alt="user image">
-      const img = document.createElement("img");
-
-      img.src = c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
-      img.alt = "user image";
-
-      // Benutzername <span>userName</span>
-      const userNameSpan = document.createElement("span");
-      userNameSpan.classList.add("commentUser");
-      userNameSpan.textContent = c.user.username;
-
-      // Kommentar-Text <p>commentText</p>
-      const commentParagraph = document.createElement("p");
-      commentParagraph.textContent = c.content;
-
-      const existingEntry = mostliked.find((entry) => entry.key === c.commentid);
-
-      if (existingEntry) {
-        // Wenn der Eintrag existiert, erhöhe den liked-Wert
-        existingEntry.liked += c.amountlikes;
-      } else {
-        // Wenn der Eintrag nicht existiert, füge einen neuen hinzu
-        mostliked.push({
-          key: c.commentid,
-          liked: c.amountlikes,
-          img: c.user.img,
-          name: c.user.username,
+      commentToDom(c);
+      fetchChildComments(c.commentid).then((result) => {
+        if (!result) return;
+        result.slice().forEach(function (c2) {
+          commentToDom(c2, true);
         });
-      }
-
-      const svgNS = "http://www.w3.org/2000/svg";
-      const likeContainer = document.createElement("div");
-      likeContainer.classList.add("likeComment");
-      const svgLike = document.createElementNS(svgNS, "svg");
-      svgLike.setAttribute("id", c.commentid);
-
-      if (c.isliked) {
-        // svgLike.addEventListener("click", function () {
-        //   dislikePost(objekt.id);
-        // });
-        svgLike.classList.add("fill-red"); // Rot hinzufügen
-      } else {
-        svgLike.addEventListener(
-          "click",
-          function handleLikeClick(event) {
-            event.stopPropagation();
-            event.preventDefault();
-            likeComment(c.commentid);
-            c.isliked = true;
-            c.amountlikes++;
-            let e = document.getElementById(c.commentid);
-            e.classList.add("fill-red");
-
-            // Prüfen, ob das <span> "K" oder "M" enthält
-            if (e.nextElementSibling.textContent.includes("K") || e.nextElementSibling.textContent.includes("M")) {
-              return; // Wenn ja, wird das Hochzählen übersprungen
-            } else {
-              let currentCount = parseInt(e.nextElementSibling.textContent);
-              currentCount++;
-              e.nextElementSibling.textContent = formatNumber(currentCount);
-            }
-            svgLike.removeEventListener("click", handleLikeClick);
-          },
-          { capture: true }
-        );
-      }
-      const useLike = document.createElementNS(svgNS, "use");
-      useLike.setAttribute("href", "#post-like");
-      svgLike.appendChild(useLike);
-      likeContainer.appendChild(svgLike);
-      const spanLike = document.createElement("span");
-      spanLike.textContent = formatNumber(c.amountlikes);
-      likeContainer.appendChild(spanLike);
-
-      const commentDate = document.createElement("span");
-      commentDate.textContent = "  •  " + timeAgo(c.createdat);
-      commentDate.classList.add("commentDate");
-      likeContainer.appendChild(commentDate);
-
-      const commentHeader = document.createElement("div");
-
-      // Zusammenfügen der Elemente
-      comment.appendChild(img);
-      commentHeader.appendChild(userNameSpan);
-      commentHeader.appendChild(commentDate);
-      commentHeader.classList.add("commentNameTime");
-
-      comment.appendChild(commentHeader);
-
-      // comment.appendChild(commentUser);
-      comment.appendChild(commentParagraph);
-      comment.appendChild(likeContainer);
-      comments.appendChild(comment);
-      // if (objekt.contenttype === "audio") createTemporaryAudioElement(document.getElementById(objekt.media));
+      });
     });
   mostliked.sort((a, b) => b.liked - a.liked);
   console.log(mostliked);
@@ -881,6 +986,7 @@ async function postClicked(objekt) {
   topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
   mostlikedcontainer.appendChild(topcommenter);
 }
+
 function timeAgo(datetime) {
   const now = Date.now(); // Aktuelle Zeit in Millisekunden
   const timestamp = new Date(datetime.replace(" ", "T")).getTime(); // ISO-konforme Umwandlung
@@ -1204,7 +1310,7 @@ async function fetchTags(searchStr) {
   const variables = { searchstr: searchStr };
 
   try {
-    const response = await fetch("https://peer-network.eu/graphql", {
+    const response = await fetch(GraphGL, {
       method: "POST",
       headers: headers,
       body: JSON.stringify({ query, variables }),

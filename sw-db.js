@@ -328,7 +328,7 @@ function isPHPJSorCSS(url) {
 }
 function isServiceWorker(url) {
   // Prüfen, ob die URL den Service Worker enthält
-  return url.includes("/sw-db.js") || url.includes("https://peer-network.eu/graphql");
+  return url.includes("/sw-db.js") || url.includes(GraphGL);
 }
 async function fetchAndCacheIfNotExists(request) {
   const compositeKey = await generateCompositeKey(request);
