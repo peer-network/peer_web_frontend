@@ -64,11 +64,11 @@ include 'phpheader.php';
                 </div>
                 <div class="postOptions">
                     <div class="postOptionsButton" title="show trends">
-                        <span>Trendig</span>
+                        <span>Everything</span>
                         <img src="svg/trending.svg" alt="trending" />
                     </div>
                     <div class="postOptionsButton" title="my followed">
-                        <span>Subscriptions</span>
+                        <span>Following</span>
                         <img src="svg/followed.svg" alt="followed" />
                     </div>
                     <div class="postOptionsButton" title="your friends like">
@@ -88,16 +88,17 @@ include 'phpheader.php';
                         &nbsp;apply filter
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterImage" type="checkbox" name="IMAGE" />
+                        <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" />
                         <label for="filterImage" class="filterButton" title="Fotos"><img src="svg/filterImage.svg" alt="Image filter" /></label>
-                        <input checked id="filterNotes" type="checkbox" name="TEXT" />
+                        <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" />
                         <label for="filterNotes" class="filterButton" title="Notes" name="notes"><img src="svg/filterNotes.svg" alt="Notes filter" /></label>
-                        <input checked id="filterAdio" type="checkbox" name="AUDIO" />
-                        <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter" /></label>
+
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterVideo" type="checkbox" name="VIDEO" />
+                        <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" />
                         <label for="filterVideo" class="filterButton" title="Video"><img src="svg/filterVideo.svg" alt="Video filter" /></label>
+                        <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" />
+                        <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter" /></label>
                         <!-- <input checked id="filterPodcast" type="checkbox" name="PODCAST" />
                         <label for="filterPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast filter" /></label>
                         <input checked id="filterFickFuck" type="checkbox" name="LOCAL" />
@@ -122,13 +123,17 @@ include 'phpheader.php';
                 </select>
 
                 <div class="menu">
-                    <div class="menu-item aktive">
-                        <img class="icon" src="svg/paid.svg" />
-                        <p>paid&nbsp;content</p>
+                    <div class="filterGroup">
+                        <input id="filterMostLiked" sortby="LIKES" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostLiked" class="filterButton most" title="Sort by most liked"><img src="svg/post-like.svg" alt="MostLiked filter" />Most<br>liked</label>
+                        <input id="filterMostCommented" sortby="COMMENTS" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostCommented" class="filterButton most" title="Sort by most commented"><img src="svg/post-comment.svg" alt="MostCommented filter" />Most<br>commented</label>
                     </div>
-                    <div class="menu-item">
-                        <img class="icon" src="svg/free.svg" />
-                        <p>free&nbsp;content</p>
+                    <div class="filterGroup">
+                        <input id="filterMostPopular" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostPopular" class="filterButton most" title="Sort by most popular"><img src="svg/popular.svg" alt="MostPopular filter" />Most<br>popular</label>
+                        <input id="filterMostControversial" sortby="DISLIKES" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostControversial" class="filterButton most" title="Sort by most controversial"><img src="svg/controversial.svg" alt="MostControversial filter" />Most<br>controversial</label>
                     </div>
                 </div>
             </form>
@@ -330,7 +335,7 @@ include 'phpheader.php';
 
                     <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
                 </div>
-                <p>The maximum file size is 25MB</p>
+                <p>The maximum file size is 4MB</p>
 
                 <!-- <label for="bildueberschrift">Überschrift:</label> -->
                 <input type="text" id="titleImage" placeholder="Add title" name="text-input" maxlength="150" required />
@@ -338,6 +343,12 @@ include 'phpheader.php';
                 <textarea id="descriptionImage" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
                 <div id="preview-image" class="blockscroll preview-container"></div>
                 <button class="button" id="createPostImage">Upload</button>
+            </form>
+            <form id="newNotesPost" class="upload" method="post">
+                <input type="text" id="titleNotes" placeholder="Add title" name="text-input" maxlength="150" required />
+                <textarea id="descriptionNotes" rows="8" placeholder="What’s on your mind?" name="text-input" maxlength="1200" required></textarea>
+                <p>The maximum Text size is 4MB</p>
+                <button class="button" id="createPostNotes">Upload</button>
             </form>
             <form id="newAudioPost" class="upload" method="post">
                 <h2>Upload File</h2>
@@ -358,7 +369,7 @@ include 'phpheader.php';
 
                     <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
                 </div>
-                <p>The maximum file size is 200MB</p>
+                <p>The maximum file size is 4MB</p>
 
                 <!-- <label for="bildueberschrift">Überschrift:</label> -->
                 <input type="text" id="titleAudio" placeholder="Add title" name="text-input" maxlength="150" required />
@@ -385,7 +396,7 @@ include 'phpheader.php';
 
                     <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
                 </div>
-                <p>The maximum file size is 3GB</p>
+                <p>The maximum file size is 4MB</p>
 
                 <!-- <label for="bildueberschrift">Überschrift:</label> -->
                 <input type="text" id="titleVideo" placeholder="Add title" name="text-input" maxlength="150" required />

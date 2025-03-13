@@ -162,7 +162,9 @@ h1 {
   align-items: center;
   gap: 0.7rem;
 }
-
+.header > div:first-of-type {
+  filter: drop-shadow(5px 5px 10px #9a784e);
+}
 .header div img {
   width: 1.15rem;
   height: auto;
@@ -209,6 +211,7 @@ h1 {
   background-color: var(--input-background);
   color: var(--text-color);
   border: none;
+  color: grey;
 }
 
 .lupe {
@@ -376,8 +379,33 @@ h1 {
   align-items: center;
   font-size: 1.2rem;
   margin-bottom: 1rem;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
+.chkMost + label img {
+  width: 3rem;
+  margin-bottom: 0.5rem;
+}
+.chkMost + label {
+  height: 6rem;
+  padding: 0.5rem;
+  border: 2px solid transparent;
+  line-height: 1.3rem;
+  min-width: 50%;
+}
+.chkMost:checked + label {
+  border: 2px solid var(--button-active);
+  filter: drop-shadow(0 0 0.3rem var(--button-active));
+}
+.most {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: flex-start;
+  font-size: 0.7rem;
+  border-radius: 0.8rem;
+}
 .filterButton:hover {
   animation: borderButton 0.5s forwards;
 }
@@ -470,7 +498,7 @@ h1 {
   filter: brightness(1);
   background-color: transparent !important;
 }
-
+#createNotes:checked ~ #newNotesPost,
 #createImage:checked ~ #newImagePost,
 #createVideo:checked ~ #newVideoPost,
 #createAudio:checked ~ #newAudioPost {

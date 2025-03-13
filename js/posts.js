@@ -1,4 +1,4 @@
-async function getPosts(offset, limit, filter, title = "", tag = null) {
+async function getPosts(offset, limit, filter, title = "", tag = null, sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -6,17 +6,17 @@ async function getPosts(offset, limit, filter, title = "", tag = null) {
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-
-  var graphql = JSON.stringify({
-    query: `query Getallposts {
+  title = sanitizeString(title);
+  if (!sortby) sortby = "NEWEST";
+  let searchstr = `query Getallposts {
     getallposts(
-      sortBy: NEWEST, 
-      postLimit: ${limit}, 
-      postOffset: ${offset}, 
-      filterBy: [${filter}],        
-      title: "${title}",
-      tag: ${tag}
-    ) {
+      sortBy: ${sortby},
+      postLimit: ${limit},
+      postOffset: ${offset},
+      filterBy: [${filter}],
+      tag: ${tag}`;
+  searchstr += title && title.length >= 2 ? `,title: "${title}"` : "";
+  searchstr += `) {
         status
         ResponseCode
         affectedRows {
@@ -63,7 +63,9 @@ async function getPosts(offset, limit, filter, title = "", tag = null) {
         }
     }
 }
-`,
+`;
+  var graphql = JSON.stringify({
+    query: searchstr,
     variables: {},
   });
 
@@ -272,7 +274,7 @@ async function sendCreatePost(variables) {
   };
 
   const query = `
-    mutation CreatePost($title: String!, $media: String!, $mediadescription: String!, $contenttype: String!, $tags: [String!]) {
+    mutation CreatePost($title: String!, $media: String!, $mediadescription: String!, $contenttype: ContenType!, $tags: [String!]) {
       createPost(
         action: POST
         input: {
@@ -286,7 +288,26 @@ async function sendCreatePost(variables) {
       ) {
         status
         ResponseCode
-        affectedRows
+        affectedRows {
+            id
+            contenttype
+            title
+            media
+            cover
+            mediadescription
+            createdat
+            amountlikes
+            amountviews
+            amountcomments
+            amountdislikes
+            amounttrending
+            isliked
+            isviewed
+            isreported
+            isdisliked
+            issaved
+            tags
+        }
       }
     }
   `;

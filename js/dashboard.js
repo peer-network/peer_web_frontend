@@ -223,6 +223,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const observer = new IntersectionObserver(observerCallback, observerOptions);
   observer.observe(footer);
 
+  function isStringLargerThanMB(str, mb) {
+    const byteSize = new TextEncoder().encode(str).length;
+    const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
+    return byteSize > maxBytes;
+  }
+
   document.getElementById("btAddPost").addEventListener("click", function startAddPost() {
     header.classList.add("none");
     togglePopup("addPost");
@@ -232,6 +238,32 @@ document.addEventListener("DOMContentLoaded", () => {
     header.classList.remove("none");
     togglePopup("addPost");
   });
+  document.getElementById("createPostNotes").addEventListener("click", async function createPost(event) {
+    event.preventDefault(); // Prevent form reload
+    const title = document.getElementById("titleNotes").value;
+    const textareaValue = document.getElementById("descriptionNotes").value;
+    const encoder = new TextEncoder();
+    const encodedData = encoder.encode(textareaValue);
+    const base64String = btoa(String.fromCharCode(...encodedData));
+    const base64WithMime = `data:text/plain;base64,${base64String}`;
+    const tags = tag_getTagArray();
+
+    if (isStringLargerThanMB(base64WithMime, 4)) {
+      Merror("Error", "The text is too large. Please upload a smaller text.");
+      return;
+    }
+    if (
+      await sendCreatePost({
+        title: title,
+        media: base64WithMime,
+        contenttype: "text",
+        tags: tags,
+      })
+    ) {
+      togglePopup("addPost");
+      location.reload();
+    }
+  });
   document.getElementById("createPostImage").addEventListener("click", async function createPost(event) {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleImage").value;
@@ -239,20 +271,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageWrappers = document.querySelectorAll(".create-img");
     const tags = tag_getTagArray();
 
-    const combinedHTML = Array.from(imageWrappers)
-      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      .join(" "); // Concatenate the HTML content with a space in between
+    const combinedBase64 = Array.from(imageWrappers)
+      .map((img) => img.src) // Bildquelle (src) abrufen
+      .filter((src) => src.startsWith("data:image/"))
+      .join(" ");
+    // // const combinedHTML = Array.from(imageWrappers)
+    //   .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+    //   .join(" "); // Concatenate the HTML content with a space in between
+    if (isStringLargerThanMB(combinedBase64, 4)) {
+      Merror("Error", "The image(s) is too large. Please upload a smaller image(s).");
+      return;
+    }
     if (
       await sendCreatePost({
         title: title,
-        media: combinedHTML,
+        media: combinedBase64,
         mediadescription: beschreibung,
         contenttype: "image",
         tags: tags,
       })
     ) {
       togglePopup("addPost");
-
       location.reload();
     }
   });
@@ -266,6 +305,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
       .join(" "); // Concatenate the HTML content with a space in between
+    if (isStringLargerThanMB(combinedHTML, 4)) {
+      Merror("Error", "The audio is too large. Please upload a smaller audio.");
+      return;
+    }
     if (
       await sendCreatePost({
         title: title,
@@ -280,6 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     }
   });
+
   document.getElementById("createPostVideo").addEventListener("click", async function createPost(event) {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleVideo").value;
@@ -290,6 +334,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
       .join(" "); // Concatenate the HTML content with a space in between
+    if (isStringLargerThanMB(combinedHTML, 4)) {
+      Merror("Error", "The video is too large. Please upload a smaller video.");
+      return;
+    }
     if (
       await sendCreatePost({
         title: title,
@@ -300,12 +348,26 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     ) {
       togglePopup("addPost");
-
       location.reload();
     }
   });
+  const textsearch = document.getElementById("searchText");
+  textsearch.addEventListener("input", () => {
+    const parentElements = document.querySelectorAll(".card");
 
-  const checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
+    parentElements.forEach((element) => {
+      const h1s = element.querySelectorAll("h1");
+      h1s.forEach((h1) => {
+        if (h1.innerText.toLowerCase().includes(textsearch.value.toLowerCase())) {
+          element.classList.remove("none");
+        } else {
+          element.classList.add("none");
+        }
+      });
+    });
+    postsLaden();
+  });
+  const checkboxes = document.querySelectorAll("#filter .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
@@ -321,6 +383,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         console.log(`${event.target.name} wurde deaktiviert.`);
       }
+      postsLaden();
+    });
+  });
+  const radio = document.querySelectorAll("#filter .chkMost");
+  radio.forEach((item) => {
+    let lastSelected = null;
+    item.addEventListener("click", function () {
+      if (this === lastSelected) {
+        this.checked = false;
+        lastSelected = null;
+        saveFilterSettings();
+        location.reload();
+      } else {
+        lastSelected = this;
+      }
+    });
+    item.addEventListener("change", (event) => {
+      saveFilterSettings();
+      location.reload();
     });
   });
   // window.addEventListener("resize", () => {
@@ -655,7 +736,7 @@ async function postsLaden() {
   const form = document.querySelector("#filter");
 
   // Alle Checkboxen innerhalb des Formulars abrufen
-  const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+  const checkboxes = form.querySelectorAll(".filteritem:checked");
 
   // Die Werte der angehakten Checkboxen sammeln
   const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
@@ -666,7 +747,9 @@ async function postsLaden() {
   // Ergebnis ausgeben
   console.log(values);
   const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
-  const posts = await getPosts(postsLaden.offset, 48, cleanedArray);
+  const textsearch = document.getElementById("searchText").value;
+  const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
+  const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, null, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   console.log(cleanedArray);
 
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
@@ -719,8 +802,8 @@ async function postsLaden() {
       postDiv.appendChild(audio);
     } else if (objekt.contenttype === "video") {
       video = document.createElement("video");
-      video.id = objekt.media;
-      video.src = tempMedia(objekt.media);
+      video.id = extractAfterComma(objekt.media);
+      video.src = tempMedia(video.id);
       video.controls = true;
       video.className = "custom-video";
       addMediaListener(video);
@@ -914,7 +997,7 @@ async function postClicked(objekt) {
   } else if (objekt.contenttype === "video") {
     const video = document.createElement("video");
     video.id = "video2";
-    video.src = tempMedia(objekt.media);
+    video.src = tempMedia(extractAfterComma(objekt.media));
     video.controls = true;
     video.className = "custom-video";
     video.autoplay = true; // Autoplay aktivieren
@@ -1157,6 +1240,16 @@ async function processFiles(files, id) {
 
   const previewContainer = document.getElementById("preview-" + id);
   let previewItem;
+  const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
+  let size = 0;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    size += file.size;
+    if (size > maxSizeMB * 1024 * 1024) {
+      Merror("Error", "The file is too large. Please select a file(s) under 4MB.");
+      return;
+    }
+  }
   files.forEach(async (file) => {
     // if (!file.type.startsWith("image/")) {
     //   info("Information", `${file.name} ist keine Bilddatei.`);
@@ -1244,7 +1337,10 @@ function handleDelete(event) {
   event.target.parentElement.remove();
   // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
-
+function isFileLargerThanMB(file, mb) {
+  const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
+  return file.size > maxBytes;
+}
 async function convertImageToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1476,23 +1572,21 @@ function tag_getTagArray() {
 }
 function saveFilterSettings() {
   let filterSettings = {};
-  let checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
+  let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
 
   checkboxes.forEach((checkbox) => {
-    filterSettings[checkbox.name] = checkbox.checked; // Speichert Name und Zustand
+    filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
   });
-
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
 }
 function restoreFilterSettings() {
   let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
 
   if (filterSettings) {
-    let checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
-
+    let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
     checkboxes.forEach((checkbox) => {
-      if (filterSettings[checkbox.name] !== undefined) {
-        checkbox.checked = filterSettings[checkbox.name]; // Zustand setzen
+      if (filterSettings[checkbox.id] !== undefined) {
+        checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
       }
     });
   }
