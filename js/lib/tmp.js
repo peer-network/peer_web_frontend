@@ -1,4 +1,6 @@
 function tempMedia(folder) {
-  let s = "https://media.getpeer.eu" + folder;
-  return s;
+  let domain = document.getElementById("config").dataset.host;
+  const newUrl = domain.replace("://", "://media.") + folder;
+  // let s = "https://media.getpeer.eu" + folder;
+  return newUrl;
 }
