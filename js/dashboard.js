@@ -223,6 +223,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const observer = new IntersectionObserver(observerCallback, observerOptions);
   observer.observe(footer);
 
+  function isStringLargerThanMB(str, mb) {
+    const byteSize = new TextEncoder().encode(str).length;
+    const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
+    return byteSize > maxBytes;
+  }
+
   document.getElementById("btAddPost").addEventListener("click", function startAddPost() {
     header.classList.add("none");
     togglePopup("addPost");
@@ -232,6 +238,35 @@ document.addEventListener("DOMContentLoaded", () => {
     header.classList.remove("none");
     togglePopup("addPost");
   });
+  document.getElementById("createPostNotes").addEventListener("click", async function createPost(event) {
+    event.preventDefault(); // Prevent form reload
+    const title = document.getElementById("titleNotes").value;
+    const textareaValue = document.getElementById("descriptionNotes").value;
+    const encoder = new TextEncoder();
+    const encodedData = encoder.encode(textareaValue);
+    const base64String = btoa(String.fromCharCode(...encodedData));
+    const base64WithMime = [`data:text/plain;base64,${base64String}`];
+    const tags = tag_getTagArray();
+
+    const gesamtLaenge = base64WithMime.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
+      Merror("Error", "The text is too large. Please upload a smaller text.");
+      return;
+    }
+    if (
+      await sendCreatePost({
+        title: title,
+        media: base64WithMime,
+        mediadescription: "eine Beschreibung, warum auch immer???",
+        contenttype: "text",
+        tags: tags,
+      })
+    ) {
+      togglePopup("addPost");
+      location.reload();
+    }
+  });
   document.getElementById("createPostImage").addEventListener("click", async function createPost(event) {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleImage").value;
@@ -239,20 +274,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageWrappers = document.querySelectorAll(".create-img");
     const tags = tag_getTagArray();
 
-    const combinedHTML = Array.from(imageWrappers)
-      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      .join(" "); // Concatenate the HTML content with a space in between
+    const combinedBase64 = Array.from(imageWrappers)
+      .map((img) => img.src) // Bildquelle (src) abrufen
+      .filter((src) => src.startsWith("data:image/"));
+    // // const combinedHTML = Array.from(imageWrappers)
+    //   .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+    //   .join(" "); // Concatenate the HTML content with a space in between
+    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
+      Merror("Error", "The image(s) is too large. Please upload a smaller image(s).");
+      return;
+    }
     if (
       await sendCreatePost({
         title: title,
-        media: combinedHTML,
+        media: combinedBase64,
         mediadescription: beschreibung,
         contenttype: "image",
         tags: tags,
       })
     ) {
       togglePopup("addPost");
-
       location.reload();
     }
   });
@@ -263,13 +306,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageWrappers = document.querySelectorAll(".create-audio");
     const tags = tag_getTagArray();
 
-    const combinedHTML = Array.from(imageWrappers)
-      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      .join(" "); // Concatenate the HTML content with a space in between
+    const combinedBase64 = Array.from(imageWrappers)
+      .map((img) => img.src) // Bildquelle (src) abrufen
+      .filter((src) => src.startsWith("data:audio/"));
+
+    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
+      Merror("Error", "The audio is too large. Please upload a smaller audio.");
+      return;
+    }
+    const canvas = document.querySelector("#preview-audio > div > canvas");
+    const dataURL = [canvas.toDataURL("image/webp", 0.8)];
+    console.log(dataURL);
     if (
       await sendCreatePost({
         title: title,
-        media: combinedHTML,
+        media: combinedBase64,
+        cover: dataURL,
         mediadescription: beschreibung,
         contenttype: "audio",
         tags: tags,
@@ -280,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     }
   });
+
   document.getElementById("createPostVideo").addEventListener("click", async function createPost(event) {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleVideo").value;
@@ -287,25 +342,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageWrappers = document.querySelectorAll(".create-video");
     const tags = tag_getTagArray();
 
-    const combinedHTML = Array.from(imageWrappers)
-      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      .join(" "); // Concatenate the HTML content with a space in between
+    const combinedBase64 = Array.from(imageWrappers)
+      .map((img) => img.src) // Bildquelle (src) abrufen
+      .filter((src) => src.startsWith("data:video/"));
+    // .join(" ");
+    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
+      Merror("Error", "The video is too large. Please upload a smaller video.");
+      return;
+    }
     if (
       await sendCreatePost({
         title: title,
-        media: combinedHTML,
+        media: combinedBase64,
         mediadescription: beschreibung,
         contenttype: "video",
         tags: tags,
       })
     ) {
       togglePopup("addPost");
-
       location.reload();
     }
   });
+  const textsearch = document.getElementById("searchText");
+  textsearch.addEventListener("input", () => {
+    const parentElements = document.querySelectorAll(".card");
 
-  const checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
+    parentElements.forEach((element) => {
+      const h1s = element.querySelectorAll("h1");
+      h1s.forEach((h1) => {
+        if (h1.innerText.toLowerCase().includes(textsearch.value.toLowerCase())) {
+          element.classList.remove("none");
+        } else {
+          element.classList.add("none");
+        }
+      });
+    });
+    postsLaden();
+  });
+  const checkboxes = document.querySelectorAll("#filter .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
@@ -321,6 +397,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         console.log(`${event.target.name} wurde deaktiviert.`);
       }
+      location.reload();
+    });
+  });
+  const radio = document.querySelectorAll("#filter .chkMost");
+  radio.forEach((item) => {
+    let lastSelected = null;
+    item.addEventListener("click", function () {
+      if (this === lastSelected) {
+        this.checked = false;
+        lastSelected = null;
+        saveFilterSettings();
+        location.reload();
+      } else {
+        lastSelected = this;
+      }
+    });
+    item.addEventListener("change", (event) => {
+      saveFilterSettings();
+      location.reload();
     });
   });
   // window.addEventListener("resize", () => {
@@ -613,6 +708,7 @@ async function getUser() {
     profil_login.classList.remove("none");
   } else {
     document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
+    document.getElementById("slug").innerText = "#" + profil.data.profile.affectedRows.slug;
     document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
@@ -655,7 +751,7 @@ async function postsLaden() {
   const form = document.querySelector("#filter");
 
   // Alle Checkboxen innerhalb des Formulars abrufen
-  const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+  const checkboxes = form.querySelectorAll(".filteritem:checked");
 
   // Die Werte der angehakten Checkboxen sammeln
   const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
@@ -666,7 +762,9 @@ async function postsLaden() {
   // Ergebnis ausgeben
   console.log(values);
   const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
-  const posts = await getPosts(postsLaden.offset, 48, cleanedArray);
+  const textsearch = document.getElementById("searchText").value;
+  const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
+  const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, null, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   console.log(cleanedArray);
 
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
@@ -682,20 +780,24 @@ async function postsLaden() {
 
     // <div class="post"> erstellen und Bild hinzufügen
 
-    const parts = objekt.media.split(",");
-
-    // Mit einer Schleife durchlaufen
-    let trimmedPart;
     let postDiv;
     let img;
     postDiv = document.createElement("div");
     postDiv.classList.add("post");
+    const array = JSON.parse(objekt.media);
+    let cover = null;
+    if (objekt.cover) {
+      cover = JSON.parse(objekt.cover);
+    }
+    // for (const item of array) {
+    //   console.log("Path:", item.path);
+    //   console.log("Size:", item.options.size);
+    //   console.log("Resolution:", item.options.resolution);
+    // }
     if (objekt.contenttype === "image") {
-      if (parts.length > 1) postDiv.classList.add("multi");
-      for (const part of parts) {
-        trimmedPart = part.trim();
+      if (array.length > 1) postDiv.classList.add("multi");
+      for (const item of array) {
         img = document.createElement("img");
-
         img.onload = () => {
           img.setAttribute("height", img.naturalHeight);
           img.setAttribute("width", img.naturalWidth);
@@ -705,26 +807,58 @@ async function postsLaden() {
           // reject(error);
         };
 
-        img.src = tempMedia(trimmedPart);
+        img.src = tempMedia(item.path);
         img.alt = "";
         postDiv.appendChild(img);
       }
     } else if (objekt.contenttype === "audio") {
-      audio = document.createElement("audio");
-      audio.id = objekt.media;
-      audio.src = tempMedia(objekt.media);
-      audio.controls = true;
-      audio.className = "custom-audio";
-      addMediaListener(audio);
-      postDiv.appendChild(audio);
+      if (cover) {
+        img = document.createElement("img");
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.src = tempMedia(cover[0].path);
+        img.alt = "Cover";
+        postDiv.appendChild(img);
+      }
+      for (const item of array) {
+        audio = document.createElement("audio");
+        audio.id = item.path;
+        audio.src = tempMedia(item.path);
+        audio.controls = true;
+        audio.className = "custom-audio";
+        addMediaListener(audio);
+        postDiv.appendChild(audio);
+      }
     } else if (objekt.contenttype === "video") {
-      video = document.createElement("video");
-      video.id = objekt.media;
-      video.src = tempMedia(objekt.media);
-      video.controls = true;
-      video.className = "custom-video";
-      addMediaListener(video);
-      postDiv.appendChild(video);
+      for (const item of array) {
+        if (item.cover) {
+          img = document.createElement("img");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(item.cover);
+          img.alt = "Cover";
+          postDiv.appendChild(img);
+        }
+        video = document.createElement("video");
+        video.id = extractAfterComma(item.path);
+        video.src = tempMedia(item.path);
+        video.controls = true;
+        video.className = "custom-video";
+        addMediaListener(video);
+        postDiv.appendChild(video);
+      }
+    } else if (objekt.contenttype === "text") {
+      for (const item of array) {
+        div = document.createElement("div");
+        div.id = objekt.id;
+        loadTextFile(tempMedia(item.path), div.id);
+        div.className = "custom-text";
+        postDiv.appendChild(div);
+      }
     }
 
     const shadowDiv = document.createElement("div");
@@ -877,70 +1011,79 @@ async function viewed(object) {
 
 async function postClicked(objekt) {
   const UserID = getCookie("userID");
-  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 3000);
+  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
   togglePopup("cardClicked");
   document.getElementById("header").classList.add("none");
   const imageContainer = document.getElementById("comment-img-container");
   // imageContainer.innerHTML = "";
+  const array = JSON.parse(objekt.media);
 
   if (objekt.contenttype === "audio") {
-    const audio = document.createElement("audio");
-    audio.id = "audio2";
-    audio.src = tempMedia(objekt.media);
-    audio.controls = true;
-    audio.className = "custom-audio";
+    for (const item of array) {
+      const audio = document.createElement("audio");
+      audio.id = "audio2";
+      audio.src = tempMedia(item.path);
+      audio.controls = true;
+      audio.className = "custom-audio";
 
-    // 1. Erzeuge das <div>-Element
-    const audioContainer = document.createElement("div");
-    audioContainer.id = "audio-container"; // Setze die ID
+      // 1. Erzeuge das <div>-Element
+      const audioContainer = document.createElement("div");
+      audioContainer.id = "audio-container"; // Setze die ID
 
-    // 2. Erzeuge das <canvas>-Element
-    const canvas = document.createElement("canvas");
-    canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+      // 2. Erzeuge das <canvas>-Element
+      const canvas = document.createElement("canvas");
+      canvas.id = "waveform-preview"; // Setze die ID für das Canvas
 
-    // 3. Erzeuge das <button>-Element
-    const button = document.createElement("button");
-    button.id = "play-pause"; // Setze die ID für den Button
-    button.textContent = "Play"; // Setze den Textinhalt des Buttons
+      // 3. Erzeuge das <button>-Element
+      const button = document.createElement("button");
+      button.id = "play-pause"; // Setze die ID für den Button
+      button.textContent = "Play"; // Setze den Textinhalt des Buttons
 
-    // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
-    audioContainer.appendChild(canvas);
-    audioContainer.appendChild(button);
-    // audioContainer.appendChild(audio);
-    // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-    imageContainer.appendChild(audioContainer);
+      // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+      audioContainer.appendChild(canvas);
+      audioContainer.appendChild(button);
+      // audioContainer.appendChild(audio);
+      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+      imageContainer.appendChild(audioContainer);
 
-    initAudioplayer("waveform-preview", audio.src);
+      initAudioplayer("waveform-preview", audio.src);
+    }
   } else if (objekt.contenttype === "video") {
-    const video = document.createElement("video");
-    video.id = "video2";
-    video.src = tempMedia(objekt.media);
-    video.controls = true;
-    video.className = "custom-video";
-    video.autoplay = true; // Autoplay aktivieren
-    video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
-    video.loop = true; // Video in Endlosschleife abspielen
+    for (const item of array) {
+      const video = document.createElement("video");
+      video.id = "video2";
+      video.src = tempMedia(extractAfterComma(item.path));
+      video.controls = true;
+      video.className = "custom-video";
+      video.autoplay = true; // Autoplay aktivieren
+      video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
+      video.loop = true; // Video in Endlosschleife abspielen
 
-    // 1. Erzeuge das <div>-Element
-    const videoContainer = document.createElement("div");
-    videoContainer.appendChild(video);
-    videoContainer.id = "video-container"; // Setze die ID
+      // 1. Erzeuge das <div>-Element
+      const videoContainer = document.createElement("div");
+      videoContainer.appendChild(video);
+      videoContainer.id = "video-container"; // Setze die ID
 
-    // videoContainer.appendChild(video);
-    // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-    imageContainer.appendChild(videoContainer);
+      // videoContainer.appendChild(video);
+      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+      imageContainer.appendChild(videoContainer);
+    }
+  } else if (objekt.contenttype === "text") {
+    for (const item of array) {
+      const div = document.createElement("div");
+      div.id = "text";
+      div.innerHTML = document.getElementById(objekt.id).innerHTML;
+      div.className = "custom-text clicked";
+      imageContainer.appendChild(div);
+    }
   } else {
-    const parts = objekt.media.split(",");
-    let trimmedPart;
     let img;
-
     imageContainer.classList.add("comment-img");
-    if (parts.length > 1) imageContainer.classList.add("multi");
+    if (array.length > 1) imageContainer.classList.add("multi");
     else imageContainer.classList.remove("multi");
-    for (const part of parts) {
-      trimmedPart = part.trim();
+    for (const item of array) {
       img = document.createElement("img");
-      img.src = tempMedia(trimmedPart);
+      img.src = tempMedia(item.path);
       img.alt = "";
       // img.addEventListener("click", function () {
       //   showImg(img);
@@ -1157,6 +1300,16 @@ async function processFiles(files, id) {
 
   const previewContainer = document.getElementById("preview-" + id);
   let previewItem;
+  const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
+  let size = 0;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    size += file.size;
+    if (size > maxSizeMB * 1024 * 1024) {
+      Merror("Error", "The file is too large. Please select a file(s) under 4MB.");
+      return;
+    }
+  }
   files.forEach(async (file) => {
     // if (!file.type.startsWith("image/")) {
     //   info("Information", `${file.name} ist keine Bilddatei.`);
@@ -1244,7 +1397,10 @@ function handleDelete(event) {
   event.target.parentElement.remove();
   // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
-
+function isFileLargerThanMB(file, mb) {
+  const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
+  return file.size > maxBytes;
+}
 async function convertImageToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1476,23 +1632,21 @@ function tag_getTagArray() {
 }
 function saveFilterSettings() {
   let filterSettings = {};
-  let checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
+  let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
 
   checkboxes.forEach((checkbox) => {
-    filterSettings[checkbox.name] = checkbox.checked; // Speichert Name und Zustand
+    filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
   });
-
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
 }
 function restoreFilterSettings() {
   let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
 
   if (filterSettings) {
-    let checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
-
+    let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
     checkboxes.forEach((checkbox) => {
-      if (filterSettings[checkbox.name] !== undefined) {
-        checkbox.checked = filterSettings[checkbox.name]; // Zustand setzen
+      if (filterSettings[checkbox.id] !== undefined) {
+        checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
       }
     });
   }
