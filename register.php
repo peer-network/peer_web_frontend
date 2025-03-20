@@ -1,5 +1,6 @@
 <?php
 include 'phpheader.php';
+include 'host.php';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -19,6 +20,8 @@ include 'phpheader.php';
 </head>
 
 <body class="container">
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars($protocol . '://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+
     <aside class="bild">
         <div class="phone">
             <div class="screen">
@@ -48,7 +51,7 @@ include 'phpheader.php';
         <div class="input-field">
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required class="input-text"></input>
             <label id="validationMessage" for="password"></label>
-            </div>
+        </div>
 
         <input class="button" type="submit" name="registrieren" value="Registrieren">
 

@@ -140,7 +140,7 @@ h1 {
   padding: 1rem;
   text-align: center;
   position: sticky;
-  top: 0;
+  top: -5rem;
   /* margin-bottom: 1rem; */
   height: 5rem;
   z-index: 1;
@@ -153,9 +153,14 @@ h1 {
   align-items: center;
   align-content: center;
   /* margin-left: -5vw; */
-  box-shadow: 0 0px 3px #aaa;
+  /* box-shadow: 0 0px 3px #aaa; */
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 1;
 }
-
+.headerweg {
+  pointer-events: none;
+  opacity: 0;
+}
 .header div {
   position: relative;
   display: flex;
@@ -223,15 +228,18 @@ h1 {
 
 .main {
   grid-area: main;
-  display: flex;
+  display: grid;
   padding: 1rem;
   gap: 2rem 1rem;
   overflow: auto;
+  overflow-x: auto;
   margin-top: 0rem;
-  /* scroll-snap-type: y mandatory; */
+  scroll-snap-type: y mandatory;
   overflow-x: hidden;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  grid-template-columns: repeat(auto-fit, minmax(16dvw, 1fr));
+  /* grid-template-rows: repeat(auto-fit, minmax(28dvw, 26dvh)); */
 }
 
 /* Standard-Zeilen: Links 60%, Rechts 40% */
@@ -778,13 +786,13 @@ h1 {
 }
 
 .card {
-  height: 28rem;
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
   /* background-color: red; */
-  /* width: 10rem; */
+  width: 100%;
   aspect-ratio: 3/4.34;
   /* box-shadow: .3rem .3rem 6px #3d3d3d; */
   justify-content: flex-start;
@@ -809,8 +817,13 @@ h1 {
   box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000;
   position: absolute;
 }
-
-.post img {
+.comming-soon {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  filter: grayscale(1) !important;
+}
+.post img,
+.custom-text {
   position: absolute;
   height: 100%;
   width: fit-content;
@@ -819,7 +832,20 @@ h1 {
   left: 50%;
   transform: translateX(-50%);
 }
-
+.custom-text {
+  font-size: clamp(12px, 1dvw, 2rem);
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  word-wrap: break-word; /* Für ältere Browser */
+  overflow-wrap: break-word; /* Standard */
+  white-space: normal; /* Erlaubt den normalen Zeilenumbruch */
+  word-break: break-word; /* Für bessere Unterstützung */
+  overflow-y: auto;
+}
+.clicked {
+  font-size: 1.5rem !important;
+}
 .social {
   position: absolute;
   width: 100%;
@@ -851,15 +877,15 @@ h1 {
 }
 
 .card h1 {
-  /* position: absolute; */
-  /* top: 0; */
-  /* left: 0; */
-  /* z-index: 2; */
   width: 100%;
   margin-bottom: 0.4rem;
-  /* height: 2rem; */
-  display: inline-block;
-  text-shadow: 0 0 2px var(--black);
+  text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
+  filter: drop-shadow(0 0 5px black);
+  padding: 0.3rem;
+  border-radius: 0.2rem;
+}
+[content="text"] h1 {
+  background-color: #474747de;
 }
 .post-text {
   display: table-column;

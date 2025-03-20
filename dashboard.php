@@ -1,6 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
+include 'host.php';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -11,9 +12,10 @@ include 'phpheader.php';
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?" defer></script>
-    <script src="js/dashboard.js" defer></script>
     <script src="js/audio.js" async></script>
-    <script src="js/posts.js" async></script>
+    <script src="js/posts.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
@@ -22,6 +24,7 @@ include 'phpheader.php';
 </head>
 
 <body>
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars($protocol . '://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <header>
         <svg class="none">
             <symbol id="post-comment" viewBox="0 0 44 45">
@@ -63,15 +66,15 @@ include 'phpheader.php';
                     <img class="lupe" src="svg/lupe.svg" alt="search" />
                 </div>
                 <div class="postOptions">
-                    <div class="postOptionsButton" title="show trends">
+                    <div class="postOptionsButton comming-soon" title="show trends">
                         <span>Everything</span>
                         <img src="svg/trending.svg" alt="trending" />
                     </div>
-                    <div class="postOptionsButton" title="my followed">
+                    <div class="postOptionsButton comming-soon" title="my followed">
                         <span>Following</span>
                         <img src="svg/followed.svg" alt="followed" />
                     </div>
-                    <div class="postOptionsButton" title="your friends like">
+                    <div class="postOptionsButton comming-soon" title="your friends like">
                         <span>Friends</span>
                         <img src="svg/friends.svg" alt="friends" />
                     </div>
@@ -114,12 +117,12 @@ include 'phpheader.php';
                     </div> -->
                 </menu>
                 <!-- <label for="advancedFilter" style="color: white;">advanced filter</label> -->
-                <select id="advancedFilter" class="dark-select">
+                <select id="advancedFilter" class="dark-select comming-soon">
                     <option class="none" name="" disabled selected>advanced filter</option>
-                    <option value="1">was soll hier stehen?</option>
+                    <!-- <option value="1">was soll hier stehen?</option>
                     <option value="2">und wie siehts aus</option>
                     <option value="2">miau</option>
-                    <option value="2">wuff</option>
+                    <option value="2">wuff</option> -->
                 </select>
 
                 <div class="menu">
@@ -172,9 +175,9 @@ include 'phpheader.php';
                 <!-- Profil-Bild und Name -->
                 <div class="profile-header">
                     <img id="profilbild" src="" alt="Profile Picture" class="profile-picture" />
-                    <div id="badge" class="badge"></div>
+                    <!-- <div id="badge" class="badge"></div> -->
                     <h2 id="username">logged out</h2>
-                    <p class="username">@unlicensed</p>
+                    <p id="slug" class="username">@unlicensed</p>
                 </div>
 
                 <!-- Statistiken -->
@@ -199,16 +202,16 @@ include 'phpheader.php';
                         <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                         <p>Dashboard</p>
                     </div>
-                    <div class="menu-item">
+                    <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                         <p>Messages</p>
                         <div class="notification-badge">8</div>
                     </div>
-                    <div class="menu-item">
+                    <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-network.svg" alt="network" />
                         <p>Network</p>
                     </div>
-                    <div class="menu-item">
+                    <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-wallet.svg" alt="wallet" />
                         <p>Wallet</p>
                     </div>
@@ -224,8 +227,8 @@ include 'phpheader.php';
                             <img class="icon" src="svg/icon-add.svg" alt="add" />
                         </div>
                     </div>
-                    <div id="" class="group-icon">
-                        <img class="icon icon-group" src="svg/icon-group.svg" alt="settings" />
+                    <div id="" class="group-icon comming-soon">
+                        <img class="icon icon-group comming-soon" src="svg/icon-group.svg" alt="settings" />
                     </div>
                 </div>
             </div>
@@ -261,9 +264,9 @@ include 'phpheader.php';
                         </div>
 
                         <div id="comments-buttons">
-                            <img src="svg/share.svg" class="postViews" />
-                            <img src="svg/bookmark.svg" class="postViews" />
-                            <img src="svg/report.svg" class="postViews" />
+                            <img src="svg/share.svg" class="postViews comming-soon" />
+                            <img src="svg/bookmark.svg" class="postViews comming-soon" />
+                            <img src="svg/report.svg" class="postViews comming-soon" />
                         </div>
                     </div>
                     <div class="flex centvert csum">

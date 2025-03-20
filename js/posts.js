@@ -24,6 +24,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
             contenttype
             title
             media
+            cover
             mediadescription
             createdat
             amountlikes
@@ -274,7 +275,7 @@ async function sendCreatePost(variables) {
   };
 
   const query = `
-    mutation CreatePost($title: String!, $media: String!, $mediadescription: String!, $contenttype: ContenType!, $tags: [String!]) {
+    mutation CreatePost($title: String!, $media: [String!], $mediadescription: String!, $contenttype: ContenType!, $tags: [String!]) {
       createPost(
         action: POST
         input: {

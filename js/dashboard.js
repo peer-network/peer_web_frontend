@@ -245,10 +245,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const encoder = new TextEncoder();
     const encodedData = encoder.encode(textareaValue);
     const base64String = btoa(String.fromCharCode(...encodedData));
-    const base64WithMime = `data:text/plain;base64,${base64String}`;
+    const base64WithMime = [`data:text/plain;base64,${base64String}`];
     const tags = tag_getTagArray();
 
-    if (isStringLargerThanMB(base64WithMime, 4)) {
+    const gesamtLaenge = base64WithMime.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
       Merror("Error", "The text is too large. Please upload a smaller text.");
       return;
     }
@@ -256,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await sendCreatePost({
         title: title,
         media: base64WithMime,
+        mediadescription: "eine Beschreibung, warum auch immer???",
         contenttype: "text",
         tags: tags,
       })
@@ -273,12 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const combinedBase64 = Array.from(imageWrappers)
       .map((img) => img.src) // Bildquelle (src) abrufen
-      .filter((src) => src.startsWith("data:image/"))
-      .join(" ");
+      .filter((src) => src.startsWith("data:image/"));
     // // const combinedHTML = Array.from(imageWrappers)
     //   .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
     //   .join(" "); // Concatenate the HTML content with a space in between
-    if (isStringLargerThanMB(combinedBase64, 4)) {
+    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
       Merror("Error", "The image(s) is too large. Please upload a smaller image(s).");
       return;
     }
@@ -302,17 +306,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageWrappers = document.querySelectorAll(".create-audio");
     const tags = tag_getTagArray();
 
-    const combinedHTML = Array.from(imageWrappers)
-      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      .join(" "); // Concatenate the HTML content with a space in between
-    if (isStringLargerThanMB(combinedHTML, 4)) {
+    const combinedBase64 = Array.from(imageWrappers)
+      .map((img) => img.src) // Bildquelle (src) abrufen
+      .filter((src) => src.startsWith("data:audio/"));
+
+    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
       Merror("Error", "The audio is too large. Please upload a smaller audio.");
       return;
     }
+    const canvas = document.querySelector("#preview-audio > div > canvas");
+    const dataURL = [canvas.toDataURL("image/webp", 0.8)];
+    console.log(dataURL);
     if (
       await sendCreatePost({
         title: title,
-        media: combinedHTML,
+        media: combinedBase64,
+        cover: dataURL,
         mediadescription: beschreibung,
         contenttype: "audio",
         tags: tags,
@@ -331,17 +342,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageWrappers = document.querySelectorAll(".create-video");
     const tags = tag_getTagArray();
 
-    const combinedHTML = Array.from(imageWrappers)
-      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      .join(" "); // Concatenate the HTML content with a space in between
-    if (isStringLargerThanMB(combinedHTML, 4)) {
+    const combinedBase64 = Array.from(imageWrappers)
+      .map((img) => img.src) // Bildquelle (src) abrufen
+      .filter((src) => src.startsWith("data:video/"));
+    // .join(" ");
+    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+    const maxBytes = 4 * 1024 * 1024;
+    if (gesamtLaenge > maxBytes) {
       Merror("Error", "The video is too large. Please upload a smaller video.");
       return;
     }
     if (
       await sendCreatePost({
         title: title,
-        media: combinedHTML,
+        media: combinedBase64,
         mediadescription: beschreibung,
         contenttype: "video",
         tags: tags,
@@ -383,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         console.log(`${event.target.name} wurde deaktiviert.`);
       }
-      postsLaden();
+      location.reload();
     });
   });
   const radio = document.querySelectorAll("#filter .chkMost");
@@ -694,6 +708,7 @@ async function getUser() {
     profil_login.classList.remove("none");
   } else {
     document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
+    document.getElementById("slug").innerText = "#" + profil.data.profile.affectedRows.slug;
     document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
@@ -765,20 +780,24 @@ async function postsLaden() {
 
     // <div class="post"> erstellen und Bild hinzufügen
 
-    const parts = objekt.media.split(",");
-
-    // Mit einer Schleife durchlaufen
-    let trimmedPart;
     let postDiv;
     let img;
     postDiv = document.createElement("div");
     postDiv.classList.add("post");
+    const array = JSON.parse(objekt.media);
+    let cover = null;
+    if (objekt.cover) {
+      cover = JSON.parse(objekt.cover);
+    }
+    // for (const item of array) {
+    //   console.log("Path:", item.path);
+    //   console.log("Size:", item.options.size);
+    //   console.log("Resolution:", item.options.resolution);
+    // }
     if (objekt.contenttype === "image") {
-      if (parts.length > 1) postDiv.classList.add("multi");
-      for (const part of parts) {
-        trimmedPart = part.trim();
+      if (array.length > 1) postDiv.classList.add("multi");
+      for (const item of array) {
         img = document.createElement("img");
-
         img.onload = () => {
           img.setAttribute("height", img.naturalHeight);
           img.setAttribute("width", img.naturalWidth);
@@ -788,26 +807,58 @@ async function postsLaden() {
           // reject(error);
         };
 
-        img.src = tempMedia(trimmedPart);
+        img.src = tempMedia(item.path);
         img.alt = "";
         postDiv.appendChild(img);
       }
     } else if (objekt.contenttype === "audio") {
-      audio = document.createElement("audio");
-      audio.id = objekt.media;
-      audio.src = tempMedia(objekt.media);
-      audio.controls = true;
-      audio.className = "custom-audio";
-      addMediaListener(audio);
-      postDiv.appendChild(audio);
+      if (cover) {
+        img = document.createElement("img");
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.src = tempMedia(cover[0].path);
+        img.alt = "Cover";
+        postDiv.appendChild(img);
+      }
+      for (const item of array) {
+        audio = document.createElement("audio");
+        audio.id = item.path;
+        audio.src = tempMedia(item.path);
+        audio.controls = true;
+        audio.className = "custom-audio";
+        addMediaListener(audio);
+        postDiv.appendChild(audio);
+      }
     } else if (objekt.contenttype === "video") {
-      video = document.createElement("video");
-      video.id = extractAfterComma(objekt.media);
-      video.src = tempMedia(video.id);
-      video.controls = true;
-      video.className = "custom-video";
-      addMediaListener(video);
-      postDiv.appendChild(video);
+      for (const item of array) {
+        if (item.cover) {
+          img = document.createElement("img");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(item.cover);
+          img.alt = "Cover";
+          postDiv.appendChild(img);
+        }
+        video = document.createElement("video");
+        video.id = extractAfterComma(item.path);
+        video.src = tempMedia(item.path);
+        video.controls = true;
+        video.className = "custom-video";
+        addMediaListener(video);
+        postDiv.appendChild(video);
+      }
+    } else if (objekt.contenttype === "text") {
+      for (const item of array) {
+        div = document.createElement("div");
+        div.id = objekt.id;
+        loadTextFile(tempMedia(item.path), div.id);
+        div.className = "custom-text";
+        postDiv.appendChild(div);
+      }
     }
 
     const shadowDiv = document.createElement("div");
@@ -960,70 +1011,79 @@ async function viewed(object) {
 
 async function postClicked(objekt) {
   const UserID = getCookie("userID");
-  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 3000);
+  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
   togglePopup("cardClicked");
   document.getElementById("header").classList.add("none");
   const imageContainer = document.getElementById("comment-img-container");
   // imageContainer.innerHTML = "";
+  const array = JSON.parse(objekt.media);
 
   if (objekt.contenttype === "audio") {
-    const audio = document.createElement("audio");
-    audio.id = "audio2";
-    audio.src = tempMedia(objekt.media);
-    audio.controls = true;
-    audio.className = "custom-audio";
+    for (const item of array) {
+      const audio = document.createElement("audio");
+      audio.id = "audio2";
+      audio.src = tempMedia(item.path);
+      audio.controls = true;
+      audio.className = "custom-audio";
 
-    // 1. Erzeuge das <div>-Element
-    const audioContainer = document.createElement("div");
-    audioContainer.id = "audio-container"; // Setze die ID
+      // 1. Erzeuge das <div>-Element
+      const audioContainer = document.createElement("div");
+      audioContainer.id = "audio-container"; // Setze die ID
 
-    // 2. Erzeuge das <canvas>-Element
-    const canvas = document.createElement("canvas");
-    canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+      // 2. Erzeuge das <canvas>-Element
+      const canvas = document.createElement("canvas");
+      canvas.id = "waveform-preview"; // Setze die ID für das Canvas
 
-    // 3. Erzeuge das <button>-Element
-    const button = document.createElement("button");
-    button.id = "play-pause"; // Setze die ID für den Button
-    button.textContent = "Play"; // Setze den Textinhalt des Buttons
+      // 3. Erzeuge das <button>-Element
+      const button = document.createElement("button");
+      button.id = "play-pause"; // Setze die ID für den Button
+      button.textContent = "Play"; // Setze den Textinhalt des Buttons
 
-    // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
-    audioContainer.appendChild(canvas);
-    audioContainer.appendChild(button);
-    // audioContainer.appendChild(audio);
-    // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-    imageContainer.appendChild(audioContainer);
+      // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+      audioContainer.appendChild(canvas);
+      audioContainer.appendChild(button);
+      // audioContainer.appendChild(audio);
+      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+      imageContainer.appendChild(audioContainer);
 
-    initAudioplayer("waveform-preview", audio.src);
+      initAudioplayer("waveform-preview", audio.src);
+    }
   } else if (objekt.contenttype === "video") {
-    const video = document.createElement("video");
-    video.id = "video2";
-    video.src = tempMedia(extractAfterComma(objekt.media));
-    video.controls = true;
-    video.className = "custom-video";
-    video.autoplay = true; // Autoplay aktivieren
-    video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
-    video.loop = true; // Video in Endlosschleife abspielen
+    for (const item of array) {
+      const video = document.createElement("video");
+      video.id = "video2";
+      video.src = tempMedia(extractAfterComma(item.path));
+      video.controls = true;
+      video.className = "custom-video";
+      video.autoplay = true; // Autoplay aktivieren
+      video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
+      video.loop = true; // Video in Endlosschleife abspielen
 
-    // 1. Erzeuge das <div>-Element
-    const videoContainer = document.createElement("div");
-    videoContainer.appendChild(video);
-    videoContainer.id = "video-container"; // Setze die ID
+      // 1. Erzeuge das <div>-Element
+      const videoContainer = document.createElement("div");
+      videoContainer.appendChild(video);
+      videoContainer.id = "video-container"; // Setze die ID
 
-    // videoContainer.appendChild(video);
-    // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-    imageContainer.appendChild(videoContainer);
+      // videoContainer.appendChild(video);
+      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+      imageContainer.appendChild(videoContainer);
+    }
+  } else if (objekt.contenttype === "text") {
+    for (const item of array) {
+      const div = document.createElement("div");
+      div.id = "text";
+      div.innerHTML = document.getElementById(objekt.id).innerHTML;
+      div.className = "custom-text clicked";
+      imageContainer.appendChild(div);
+    }
   } else {
-    const parts = objekt.media.split(",");
-    let trimmedPart;
     let img;
-
     imageContainer.classList.add("comment-img");
-    if (parts.length > 1) imageContainer.classList.add("multi");
+    if (array.length > 1) imageContainer.classList.add("multi");
     else imageContainer.classList.remove("multi");
-    for (const part of parts) {
-      trimmedPart = part.trim();
+    for (const item of array) {
       img = document.createElement("img");
-      img.src = tempMedia(trimmedPart);
+      img.src = tempMedia(item.path);
       img.alt = "";
       // img.addEventListener("click", function () {
       //   showImg(img);
