@@ -1,5 +1,6 @@
 <?php
 include 'phpheader.php';
+include 'host.php';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -20,6 +21,8 @@ include 'phpheader.php';
 </head>
 
 <body class="container">
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars($protocol . '://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+
     <aside class="bild">
         <div class="phone">
             <div class="screen">

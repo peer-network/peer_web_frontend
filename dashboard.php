@@ -1,6 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
+include 'host.php';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -11,9 +12,10 @@ include 'phpheader.php';
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?" defer></script>
-    <script src="js/dashboard.js" defer></script>
     <script src="js/audio.js" async></script>
-    <script src="js/posts.js" async></script>
+    <script src="js/posts.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
@@ -22,6 +24,7 @@ include 'phpheader.php';
 </head>
 
 <body>
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars($protocol . '://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <header>
         <svg class="none">
             <symbol id="post-comment" viewBox="0 0 44 45">
@@ -63,15 +66,15 @@ include 'phpheader.php';
                     <img class="lupe" src="svg/lupe.svg" alt="search" />
                 </div>
                 <div class="postOptions">
-                    <div class="postOptionsButton" title="show trends">
-                        <span>Trendig</span>
+                    <div class="postOptionsButton comming-soon" title="show trends">
+                        <span>Everything</span>
                         <img src="svg/trending.svg" alt="trending" />
                     </div>
-                    <div class="postOptionsButton" title="my followed">
-                        <span>Subscriptions</span>
+                    <div class="postOptionsButton comming-soon" title="my followed">
+                        <span>Following</span>
                         <img src="svg/followed.svg" alt="followed" />
                     </div>
-                    <div class="postOptionsButton" title="your friends like">
+                    <div class="postOptionsButton comming-soon" title="your friends like">
                         <span>Friends</span>
                         <img src="svg/friends.svg" alt="friends" />
                     </div>
@@ -88,16 +91,17 @@ include 'phpheader.php';
                         &nbsp;apply filter
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterImage" type="checkbox" name="IMAGE" />
+                        <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" />
                         <label for="filterImage" class="filterButton" title="Fotos"><img src="svg/filterImage.svg" alt="Image filter" /></label>
-                        <input checked id="filterNotes" type="checkbox" name="TEXT" />
+                        <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" />
                         <label for="filterNotes" class="filterButton" title="Notes" name="notes"><img src="svg/filterNotes.svg" alt="Notes filter" /></label>
-                        <input checked id="filterAdio" type="checkbox" name="AUDIO" />
-                        <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter" /></label>
+
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterVideo" type="checkbox" name="VIDEO" />
+                        <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" />
                         <label for="filterVideo" class="filterButton" title="Video"><img src="svg/filterVideo.svg" alt="Video filter" /></label>
+                        <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" />
+                        <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter" /></label>
                         <!-- <input checked id="filterPodcast" type="checkbox" name="PODCAST" />
                         <label for="filterPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast filter" /></label>
                         <input checked id="filterFickFuck" type="checkbox" name="LOCAL" />
@@ -113,22 +117,26 @@ include 'phpheader.php';
                     </div> -->
                 </menu>
                 <!-- <label for="advancedFilter" style="color: white;">advanced filter</label> -->
-                <select id="advancedFilter" class="dark-select">
+                <select id="advancedFilter" class="dark-select comming-soon">
                     <option class="none" name="" disabled selected>advanced filter</option>
-                    <option value="1">was soll hier stehen?</option>
+                    <!-- <option value="1">was soll hier stehen?</option>
                     <option value="2">und wie siehts aus</option>
                     <option value="2">miau</option>
-                    <option value="2">wuff</option>
+                    <option value="2">wuff</option> -->
                 </select>
 
                 <div class="menu">
-                    <div class="menu-item aktive">
-                        <img class="icon" src="svg/paid.svg" />
-                        <p>paid&nbsp;content</p>
+                    <div class="filterGroup">
+                        <input id="filterMostLiked" sortby="LIKES" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostLiked" class="filterButton most" title="Sort by most liked"><img src="svg/post-like.svg" alt="MostLiked filter" />Most<br>liked</label>
+                        <input id="filterMostCommented" sortby="COMMENTS" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostCommented" class="filterButton most" title="Sort by most commented"><img src="svg/post-comment.svg" alt="MostCommented filter" />Most<br>commented</label>
                     </div>
-                    <div class="menu-item">
-                        <img class="icon" src="svg/free.svg" />
-                        <p>free&nbsp;content</p>
+                    <div class="filterGroup">
+                        <input id="filterMostPopular" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostPopular" class="filterButton most" title="Sort by most popular"><img src="svg/popular.svg" alt="MostPopular filter" />Most<br>popular</label>
+                        <input id="filterMostControversial" sortby="DISLIKES" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostControversial" class="filterButton most" title="Sort by most controversial"><img src="svg/controversial.svg" alt="MostControversial filter" />Most<br>controversial</label>
                     </div>
                 </div>
             </form>
@@ -167,9 +175,9 @@ include 'phpheader.php';
                 <!-- Profil-Bild und Name -->
                 <div class="profile-header">
                     <img id="profilbild" src="" alt="Profile Picture" class="profile-picture" />
-                    <div id="badge" class="badge"></div>
+                    <!-- <div id="badge" class="badge"></div> -->
                     <h2 id="username">logged out</h2>
-                    <p class="username">@unlicensed</p>
+                    <p id="slug" class="username">@unlicensed</p>
                 </div>
 
                 <!-- Statistiken -->
@@ -194,16 +202,16 @@ include 'phpheader.php';
                         <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                         <p>Dashboard</p>
                     </div>
-                    <div class="menu-item">
+                    <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                         <p>Messages</p>
                         <div class="notification-badge">8</div>
                     </div>
-                    <div class="menu-item">
+                    <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-network.svg" alt="network" />
                         <p>Network</p>
                     </div>
-                    <div class="menu-item">
+                    <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-wallet.svg" alt="wallet" />
                         <p>Wallet</p>
                     </div>
@@ -219,8 +227,8 @@ include 'phpheader.php';
                             <img class="icon" src="svg/icon-add.svg" alt="add" />
                         </div>
                     </div>
-                    <div id="" class="group-icon">
-                        <img class="icon icon-group" src="svg/icon-group.svg" alt="settings" />
+                    <div id="" class="group-icon comming-soon">
+                        <img class="icon icon-group comming-soon" src="svg/icon-group.svg" alt="settings" />
                     </div>
                 </div>
             </div>
@@ -256,9 +264,9 @@ include 'phpheader.php';
                         </div>
 
                         <div id="comments-buttons">
-                            <img src="svg/share.svg" class="postViews" />
-                            <img src="svg/bookmark.svg" class="postViews" />
-                            <img src="svg/report.svg" class="postViews" />
+                            <img src="svg/share.svg" class="postViews comming-soon" />
+                            <img src="svg/bookmark.svg" class="postViews comming-soon" />
+                            <img src="svg/report.svg" class="postViews comming-soon" />
                         </div>
                     </div>
                     <div class="flex centvert csum">
@@ -330,7 +338,7 @@ include 'phpheader.php';
 
                     <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
                 </div>
-                <p>The maximum file size is 25MB</p>
+                <p>The maximum file size is 4MB</p>
 
                 <!-- <label for="bildueberschrift">Überschrift:</label> -->
                 <input type="text" id="titleImage" placeholder="Add title" name="text-input" maxlength="150" required />
@@ -338,6 +346,12 @@ include 'phpheader.php';
                 <textarea id="descriptionImage" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
                 <div id="preview-image" class="blockscroll preview-container"></div>
                 <button class="button" id="createPostImage">Upload</button>
+            </form>
+            <form id="newNotesPost" class="upload" method="post">
+                <input type="text" id="titleNotes" placeholder="Add title" name="text-input" maxlength="150" required />
+                <textarea id="descriptionNotes" rows="8" placeholder="What’s on your mind?" name="text-input" maxlength="1200" required></textarea>
+                <p>The maximum Text size is 4MB</p>
+                <button class="button" id="createPostNotes">Upload</button>
             </form>
             <form id="newAudioPost" class="upload" method="post">
                 <h2>Upload File</h2>
@@ -358,7 +372,7 @@ include 'phpheader.php';
 
                     <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
                 </div>
-                <p>The maximum file size is 200MB</p>
+                <p>The maximum file size is 4MB</p>
 
                 <!-- <label for="bildueberschrift">Überschrift:</label> -->
                 <input type="text" id="titleAudio" placeholder="Add title" name="text-input" maxlength="150" required />
@@ -385,7 +399,7 @@ include 'phpheader.php';
 
                     <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
                 </div>
-                <p>The maximum file size is 3GB</p>
+                <p>The maximum file size is 4MB</p>
 
                 <!-- <label for="bildueberschrift">Überschrift:</label> -->
                 <input type="text" id="titleVideo" placeholder="Add title" name="text-input" maxlength="150" required />
