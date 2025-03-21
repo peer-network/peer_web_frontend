@@ -24,7 +24,7 @@ Header always set Permissions-Policy "camera=(self), geolocation=(self), microph
 Header always set Referrer-Policy "no-referrer"
 Header always edit Set-Cookie (.*) "$1; SameSite=strict"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
-Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' https://media.getpeer.eu/ https://media.peer-network.eu data: blob:; worker-src 'self' about:; connect-src 'self' data: blob: https://media.peer-network.eu https://media.getpeer.eu https://getpeer.eu/graphql https://peer-network.eu/graphql; child-src 'self' https://media.getpeer.eu https://media.peer-network.eu; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
+Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' https://media.getpeer.eu/ https://media.peernetwork.eu data: blob:; worker-src 'self' about:; connect-src 'self' data: blob: https://media.peernetwork.eu https://media.getpeer.eu https://getpeer.eu/graphql https://peernetwork.eu/graphql; child-src 'self' https://media.getpeer.eu https://media.peernetwork.eu; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
 
 <FilesMatch "(pdo.php|php.ini|backup.php)">
 Deny from all
