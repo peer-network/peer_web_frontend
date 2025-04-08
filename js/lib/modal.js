@@ -46,6 +46,13 @@ function createModal({ title = "", message = "", buttons = [], type = "info", te
         closeModal(modal);
       }
     });
+    const tarea = document.querySelector(".modal-content textarea");
+
+    if (tarea) {
+      setTimeout(() => {
+        tarea.focus();
+      }, 10);
+    }
   });
 
   function closeModal(modalElement) {

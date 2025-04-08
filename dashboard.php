@@ -24,7 +24,7 @@ include 'host.php';
 </head>
 
 <body>
-    <div id="config" class="none" data-host="<?php echo htmlspecialchars($protocol . '://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <header>
         <svg class="none">
             <symbol id="post-comment" viewBox="0 0 44 45">
@@ -62,13 +62,13 @@ include 'host.php';
                     <h1 id="h1">Dashboard</h1>
                 </div>
                 <div class="search-group">
-                    <input name="search" id="searchText" type="text" placeholder="Search for anything" aria-label="Search" />
+                    <input name="search" id="searchText" type="text" placeholder="Search for Title or #Tags" aria-label="Search" />
                     <img class="lupe" src="svg/lupe.svg" alt="search" />
                 </div>
                 <div class="postOptions">
-                    <div class="postOptionsButton comming-soon" title="show trends">
+                    <div id="everything" class="postOptionsButton" title="show everything">
                         <span>Everything</span>
-                        <img src="svg/trending.svg" alt="trending" />
+                        <img src="svg/nofilter.svg" alt="trending" />
                     </div>
                     <div class="postOptionsButton comming-soon" title="my followed">
                         <span>Following</span>
@@ -174,24 +174,24 @@ include 'host.php';
             <div id="profil-container">
                 <!-- Profil-Bild und Name -->
                 <div class="profile-header">
-                    <img id="profilbild" src="" alt="Profile Picture" class="profile-picture" />
+                    <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
                     <!-- <div id="badge" class="badge"></div> -->
-                    <h2 id="username">logged out</h2>
-                    <p id="slug" class="username">@unlicensed</p>
+                    <h2 id="username">&nbsp;</h2>
+                    <p id="slug" class="username">&nbsp;</p>
                 </div>
 
                 <!-- Statistiken -->
                 <div class="stats">
                     <div class="stat">
-                        <span id="userPosts"></span>
+                        <span id="userPosts">&nbsp;</span>
                         <p>Posts</p>
                     </div>
                     <div class="stat">
-                        <span id="followers"></span>
+                        <span id="followers">&nbsp;</span>
                         <p>Followers</p>
                     </div>
                     <div class="stat">
-                        <span id="following"></span>
+                        <span id="following">&nbsp;</span>
                         <p>Following</p>
                     </div>
                 </div>
@@ -247,28 +247,35 @@ include 'host.php';
                 <div id="comment-img-container">
                     <img id="comment-img" src="" alt="" />
                 </div>
+                <div class="commentsButtons">
+                    <div class="postViews">
+                        <svg>
+                            <use href="#post-view" />
+                        </svg>
+                        <span id="postViews">234</span>
+                    </div>
+                    <div class="postViews">
+                        <svg>
+                            <use href="#post-like" />
+                        </svg>
+                        <span id="postLikes">234</span>
+                    </div>
+                    <div id="comments-buttons">
+                        <img src="svg/share.svg" class="postViews comming-soon" />
+                        <img src="svg/bookmark.svg" class="postViews comming-soon" />
+                        <img src="svg/report.svg" class="postViews comming-soon" />
+                    </div>
+                </div>
                 <div id="comment-title"></div>
                 <div id="comment-text"></div>
                 <div id="tags"></div>
-                <div id="postperformance"></div>
+                <!-- <div id="postperformance"></div> -->
+
             </div>
             <div id="comments-container">
                 <div id="comments-header">
                     <div id="mostliked"></div>
-                    <div class="commentsButtons">
-                        <div class="postViews">
-                            <svg>
-                                <use href="#post-view" />
-                            </svg>
-                            <span id="postViews">234</span>
-                        </div>
 
-                        <div id="comments-buttons">
-                            <img src="svg/share.svg" class="postViews comming-soon" />
-                            <img src="svg/bookmark.svg" class="postViews comming-soon" />
-                            <img src="svg/report.svg" class="postViews comming-soon" />
-                        </div>
-                    </div>
                     <div class="flex centvert csum">
                         <span>Comments</span>
                         <svg class="btn">
@@ -354,7 +361,7 @@ include 'host.php';
                 <button class="button" id="createPostNotes">Upload</button>
             </form>
             <form id="newAudioPost" class="upload" method="post">
-                <h2>Upload File</h2>
+                <h2>Upload music</h2>
                 <div id="drop-area-audio" class="drop-area">
                     <div>
                         <p>Drag and Drop file here</p>
@@ -378,6 +385,26 @@ include 'host.php';
                 <input type="text" id="titleAudio" placeholder="Add title" name="text-input" maxlength="150" required />
                 <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
                 <textarea id="descriptionAudio" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
+                <h2>Upload cover</h2>
+                <div id="drop-area-cover" class="drop-area">
+                    <div>
+                        <p>Drag and Drop file here</p>
+                        <p>
+                            or
+                            <u>Choose File</u>
+                        </p>
+                    </div>
+
+                    <img class="filterButton" src="svg/filterImage.svg" alt="Cover upload" />
+                    <div>
+                        <p>Supported formats:</p>
+                        <p>.png, .jpg, .jpeg, .gif, .webp</p>
+                    </div>
+
+                    <input type="file" id="file-input-cover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
+                </div>
+                <p>The maximum file size is 4MB</p>
+                <div id="preview-cover" class="blockscroll preview-container"></div>
                 <div id="preview-audio" class="blockscroll preview-container"></div>
                 <button class="button" id="createPostAudio">Upload</button>
             </form>

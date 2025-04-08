@@ -18,15 +18,18 @@ async function fetchHelloData(userid = null) {
         affectedRows {
             id
             username
-            slug
             status
+            slug
             img
             biography
-            amountfollower
-            amountfollowed
-            amountposts
             isfollowed
             isfollowing
+            amountposts
+            amounttrending
+            amountfollowed
+            amountfollower
+            amountfriends
+            amountblocked
         }
       }
     }`,

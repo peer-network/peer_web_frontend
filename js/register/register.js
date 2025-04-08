@@ -133,7 +133,7 @@ async function verifyUser2(userid) {
       console.log("Error Message:", ResponseCode);
       if (status === "success") {
         info("register successfull");
-        window.location.href = "/login.php";
+        window.location.href = "login.php";
       }
     })
     .catch((error) => {
