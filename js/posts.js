@@ -13,8 +13,8 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
       sortBy: ${sortby},
       postLimit: ${limit},
       postOffset: ${offset},
-      filterBy: [${filter}],
-      tag: ${tag}`;
+      filterBy: [${filter}],`;
+  searchstr += tag && tag.length >= 3 ? `,tag: "${tag}"` : "";
   searchstr += title && title.length >= 2 ? `,title: "${title}"` : "";
   searchstr += `) {
         status
@@ -102,7 +102,6 @@ function viewPost(postid) {
         resolveActionPost(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
-          affectedRows
         }
       }`,
 
@@ -153,7 +152,6 @@ function likePost(postid) {
         resolveActionPost(postid: "${postid}", action: LIKE) {
           status
           ResponseCode
-          affectedRows
         }
       }`,
 
@@ -215,52 +213,8 @@ async function dislikePost(postid) {
     .catch((error) => console.log("error", error));
 }
 
-async function fetchPostData(postId) {
-  const accessToken = getCookie("authToken");
-  const query = `
-            query getPost($id: ID!) {
-                post(id: $id) {
-                    comments {
-                        commentid
-                        userid
-                        postid
-                        parentid
-                        content
-                        amountlikes
-                        isliked
-                        createdat
-                    }
-                }
-            }
-        `;
-
-  const variables = { id: postId };
-
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-
-  return fetch("https://your-graphql-endpoint.com/graphql", {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.errors) {
-        console.error("GraphQL Fehler:", result.errors);
-        return null;
-      }
-      return result.data.post;
-    })
-    .catch((error) => {
-      console.error("Netzwerkfehler:", error);
-      return null;
-    });
+function isVariableNameInArray(variableObj, nameArray) {
+  return Object.keys(variableObj).some((key) => key.includes(nameArray));
 }
 async function sendCreatePost(variables) {
   const accessToken = getCookie("authToken");
@@ -274,15 +228,27 @@ async function sendCreatePost(variables) {
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const query = `
-    mutation CreatePost($title: String!, $media: [String!], $mediadescription: String!, $contenttype: ContenType!, $tags: [String!]) {
+  let query = `
+    mutation CreatePost($title: String!, $media: [String!]`;
+  if (isVariableNameInArray(variables, "cover")) {
+    query += `, $cover: [String!]`;
+  }
+  if (isVariableNameInArray(variables, "mediadescription")) {
+    query += `, $mediadescription: String!`;
+  }
+  query += `, $contenttype: ContenType!, $tags: [String!]) {
       createPost(
         action: POST
         input: {
           title: $title
-          media: $media
-          cover: null
-          mediadescription: $mediadescription
+          media: $media`;
+  if (isVariableNameInArray(variables, "cover")) {
+    query += `\ncover: $cover`;
+  }
+  if (isVariableNameInArray(variables, "mediadescription")) {
+    query += `\nmediadescription: $mediadescription`;
+  }
+  query += `
           contenttype: $contenttype
           tags: $tags
         }

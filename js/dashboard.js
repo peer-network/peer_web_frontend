@@ -1,5 +1,14 @@
 // :TODO VIEWS
-
+function extractWords(str) {
+  // Zerlege den String in Wörter anhand von Leerzeichen
+  const words = str.split(" ");
+  // Filtere alle Wörter, die mit einer Raute beginnen
+  const hashtags = words.filter((word) => word.startsWith("#")).map((word) => word.slice(1));
+  // Filtere alle Wörter, die nicht mit einer Raute beginnen
+  const normalWords = words.filter((word) => !word.startsWith("#"));
+  // Rückgabe als Objekt mit beiden Arrays
+  return { hashtags, normalWords };
+}
 let mostliked = [];
 function commentToDom(c, append = true) {
   const userID = getCookie("userID");
@@ -10,8 +19,10 @@ function commentToDom(c, append = true) {
   const postID = document.getElementById("addComment").getAttribute("postID");
   // Benutzerbild <img src="userImage" alt="user image">
   const img = document.createElement("img");
-
-  img.src = c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
+  img.onerror = function () {
+    this.src = "svg/noname.svg";
+  };
+  img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
   if (!c.parentid)
     img.addEventListener(
@@ -163,9 +174,12 @@ document.addEventListener("DOMContentLoaded", () => {
   //     fileInput.accept = event.target.value;
   //   }
   // });
-
+  const everything = document.getElementById("everything");
+  everything.addEventListener("click", () => {
+    deleteFilter();
+    location.reload();
+  });
   const closeComments = document.getElementById("closeComments");
-
   closeComments.addEventListener("click", () => {
     togglePopup("cardClicked");
     cancelTimeout();
@@ -258,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
       await sendCreatePost({
         title: title,
         media: base64WithMime,
-        mediadescription: "eine Beschreibung, warum auch immer???",
         contenttype: "text",
         tags: tags,
       })
@@ -317,8 +330,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     const canvas = document.querySelector("#preview-audio > div > canvas");
-    const dataURL = [canvas.toDataURL("image/webp", 0.8)];
-    console.log(dataURL);
+    const cover = document.querySelector("#preview-cover > div > img");
+    let dataURL;
+    if (cover) {
+      dataURL = [cover.src];
+    } else {
+      dataURL = [canvas.toDataURL("image/webp", 0.8)];
+    }
     if (
       await sendCreatePost({
         title: title,
@@ -365,20 +383,24 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     }
   });
+
   const textsearch = document.getElementById("searchText");
   textsearch.addEventListener("input", () => {
+    const { hashtags, normalWords } = extractWords(textsearch.value.toLowerCase());
     const parentElements = document.querySelectorAll(".card");
 
     parentElements.forEach((element) => {
-      const h1s = element.querySelectorAll("h1");
-      h1s.forEach((h1) => {
-        if (h1.innerText.toLowerCase().includes(textsearch.value.toLowerCase())) {
-          element.classList.remove("none");
-        } else {
-          element.classList.add("none");
-        }
-      });
+      const h1 = element.querySelector("h1");
+      const tags = element.getAttribute("tags").split(",");
+      const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word.toLowerCase()));
+      const isTag = !hashtags.length || tags.some((tag) => tag.includes(hashtags));
+      if (isTitle && isTag) {
+        element.classList.remove("none");
+      } else {
+        element.classList.add("none");
+      }
     });
+    localStorage.setItem("tags", document.getElementById("searchText").value);
     postsLaden();
   });
   const checkboxes = document.querySelectorAll("#filter .filteritem");
@@ -508,6 +530,10 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       dropArea: document.getElementById("drop-area-video"),
       fileInput: document.getElementById("file-input-video"),
+    },
+    {
+      dropArea: document.getElementById("drop-area-cover"),
+      fileInput: document.getElementById("file-input-cover"),
     },
   ];
 
@@ -712,7 +738,11 @@ async function getUser() {
     document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
-    document.getElementById("profilbild").src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
+    const img = document.getElementById("profilbild");
+    img.onerror = function () {
+      this.src = "svg/noname.svg";
+    };
+    img.src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
   }
   return profil;
 }
@@ -762,9 +792,12 @@ async function postsLaden() {
   // Ergebnis ausgeben
   console.log(values);
   const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
-  const textsearch = document.getElementById("searchText").value;
+  // const textsearch = document.getElementById("searchText").value;
+  const { hashtags, normalWords } = extractWords(document.getElementById("searchText").value.toLowerCase());
+  const textsearch = normalWords.join(" ");
+  const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-  const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, null, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+  const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   console.log(cleanedArray);
 
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
@@ -774,10 +807,11 @@ async function postsLaden() {
   posts.data.getallposts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
+    card.id = objekt.id;
     card.classList.add("card");
     card.setAttribute("tabindex", "0");
     card.setAttribute("content", objekt.contenttype);
-
+    card.setAttribute("tags", objekt.tags.join(","));
     // <div class="post"> erstellen und Bild hinzufügen
 
     let postDiv;
@@ -854,8 +888,8 @@ async function postsLaden() {
     } else if (objekt.contenttype === "text") {
       for (const item of array) {
         div = document.createElement("div");
-        div.id = objekt.id;
-        loadTextFile(tempMedia(item.path), div.id);
+        // div.id = objekt.id;
+        loadTextFile(tempMedia(item.path), div);
         div.className = "custom-text";
         postDiv.appendChild(div);
       }
@@ -868,11 +902,26 @@ async function postsLaden() {
     // <div class="post-inhalt"> erstellen und Titel und Text hinzufügen
     const inhaltDiv = document.createElement("div");
     inhaltDiv.classList.add("post-inhalt");
+    const userNameSpan = document.createElement("span");
+    userNameSpan.classList.add("post-userName");
+    userNameSpan.textContent = objekt.user.username;
+    const time_ago = document.createElement("span");
+    time_ago.classList.add("post-userName", "timeAgo");
+    time_ago.textContent = timeAgo(objekt.createdat);
+    const userImg = document.createElement("img");
+    userImg.classList.add("post-userImg");
+    userImg.onerror = function () {
+      this.src = "svg/noname.svg";
+    };
+    userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
     const h1 = document.createElement("h1");
     h1.textContent = objekt.title;
     const p = document.createElement("p");
     p.classList.add("post-text");
     p.textContent = objekt.mediadescription;
+    inhaltDiv.appendChild(userImg);
+    inhaltDiv.appendChild(userNameSpan);
+    inhaltDiv.appendChild(time_ago);
     inhaltDiv.appendChild(h1);
     inhaltDiv.appendChild(p);
 
@@ -899,7 +948,7 @@ async function postsLaden() {
     const likeContainer = document.createElement("div");
 
     const svgLike = document.createElementNS(svgNS, "svg");
-    svgLike.setAttribute("id", objekt.id);
+    // svgLike.setAttribute("id", objekt.id);
 
     if (objekt.isliked) {
       // svgLike.addEventListener("click", function () {
@@ -915,16 +964,20 @@ async function postsLaden() {
           event.preventDefault();
           likePost(objekt.id).then((success) => {
             if (success) {
+              objekt.isliked = true;
               let e = document.getElementById(objekt.id);
-              e.classList.add("fill-red");
+              const Svg = e.querySelector(".social div:nth-of-type(2) svg");
+              Svg.classList.add("fill-red");
 
               // Prüfen, ob das <span> "K" oder "M" enthält
-              if (e.nextElementSibling.textContent.includes("K") || e.nextElementSibling.textContent.includes("M")) {
+              if (Svg.nextElementSibling.textContent.includes("K") || Svg.nextElementSibling.textContent.includes("M")) {
                 return; // Wenn ja, wird das Hochzählen übersprungen
               } else {
-                let currentCount = parseInt(e.nextElementSibling.textContent);
-                currentCount++;
-                e.nextElementSibling.textContent = formatNumber(currentCount);
+                let currentCount = parseInt(Svg.nextElementSibling.textContent);
+                if (currentCount !== currentCount) currentCount = 1;
+                else currentCount++;
+                Svg.nextElementSibling.textContent = formatNumber(currentCount);
+                objekt.amountlikes = currentCount;
               }
             }
           });
@@ -1030,6 +1083,18 @@ async function postClicked(objekt) {
       const audioContainer = document.createElement("div");
       audioContainer.id = "audio-container"; // Setze die ID
 
+      if (objekt.cover) {
+        const cover = JSON.parse(objekt.cover);
+        img = document.createElement("img");
+        img.classList.add("cover");
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.src = tempMedia(cover[0].path);
+        img.alt = "Cover";
+        audioContainer.appendChild(img);
+      }
       // 2. Erzeuge das <canvas>-Element
       const canvas = document.createElement("canvas");
       canvas.id = "waveform-preview"; // Setze die ID für das Canvas
@@ -1037,9 +1102,13 @@ async function postClicked(objekt) {
       // 3. Erzeuge das <button>-Element
       const button = document.createElement("button");
       button.id = "play-pause"; // Setze die ID für den Button
-      button.textContent = "Play"; // Setze den Textinhalt des Buttons
+      // button.textContent = "Play"; // Setze den Textinhalt des Buttons
 
       // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+      let cover = null;
+      if (objekt.cover) {
+        cover = JSON.parse(objekt.cover);
+      }
       audioContainer.appendChild(canvas);
       audioContainer.appendChild(button);
       // audioContainer.appendChild(audio);
@@ -1072,7 +1141,11 @@ async function postClicked(objekt) {
     for (const item of array) {
       const div = document.createElement("div");
       div.id = "text";
-      div.innerHTML = document.getElementById(objekt.id).innerHTML;
+
+      let card = document.getElementById(objekt.id);
+      const textcontainer = card.querySelector(".custom-text");
+
+      div.innerHTML = textcontainer.innerHTML;
       div.className = "custom-text clicked";
       imageContainer.appendChild(div);
     }
@@ -1125,31 +1198,53 @@ async function postClicked(objekt) {
     img.src = mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
     mostlikedcontainer.appendChild(img);
   }
-  const topcommenter = document.createElement("span");
-  topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
-  mostlikedcontainer.appendChild(topcommenter);
-}
+  // const topcommenter = document.createElement("span");
+  // topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
+  // mostlikedcontainer.appendChild(topcommenter);
+  document.getElementById("postViews").innerText = objekt.amountviews;
+  document.getElementById("postLikes").innerText = objekt.amountlikes;
+  const svgLike = document.getElementById("postLikes").previousElementSibling;
+  svgLike.classList = "";
+  if (objekt.isliked) {
+    svgLike.classList = "fill-red";
+  } else if (objekt.user.id !== UserID) {
+    svgLike.addEventListener(
+      "click",
+      function handleLikeClick(event) {
+        // event.currentTarget.removeEventListener("click", handleLikeClick);
+        event.stopPropagation();
+        event.preventDefault();
+        likePost(objekt.id).then((success) => {
+          if (success) {
+            objekt.isliked = true;
+            let e = document.getElementById(objekt.id);
+            const Svg = e.querySelector(".social div:nth-of-type(2) svg");
+            Svg.classList.add("fill-red");
 
-function timeAgo(datetime) {
-  const now = Date.now(); // Aktuelle Zeit in Millisekunden
-  const timestamp = new Date(datetime.replace(" ", "T")).getTime(); // ISO-konforme Umwandlung
-  const elapsed = now - timestamp - 3600000; // Verstrichene Zeit in Millisekunden
-
-  const seconds = Math.floor(elapsed / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-  const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
-  const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
-
-  if (seconds < 60) return `${seconds} second` + (seconds > 1 ? "s ago" : " ago");
-  if (minutes < 60) return `${minutes} minute` + (minutes > 1 ? "s ago" : " ago");
-  if (hours < 24) return `${hours} hour` + (hours > 1 ? "s ago" : " ago");
-  if (days < 7) return `${days} day` + (days > 1 ? "s ago" : " ago");
-  if (weeks < 4) return `${weeks} week` + (weeks > 1 ? "s ago" : " ago");
-  if (months < 12) return `${months} month` + (months > 1 ? "s ago" : " ago");
-  return `${years} year` + (years > 1 ? "s ago" : " ago");
+            // Prüfen, ob das <span> "K" oder "M" enthält
+            if (Svg.nextElementSibling.textContent.includes("K") || Svg.nextElementSibling.textContent.includes("M")) {
+              return; // Wenn ja, wird das Hochzählen übersprungen
+            } else {
+              let currentCount = parseInt(Svg.nextElementSibling.textContent);
+              if (currentCount !== currentCount) currentCount = 1;
+              else currentCount++;
+              Svg.nextElementSibling.textContent = formatNumber(currentCount);
+            }
+            svgLike.classList = "fill-red";
+            if (svgLike.nextElementSibling.textContent.includes("K") || svgLike.nextElementSibling.textContent.includes("M")) {
+              return; // Wenn ja, wird das Hochzählen übersprungen
+            } else {
+              let currentCount = parseInt(svgLike.nextElementSibling.textContent);
+              if (currentCount !== currentCount) currentCount = 1;
+              else currentCount++;
+              svgLike.nextElementSibling.textContent = formatNumber(currentCount);
+            }
+          }
+        });
+      },
+      { capture: true, once: true }
+    );
+  }
 }
 
 // let isDragging = false;
@@ -1630,6 +1725,11 @@ function tag_removeAllTags() {
 function tag_getTagArray() {
   return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
 }
+function deleteFilter() {
+  localStorage.removeItem("filterSettings");
+  localStorage.removeItem("tags");
+}
+
 function saveFilterSettings() {
   let filterSettings = {};
   let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
@@ -1638,6 +1738,7 @@ function saveFilterSettings() {
     filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
   });
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
+  localStorage.setItem("tags", document.getElementById("searchText").value);
 }
 function restoreFilterSettings() {
   let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
@@ -1650,6 +1751,7 @@ function restoreFilterSettings() {
       }
     });
   }
+  document.getElementById("searchText").value = localStorage.getItem("tags") || ""; // Tags wiederherstellen
 }
 // function connectImagesWithGradient(container, img1, img2) {
 //   // Container und Bilder auswählen

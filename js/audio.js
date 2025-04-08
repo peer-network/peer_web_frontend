@@ -77,6 +77,9 @@ function initAudioplayer(canvasID, url) {
       const progress = audioplayer.currentTime / audioplayer.duration; // Fortschritt berechnen
       drawWaveform(progress); // Fortschrittslinie zeichnen
       requestAnimationFrame(updateProgress); // Aktualisiere bei laufendem  audioplayer
+      playPauseButton.classList.add("paused"); // Klasse hinzufügen
+    } else {
+      playPauseButton.classList.remove("paused"); // Klasse entfernen
     }
   }
 
@@ -89,11 +92,13 @@ function initAudioplayer(canvasID, url) {
     if (audioplayer.paused) {
       await audioContext.resume(); // Für Chrome: AudioContext aktivieren
       audioplayer.play();
-      playPauseButton.textContent = "Pause";
+      // playPauseButton.textContent = "Pause";
+      // playPauseButton.classList.remove("paused"); // Klasse entfernen
       updateProgress(); // Fortschritt starten
     } else {
       audioplayer.pause();
-      playPauseButton.textContent = "Play";
+      // playPauseButton.textContent = "Play";
+      // playPauseButton.classList.add("paused"); // Klasse hinzufügen
     }
   });
 

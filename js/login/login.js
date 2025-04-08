@@ -76,7 +76,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     // Handle successful registration (e.g., redirect or display success message)
     if (result.status === "success" && result.ResponseCode === "Login successful") {
-      window.location.href = "/dashboard.php";
+      window.location.href = "dashboard.php";
     } else {
       displayValidationMessage(result.ResponseCode || "Fehler beim Login.");
     }
