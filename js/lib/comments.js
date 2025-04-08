@@ -44,7 +44,7 @@ async function likeComment(commentId) {
     });
 }
 
-async function createComment(postid, content, parentId = null) {
+async function createComment(postId, content, parentId = null) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -53,31 +53,39 @@ async function createComment(postid, content, parentId = null) {
     Authorization: `Bearer ${accessToken}`,
   });
 
-  const mutation = `mutation CreateComment($input: CreateCommentInput!) {
-                      createComment(
-                          action: COMMENT
-                          input: $input
-                      ) {
-                          status
-                          ResponseCode
-                          affectedRows
-                      }
-                  }`;
-  const variables = {
-    input: {
-      postid: postid,
-      parentid: parentId,
-      content: content,
-    },
-  };
+  const query = `
+    mutation CreateComment($postId: ID!, $content: String!, $parentId: ID) {
+      createComment(action: COMMENT, postid: $postId, content: $content, parentid: $parentId) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+          commentid
+          userid
+          content
+          createdat
+          amountlikes
+          isliked
+          postid
+          parentid
+          user {
+              id
+              username
+              slug
+              img
+              isfollowed
+              isfollowing
+          }
+        }
+      }
+    }
+  `;
+  const variables = { postId, content, parentId };
 
   return fetch(GraphGL, {
     method: "POST",
     headers: headers,
-    body: JSON.stringify({
-      query: mutation,
-      variables: variables,
-    }),
+    body: JSON.stringify({ query, variables }),
   })
     .then((response) => response.json())
     .then((data) => {

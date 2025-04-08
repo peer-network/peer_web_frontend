@@ -19,13 +19,15 @@ function sanitizeString(str) {
 function extractAfterComma(str) {
   return str.includes(",") ? str.split(",")[1] : str;
 }
-async function loadTextFile(url, elementId) {
+async function loadTextFile(url, element) {
+  // let id = document.getElementById(elementId);
+  // const textcontainer = id.querySelector(".custom-text");
   try {
     const response = await fetch(url);
     const text = await response.text();
-    document.getElementById(elementId).innerText = text;
+    element.innerText = text;
   } catch (error) {
-    document.getElementById(elementId).innerText = "Fehler beim Laden der Datei.";
+    element.innerText = "Fehler beim Laden der Datei.";
   }
 }
 async function readBytes(url, byteCount) {
