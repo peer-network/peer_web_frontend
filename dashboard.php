@@ -7,14 +7,14 @@ include 'host.php';
 <html lang="de">
 
 <head>
-    <link rel="stylesheet" href="css/dashboard.css" />
-    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="css/dashboard.css?<?php echo filemtime('css/dashboard.css'); ?>" />
+    <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
 
     <!-- <script src="sw_instal.min.js" async></script> -->
-    <script src="js/lib.min.js?" defer></script>
-    <script src="js/audio.js" async></script>
-    <script src="js/posts.js" defer></script>
-    <script src="js/dashboard.js" defer></script>
+    <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
+    <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
+    <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
 
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -292,8 +292,9 @@ include 'host.php';
                 </div>
                 <div id="comments" class="comments"></div>
             </div>
-            <div id="closeComments" class="btClose"><img src="svg/plus2.svg" alt="close" /></div>
+
         </div>
+        <div id="closeComments" class="btClose"><img src="svg/plus2.svg" alt="close" /></div>
 
         <div id="addPost" class="none scrollable">
             <input id="createImage" type="radio" name="postArt" value="image/*" checked />

@@ -232,6 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const observerOptions = {
     root: null, // null bedeutet, dass der Viewport als root genutzt wird
+    rootMargin: "0px 0px 100% 0px",
     threshold: 0.1, // 10% des Footers müssen im Viewport sein, um die Funktion auszulösen
   };
   const observer = new IntersectionObserver(observerCallback, observerOptions);
@@ -612,6 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //       processFiles(files);
   //     }
   //   });
+  postsLaden();
 });
 // window.addEventListener("load", () => {
 
@@ -880,7 +882,7 @@ async function postsLaden() {
         video = document.createElement("video");
         video.id = extractAfterComma(item.path);
         video.src = tempMedia(item.path);
-        video.controls = true;
+        video.controls = false;
         video.className = "custom-video";
         addMediaListener(video);
         postDiv.appendChild(video);
