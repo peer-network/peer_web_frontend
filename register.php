@@ -7,7 +7,7 @@ include 'host.php';
 
 <head>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
-    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
     <script src="js/register/confirmLoginRegister.js?<?php echo filemtime('js/register/confirmLoginRegister.js'); ?>" defer></script>
     <script src="js/register/register.js?<?php echo filemtime('js/register/register.js'); ?>" defer></script>
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>

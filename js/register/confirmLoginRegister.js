@@ -32,7 +32,7 @@ const emailField = document.getElementById("email");
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Event-Listener für das Verlassen des Eingabefelds (blur)
-emailField.addEventListener("blur", function () {
+emailField.addEventListener("input", function () {
   // Überprüfen, ob die E-Mail gültig ist
   if (emailRegex.test(emailField.value)) {
     // Gültige E-Mail: Klasse 'valid-email' hinzufügen und 'invalid-email' entfernen
@@ -56,14 +56,11 @@ const passwordConfirm = document.getElementById("confirm_password");
 // Regulärer Ausdruck für Passwort-Validierung: Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Zahl
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 if (passwordConfirm) {
-  passwordConfirm.addEventListener("blur", function () {
+  passwordConfirm.addEventListener("input", function () {
     document.getElementById("validationMessage").innerText = "";
     document.getElementById("validationMessage").classList.remove("notvalid");
     // Überprüfen, ob das Passwort gültig ist
-    if (
-      passwordRegex.test(passwordConfirm.value) &&
-      passwordConfirm.value === passwordField.value
-    ) {
+    if (passwordRegex.test(passwordConfirm.value) && passwordConfirm.value === passwordField.value) {
       // Gültiges Passwort: Klasse 'valid-password' hinzufügen und 'invalid-password' entfernen
       passwordConfirm.parentElement.classList.add("valid");
       passwordConfirm.parentElement.classList.remove("invalid");
@@ -75,7 +72,7 @@ if (passwordConfirm) {
   });
 }
 // Event-Listener für das Verlassen des Eingabefelds (blur)
-passwordField.addEventListener("blur", function () {
+passwordField.addEventListener("input", function () {
   document.getElementById("validationMessage").innerText = "";
   document.getElementById("validationMessage").classList.remove("notvalid");
   // Überprüfen, ob das Passwort gültig ist
