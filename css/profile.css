@@ -1,0 +1,472 @@
+
+
+.profile-layout {
+    display: flex;
+    gap: 20px;
+}
+.profile-left {
+    width: 30%;
+    padding: 15px;
+    border-radius: 10px;
+}
+.profile-right {
+    width: 70%;
+    padding: 15px;
+    border-radius: 10px;
+}
+.profile-header{
+    display: flex;
+}
+.right-profile-header{
+    justify-items: center;
+}
+.bio {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+.bio .user-input {
+    display: flex;
+    flex-direction: column;
+    /* Add other styles for user-input, like padding or margins */
+  }
+  .bio .editable-textarea {
+    /* Add styles for the textarea, like width, height, etc. */
+    width: 100%; /* Make textarea take full width */
+    resize: vertical; /* Allow vertical resizing */
+    margin-bottom: 10px; /* Space between textarea and button */
+  }
+  
+  /* If you need space between the textarea and the edit-icon, you can add margin to the user-input */
+  .bio .user-input{
+    margin-bottom: 10px;
+  }
+
+  button#edit-profile-btn {
+    background-color: #383838; /* Dark grey background */
+    color: #c7c7c7; /* Light grey text */
+    padding: 10px 20px; /* Padding for spacing */
+    border: none; /* Remove default border */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 14px; /* Adjust font size */
+    font-weight: 600; /* Semi-bold font weight */
+    cursor: pointer; /* Change cursor on hover */
+    display: block; /* Make it a block element */
+    margin: 20px auto; /* Center the button horizontally and add margin */
+    width: fit-content; /* Adjust width to content */
+  }
+  
+  button#edit-profile-btn:hover {
+    background-color: #484848; /* Slightly lighter background on hover */
+  }
+  
+  button#edit-profile-btn:active {
+    background-color: #282828; /* Slightly darker background on click */
+  }
+
+.editing #edit-profile-btn {
+    border-color: green;
+    color: green;
+}
+.edit-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    color: #007bff;
+    display: none;
+}
+.editing .edit-icon {
+    display: inline;
+}
+.editable-textarea, .editable-input {
+    width: 100%;
+    font-size: 16px;
+    padding: 5px;
+    resize: vertical;
+}
+.editable-textarea {
+    height: 80px;
+    min-height: 80px;
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+}
+.user-input{
+    display: flex;
+}
+.post-container {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    height:250px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin:10px;
+    position: relative;
+}
+
+.image-post{
+    background-color: rgb(255, 255, 255);
+}
+
+.image-post h1{
+    color: #1e1e1e;
+}
+.image-post h3{
+    color: #1e1e1e;
+}
+.image-post p{
+    color: #3a3a3a;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.post-content{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+.post-content p {
+    margin-top: 10px;
+    width: 80%;
+    font-size: 15px;
+    font-weight: lighter;
+}
+
+.post-content video{
+    width: 100%;
+}
+.post-content img{
+    width: 100%;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 10; /* Ensures buttons are above images */
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* WebKit (Chrome, Safari) scrollbar styling */
+.carousel::-webkit-scrollbar {
+    display: none; /* Small horizontal scrollbar */
+}
+
+
+.carousel-images {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap; /* Ensure images stay in a single line */
+    height: auto;
+    max-height: none;
+}
+
+.carousel-images img {
+    height: auto;
+    border-radius: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    object-fit: cover;
+    max-height: none;
+}
+
+.carousel-images img:hover {
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+.carousel-images.multiple-images {
+    overflow-x: auto; /* Enable horizontal scrolling when multiple images */
+    white-space: nowrap; /* Prevents images from wrapping */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #ccc transparent; /* Custom scrollbar color */
+    scroll-behavior: smooth; /* Smooth scrolling */
+    transition: transform 0.3s ease-in-out;
+
+  }
+
+.prev {
+    left: 10px;
+}
+.next {
+    right: 10px;
+}
+.post-footer {
+    display: flex;
+    justify-content: flex-end; 
+    margin-top: 10px;
+    position: relative;
+    align-items: center; 
+  }
+  
+  .post-footer span {
+    display: flex;
+    align-items: center; 
+    margin-left: 10px; 
+  }
+  
+  .post-footer span p {
+    margin-left: 5px; 
+    margin-bottom: 0; 
+  }
+  
+  .post-footer span:first-child {
+    margin-left: 0; 
+  }
+  
+.red {
+    color: red;
+}
+.green {
+    color: green;
+}
+.connections {
+    width: 100%;
+    max-width: 700px; /* You can adjust this width as needed */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    color: #fff;
+    overflow: hidden;
+}
+
+.connections h3 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+#connection-list {
+    display: flex;
+    grid-template-columns: repeat(3, 1fr); /* Three columns */
+    gap: 20px;
+    justify-items: center;
+    flex-wrap: wrap;
+}
+
+.connection {
+    text-align: center;
+}
+
+.connections-profile-pic {
+    width: 80px;  /* Set the size of the image */
+    height: 80px;
+    border-radius: 50%;  /* Make image round */
+    object-fit: cover;  /* Ensure image fits within the circle */
+    margin-bottom: 10px;
+}
+
+.connections-username {
+    font-size: 14px;
+    color: #fff;
+    font-weight: bold;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    #connection-list {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    #connection-list {
+        grid-template-columns: 1fr; /* 1 column on very small screens */
+    }
+}
+.profile-bio{
+    overflow: hidden;
+}
+.notvalid {
+    color: red!important;
+    height: 2rem !important;
+    padding: 2% 3% !important;
+  }
+
+  #validationMessage {
+    background-color: #ffdddd;
+    color: #d8000c;
+    border: 1px solid #d8000c;
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    width: fit-content; /* Only as wide as content */
+    max-width: 100%; /* Prevents overflow */
+    display: none;
+}
+
+  input:focus + label {
+    display: none;
+  }
+  
+  .valid {
+    border: 2px solid green;
+    background-color: #e0ffe0;
+    /* Hellgrüner Hintergrund */
+  }
+  
+  /* Stil für ungültige E-Mail */
+  .invalid {
+    border: 2px solid red;
+    background-color: #ffe0e0;
+    /* Hellroter Hintergrund */
+  }
+  .no-post{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+  @media (max-width: 1090px) {
+    .profile-left, .profile-right {
+        width: 100%;
+        min-width: unset;
+        text-align: center;
+    }
+    .profile-layout {
+        flex-direction: column; /* Stack left and right sections */
+      }
+    
+      .profile-right {
+        order: 2; /* Move right section below left section */
+      }
+    
+      .profile-left {
+        order: 1; /* ensure left is above right */
+      }
+}
+@media (max-width: 461px) {
+    .post-container {
+      width: 100% !important; /* Override inline styles */
+    }
+  }
+  @media (max-width: 1154px) {
+    .post-container {
+      width: 100% !important; /* Override inline styles */
+    }
+  }
+.user-profile{
+    overflow-wrap: anywhere;
+}
+.custom-note {
+    font-size: clamp(12px, 1dvw, 2rem);
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    word-wrap: break-word; /* Für ältere Browser */
+    overflow-wrap: break-word; /* Standard */
+    white-space: normal; /* Erlaubt den normalen Zeilenumbruch */
+    word-break: break-word; /* Für bessere Unterstützung */
+    overflow-y: auto;
+    position: relative;
+  }
+  .custom-note-clicked {
+    font-size: clamp(12px, 1dvw, 2rem);
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    word-wrap: break-word; /* Für ältere Browser */
+    overflow-wrap: break-word; /* Standard */
+    white-space: normal; /* Erlaubt den normalen Zeilenumbruch */
+    word-break: break-word; /* Für bessere Unterstützung */
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .post-desc {
+    position: absolute;
+    top: 50%;
+    width: 98%;
+    padding: 1rem;
+    left: 0;
+    color: var(--white);
+    z-index: 2;
+    /* margin-bottom: 5rem; */
+    /* bottom: 3rem; */
+  }
+
+  #picture-input #edit-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+    align-self: anchor-center;
+}
+
+#edit-icon{
+    display: none;
+}
+
+.editing #picture-input:hover #edit-icon {
+    display: block;
+}
+#picture-input {
+    position: relative;
+    display: inline-block;
+}
+.editing #edit-icon {
+    display: inline-block; /* Show edit icons in edit mode */
+}
+.editing #picture-input {
+    cursor: pointer; /* Allow image selection */
+}
+.menu-item a{
+    text-decoration: none;
+}
+#user-posts{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
