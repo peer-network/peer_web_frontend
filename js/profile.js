@@ -3,7 +3,12 @@ let updatedProfilePic;
 document.addEventListener("DOMContentLoaded", async function () {
   document.getElementById("profile-image-upload").addEventListener("change", function (event) {
     const file = event.target.files[0];
-  
+        if (file && !file.type.match(/^image\/(jpeg|jpg|png)$/)) {
+          Merror("Error", "Invalid file type. Only JPG, JPEG, and PNG are allowed.");
+         return;
+        }else if(!file){
+          return;
+        }
         const reader = new FileReader();
         
         reader.onload = function(e) {
@@ -46,20 +51,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (isEditing) {
         // Validate Username
-        if (!usernameInput.value.trim()) {
-          validationMessage.innerText = "Username cannot be empty";
-          return; // Stop here without exiting edit mode
-        }
+        let base64String = bioInput.value;
+        await textToBase64File(base64String).then(res => {
+          base64String = res
+        })
         const response = await updateUserData(
           usernameInput.value,
           "Saicharan@2511",
-          bioInput.value
+          base64String
         );
 
         if (response && response.success) {
           // Remove validation errors
-          validationMessage.innerText = "";
-          validationMessage.classList.remove("notvalid");
           usernameInput.classList.remove("invalid");
           bioInput.classList.remove("invalid");
 
@@ -93,8 +96,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Convert bio to textarea
         const bioElement = document.getElementById("profile-text");
+        
         const bioInput = createTextarea(
-          bioElement.textContent,
+          bioElement.textContent?.trim(),
           "editable-textarea"
         );
         bioElement.replaceWith(bioInput);
@@ -181,33 +185,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   });
 
-    let index = 0;
-    const images = document.querySelector('.carousel-images');
-    const prevButton = document.querySelector('.prev');
-    const nextButton = document.querySelector('.next');
-    const totalImages = images.children.length;
-    const visibleImages = 2;
-
-    function updateButtons() {
-        prevButton.style.display = index === 0 ? 'none' : 'block';
-        nextButton.style.display = index >= totalImages - visibleImages ? 'none' : 'block';
-    }
-
-    function moveSlide(step) {
-        index += step;
-        if (index < 0) {
-            index = 0;
-        } else if (index > totalImages - visibleImages) {
-            index = totalImages - visibleImages;
-        }
-        images.style.transform = `translateX(${-index * 110}px)`;
-        updateButtons();
-    }
-
-    prevButton.addEventListener("click", () => moveSlide(-1));
-    nextButton.addEventListener("click", () => moveSlide(1));
-
-    updateButtons();
    
     
 });
@@ -300,6 +277,7 @@ async function fetchUserDetails(){
   }else{
     let text = document.createElement("p")
     text.innerText = "No friends found"
+    text.classList.add("no-friends")
     connectionsDiv.appendChild(text)
   }
   
@@ -601,18 +579,11 @@ async function updateUserData(userName, password, bio) {
 document.addEventListener("blur", function (event) {
   if (event.target.classList.contains("editable-input")) {
     let usernameInput = event.target;
-    let validationMessage = document.getElementById("validationMessage");
 
     if (!usernameInput.value.trim()) {  
       usernameInput.classList.add("invalid");
-      validationMessage.innerText = "Username cannot be empty";
-      validationMessage.classList.add("notvalid");
-      validationMessage.style.display = "block"
     } else {
-      validationMessage.innerText = "";
-      validationMessage.classList.remove("notvalid");
       usernameInput.classList.remove("invalid");
-      validationMessage.style.display = "none"
     }
   }
 }, true);
@@ -802,6 +773,22 @@ try {
 } catch (error) {
     return {status: false, response: [] } ;
 }
+}
+
+function textToBase64File(text) {
+  return new Promise((resolve, reject) => {
+      if (text.trim() === "") {
+       text = "  "; // Added two spaces if empty
+      }
+      let blob = new Blob([text], { type: 'text/plain' });
+      let reader = new FileReader();
+      reader.onloadend = function () {
+          resolve(reader.result);
+      };
+      reader.onerror = reject;
+
+      reader.readAsDataURL(blob);
+  });
 }
 
 

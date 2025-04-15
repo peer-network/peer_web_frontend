@@ -107,7 +107,7 @@ include 'host.php';
                     <div class="profile-left">
                         <!-- Profile Picture and Bio -->
                         <div class="profile-bio">
-                            <div class="profile-header">
+                            <div class="profile-details">
                                 <label id="picture-input">
                                     <img id="profile-picture" onerror="onPictureError('profile-picture')" src=""
                                         class="profile-picture" alt="Profile Picture">
@@ -119,7 +119,6 @@ include 'host.php';
                                 <div class="user-profile">
                                     <div class="user-input">
                                         <h2 id="username-left"></h2>
-                                        <label id="validationMessage" for="username-left"></label>
                                         <span class="edit-icon">✏️</span>
                                     </div>
                                     <div class="user-input">

@@ -14,15 +14,12 @@
     padding: 15px;
     border-radius: 10px;
 }
-.profile-header{
-    display: flex;
-}
 .right-profile-header{
     justify-items: center;
 }
 .bio {
     font-family: Arial, sans-serif;
-    padding: 20px;
+    padding: 20px 20px 20px 0px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -43,6 +40,9 @@
   /* If you need space between the textarea and the edit-icon, you can add margin to the user-input */
   .bio .user-input{
     margin-bottom: 10px;
+  }
+  #profile-text{
+    text-align: left;
   }
 
   button#edit-profile-btn {
@@ -90,7 +90,7 @@
     height: 80px;
     min-height: 80px;
 }
-.profile-header {
+.profile-details {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -204,7 +204,7 @@
 }
 
 .carousel-images img {
-    height: auto;
+    height: 150px;
     border-radius: 20px;
     flex-shrink: 0;
     cursor: pointer;
@@ -267,15 +267,15 @@
     max-width: 700px; /* You can adjust this width as needed */
     margin: 0 auto;
     padding: 20px;
-    background-color: #333;
+    background-color: #292828;
     border-radius: 10px;
     color: #fff;
     overflow: hidden;
 }
 
-.connections h3 {
+.connections h4 {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -285,6 +285,10 @@
     gap: 20px;
     justify-items: center;
     flex-wrap: wrap;
+}
+
+#connection-list .no-friends{
+    margin: 0 auto;
 }
 
 .connection {
@@ -325,20 +329,6 @@
     height: 2rem !important;
     padding: 2% 3% !important;
   }
-
-  #validationMessage {
-    background-color: #ffdddd;
-    color: #d8000c;
-    border: 1px solid #d8000c;
-    padding: 8px;
-    margin-top: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    width: fit-content; /* Only as wide as content */
-    max-width: 100%; /* Prevents overflow */
-    display: none;
-}
 
   input:focus + label {
     display: none;
@@ -425,8 +415,7 @@
     left: 0;
     color: var(--white);
     z-index: 2;
-    /* margin-bottom: 5rem; */
-    /* bottom: 3rem; */
+    pointer-events: none;
   }
 
   #picture-input #edit-icon {
