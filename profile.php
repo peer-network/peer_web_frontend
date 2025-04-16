@@ -1,7 +1,23 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 include 'host.php';
+
+$userId = $_GET['userId'] ?? null;
+
+if ($userId) {
+    echo "<script>var userProfileId = '" . htmlspecialchars($userId, ENT_QUOTES, 'UTF-8') . "';</script>";
+} else {
+    // Check if the user is trying to access profile.php directly, and redirect them.
+    if(strpos($_SERVER['REQUEST_URI'], "profile.php") !== false){
+        // redirect to index.php or login page.
+        header("Location: index.php?error=noUserID");
+        exit;
+    }
+    echo "<script>var userProfileId = null;</script>";
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <!DOCTYPE html>
@@ -18,6 +34,7 @@ include 'host.php';
     <script src="js/posts.js" defer></script>
     <script src="js/profile.js"></script>
     <script src="js/audio.js" async></script>
+    <script src="js/loader.js" async></script>
 </head>
 
 <body>
@@ -25,6 +42,8 @@ include 'host.php';
         data-host="<?php echo htmlspecialchars($protocol . '://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <div id="profile-body">
         <article id="dashboard" class="dashboard">
+            <div id="error">
+            </div>
             <div id="profileHeader" class="header">
                 <div>
                     <img src="svg/logo_sw.svg" alt="Peer Network Logo" />
@@ -109,8 +128,8 @@ include 'host.php';
                         <div class="profile-bio">
                             <div class="profile-details">
                                 <label id="picture-input">
-                                    <img id="profile-picture" onerror="onPictureError('profile-picture')" src=""
-                                        class="profile-picture" alt="Profile Picture">
+                                    <img id="profile-picture-left" onerror="this.onerror=null; this.src='svg/noname.svg';" src=""
+                                        alt="Profile Picture">
                                     <button id="edit-icon">
                                         ✏️
                                     </button>
@@ -130,15 +149,15 @@ include 'host.php';
                             <!-- Stats -->
                             <div class="stats">
                                 <div class="stat">
-                                    <span class="amountposts"></span>
+                                    <span id="amountposts-left"></span>
                                     <p>Posts</p>
                                 </div>
                                 <div class="stat">
-                                    <span class="amountfollower"></span>
+                                    <span id="amountfollower-left"></span>
                                     <p>Followers</p>
                                 </div>
                                 <div class="stat">
-                                    <span class="amountfollowed"></span>
+                                    <span id="amountfollowed-left"></span>
                                     <p>Following</p>
                                 </div>
                             </div>
@@ -148,6 +167,7 @@ include 'host.php';
                                 <div class="user-input">
                                     <p id="profile-text"></p>
                                     <button id="edit-profile-btn">Edit Profile</button>
+                                    <button id="follow-btn">Follow</button>
                                 </div>
                                 <span class="edit-icon">✏️</span>
                             </div>
@@ -166,14 +186,14 @@ include 'host.php';
                     <div class="profile-right">
                         <div id="user-posts">
                             <!-- <div class="post-container">
-                        <div class="post-header">
+                           <div class="post-header">
                             <img src="img/register.jpg" alt="Tyler Jones" class="profile-pic">
                             <div>
                                 <h3></h3>
                                 <p></p>
                             </div>
-                        </div>
-                        <div class="post-content">
+                           </div>
+                           <div class="post-content">
                             <p></p>
                             <div class="carousel">
                             <button class="prev">&#10094;</button>
@@ -182,13 +202,16 @@ include 'host.php';
                                 </div>
                                 <button class="next">&#10095;</button>
                             </div>
-                        </div>
-                        <div class="post-footer">
+                            </div>
+                            <div class="post-footer">
                             <span>👁️</span>
                             <span>❤️</span>
                             <span>💬</span>
+                            </div>
+                            </div> -->
                         </div>
-                    </div> -->
+                        <div id="footer" class="footer">
+                            <img src="svg/logo_farbe.svg" alt="loading" />
                         </div>
                     </div>
                 </div>
@@ -199,7 +222,8 @@ include 'host.php';
                 <div id="profil-container">
                     <!-- Profil-Bild und Name -->
                     <div class="right-profile-header">
-                        <img id="profilbild" onerror="onPictureError('profile-picture')" class="profile-picture"
+
+                        <img onerror="this.onerror=null; this.src='svg/noname.svg';" src="" id="profile-picture-right"
                             alt="Profile Picture">
 
                         <!-- <div id="badge" class="badge"></div> -->
@@ -210,15 +234,15 @@ include 'host.php';
                     <!-- Statistiken -->
                     <div class="stats">
                         <div class="stat">
-                            <span class="amountposts"></span>
+                            <span id="amountposts-right"></span>
                             <p>Posts</p>
                         </div>
                         <div class="stat">
-                            <span class="amountfollower"></span>
+                            <span id="amountfollower-right"></span>
                             <p>Followers</p>
                         </div>
                         <div class="stat">
-                            <span class="amountfollowed"></span>
+                            <span id="amountfollowed-right"></span>
                             <p>Following</p>
                         </div>
                     </div>
@@ -264,9 +288,7 @@ include 'host.php';
                     <a href="/register.php">register</a>
                 </div>
             </aside>
-            <div id="footer" class="footer">
-                <img src="svg/logo_farbe.svg" alt="loading" />
-            </div>
+            <!--  -->
         </article>
         <div id="overlay" class="none scrollable">
             <div id="cardClicked" class="none scrollable">
@@ -468,9 +490,6 @@ include 'host.php';
                 <div id="closeAddPost" class="btClose"><img src="svg/plus2.svg" alt="close" /></div>
             </div>
         </div>
-    </div>
-    <div id="access-denied">
-        <p>Access Denied!!!!</p>
     </div>
 </body>
 

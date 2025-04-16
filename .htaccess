@@ -63,7 +63,12 @@ Header set Expires "0"
 
 </IfModule>
 
-# RewriteEngine On 
+#RewriteEngine On
+#RewriteBase /
+
+#RewriteRule ^([a-zA-Z0-9_-]+)$ profile.php?user=$1 [L,QSA]
+
+
 # RewriteCond % { HTTPS } off 
 # RewriteRule ^(.*)$ https://% { HTTP_HOST }% { REQUEST_URI } [L, R=301]
 # #RewriteCond %{HTTP_HOST} ^www\.peernetwork\.website$ [NC]
@@ -77,6 +82,28 @@ Header set Expires "0"
 # RewriteRule ^(.*)$ $1.php [NC, L]
 # RewriteCond % { REQUEST_METHOD } ^(TRACE | TRACK)
 # RewriteRule .* - [F]
+
+RewriteEngine On
+
+# Rewrite requests to /profile.php/[userId] to profile.php?userId=[userId]
+RewriteRule ^profile\.php/([^/]+)$ profile.php?userId=$1 [L,QSA]
+
+# Handle requests to /profile.php/[userId]/ (optional, for trailing slash)
+RewriteRule ^profile\.php/([^/]+)/$ profile.php?userId=$1 [L,QSA]
+
+# Redirect /profile.php to /profile.php/[userID]
+RewriteCond %{REQUEST_URI} ^/profile\.php$
+RewriteCond %{QUERY_STRING} ^$
+RewriteCond %{HTTP_COOKIE} user_id=([^;]+) [NC,OR]
+RewriteCond %{ENV:REDIRECT_user_id} ^([^/]+)$ [NC]
+RewriteRule ^profile\.php$ profile.php/%1? [R=301,L]
+
+# Handle base case access of profile.php when no user id is present and no cookie is set.
+RewriteCond %{REQUEST_URI} ^/profile\.php$
+RewriteCond %{QUERY_STRING} ^$
+RewriteCond %{HTTP_COOKIE} !user_id=([^;]+) [NC]
+RewriteCond %{ENV:REDIRECT_user_id} !^([^/]+)$ [NC]
+RewriteRule ^profile\.php$ index.php?error=noUserID [R=302,L]
 
 <IfModule mod_deflate.c>
 AddType image/svg+xml .svg

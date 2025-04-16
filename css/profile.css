@@ -1,5 +1,18 @@
-
-
+.main{
+    top: 0;
+    left: 0;
+    bottom: 0;
+    position: sticky;
+    overflow: hidden;
+}
+.dashboard{
+    grid-template-areas:
+        "sidebar header profil"
+        "sidebar main profil";
+}
+.header{
+    top: 0;
+}
 .profile-layout {
     display: flex;
     gap: 20px;
@@ -8,11 +21,15 @@
     width: 30%;
     padding: 15px;
     border-radius: 10px;
+    height: calc(100vh - 100px);
+    overflow: hidden;
 }
 .profile-right {
     width: 70%;
     padding: 15px;
     border-radius: 10px;
+    height: calc(100vh - 100px);
+    overflow-y: scroll;
 }
 .right-profile-header{
     justify-items: center;
@@ -23,26 +40,24 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    height: 100%;
 }
 .bio .user-input {
     display: flex;
     flex-direction: column;
-    /* Add other styles for user-input, like padding or margins */
+    margin-bottom: 10px;
+    width: 100%;
   }
   .bio .editable-textarea {
-    /* Add styles for the textarea, like width, height, etc. */
-    width: 100%; /* Make textarea take full width */
-    resize: vertical; /* Allow vertical resizing */
-    margin-bottom: 10px; /* Space between textarea and button */
+    width: 100%; 
+    resize: vertical; 
+    margin-bottom: 10px; 
   }
   
-  /* If you need space between the textarea and the edit-icon, you can add margin to the user-input */
-  .bio .user-input{
-    margin-bottom: 10px;
-  }
+
   #profile-text{
     text-align: left;
+    max-height: 100px;
+    overflow-y: scroll;
   }
 
   button#edit-profile-btn {
@@ -96,7 +111,14 @@
     gap: 10px;
     margin-bottom: 15px;
 }
-.profile-picture {
+#profile-picture-left {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+#profile-picture-right {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -271,6 +293,8 @@
     border-radius: 10px;
     color: #fff;
     overflow: hidden;
+    overflow-y: auto;
+    height: 50%;
 }
 
 .connections h4 {
@@ -285,6 +309,7 @@
     gap: 20px;
     justify-items: center;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 #connection-list .no-friends{
@@ -296,8 +321,8 @@
 }
 
 .connections-profile-pic {
-    width: 80px;  /* Set the size of the image */
-    height: 80px;
+    width: 50px;  /* Set the size of the image */
+    height: 50px;
     border-radius: 50%;  /* Make image round */
     object-fit: cover;  /* Ensure image fits within the circle */
     margin-bottom: 10px;
@@ -306,23 +331,46 @@
 .connections-username {
     font-size: 14px;
     color: #fff;
-    font-weight: bold;
     margin: 0;
 }
 
 @media (max-width: 768px) {
+    .connections{
+        height: 25vh;
+    }
     #connection-list {
         grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
     }
+    .no-post{
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: 0;
+        left: 0;
+      }
 }
-
+@media(max-width: 720px){
+    .connections{
+        height: 20vh;
+    }
+}
 @media (max-width: 480px) {
     #connection-list {
         grid-template-columns: 1fr; /* 1 column on very small screens */
     }
+    .no-post{
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: 0;
+        left: 0;
+      }
 }
 .profile-bio{
     overflow: hidden;
+    overflow-y: scroll;
 }
 .notvalid {
     color: red!important;
@@ -350,9 +398,19 @@
     text-align: center;
     display: flex;
     justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
   }
   @media (max-width: 1090px) {
-    .profile-left, .profile-right {
+    .profile-left {
+        width: 100%;
+        min-width: unset;
+        text-align: center;
+        height: 50%;
+        overflow-y: hidden;
+    }
+    .profile-right {
         width: 100%;
         min-width: unset;
         text-align: center;
@@ -368,11 +426,30 @@
       .profile-left {
         order: 1; /* ensure left is above right */
       }
+      .no-post{
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: 0;
+        left: 0;
+      }
+      .connections{
+        height: 20vh;
+      }
 }
 @media (max-width: 461px) {
     .post-container {
       width: 100% !important; /* Override inline styles */
     }
+    .no-post{
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: 0;
+        left: 0;
+      }
   }
   @media (max-width: 1154px) {
     .post-container {
@@ -452,10 +529,36 @@
 }
 .menu-item a{
     text-decoration: none;
+    color: white;
 }
 #user-posts{
     display: flex;
     flex-wrap: wrap;
 }
+#follow-btn{
+    background-color: #383838; /* Dark grey background */
+    color: #c7c7c7; /* Light grey text */
+    padding: 5px; /* Padding for spacing */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Adjust font size */
+    cursor: pointer; /* Change cursor on hover */
+    display: block; /* Make it a block element */
+    margin: 20px auto; /* Center the button horizontally and add margin */
+    width: 100%; /* Adjust width to content */
+}  
+#follow-btn:hover {
+    background-color: #484848; /* Slightly lighter background on hover */
+  }
+  #error{
+    position: absolute;
+    text-align: center;
+    top: 50%;
+  }
+  @media (max-width: 45rem) {
+    .main{
+        height: auto;
+    }
+  }
 
 

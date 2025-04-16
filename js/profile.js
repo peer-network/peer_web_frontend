@@ -1,6 +1,10 @@
 let currentUserId;
+let loggedInUserId;
 let updatedProfilePic;
+let currentUserName;
+let currentUserDetails;
 document.addEventListener("DOMContentLoaded", async function () {
+  
   document.getElementById("profile-image-upload").addEventListener("change", function (event) {
     const file = event.target.files[0];
         if (file && !file.type.match(/^image\/(jpeg|jpg|png)$/)) {
@@ -12,13 +16,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            document.getElementById("profile-picture").src = e.target.result
+            document.getElementById("profile-picture-left").src = e.target.result
             updatedProfilePic = e.target.result
         };
         
         reader.readAsDataURL(file);
   });
-  document.getElementById("access-denied").style.display = "none"
   const closeComments = document.getElementById("closeComments");
 
   closeComments.addEventListener("click", () => {
@@ -26,12 +29,23 @@ document.addEventListener("DOMContentLoaded", async function () {
     cancelTimeout();
     document.getElementById("profileHeader").classList.remove("none");
   });
+
+  document.getElementById("profile-picture-right").addEventListener("click", function(){
+    location.href = "profile.php?userId=" + loggedInUserId
+  })
+  
   try{
-    restoreFilterSettings()
+    restoreFilterSettings();
    await fetchUserDetails();
   }catch{
-    document.getElementById("profile-body").remove()
-    document.getElementById("access-denied").style.display = "block";
+    document.getElementsByClassName("sidebar")[0].remove();
+    document.getElementsByClassName("profile-layout")[0].remove()
+    document.getElementById("profileHeader").remove()
+    const error = document.getElementById("error");
+    const errorText = document.createElement("h1");
+    errorText.textContent = "Sorry, this page isn't available."
+    error.appendChild(errorText)
+    document.getElementsByClassName("main")[0].appendChild(error)
     return;
   }
   document.getElementById("edit-icon").addEventListener("click", function triggerFileUpload(event) {
@@ -40,10 +54,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     event.stopPropagation();
   })
-  const button = document.getElementById("edit-profile-btn");
-  
-    
-  button.addEventListener("click", async function () {
+  const followBtn = document.getElementById("follow-btn")
+  followBtn.addEventListener("click", async ()=>{
+    if(!currentUserDetails.isfollowing){
+     const res = await followUser(currentUserId)
+     if(res.status){
+      followBtn.innerText = "Following"
+     }
+    }
+  })
+  if (loggedInUserId == currentUserId) {
+    if(followBtn){
+      followBtn.style.display = "none";
+    }
+    const button = document.getElementById("edit-profile-btn");
+    button.addEventListener("click", async function () {
       const isEditing = document.body.classList.contains("editing");
       const usernameInput = document.querySelector(".editable-input");
       const bioInput = document.querySelector(".editable-textarea");
@@ -52,15 +77,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (isEditing) {
         // Validate Username
         let base64String = bioInput.value;
-        await textToBase64File(base64String).then(res => {
-          base64String = res
-        })
+        await textToBase64File(base64String).then((res) => {
+          base64String = res;
+        });
+        showLoader();
         const response = await updateUserData(
           usernameInput.value,
           "Saicharan@2511",
           base64String
         );
-
+        hideLoader();
         if (response && response.success) {
           // Remove validation errors
           usernameInput.classList.remove("invalid");
@@ -77,9 +103,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
           button.textContent = "Edit Profile";
           document.body.classList.remove("editing"); // Exit edit mode
-          document.getElementById("picture-input").removeAttribute("for")
-          document.getElementById("edit-icon").style.display = "none"
-          location.reload()
+          document.getElementById("picture-input").removeAttribute("for");
+          document.getElementById("edit-icon").style.display = "none";
+          location.reload();
         }
       } else {
         // Enter edit mode
@@ -96,17 +122,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Convert bio to textarea
         const bioElement = document.getElementById("profile-text");
-        
+
         const bioInput = createTextarea(
           bioElement.textContent?.trim(),
           "editable-textarea"
         );
         bioElement.replaceWith(bioInput);
-        document.getElementById("picture-input").setAttribute("for", "profile-image-upload")
-        document.getElementById("edit-icon").style.display = "inline-block"
-
+        document
+          .getElementById("picture-input")
+          .setAttribute("for", "profile-image-upload");
+        document.getElementById("edit-icon").style.display = "inline-block";
       }
-  });
+    });
+  }else{
+    document.getElementById("edit-profile-btn").style.display = "none"
+    if(currentUserDetails.isfollowing){
+      followBtn.innerText = "Following"
+    }
+  }
 
   function createInputField(value, className) {
       const input = document.createElement("input");
@@ -133,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        getUserPosts(currentUserId);
+        getUserPosts(currentUserId, true);
         console.log("Der Footer ist jetzt im Viewport sichtbar!");
       }
     });
@@ -217,73 +250,100 @@ function timeAgo(datetime) {
 }
 
 async function fetchUserDetails(){
-  const profil = await fetchHelloData();
-  currentUserId = profil.data.hello.currentuserid;
-  Array.from(["username-left", "username-right"]).forEach(id =>{
-    document.getElementById(id).innerText = profil.data.profile.affectedRows.username;
-  })
-  Array.from(["slug-left", "slug-right"]).forEach(id =>{
-    document.getElementById(id).innerText = "#" +  profil.data.profile.affectedRows.slug;
-  })
-  Array.from(document.getElementsByClassName("profile-picture")).forEach((ele) =>{
-      ele.src = tempMedia(profil.data.profile.affectedRows.img);
-  })
-  Array.from(["amountposts", "amountfollower", "amountfollowed"]).forEach(x =>{
-    Array.from(document.getElementsByClassName(x)).forEach((ele) =>{
-      ele.innerText = profil.data.profile.affectedRows[x];
-  })
-  })
-  const bioTxt = tempMedia(profil.data.profile.affectedRows.biography);
-  fetch(bioTxt)
-    .then(response => {
-        if (!response.ok) { // Check if status is not 200-299
-            throw new Error(`HTTP error! Status: ${response.status}`);
+  const currentUser = await fetchHelloData(userProfileId);
+  const loggedInUser = await fetchHelloData();
+  loggedInUserId = loggedInUser.data.hello.currentuserid;
+  const profileLink = document.createElement("a")
+  profileLink.id = "profile-link"
+  profileLink.textContent = loggedInUser.data.profile.affectedRows.username
+  profileLink.href = "profile.php?userId=" + loggedInUserId;
+  profileLink.style.textDecoration = "none";
+  profileLink.style.color = "white"
+  document.getElementById("username-right").appendChild(profileLink)
+  //document.getElementById("username-right").innerText = loggedInUser.data.profile.affectedRows.username;
+  document.getElementById("slug-right").innerText = "#" +  loggedInUser.data.profile.affectedRows.slug;
+  document.getElementById("profile-picture-right").src = tempMedia(loggedInUser.data.profile.affectedRows.img);
+  document.getElementById("amountposts-right").innerText = loggedInUser.data.profile.affectedRows.amountposts
+  document.getElementById("amountfollower-right").innerText = loggedInUser.data.profile.affectedRows.amountfollower
+  document.getElementById("amountfollowed-right").innerText = loggedInUser.data.profile.affectedRows.amountfollowed
+
+
+
+  if (!currentUser || currentUser?.data?.profile?.status == "error") {
+    throw Error("Invalid");
+  } else {
+    currentUserDetails = currentUser.data.profile.affectedRows;
+    currentUserId = currentUser.data.profile.affectedRows.id;
+    currentUserName = currentUser.data.profile.affectedRows.username;
+    document.getElementById("username-left").innerText =
+      currentUser.data.profile.affectedRows.username;
+    document.getElementById("slug-left").innerText =
+      "#" + currentUser.data.profile.affectedRows.slug;
+    document.getElementById("profile-picture-left").src = tempMedia(
+      currentUser.data.profile.affectedRows.img
+    );
+    document.getElementById("amountposts-left").innerText =
+      currentUser.data.profile.affectedRows.amountposts;
+    document.getElementById("amountfollower-left").innerText =
+      currentUser.data.profile.affectedRows.amountfollower;
+    document.getElementById("amountfollowed-left").innerText =
+      currentUser.data.profile.affectedRows.amountfollowed;
+    const bioTxt = tempMedia(currentUser.data.profile.affectedRows.biography);
+    fetch(bioTxt)
+      .then((response) => {
+        if (!response.ok) {
+          // Check if status is not 200-299
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.text();
-    })
-    .then(data => {
-        document.getElementById('profile-text').innerText = data;
-    })
-    .catch(error => {
-        console.error('Fetch error:', error); // Log error message
-        document.getElementById('profile-text').innerText = "";
-    });
+      })
+      .then((data) => {
+        document.getElementById("profile-text").innerText = data;
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error); // Log error message
+        document.getElementById("profile-text").innerText = "";
+      });
 
+    await getUserPosts(userProfileId);
 
-  await getUserPosts(currentUserId);
-  const mutualResponse =  await getUserFriends(20, 0);
-  let connectionsDiv = document.getElementById("connection-list")
-  let latestConnections = mutualResponse.status ? mutualResponse.response : [];
-
-  if(latestConnections.length){
-    latestConnections.forEach(user=>{
-      const connectionDiv = document.createElement("div");
-      connectionDiv.className = "connection"
-      const profilePic = document.createElement("img");
-      profilePic.src = tempMedia(user.img);
-      profilePic.className = "connections-profile-pic";
-      profilePic.alt = user.username;
-      profilePic.onerror = function () {
+    const mutualResponse = await getUserFriends(20, 0);
+     
+      
+    let connectionsDiv = document.getElementById("connection-list");
+    let latestConnections = mutualResponse.status
+      ? mutualResponse.response
+      : [];
+    if (latestConnections.length) {
+      latestConnections.forEach((user) => {
+        const connectionDiv = document.createElement("div");
+        connectionDiv.className = "connection";
+        const profilePic = document.createElement("img");
+        profilePic.src = tempMedia(user.img);
+        profilePic.className = "connections-profile-pic";
+        profilePic.alt = user.username;
+        profilePic.onerror = function () {
           this.onerror = null; // Prevent infinite loop if fallback also fails
-          this.src = "svg/noname.svg"; 
-      };
-      const username = document.createElement("p");
-      username.className = "connections-username";
-      username.innerText = user.username;
-      connectionDiv.appendChild(profilePic);
-      connectionDiv.appendChild(username)
-      connectionsDiv.appendChild(connectionDiv)
-    })
-  }else{
-    let text = document.createElement("p")
-    text.innerText = "No friends found"
-    text.classList.add("no-friends")
-    connectionsDiv.appendChild(text)
+          this.src = "svg/noname.svg";
+        };
+        const username = document.createElement("p");
+        username.className = "connections-username";
+        username.innerText = user.username;
+        connectionDiv.appendChild(profilePic);
+        connectionDiv.appendChild(username);
+        connectionsDiv.appendChild(connectionDiv);
+      });
+    } else {
+      let text = document.createElement("p");
+      text.innerText = "No friends found";
+      text.classList.add("no-friends");
+      connectionsDiv.appendChild(text);
+    }
   }
   
 }
 
-async function getUserPosts(userId) {
+async function getUserPosts(userId, offset) {
   if (getUserPosts.offset === undefined) {
     getUserPosts.offset = 0; // Initialwert
   }
@@ -302,11 +362,12 @@ async function getUserPosts(userId) {
   const userPosts = await getPosts(getUserPosts.offset, 48, cleanedArray, "", null, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   console.log(cleanedArray);
   let data = userPosts.data.getallposts.affectedRows?.filter(x => x.user.id == userId)
-  if(!data.length && !document.getElementsByClassName("no-post")?.length){
+  if(!data.length && !offset){
     let noPostDiv = document.createElement("h1")
     noPostDiv.textContent = "No Posts Yet";
     noPostDiv.classList.add("no-post")
     document.getElementsByClassName("profile-right")[0].appendChild(noPostDiv)
+    document.getElementById("footer").style.display = "none"
   }
   data.forEach(async post => {
     const postContainer = document.createElement("div");
@@ -498,29 +559,31 @@ async function updateUserData(userName, password, bio) {
   try {
     let status = true;
     let statusCode = ""
-    const updateNameMutation = {
-      query: `
-          mutation {
-              updateName(username: "${userName}", password: "") {
-                  status
-                  ResponseCode
-              }
+    if(currentUserName != userName){
+      const updateNameMutation = {
+        query: `
+            mutation {
+                updateName(username: "${userName}", password: "") {
+                    status
+                    ResponseCode
+                }
+            }
+        `
+      };
+      await fetch(GraphGL, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(updateNameMutation),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.data.updateName.status !== "success") {
+            status = false;
+            statusCode = "UserName";
+            Merror("Error", data.data.updateName.ResponseCode);
           }
-      `
-    };
-    await fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(updateNameMutation),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.data.updateName.status !== "success") {
-          status = false;
-          statusCode = "UserName";
-          Merror("Error", data.data.updateName.ResponseCode);
-        }
-      });
+        });
+    }
     if (!["", null, undefined].includes(bio)) {
       const updateBiographyMutation = {
         query: `
@@ -737,7 +800,8 @@ function togglePopup(popup) {
 }
 
 async function getUserFriends(limit, offset){
-  const friendsMutations = `query Friends {
+  const friendsMutations ={
+    query: `query Friends {
     friends(limit: ${limit}, offset: ${offset}) {
         status
         counter
@@ -752,6 +816,7 @@ async function getUserFriends(limit, offset){
         }
     }
 }`
+  } 
 
 const accessToken = getCookie("authToken");
 const headers = new Headers({
@@ -789,6 +854,40 @@ function textToBase64File(text) {
 
       reader.readAsDataURL(blob);
   });
+}
+
+function followUser(userId){
+  const accessToken = getCookie("authToken");
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+  
+  const followUserMutation = {
+    query: `mutation UserFollow {
+    userFollow(userid: "${userId}") {
+        status
+        ResponseCode
+        isfollowing
+    }
+}`
+  }
+
+  try {
+    return fetch(GraphGL, {
+         method: "POST",
+         headers: headers,
+         body: JSON.stringify(followUserMutation)
+     }).then(res => res.json()).then(res =>{
+       if(res && res.data.userFollow.status == "success"){
+         return {status: true }; 
+       }else{
+         return {status: false} ;
+       }
+     })
+} catch (error) {
+ return {status: false} ;
+}
 }
 
 
