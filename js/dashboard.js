@@ -9,6 +9,17 @@ function extractWords(str) {
   // Rückgabe als Objekt mit beiden Arrays
   return { hashtags, normalWords };
 }
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+function handleMouseMoveEnd(video) {
+  video.play();
+}
 let mostliked = [];
 function commentToDom(c, append = true) {
   const userID = getCookie("userID");
@@ -174,6 +185,197 @@ document.addEventListener("DOMContentLoaded", () => {
   //     fileInput.accept = event.target.value;
   //   }
   // });
+
+  // const editProfilPicture = document.getElementById("editProfileImage");
+  // editProfilPicture.addEventListener("click", () => {
+  //   document.getElementById("profileImageInput").click();
+  //   document.getElementById("cropButton").classList.remove("none");
+  //   const profileImageInput = document.getElementById("profileImageInput");
+  //   const image = document.getElementById("profilbild");
+  //   const cropContainer = document.getElementById("cropContainer");
+  //   const result = document.getElementById("result");
+
+  //   // Globale Variablen für Translation und Zoom
+  //   let offsetX = 0,
+  //     offsetY = 0;
+  //   let currentZoom = 1;
+
+  //   // Variablen für Dragging
+  //   let isDragging = false,
+  //     startX = 0,
+  //     startY = 0;
+
+  //   // Variablen für Touch-Pinch
+  //   let isPinching = false;
+  //   let lastTouchDistance = 0;
+
+  //   // Aktualisiert die Transformation des Bildes (Translation & Scale)
+  //   function updateTransform() {
+  //     image.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${currentZoom})`;
+  //   }
+
+  //   // Bild laden
+  //   profileImageInput.addEventListener("change", function (e) {
+  //     const file = e.target.files[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = function (evt) {
+  //         image.src = evt.target.result;
+  //         image.style.display = "block";
+  //         // Reset initial values
+  //         offsetX = 0;
+  //         offsetY = 0;
+  //         currentZoom = 1;
+  //         updateTransform();
+  //         image.onload = function () {
+  //           // Optional: Bild innerhalb des Containers zentrieren
+  //           offsetX = (cropContainer.clientWidth - image.naturalWidth) / 2;
+  //           offsetY = (cropContainer.clientHeight - image.naturalHeight) / 2;
+  //           updateTransform();
+  //         };
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   });
+
+  //   // ------------------- Maussteuerung -------------------
+  //   image.addEventListener("mousedown", function (e) {
+  //     isDragging = true;
+  //     startX = e.clientX;
+  //     startY = e.clientY;
+  //     e.preventDefault();
+  //   });
+
+  //   document.addEventListener("mousemove", function (e) {
+  //     if (!isDragging) return;
+  //     const dx = e.clientX - startX;
+  //     const dy = e.clientY - startY;
+  //     startX = e.clientX;
+  //     startY = e.clientY;
+  //     offsetX += dx;
+  //     offsetY += dy;
+  //     updateTransform();
+  //   });
+
+  //   document.addEventListener("mouseup", function () {
+  //     isDragging = false;
+  //   });
+
+  //   // Zoom via Mausrad – Setzt transform-origin anhand der Mausposition
+  //   cropContainer.addEventListener("wheel", function (e) {
+  //     e.preventDefault();
+  //     const rect = cropContainer.getBoundingClientRect();
+  //     // Mausposition relativ zum Container
+  //     const mouseX = e.clientX - rect.left;
+  //     const mouseY = e.clientY - rect.top;
+  //     // Berechne den Punkt im Bild (unter Berücksichtigung der aktuellen Verschiebung)
+  //     const originX = mouseX - offsetX;
+  //     const originY = mouseY - offsetY;
+  //     image.style.transformOrigin = `${originX}px ${originY}px`;
+
+  //     // Aktualisiere den Zoomfaktor
+  //     if (e.deltaY < 0) {
+  //       currentZoom *= 1.1;
+  //     } else {
+  //       currentZoom /= 1.1;
+  //     }
+  //     // Begrenzung des Zooms
+  //     currentZoom = Math.min(Math.max(currentZoom, 0.5), 3);
+  //     updateTransform();
+  //   });
+
+  //   // ------------------- Touch-Steuerung -------------------
+  //   image.addEventListener(
+  //     "touchstart",
+  //     function (e) {
+  //       if (e.touches.length === 1) {
+  //         // Ein Finger: Beginne Dragging
+  //         isDragging = true;
+  //         startX = e.touches[0].clientX;
+  //         startY = e.touches[0].clientY;
+  //       } else if (e.touches.length === 2) {
+  //         // Zwei Finger: Beginne Pinch-Zoom
+  //         isPinching = true;
+  //         isDragging = false; // Deaktiviere Dragging während des Pinch-Zooms
+  //         const [touch1, touch2] = e.touches;
+  //         lastTouchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+  //       }
+  //       e.preventDefault();
+  //     },
+  //     { passive: false }
+  //   );
+
+  //   image.addEventListener(
+  //     "touchmove",
+  //     function (e) {
+  //       if (isDragging && e.touches.length === 1) {
+  //         // Verschiebe das Bild mit einem Finger (Drag)
+  //         const touch = e.touches[0];
+  //         const dx = touch.clientX - startX;
+  //         const dy = touch.clientY - startY;
+  //         startX = touch.clientX;
+  //         startY = touch.clientY;
+  //         offsetX += dx;
+  //         offsetY += dy;
+  //         updateTransform();
+  //       } else if (isPinching && e.touches.length === 2) {
+  //         // Pinch-Zoom mit zwei Fingern
+  //         const [touch1, touch2] = e.touches;
+  //         const newDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+  //         // Berechne den Mittelpunkt der beiden Finger relativ zum Container
+  //         const rect = cropContainer.getBoundingClientRect();
+  //         const centerX = (touch1.clientX + touch2.clientX) / 2 - rect.left;
+  //         const centerY = (touch1.clientY + touch2.clientY) / 2 - rect.top;
+  //         // Berechne den Punkt im Bild (unter Berücksichtigung der Verschiebung)
+  //         const originX = centerX - offsetX;
+  //         const originY = centerY - offsetY;
+  //         image.style.transformOrigin = `${originX}px ${originY}px`;
+
+  //         // Aktualisiere den Zoomfaktor anhand des Abstands
+  //         const zoomFactor = newDistance / lastTouchDistance;
+  //         currentZoom *= zoomFactor;
+  //         currentZoom = Math.min(Math.max(currentZoom, 0.5), 3);
+  //         lastTouchDistance = newDistance;
+  //         updateTransform();
+  //       }
+  //       e.preventDefault();
+  //     },
+  //     { passive: false }
+  //   );
+
+  //   image.addEventListener(
+  //     "touchend",
+  //     function (e) {
+  //       // Wenn alle Finger weg sind, beende alle Gesten
+  //       if (e.touches.length === 0) {
+  //         isDragging = false;
+  //         isPinching = false;
+  //       }
+  //       // Falls noch ein Finger übrig ist, wird wieder Dragging aktiviert
+  //       if (e.touches.length === 1) {
+  //         isPinching = false;
+  //         isDragging = true;
+  //         startX = e.touches[0].clientX;
+  //         startY = e.touches[0].clientY;
+  //       }
+  //       e.preventDefault();
+  //     },
+  //     { passive: false }
+  //   );
+
+  //   // ------------------- Ergebnisanzeige -------------------
+  //   document.getElementById("cropButton").addEventListener("click", function () {
+  //     const clonedCrop = cropContainer.cloneNode(true);
+  //     const clonedImage = clonedCrop.querySelector("img");
+  //     if (clonedImage) {
+  //       clonedImage.style.cursor = "default";
+  //     }
+  //     result.innerHTML = "";
+  //     result.appendChild(clonedCrop);
+  //   });
+  //   // alert("Please use the profile page to edit your profile picture.");
+  // });
+
   const everything = document.getElementById("everything");
   everything.addEventListener("click", () => {
     deleteFilter();
@@ -492,15 +694,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // );
   let lastScrollTop = 0;
 
-  function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
-
   window.addEventListener(
     "scroll",
     debounce(function () {
@@ -801,7 +994,7 @@ async function postsLaden() {
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
   const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   console.log(cleanedArray);
-
+  const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
@@ -880,12 +1073,41 @@ async function postsLaden() {
           postDiv.appendChild(img);
         }
         video = document.createElement("video");
+        video.muted = true;
         video.id = extractAfterComma(item.path);
         video.src = tempMedia(item.path);
         video.controls = false;
         video.className = "custom-video";
         addMediaListener(video);
         postDiv.appendChild(video);
+        card.addEventListener("mousemove", function (event) {
+          const video = this.getElementsByTagName("video")[0];
+          // Hole die Position und Größe des Videoelements
+          if (video.readyState >= 4) {
+            const rect = video.getBoundingClientRect();
+            // Berechne die horizontale Position relativ zum Video
+            const mouseX = event.clientX - rect.left;
+            // Errechne den relativen Wert von 0 (links) bis 1 (rechts)
+            const relativePosition = mouseX / rect.width;
+
+            // Bei Videos, deren Dauer noch nicht geladen ist, abbrechen
+            if (!video.duration) return;
+
+            // Setze die aktuelle Wiedergabezeit (currentTime)
+            video.currentTime = relativePosition * video.duration;
+            video.play();
+          }
+
+          // debouncedMoveEnd(video);
+        });
+        card.addEventListener("mouseleave", function (e) {
+          const allMediaElements = document.querySelectorAll("video");
+          allMediaElements.forEach((otherMedia) => {
+            otherMedia.pause();
+          });
+          // const video = this.getElementsByTagName("video")[0];
+          // video.pause();
+        });
       }
     } else if (objekt.contenttype === "text") {
       for (const item of array) {

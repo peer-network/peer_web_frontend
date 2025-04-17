@@ -25,10 +25,17 @@ async function loadTextFile(url, element) {
   try {
     const response = await fetch(url);
     const text = await response.text();
-    element.innerText = text;
+
+    element.innerText = sliceTextAtWord(text) + "...";
   } catch (error) {
     element.innerText = "Fehler beim Laden der Datei.";
   }
+}
+function sliceTextAtWord(text, maxLength = 140) {
+  if (text.length <= maxLength) return text;
+  const sliced = text.slice(0, maxLength);
+  const lastSpace = sliced.lastIndexOf(" ");
+  return sliced.slice(0, lastSpace);
 }
 async function readBytes(url, byteCount) {
   try {
