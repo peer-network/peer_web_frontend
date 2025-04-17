@@ -144,7 +144,7 @@ async function fetchChildComments(parentId) {
     .then((response) => response.json())
     .then((data) => {
       console.log("Antwort vom Server:", data);
-      if (data.data.parentcomments.status === "error") {
+      if (data.data.parentcomments.status === "error" && data.data.parentcomments.ResponseCode !== "This is not a commentId") {
         throw new Error(data.data.parentcomments.ResponseCode);
       } else {
         return data.data.parentcomments.affectedRows;
