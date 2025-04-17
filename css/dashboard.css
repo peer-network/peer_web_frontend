@@ -894,9 +894,21 @@ input:not(:placeholder-shown) + img {
   white-space: normal;
   word-break: break-word;
   overflow-y: auto;
-  height: 100%;
+  height: 87%;
   position: absolute;
 }
+/* .custom-text::after {
+  content: "...";
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 56%;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  backdrop-filter: blur(67px);
+  -webkit-backdrop-filter: blur(12px);
+} */
 .clicked {
   font-size: 1.5rem !important;
 }

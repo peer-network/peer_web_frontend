@@ -26,7 +26,7 @@ async function loadTextFile(url, element) {
     const response = await fetch(url);
     const text = await response.text();
 
-    element.innerText = sliceTextAtWord(text) + "...";
+    element.innerText = text;
   } catch (error) {
     element.innerText = "Fehler beim Laden der Datei.";
   }
