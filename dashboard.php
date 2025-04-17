@@ -174,7 +174,11 @@ include 'host.php';
             <div id="profil-container">
                 <!-- Profil-Bild und Name -->
                 <div class="profile-header">
-                    <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
+                    <div id="cropContainer" class="cropContainer">
+                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
+                        <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
+                        <img id="cropButton" src="svg/ok.svg" alt="edit"> -->
+                    </div>
                     <!-- <div id="badge" class="badge"></div> -->
                     <h2 id="username">&nbsp;</h2>
                     <p id="slug" class="username">&nbsp;</p>
@@ -450,6 +454,7 @@ include 'host.php';
             <div id="closeAddPost" class="btClose"><img src="svg/plus2.svg" alt="close" /></div>
         </div>
     </div>
+    <input type="file" id="profileImageInput" accept="image/*" class="none" />
 </body>
 
 </html>

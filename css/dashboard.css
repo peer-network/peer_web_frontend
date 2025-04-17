@@ -582,7 +582,23 @@ input:not(:placeholder-shown) + img {
   border-radius: 50%;
   aspect-ratio: 1 / 1;
 }
-
+.cropContainer:hover #editProfileImage {
+  display: block !important;
+}
+#editProfileImage,
+#cropButton {
+  left: 50%;
+  top: 36%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  display: none;
+}
+#cropButton {
+  top: 50%;
+}
+#editProfileImage:hover {
+  cursor: pointer;
+}
 .badge {
   position: absolute;
   top: 6rem;
