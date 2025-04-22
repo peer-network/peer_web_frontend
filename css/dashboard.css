@@ -87,7 +87,7 @@ header {
   z-index: 3;
 }
 h1 {
-  display: inline;
+  /* display: inline; */
 }
 
 /* Hauptgrid */
@@ -839,6 +839,7 @@ input:not(:placeholder-shown) + img {
   flex-shrink: 1;
   flex-grow: 1;
 }
+
 /* .card:hover {
   margin-left: -100%;
   width: 200%;
@@ -857,7 +858,7 @@ input:not(:placeholder-shown) + img {
   height: 100%;
   width: 100%;
   left: 0;
-  position: absolute;
+  position: relative;
 }
 
 .shadow {
@@ -885,17 +886,23 @@ input:not(:placeholder-shown) + img {
   object-fit: cover;
 }
 .custom-text {
+  background-color: rgb(32, 32, 32);
+  color: whitesmoke;
   font-size: clamp(12px, 1dvw, 2rem);
   width: 100%;
-  padding: 4rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 1rem 1rem;
   border: none;
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
   overflow-y: auto;
-  height: 87%;
-  position: absolute;
+  height: 57%;
+  position: relative;
+}
+.card[content="text"] .post-text {
+  display: none;
+  height: 7rem;
 }
 /* .custom-text::after {
   content: "...";
@@ -973,18 +980,60 @@ input:not(:placeholder-shown) + img {
   z-index: 9;
   transform: scale(0.8);
 }
-.card h1 {
-  position: absolute;
+.card[content="text"] h1 {
+  z-index: 9;
+  /* position: absolute; */
   width: 100%;
-  top: 60%;
+  top: 2.5rem;
   margin-bottom: 0.4rem;
   text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
   filter: drop-shadow(0 0 5px black);
-  padding: 0.3rem;
+  padding: 0.3rem 1rem;
+
   border-radius: 0.2rem;
+  margin-top: 3rem;
 }
 [content="text"] h1 {
-  background-color: #474747de;
+  /* background-color: var(--background-color); */
+}
+.card[content="text"]:hover h1 {
+  /* top: 3rem !important; */
+  z-index: 100 !important;
+  text-align: center;
+  padding: 0.3rem 1rem;
+  background-color: #ffffffeb;
+  filter: none;
+  text-shadow: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+.card[content="text"] > div:hover > .post-inhalt,
+.card[content="text"] > h1:hover ~ .post-inhalt,
+.card[content="text"]:hover ~ .post-inhalt {
+  background-color: whitesmoke;
+  z-index: 100;
+  height: fit-content;
+  color: #000;
+}
+.card[content="text"]:hover .post-text {
+  display: none;
+}
+.card[content="text"]:hover span {
+  filter: none;
+  text-shadow: none;
+}
+.card[content="text"]:hover > .post {
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  z-index: 99;
+}
+.card[content="text"] > div:hover > .custom-text,
+.card[content="text"] > h1:hover + .custom-text,
+.card[content="text"]:hover > .custom-text {
+  height: calc(100% - 9rem);
+  background-color: whitesmoke;
+  color: #000;
 }
 .post-userName {
   position: absolute;
@@ -1016,16 +1065,22 @@ input:not(:placeholder-shown) + img {
 .post-text {
   display: table-column;
   font-size: 0.8rem;
-  /* z-index: 2; */
   position: absolute;
   top: calc(60% + 2rem);
+  /* background-color: grey; */
+  padding: 0.5rem;
+  width: calc(100% - 2rem);
+  max-height: 7rem;
+  overflow-y: auto;
+  box-shadow: 0 -0.1rem 2rem #00000075;
+  background-color: transparent;
 }
 
 .post-inhalt {
   position: absolute;
   top: 0rem;
   height: 80%;
-  width: 98%;
+  width: 100%;
   padding: 1rem;
   left: 0;
   color: var(--white);
@@ -1223,6 +1278,7 @@ input:not(:placeholder-shown) + img {
   max-height: 97%;
   height: auto;
   max-width: 100%;
+  width: 100%;
   border-radius: 1rem;
   scroll-snap-align: start;
 }

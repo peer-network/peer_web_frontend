@@ -1076,26 +1076,23 @@ async function postsLaden() {
         video.muted = true;
         video.id = extractAfterComma(item.path);
         video.src = tempMedia(item.path);
+        video.preload = "metadata";
         video.controls = false;
         video.className = "custom-video";
         addMediaListener(video);
         postDiv.appendChild(video);
         card.addEventListener("mousemove", function (event) {
           const video = this.getElementsByTagName("video")[0];
-          // Hole die Position und Größe des Videoelements
-          if (video.readyState >= 4) {
+
+          if (video.readyState >= 2) {
             const rect = video.getBoundingClientRect();
-            // Berechne die horizontale Position relativ zum Video
             const mouseX = event.clientX - rect.left;
-            // Errechne den relativen Wert von 0 (links) bis 1 (rechts)
             const relativePosition = mouseX / rect.width;
 
-            // Bei Videos, deren Dauer noch nicht geladen ist, abbrechen
             if (!video.duration) return;
 
-            // Setze die aktuelle Wiedergabezeit (currentTime)
             video.currentTime = relativePosition * video.duration;
-            video.play();
+            if (video.paused || video.currentTime === 0) video.play();
           }
 
           // debouncedMoveEnd(video);
@@ -1103,7 +1100,7 @@ async function postsLaden() {
         card.addEventListener("mouseleave", function (e) {
           const allMediaElements = document.querySelectorAll("video");
           allMediaElements.forEach((otherMedia) => {
-            otherMedia.pause();
+            if (!otherMedia.paused) otherMedia.pause();
           });
           // const video = this.getElementsByTagName("video")[0];
           // video.pause();
@@ -1115,8 +1112,23 @@ async function postsLaden() {
         // div.id = objekt.id;
         loadTextFile(tempMedia(item.path), div);
         div.className = "custom-text";
+        const h1 = document.createElement("h1");
+        h1.textContent = objekt.title;
+        postDiv.appendChild(h1);
         postDiv.appendChild(div);
       }
+      card.addEventListener("mousemove", function (event) {
+        const ctext = this.getElementsByClassName("custom-text")[0];
+        // const rect = this.getBoundingClientRect();
+        // const mouseY = event.clientY - rect.top;
+        // const relativePosition = mouseY / rect.height;
+        // setScrollPercent(ctext, relativePosition, true);
+        ctext.classList.add("scroll-shadows");
+      });
+      card.addEventListener("mouseleave", function (e) {
+        const ctext = this.getElementsByClassName("custom-text")[0];
+        ctext.classList.remove("scroll-shadows");
+      });
     }
 
     const shadowDiv = document.createElement("div");
@@ -1146,7 +1158,12 @@ async function postsLaden() {
     inhaltDiv.appendChild(userImg);
     inhaltDiv.appendChild(userNameSpan);
     inhaltDiv.appendChild(time_ago);
-    inhaltDiv.appendChild(h1);
+    if (objekt.contenttype === "text") {
+      // const customText = postDiv.querySelector(".custom-text");
+      // customText.prepend(h1);
+    } else {
+      inhaltDiv.appendChild(h1);
+    }
     inhaltDiv.appendChild(p);
 
     const svgNS = "http://www.w3.org/2000/svg";
@@ -1976,6 +1993,24 @@ function restoreFilterSettings() {
     });
   }
   document.getElementById("searchText").value = localStorage.getItem("tags") || ""; // Tags wiederherstellen
+}
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .getRegistrations()
+    .then(function (registrations) {
+      for (let registration of registrations) {
+        registration.unregister().then(function (success) {
+          if (success) {
+            console.log("Service Worker erfolgreich abgemeldet.");
+          } else {
+            console.warn("Service Worker konnte nicht abgemeldet werden.");
+          }
+        });
+      }
+    })
+    .catch(function (error) {
+      console.error("Fehler beim Abrufen der Registrierungen:", error);
+    });
 }
 // function connectImagesWithGradient(container, img1, img2) {
 //   // Container und Bilder auswählen
