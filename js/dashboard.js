@@ -919,29 +919,6 @@ function updateOnlineStatus() {
   }
 }
 
-async function getUser() {
-  const profil = await fetchHelloData();
-  const id = getCookie("userID");
-  if (!id) {
-    const profil_container = document.getElementById("profil-container");
-    const profil_login = document.getElementById("profil-login");
-    profil_container.classList.add("none");
-    profil_login.classList.remove("none");
-  } else {
-    document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
-    document.getElementById("slug").innerText = "#" + profil.data.profile.affectedRows.slug;
-    document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
-    document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
-    document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
-    const img = document.getElementById("profilbild");
-    img.onerror = function () {
-      this.src = "svg/noname.svg";
-    };
-    img.src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
-  }
-  return profil;
-}
-
 function appendPost(json) {
   const parentElement = document.getElementById("parent-id"); // Das übergeordnete Element
   const letztesDiv = parentElement.lastElementChild;
@@ -992,7 +969,7 @@ async function postsLaden() {
   const textsearch = normalWords.join(" ");
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-  const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   console.log(cleanedArray);
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
@@ -1258,7 +1235,7 @@ async function postsLaden() {
     });
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
-    postsLaden.offset++;
+    postsLaden.offset += 20;
   });
 
   // console.log("amountcomments:", objekt.amountcomments);

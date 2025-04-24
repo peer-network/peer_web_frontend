@@ -1,0 +1,106 @@
+.dashboard {
+  grid-template-areas:
+    "sidebar header profil"
+    "sidebar main profil";
+  grid-template-rows: 5rem auto;
+}
+#wallet {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  grid-template-columns: 0% 100%;
+  grid-template-rows: auto;
+  height: 90%;
+  width: 100%;
+  gap: 2rem;
+  padding: 1rem 3rem;
+}
+#wallet-amount img {
+  width: 2rem;
+  height: auto;
+  display: inline-block;
+}
+#wallet-amount {
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-around;
+}
+#wallet-amount > div {
+  display: grid;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#wallet-amount > div > p {
+  grid-column: span 2;
+}
+#freecontent h2,
+#freecontent h3 {
+  text-align: center;
+  margin: 1rem 0;
+}
+.limit-container {
+  margin-bottom: 20px;
+}
+
+.label {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.progress-bar {
+  background: #333;
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(to right, #444, #5ea4ff);
+  width: var(--progress);
+  transition: width 0.3s ease;
+}
+.radial-progress {
+  --size: 200px;
+  --thickness: 12px;
+  --progress: 65; /* in Prozent (0–100) */
+
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: conic-gradient(#5ea4ff calc(var(--progress) * 1%), #333 calc(var(--progress) * 1%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: auto;
+}
+
+.radial-progress::before {
+  content: "";
+  position: absolute;
+  width: calc(var(--size) - var(--thickness) * 2);
+  height: calc(var(--size) - var(--thickness) * 2);
+  background: #000;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.value {
+  color: #5ea4ff;
+  font-size: 24px;
+  text-align: center;
+  z-index: 2;
+}
+
+.label {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.label span {
+  color: #5ea4ff;
+}
