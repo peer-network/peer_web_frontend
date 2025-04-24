@@ -806,7 +806,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //       processFiles(files);
   //     }
   //   });
-  postsLaden();
+  // postsLaden();
 });
 // window.addEventListener("load", () => {
 
@@ -1237,7 +1237,6 @@ async function postsLaden() {
     parentElement.appendChild(card);
   });
   postsLaden.offset += 20;
-
   // console.log("amountcomments:", objekt.amountcomments);
   // console.log("amountdislikes:", objekt.amountdislikes);
   // console.log("amountlikes:", objekt.amountlikes);
