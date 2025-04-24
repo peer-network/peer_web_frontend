@@ -1235,8 +1235,8 @@ async function postsLaden() {
     });
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
-    postsLaden.offset += 20;
   });
+  postsLaden.offset += 20;
 
   // console.log("amountcomments:", objekt.amountcomments);
   // console.log("amountdislikes:", objekt.amountdislikes);
