@@ -84,7 +84,7 @@
   position: absolute;
   width: calc(var(--size) - var(--thickness) * 2);
   height: calc(var(--size) - var(--thickness) * 2);
-  background: #000;
+  background: #262626;
   border-radius: 50%;
   z-index: 1;
 }
