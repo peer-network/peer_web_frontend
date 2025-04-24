@@ -216,10 +216,10 @@ include 'host.php';
                         <img class="icon" src="svg/icon-network.svg" alt="network" />
                         <p>Network</p>
                     </div>
-                    <div class="menu-item comming-soon">
+                    <a href="wallet.php" class="menu-item">
                         <img class="icon" src="svg/icon-wallet.svg" alt="wallet" />
                         <p>Wallet</p>
-                    </div>
+                    </a>
                     <!-- Bottom-Icons -->
                     <div class="bottom-icons">
                         <div id="btAddPost" class="icon-add">

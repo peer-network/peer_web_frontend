@@ -95,3 +95,25 @@ async function hello() {
     throw error;
   }
 }
+async function getUser() {
+  const profil = await fetchHelloData();
+  const id = getCookie("userID");
+  if (!id) {
+    const profil_container = document.getElementById("profil-container");
+    const profil_login = document.getElementById("profil-login");
+    profil_container.classList.add("none");
+    profil_login.classList.remove("none");
+  } else {
+    document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
+    document.getElementById("slug").innerText = "#" + profil.data.profile.affectedRows.slug;
+    document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
+    document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
+    document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
+    const img = document.getElementById("profilbild");
+    img.onerror = function () {
+      this.src = "svg/noname.svg";
+    };
+    img.src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
+  }
+  return profil;
+}

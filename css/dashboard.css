@@ -674,6 +674,8 @@ input:not(:placeholder-shown) + img {
   padding: 10px;
   position: relative;
   border: 2px solid transparent;
+  text-decoration: none;
+  color: var(--text-color);
 }
 
 .filterContainer {
@@ -966,7 +968,9 @@ input:not(:placeholder-shown) + img {
   z-index: 9;
   transform: scale(0.8);
 }
-
+.card[content="video"] h1 {
+  margin-top: 100%;
+}
 .card[content="audio"] {
   width: 28rem;
 }
@@ -1281,6 +1285,8 @@ input:not(:placeholder-shown) + img {
   width: 100%;
   border-radius: 1rem;
   scroll-snap-align: start;
+  height: 100%;
+  width: auto;
 }
 
 #comments-container {
