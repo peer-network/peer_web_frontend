@@ -61,9 +61,9 @@ function commentToDom(c, append = true) {
               }
             });
           }
-          console.log("Ergebnis:", result);
+          // console.log("Ergebnis:", result);
         });
-        console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
+        // console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
         // window.location.href = "profile.html?user=" + c.user.id;
       },
       { capture: true }
@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
-      console.log("Ergebnis:", result);
+      // console.log("Ergebnis:", result);
     });
     // document.getElementById("commentInput").focus();
     // createComment(attributeValue, "test");
@@ -416,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
     document.documentElement.requestFullscreen().catch((err) => {
-      console.warn(`Vollbildmodus konnte nicht aktiviert werden: ${err.message}`);
+      // console.warn(`Vollbildmodus konnte nicht aktiviert werden: ${err.message}`);
     });
   }
 
@@ -428,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         postsLaden();
-        console.log("Der Footer ist jetzt im Viewport sichtbar!");
+        // console.log("Der Footer ist jetzt im Viewport sichtbar!");
       }
     });
   };
@@ -615,12 +615,12 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.forEach((element) => {
           element.classList.remove("none");
         });
-        console.log(`${event.target.name} wurde aktiviert.`);
+        // console.log(`${event.target.name} wurde aktiviert.`);
       } else {
         elements.forEach((element) => {
           element.classList.add("none");
         });
-        console.log(`${event.target.name} wurde deaktiviert.`);
+        // console.log(`${event.target.name} wurde deaktiviert.`);
       }
       location.reload();
     });
@@ -806,11 +806,9 @@ document.addEventListener("DOMContentLoaded", () => {
   //       processFiles(files);
   //     }
   //   });
-  postsLaden();
+  // postsLaden();
+  // postsLaden();
 });
-// window.addEventListener("load", () => {
-
-// });
 
 async function addScrollBlocker(element) {
   let isAnimating = false;
@@ -930,29 +928,8 @@ async function postsLaden() {
     postsLaden.offset = 0; // Initialwert
   }
 
-  // // Formular auswählen
-  // const form = document.querySelector("#filter");
-
-  // // Alle Checkboxen im Formular auswählen
-  // const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
-
-  // // Werte der ausgewählten Checkboxen sammeln
-  // const checkedValues = Array.from(checkboxes).map(
-  //   (checkbox) => checkbox.value
-  // );
-
-  // // JSON-Objekt erstellen
-  // const jsonResult = {
-  //   filterBy: checkedValues,
-  // };
-
-  // // JSON anzeigen (z. B. in der Konsole)
-  // console.log(JSON.stringify(jsonResult));
-  // Formular mit ID auswählen
-
   const form = document.querySelector("#filter");
 
-  // Alle Checkboxen innerhalb des Formulars abrufen
   const checkboxes = form.querySelectorAll(".filteritem:checked");
 
   // Die Werte der angehakten Checkboxen sammeln
@@ -962,7 +939,6 @@ async function postsLaden() {
   // const result = values.join(" ");
 
   // Ergebnis ausgeben
-  console.log(values);
   const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
   // const textsearch = document.getElementById("searchText").value;
   const { hashtags, normalWords } = extractWords(document.getElementById("searchText").value.toLowerCase());
@@ -970,7 +946,7 @@ async function postsLaden() {
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
   const posts = await getPosts(postsLaden.offset, 20, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-  console.log(cleanedArray);
+  // console.log(cleanedArray);
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
@@ -995,11 +971,6 @@ async function postsLaden() {
     if (objekt.cover) {
       cover = JSON.parse(objekt.cover);
     }
-    // for (const item of array) {
-    //   console.log("Path:", item.path);
-    //   console.log("Size:", item.options.size);
-    //   console.log("Resolution:", item.options.resolution);
-    // }
     if (objekt.contenttype === "image") {
       if (array.length > 1) postDiv.classList.add("multi");
       for (const item of array) {
@@ -1008,10 +979,7 @@ async function postsLaden() {
           img.setAttribute("height", img.naturalHeight);
           img.setAttribute("width", img.naturalWidth);
         };
-        img.onerror = (error) => {
-          // Fehler behandeln, wenn das Bild nicht geladen werden kann
-          // reject(error);
-        };
+        img.onerror = (error) => {};
 
         img.src = tempMedia(item.path);
         img.alt = "";
@@ -1112,7 +1080,6 @@ async function postsLaden() {
     shadowDiv.classList.add("shadow");
     postDiv.appendChild(shadowDiv);
 
-    // <div class="post-inhalt"> erstellen und Titel und Text hinzufügen
     const inhaltDiv = document.createElement("div");
     inhaltDiv.classList.add("post-inhalt");
     const userNameSpan = document.createElement("span");
@@ -1235,23 +1202,8 @@ async function postsLaden() {
     });
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
-    postsLaden.offset += 20;
   });
-
-  // console.log("amountcomments:", objekt.amountcomments);
-  // console.log("amountdislikes:", objekt.amountdislikes);
-  // console.log("amountlikes:", objekt.amountlikes);
-  // console.log("amountviews:", objekt.amountviews);
-  // console.log("contenttype:", objekt.contenttype);
-  // console.log("createdat:", objekt.createdat);
-  // console.log("isdisliked:", objekt.isdisliked);
-  // console.log("isliked:", objekt.isliked);
-  // console.log("isreported:", objekt.isreported);
-  // console.log("issaved:", objekt.issaved);
-  // console.log("isviewed:", objekt.isviewed);
-  // console.log("media:", objekt.media);
-  // console.log("mediadescription:", objekt.mediadescription);
-  // console.log("title:", objekt.title);
+  postsLaden.offset += posts.data.getallposts.affectedRows.length;
 }
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -1277,7 +1229,7 @@ function cancelTimeout() {
 async function viewed(object) {
   viewPost(object.id);
   object.isviewed = true;
-  console.log(object.id);
+  // console.log(object.id);
 }
 
 async function postClicked(objekt) {
@@ -1407,7 +1359,7 @@ async function postClicked(objekt) {
       });
     });
   mostliked.sort((a, b) => b.liked - a.liked);
-  console.log(mostliked);
+  // console.log(mostliked);
   const mostlikedcontainer = document.getElementById("mostliked");
   mostlikedcontainer.innerHTML = "";
   for (let i = 0; i < 3 && i < mostliked.length; i++) {
@@ -1706,7 +1658,7 @@ function addDeleteListener(element) {
 // Die Funktion, die beim Event aufgerufen wird
 function handleDelete(event) {
   event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
-  console.log("Post löschen:", event.target);
+  // console.log("Post löschen:", event.target);
   event.target.parentElement.remove();
   // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
@@ -1793,7 +1745,7 @@ async function fetchTags(searchStr) {
     }
     return result.data.tagsearch.affectedRows;
   } catch (error) {
-    console.error("Error fetching tags:", error);
+    // console.error("Error fetching tags:", error);
     return [];
   }
 }
@@ -1978,15 +1930,15 @@ if ("serviceWorker" in navigator) {
       for (let registration of registrations) {
         registration.unregister().then(function (success) {
           if (success) {
-            console.log("Service Worker erfolgreich abgemeldet.");
+            // console.log("Service Worker erfolgreich abgemeldet.");
           } else {
-            console.warn("Service Worker konnte nicht abgemeldet werden.");
+            // console.warn("Service Worker konnte nicht abgemeldet werden.");
           }
         });
       }
     })
     .catch(function (error) {
-      console.error("Fehler beim Abrufen der Registrierungen:", error);
+      // console.error("Fehler beim Abrufen der Registrierungen:", error);
     });
 }
 // function connectImagesWithGradient(container, img1, img2) {

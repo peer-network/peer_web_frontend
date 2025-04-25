@@ -969,10 +969,17 @@ input:not(:placeholder-shown) + img {
   transform: scale(0.8);
 }
 .card[content="video"] h1 {
-  margin-top: 100%;
+  margin-top: 20cqh;
+}
+.card[content="audio"] h1,
+.card[content="image"] h1 {
+  margin-top: 20cqh;
+}
+.card[content="audio"] h1 {
+  margin-top: 20cqh;
 }
 .card[content="audio"] {
-  width: 28rem;
+  width: 20cqh;
 }
 .card[content="audio"]::before {
   content: url("../svg/audio.svg");
@@ -1076,7 +1083,7 @@ input:not(:placeholder-shown) + img {
   width: calc(100% - 2rem);
   max-height: 7rem;
   overflow-y: auto;
-  box-shadow: 0 -0.1rem 2rem #00000075;
+  /* box-shadow: 0 -0.1rem 2rem #00000075; */
   background-color: transparent;
 }
 
