@@ -807,6 +807,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //     }
   //   });
   // postsLaden();
+  // postsLaden();
 });
 
 async function addScrollBlocker(element) {
