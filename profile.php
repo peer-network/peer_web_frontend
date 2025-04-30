@@ -1,13 +1,82 @@
+
+<!--<div id="profil-container">
+    <!-- Profil-Bild und Name -->
+    <!--<div class="profile-header">
+        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture">
+        <div id="badge" class="badge"></div>
+        <h2 id="username">logged out</h2>
+        <p class="username">@unlicensed</p>
+    </div>
+
+    <!-- Statistiken -->
+    <!--<div class="stats">
+        <div class="stat">
+            <span id="userPosts"></span>
+            <p>Posts</p>
+        </div>
+        <div class="stat">
+            <span id="followers"></span>
+            <p>Followers</p>
+        </div>
+        <div class="stat">
+            <span id="following"></span>
+            <p>Following</p>
+        </div>
+    </div>
+
+    <!-- Menü -->
+    <!--<div class="menu stats">
+        <div class="menu-item active">
+            <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard">
+            <p>Dashboard</p>
+        </div>
+        <div class="menu-item">
+            <img class="icon" src="svg/icon-messages.svg" alt="messages">
+            <p>Messages</p>
+            <div class="notification-badge">8</div>
+        </div>
+        <div class="menu-item">
+            <img class="icon" src="svg/icon-network.svg" alt="network">
+            <p>Network</p>
+        </div>
+        <div class="menu-item">
+            <img class="icon" src="svg/icon-wallet.svg" alt="wallet">
+            <p>Wallet</p>
+        </div>
+        <!-- Bottom-Icons -->
+        <!--<div class="bottom-icons">
+            <div id="btAddPost" class="icon-add">
+                <!-- <svg class="icon" width="100%" height="100%" viewBox="0 0 100 100">
+                    <g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="11">
+                        <path d="m50 10v80" />
+                        <path d="m90 50h-80" />
+                    </g>
+                </svg> -->
+                <!--<img class="icon" src="svg/icon-add.svg" alt="add">
+            </div>
+
+        </div>
+        <div id="" class="group-icon">
+            <img class="icon icon-group" src="svg/icon-group.svg" alt="settings">
+        </div>
+    </div>
+</div>
+<div id="profil-login" class="none">
+    <a href="/login.php">login</a>
+    <a href="/register.php">register</a>
+</div>-->
+
 <?php
 header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
 include 'host.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="de">
 
 <head>
-    <link rel="stylesheet" href="css/dashboard.css?<?php echo filemtime('css/dashboard.css'); ?>" />
+    <link rel="stylesheet" href="css/profile.css?<?php echo filemtime('css/profile.css'); ?>" />
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/scrollshadow.css?<?php echo filemtime('css/scrollshadow.css'); ?>" />
 
@@ -16,14 +85,12 @@ include 'host.php';
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
     <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
-    <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
-
 
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
     ?>
-    <title>Dashboard</title>
+    <title>Profile</title>
 </head>
 
 <body>
@@ -57,10 +124,17 @@ include 'host.php';
         </svg>
     </header>
 
-    <article id="dashboard" class="dashboard">
+    <article id="dashboard" class="profile dashboard">
         <header id="header">
             <div id="DashboardHeader" class="header">
-                
+                <div class="dash">
+                    <img class="logo" src="svg/logo_sw.svg" alt="Peer Network Logo" />
+                    <h1 id="h1">My Profile</h1>
+                </div>
+                <div class="search-group">
+                    <input name="search" id="searchText" type="text" placeholder="Search" aria-label="Search" />
+                    <img class="lupe" src="svg/lupe.svg" alt="search" />
+                </div>
                 <div class="postOptions">
                     <div id="everything" class="postOptionsButton" title="show everything">
                         <span>Everything</span>
@@ -81,135 +155,53 @@ include 'host.php';
         <!-- Sidebar -->
         <aside class="sidebar">
             <form id="filter" class="filterContainer">
-                    <div class="dash">
-                        <img class="logo" src="svg/logo_sw.svg" alt="Peer Network Logo" />
-                        <h1 id="h1">Dashboard</h1>
-                    </div>
-                    <div class="search-group">
-                        <input name="search" id="searchText" type="text" placeholder="Search" aria-label="Search" />
-                        <img class="lupe" src="svg/lupe.svg" alt="search" />
-                    </div>
-                <div class="filter-sec">
-                    <div class="center">
-                        &nbsp;Filter
-                    </div>
-                    <menu class="filter">
-                        <div class="filterGroup">
-                            <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" />
-                            <label for="filterImage" class="filterButton" title="Fotos">
-                                <img src="svg/photo.svg" alt="Image filter"/>
-                                <span>Photo</span>
-                            </label>
-                            <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" />
-                            <label for="filterNotes" class="filterButton" title="Notes" name="notes">
-                                <img src="svg/text.svg" alt="Notes filter"/>
-                                <span>Text</span>
-                            </label>
-
-                        </div>
-                        <div class="filterGroup">
-                            <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" />
-                            <label for="filterVideo" class="filterButton" title="Video">
-                                <img src="svg/videos.svg" alt="Video filter"/>
-                                <span>Video</span>
-                            </label>
-                            <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" />
-                            <label for="filterAdio" class="filterButton" title="Audio">
-                                <img src="svg/music.svg" alt="Audio filter"/>
-                                <span>Music</span>
-                            </label>
-                            <!-- <input checked id="filterPodcast" type="checkbox" name="PODCAST" />
-                            <label for="filterPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast filter" /></label>
-                            <input checked id="filterFickFuck" type="checkbox" name="LOCAL" />
-                            <label for="filterFickFuck" class="filterButton" title="local"><img src="svg/filterFickFuck.svg" alt="Local filter" /></label> -->
-                        </div>
-                        <!-- <div class="filterGroup">
-                            <input checked id="filterPolls" class="filterButton" type="checkbox" name="POLLS" />
-                            <label for="filterPolls" class="filterButton" title="Polls"><img src="svg/filterPolls.svg" alt="Polls filter" /></label>
-                            <input checked id="filterQuiz" type="checkbox" name="QUIZ" />
-                            <label for="filterQuiz" class="filterButton" title="Quiz"><img src="svg/filterQuiz.svg" alt="Quiz filter" /></label>
-                            <input checked id="filterEvent" type="checkbox" name="EVENT" />
-                            <label for="filterEvent" class="filterButton" title="Event"><img src="svg/filterEvent.svg" alt="Event filter" /></label>
-                        </div> -->
-                    </menu>
+                <div class="center">
+                    <img class="icon" src="svg/filterApply.svg" alt="apply Filter" />
+                    &nbsp;Apply filter
                 </div>
-                <div class="sort-sec">
-                    <div class="center">
-                        &nbsp;Sort
-                    </div>
-                    <div class="menu">
-                        <div class="filterGroup">
-                            <input id="filterMostLiked" sortby="LIKES" class="chkMost" type="radio" name="sortby" />
-                            <label for="filterMostLiked" class="filterButton most" title="Sort by most liked">
-                                <img src="svg/post-like.svg" alt="MostLiked filter"/>
-                                <span>Most<br>liked</span>
-                            </label>
-                            <input id="filterMostCommented" sortby="COMMENTS" class="chkMost" type="radio" name="sortby"/>
-                            <label for="filterMostCommented" class="filterButton most" title="Sort by most commented">
-                                <img src="svg/post-comment.svg" alt="MostCommented filter"/>
-                                <span>Most<br>commented</span>
-                            </label>
-                        </div>
-                        <div class="filterGroup">
-                            <input id="filterMostPopular" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
-                            <label for="filterMostPopular" class="filterButton most" title="Sort by most popular"/>
-                                <img src="svg/popular.svg" alt="MostPopular filter">
-                                <span>Most<br>popular</span>
-                            </label>
-                            <input id="filterMostControversial" sortby="DISLIKES" class="chkMost" type="radio" name="sortby" />
-                            <label for="filterMostControversial" class="filterButton most" title="Sort by most controversial">
-                                <img src="svg/controversial.svg" alt="MostControversial filter"/>
-                                <span>Most<br>controversial</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="con-freeaction">
-                    <h2>Daily free actions</h2>
-                    <div class="limit-container">
-                        <div class="label">
-                            Likes
-                            <span>(</span>
-                            <span id="Likesused">&nbsp;</span>
-                            <span>/</span>
-                            <span id="Likesavailable">&nbsp;</span>
-                            <span>&nbsp;left)</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div id="LikesStat" class="progress" style="--progress: 0%;"></div>
-                        </div>
-                    </div>
+                <menu class="filter">
+                    <div class="filterGroup">
+                        <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" />
+                        <label for="filterImage" class="filterButton" title="Fotos"><img src="svg/filterImage.svg" alt="Image filter" /></label>
+                        <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" />
+                        <label for="filterNotes" class="filterButton" title="Notes" name="notes"><img src="svg/filterNotes.svg" alt="Notes filter" /></label>
 
-                    <div class="limit-container">
-                        <div class="label">
-                            Comments
-                            <span>(</span>
-                            <span id="Commentsused">&nbsp;</span>
-                            <span>/</span>
-                            <span id="Commentsavailable">&nbsp;</span>
-                            <span>&nbsp;left)</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div id="CommentsStat" class="progress" style="--progress: 0%;"></div>
-                        </div>
                     </div>
+                    <div class="filterGroup">
+                        <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" />
+                        <label for="filterVideo" class="filterButton" title="Video"><img src="svg/filterVideo.svg" alt="Video filter" /></label>
+                        <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" />
+                        <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter" /></label>
+                        <!-- <input checked id="filterPodcast" type="checkbox" name="PODCAST" />
+                        <label for="filterPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast filter" /></label>
+                        <input checked id="filterFickFuck" type="checkbox" name="LOCAL" />
+                        <label for="filterFickFuck" class="filterButton" title="local"><img src="svg/filterFickFuck.svg" alt="Local filter" /></label> -->
+                    </div>
+                    <!-- <div class="filterGroup">
+                        <input checked id="filterPolls" class="filterButton" type="checkbox" name="POLLS" />
+                        <label for="filterPolls" class="filterButton" title="Polls"><img src="svg/filterPolls.svg" alt="Polls filter" /></label>
+                        <input checked id="filterQuiz" type="checkbox" name="QUIZ" />
+                        <label for="filterQuiz" class="filterButton" title="Quiz"><img src="svg/filterQuiz.svg" alt="Quiz filter" /></label>
+                        <input checked id="filterEvent" type="checkbox" name="EVENT" />
+                        <label for="filterEvent" class="filterButton" title="Event"><img src="svg/filterEvent.svg" alt="Event filter" /></label>
+                    </div> -->
+                </menu>        
 
-                    <div class="limit-container">
-                        <div class="label">
-                            Posts
-                            <span>(</span>
-                            <span id="Postsused">&nbsp;</span>
-                            <span>/</span>
-                            <span id="Postsavailable">&nbsp;</span>
-                            <span>&nbsp;left)</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div id="PostsStat" class="progress" style="--progress: 0%;"></div>
-                        </div>
+                <div class="menu">
+                    <div class="filterGroup">
+                        <input id="filterMostLiked" sortby="LIKES" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostLiked" class="filterButton most" title="Sort by most liked"><img src="svg/post-like.svg" alt="MostLiked filter" />Most<br>liked</label>
+                        <input id="filterMostCommented" sortby="COMMENTS" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostCommented" class="filterButton most" title="Sort by most commented"><img src="svg/post-comment.svg" alt="MostCommented filter" />Most<br>commented</label>
+                    </div>
+                    <div class="filterGroup">
+                        <input id="filterMostPopular" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostPopular" class="filterButton most" title="Sort by most popular"><img src="svg/popular.svg" alt="MostPopular filter" />Most<br>popular</label>
+                        <input id="filterMostControversial" sortby="DISLIKES" class="chkMost" type="radio" name="sortby" />
+                        <label for="filterMostControversial" class="filterButton most" title="Sort by most controversial"><img src="svg/controversial.svg" alt="MostControversial filter" />Most<br>controversial</label>
                     </div>
                 </div>
             </form>
-        
         </aside>
 
         <!-- Main Content Area (Mittlere Spalte mit einem inneren Grid) -->

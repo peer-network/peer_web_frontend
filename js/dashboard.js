@@ -1716,8 +1716,8 @@ async function fetchTags(searchStr) {
     Authorization: `Bearer ${accessToken}`,
   });
   const query = `
-      query Tagsearch($searchstr: String!) {
-          tagsearch(tagname: $searchstr, limit: 10) {
+      query searchTags($searchstr: String!) {
+          searchTags(tagname: $searchstr, limit: 10) {
               status
               counter
               ResponseCode
@@ -1740,10 +1740,10 @@ async function fetchTags(searchStr) {
     const result = await response.json();
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.tagsearch.affectedRows.length) {
+    if (!result.data.searchtags.affectedRows.length) {
       failedSearches.add(searchStr);
     }
-    return result.data.tagsearch.affectedRows;
+    return result.data.searchtags.affectedRows;
   } catch (error) {
     // console.error("Error fetching tags:", error);
     return [];

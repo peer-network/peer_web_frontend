@@ -103,7 +103,6 @@ include 'host.php';
                 <div id="PostsStat" class="progress" style="--progress: 0%;"></div>
               </div>
             </div>
-
           </div>
         </div>
         <div id="wallet-amount">

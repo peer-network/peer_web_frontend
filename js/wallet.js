@@ -1,8 +1,8 @@
 getUser();
 dailyfree();
-currentliquidity();
+balance();
 nextmint();
-async function currentliquidity() {
+async function balance() {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -13,8 +13,8 @@ async function currentliquidity() {
 
   // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
-    query: `query Currentliquidity {
-        currentliquidity {
+    query: `query balance {
+        balance {
             currentliquidity
         }
     }`,
@@ -37,8 +37,8 @@ async function currentliquidity() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
 
-    document.getElementById("token").innerText = result.data.currentliquidity.currentliquidity;
-    const formatted = (result.data.currentliquidity.currentliquidity * 0.1).toFixed(2).replace(".", ",") + " €";
+    document.getElementById("token").innerText = result.data.balance.balance;
+    const formatted = (result.data.balance.balance * 0.1).toFixed(2).replace(".", ",") + " €";
     document.getElementById("money").innerText = formatted;
     return result.data.hello;
   } catch (error) {
@@ -57,8 +57,8 @@ async function dailyfree() {
 
   // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
-    query: `query Dailyfreestatus {
-    dailyfreestatus {
+    query: `query getDailyFreeStatus {
+    getDailyFreeStatus {
         status
         ResponseCode
         affectedRows {
@@ -86,7 +86,7 @@ async function dailyfree() {
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-    result.data.dailyfreestatus.affectedRows.forEach((entry) => {
+    result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
       document.getElementById(entry.name + "used").innerText = entry.used;
       document.getElementById(entry.name + "available").innerText = entry.available;
       const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
@@ -94,7 +94,7 @@ async function dailyfree() {
       console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
 
-    return result.data.dailyfreestatus;
+    return result.data.getDailyFreeStatus;
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
@@ -131,3 +131,5 @@ function getNext0930() {
 
   return next0930;
 }
+
+

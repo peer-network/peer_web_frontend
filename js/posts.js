@@ -8,8 +8,8 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
   });
   title = sanitizeString(title);
   if (!sortby) sortby = "NEWEST";
-  let searchstr = `query Getallposts {
-    getallposts(
+  let searchstr = `query ListPosts {
+    listPosts(
       sortBy: ${sortby},
       postLimit: ${limit},
       postOffset: ${offset},
