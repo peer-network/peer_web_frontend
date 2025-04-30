@@ -1,0 +1,119 @@
+<?php
+/**
+ * Author: Luqman
+ * Dated: 29 April 2025
+ * Usage: This template provides the HTML structure for the private chat container.
+ * It contains the layout for displaying messages, input fields and other necessary elements
+ * to facilitate a one-on-one chat experience. This template is specifically used in the private chat page
+ * (privatechat.php) and is designed to handle private communication between users.
+ */
+?>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <img src="https://i.pravatar.cc/40?img=1" alt="Amelie" class="avatar">
+        <div class="username">Sparkasse Wanderverein Brenner</div>
+        <div class="username">56 Members</div>
+    </div>
+
+    <div class="chat-messages">
+        <div class="message left">
+            <div class="profile_avatar">
+                <img src="https://i.pravatar.cc/40?img=1" class="avatar" alt="Avatar">
+            </div>
+            <div class="message_content">
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="message right">
+            <div class="profile_avatar">
+                <img src="https://i.pravatar.cc/40?img=2" class="avatar" alt="Avatar">
+            </div>
+            <div class="message_content">
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="message left">
+            <div class="profile_avatar">
+                <img src="https://i.pravatar.cc/40?img=3" class="avatar" alt="Avatar">
+            </div>
+            <div class="message_content">
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="message right">
+            <div class="profile_avatar">
+                <img src="https://i.pravatar.cc/40?img=2" class="avatar" alt="Avatar">
+            </div>
+            <div class="message_content">
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+                <div class="bubble blue">
+                    Send me other pictures and posts.
+                    <span class="time">9:30</span>
+                </div>
+                <div class="bubble blue">
+                    Send me other pictures and posts.
+                    <span class="time">9:30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="message left">
+            <div class="profile_avatar">
+                <img src="https://i.pravatar.cc/40?img=1" class="avatar" alt="Avatar">
+            </div>
+            <div class="message_content">
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="message right">
+            <div class="profile_avatar">
+                <img src="https://i.pravatar.cc/40?img=2" class="avatar" alt="Avatar">
+            </div>
+            <div class="message_content">
+                <div class="bubble blue">
+                    Yeah right? :)
+                    <span class="time">9:30</span>
+                </div>
+                <div class="bubble blue">
+                    Send me other pictures and posts.
+                    <span class="time">9:30</span>
+                </div>
+                <div class="bubble blue">
+                    Send me other pictures and posts.
+                    <span class="time">9:30</span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="chat-input">
+        <img src="https://i.pravatar.cc/40?img=2" class="avatar">
+        <textarea name="" id="" cols="30" rows="4" placeholder="Write a message ..."></textarea>
+    </div>
+</div>

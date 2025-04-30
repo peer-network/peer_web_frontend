@@ -97,6 +97,7 @@ async function createComment(postId, content, parentId = null) {
       return error;
     });
 }
+
 async function fetchChildComments(parentId) {
   // Definiere den GraphQL-Query mit einer Variablen
   const accessToken = getCookie("authToken");
@@ -132,6 +133,7 @@ async function fetchChildComments(parentId) {
         }
     }
   }`;
+  
   // Setze die Variable für den Request
   const variables = { parent: parentId };
 
