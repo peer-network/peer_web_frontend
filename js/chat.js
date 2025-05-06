@@ -132,8 +132,9 @@ async function renderChatSidebar(chatList) {
 async function renderMessages(chat) {
   const container = document.querySelector(".chat-messages");
   const template = document.getElementById("chat-message-template");
-
   if (!template) return console.error("Template not found!");
+
+  container.innerHTML = "";
 
   const header = document.querySelector(".chat-header .username");
   const headerAvatar = document.querySelector(".chat-header .avatar");
@@ -143,36 +144,34 @@ async function renderMessages(chat) {
   header.textContent = chat.type === "private" ? otherUser?.username : chat.name;
   headerAvatar.src = getAvatarUrl(otherUser?.img);
 
-  container.innerHTML = "";
-
   chat.chatmessages.forEach(msg => {
     const isCurrentUser = msg.senderid === currentUserId;
-    const side = isCurrentUser ? "right" : "left";
+    const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
+    const time = new Date(msg.createdat).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
     const clone = template.content.cloneNode(true);
     const message = clone.querySelector(".message");
     if (!message) return;
 
-    message.classList.add(side);
+    message.classList.add(isCurrentUser ? "right" : "left");
+    message.querySelector(".avatar").src = getAvatarUrl(sender?.img);
 
-    const avatar = message.querySelector(".avatar");
-    const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
-    avatar.src = getAvatarUrl(sender?.img);
+    const textEl = message.querySelector(".message-text");
 
-    const time = new Date(msg.createdat).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    // Add sender label for group chat
+    if (chat.type === "group") {
+      textEl.innerHTML = `<div class="sender-name">${isCurrentUser ? "– you" : `@${sender?.username || "User"}`}</div>` + decodeHTML(msg.content);
+    } else {
+      textEl.textContent = decodeHTML(msg.content);
+    }
 
-    // message.querySelector(".message-text").textContent = msg.content;
-    message.querySelector(".message-text").textContent = decodeHTML(msg.content);
     message.querySelector(".time").textContent = time;
-
     container.appendChild(clone);
   });
 
   container.scrollTop = container.scrollHeight;
 }
+
 
 async function sendMessage(chatid, content) {
   const accessToken = getCookie("authToken");
