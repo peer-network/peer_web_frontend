@@ -13,18 +13,13 @@
         <div class="search-container">
             <input type="text" placeholder="Title" class="input title" />
         </div>
-
-        <!-- Private / Groups Toggle + Add Button -->
+        
         <div class="chat-switch">
             <button id="privateBtn" class="tab active">Private</button>
             <button id="groupBtn" class="tab">Groups</button>
             <button class="add-btn">+</button>
         </div>
     </div>
-
-    <!--<div id="chatContainer">
-
-    </div>-->
 
     <template id="chat-sidebar-item-template">
         <div class="chat-item">

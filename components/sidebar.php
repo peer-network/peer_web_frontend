@@ -17,14 +17,14 @@
     </div>
   </div>
   <div class="menu chats stats sidebar_chats">
-    <a href="privatechat.php" class="menu-item">
+    <div class="menu-item">
       <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
       <p>Direct Message</p>
-    </a>
+    </div>
 
-    <a href="groupchat.php" class="menu-item">
+    <div class="menu-item">
       <img class="icon" src="svg/icon-network.svg" alt="network" />
       <p>Group messages</p>
-    </a>
+    </div>
   </div>
 </aside>

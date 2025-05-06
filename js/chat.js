@@ -1,11 +1,8 @@
-// Final Production-Ready Chat UI Script
-// Clean, maintainable, and ready for review or deployment
-
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("privateBtn").addEventListener("click", () => loadChats("private"));
   document.getElementById("groupBtn").addEventListener("click", () => loadChats("group"));
 
-  loadChats("private"); // Load private by default
+  loadChats("private");
 });
 
 async function loadChats(filterType = "private") {
@@ -158,7 +155,7 @@ async function renderMessages(chat) {
 
     const textEl = message.querySelector(".message-text");
 
-    // Add sender label for group chat
+    // Add user-name label for group chat
     if (chat.type === "group") {
       textEl.innerHTML = `<div class="sender-name">${isCurrentUser ? "– you" : `@${sender?.username || "User"}`}</div>` + decodeHTML(msg.content);
     } else {
