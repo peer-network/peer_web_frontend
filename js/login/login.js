@@ -41,7 +41,7 @@ async function loginRequest(email, password) {
 
     // Log status and error message for debugging; avoid logging sensitive tokens
     console.log("Status:", status);
-    if (ResponseCode) console.warn("Error Message:", ResponseCode);
+    if (ResponseCode !== "10801") console.warn("Error Message:", ResponseCode);
 
     // Securely store tokens if login was successful
     if (status === "success") {
@@ -75,10 +75,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const result = await loginRequest(email, password);
 
     // Handle successful registration (e.g., redirect or display success message)
-    if (result.status === "success" && result.ResponseCode === "Login successful") {
+    if (result.status === "success" && result.ResponseCode === "10801") {
       window.location.href = "dashboard.php";
     } else {
-      displayValidationMessage(result.ResponseCode || "Fehler beim Login.");
+      displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");
     }
   } catch (error) {
     console.error("Error during login request:", error);
