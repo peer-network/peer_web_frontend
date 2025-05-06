@@ -164,7 +164,8 @@ async function renderMessages(chat) {
       minute: "2-digit",
     });
 
-    message.querySelector(".message-text").textContent = msg.content;
+    // message.querySelector(".message-text").textContent = msg.content;
+    message.querySelector(".message-text").textContent = decodeHTML(msg.content);
     message.querySelector(".time").textContent = time;
 
     container.appendChild(clone);
@@ -292,4 +293,13 @@ function getCookie(name) {
 
 function getAvatarUrl(path) {
   return path ? `http://localhost/peer_web_frontend${path}` : "svg/noname.svg";
+}
+
+function decodeHTML(str) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  const firstPass = txt.value;
+
+  txt.innerHTML = firstPass;
+  return txt.value;
 }

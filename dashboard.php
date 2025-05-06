@@ -207,7 +207,7 @@ include 'host.php';
                         <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                         <p>Dashboard</p>
                     </div>
-                    <a href="privatechat.php" class="menu-item">
+                    <a href="chat.php" class="menu-item">
                         <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                         <p>Messages</p>
                         <div class="notification-badge">8</div>
