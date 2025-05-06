@@ -16,14 +16,32 @@
 
         <!-- Private / Groups Toggle + Add Button -->
         <div class="chat-switch">
-            <button class="tab active">Private</button>
-            <button class="tab">Groups</button>
+            <button id="privateBtn" class="tab active">Private</button>
+            <button id="groupBtn" class="tab">Groups</button>
             <button class="add-btn">+</button>
         </div>
     </div>
 
+    <!--<div id="chatContainer">
+
+    </div>-->
+
+    <template id="chat-sidebar-item-template">
+        <div class="chat-item">
+            <img class="avatar" src="./img/ender.png" alt="Avatar" />
+            <div class="chat-details">
+            <div class="chat-row">
+                <span class="name">Name</span>
+                <span class="time">Time</span>
+            </div>
+            <div class="message-preview">Message preview</div>
+            <div class="unread-badge" style="display: none;"></div>
+            </div>
+        </div>
+    </template>
+  
     <!-- Chat Item Template -->
-    <div class="chat-item">
+    <!--<div class="chat-item">
         <img class="avatar" src="./img/ender.png" alt="avatar" />
         <div class="chat-details">
             <div class="chat-row">
@@ -100,5 +118,5 @@
             </div>
             <div class="message-preview"><span class="you">You:</span> Here is the text prompt …</div>
         </div>
-    </div>
+    </div> -->
 </div>

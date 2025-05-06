@@ -10,7 +10,8 @@
 ?>
 
 <!-- <script src="sw_instal.min.js" async></script> -->
-  <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-  <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
-  <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
-  <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
+<script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+<script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
+<script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
+<script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
+<script src="js/chat.js?<?php echo filemtime('js/chat.js'); ?>" defer></script>
