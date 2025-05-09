@@ -30,7 +30,7 @@ async function likeComment(commentId) {
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
+      console.log('i am here ', result);
       if (result.data.likeComment.status == "error") {
         throw new Error(result.data.likeComment.ResponseCode);
       } else {
@@ -38,7 +38,8 @@ async function likeComment(commentId) {
       }
     })
     .catch((error) => {
-      Merror("Like failed", error);
+      // Merror("Like failed", error);
+      Merror(result.data.likeComment.ResponseCode);
       console.log("error", error);
       return false;
     });
@@ -93,10 +94,11 @@ async function createComment(postId, content, parentId = null) {
       return data;
     })
     .catch((error) => {
-      console.error("Fehler:", error);
+      //console.error("Fehler:", error);
       return error;
     });
 }
+
 async function fetchChildComments(parentId) {
   // Definiere den GraphQL-Query mit einer Variablen
   const accessToken = getCookie("authToken");
@@ -108,8 +110,8 @@ async function fetchChildComments(parentId) {
   });
 
   const query = `
-  query Parentcomments($parent: ID!) {
-    parentcomments(parent: $parent) {
+  query listChildComments($parent: ID!) {
+    listChildComments(parent: $parent) {
         status
         counter
         ResponseCode
@@ -132,6 +134,7 @@ async function fetchChildComments(parentId) {
         }
     }
   }`;
+  
   // Setze die Variable für den Request
   const variables = { parent: parentId };
 
@@ -144,10 +147,10 @@ async function fetchChildComments(parentId) {
     .then((response) => response.json())
     .then((data) => {
       console.log("Antwort vom Server:", data);
-      if (data.data.parentcomments.status === "error" && data.data.parentcomments.ResponseCode !== "This is not a commentId") {
-        throw new Error(data.data.parentcomments.ResponseCode);
+      if (data.data.listChildComments.status === "error" && data.data.listChildComments.ResponseCode !== "This is not a commentId") {
+        throw new Error(data.data.listChildComments.ResponseCode);
       } else {
-        return data.data.parentcomments.affectedRows;
+        return data.data.listChildComments.affectedRows;
       }
     })
     .catch((error) => {

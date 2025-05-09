@@ -1,3 +1,5 @@
+//  import { responseMessages } from "../lib/responseCodes.js";
+// console.log(responseMessages);
 async function loginRequest(email, password) {
   // Create headers
   const headers = new Headers({
@@ -37,7 +39,12 @@ async function loginRequest(email, password) {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
 
-    const { status, ResponseCode, accessToken, refreshToken } = result.data.login;
+    const {
+      status,
+      ResponseCode,
+      accessToken,
+      refreshToken
+    } = result.data.login;
 
     // Log status and error message for debugging; avoid logging sensitive tokens
     console.log("Status:", status);
@@ -48,11 +55,17 @@ async function loginRequest(email, password) {
       document.cookie = `authToken=${accessToken}; path=/; secure; SameSite=Strict`;
       document.cookie = `refreshToken=${refreshToken}; path=/; secure; SameSite=Strict`;
     }
+
     console.log("Status:", status);
     console.log("ResponseCode:", ResponseCode);
     console.log("Access Token:", accessToken);
     console.log("Refresh Token:", refreshToken);
-    return { status, ResponseCode, accessToken, refreshToken };
+    return {
+      status,
+      ResponseCode,
+      accessToken,
+      refreshToken
+    };
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
@@ -75,6 +88,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const result = await loginRequest(email, password);
 
     // Handle successful registration (e.g., redirect or display success message)
+    if (result.status === "success" && result.ResponseCode === "10801") {
     if (result.status === "success" && result.ResponseCode === "10801") {
       window.location.href = "dashboard.php";
     } else {

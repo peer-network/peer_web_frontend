@@ -12,6 +12,7 @@ include 'host.php';
     <link rel="stylesheet" href="css/scrollshadow.css?<?php echo filemtime('css/scrollshadow.css'); ?>" />
 
     <!-- <script src="sw_instal.min.js" async></script> -->
+    <script src="js/statusMessages.min.js?<?php echo filemtime('js/statusMessages.min.js'); ?>" defer></script>
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
@@ -207,11 +208,11 @@ include 'host.php';
                         <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                         <p>Dashboard</p>
                     </div>
-                    <div class="menu-item comming-soon">
+                    <a href="chat.php" class="menu-item">
                         <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                         <p>Messages</p>
                         <div class="notification-badge">8</div>
-                    </div>
+                    </a>
                     <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-network.svg" alt="network" />
                         <p>Network</p>

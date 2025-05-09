@@ -952,7 +952,8 @@ async function postsLaden() {
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.getallposts.affectedRows.forEach((objekt) => {
+  // posts.data.getallposts.affectedRows.forEach((objekt) => {
+  posts.data.listPosts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.id = objekt.id;
@@ -1203,7 +1204,8 @@ async function postsLaden() {
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
   });
-  postsLaden.offset += posts.data.getallposts.affectedRows.length;
+  // postsLaden.offset += posts.data.getallposts.affectedRows.length;
+  postsLaden.offset += posts.data.listPosts.affectedRows.length;
 }
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -1716,8 +1718,8 @@ async function fetchTags(searchStr) {
     Authorization: `Bearer ${accessToken}`,
   });
   const query = `
-      query Tagsearch($searchstr: String!) {
-          tagsearch(tagname: $searchstr, limit: 10) {
+      query searchTags($searchstr: String!) {
+          searchTags(tagname: $searchstr, limit: 10) {
               status
               counter
               ResponseCode
@@ -1740,10 +1742,10 @@ async function fetchTags(searchStr) {
     const result = await response.json();
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.tagsearch.affectedRows.length) {
+    if (!result.data.searchTags.affectedRows.length) {
       failedSearches.add(searchStr);
     }
-    return result.data.tagsearch.affectedRows;
+    return result.data.searchTags.affectedRows;
   } catch (error) {
     // console.error("Error fetching tags:", error);
     return [];
@@ -1753,52 +1755,56 @@ const failedSearches = new Set();
 const tagInput = document.getElementById("tag-input");
 const tagContainer = document.getElementById("tagsContainer");
 const dropdownMenu = document.getElementById("dropdownMenu");
-tagInput.addEventListener("input", async function () {
-  const searchStr = tagInput.value.trim();
-  if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-    if (searchStr.length < 3) {
-      dropdownMenu.innerHTML = "";
-      dropdownMenu.classList.add("none");
-      return;
-    }
-  } else {
-    info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-    return;
-  }
-
-  const tags = await fetchTags(searchStr);
-  dropdownMenu.innerHTML = "";
-  const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
-
-  tags.forEach((tag) => {
-    if (!existingTags.includes(tag.name + "X")) {
-      const option = document.createElement("div");
-      option.textContent = tag.name;
-      option.classList.add("dropdown-item");
-      option.addEventListener("click", () => {
-        tagInput.value = tag.name;
-        tag_addTag(tagInput.value.trim());
-        tagInput.value = "";
-        tagInput.focus();
-        dropdownMenu.classList.toggle("none");
-      });
-      dropdownMenu.appendChild(option);
-    }
-  });
-
-  dropdownMenu.classList.toggle("none", tags.length == 0);
-});
-
-tagInput.addEventListener("keypress", function (event) {
-  if (event.key === "Enter" && tagInput.value.trim() !== "") {
+if (tagInput) {
+  tagInput.addEventListener("input", async function () {
+    const searchStr = tagInput.value.trim();
     if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-      tag_addTag(tagInput.value.trim());
-      tagInput.value = "";
+      if (searchStr.length < 3) {
+        dropdownMenu.innerHTML = "";
+        dropdownMenu.classList.add("none");
+        return;
+      }
     } else {
       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+      return;
     }
-  }
-});
+
+    const tags = await fetchTags(searchStr);
+    dropdownMenu.innerHTML = "";
+    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+
+    tags.forEach((tag) => {
+      if (!existingTags.includes(tag.name + "X")) {
+        const option = document.createElement("div");
+        option.textContent = tag.name;
+        option.classList.add("dropdown-item");
+        option.addEventListener("click", () => {
+          tagInput.value = tag.name;
+          tag_addTag(tagInput.value.trim());
+          tagInput.value = "";
+          tagInput.focus();
+          dropdownMenu.classList.toggle("none");
+        });
+        dropdownMenu.appendChild(option);
+      }
+    });
+
+    dropdownMenu.classList.toggle("none", tags.length == 0);
+  });
+}
+
+if (tagInput) {
+  tagInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter" && tagInput.value.trim() !== "") {
+      if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+        tag_addTag(tagInput.value.trim());
+        tagInput.value = "";
+      } else {
+        info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+      }
+    }
+  });
+}
 
 window.addEventListener("click", function (event) {
   if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
@@ -1921,7 +1927,11 @@ function restoreFilterSettings() {
       }
     });
   }
-  document.getElementById("searchText").value = localStorage.getItem("tags") || ""; // Tags wiederherstellen
+  localStorage.getItem("tags"); // Tags wiederherstellen
+  if (localStorage.getItem("tags")) { 
+    document.getElementById("searchText").value = localStorage.getItem("tags");
+  }
+  
 }
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
