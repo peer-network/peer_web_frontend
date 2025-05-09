@@ -58,7 +58,7 @@ async function registerUser(email, password, username) {
     // Fehler: Benutzername bereits vergeben
     else {
       // Merror("Register failed", result.data.register.ResponseCode);
-      Merror("Register failed", getMessage(result.data.register.ResponseCode));
+      Merror("Register failed", userfriendlymsg(result.data.register.ResponseCode));
       console.error("Register failed:" + result.data.register.ResponseCode);
     }
   } catch (error) {

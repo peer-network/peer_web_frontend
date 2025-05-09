@@ -119,7 +119,7 @@ function viewPost(postid) {
     .then((result) => {
       console.log(result);
       if (result.data.resolvePostAction.status == "error") {
-        throw new Error(getMessage(result.data.resolvePostAction.ResponseCode));
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
@@ -235,7 +235,7 @@ async function sendCreatePost(variables) {
   if (isVariableNameInArray(variables, "mediadescription")) {
     query += `, $mediadescription: String!`;
   }
-  query += `, $contenttype: ContenType!, $tags: [String!]) {
+  query += `, $contenttype: ContentType!, $tags: [String!]) {
       createPost(
         action: POST
         input: {
@@ -306,11 +306,10 @@ async function sendCreatePost(variables) {
     console.log("Mutation Result:", result.data);
 
     if (result.data.createPost.status == "error") {
-      Merror(getMessage(result.data.createPost.ResponseCode));
+      Merror(userfriendlymsg(result.data.createPost.ResponseCode));
       throw new Error(result.data.createPost.ResponseCode);
     } else return result.data;
   } catch (error) {
-    // Merror(getMessage(result.data.createPost.ResponseCode));
     Merror("Create Post failed", error);
     // console.error("Error create Post:", error);
     return false;

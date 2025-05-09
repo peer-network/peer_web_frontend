@@ -89,7 +89,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     // Handle successful registration (e.g., redirect or display success message)
     if (result.status === "success" && result.ResponseCode === "10801") {
-    if (result.status === "success" && result.ResponseCode === "10801") {
       window.location.href = "dashboard.php";
     } else {
       displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");
