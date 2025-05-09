@@ -12,6 +12,7 @@ include 'host.php';
     <script src="js/lib/const.js?<?php echo filemtime('js/lib/const.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
+    <script src="js/statusMessages.min.js?<?php echo filemtime('js/statusMessages.min.js'); ?>" defer></script>
     <!-- <script src="sw_instal.min.js" async></script> -->
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';

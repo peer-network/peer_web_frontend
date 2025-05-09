@@ -8,11 +8,11 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
   });
   title = sanitizeString(title);
   if (!sortby) sortby = "NEWEST";
-  let searchstr = `query Getallposts {
-    getallposts(
+  let searchstr = `query listPosts {
+    listPosts(
       sortBy: ${sortby},
-      postLimit: ${limit},
-      postOffset: ${offset},
+      limit: ${limit},
+      offset: ${offset},
       filterBy: [${filter}],`;
   searchstr += tag && tag.length >= 3 ? `,tag: "${tag}"` : "";
   searchstr += title && title.length >= 2 ? `,title: "${title}"` : "";
@@ -80,7 +80,6 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       return result;
     })
     .catch((error) => {
@@ -98,8 +97,8 @@ function viewPost(postid) {
   });
 
   var graphql = JSON.stringify({
-    query: `mutation ResolveActionPost {
-        resolveActionPost(postid: "${postid}", action: VIEW) {
+    query: `mutation resolvePostAction {
+        resolvePostAction(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
         }
@@ -119,8 +118,8 @@ function viewPost(postid) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      if (result.data.resolveActionPost.status == "error") {
-        throw new Error(result.data.resolveActionPost.ResponseCode);
+      if (result.data.resolvePostAction.status == "error") {
+        throw new Error(getMessage(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
@@ -148,8 +147,8 @@ function likePost(postid) {
   //     }
   // }
   var graphql = JSON.stringify({
-    query: `mutation ResolveActionPost {
-        resolveActionPost(postid: "${postid}", action: LIKE) {
+    query: `mutation resolvePostAction {
+        resolvePostAction(postid: "${postid}", action: LIKE) {
           status
           ResponseCode
         }
@@ -169,8 +168,8 @@ function likePost(postid) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      if (result.data.resolveActionPost.status == "error") {
-        throw new Error(result.data.resolveActionPost.ResponseCode);
+      if (result.data.resolvePostAction.status == "error") {
+        throw new Error(result.data.resolvePostAction.ResponseCode);
       } else {
         return true;
       }
@@ -307,11 +306,13 @@ async function sendCreatePost(variables) {
     console.log("Mutation Result:", result.data);
 
     if (result.data.createPost.status == "error") {
+      Merror(getMessage(result.data.createPost.ResponseCode));
       throw new Error(result.data.createPost.ResponseCode);
     } else return result.data;
   } catch (error) {
+    // Merror(getMessage(result.data.createPost.ResponseCode));
     Merror("Create Post failed", error);
-    console.error("Error create Post:", error);
+    // console.error("Error create Post:", error);
     return false;
   }
 }

@@ -144,14 +144,11 @@ async function renderMessages(chat) {
   chat.chatmessages.forEach(msg => {
     const isCurrentUser = msg.senderid === currentUserId;
     const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
-  
     const iso = msg.createdat.replace(" ", "T").split(".")[0] + "Z";
     const time =  new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    console.log('time --> ', time);
-
-
     const clone = template.content.cloneNode(true);
     const message = clone.querySelector(".message");
+
     if (!message) return;
 
     message.classList.add(isCurrentUser ? "right" : "left");
