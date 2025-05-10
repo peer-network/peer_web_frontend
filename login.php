@@ -8,11 +8,8 @@ include 'host.php';
 <head>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
-
-    <script src="js/lib/const.js?<?php echo filemtime('js/lib/const.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
-    <script src="js/statusMessages.min.js?<?php echo filemtime('js/statusMessages.min.js'); ?>" defer></script>
     <!-- <script src="sw_instal.min.js" async></script> -->
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -29,7 +26,6 @@ include 'host.php';
             <div class="screen">
                 <img src="img/register.webp" alt="Login" width="612" height="612">
             </div>
-
             <div class="home-button">
                 <img src="svg/logo_sw.svg" alt="PeerLogo" width="96" height="96">
             </div>
@@ -49,7 +45,6 @@ include 'host.php';
                     <img src="svg/apple.svg" height="48" width="48" alt="Login with Apple">
                 </div>
             </div>
-
         </div>
         <div class="line-with-text"><span>or</span></div>
         <div class="input-field">
@@ -68,9 +63,6 @@ include 'host.php';
         </div>
         <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
     </form>
-
-    <input type="checkbox" id="disclaimer" name="disclaimer" class="checkbox">
-    <label for="disclaimer" class="disclaimer-container"><img src="img/DISLAIMER.png" alt="disclaimer-image" class="disclaimer" width="3240" height="1650"></label>
 
 </body>
 

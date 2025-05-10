@@ -63,11 +63,19 @@ function createModal({ title = "", message = "", buttons = [], type = "info", te
     }, 300);
   }
 }
-
+function userfriendlymsg(code) {
+  let msg;
+  if (code in responsecodes.data) {
+    msg = responsecodes.data[code].userFriendlyComment;
+  } else {
+    msg = code;
+  }
+  return msg;
+}
 function info(title, text = "") {
   return createModal({
     title: title,
-    message: text,
+    message: userfriendlymsg(text),
     buttons: ["OK"],
     type: "info",
   });
@@ -76,7 +84,7 @@ function info(title, text = "") {
 function Merror(title, text = "") {
   return createModal({
     title: title,
-    message: text,
+    message: userfriendlymsg(text),
     buttons: ["OK"],
     type: "error",
   });
@@ -85,7 +93,7 @@ function Merror(title, text = "") {
 function warnig(title, text = "") {
   return createModal({
     title: title,
-    message: text,
+    message: userfriendlymsg(text),
     buttons: ["OK"],
     type: "warning",
   });

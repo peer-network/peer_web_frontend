@@ -47,9 +47,8 @@ async function loginRequest(email, password) {
     } = result.data.login;
 
     // Log status and error message for debugging; avoid logging sensitive tokens
-    console.log("result.data: ", result.data);
-
-    if (ResponseCode) console.warn("Error Message:", ResponseCode);
+    console.log("Status:", status);
+    if (ResponseCode !== "10801") console.warn("Error Message:", ResponseCode);
 
     // Securely store tokens if login was successful
     if (status === "success") {
@@ -92,9 +91,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     if (result.status === "success" && result.ResponseCode === "10801") {
       window.location.href = "dashboard.php";
     } else {
-      console.log(getMessage(result.ResponseCode));
-      displayValidationMessage(getMessage(result.ResponseCode) || "Fehler beim Login.");
-    } 
+      displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");
+    }
   } catch (error) {
     console.error("Error during login request:", error);
     displayValidationMessage("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
