@@ -167,16 +167,14 @@ function likePost(postid) {
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       if (result.data.resolvePostAction.status == "error") {
-        throw new Error(result.data.resolvePostAction.ResponseCode);
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
     })
     .catch((error) => {
       Merror("Like failed", error);
-      console.log("error", error);
       return false;
     });
 }
@@ -209,7 +207,7 @@ async function dislikePost(postid) {
   fetch(GraphGL, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
+    .catch((error) =>  Merror("Dislike failed", error));
 }
 
 function isVariableNameInArray(variableObj, nameArray) {
@@ -306,8 +304,7 @@ async function sendCreatePost(variables) {
     console.log("Mutation Result:", result.data);
 
     if (result.data.createPost.status == "error") {
-      Merror(userfriendlymsg(result.data.createPost.ResponseCode));
-      throw new Error(result.data.createPost.ResponseCode);
+      throw new Error(userfriendlymsg(result.data.createPost.ResponseCode));
     } else return result.data;
   } catch (error) {
     Merror("Create Post failed", error);

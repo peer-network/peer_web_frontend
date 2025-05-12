@@ -45,19 +45,24 @@ async function loadChats(filterType = "private") {
     const response = await fetch(GraphGL, {
       method: "POST",
       headers,
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({
+        query
+      }),
     });
 
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     const result = await response.json();
     if (result.errors) throw new Error(result.errors[0].message);
 
-    const rawChats = result?.data?.listChats?.affectedRows || [];
+    const rawChats = result ? .data ? .listChats ? .affectedRows || [];
 
     const typedChats = rawChats
       .map(chat => {
-        const isPrivate = !chat.name?.trim() && !chat.image;
-        return { ...chat, type: isPrivate ? "private" : "group" };
+        const isPrivate = !chat.name ? .trim() && !chat.image;
+        return {
+          ...chat,
+          type: isPrivate ? "private" : "group"
+        };
       })
       .filter(chat => chat.type === filterType);
 
@@ -88,7 +93,7 @@ async function renderChatSidebar(chatList) {
     const otherUser = chat.chatparticipants.find(p => p.userid !== currentUserId) || chat.chatparticipants[0];
     const lastMessage = chat.chatmessages.at(-1);
     const time = lastMessage ? formatTimeAgo(lastMessage.createdat) : "—";
-    const preview = lastMessage?.content || "Start chatting...";
+    const preview = lastMessage ? .content || "Start chatting...";
     const unread = chat.unreadCount > 0;
 
     const clone = template.content.cloneNode(true);
@@ -138,21 +143,24 @@ async function renderMessages(chat) {
   const currentUserId = await getCurrentUserId();
 
   const otherUser = chat.chatparticipants.find(u => u.userid !== currentUserId);
-  header.textContent = chat.type === "private" ? otherUser?.username : chat.name;
-  headerAvatar.src = getAvatarUrl(otherUser?.img);
+  header.textContent = chat.type === "private" ? otherUser ? .username : chat.name;
+  headerAvatar.src = getAvatarUrl(otherUser ? .img);
 
   chat.chatmessages.forEach(msg => {
     const isCurrentUser = msg.senderid === currentUserId;
     const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
     const iso = msg.createdat.replace(" ", "T").split(".")[0] + "Z";
-    const time =  new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const time = new Date(iso).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
     const clone = template.content.cloneNode(true);
     const message = clone.querySelector(".message");
 
     if (!message) return;
 
     message.classList.add(isCurrentUser ? "right" : "left");
-    message.querySelector(".avatar").src = getAvatarUrl(sender?.img);
+    message.querySelector(".avatar").src = getAvatarUrl(sender ? .img);
 
     const textEl = message.querySelector(".message-text");
 
@@ -192,13 +200,19 @@ async function sendMessage(chatid, content) {
     }
   `;
 
-  const variables = { chatid, content };
+  const variables = {
+    chatid,
+    content
+  };
 
   try {
     const response = await fetch(GraphGL, {
       method: "POST",
       headers,
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({
+        query,
+        variables
+      }),
     });
 
     if (!response.ok) throw new Error("Chat message send failed.");
@@ -216,7 +230,7 @@ if (sendPrivateMessage) {
     if (event.key === "Enter" && !event.shiftKey && !isSending) {
       event.preventDefault();
 
-      const chatid = document.querySelector(".chat-item.active-chat")?.getAttribute("data-chatid");
+      const chatid = document.querySelector(".chat-item.active-chat") ? .getAttribute("data-chatid");
       const content = event.target.value.trim();
 
       if (!chatid || !content) return;
@@ -224,7 +238,7 @@ if (sendPrivateMessage) {
       isSending = true;
       try {
         const res = await sendMessage(chatid, content);
-        const status = res?.data?.sendChatMessage?.status;
+        const status = res ? .data ? .sendChatMessage ? .status;
 
         if (status === "success") {
           const template = document.getElementById("chat-message-template");
@@ -263,7 +277,7 @@ async function getCurrentUserId() {
 
   try {
     const result = await hello();
-    const userId = result?.currentuserid;
+    const userId = result ? .currentuserid;
     if (userId) {
       document.cookie = `userID=${userId}; path=/; SameSite=Strict`;
       cachedUserId = userId;
@@ -300,3 +314,15 @@ function decodeHTML(str) {
   txt.innerHTML = firstPass;
   return txt.value;
 }
+
+const search_contacts = document.getElementById('search-contacts');
+const search_contact_results = document.getElementById('search-contact-results');
+
+search_contacts.addEventListener('input', () => {
+  let inputValue = search_contacts.value.trim();
+  if (inputValue !== '' && inputValue.length > 2) {
+    search_contact_results.style.display = 'block';
+  } else {
+    search_contact_results.style.display = 'none';
+  }
+});

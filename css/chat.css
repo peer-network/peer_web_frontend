@@ -112,6 +112,7 @@
 }
 
 .unread-badge {
+  display: none;
   position: absolute;
   bottom: 0;
   right: 15px;
@@ -132,6 +133,39 @@
   position: relative;
 }
 
+.search-contact-results {
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  top: 125px;
+  min-height: 250px;
+  left: 0;
+  width: 100%;
+  background: #494949;
+  border-radius: 15px;
+}
+.search-contact-results .contacts-found {
+  padding: 15px;
+}
+
+.search-contact-results .contacts-found .single-contact {
+  margin: 5px 0;
+}
+
+.search-contact-results .contacts-found .single-contact .contact-avatar {
+  width: 40px;
+  width: 40px;
+}
+
+.search-contact-results .contacts-found .single-contact .contact-details {
+  
+}
+
+.search-contact-results .contacts-found .single-contact .contact-details .contact-name {
+  
+}
+
+
 /* ====== Search Bar ====== */
 .search-container {
   display: flex;
@@ -139,6 +173,7 @@
   background-color: var(--shadow-color);
   padding: 0.5rem;
   border-radius: 30px;
+  position: relative;
 }
 
 .input {
@@ -152,16 +187,25 @@
   margin-right: 0.5rem;
 }
 
-.input::placeholder {
-  color: var(--input_placeholder);
+.search-container .starter-placeholders {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  background: transparent;
 }
 
-.input.username {
-  width: 120px;
+.search-container .starter-placeholders span {
+  display: inline-block;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 15px;
+  padding: 3px 5px;
+  font-size: 0.7em;
+  font-weight: bold;
 }
 
-.input.title {
-  flex: 1;
+.input:focus + .starter-placeholders {
+  display: none;
 }
 
 .search-btn {

@@ -11,7 +11,21 @@
     <div class="top-bar">
         <!-- Search Bar -->
         <div class="search-container">
-            <input type="text" placeholder="Title" class="input title" />
+            <input type="text" placeholder=" " class="input title" id="search-contacts" />
+            <div class="starter-placeholders">
+                <span>@username</span>
+                <span>Title</span>
+            </div>
+        </div>
+        <div class="search-contact-results" id="search-contact-results">
+            <div class="contacts-found">
+                <div class="single-contact" data-userId="7a91806b-f6eb-4c57-b1c6-e65f72d1f179">
+                    <img class="contact-avatar" src="./img/ender.png" alt="tester3">
+                    <div class="contact-details">
+                        <span class="contact-name">tester3</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="chat-switch">
@@ -47,7 +61,7 @@
                     <span class="time">Time</span>
                 </div>
                 <div class="message-preview">Message preview</div>
-                <div class="unread-badge" style="display: none;"></div>
+                <div class="unread-badge"></div>
             </div>
         </div>
     </template>

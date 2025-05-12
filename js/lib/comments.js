@@ -30,17 +30,15 @@ async function likeComment(commentId) {
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log('i am here ', result);
       if (result.data.likeComment.status == "error") {
-        throw new Error(result.data.likeComment.ResponseCode);
+        throw new Error(userfriendlymsg(result.data.likeComment.ResponseCode));
       } else {
         return true;
       }
     })
     .catch((error) => {
       // Merror("Like failed", error);
-      Merror(result.data.likeComment.ResponseCode);
-      console.log("error", error);
+      Merror(userfriendlymsg(result.data.likeComment.ResponseCode));
       return false;
     });
 }
@@ -81,20 +79,27 @@ async function createComment(postId, content, parentId = null) {
       }
     }
   `;
-  const variables = { postId, content, parentId };
+  const variables = {
+    postId,
+    content,
+    parentId
+  };
 
   return fetch(GraphGL, {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify({ query, variables }),
-  })
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        query,
+        variables
+      }),
+    })
     .then((response) => response.json())
     .then((data) => {
       console.log("Antwort:", data);
       return data;
     })
     .catch((error) => {
-      //console.error("Fehler:", error);
+      console.error("Fehler:", error);
       return error;
     });
 }
@@ -134,26 +139,31 @@ async function fetchChildComments(parentId) {
         }
     }
   }`;
-  
+
   // Setze die Variable für den Request
-  const variables = { parent: parentId };
+  const variables = {
+    parent: parentId
+  };
 
   // Ersetze die URL mit der deines GraphQL-Endpunkts
   return fetch(GraphGL, {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify({ query, variables }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Antwort vom Server:", data);
-      if (data.data.listChildComments.status === "error" && data.data.listChildComments.ResponseCode !== "This is not a commentId") {
-        throw new Error(data.data.listChildComments.ResponseCode);
-      } else {
-        return data.data.listChildComments.affectedRows;
-      }
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        query,
+        variables
+      }),
     })
-    .catch((error) => {
+    .then((response) => response.json())
+    .then((res) => {
+      // if (res.data.listChildComments.status === "error" && res.data.listChildComments.ResponseCode !== "This is not a commentId") {
+      if (res.data.listChildComments.status === "error") {
+        throw new Error(userfriendlymsg(res.data.listChildComments.ResponseCode));
+      } else {
+        return res.data.listChildComments.affectedRows;
+      }
+
+    }).catch((error) => {
       console.error("Fehler:", error);
       return null;
     });
