@@ -264,10 +264,10 @@ include 'host.php';
 
                 <!-- Menü -->
                 <div class="menu stats">
-                    <div class="menu-item active">
+                    <a href="dashboard.php" class="menu-item active">
                         <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                         <p>Dashboard</p>
-                    </div>
+                    </a>
                     <div class="menu-item comming-soon">
                         <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                         <p>Messages</p>

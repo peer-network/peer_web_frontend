@@ -31,14 +31,15 @@ async function balance() {
   try {
     // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
 
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const result = await response.json();
+    // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
 
-    document.getElementById("token").innerText = result.data.balance.balance;
-    const formatted = (result.data.balance.balance * 0.1).toFixed(2).replace(".", ",") + " €";
+    document.getElementById("token").innerText = result.data.balance.currentliquidity;
+    const formatted = (result.data.balance.currentliquidity * 0.1).toFixed(2).replace(".", ",") + " €";
     document.getElementById("money").innerText = formatted;
     return result.data.hello;
   } catch (error) {
@@ -67,7 +68,7 @@ async function dailyfree() {
             available
         }
     }
-}`,
+  }`,
   });
 
   // Define request options
