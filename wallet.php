@@ -10,7 +10,6 @@ include 'host.php';
   <link rel="stylesheet" href="css/dashboard.css?<?php echo filemtime('css/dashboard.css'); ?>" />
   <link rel="stylesheet" href="css/wallet.css?<?php echo filemtime('css/wallet.css'); ?>" />
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
-  <link rel="stylesheet" href="css/scrollshadow.css?<?php echo filemtime('css/scrollshadow.css'); ?>" />
 
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
@@ -48,81 +47,100 @@ include 'host.php';
     </aside>
 
     <!-- Main Content Area (Mittlere Spalte mit einem inneren Grid) -->
+    <aside class="sidebar">
+      <div id="freecontent">
+        <h2 id="timeuntil">Time until next <span class="blue">Mint</span></h2>
+        <div class="radial-progress" id="nextmintRadial" style="--progress: 65">
+          <div class="value">
+            <span id="nextminttime">03:46:54</span>
+            <div class="label"><span id="nextminthours">&nbsp;&nbsp;</span><span>&nbsp;hrs,&nbsp;</span><span id="nextmintminutes">&nbsp;&nbsp;</span><span>&nbsp;min,&nbsp;</span><span id="nextmintseconds">&nbsp;&nbsp;</span><span>&nbsp;sec</span></div>
+          </div>
+        </div>
+        <div class="con-freeaction">
+          <h2>Daily free actions</h2>
+          <div class="limit-container">
+            <div class="label">
+              Likes
+              <span>(</span>
+              <span id="Likesused">&nbsp;</span>
+              <span>/</span>
+              <span id="Likesavailable">&nbsp;</span>
+              <span>&nbsp;left)</span>
+            </div>
+            <div class="progress-bar">
+              <div id="LikesStat" class="progress" style="--progress: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="limit-container">
+            <div class="label">
+              Comments
+              <span>(</span>
+              <span id="Commentsused">&nbsp;</span>
+              <span>/</span>
+              <span id="Commentsavailable">&nbsp;</span>
+              <span>&nbsp;left)</span>
+            </div>
+            <div class="progress-bar">
+              <div id="CommentsStat" class="progress" style="--progress: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="limit-container">
+            <div class="label">
+              Posts
+              <span>(</span>
+              <span id="Postsused">&nbsp;</span>
+              <span>/</span>
+              <span id="Postsavailable">&nbsp;</span>
+              <span>&nbsp;left)</span>
+            </div>
+            <div class="progress-bar">
+              <div id="PostsStat" class="progress" style="--progress: 0%;"></div>
+            </div>
+          </div>
+
+        </div>
+
+
+
+      </div>
+    </aside>
     <main id="main" class="main ">
       <div id="wallet">
-        <div id="wallet-person">
-        </div>
-        <div id="freecontent">
-          <h2 id="timeuntil">Time until next Mint</h2>
-          <div class="radial-progress" id="nextmintRadial" style="--progress: 65">
-            <div class="value">
-              <span id="nextminttime">03:46:54</span>
-              <div class="label"><span id="nextminthours">&nbsp;&nbsp;</span><span>&nbsp;hrs,&nbsp;</span><span id="nextmintminutes">&nbsp;&nbsp;</span><span>&nbsp;min,&nbsp;</span><span id="nextmintseconds">&nbsp;&nbsp;</span><span>&nbsp;sec</span></div>
-            </div>
-          </div>
-          <div class="con-freeaction">
-            <h2>Daily free actions</h2>
-            <div class="limit-container">
-              <div class="label">
-                Likes
-                <span>(</span>
-                <span id="Likesused">&nbsp;</span>
-                <span>/</span>
-                <span id="Likesavailable">&nbsp;</span>
-                <span>&nbsp;left)</span>
-              </div>
-              <div class="progress-bar">
-                <div id="LikesStat" class="progress" style="--progress: 0%;"></div>
-              </div>
-            </div>
-
-            <div class="limit-container">
-              <div class="label">
-                Comments
-                <span>(</span>
-                <span id="Commentsused">&nbsp;</span>
-                <span>/</span>
-                <span id="Commentsavailable">&nbsp;</span>
-                <span>&nbsp;left)</span>
-              </div>
-              <div class="progress-bar">
-                <div id="CommentsStat" class="progress" style="--progress: 0%;"></div>
-              </div>
-            </div>
-
-            <div class="limit-container">
-              <div class="label">
-                Posts
-                <span>(</span>
-                <span id="Postsused">&nbsp;</span>
-                <span>/</span>
-                <span id="Postsavailable">&nbsp;</span>
-                <span>&nbsp;left)</span>
-              </div>
-              <div class="progress-bar">
-                <div id="PostsStat" class="progress" style="--progress: 0%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="wallet-amount">
-          <div class="token">
-            <span id="token"></span>
+        <div class="token">
+          <h2>Total Tokens</h2>
+          <div>
             <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
-            <p>Token Total</p>
+            <span id="token"></span>
+            <div class="money">
+              <span>~</span>
+              <span id="money"></span>
+              <span id="tokenpercent"></span>
+            </div>
           </div>
-          <div class="money">
-            <span id="money"></span>
-            <span></span>
-            <p>Money Total (EUR)</p>
-          </div>
-          <!-- <div class="gems">
-            <span id="gems"></span>
-            <img src="svg/gem.svg" alt="peer token" class="logo" />
-            <p>Gems Total (All time)</p>
-          </div> -->
+
         </div>
 
+        <div class="kurs">
+          <div>
+            <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
+            <img src="svg/steigend.svg" alt="">
+          </div>
+
+          <span>1 Gem ≈ 133 PeerTokens</span>
+        </div>
+      </div>
+      <div id="wallet-transaction">
+        <h2>List of transactions</h2>
+        <div id="history-container" class="history-container">
+          <div class="history-header">
+            <span class="type">Type</span>
+            <span class="date">Date</span>
+            <span class="amount">Amount</span>
+          </div>
+
+        </div>
       </div>
     </main>
 
