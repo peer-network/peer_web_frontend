@@ -2,7 +2,9 @@ getUser();
 dailyfree();
 balance();
 nextmint();
-async function balance() {
+dailywin();
+dailypays();
+async function currentliquidity() {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -13,11 +15,13 @@ async function balance() {
 
   // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
-    query: `query balance {
-        balance {
-            currentliquidity
-        }
-    }`,
+    query: `query Balance {
+    balance {
+        status
+        ResponseCode
+        currentliquidity
+    }
+}`,
   });
 
   // Define request options
@@ -58,15 +62,15 @@ async function dailyfree() {
 
   // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
-    query: `query getDailyFreeStatus {
+    query: `query Dailyfreestatus {
     getDailyFreeStatus {
-        status
-        ResponseCode
-        affectedRows {
-            name
-            used
-            available
-        }
+      status
+      ResponseCode
+      affectedRows {
+        name
+        used
+        available
+      }
     }
   }`,
   });
@@ -92,7 +96,7 @@ async function dailyfree() {
       document.getElementById(entry.name + "available").innerText = entry.available;
       const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
       document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
-      console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+      // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
 
     return result.data.getDailyFreeStatus;
@@ -132,5 +136,176 @@ function getNext0930() {
 
   return next0930;
 }
+async function dailywin() {
+  const accessToken = getCookie("authToken");
 
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
 
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+    query: `query ListWinLogs {
+      listWinLogs(day: D0) {
+        affectedRows {
+            from
+            token
+            userid
+            postid
+            action
+            numbers
+            createdat
+        }
+        status
+        counter
+        ResponseCode
+    }
+}`,
+  });
+
+  // Define request options
+  const requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  try {
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
+    const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
+    sortedDescending.forEach((entry) => {
+      const historyItem = document.createElement("div");
+      historyItem.className = "history-item";
+
+      const typeDiv = document.createElement("div");
+      typeDiv.className = "type";
+      typeDiv.textContent = entry.action == 2 ? "Like" : entry.action == 5 ? "Post create" : entry.action == 4 ? "Comment" : "unknown";
+
+      const dateDiv = document.createElement("div");
+      dateDiv.className = "date";
+      dateDiv.textContent = adjustForDSTAndFormat(entry.createdat); // Formatieren des Datums
+
+      const centerDiv = document.createElement("div");
+      centerDiv.className = "center";
+
+      const amountSpan = document.createElement("span");
+      amountSpan.className = "amount";
+      amountSpan.textContent = entry.numbers.toString().replace(/,/g, ".");
+
+      const logoImg = document.createElement("img");
+      logoImg.src = "svg/logo_sw.svg";
+      logoImg.alt = "";
+
+      centerDiv.appendChild(amountSpan);
+      centerDiv.appendChild(logoImg);
+
+      historyItem.appendChild(typeDiv);
+      historyItem.appendChild(dateDiv);
+      historyItem.appendChild(centerDiv);
+
+      // Füge das Element z. B. zu einem Container im DOM hinzu
+
+      document.getElementById("history-container").appendChild(historyItem);
+    });
+
+    return result.data.fetchwinslog;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}
+async function dailypays() {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+    query: `query ListPaymentLogs {
+      listPaymentLogs(day: D0) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+            from
+            token
+            userid
+            postid
+            action
+            numbers
+            createdat
+        }
+      }
+    }`,
+  });
+
+  // Define request options
+  const requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  try {
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
+    result.data.listPaymentLogs.affectedRows.forEach((entry) => {
+      const historyItem = document.createElement("div");
+      historyItem.className = "history-item";
+
+      const typeDiv = document.createElement("div");
+      typeDiv.className = "type";
+      typeDiv.textContent = "Withdraw";
+
+      const dateDiv = document.createElement("div");
+      dateDiv.className = "date";
+      dateDiv.textContent = "3 Feb 00:00";
+
+      const centerDiv = document.createElement("div");
+      centerDiv.className = "center";
+
+      const amountSpan = document.createElement("span");
+      amountSpan.className = "amount";
+      amountSpan.textContent = "-1234";
+
+      const logoImg = document.createElement("img");
+      logoImg.src = "svg/logo_sw.svg";
+      logoImg.alt = "";
+
+      centerDiv.appendChild(amountSpan);
+      centerDiv.appendChild(logoImg);
+
+      historyItem.appendChild(typeDiv);
+      historyItem.appendChild(dateDiv);
+      historyItem.appendChild(centerDiv);
+
+      // Füge das Element z. B. zu einem Container im DOM hinzu
+
+      document.getElementById("history-container").appendChild(historyItem);
+    });
+
+    return result.data.listPaymentLogs;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}
