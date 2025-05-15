@@ -1,14 +1,16 @@
 // :TODO VIEWS
 function extractWords(str) {
-  // Zerlege den String in Wörter anhand von Leerzeichen
   const words = str.split(" ");
-  // Filtere alle Wörter, die mit einer Raute beginnen
+
   const hashtags = words.filter((word) => word.startsWith("#")).map((word) => word.slice(1));
-  // Filtere alle Wörter, die nicht mit einer Raute beginnen
-  const normalWords = words.filter((word) => !word.startsWith("#"));
-  // Rückgabe als Objekt mit beiden Arrays
-  return { hashtags, normalWords };
+
+  const usernames = words.filter((word) => word.startsWith("@")).map((word) => word.slice(1));
+
+  const normalWords = words.filter((word) => !word.startsWith("#") && !word.startsWith("@"));
+
+  return { hashtags, usernames, normalWords };
 }
+
 function debounce(func, wait) {
   let timeout;
   return function (...args) {
@@ -587,25 +589,287 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const textsearch = document.getElementById("searchText");
-  textsearch.addEventListener("input", () => {
-    const { hashtags, normalWords } = extractWords(textsearch.value.toLowerCase());
-    const parentElements = document.querySelectorAll(".card");
+  // if (titleInput && tagInput && userInput && lupe) {
+  //   async function searchUsersByUsername(username) {
+  //     if (!username.trim()) return [];
 
-    parentElements.forEach((element) => {
-      const h1 = element.querySelector("h1");
-      const tags = element.getAttribute("tags").split(",");
-      const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word.toLowerCase()));
-      const isTag = !hashtags.length || tags.some((tag) => tag.includes(hashtags));
-      if (isTitle && isTag) {
-        element.classList.remove("none");
-      } else {
-        element.classList.add("none");
+  //     const accessToken = getCookie("authToken");
+  //     const headers = new Headers({
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${accessToken}`,
+  //     });
+
+  //     const query = `
+  //       query SearchUser {
+  //         searchUser(username: "${username}", offset: 0, $limit: 20 ) {
+  //           status
+  //           ResponseCode
+  //           affectedRows {
+  //             id
+  //             username
+  //             img
+  //             slug
+  //           }
+  //         }
+  //       }
+  //     `;
+  //     const variables = { username };
+
+  //     try {
+  //       const response = await fetch(GraphGL, {
+  //         method: "POST",
+  //         headers: headers,
+  //         body: JSON.stringify({ query, variables }),
+  //       });
+
+  //       const result = await response.json();
+  //       return result?.data?.searchUser?.affectedRows?.map(u => u.username.toLowerCase()) || [];
+  //     } catch (error) {
+  //       console.error("Error searching user:", error);
+  //       return [];
+  //     }
+  //   }
+  // Select input elements
+  const titleInput = document.getElementById("searchTitle");
+  const tagInput = document.getElementById("searchTag");
+  const userInput = document.getElementById("searchUser");
+  const lupe = document.querySelector(".lupe");
+  const avatar = "https://media.getpeer.eu";
+  
+  // Function to search for users via GraphQL
+  async function searchUsers(username) {
+    // let users
+    const accessToken = getCookie("authToken");
+
+    const query = `
+      query SearchUser {
+        searchUser(username: "${username}", offset: 0, limit: 20) {
+          status
+          counter
+          ResponseCode
+          affectedRows {
+            id
+            username
+            slug
+            img
+            biography
+          }
+        }
       }
-    });
-    localStorage.setItem("tags", document.getElementById("searchText").value);
-    postsLaden();
+    `;
+
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      // userInput.addEventListener("focus", async () => {
+      //   const json = await response.json();
+      //   users = json?.data?.searchUser?.affectedRows || [];
+      //   const dropdown = document.getElementById("userDropdown");
+
+      //   dropdown.innerHTML = "";
+      //   dropdown.style.display = users.length ? "block" : "none";
+
+      //   users.forEach(user => {
+      //     const item = document.createElement("div");
+      //     item.className = "dropdown-item";
+      //     item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+      //     item.addEventListener("click", () => {
+      //       loadUserProfile(user.username);
+      //       dropdown.style.display = "none";
+      //     });
+      //     dropdown.appendChild(item);
+      //   });
+      // });
+
+
+      const json = await response.json();
+      const users = json?.data?.searchUser?.affectedRows || [];
+
+      const dropdown = document.getElementById("userDropdown");
+      dropdown.innerHTML = "";
+      if (users.length) {
+        dropdown.classList.remove("none");
+      } else {
+        dropdown.classList.add("none");
+      }
+
+      users.forEach(user => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+        
+        const img = item.querySelector("img");
+        img.onerror = function () {
+          this.src = "svg/noname.svg";
+        };
+
+        item.addEventListener("click", () => {
+          loadUserProfile(user.username);
+          dropdown.classList.add("none");
+        });
+        dropdown.appendChild(item);
+      });
+
+      return users;
+    } catch (error) {
+      console.error("Error searching users:", error);
+      return [];
+    }
+
+    function loadUserProfile(username) {
+      window.location.href = `/profile/${username}`;
+    }
+}
+  
+
+  async function getProfile(userID) {
+    const accessToken = getCookie("authToken");
+
+    const query = `
+      query GetProfile {
+        getProfile (userID: "${userID}") {
+          status
+          ResponseCode
+          affectedRows {
+              id
+              username
+              status
+              slug
+              img
+              biography
+              isfollowed
+              isfollowing
+              amountposts
+              amounttrending
+              amountfollowed
+              amountfollower
+              amountfriends
+              amountblocked
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(GraphGL,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const json = await response.json();
+      return json?.data?.getProfile || null;
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      return null;
+    }
+  }
+
+
+  // Function to search for tags via GraphQL
+  async function listTags() {
+    const accessToken = getCookie("authToken");
+    const query = `
+      query ListTags {
+        listTags(offset: 0, limit: 20) {
+          status
+          counter
+          ResponseCode
+          affectedRows {
+            name
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const json = await response.json();
+      console.log("Tag search result:", json);
+      console.log()
+      return json?.data?.listTags?.affectedRows || [];
+    } catch (error) {
+      console.error("Error listing tags:", error);
+      return [];
+    }
+  }
+
+  // Main applyFilters function
+  async function applyFilters() {
+    const titleValue = titleInput.value.trim().toLowerCase();
+    const userValue = userInput.value.trim().toLowerCase();
+    const tagValue = tagInput.value.trim().toLowerCase();
+
+    if (userValue) await searchUsers(userValue);
+    // if (titleValue) await searchTitles(titleValue);
+    if (tagValue) await listTags(tagValue);
+
+    // Optionally save local storage (optional)
+    localStorage.setItem("searchTitle", titleValue);
+    localStorage.setItem("searchTag", tagValue);
+    localStorage.setItem("searchUser", userValue);
+  }
+  
+
+  // Add input listeners
+  [titleInput, tagInput, userInput].forEach((input) =>
+    input.addEventListener("input", applyFilters)
+  );
+
+  // Trigger on click
+  lupe.addEventListener("click", applyFilters);
+  const serchgroup = document.getElementById("searchGroup");
+  const pulldown = serchgroup.querySelectorAll(".dropdown");
+
+   
+    serchgroup.addEventListener("mouseleave", () => {
+      pulldown.forEach((item) => {
+        item.classList.add("none");
+      });
+     
   });
+
+  
+
+    
+
+  // const textsearch = document.getElementById("searchGroup");
+  // textsearch.addEventListener("input", () => {
+  //   const { hashtags, normalWords } = extractWords(textsearch.value.toLowerCase());
+  //   const parentElements = document.querySelectorAll(".card");
+
+  //   parentElements.forEach((element) => {
+  //     const h1 = element.querySelector("h1");
+  //     const tags = element.getAttribute("tags").split(",");
+  //     const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word.toLowerCase()));
+  //     const isTag = !hashtags.length || tags.some((tag) => tag.includes(hashtags));
+  //     if (isTitle && isTag) {
+  //       element.classList.remove("none");
+  //     } else {
+  //       element.classList.add("none");
+  //     }
+  //   });
+  //   localStorage.setItem("tags", document.getElementById("searchGroup").value);
+  //   postsLaden();
+  // });
   const checkboxes = document.querySelectorAll("#filter .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
@@ -909,7 +1173,7 @@ function updateOnlineStatus() {
   if (!navigator.onLine) {
     // Wenn offline, Banner anzeigen
     statusBanner.classList.add("offline");
-    statusBanner.textContent = "offline";
+    statusBanner.textContent = "offlines";
   } else {
     // Wenn online, Banner ausblenden
     statusBanner.classList.remove("offline");
@@ -941,25 +1205,25 @@ async function postsLaden() {
   // Ergebnis ausgeben
   const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
   // const textsearch = document.getElementById("searchText").value;
-  const { hashtags, normalWords } = extractWords(document.getElementById("searchText").value.toLowerCase());
-  const textsearch = normalWords.join(" ");
+  const { hashtags, normalWords } = extractWords(document.getElementById("searchTag").value.toLowerCase());
+  const tagInput = normalWords.join(" ");
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   // console.log(cleanedArray);
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.getallposts.affectedRows.forEach((objekt) => {
+  posts.data.listPosts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.id = objekt.id;
     card.classList.add("card");
     card.setAttribute("tabindex", "0");
     card.setAttribute("content", objekt.contenttype);
-    card.setAttribute("tags", objekt.tags.join(","));
+    // card.setAttribute("tags", objekt.tags.join(","));
     // <div class="post"> erstellen und Bild hinzufügen
 
     let postDiv;
@@ -1203,7 +1467,7 @@ async function postsLaden() {
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
   });
-  postsLaden.offset += posts.data.getallposts.affectedRows.length;
+  postsLaden.offset += posts.data.listPosts.affectedRows.length;
 }
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -1701,6 +1965,8 @@ async function convertImageToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
+
+
 async function fetchTags(searchStr) {
   // if (failedSearches.has(searchStr)) {
   //   return [];
@@ -1716,8 +1982,8 @@ async function fetchTags(searchStr) {
     Authorization: `Bearer ${accessToken}`,
   });
   const query = `
-      query Tagsearch($searchstr: String!) {
-          tagsearch(tagname: $searchstr, limit: 10) {
+      query searchTags($searchstr: String!) {
+          searchTags(tagName: $searchstr, limit: 10) {
               status
               counter
               ResponseCode
@@ -1740,10 +2006,10 @@ async function fetchTags(searchStr) {
     const result = await response.json();
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.tagsearch.affectedRows.length) {
+    if (!result.data.searchTags.affectedRows.length) {
       failedSearches.add(searchStr);
     }
-    return result.data.tagsearch.affectedRows;
+    return result.data.searchTags.affectedRows;
   } catch (error) {
     // console.error("Error fetching tags:", error);
     return [];
@@ -1908,7 +2174,7 @@ function saveFilterSettings() {
     filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
   });
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
-  localStorage.setItem("tags", document.getElementById("searchText").value);
+  localStorage.setItem("tags", document.getElementById("searchGroup").value);
 }
 function restoreFilterSettings() {
   let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
@@ -1921,8 +2187,8 @@ function restoreFilterSettings() {
       }
     });
   }
-  document.getElementById("searchText").value = localStorage.getItem("tags") || ""; // Tags wiederherstellen
-}
+  document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
+} 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .getRegistrations()
@@ -2020,3 +2286,61 @@ if ("serviceWorker" in navigator) {
 //   path.setAttribute("stroke", "url(#gradient)");
 //   path.setAttribute("stroke-width", 2);
 // }
+
+
+// daily free actions
+dailyfree();
+async function dailyfree() {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+    query: `query getDailyFreeStatus {
+      getDailyFreeStatus {
+        status
+        ResponseCode
+        affectedRows {
+          name
+          used
+          available
+        }
+      }
+   }`,
+  });
+
+  // Define request options
+  const requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  try {
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
+    result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
+      document.getElementById(entry.name + "used").innerText = entry.used;
+      document.getElementById(entry.name + "available").innerText = entry.available;
+      const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
+      document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
+      console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+    });
+
+    return result.data.getDailyFreeStatus;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}
