@@ -634,9 +634,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const tagInput = document.getElementById("searchTag");
   const userInput = document.getElementById("searchUser");
   const lupe = document.querySelector(".lupe");
-
+  const avatar = "https://media.getpeer.eu";
+  
   // Function to search for users via GraphQL
   async function searchUsers(username) {
+    // let users
     const accessToken = getCookie("authToken");
 
     const query = `
@@ -666,15 +668,113 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ query })
       });
 
+      // userInput.addEventListener("focus", async () => {
+      //   const json = await response.json();
+      //   users = json?.data?.searchUser?.affectedRows || [];
+      //   const dropdown = document.getElementById("userDropdown");
+
+      //   dropdown.innerHTML = "";
+      //   dropdown.style.display = users.length ? "block" : "none";
+
+      //   users.forEach(user => {
+      //     const item = document.createElement("div");
+      //     item.className = "dropdown-item";
+      //     item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+      //     item.addEventListener("click", () => {
+      //       loadUserProfile(user.username);
+      //       dropdown.style.display = "none";
+      //     });
+      //     dropdown.appendChild(item);
+      //   });
+      // });
+
+
       const json = await response.json();
-      console.log("User search result:", json);
-      console.log()
-      return json?.data?.searchUser?.affectedRows || [];
+      const users = json?.data?.searchUser?.affectedRows || [];
+
+      const dropdown = document.getElementById("userDropdown");
+      dropdown.innerHTML = "";
+      if (users.length) {
+        dropdown.classList.remove("none");
+      } else {
+        dropdown.classList.add("none");
+      }
+
+      users.forEach(user => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+        
+        const img = item.querySelector("img");
+        img.onerror = function () {
+          this.src = "svg/noname.svg";
+        };
+
+        item.addEventListener("click", () => {
+          loadUserProfile(user.username);
+          dropdown.classList.add("none");
+        });
+        dropdown.appendChild(item);
+      });
+
+      return users;
     } catch (error) {
       console.error("Error searching users:", error);
       return [];
     }
+
+    function loadUserProfile(username) {
+      window.location.href = `/profile/${username}`;
+    }
+}
+  
+
+  async function getProfile(userID) {
+    const accessToken = getCookie("authToken");
+
+    const query = `
+      query GetProfile {
+        getProfile (userID: "${userID}") {
+          status
+          ResponseCode
+          affectedRows {
+              id
+              username
+              status
+              slug
+              img
+              biography
+              isfollowed
+              isfollowing
+              amountposts
+              amounttrending
+              amountfollowed
+              amountfollower
+              amountfriends
+              amountblocked
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(GraphGL,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const json = await response.json();
+      return json?.data?.getProfile || null;
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      return null;
+    }
   }
+
 
   // Function to search for tags via GraphQL
   async function listTags() {
@@ -727,6 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("searchTag", tagValue);
     localStorage.setItem("searchUser", userValue);
   }
+  
 
   // Add input listeners
   [titleInput, tagInput, userInput].forEach((input) =>
@@ -735,6 +836,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Trigger on click
   lupe.addEventListener("click", applyFilters);
+  const serchgroup = document.getElementById("searchGroup");
+  const pulldown = serchgroup.querySelectorAll(".dropdown");
+
+   
+    serchgroup.addEventListener("mouseleave", () => {
+      pulldown.forEach((item) => {
+        item.classList.add("none");
+      });
+     
+  });
+
   
 
     

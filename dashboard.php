@@ -60,13 +60,28 @@ include 'host.php';
         <header id="header">
             <div id="DashboardHeader" class="header">
                 <div class="search-group" id="searchGroup">
-                    <input name="searchUser" id="searchUser" type="text" placeholder="@username" aria-label="Search Username" />
+                    <div class="search-box">
+                        <input name="searchUser" id="searchUser" type="text" placeholder="@username" />
+                        <div class="dropdown none" id="userDropdown"></div>
+                    </div>
+
                     <div class="divider"></div>
-                    <input name="searchTitle" id="searchTitle" type="text" placeholder="~title" aria-label="Search Title" />
+
+                    <div class="search-box">
+                        <input name="searchTitle" id="searchTitle" type="text" placeholder="~title" />
+                        <div class="dropdown none" id="titleDropdown"></div>
+                    </div>
+
                     <div class="divider"></div>
-                    <input name="searchTag" id="searchTag" type="text" placeholder="#tag" aria-label="Search Tags" />
-                    <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search" style="cursor: pointer;"/>
+
+                    <div class="search-box">
+                        <input name="searchTag" id="searchTag" type="text" placeholder="#tag" />
+                        <div class="dropdown none" id="tagDropdown"></div>
+                    </div>
+
+                    <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search" style="cursor: pointer;" />
                 </div>
+                <div id="userResults" class="user-results"></div>
                 <div class="notify" ><img src="svg/bell.svg" alt="notification icon"></div>
                 <div class="postOptions">
                     <div id="everything" class="postOptionsButton" title="show everything">

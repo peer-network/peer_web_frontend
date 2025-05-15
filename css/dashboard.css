@@ -261,8 +261,50 @@ h1 {
   border-radius: 2rem;
   flex: 1 1 200px;
   min-width: 0;
+  width: 100%;
+  max-width: 10rem;
   font-size: 1rem;
   background-color: #fff;
+}
+
+.search-box {
+  position: relative;
+  flex: 1 1 200px;
+}
+
+.dropdown {
+  position: absolute;
+  margin-top: .5rem;
+  top: 100%;
+  z-index: 999;
+  width: 38rem;
+  height: 25rem;
+  max-height: 25rem;
+  background-color: var(--bg-filter);
+  border-radius: 0.5rem;
+  overflow-y: auto;
+  gap: 1rem;
+}
+
+.dropdown-item {
+  display: flex;
+  padding:.6rem 1rem !important;
+  width: 100% !important;
+  cursor: pointer;
+  color: var(--text-color) !important;
+  align-items: center;
+  background-color: var(--bg-filter) !important;
+  gap : 0.5rem;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0 !important;
+}
+
+.header div img {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
 }
 
 .search-group input[placeholder="#tag"] {
