@@ -1,6 +1,6 @@
 getUser();
 dailyfree();
-currentliquidity();
+balance();
 nextmint();
 dailywin();
 dailypays();
@@ -35,10 +35,11 @@ async function currentliquidity() {
   try {
     // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
 
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const result = await response.json();
+    // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
 
     document.getElementById("token").innerText = result.data.balance.currentliquidity;
@@ -98,7 +99,7 @@ async function dailyfree() {
       // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
 
-    return result.data.dailyfreestatus;
+    return result.data.getDailyFreeStatus;
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
@@ -135,6 +136,7 @@ function getNext0930() {
 
   return next0930;
 }
+
 async function dailywin() {
   const accessToken = getCookie("authToken");
 
