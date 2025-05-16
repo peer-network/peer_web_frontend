@@ -160,4 +160,4 @@ async function fetchChildComments(parentId) {
 }
 
 // Beispielaufruf der Funktion
-// fetchParentcomments("c85fa56c-262b-464d-a165-3dca9b767605");
+// fetchlistChildComments("c85fa56c-262b-464d-a165-3dca9b767605");
