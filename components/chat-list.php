@@ -39,7 +39,6 @@
 
         <div class="chat-pannel">
             <div class="chat-pannel-widget">
-
                 <div class="chat-list-overlay">
                     <div class="chat-list-item">
                         <span class="profile-pic"><img src="svg/logo_sw.svg" alt="Profile Pic" /></span>
