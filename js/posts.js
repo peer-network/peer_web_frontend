@@ -96,7 +96,7 @@ function viewPost(postid) {
 
   var graphql = JSON.stringify({
     query: `mutation ResolvePostAction {
-        resolvePostAction: "${postid}", action: VIEW) {
+        resolvePostAction(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
         }
@@ -124,7 +124,7 @@ function viewPost(postid) {
     })
     .catch((error) => {
       Merror("View Post failed", error);
-      console.log("error", error);
+      // console.log("error", error);
       return false;
     });
 }
@@ -311,3 +311,8 @@ async function sendCreatePost(variables) {
     return false;
   }
 }
+
+// function listPosts(tagName) {
+//   // your logic to list posts based on tagName
+// }
+// window.listPosts = listPosts;
