@@ -111,15 +111,15 @@ h1 {
 .sidebar,
 .profil {
   position: sticky;
-  z-index: 2;
+  z-index: 3;
   top: 0;
   height: 100dvh;
   max-height: 100dvh;
   justify-content: center;
   padding: 1.5rem;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   background-color: var(--background-color);
-  box-shadow: 0rem 0 3rem var(--shadow-color);
+  /* box-shadow: 0rem 0 3rem var(--shadow-color); */
 }
 
 .sidebar {
@@ -142,7 +142,7 @@ h1 {
   text-align: center;
   justify-content: center;
   gap: 1rem;
-  position: sticky;
+  position: fixed;
   top: 0rem;
   /* margin-bottom: 1rem; */
   height: 8rem;
@@ -156,7 +156,7 @@ h1 {
   align-content: center;
   /* margin-left: -5vw; */
   /* box-shadow: 0 0px 3px #aaa; */
-  transition: transform 0.5s ease, opacity 0.5s ease;
+  /* transition: transform 0.5s ease, opacity 0.5s ease; */
   opacity: 1;
 }
 .headerweg {
@@ -202,6 +202,7 @@ h1 {
 }
 
 .progress-bar {
+  --progress: 0%;
   background: #333;
   border-radius: 4px;
   height: 8px;
@@ -264,7 +265,8 @@ h1 {
   width: 100%;
   max-width: 10rem;
   font-size: 1rem;
-  background-color: #fff;
+  background-color: var(--bg-filter);
+  /* background-color: #fff; */
 }
 
 .search-box {
@@ -308,7 +310,7 @@ h1 {
 }
 
 .search-group input[placeholder="#tag"] {
-  color: #77AFFF;
+  color: #0069FF;
 }
 
 .search-group input[placeholder="@username"] {
@@ -349,7 +351,7 @@ h1 {
 .main {
   grid-area: main;
   /* display: grid; */
-  gap: 1.5rem 1.5rem;
+  gap: 2rem 2rem;
   padding: 0.2rem;
   overflow: auto;
   overflow-x: auto;
@@ -1109,7 +1111,7 @@ h1 {
   width: 28rem;
 } */
 .card[content="video"] {
-  aspect-ratio: 3/6;
+  aspect-ratio: 3/4.34;
   flex-grow: 1;
 }
 .card[content="video"]::before {
@@ -1360,11 +1362,10 @@ h1 {
   left: 0;
   width: 100vw;
   height: 100dvh;
-  z-index: 2;
+  z-index: 5;
   background-color: #4848487d;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
-  z-index: 2;
 }
 
 #cardClicked {
@@ -1374,7 +1375,7 @@ h1 {
   transform: translate(-50%, -50%);
   top: 50%;
   position: fixed;
-  /* z-index: 5; */
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-areas: "img comment";
