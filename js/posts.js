@@ -1,4 +1,11 @@
-async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby = "NEWEST") {
+window.listPosts = async function getPosts(tagName) {
+  console.log("Fetching posts for tag:", tagName);
+
+  // Your GraphQL or fetch logic here...
+};
+
+
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -6,7 +13,14 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  title = sanitizeString(title);
+  if (typeof title === "string") {
+    title = sanitizeString(title);
+  } else {
+    title = "";
+  }
+
+  // tag = sanitizeString(tag);
+  // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
   let postsList = `query ListPosts {
     listPosts(
@@ -14,6 +28,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
+  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
   postsList += `) {
         status
         ResponseCode
@@ -81,7 +96,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
       return result;
     })
     .catch((error) => {
-      console.log("error", error);
+      Merror("error", error);
       throw error;
     });
 }
@@ -312,7 +327,3 @@ async function sendCreatePost(variables) {
   }
 }
 
-// function listPosts(tagName) {
-//   // your logic to list posts based on tagName
-// }
-// window.listPosts = listPosts;

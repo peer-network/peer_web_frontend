@@ -70,14 +70,14 @@ include 'host.php';
 
                     <div class="search-box">
                         <input name="searchTitle" id="searchTitle" type="text" placeholder="~title" />
-                        <div class="dropdown none" id="titleDropdown"></div>
+                        <div class="dropdown none drop1" id="titleDropdown"></div>
                     </div>
 
                     <div class="divider"></div>
 
                     <div class="search-box">
                         <input name="searchTag" id="searchTag" type="text" placeholder="#tag" />
-                        <div class="dropdown none" id="tagDropdown"></div>
+                        <div class="dropdown none drop2" id="tagDropdown"></div>
                     </div>
 
                     <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search"/>
@@ -104,10 +104,10 @@ include 'host.php';
         <!-- Sidebar -->
         <aside class="sidebar">
             <form id="filter" class="filterContainer">
-                    <div class="dash">
+                    <a href="dashboard.php" class="dash">
                         <img class="logo" src="svg/Home.svg" alt="Peer Network Logo" />
                         <h1 id="h1">Dashboard</h1>
-                    </div>
+                    </a>
                 <div class="filter-sec">
                     <div class="center">
                         &nbsp;Filter
