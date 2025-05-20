@@ -147,12 +147,18 @@ async function fetchChildComments(parentId) {
 
   // Ersetze die URL mit der deines GraphQL-Endpunkts
   return fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        query,
-        variables
-      }),
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({ query, variables }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Antwort vom Server:", data);
+      if (data.data.listChildComments.status === "error" && data.data.listChildComments.ResponseCode !== "This is not a commentId") {
+        throw new Error(data.data.listChildComments.ResponseCode);
+      } else {
+        return data.data.listChildComments.affectedRows;
+      }
     })
     .then((response) => response.json())
     .then((res) => {
@@ -170,4 +176,4 @@ async function fetchChildComments(parentId) {
 }
 
 // Beispielaufruf der Funktion
-// fetchParentcomments("c85fa56c-262b-464d-a165-3dca9b767605");
+// fetchlistChildComments("c85fa56c-262b-464d-a165-3dca9b767605");
