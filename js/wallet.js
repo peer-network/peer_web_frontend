@@ -5,7 +5,7 @@ currentliquidity();
 nextmint();
 dailywin();
 dailypays();
-async function currentliquidity() {
+async function getLiquiudity() {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -41,17 +41,22 @@ async function currentliquidity() {
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-
-    document.getElementById("token").innerText = result.data.balance.currentliquidity;
-    const formatted = (result.data.balance.currentliquidity * 0.1).toFixed(2).replace(".", ",") + " €";
-    document.getElementById("money").innerText = formatted;
-    return result.data.hello;
+    return result.data.balance.currentliquidity;
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
   }
 }
-async function dailyfree() {
+async function currentliquidity() {
+  const token = await getLiquiudity();
+
+  if (token !== null) {
+    document.getElementById("token").innerText = token;
+    const formatted = (token * 0.1).toFixed(2).replace(".", ",") + " €";
+    document.getElementById("money").innerText = formatted;
+  }
+}
+async function getDailyFreeStatus() {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -91,18 +96,24 @@ async function dailyfree() {
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-    result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
+    return result.data.getDailyFreeStatus.affectedRows;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}
+async function dailyfree() {
+  const result = await getDailyFreeStatus();
+
+  if (result !== null) {
+    result.forEach((entry) => {
       document.getElementById(entry.name + "used").innerText = entry.used;
       document.getElementById(entry.name + "available").innerText = entry.available;
       const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
       document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
       // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
-
-    return result.data.dailyfreestatus;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
+    return result;
   }
 }
 function nextmint() {

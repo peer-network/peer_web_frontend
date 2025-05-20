@@ -45,6 +45,9 @@ async function likeComment(commentId) {
 }
 
 async function createComment(postId, content, parentId = null) {
+  if (!(await LiquiudityCheck(3, "Comment Post", "comment"))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   // Create headers

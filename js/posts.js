@@ -1,3 +1,8 @@
+const post = 2;
+const like = 0;
+const dislike = 3;
+const comment = 1;
+
 async function getPosts(offset, limit, filter, title = "", tag = null, sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
@@ -128,7 +133,10 @@ function viewPost(postid) {
     });
 }
 
-function likePost(postid) {
+async function likePost(postid) {
+  if (!(await LiquiudityCheck(10, "Like Post", like))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -178,6 +186,9 @@ function likePost(postid) {
     });
 }
 async function dislikePost(postid) {
+  if (!(await LiquiudityCheck(5, "Dislike Post", dislike))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -212,7 +223,37 @@ async function dislikePost(postid) {
 function isVariableNameInArray(variableObj, nameArray) {
   return Object.keys(variableObj).some((key) => key.includes(nameArray));
 }
+async function LiquiudityCheck(postCosts, title, action) {
+  const msg = ["like", "comment", "post"];
+  const cancel = 0;
+  const dailyfree = await getDailyFreeStatus();
+  const dailyPostAvailable = dailyfree[action].available;
+  const bitcoinPrice = await getBitcoinPriceEUR();
+  const tokenPrice = 100000 / bitcoinPrice;
+  const token = await getLiquiudity();
+  if (!dailyPostAvailable && token * tokenPrice < postCosts) {
+    Merror(
+      title,
+      `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}.
+      You currently have ${token} Peer Tokens.`
+    );
+    return false;
+  } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
+    let answer = await confirm(
+      title,
+      `You currently have ${token} Peer Tokens.
+       This ${msg[action]} will cost ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens.`
+    );
+    if (answer === null || answer === cancel) {
+      return false;
+    }
+    return true;
+  }
+}
 async function sendCreatePost(variables) {
+  if (!(await LiquiudityCheck(20, "Create Post", post))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   if (!accessToken) {
@@ -309,5 +350,19 @@ async function sendCreatePost(variables) {
     Merror("Create Post failed", error);
     console.error("Error create Post:", error);
     return false;
+  }
+}
+// Beispiel: Hole den Bitcoin‐Preis in EUR von CoinGecko
+
+async function getBitcoinPriceEUR() {
+  const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP-Error: ${response.status}`);
+    const data = await response.json();
+    console.log(`1 BTC = ${data.bitcoin.eur} EUR`);
+    return data.bitcoin.eur;
+  } catch (err) {
+    console.error("Fehler beim Abrufen des Bitcoin-Kurses:", err);
   }
 }
