@@ -108,8 +108,8 @@ async function fetchChildComments(parentId) {
   });
 
   const query = `
-  query Parentcomments($parent: ID!) {
-    parentcomments(parent: $parent) {
+  query listChildComments($parent: ID!) {
+    listChildComments(parent: $parent) {
         status
         counter
         ResponseCode
@@ -144,10 +144,10 @@ async function fetchChildComments(parentId) {
     .then((response) => response.json())
     .then((data) => {
       console.log("Antwort vom Server:", data);
-      if (data.data.parentcomments.status === "error") {
-        throw new Error(data.data.parentcomments.ResponseCode);
+      if (data.data.listChildComments.status === "error" && data.data.listChildComments.ResponseCode !== "This is not a commentId") {
+        throw new Error(data.data.listChildComments.ResponseCode);
       } else {
-        return data.data.parentcomments.affectedRows;
+        return data.data.listChildComments.affectedRows;
       }
     })
     .catch((error) => {
@@ -157,4 +157,4 @@ async function fetchChildComments(parentId) {
 }
 
 // Beispielaufruf der Funktion
-// fetchParentcomments("c85fa56c-262b-464d-a165-3dca9b767605");
+// fetchlistChildComments("c85fa56c-262b-464d-a165-3dca9b767605");

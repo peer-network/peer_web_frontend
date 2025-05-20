@@ -2,7 +2,7 @@
 async function registerUser(email, password, username) {
   // GraphQL-Mutation für die Registrierung eines Benutzers
   const query = `
-        mutation Register($input: RegisterInput!) {
+        mutation Register($input: RegistrationInput!) {
             register(input: $input) {
                 status
                 ResponseCode
@@ -23,6 +23,7 @@ async function registerUser(email, password, username) {
       email: email,
       password: password,
       username: username,
+      pkey: null,
     },
   };
 
@@ -106,7 +107,7 @@ async function verifyUser2(userid) {
   // Definiere den GraphQL-Mutation-Query mit einer Variablen
   const query = `
     mutation VerifiedAccount($userId: ID!) {
-      verifiedAccount(userid: $userId) {
+      verifyAccount(userid: $userId) {
         status
         ResponseCode
       }
@@ -128,11 +129,11 @@ async function verifyUser2(userid) {
     .then((data) => {
       console.log("Mutation result:", data);
       // Ergebnis der Mutation verarbeiten
-      const { status, ResponseCode } = data.data.verifiedAccount;
+      const { status, ResponseCode } = data.data.verifyAccount;
       console.log("Status:", status);
       console.log("Error Message:", ResponseCode);
       if (status === "success") {
-        info("register successfull");
+        info(ResponseCode);
         window.location.href = "login.php";
       }
     })

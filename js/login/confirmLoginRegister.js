@@ -13,7 +13,7 @@ function displayValidationMessage(message) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
   // Event-Listener für das Verlassen des Eingabefelds (blur)
-  emailField.addEventListener("blur", function () {
+  emailField.addEventListener("input", function () {
     // Überprüfen, ob die E-Mail gültig ist
     if (emailRegex.test(emailField.value)) {
       // Gültige E-Mail: Klasse 'valid-email' hinzufügen und 'invalid-email' entfernen
@@ -37,7 +37,7 @@ function displayValidationMessage(message) {
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
   
   // Event-Listener für das Verlassen des Eingabefelds (blur)
-  passwordField.addEventListener("blur", function () {
+  passwordField.addEventListener("input", function () {
     document.getElementById("validationMessage").innerText="";
     document.getElementById("validationMessage").classList.remove("notvalid");
     // Überprüfen, ob das Passwort gültig ist

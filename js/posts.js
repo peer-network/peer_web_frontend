@@ -1,4 +1,4 @@
-async function getPosts(offset, limit, filter, title = "", tag = null, sortby = "NEWEST") {
+async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -8,15 +8,13 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
   });
   title = sanitizeString(title);
   if (!sortby) sortby = "NEWEST";
-  let searchstr = `query Getallposts {
-    getallposts(
+  let postsList = `query ListPosts {
+    listPosts(
       sortBy: ${sortby},
-      postLimit: ${limit},
-      postOffset: ${offset},
-      filterBy: [${filter}],`;
-  searchstr += tag && tag.length >= 3 ? `,tag: "${tag}"` : "";
-  searchstr += title && title.length >= 2 ? `,title: "${title}"` : "";
-  searchstr += `) {
+      limit: ${limit},
+      offset: ${offset},
+      filterBy: [${filterBy}],`;
+  postsList += `) {
         status
         ResponseCode
         affectedRows {
@@ -66,7 +64,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
 }
 `;
   var graphql = JSON.stringify({
-    query: searchstr,
+    query: postsList,
     variables: {},
   });
 
@@ -98,8 +96,8 @@ function viewPost(postid) {
   });
 
   var graphql = JSON.stringify({
-    query: `mutation ResolveActionPost {
-        resolveActionPost(postid: "${postid}", action: VIEW) {
+    query: `mutation ResolvePostAction {
+        resolvePostAction: "${postid}", action: VIEW) {
           status
           ResponseCode
         }
@@ -119,14 +117,14 @@ function viewPost(postid) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      if (result.data.resolveActionPost.status == "error") {
-        throw new Error(result.data.resolveActionPost.ResponseCode);
+      if (result.data.resolvePostAction.status == "error") {
+        throw new Error(result.data.resolvePostAction.ResponseCode);
       } else {
         return true;
       }
     })
     .catch((error) => {
-      Merror("Like failed", error);
+      Merror("View Post failed", error);
       console.log("error", error);
       return false;
     });
@@ -148,8 +146,8 @@ function likePost(postid) {
   //     }
   // }
   var graphql = JSON.stringify({
-    query: `mutation ResolveActionPost {
-        resolveActionPost(postid: "${postid}", action: LIKE) {
+    query: `mutation ResolvePostAction {
+        resolvePostAction(postid: "${postid}", action: LIKE) {
           status
           ResponseCode
         }
@@ -169,14 +167,14 @@ function likePost(postid) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      if (result.data.resolveActionPost.status == "error") {
-        throw new Error(result.data.resolveActionPost.ResponseCode);
+      if (result.data.resolvePostAction.status == "error") {
+        throw new Error(result.data.resolvePostAction.ResponseCode);
       } else {
         return true;
       }
     })
     .catch((error) => {
-      Merror("Like failed", error);
+      Merror("Like Post failed", error);
       console.log("error", error);
       return false;
     });
@@ -191,8 +189,8 @@ async function dislikePost(postid) {
   });
 
   var graphql = JSON.stringify({
-    query: `mutation DislikePost {
-        dislikePost(input: { postid: "${postid}" }) {
+    query: `mutation DeletePost {
+        deletePost(input: { postid: "${postid}" }) {
           status
           ResponseCode
         }
@@ -236,7 +234,7 @@ async function sendCreatePost(variables) {
   if (isVariableNameInArray(variables, "mediadescription")) {
     query += `, $mediadescription: String!`;
   }
-  query += `, $contenttype: ContenType!, $tags: [String!]) {
+  query += `, $contenttype: ContentType!, $tags: [String!]) {
       createPost(
         action: POST
         input: {

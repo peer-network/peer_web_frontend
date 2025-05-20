@@ -1,13 +1,26 @@
 // :TODO VIEWS
 function extractWords(str) {
-  // Zerlege den String in Wörter anhand von Leerzeichen
   const words = str.split(" ");
-  // Filtere alle Wörter, die mit einer Raute beginnen
+
   const hashtags = words.filter((word) => word.startsWith("#")).map((word) => word.slice(1));
-  // Filtere alle Wörter, die nicht mit einer Raute beginnen
-  const normalWords = words.filter((word) => !word.startsWith("#"));
-  // Rückgabe als Objekt mit beiden Arrays
-  return { hashtags, normalWords };
+
+  const usernames = words.filter((word) => word.startsWith("@")).map((word) => word.slice(1));
+
+  const normalWords = words.filter((word) => !word.startsWith("#") && !word.startsWith("@"));
+
+  return { hashtags, usernames, normalWords };
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+function handleMouseMoveEnd(video) {
+  video.play();
 }
 let mostliked = [];
 function commentToDom(c, append = true) {
@@ -50,9 +63,9 @@ function commentToDom(c, append = true) {
               }
             });
           }
-          console.log("Ergebnis:", result);
+          // console.log("Ergebnis:", result);
         });
-        console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
+        // console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
         // window.location.href = "profile.html?user=" + c.user.id;
       },
       { capture: true }
@@ -174,6 +187,197 @@ document.addEventListener("DOMContentLoaded", () => {
   //     fileInput.accept = event.target.value;
   //   }
   // });
+
+  // const editProfilPicture = document.getElementById("editProfileImage");
+  // editProfilPicture.addEventListener("click", () => {
+  //   document.getElementById("profileImageInput").click();
+  //   document.getElementById("cropButton").classList.remove("none");
+  //   const profileImageInput = document.getElementById("profileImageInput");
+  //   const image = document.getElementById("profilbild");
+  //   const cropContainer = document.getElementById("cropContainer");
+  //   const result = document.getElementById("result");
+
+  //   // Globale Variablen für Translation und Zoom
+  //   let offsetX = 0,
+  //     offsetY = 0;
+  //   let currentZoom = 1;
+
+  //   // Variablen für Dragging
+  //   let isDragging = false,
+  //     startX = 0,
+  //     startY = 0;
+
+  //   // Variablen für Touch-Pinch
+  //   let isPinching = false;
+  //   let lastTouchDistance = 0;
+
+  //   // Aktualisiert die Transformation des Bildes (Translation & Scale)
+  //   function updateTransform() {
+  //     image.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${currentZoom})`;
+  //   }
+
+  //   // Bild laden
+  //   profileImageInput.addEventListener("change", function (e) {
+  //     const file = e.target.files[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = function (evt) {
+  //         image.src = evt.target.result;
+  //         image.style.display = "block";
+  //         // Reset initial values
+  //         offsetX = 0;
+  //         offsetY = 0;
+  //         currentZoom = 1;
+  //         updateTransform();
+  //         image.onload = function () {
+  //           // Optional: Bild innerhalb des Containers zentrieren
+  //           offsetX = (cropContainer.clientWidth - image.naturalWidth) / 2;
+  //           offsetY = (cropContainer.clientHeight - image.naturalHeight) / 2;
+  //           updateTransform();
+  //         };
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   });
+
+  //   // ------------------- Maussteuerung -------------------
+  //   image.addEventListener("mousedown", function (e) {
+  //     isDragging = true;
+  //     startX = e.clientX;
+  //     startY = e.clientY;
+  //     e.preventDefault();
+  //   });
+
+  //   document.addEventListener("mousemove", function (e) {
+  //     if (!isDragging) return;
+  //     const dx = e.clientX - startX;
+  //     const dy = e.clientY - startY;
+  //     startX = e.clientX;
+  //     startY = e.clientY;
+  //     offsetX += dx;
+  //     offsetY += dy;
+  //     updateTransform();
+  //   });
+
+  //   document.addEventListener("mouseup", function () {
+  //     isDragging = false;
+  //   });
+
+  //   // Zoom via Mausrad – Setzt transform-origin anhand der Mausposition
+  //   cropContainer.addEventListener("wheel", function (e) {
+  //     e.preventDefault();
+  //     const rect = cropContainer.getBoundingClientRect();
+  //     // Mausposition relativ zum Container
+  //     const mouseX = e.clientX - rect.left;
+  //     const mouseY = e.clientY - rect.top;
+  //     // Berechne den Punkt im Bild (unter Berücksichtigung der aktuellen Verschiebung)
+  //     const originX = mouseX - offsetX;
+  //     const originY = mouseY - offsetY;
+  //     image.style.transformOrigin = `${originX}px ${originY}px`;
+
+  //     // Aktualisiere den Zoomfaktor
+  //     if (e.deltaY < 0) {
+  //       currentZoom *= 1.1;
+  //     } else {
+  //       currentZoom /= 1.1;
+  //     }
+  //     // Begrenzung des Zooms
+  //     currentZoom = Math.min(Math.max(currentZoom, 0.5), 3);
+  //     updateTransform();
+  //   });
+
+  //   // ------------------- Touch-Steuerung -------------------
+  //   image.addEventListener(
+  //     "touchstart",
+  //     function (e) {
+  //       if (e.touches.length === 1) {
+  //         // Ein Finger: Beginne Dragging
+  //         isDragging = true;
+  //         startX = e.touches[0].clientX;
+  //         startY = e.touches[0].clientY;
+  //       } else if (e.touches.length === 2) {
+  //         // Zwei Finger: Beginne Pinch-Zoom
+  //         isPinching = true;
+  //         isDragging = false; // Deaktiviere Dragging während des Pinch-Zooms
+  //         const [touch1, touch2] = e.touches;
+  //         lastTouchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+  //       }
+  //       e.preventDefault();
+  //     },
+  //     { passive: false }
+  //   );
+
+  //   image.addEventListener(
+  //     "touchmove",
+  //     function (e) {
+  //       if (isDragging && e.touches.length === 1) {
+  //         // Verschiebe das Bild mit einem Finger (Drag)
+  //         const touch = e.touches[0];
+  //         const dx = touch.clientX - startX;
+  //         const dy = touch.clientY - startY;
+  //         startX = touch.clientX;
+  //         startY = touch.clientY;
+  //         offsetX += dx;
+  //         offsetY += dy;
+  //         updateTransform();
+  //       } else if (isPinching && e.touches.length === 2) {
+  //         // Pinch-Zoom mit zwei Fingern
+  //         const [touch1, touch2] = e.touches;
+  //         const newDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+  //         // Berechne den Mittelpunkt der beiden Finger relativ zum Container
+  //         const rect = cropContainer.getBoundingClientRect();
+  //         const centerX = (touch1.clientX + touch2.clientX) / 2 - rect.left;
+  //         const centerY = (touch1.clientY + touch2.clientY) / 2 - rect.top;
+  //         // Berechne den Punkt im Bild (unter Berücksichtigung der Verschiebung)
+  //         const originX = centerX - offsetX;
+  //         const originY = centerY - offsetY;
+  //         image.style.transformOrigin = `${originX}px ${originY}px`;
+
+  //         // Aktualisiere den Zoomfaktor anhand des Abstands
+  //         const zoomFactor = newDistance / lastTouchDistance;
+  //         currentZoom *= zoomFactor;
+  //         currentZoom = Math.min(Math.max(currentZoom, 0.5), 3);
+  //         lastTouchDistance = newDistance;
+  //         updateTransform();
+  //       }
+  //       e.preventDefault();
+  //     },
+  //     { passive: false }
+  //   );
+
+  //   image.addEventListener(
+  //     "touchend",
+  //     function (e) {
+  //       // Wenn alle Finger weg sind, beende alle Gesten
+  //       if (e.touches.length === 0) {
+  //         isDragging = false;
+  //         isPinching = false;
+  //       }
+  //       // Falls noch ein Finger übrig ist, wird wieder Dragging aktiviert
+  //       if (e.touches.length === 1) {
+  //         isPinching = false;
+  //         isDragging = true;
+  //         startX = e.touches[0].clientX;
+  //         startY = e.touches[0].clientY;
+  //       }
+  //       e.preventDefault();
+  //     },
+  //     { passive: false }
+  //   );
+
+  //   // ------------------- Ergebnisanzeige -------------------
+  //   document.getElementById("cropButton").addEventListener("click", function () {
+  //     const clonedCrop = cropContainer.cloneNode(true);
+  //     const clonedImage = clonedCrop.querySelector("img");
+  //     if (clonedImage) {
+  //       clonedImage.style.cursor = "default";
+  //     }
+  //     result.innerHTML = "";
+  //     result.appendChild(clonedCrop);
+  //   });
+  //   // alert("Please use the profile page to edit your profile picture.");
+  // });
+
   const everything = document.getElementById("everything");
   everything.addEventListener("click", () => {
     deleteFilter();
@@ -206,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
-      console.log("Ergebnis:", result);
+      // console.log("Ergebnis:", result);
     });
     // document.getElementById("commentInput").focus();
     // createComment(attributeValue, "test");
@@ -214,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
     document.documentElement.requestFullscreen().catch((err) => {
-      console.warn(`Vollbildmodus konnte nicht aktiviert werden: ${err.message}`);
+      // console.warn(`Vollbildmodus konnte nicht aktiviert werden: ${err.message}`);
     });
   }
 
@@ -226,12 +430,13 @@ document.addEventListener("DOMContentLoaded", () => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         postsLaden();
-        console.log("Der Footer ist jetzt im Viewport sichtbar!");
+        // console.log("Der Footer ist jetzt im Viewport sichtbar!");
       }
     });
   };
   const observerOptions = {
     root: null, // null bedeutet, dass der Viewport als root genutzt wird
+    rootMargin: "0px 0px 100% 0px",
     threshold: 0.1, // 10% des Footers müssen im Viewport sein, um die Funktion auszulösen
   };
   const observer = new IntersectionObserver(observerCallback, observerOptions);
@@ -384,25 +589,287 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const textsearch = document.getElementById("searchText");
-  textsearch.addEventListener("input", () => {
-    const { hashtags, normalWords } = extractWords(textsearch.value.toLowerCase());
-    const parentElements = document.querySelectorAll(".card");
+  // if (titleInput && tagInput && userInput && lupe) {
+  //   async function searchUsersByUsername(username) {
+  //     if (!username.trim()) return [];
 
-    parentElements.forEach((element) => {
-      const h1 = element.querySelector("h1");
-      const tags = element.getAttribute("tags").split(",");
-      const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word.toLowerCase()));
-      const isTag = !hashtags.length || tags.some((tag) => tag.includes(hashtags));
-      if (isTitle && isTag) {
-        element.classList.remove("none");
-      } else {
-        element.classList.add("none");
+  //     const accessToken = getCookie("authToken");
+  //     const headers = new Headers({
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${accessToken}`,
+  //     });
+
+  //     const query = `
+  //       query SearchUser {
+  //         searchUser(username: "${username}", offset: 0, $limit: 20 ) {
+  //           status
+  //           ResponseCode
+  //           affectedRows {
+  //             id
+  //             username
+  //             img
+  //             slug
+  //           }
+  //         }
+  //       }
+  //     `;
+  //     const variables = { username };
+
+  //     try {
+  //       const response = await fetch(GraphGL, {
+  //         method: "POST",
+  //         headers: headers,
+  //         body: JSON.stringify({ query, variables }),
+  //       });
+
+  //       const result = await response.json();
+  //       return result?.data?.searchUser?.affectedRows?.map(u => u.username.toLowerCase()) || [];
+  //     } catch (error) {
+  //       console.error("Error searching user:", error);
+  //       return [];
+  //     }
+  //   }
+  // Select input elements
+  const titleInput = document.getElementById("searchTitle");
+  const tagInput = document.getElementById("searchTag");
+  const userInput = document.getElementById("searchUser");
+  const lupe = document.querySelector(".lupe");
+  const avatar = "https://media.getpeer.eu";
+  
+  // Function to search for users via GraphQL
+  async function searchUsers(username) {
+    // let users
+    const accessToken = getCookie("authToken");
+
+    const query = `
+      query SearchUser {
+        searchUser(username: "${username}", offset: 0, limit: 20) {
+          status
+          counter
+          ResponseCode
+          affectedRows {
+            id
+            username
+            slug
+            img
+            biography
+          }
+        }
       }
-    });
-    localStorage.setItem("tags", document.getElementById("searchText").value);
-    postsLaden();
+    `;
+
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      // userInput.addEventListener("focus", async () => {
+      //   const json = await response.json();
+      //   users = json?.data?.searchUser?.affectedRows || [];
+      //   const dropdown = document.getElementById("userDropdown");
+
+      //   dropdown.innerHTML = "";
+      //   dropdown.style.display = users.length ? "block" : "none";
+
+      //   users.forEach(user => {
+      //     const item = document.createElement("div");
+      //     item.className = "dropdown-item";
+      //     item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+      //     item.addEventListener("click", () => {
+      //       loadUserProfile(user.username);
+      //       dropdown.style.display = "none";
+      //     });
+      //     dropdown.appendChild(item);
+      //   });
+      // });
+
+
+      const json = await response.json();
+      const users = json?.data?.searchUser?.affectedRows || [];
+
+      const dropdown = document.getElementById("userDropdown");
+      dropdown.innerHTML = "";
+      if (users.length) {
+        dropdown.classList.remove("none");
+      } else {
+        dropdown.classList.add("none");
+      }
+
+      users.forEach(user => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+        
+        const img = item.querySelector("img");
+        img.onerror = function () {
+          this.src = "svg/noname.svg";
+        };
+
+        item.addEventListener("click", () => {
+          loadUserProfile(user.username);
+          dropdown.classList.add("none");
+        });
+        dropdown.appendChild(item);
+      });
+
+      return users;
+    } catch (error) {
+      console.error("Error searching users:", error);
+      return [];
+    }
+
+    function loadUserProfile(username) {
+      window.location.href = `/profile/${username}`;
+    }
+}
+  
+
+  async function getProfile(userID) {
+    const accessToken = getCookie("authToken");
+
+    const query = `
+      query GetProfile {
+        getProfile (userID: "${userID}") {
+          status
+          ResponseCode
+          affectedRows {
+              id
+              username
+              status
+              slug
+              img
+              biography
+              isfollowed
+              isfollowing
+              amountposts
+              amounttrending
+              amountfollowed
+              amountfollower
+              amountfriends
+              amountblocked
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(GraphGL,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const json = await response.json();
+      return json?.data?.getProfile || null;
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      return null;
+    }
+  }
+
+
+  // Function to search for tags via GraphQL
+  async function listTags() {
+    const accessToken = getCookie("authToken");
+    const query = `
+      query ListTags {
+        listTags(offset: 0, limit: 20) {
+          status
+          counter
+          ResponseCode
+          affectedRows {
+            name
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const json = await response.json();
+      console.log("Tag search result:", json);
+      console.log()
+      return json?.data?.listTags?.affectedRows || [];
+    } catch (error) {
+      console.error("Error listing tags:", error);
+      return [];
+    }
+  }
+
+  // Main applyFilters function
+  async function applyFilters() {
+    const titleValue = titleInput.value.trim().toLowerCase();
+    const userValue = userInput.value.trim().toLowerCase();
+    const tagValue = tagInput.value.trim().toLowerCase();
+
+    if (userValue) await searchUsers(userValue);
+    // if (titleValue) await searchTitles(titleValue);
+    if (tagValue) await listTags(tagValue);
+
+    // Optionally save local storage (optional)
+    localStorage.setItem("searchTitle", titleValue);
+    localStorage.setItem("searchTag", tagValue);
+    localStorage.setItem("searchUser", userValue);
+  }
+  
+
+  // Add input listeners
+  [titleInput, tagInput, userInput].forEach((input) =>
+    input.addEventListener("input", applyFilters)
+  );
+
+  // Trigger on click
+  lupe.addEventListener("click", applyFilters);
+  const serchgroup = document.getElementById("searchGroup");
+  const pulldown = serchgroup.querySelectorAll(".dropdown");
+
+   
+    serchgroup.addEventListener("mouseleave", () => {
+      pulldown.forEach((item) => {
+        item.classList.add("none");
+      });
+     
   });
+
+  
+
+    
+
+  // const textsearch = document.getElementById("searchGroup");
+  // textsearch.addEventListener("input", () => {
+  //   const { hashtags, normalWords } = extractWords(textsearch.value.toLowerCase());
+  //   const parentElements = document.querySelectorAll(".card");
+
+  //   parentElements.forEach((element) => {
+  //     const h1 = element.querySelector("h1");
+  //     const tags = element.getAttribute("tags").split(",");
+  //     const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word.toLowerCase()));
+  //     const isTag = !hashtags.length || tags.some((tag) => tag.includes(hashtags));
+  //     if (isTitle && isTag) {
+  //       element.classList.remove("none");
+  //     } else {
+  //       element.classList.add("none");
+  //     }
+  //   });
+  //   localStorage.setItem("tags", document.getElementById("searchGroup").value);
+  //   postsLaden();
+  // });
   const checkboxes = document.querySelectorAll("#filter .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
@@ -412,12 +879,12 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.forEach((element) => {
           element.classList.remove("none");
         });
-        console.log(`${event.target.name} wurde aktiviert.`);
+        // console.log(`${event.target.name} wurde aktiviert.`);
       } else {
         elements.forEach((element) => {
           element.classList.add("none");
         });
-        console.log(`${event.target.name} wurde deaktiviert.`);
+        // console.log(`${event.target.name} wurde deaktiviert.`);
       }
       location.reload();
     });
@@ -490,15 +957,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //   false
   // );
   let lastScrollTop = 0;
-
-  function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
 
   window.addEventListener(
     "scroll",
@@ -612,10 +1070,9 @@ document.addEventListener("DOMContentLoaded", () => {
   //       processFiles(files);
   //     }
   //   });
+  // postsLaden();
+  // postsLaden();
 });
-// window.addEventListener("load", () => {
-
-// });
 
 async function addScrollBlocker(element) {
   let isAnimating = false;
@@ -716,35 +1173,12 @@ function updateOnlineStatus() {
   if (!navigator.onLine) {
     // Wenn offline, Banner anzeigen
     statusBanner.classList.add("offline");
-    statusBanner.textContent = "offline";
+    statusBanner.textContent = "offlines";
   } else {
     // Wenn online, Banner ausblenden
     statusBanner.classList.remove("offline");
     statusBanner.textContent = "Dashboard";
   }
-}
-
-async function getUser() {
-  const profil = await fetchHelloData();
-  const id = getCookie("userID");
-  if (!id) {
-    const profil_container = document.getElementById("profil-container");
-    const profil_login = document.getElementById("profil-login");
-    profil_container.classList.add("none");
-    profil_login.classList.remove("none");
-  } else {
-    document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
-    document.getElementById("slug").innerText = "#" + profil.data.profile.affectedRows.slug;
-    document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
-    document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
-    document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
-    const img = document.getElementById("profilbild");
-    img.onerror = function () {
-      this.src = "svg/noname.svg";
-    };
-    img.src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
-  }
-  return profil;
 }
 
 function appendPost(json) {
@@ -758,29 +1192,8 @@ async function postsLaden() {
     postsLaden.offset = 0; // Initialwert
   }
 
-  // // Formular auswählen
-  // const form = document.querySelector("#filter");
-
-  // // Alle Checkboxen im Formular auswählen
-  // const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
-
-  // // Werte der ausgewählten Checkboxen sammeln
-  // const checkedValues = Array.from(checkboxes).map(
-  //   (checkbox) => checkbox.value
-  // );
-
-  // // JSON-Objekt erstellen
-  // const jsonResult = {
-  //   filterBy: checkedValues,
-  // };
-
-  // // JSON anzeigen (z. B. in der Konsole)
-  // console.log(JSON.stringify(jsonResult));
-  // Formular mit ID auswählen
-
   const form = document.querySelector("#filter");
 
-  // Alle Checkboxen innerhalb des Formulars abrufen
   const checkboxes = form.querySelectorAll(".filteritem:checked");
 
   // Die Werte der angehakten Checkboxen sammeln
@@ -790,28 +1203,27 @@ async function postsLaden() {
   // const result = values.join(" ");
 
   // Ergebnis ausgeben
-  console.log(values);
   const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
   // const textsearch = document.getElementById("searchText").value;
-  const { hashtags, normalWords } = extractWords(document.getElementById("searchText").value.toLowerCase());
-  const textsearch = normalWords.join(" ");
+  const { hashtags, normalWords } = extractWords(document.getElementById("searchTag").value.toLowerCase());
+  const tagInput = normalWords.join(" ");
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-  const posts = await getPosts(postsLaden.offset, 48, cleanedArray, textsearch, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-  console.log(cleanedArray);
-
+  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+  // console.log(cleanedArray);
+  const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.getallposts.affectedRows.forEach((objekt) => {
+  posts.data.listPosts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.id = objekt.id;
     card.classList.add("card");
     card.setAttribute("tabindex", "0");
     card.setAttribute("content", objekt.contenttype);
-    card.setAttribute("tags", objekt.tags.join(","));
+    // card.setAttribute("tags", objekt.tags.join(","));
     // <div class="post"> erstellen und Bild hinzufügen
 
     let postDiv;
@@ -823,11 +1235,6 @@ async function postsLaden() {
     if (objekt.cover) {
       cover = JSON.parse(objekt.cover);
     }
-    // for (const item of array) {
-    //   console.log("Path:", item.path);
-    //   console.log("Size:", item.options.size);
-    //   console.log("Resolution:", item.options.resolution);
-    // }
     if (objekt.contenttype === "image") {
       if (array.length > 1) postDiv.classList.add("multi");
       for (const item of array) {
@@ -836,10 +1243,7 @@ async function postsLaden() {
           img.setAttribute("height", img.naturalHeight);
           img.setAttribute("width", img.naturalWidth);
         };
-        img.onerror = (error) => {
-          // Fehler behandeln, wenn das Bild nicht geladen werden kann
-          // reject(error);
-        };
+        img.onerror = (error) => {};
 
         img.src = tempMedia(item.path);
         img.alt = "";
@@ -878,12 +1282,38 @@ async function postsLaden() {
           postDiv.appendChild(img);
         }
         video = document.createElement("video");
+        video.muted = true;
         video.id = extractAfterComma(item.path);
         video.src = tempMedia(item.path);
-        video.controls = true;
+        video.preload = "metadata";
+        video.controls = false;
         video.className = "custom-video";
         addMediaListener(video);
         postDiv.appendChild(video);
+        card.addEventListener("mousemove", function (event) {
+          const video = this.getElementsByTagName("video")[0];
+
+          if (video.readyState >= 2) {
+            const rect = video.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const relativePosition = mouseX / rect.width;
+
+            if (!video.duration) return;
+
+            video.currentTime = relativePosition * video.duration;
+            if (video.paused || video.currentTime === 0) video.play();
+          }
+
+          // debouncedMoveEnd(video);
+        });
+        card.addEventListener("mouseleave", function (e) {
+          const allMediaElements = document.querySelectorAll("video");
+          allMediaElements.forEach((otherMedia) => {
+            if (!otherMedia.paused) otherMedia.pause();
+          });
+          // const video = this.getElementsByTagName("video")[0];
+          // video.pause();
+        });
       }
     } else if (objekt.contenttype === "text") {
       for (const item of array) {
@@ -891,15 +1321,29 @@ async function postsLaden() {
         // div.id = objekt.id;
         loadTextFile(tempMedia(item.path), div);
         div.className = "custom-text";
+        const h1 = document.createElement("h1");
+        h1.textContent = objekt.title;
+        postDiv.appendChild(h1);
         postDiv.appendChild(div);
       }
+      card.addEventListener("mousemove", function (event) {
+        const ctext = this.getElementsByClassName("custom-text")[0];
+        // const rect = this.getBoundingClientRect();
+        // const mouseY = event.clientY - rect.top;
+        // const relativePosition = mouseY / rect.height;
+        // setScrollPercent(ctext, relativePosition, true);
+        ctext.classList.add("scroll-shadows");
+      });
+      card.addEventListener("mouseleave", function (e) {
+        const ctext = this.getElementsByClassName("custom-text")[0];
+        ctext.classList.remove("scroll-shadows");
+      });
     }
 
     const shadowDiv = document.createElement("div");
     shadowDiv.classList.add("shadow");
     postDiv.appendChild(shadowDiv);
 
-    // <div class="post-inhalt"> erstellen und Titel und Text hinzufügen
     const inhaltDiv = document.createElement("div");
     inhaltDiv.classList.add("post-inhalt");
     const userNameSpan = document.createElement("span");
@@ -922,7 +1366,12 @@ async function postsLaden() {
     inhaltDiv.appendChild(userImg);
     inhaltDiv.appendChild(userNameSpan);
     inhaltDiv.appendChild(time_ago);
-    inhaltDiv.appendChild(h1);
+    if (objekt.contenttype === "text") {
+      // const customText = postDiv.querySelector(".custom-text");
+      // customText.prepend(h1);
+    } else {
+      inhaltDiv.appendChild(h1);
+    }
     inhaltDiv.appendChild(p);
 
     const svgNS = "http://www.w3.org/2000/svg";
@@ -1017,23 +1466,8 @@ async function postsLaden() {
     });
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
-    postsLaden.offset++;
   });
-
-  // console.log("amountcomments:", objekt.amountcomments);
-  // console.log("amountdislikes:", objekt.amountdislikes);
-  // console.log("amountlikes:", objekt.amountlikes);
-  // console.log("amountviews:", objekt.amountviews);
-  // console.log("contenttype:", objekt.contenttype);
-  // console.log("createdat:", objekt.createdat);
-  // console.log("isdisliked:", objekt.isdisliked);
-  // console.log("isliked:", objekt.isliked);
-  // console.log("isreported:", objekt.isreported);
-  // console.log("issaved:", objekt.issaved);
-  // console.log("isviewed:", objekt.isviewed);
-  // console.log("media:", objekt.media);
-  // console.log("mediadescription:", objekt.mediadescription);
-  // console.log("title:", objekt.title);
+  postsLaden.offset += posts.data.listPosts.affectedRows.length;
 }
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -1059,7 +1493,7 @@ function cancelTimeout() {
 async function viewed(object) {
   viewPost(object.id);
   object.isviewed = true;
-  console.log(object.id);
+  // console.log(object.id);
 }
 
 async function postClicked(objekt) {
@@ -1189,7 +1623,7 @@ async function postClicked(objekt) {
       });
     });
   mostliked.sort((a, b) => b.liked - a.liked);
-  console.log(mostliked);
+  // console.log(mostliked);
   const mostlikedcontainer = document.getElementById("mostliked");
   mostlikedcontainer.innerHTML = "";
   for (let i = 0; i < 3 && i < mostliked.length; i++) {
@@ -1488,7 +1922,7 @@ function addDeleteListener(element) {
 // Die Funktion, die beim Event aufgerufen wird
 function handleDelete(event) {
   event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
-  console.log("Post löschen:", event.target);
+  // console.log("Post löschen:", event.target);
   event.target.parentElement.remove();
   // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
@@ -1531,6 +1965,8 @@ async function convertImageToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
+
+
 async function fetchTags(searchStr) {
   // if (failedSearches.has(searchStr)) {
   //   return [];
@@ -1546,8 +1982,8 @@ async function fetchTags(searchStr) {
     Authorization: `Bearer ${accessToken}`,
   });
   const query = `
-      query Tagsearch($searchstr: String!) {
-          tagsearch(tagname: $searchstr, limit: 10) {
+      query searchTags($searchstr: String!) {
+          searchTags(tagName: $searchstr, limit: 10) {
               status
               counter
               ResponseCode
@@ -1570,12 +2006,12 @@ async function fetchTags(searchStr) {
     const result = await response.json();
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.tagsearch.affectedRows.length) {
+    if (!result.data.searchTags.affectedRows.length) {
       failedSearches.add(searchStr);
     }
-    return result.data.tagsearch.affectedRows;
+    return result.data.searchTags.affectedRows;
   } catch (error) {
-    console.error("Error fetching tags:", error);
+    // console.error("Error fetching tags:", error);
     return [];
   }
 }
@@ -1738,7 +2174,7 @@ function saveFilterSettings() {
     filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
   });
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
-  localStorage.setItem("tags", document.getElementById("searchText").value);
+  localStorage.setItem("tags", document.getElementById("searchGroup").value);
 }
 function restoreFilterSettings() {
   let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
@@ -1751,7 +2187,25 @@ function restoreFilterSettings() {
       }
     });
   }
-  document.getElementById("searchText").value = localStorage.getItem("tags") || ""; // Tags wiederherstellen
+  document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
+} 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .getRegistrations()
+    .then(function (registrations) {
+      for (let registration of registrations) {
+        registration.unregister().then(function (success) {
+          if (success) {
+            // console.log("Service Worker erfolgreich abgemeldet.");
+          } else {
+            // console.warn("Service Worker konnte nicht abgemeldet werden.");
+          }
+        });
+      }
+    })
+    .catch(function (error) {
+      // console.error("Fehler beim Abrufen der Registrierungen:", error);
+    });
 }
 // function connectImagesWithGradient(container, img1, img2) {
 //   // Container und Bilder auswählen
@@ -1832,3 +2286,61 @@ function restoreFilterSettings() {
 //   path.setAttribute("stroke", "url(#gradient)");
 //   path.setAttribute("stroke-width", 2);
 // }
+
+
+// daily free actions
+dailyfree();
+async function dailyfree() {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+    query: `query getDailyFreeStatus {
+      getDailyFreeStatus {
+        status
+        ResponseCode
+        affectedRows {
+          name
+          used
+          available
+        }
+      }
+   }`,
+  });
+
+  // Define request options
+  const requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  try {
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
+    result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
+      document.getElementById(entry.name + "used").innerText = entry.used;
+      document.getElementById(entry.name + "available").innerText = entry.available;
+      const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
+      document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
+      console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+    });
+
+    return result.data.getDailyFreeStatus;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}

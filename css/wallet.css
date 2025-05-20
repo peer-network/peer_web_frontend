@@ -1,0 +1,198 @@
+.dashboard {
+  grid-template-areas:
+    "sidebar header profil"
+    "sidebar main profil";
+  grid-template-rows: 5rem auto;
+}
+.main {
+  background-image: url(../svg/bgWallet.svg);
+  background-repeat: no-repeat;
+  background-size: 190%;
+  background-position: -29rem -7rem;
+  padding: 2rem;
+}
+
+#wallet {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  /* flex-direction: row; */
+  grid-template-columns: 50% 50%;
+  /* grid-template-rows: 50% 50%; */
+  width: 100%;
+  gap: 2rem;
+  padding: 1rem 3rem;
+
+  /* display: flex; */
+  align-items: baseline;
+}
+#wallet-amount img {
+  width: 2rem;
+  height: auto;
+  display: inline-block;
+}
+#wallet-amount {
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-around;
+}
+#wallet-amount > div {
+  display: grid;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#wallet-amount > div > p {
+  grid-column: span 2;
+}
+#freecontent h2,
+#freecontent h3 {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 1.4rem;
+}
+.limit-container {
+  margin-bottom: 20px;
+}
+
+.label {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.progress-bar {
+  background: #333;
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(to right, #444, #5ea4ff);
+  width: var(--progress);
+  transition: width 0.3s ease;
+}
+.radial-progress {
+  --size: 11rem;
+  --thickness: 0.5rem;
+  --progress: 65; /* in Prozent (0–100) */
+
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: conic-gradient(#5ea4ff calc(var(--progress) * 1%), #333 calc(var(--progress) * 1%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: auto;
+}
+
+.radial-progress::before {
+  content: "";
+  position: absolute;
+  width: calc(var(--size) - var(--thickness) * 2);
+  height: calc(var(--size) - var(--thickness) * 2);
+  background: #262626;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.value {
+  color: #5ea4ff;
+  font-size: 24px;
+  text-align: center;
+  z-index: 2;
+}
+
+.label {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.label span {
+  color: #5ea4ff;
+}
+.sidebar {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+}
+#wallet-transaction {
+  width: 100%;
+}
+#wallet-transaction h2 {
+  margin-bottom: 1.5rem;
+}
+.history-header,
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+.history-item {
+  background-color: #252525;
+  border-radius: 1.5rem;
+  margin: 0.5rem;
+  padding: 2rem;
+}
+.history-item img {
+  width: 1rem;
+  height: auto;
+  display: inline-block;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.kurs {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.kurs div {
+  display: inline-block;
+}
+.kurs .peerkurs {
+  color: #aaff67;
+}
+.kurs img {
+  width: 0.7rem;
+  height: auto;
+  display: inline-block;
+}
+.token > div {
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  width: 100%;
+}
+.token > div > span {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-left: 1rem;
+}
+.token > h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.money {
+  margin-left: 3rem;
+  font-size: 1.5rem;
+}
+.amount {
+  margin-right: 0.5rem;
+}
+.blue {
+  color: #5f8ccc;
+}
+.type {
+  width: 10rem;
+}
