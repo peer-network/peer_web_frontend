@@ -1,4 +1,11 @@
-async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby = "NEWEST") {
+window.listPosts = async function getPosts(tagName) {
+  console.log("Fetching posts for tag:", tagName);
+
+  // Your GraphQL or fetch logic here...
+};
+
+
+async function getPosts(offset = 0, limit = 20, tag = "", filterBy = [], title = "", sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -7,6 +14,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
     Authorization: `Bearer ${accessToken}`,
   });
   title = sanitizeString(title);
+  // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
   let postsList = `query ListPosts {
     listPosts(
@@ -314,7 +322,3 @@ async function sendCreatePost(variables) {
   }
 }
 
-// function listPosts(tagName) {
-//   // your logic to list posts based on tagName
-// }
-// window.listPosts = listPosts;
