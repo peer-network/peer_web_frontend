@@ -178,12 +178,14 @@ h1 {
 }
 .dash {
   display: flex;
+  text-decoration: none;
   align-items: center;
+  color: var(--text-color);
   gap: 1rem;
-  margin-left: -3rem;
+  margin-left: -2rem;
 }
 .dash h1 {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
 }
 
 /* Wallet section */

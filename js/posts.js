@@ -5,7 +5,7 @@ window.listPosts = async function getPosts(tagName) {
 };
 
 
-async function getPosts(offset = 0, limit = 20, tag = "", filterBy = [], title = "", sortby = "NEWEST") {
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -13,7 +13,13 @@ async function getPosts(offset = 0, limit = 20, tag = "", filterBy = [], title =
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  title = sanitizeString(title);
+  if (typeof title === "string") {
+    title = sanitizeString(title);
+  } else {
+    title = "";
+  }
+
+  // tag = sanitizeString(tag);
   // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
   let postsList = `query ListPosts {
@@ -22,6 +28,7 @@ async function getPosts(offset = 0, limit = 20, tag = "", filterBy = [], title =
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
+  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
   postsList += `) {
         status
         ResponseCode
@@ -90,7 +97,7 @@ async function getPosts(offset = 0, limit = 20, tag = "", filterBy = [], title =
       return result;
     })
     .catch((error) => {
-      console.log("error", error);
+      Merror("error", error);
       throw error;
     });
 }
