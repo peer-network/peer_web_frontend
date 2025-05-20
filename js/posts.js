@@ -1,4 +1,4 @@
-async function getPosts(offset, limit, filter, title = "", tag = null, sortby = "NEWEST") {
+async function getPosts(offset, limit, filter, title = "", tag = null, sortby = "NEWEST",userid = null) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -10,10 +10,14 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
   if (!sortby) sortby = "NEWEST";
   let searchstr = `query listPosts {
     listPosts(
-      sortBy: ${sortby},
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filter}],`;
+
+      if (userid !== null) {
+        searchstr += `, userid: "${userid}"`;
+      }
+
   searchstr += tag && tag.length >= 3 ? `,tag: "${tag}"` : "";
   searchstr += title && title.length >= 2 ? `,title: "${title}"` : "";
   searchstr += `) {
