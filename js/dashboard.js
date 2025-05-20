@@ -813,20 +813,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
 
   tagInput.addEventListener("input", () => {
-    const query = tagInput.value.trim();
+    let query = tagInput.value.trim();
+    // console.log("Input query:", query);
+    if (query.startsWith("#")) {
+      query = query.slice(1);
+    }
     if (query.length > 0) {
       searchTags(query);
-    } else {
-      listTags();
-    }
+    } 
   });
 
-  async function searchTags(searchStr) {
+  async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
+    // console.log("Tag search result:", tagName);
+
 
     const query = `
-      query searchTags ($searchStr: String!) {
-        searchTags(tagName: $searchStr, limit: 10) {
+      query searchTags ($tagName: String!) {
+        searchTags(tagName: $tagName, limit: 10) {
           status
           counter
           ResponseCode
@@ -839,7 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
    `;
 
    
-    const variables = { searchStr };
+    const variables = { tagName };
     try {
       const response = await fetch(GraphGL,{
         method: "POST",
@@ -859,39 +863,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
 
-  async function listTags() {
-    const accessToken = getCookie("authToken");
+  // async function listTags() {
+  //   const accessToken = getCookie("authToken");
 
-    const query = `
-      query ListTags {
-        listTags(offset: 0, limit: 20) {
-          status
-          counter
-          ResponseCode
-          affectedRows {
-            name
-          }
-        }
-      }
-    `;
+  //   const query = `
+  //     query ListTags {
+  //       listTags(offset: 0, limit: 20) {
+  //         status
+  //         counter
+  //         ResponseCode
+  //         affectedRows {
+  //           name
+  //         }
+  //       }
+  //     }
+  //   `;
 
-    try {
-      const response = await fetch(GraphGL,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ query })
-      });
+  //   try {
+  //     const response = await fetch(GraphGL,{
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`
+  //       },
+  //       body: JSON.stringify({ query })
+  //     });
 
-      const json = await response.json();
-      const tags = json?.data?.listTags?.affectedRows || [];
-      displayTags(tags);
-    } catch (error) {
-      console.error("Error listing tags:", error);
-    }
-  }
+  //     const json = await response.json();
+  //     const tags = json?.data?.listTags?.affectedRows || [];
+  //     displayTags(tags);
+  //   } catch (error) {
+  //     console.error("Error listing tags:", error);
+  //   }
+  // }
 
   const tagDropdown = document.getElementById("tagDropdown");
   function displayTags(tags) {
@@ -913,7 +917,8 @@ document.addEventListener("DOMContentLoaded", () => {
           tagInput.value = `#${tag.name}`;
           tagDropdown.classList.add("none");
 
-          // // Calling the existing listPosts from post.js
+          // Calling the existing listPosts from post.js
+          postsLaden();
           // listPosts(tag.name);
         });
 
@@ -929,7 +934,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (userValue) await searchUsers(userValue);
     // if (titleValue) await searchTitles(titleValue);
-    // if (tagValue) await listTags(tagValue);
+    if (tagValue) await searchTags(tagValue);
 
     // Optionally save local storage (optional)
     localStorage.setItem("searchTitle", titleValue);
@@ -939,17 +944,17 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
   // Add input listeners
-  [titleInput, userInput].forEach((input) =>
+  [titleInput, tagInput, userInput].forEach((input) =>
     input.addEventListener("input", applyFilters)
   );
 
   // Trigger on click
   lupe.addEventListener("click", applyFilters);
-  const serchgroup = document.getElementById("searchGroup");
-  const pulldown = serchgroup.querySelectorAll(".dropdown");
+  const searchgroup = document.getElementById("searchGroup");
+  const pulldown = searchgroup.querySelectorAll(".dropdown");
 
    
-    serchgroup.addEventListener("mouseleave", () => {
+    searchgroup.addEventListener("mouseleave", () => {
       pulldown.forEach((item) => {
         item.classList.add("none");
       });
@@ -1067,22 +1072,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // );
   let lastScrollTop = 0;
 
-  window.addEventListener(
-    "scroll",
-    debounce(function () {
-      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+  // window.addEventListener(
+  //   "scroll",
+  //   debounce(function () {
+  //     let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
-      if (currentScroll > lastScrollTop) {
-        // Runter gescrollt
-        header.classList.add("none");
-      } else {
-        // Hoch gescrollt
-        header.classList.remove("none");
-      }
+  //     if (currentScroll > lastScrollTop) {
+  //       // Runter gescrollt
+  //       header.classList.add("none");
+  //     } else {
+  //       // Hoch gescrollt
+  //       header.classList.remove("none");
+  //     }
 
-      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-    }, 100) // 100 Millisekunden Verzögerung
-  );
+  //     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+  //   }, 100) // 100 Millisekunden Verzögerung
+  // );
 
   // Liste der Dropzonen und Input-Elemente
   const zones = [
