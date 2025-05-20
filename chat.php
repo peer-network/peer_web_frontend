@@ -50,7 +50,7 @@
         </div>
     </article>
 
-    <?php require_once('./components/scripts.php'); ?>
+    <?php require_once('./components/scripts-chat.php'); ?>
     
 </body>
 

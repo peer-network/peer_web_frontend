@@ -10,7 +10,6 @@ window.addEventListener("DOMContentLoaded", () => {
   privateBtn = document.getElementById("privateBtn");
   groupBtn = document.getElementById("groupBtn");
   sendPrivateMessage = document.getElementById("sendPrivateMessage");
-  console.log('on doucment load ', document.getElementById("sendPrivateMessage"))
   const updateTab = (type) => {
     filterType = type;
     privateBtn.classList.toggle("active", type === "private");
@@ -22,9 +21,6 @@ window.addEventListener("DOMContentLoaded", () => {
   groupBtn.addEventListener("click", () => updateTab("group"));
 
   updateTab("private");
-
-
-
 
   async function loadChats(filterType = "private", userId = null) {
 
@@ -112,21 +108,15 @@ window.addEventListener("DOMContentLoaded", () => {
     currentUserId = await getCurrentUserId();
     sidebar.querySelectorAll(".chat-item").forEach(el => el.remove());
 
-    console.log('currentUserId ', currentUserId);
-
     chatList.forEach((chat, index) => {
       const otherUser = chat.chatparticipants.find(p => p.userid !== currentUserId) || chat.chatparticipants[0];
       const lastMessage = chat.chatmessages.at(-1);
       const time = lastMessage ? formatTimeAgo(lastMessage.createdat) : "—";
       const preview = lastMessage ?.content || "Start chatting...";
       const unread = chat.unreadCount > 0;
-
       const clone = template.content.cloneNode(true);
       const item = clone.querySelector(".chat-item");
-
-
       if (unread) item.classList.add("unread");
-
       item.setAttribute("data-chatid", chat.id);
       item.querySelector(".avatar").alt = otherUser.username;
       item.querySelector(".name").textContent = chat.type === "private" ? otherUser.username : chat.name;
@@ -149,18 +139,14 @@ window.addEventListener("DOMContentLoaded", () => {
       };
 
       sidebar.appendChild(clone);
-
-      const shouldAutoSelect =
-        (userId && otherUser.userid === userId) || (!userId && index === 0);
+      const shouldAutoSelect = (userId && otherUser.userid === userId) || (!userId && index === 0);
 
       if (shouldAutoSelect) {
         item.classList.add("active-chat");
         renderMessages(chat);
       }
-
       // if (index === 0) item.classList.add("active-chat");
       // if (index === 0)  renderMessages(chat);
-
     });
   }
 
@@ -255,10 +241,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  console.log('sendPrivateMessage ', sendPrivateMessage)
-
   if (sendPrivateMessage) {
-    console.log('set');
     let isSending = false;
     sendPrivateMessage.addEventListener("keydown", async function (event) {
       console.log('jey down');
@@ -338,7 +321,8 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function getAvatarUrl(path) {
-    return path ? `http://localhost/peer_web_frontend${path}` : "svg/noname.svg";
+    // return path ? `http://localhost/peer_web_frontend${path}` : "svg/logo_sw.svg"; //commented for localhost (testing purposes)
+    return "svg/logo_sw.svg";
   }
 
   function decodeHTML(str) {
@@ -350,230 +334,46 @@ window.addEventListener("DOMContentLoaded", () => {
     return txt.value;
   }
 
-  function getActiveChatType() {
-    return document.getElementById("privateBtn").classList.contains("active") ?
-      "private" :
-      "group";
-  }
-
-  const search_contacts = document.getElementById('search-contacts');
-  const resultsBox = document.getElementById('search-contact-results');
-
-  search_contacts.addEventListener('click', (event) => {
-    // let inputValue = search_contacts.value.trim();
-    // if (inputValue !== '' && inputValue.length > 1) {
-    resultsBox.style.display = 'block';
-    // } else {
-    //   search_contact_results.style.display = 'none';
-    // }
-
-    event.stopPropagation();
-    getFreinds();
-  });
-
-  document.addEventListener("click", (event) => {
-    const isClickInside = resultsBox.contains(event.target); // || search_contacts.contains(event.target);
-
-    if (!isClickInside) resultsBox.style.display = "none";
-
-  });
-
-  // async function getFreinds() {
-
-  //   const accessToken = getCookie("authToken");
-  //   const headers = new Headers({
-  //     "Content-Type": "application/json",
-  //     Authorization: `Bearer ${accessToken}`,
-  //   });
-
-  //   const query = `
-  //     query ListFriends {
-  //     listFriends {
-  //         status
-  //         counter
-  //         ResponseCode
-  //         affectedRows {
-  //             userid
-  //             img
-  //             username
-  //             slug
-  //             biography
-  //             updatedat
-  //         }
-  //       }
-  //     }
-  //   `;
-
-  //   try {
-  //     const response = await fetch(GraphGL, {
-  //       method: "POST",
-  //       headers,
-  //       body: JSON.stringify({
-  //         query
-  //       }),
-  //     });
-
-  //     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-  //     const result = await response.json();
-  //     if (result.errors) throw new Error(result.errors[0].message);
-
-  //     const container = document.querySelector(".contacts-found");
-  //     container.innerHTML = ""; // Clear previous items
-
-  //     contactList = result ?.data ?.listFriends ?.affectedRows || null;
-
-  //     contactList.forEach(contact => {
-  //       // .single-contact
-  //       const contactDiv = document.createElement("div");
-  //       contactDiv.classList.add("single-contact");
-  //       contactDiv.setAttribute("data-userId", contact.userId);
-
-  //       // .contact-avatar
-  //       const avatarImg = document.createElement("img");
-  //       avatarImg.classList.add("contact-avatar");
-  //       avatarImg.setAttribute("src", getAvatarUrl("/img/ender.png"));
-  //       avatarImg.setAttribute("alt", contact.name);
-
-  //       // .contact-details
-  //       const detailsDiv = document.createElement("div");
-  //       detailsDiv.classList.add("contact-details");
-
-  //       // .contact-name
-  //       const nameSpan = document.createElement("span");
-  //       nameSpan.classList.add("contact-name");
-  //       nameSpan.textContent = contact.username;
-
-  //       // .chat-icon
-  //       const chatIcon = document.createElement("img");
-  //       chatIcon.classList.add("chat-icon");
-  //       chatIcon.setAttribute("src", "svg/chats.svg");
-  //       chatIcon.setAttribute("alt", "chat");
-
-  //       // Nest structure
-  //       detailsDiv.appendChild(nameSpan);
-  //       detailsDiv.appendChild(chatIcon);
-
-  //       contactDiv.appendChild(avatarImg);
-  //       contactDiv.appendChild(detailsDiv);
-  //       contactDiv.setAttribute("data-userId", contact.userid);
-
-  //       // 🔥 Add click event to contact row
-  //       contactDiv.addEventListener("click", () => createChatWithUser(contact.username, contact.userid));
-  //       container.appendChild(contactDiv);
-  //     })
-  //   } catch (error) {
-  //     console.error("Error loading chats:", error);
-  //   }
-  // }
-
-  // async function createChatWithUser(name, userId) {
-  //   const token = getCookie("authToken");
-  //   if (!token || !userId) {
-  //     console.error("Missing token or userId.");
-  //     return;
-  //   }
-
-  //   const query = `
-  //     mutation CreateChat($name: String!, $recipients: [String!]!) {
-  //       createChat(input: { name: $name, recipients: $recipients }) {
-  //         status
-  //         ResponseCode
-  //         affectedRows {
-  //           chatid
-  //         }
-  //       }
-  //     }
-  //   `;
-
-  //   const variables = {
-  //     name: name ? ? null,
-  //     recipients: [userId],
-  //   };
-
-  //   try {
-  //     const res = await fetch(GraphGL, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({
-  //         query,
-  //         variables
-  //       }),
-  //     });
-
-  //     const json = await res.json();
-  //     if (!res.ok || json.errors) throw new Error(json.errors ?. [0] ?.message || "Failed to create chat");
-
-  //     console.log("Chat created:", json.data);
-  //     // return json.data;
-  //     const chatType = getActiveChatType();
-
-  //     loadChats(chatType, userId);
-  //     resultsBox.style.display = "none";
-
-  //   } catch (err) {
-  //     console.error("Error creating chat:", err.message);
-  //   }
-  // }
+  // ========= Global State ========= //
+let selectedUsers = [];
+let isInReviewScreen = false;
+let fullContactList = [];
 
 
-  async function createChat({
-    name = null,
-    recipients = []
-  }) {
-    const token = getCookie("authToken");
-    if (!token || !recipients.length) {
-      console.error("Missing token or recipients");
-      return;
-    }
+// ========= Utils ========= //
+function getActiveChatType() {
+  return document.getElementById("privateBtn").classList.contains("active")
+    ? "private"
+    : "group";
+}
 
-    const query = `
-    mutation CreateChat($name: String, $recipients: [String!]!) {
-      createChat(input: { name: $name, recipients: $recipients }) {
-        status
-        ResponseCode
-        affectedRows {
-          chatid
-        }
-      }
-    }
-  `;
+function getElement(selector) {
+  return document.querySelector(selector);
+}
 
-    const variables = {
-      name,
-      recipients
-    };
 
-    try {
-      const res = await fetch(GraphGL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          query,
-          variables
-        }),
-      });
+// ========= DOM References ========= //
+const searchContactsInput = getElement('#search-contacts');
+const resultsBox = getElement('#search-contact-results');
 
-      const json = await res.json();
-      if (!res.ok || json.errors) throw new Error(json.errors ?. [0] ?.message || "Failed to create chat");
 
-      const chatType = recipients.length === 1 ? "private" : "group";
-      loadChats(chatType, recipients[0]); // Pass the main userId for rendering
-      if (typeof resultsBox !== "undefined") resultsBox.style.display = "none";
+// ========= Event Listeners ========= //
+searchContactsInput.addEventListener('click', (event) => {
+  resultsBox.style.display = 'block';
+  event.stopPropagation();
+  getFriends();
+});
 
-    } catch (err) {
-      console.error("Error creating chat:", err.message);
-    }
-  }
+document.addEventListener("click", (event) => {
+  const isClickInside = resultsBox.contains(event.target);
+  //if (!isClickInside) resultsBox.style.display = "none";
+});
 
-  async function getFreinds() {
-    const token = getCookie("authToken");
-    const query = `
+
+// ========= Fetch Friends ========= //
+async function getFriends() {
+  const token = getCookie("authToken");
+  const query = `
     query ListFriends {
       listFriends {
         affectedRows {
@@ -585,71 +385,260 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   `;
 
-    try {
-      const res = await fetch(GraphGL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          query
-        }),
-      });
-
-      const json = await res.json();
-      const contactList = json ?.data ?.listFriends ?.affectedRows || [];
-
-      renderContacts(contactList);
-    } catch (err) {
-      console.error("Error loading friends:", err.message);
-    }
-  }
-
-
-  function renderContacts(contactList, mode = "private") {
-    const container = document.querySelector(".contacts-found");
-    container.innerHTML = "";
-
-    contactList.forEach(contact => {
-      const div = document.createElement("div");
-      div.classList.add("single-contact");
-      div.dataset.userId = contact.userid;
-
-      const avatar = document.createElement("img");
-      avatar.className = "contact-avatar";
-      avatar.src = getAvatarUrl(contact.img);
-      avatar.alt = contact.username;
-
-      const details = document.createElement("div");
-      details.className = "contact-details";
-
-      const nameSpan = document.createElement("span");
-      nameSpan.className = "contact-name";
-      nameSpan.textContent = contact.username;
-
-      const chatIcon = document.createElement("img");
-      chatIcon.className = "chat-icon";
-      chatIcon.src = "svg/chats.svg";
-      chatIcon.alt = "chat";
-
-      details.appendChild(nameSpan);
-      details.appendChild(chatIcon);
-
-      div.appendChild(avatar);
-      div.appendChild(details);
-
-      // 🔥 Reuse unified createChat() for private
-      div.addEventListener("click", () =>
-        createChat({
-          name: contact.username,
-          recipients: [contact.userid]
-        })
-      );
-
-      container.appendChild(div);
+  try {
+    const res = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
     });
+
+    const json = await res.json();
+    const contactList = json?.data?.listFriends?.affectedRows || [];
+
+    renderContacts(contactList);
+  } catch (err) {
+    console.error("Error loading friends:", err.message);
+  }
+}
+
+
+// ========= Render Contacts ========= //
+function renderContacts(contactList) {
+  const container = getElement(".chat-pannel-widget");
+  container.innerHTML = "";
+
+  const chatMode = getActiveChatType();
+
+  if (!isInReviewScreen) fullContactList = contactList;
+  if (isInReviewScreen) return renderReviewScreen(container);
+
+  selectedUsers = selectedUsers.filter(Boolean);
+
+  contactList.forEach(contact => {
+    const userCard = createUserCard(contact, chatMode);
+    container.appendChild(userCard);
+  });
+
+  if (chatMode === "group") {
+    const footer = createFooterButtons();
+    container.appendChild(footer);
+  }
+}
+
+function createUserCard(contact, chatMode) {
+  const div = document.createElement("div");
+  div.classList.add("chat-list-overlay");
+  div.dataset.userId = contact.userid;
+
+  const item = document.createElement("div");
+  item.classList.add("chat-list-item");
+
+  const avatar = document.createElement("img");
+  avatar.src = getAvatarUrl(contact.img);
+  avatar.alt = contact.username;
+
+  const imgSpan = document.createElement("span");
+  imgSpan.classList.add("profile-pic");
+  imgSpan.appendChild(avatar);
+
+  const nameSpan = document.createElement("span");
+  nameSpan.classList.add("profile-name");
+  nameSpan.textContent = `${contact.username}`;
+
+  item.appendChild(imgSpan);
+  item.appendChild(nameSpan);
+
+  if (chatMode === "private") {
+    const chatIcon = document.createElement("img");
+    chatIcon.className = "chat-icon";
+    chatIcon.src = "svg/chats.svg";
+    chatIcon.alt = "chat";
+    item.appendChild(chatIcon);
+
+    div.addEventListener("click", () => {
+      createChat({
+        name: contact.username,
+        recipients: [contact.userid],
+      });
+    });
+  } else {
+    const checkBox = document.createElement("input");
+    checkBox.type = "checkbox";
+    checkBox.checked = selectedUsers.some(u => u.recipients[0] === contact.userid);
+
+    checkBox.addEventListener("change", () => {
+      if (checkBox.checked) {
+        if (!selectedUsers.some(u => u.recipients[0] === contact.userid)) {
+          selectedUsers.push({
+            name: contact.username,
+            recipients: [contact.userid],
+            img: contact.img,
+          });
+        }
+      } else {
+        selectedUsers = selectedUsers.filter(u => u.recipients[0] !== contact.userid);
+      }
+      updateSelectedCount();
+    });
+
+    item.appendChild(checkBox);
   }
 
+  div.appendChild(item);
+  return div;
+}
+
+
+// ========= Footer Buttons ========= //
+function createFooterButtons() {
+  const footer = document.createElement("div");
+  footer.className = "chat_buttons selected";
+
+  const countSpan = document.createElement("span");
+  countSpan.className = "count-selected";
+  countSpan.textContent = `${selectedUsers.length} account selected`;
+
+  const nextBtn = document.createElement("a");
+  nextBtn.href = "#";
+  nextBtn.className = "next-btn";
+  nextBtn.textContent = "Next";
+
+  nextBtn.addEventListener("click", () => {
+    if (selectedUsers.length > 0) {
+      isInReviewScreen = true;
+      renderContacts(fullContactList);
+    }
+  });
+
+  footer.appendChild(countSpan);
+  footer.appendChild(nextBtn);
+  return footer;
+}
+
+function updateSelectedCount() {
+  const countSpan = getElement(".count-selected");
+  if (countSpan) {
+    countSpan.textContent = `${selectedUsers.length} account${selectedUsers.length === 1 ? '' : 's'} selected`;
+  }
+}
+
+
+// ========= Review Screen ========= //
+function renderReviewScreen(container) {
+  container.innerHTML = "";
+
+  const nameInput = document.createElement("input");
+  nameInput.placeholder = "*Give a name to a chat";
+  nameInput.className = "chat-name-input";
+  container.appendChild(nameInput);
+
+  selectedUsers.forEach(user => {
+    const div = document.createElement("div");
+    div.classList.add("chat-list-overlay");
+    div.dataset.userId = user.recipients[0];
+
+    const item = document.createElement("div");
+    item.classList.add("chat-list-item");
+
+    const avatar = document.createElement("img");
+    avatar.src = getAvatarUrl(user.img);
+    avatar.alt = user.name;
+
+    const imgSpan = document.createElement("span");
+    imgSpan.classList.add("profile-pic");
+    imgSpan.appendChild(avatar);
+
+    const nameSpan = document.createElement("span");
+    nameSpan.classList.add("profile-name");
+    nameSpan.textContent = `${user.name} #${user.recipients[0]}`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "-";
+    removeBtn.addEventListener("click", () => {
+      selectedUsers = selectedUsers.filter(u => u.recipients[0] !== user.recipients[0]);
+      renderContacts(fullContactList);
+    });
+
+    item.appendChild(imgSpan);
+    item.appendChild(nameSpan);
+    item.appendChild(removeBtn);
+    div.appendChild(item);
+    container.appendChild(div);
+  });
+
+  const footer = document.createElement("div");
+  footer.className = "chat_buttons selected";
+
+  const backBtn = document.createElement("a");
+  backBtn.href = "#";
+  backBtn.className = "back-btn";
+  backBtn.textContent = "Add accounts";
+  backBtn.addEventListener("click", () => {
+    isInReviewScreen = false;
+    renderContacts(fullContactList);
+  });
+
+  const createBtn = document.createElement("a");
+  createBtn.href = "#";
+  createBtn.className = "next-btn";
+  createBtn.textContent = "Create chat";
+  createBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    if (!name || selectedUsers.length === 0) return;
+    createChat({
+      name,
+      recipients: selectedUsers.map(u => u.recipients[0]),
+    });
+  });
+
+  footer.appendChild(backBtn);
+  footer.appendChild(createBtn);
+  container.appendChild(footer);
+}
+
+
+// ========= Create Chat ========= //
+async function createChat({ name = null, recipients = [] }) {
+  const token = getCookie("authToken");
+  if (!token || recipients.length === 0) {
+    console.error("Missing token or recipients");
+    return;
+  }
+
+  const query = `
+    mutation CreateChat($name: String, $recipients: [String!]!) {
+      createChat(input: { name: $name, recipients: $recipients }) {
+        status
+        ResponseCode
+        affectedRows {
+          chatid
+        }
+      }
+    }
+  `;
+
+  try {
+    const res = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query, variables: { name, recipients } }),
+    });
+
+    const json = await res.json();
+    if (!res.ok || json.errors) throw new Error(json.errors?.[0]?.message || "Failed to create chat");
+
+    const chatType = recipients.length === 1 ? "private" : "group";
+    loadChats(chatType, recipients[0]);
+    if (typeof resultsBox !== "undefined") resultsBox.style.display = "none";
+  } catch (err) {
+    console.error("Error creating chat:", err.message);
+  }
+}
 
 });

@@ -47,7 +47,7 @@ async function loginRequest(email, password) {
     } = result.data.login;
 
     // Log status and error message for debugging; avoid logging sensitive tokens
-    console.log("Status:", status);
+    // console.log("Status:", status);
     if (ResponseCode !== "10801") console.warn("Error Message:", ResponseCode);
 
     // Securely store tokens if login was successful
@@ -56,10 +56,9 @@ async function loginRequest(email, password) {
       document.cookie = `refreshToken=${refreshToken}; path=/; secure; SameSite=Strict`;
     }
 
-    console.log("Status:", status);
-    console.log("ResponseCode:", ResponseCode);
-    console.log("Access Token:", accessToken);
-    console.log("Refresh Token:", refreshToken);
+    // console.log("ResponseCode:", ResponseCode);
+    // console.log("Access Token:", accessToken);
+    // console.log("Refresh Token:", refreshToken);
     return {
       status,
       ResponseCode,
