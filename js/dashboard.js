@@ -1983,7 +1983,7 @@ async function fetchTags(searchStr) {
   });
   const query = `
       query searchTags($searchstr: String!) {
-          searchTags(tagName: $searchstr, limit: 10) {
+          searchTags(tagname: $searchstr, limit: 10) {
               status
               counter
               ResponseCode
@@ -2005,7 +2005,7 @@ async function fetchTags(searchStr) {
 
     const result = await response.json();
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0]);
+    if (result.errors) throw new Error(userfriendlymsg(result.data.searchTags.ResponseCode));
     if (!result.data.searchTags.affectedRows.length) {
       failedSearches.add(searchStr);
     }

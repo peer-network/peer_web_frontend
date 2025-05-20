@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 <svg width="39" height="28" viewBox="0 0 39 28" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 12.75L14.5 26.5L37 1.5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+=======
+<svg width="38" height="29" viewBox="0 0 38 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.5 13.25L14 27L36.5 2" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+>>>>>>> Luqman/feat/chat-ui
 </svg>
