@@ -952,7 +952,7 @@ async function postsLaden() {
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.getallposts.affectedRows.forEach((objekt) => {
+  posts.data.listPosts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.id = objekt.id;
@@ -1203,7 +1203,7 @@ async function postsLaden() {
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
   });
-  postsLaden.offset += posts.data.getallposts.affectedRows.length;
+  postsLaden.offset += posts.data.listPosts.affectedRows.length;
 }
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -1717,7 +1717,7 @@ async function fetchTags(searchStr) {
   });
   const query = `
       query Tagsearch($searchstr: String!) {
-          tagsearch(tagname: $searchstr, limit: 10) {
+          searchTags(tagname: $searchstr, limit: 10) {
               status
               counter
               ResponseCode
@@ -1740,10 +1740,10 @@ async function fetchTags(searchStr) {
     const result = await response.json();
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.tagsearch.affectedRows.length) {
+    if (!result.data.searchTags.affectedRows.length) {
       failedSearches.add(searchStr);
     }
-    return result.data.tagsearch.affectedRows;
+    return result.data.searchTags.affectedRows;
   } catch (error) {
     // console.error("Error fetching tags:", error);
     return [];
@@ -1823,7 +1823,7 @@ window.addEventListener("click", function (event) {
 // async function fetchTags(searchStr) {
 //   const query = `
 //       query Tagsearch($searchstr: String!) {
-//           tagsearch(tagname: $searchstr, limit: 20) {
+//           searchTags(tagname: $searchstr, limit: 20) {
 //               status
 //               counter
 //               ResponseCode
@@ -1844,7 +1844,7 @@ window.addEventListener("click", function (event) {
 //     });
 
 //     const result = await response.json();
-//     return result.data.tagsearch;
+//     return result.data.searchTags;
 //   } catch (error) {
 //     console.error("Error fetching tags:", error);
 //     return [];

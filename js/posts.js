@@ -8,11 +8,11 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
   });
   title = sanitizeString(title);
   if (!sortby) sortby = "NEWEST";
-  let searchstr = `query Getallposts {
-    getallposts(
+  let searchstr = `query ListPosts {
+    listPosts(
       sortBy: ${sortby},
-      postLimit: ${limit},
-      postOffset: ${offset},
+      limit: ${limit},
+      offset: ${offset},
       filterBy: [${filter}],`;
   searchstr += tag && tag.length >= 3 ? `,tag: "${tag}"` : "";
   searchstr += title && title.length >= 2 ? `,title: "${title}"` : "";
@@ -31,6 +31,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
             amountviews
             amountcomments
             amountdislikes
+            amounttrending
             isliked
             isviewed
             isreported
@@ -40,6 +41,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
             user {
                 id
                 username
+                slug
                 img
                 isfollowed
                 isfollowing
@@ -50,16 +52,10 @@ async function getPosts(offset, limit, filter, title = "", tag = null, sortby = 
                 postid
                 parentid
                 content
-                amountlikes
-                isliked
                 createdat
-                user {
-                    id
-                    username
-                    img
-                    isfollowed
-                    isfollowing
-                }
+                amountlikes
+                amountreplies
+                isliked
             }
         }
     }
@@ -236,7 +232,7 @@ async function sendCreatePost(variables) {
   if (isVariableNameInArray(variables, "mediadescription")) {
     query += `, $mediadescription: String!`;
   }
-  query += `, $contenttype: ContenType!, $tags: [String!]) {
+  query += `, $contenttype: ContentType!, $tags: [String!]) {
       createPost(
         action: POST
         input: {

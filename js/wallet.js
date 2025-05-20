@@ -1,6 +1,7 @@
 getUser();
 dailyfree();
 currentliquidity();
+
 nextmint();
 dailywin();
 dailypays();

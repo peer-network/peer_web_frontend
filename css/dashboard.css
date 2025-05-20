@@ -87,7 +87,7 @@ header {
   z-index: 3;
 }
 h1 {
-  /* display: inline; */
+  font-size: 2rem;
 }
 
 /* Hauptgrid */
