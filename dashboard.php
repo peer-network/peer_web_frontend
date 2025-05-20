@@ -104,10 +104,10 @@ include 'host.php';
         <!-- Sidebar -->
         <aside class="sidebar">
             <form id="filter" class="filterContainer">
-                    <div class="dash">
+                    <a href="dashboard.php" class="dash">
                         <img class="logo" src="svg/Home.svg" alt="Peer Network Logo" />
                         <h1 id="h1">Dashboard</h1>
-                    </div>
+                    </a>
                 <div class="filter-sec">
                     <div class="center">
                         &nbsp;Filter

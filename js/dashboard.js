@@ -919,7 +919,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Calling the existing listPosts from post.js
           postsLaden();
-          // listPosts(tag.name);
+          // getPosts(tag.name);
         });
 
         tagDropdown.appendChild(tagItem);
