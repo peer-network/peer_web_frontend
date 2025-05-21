@@ -1324,7 +1324,7 @@ async function postsLaden() {
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
   const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-  // console.log(cleanedArray);
+  console.log(posts);
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element

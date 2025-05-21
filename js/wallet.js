@@ -1,6 +1,6 @@
-getLiquiuditygetUser();
+// getLiquiuditygetUser();
 dailyfree();
-balance();
+// balance();
 currentliquidity();
 nextmint();
 dailywin();

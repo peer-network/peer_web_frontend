@@ -6,12 +6,11 @@ window.listPosts = async function getPosts(tagName) {
 
 
 async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST") {
-const post = 2;
-const like = 0;
-const dislike = 3;
-const comment = 1;
-
-async function getPosts(offset, limit, filter, title = "", tag = null, sortby = "NEWEST") {
+  const post = 2;
+  const like = 0;
+  const dislike = 3;
+  const comment = 1;
+  
   const accessToken = getCookie("authToken");
 
   // Create headers
