@@ -18,7 +18,6 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
   } else {
     title = "";
   }
-
   // tag = sanitizeString(tag);
   // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
