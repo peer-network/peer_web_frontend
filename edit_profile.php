@@ -14,6 +14,8 @@ include 'host.php';
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/lib/responscodes.js?<?php echo filemtime('js/lib/responscodes.js'); ?>" defer></script>
+    <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
     <script src="js/setting.js?<?php echo filemtime('js/setting.js'); ?>" defer></script>
