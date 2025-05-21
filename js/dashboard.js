@@ -2117,6 +2117,7 @@ async function convertImageToBase64(file) {
 //       body: JSON.stringify({ query, variables }),
 //     });
 
+<<<<<<< HEAD
   //   const result = await response.json();
   //   if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
   //   if (result.errors) throw new Error(result.errors[0]);
@@ -2129,6 +2130,20 @@ async function convertImageToBase64(file) {
   //   return [];
   // }
 
+=======
+//     const result = await response.json();
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//     if (result.errors) throw new Error(userfriendlymsg(result.data.searchTags.ResponseCode));
+//     if (!result.data.searchTags.affectedRows.length) {
+//       failedSearches.add(searchStr);
+//     }
+//     return result.data.searchTags.affectedRows;
+//   } catch (error) {
+//     // console.error("Error fetching tags:", error);
+//     return [];
+//   }
+// }
+>>>>>>> 0a003d218ef32060b6d893412c7ae5b07f6f056b
 const failedSearches = new Set();
 const tagInput = document.getElementById("tag-input");
 const tagContainer = document.getElementById("tagsContainer");

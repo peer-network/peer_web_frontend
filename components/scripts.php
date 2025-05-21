@@ -14,7 +14,4 @@
 <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
 <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
 
-<?php
-// if ($_SERVER[''])
-?>
-<script src="js/chat.js?<?php echo filemtime('js/chat.js'); ?>" defer></script>
+<?php // if ($_SERVER[''])?>

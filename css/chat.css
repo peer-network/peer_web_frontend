@@ -1,5 +1,6 @@
 .main-content {
   height: 100dvh;
+  width: 100%;
 }
 
 .main-content .contacts {
@@ -40,6 +41,7 @@
   height: 100%;
   display: inline-block;
   width: 36%;
+  position: relative;
 }
 
 .chat-item {
@@ -186,9 +188,16 @@
 } */
 
 .chat-pannel {
+  display: none;
   max-width: 400px;
   width: 100%;
   font-size: clamp(12px, 1vw, 15px);
+  position: absolute;
+  left: 0;
+  z-index: 999;
+  background: #262626;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .chat-search {
@@ -213,10 +222,6 @@
   outline: 0;
 }
 
-.chat-search .searchbtn {
-  width: 20px;
-}
-
 .chat-list-overlay {
   margin-top: 20px;
 }
@@ -228,9 +233,17 @@
   padding: 0 15px;
 }
 
+.chat-list-overlay .chat-list-item img[alt="chat"] {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1); 
+  flex-shrink: 0;
+} 
+
 .chat-list-overlay .chat-list-item .profile-name {
   flex: 1;
   font-family: Poppins;
+  font-size: 16px;
 }
 
 .chat-list-overlay .chat-list-item .profile-name .profile-no {
@@ -284,8 +297,7 @@
 }
 
 .chat-pannel-widget .chat_buttons {
-
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   overflow: hidden;
@@ -293,6 +305,8 @@
 }
 
 .chat-pannel-widget .chat_buttons.selected {
+  display: flex;
+  gap: 1rem;
   background-color: rgb(119, 175, 255, 0.20);
   border-radius: 50px;
 }
@@ -318,11 +332,11 @@
   content: "";
   background-image: url("../svg/next-arrow.svg");
   background-repeat: no-repeat;
-  width: 21px;
-  height: 22px;
+  width: 18px;
+  height: 20px;
   background-size: contain;
   position: absolute;
-  margin-left: 60px;
+  margin-left: 12px;
   float: right;
   top: 14px;
 }
@@ -330,7 +344,7 @@
 .chat-pannel-widget .chat_buttons .back-btn {
   color: var(--button-color);
   text-decoration: none;
-  line-height: 58px;
+  line-height: 45px;
   text-align: center;
   display: inline-block;
   padding: 0 25px;
@@ -347,7 +361,7 @@
 .search-container {
   display: flex;
   align-items: center;
-  background-color: var(--shadow-color);
+  background-color: #363636;
   padding: 0.5rem;
   border-radius: 30px;
   position: relative;
@@ -357,7 +371,7 @@
   background-color: var(--input-background);
   color: var(--input-textcolor);
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.9rem 4.9rem;
   border-radius: 20px;
   font-weight: 600;
   outline: none;
@@ -366,10 +380,18 @@
 
 .search-container .starter-placeholders {
   position: absolute;
-  top: 13px;
-  left: 13px;
+  left: 20px;
+  bottom: 1.4rem;
   background: transparent;
 }
+
+.search-container .searchbtn {
+  width: 20px;
+  height: 20px;
+  margin-left: 11rem;
+  margin-bottom: -6px;
+}
+
 
 .search-container .starter-placeholders span {
   display: inline-block;
@@ -407,7 +429,8 @@
 }
 
 .tab {
-  flex: 1; /* 👈 makes Private & Groups stretch equally */
+  flex: 1;
+  /* 👈 makes Private & Groups stretch equally */
   text-align: center;
   background-color: var(--shadow-color);
   color: var(--text-color);
@@ -424,7 +447,8 @@
 }
 
 .add-btn {
-  flex-shrink: 0; /* 👈 prevent + button from stretching */
+  flex-shrink: 0;
+  /* 👈 prevent + button from stretching */
   width: 36px;
   height: 36px;
   background-color: var(--button-bg);
