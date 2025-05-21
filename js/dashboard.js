@@ -2080,7 +2080,6 @@ async function convertImageToBase64(file) {
   });
 }
 
-
 // async function fetchTags(searchStr) {
 //   // if (failedSearches.has(searchStr)) {
 //   //   return [];
@@ -2207,7 +2206,7 @@ window.addEventListener("click", function (event) {
 // async function fetchTags(searchStr) {
 //   const query = `
 //       query Tagsearch($searchstr: String!) {
-//           tagsearch(tagname: $searchstr, limit: 20) {
+//           searchTags(tagname: $searchstr, limit: 20) {
 //               status
 //               counter
 //               ResponseCode
@@ -2228,7 +2227,7 @@ window.addEventListener("click", function (event) {
 //     });
 
 //     const result = await response.json();
-//     return result.data.tagsearch;
+//     return result.data.searchTags;
 //   } catch (error) {
 //     console.error("Error fetching tags:", error);
 //     return [];
