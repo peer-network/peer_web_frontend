@@ -1,4 +1,11 @@
-async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby = "NEWEST") {
+window.listPosts = async function getPosts(tagName) {
+  console.log("Fetching posts for tag:", tagName);
+
+  // Your GraphQL or fetch logic here...
+};
+
+
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST") {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -6,7 +13,13 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  title = sanitizeString(title);
+  if (typeof title === "string") {
+    title = sanitizeString(title);
+  } else {
+    title = "";
+  }
+  // tag = sanitizeString(tag);
+  // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
   let postsList = `query ListPosts {
     listPosts(
@@ -14,6 +27,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
+  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
   postsList += `) {
         status
         ResponseCode
@@ -78,11 +92,10 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       return result;
     })
     .catch((error) => {
-      console.log("error", error);
+      Merror("error", error);
       throw error;
     });
 }
@@ -97,7 +110,7 @@ function viewPost(postid) {
 
   var graphql = JSON.stringify({
     query: `mutation ResolvePostAction {
-        resolvePostAction: "${postid}", action: VIEW) {
+        resolvePostAction(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
         }
@@ -118,14 +131,14 @@ function viewPost(postid) {
     .then((result) => {
       console.log(result);
       if (result.data.resolvePostAction.status == "error") {
-        throw new Error(result.data.resolvePostAction.ResponseCode);
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
     })
     .catch((error) => {
       Merror("View Post failed", error);
-      console.log("error", error);
+      // console.log("error", error);
       return false;
     });
 }
@@ -166,9 +179,8 @@ function likePost(postid) {
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       if (result.data.resolvePostAction.status == "error") {
-        throw new Error(result.data.resolvePostAction.ResponseCode);
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
@@ -208,7 +220,7 @@ async function dislikePost(postid) {
   fetch(GraphGL, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
+    .catch((error) =>  Merror("Dislike failed", error));
 }
 
 function isVariableNameInArray(variableObj, nameArray) {
@@ -305,11 +317,12 @@ async function sendCreatePost(variables) {
     console.log("Mutation Result:", result.data);
 
     if (result.data.createPost.status == "error") {
-      throw new Error(result.data.createPost.ResponseCode);
+      throw new Error(userfriendlymsg(result.data.createPost.ResponseCode));
     } else return result.data;
   } catch (error) {
     Merror("Create Post failed", error);
-    console.error("Error create Post:", error);
+    // console.error("Error create Post:", error);
     return false;
   }
 }
+
