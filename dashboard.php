@@ -229,6 +229,7 @@ include 'host.php';
         <!-- Main Content Area (Mittlere Spalte mit einem inneren Grid) -->
         <main id="main" class="main">
             <!-- <section class="card" tabindex="0">
+                <button class="follow-btn">Follow +</button>
                 <div class="post">
                     <img src="img/bg.png" alt="">
                 </div>
