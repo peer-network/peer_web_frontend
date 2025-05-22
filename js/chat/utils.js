@@ -26,12 +26,12 @@ ChatApp.utils = {
   },
 
   decodeHTML(str) {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = str;
-    const firstPass = txt.value;
-    txt.innerHTML = firstPass;
-    return txt.value;
-  },
+  if (typeof str !== "string") return "";
+
+  const txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
+},
 
   getElement(selector) {
     return document.querySelector(selector);

@@ -244,7 +244,6 @@ window.addEventListener("DOMContentLoaded", () => {
   if (sendPrivateMessage) {
     let isSending = false;
     sendPrivateMessage.addEventListener("keydown", async function (event) {
-      console.log('jey down');
       if (event.key === "Enter" && !event.shiftKey && !isSending) {
         event.preventDefault();
 

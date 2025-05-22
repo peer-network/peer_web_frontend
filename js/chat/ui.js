@@ -1,28 +1,52 @@
 window.ChatApp = window.ChatApp || {};
 
 ChatApp.ui = {
+  initChatTabs() {
+    const privateBtn = document.getElementById("privateBtn");
+    const groupBtn = document.getElementById("groupBtn");
 
-initChatTabs() {
-  const privateBtn = document.getElementById("privateBtn");
-  const groupBtn = document.getElementById("groupBtn");
+    const updateTab = (type) =>{
+      ChatApp.state.filterType = type;
 
-  let suppressTabSwitch = false;
-  ChatApp.state.suppressTabSwitch = suppressTabSwitch; 
+      const privateBtn = document.getElementById("privateBtn");
+      const groupBtn = document.getElementById("groupBtn");
 
-  const updateTab = (type) => {
-    if (ChatApp.state.suppressTabSwitch) return; 
+      privateBtn.classList.remove("active");
+      groupBtn.classList.remove("active");
+      type === "private" ? privateBtn.classList.add("active") : groupBtn.classList.add("active");
 
-    ChatApp.state.filterType = type;
-    privateBtn.classList.toggle("active", type === "private");
-    groupBtn.classList.toggle("active", type === "group");
-    ChatApp.loader.loadChats(type);
-  };
+      const isOverlayActive = ChatApp.state.isInCreateOverlay;
+      const isOnReviewScreen = ChatApp.state.isInReviewScreen;
 
-  privateBtn.addEventListener("click", () => updateTab("private"));
-  groupBtn.addEventListener("click", () => updateTab("group"));
+      if (isOverlayActive && isOnReviewScreen) {
+        ChatApp.state.isInCreateOverlay = false;
+        ChatApp.state.isInReviewScreen = false;
+        ChatApp.state.selectedUsers = [];
 
-  updateTab("private");
-},
+        const container = ChatApp.utils.getElement(".chat-pannel-widget");
+        container.innerHTML = "";
+
+        ChatApp.loader.loadChats(type);
+        return;
+      }
+
+      if (isOverlayActive) {
+        ChatApp.ui.renderContacts(ChatApp.state.fullContactList);
+        return;
+      }
+
+      ChatApp.state.isInReviewScreen = false;
+      ChatApp.state.isInCreateOverlay = false;
+      ChatApp.state.selectedUsers = [];
+
+      ChatApp.loader.loadChats(type);
+    };
+
+    privateBtn.addEventListener("click", () => updateTab("private"));
+    groupBtn.addEventListener("click", () => updateTab("group"));
+
+    updateTab("private");
+  },
 
   bindSendMessageHandler() {
   const input = document.getElementById("sendPrivateMessage");
@@ -39,11 +63,28 @@ initChatTabs() {
       if (!chatid || !content) return;
 
       isSending = true;
+
       try {
         const success = await ChatApp.ui.sendMessage(chatid, content);
+
         if (success) {
+          const container = document.querySelector(".chat-messages");
+          const template = document.getElementById("chat-message-template");
+          const clone = template.content.cloneNode(true);
+          const message = clone.querySelector(".message");
+
+          message.classList.add("right");
+          message.querySelector(".avatar").src = ChatApp.utils.getAvatarUrl("/img/ender.png"); // or user's real avatar
+          message.querySelector(".message-text").textContent = content;
+          message.querySelector(".time").textContent = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          container.appendChild(clone);
+          container.scrollTop = container.scrollHeight;
+
           input.value = "";
-          //ChatApp.loader.loadChats(ChatApp.state.filterType);
         }
       } catch (err) {
         console.error("Send failed:", err);
@@ -52,14 +93,11 @@ initChatTabs() {
       }
     }
   });
-  },
+},
 
   sendMessage(chatid, content) {
-    return ChatApp.api
-      .fetchGraphQL(ChatApp.graphql.SEND_MESSAGE, { chatid, content })
-      .then((res) => {
-        return res?.sendChatMessage?.status === "success";
-      });
+    return ChatApp.api.fetchGraphQL(ChatApp.graphql.SEND_MESSAGE, { chatid, content })
+      .then(res => res?.sendChatMessage?.status === "success");
   },
 
   initSearch() {
@@ -74,31 +112,40 @@ initChatTabs() {
     });
 
     document.addEventListener("click", (event) => {
-    const isInsideResults = resultsBox.contains(event.target);
-    const isTabClick = event.target.closest("#privateBtn, #groupBtn");
-    const isSearchInput = event.target.closest("#search-contacts");
+      const isInsideResults = ChatApp.utils.getElement(".chat-list").contains(event.target);
+      const isTabClick = event.target.closest("#privateBtn, #groupBtn");
+      const isSearchInput = event.target.closest("#search-contacts");
 
-  if (!isInsideResults && !isTabClick && !isSearchInput) {
-    //resultsBox.style.display = "none";
-  }
-});
+      if (!isInsideResults && !isTabClick && !isSearchInput) resultsBox.style.display = "none";
+    });
   },
 
   async getFriends() {
     const data = await ChatApp.api.fetchGraphQL(ChatApp.graphql.LIST_FRIENDS);
     const contactList = data?.listFriends?.affectedRows || [];
+
+    // ✅ Keep isInCreateOverlay true so tab switch shows filtered contacts properly
+    ChatApp.state.isInReviewScreen = false;
+    ChatApp.state.isInCreateOverlay = true;
+    ChatApp.state.fullContactList = contactList;
+
     ChatApp.ui.renderContacts(contactList);
   },
 
   renderContacts(contactList) {
-    const container = ChatApp.utils.getElement(".chat-pannel-widget");
-    container.innerHTML = "";
-
     const chatMode = ChatApp.state.filterType;
+    const container = ChatApp.utils.getElement(".chat-pannel-widget");
 
-    if (!ChatApp.state.isInReviewScreen) ChatApp.state.fullContactList = contactList;
-    if (ChatApp.state.isInReviewScreen) return ChatApp.ui.renderReviewScreen(container);
+    [...container.querySelectorAll(".chat-list-overlay, .chat_buttons, .input.title, #validationMessage")].forEach(el => el.remove());
 
+    ChatApp.state.fullContactList = contactList;
+
+    if (ChatApp.state.isInReviewScreen) {
+      ChatApp.state.isInCreateOverlay = false;
+      return ChatApp.ui.renderReviewScreen(container);
+    }
+
+    ChatApp.state.isInCreateOverlay = true;
     ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(Boolean);
 
     contactList.forEach(contact => {
@@ -188,10 +235,16 @@ initChatTabs() {
     nextBtn.className = "next-btn";
     nextBtn.textContent = "Next";
 
-    nextBtn.addEventListener("click", () => {
-      if (ChatApp.state.selectedUsers.length > 0) {
-        ChatApp.state.isInReviewScreen = true;
-        ChatApp.ui.renderContacts(ChatApp.state.fullContactList);
+    nextBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (ChatApp.state.selectedUsers.length >= 2) {
+        requestAnimationFrame(() => {
+          ChatApp.state.isInReviewScreen = true;
+          ChatApp.ui.renderContacts(ChatApp.state.fullContactList);
+        });
+      } else {
+        alert("Please select at least two participants.");
       }
     });
 
@@ -213,7 +266,16 @@ initChatTabs() {
     const nameInput = document.createElement("input");
     nameInput.placeholder = "*Give a name to a chat";
     nameInput.className = "input title";
+    nameInput.id = "chatNameInput";
     container.appendChild(nameInput);
+
+    const nameInputError = document.createElement("label");
+    nameInputError.id = "validationMessage";
+    nameInputError.setAttribute("for", "chatNameInput");
+    nameInputError.textContent = "";
+    nameInputError.style.color = "red";
+    nameInputError.style.display = "none";
+    container.appendChild(nameInputError);
 
     ChatApp.state.selectedUsers.forEach(user => {
       const div = document.createElement("div");
@@ -233,20 +295,18 @@ initChatTabs() {
 
       const nameSpan = document.createElement("span");
       nameSpan.classList.add("profile-name");
-      nameSpan.textContent = `${user.name}`;
-
-      // const removeBtn = document.createElement("button");
-      // removeBtn.textContent = "-";
+      nameSpan.textContent = user.name;
 
       const removeBtn = document.createElement("img");
       removeBtn.className = "chat-icon";
       removeBtn.src = "svg/remove.svg";
-      removeBtn.alt = "chat";
-
+      removeBtn.alt = "remove";
 
       removeBtn.addEventListener("click", () => {
-        ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(u => u.recipients[0] !== user.recipients[0]);
-        ChatApp.ui.renderContacts(ChatApp.state.fullContactList);
+        ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
+          u => u.recipients[0] !== user.recipients[0]
+        );
+        requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
       });
 
       item.appendChild(imgSpan);
@@ -263,23 +323,37 @@ initChatTabs() {
     backBtn.href = "#";
     backBtn.className = "back-btn";
     backBtn.textContent = "Add accounts";
-    backBtn.addEventListener("click", () => {
-      ChatApp.state.isInReviewScreen = false;
-      ChatApp.ui.renderContacts(ChatApp.state.fullContactList);
+    backBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      requestAnimationFrame(() => {
+        ChatApp.state.isInReviewScreen = false;
+        ChatApp.ui.renderContacts(ChatApp.state.fullContactList);
+      });
     });
 
     const createBtn = document.createElement("a");
     createBtn.href = "#";
     createBtn.className = "next-btn";
     createBtn.textContent = "Create chat";
-    createBtn.addEventListener("click", () => {
+    createBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const name = nameInput.value.trim();
-      if (!name || ChatApp.state.selectedUsers.length === 0) return;
-      ChatApp.ui.createChat({
-        name,
-        recipients: ChatApp.state.selectedUsers.map(u => u.recipients[0]),
-        image: "data:image/webp;base64,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",
-      });
+
+      if (!name || ChatApp.state.selectedUsers.length < 2) {
+        nameInputError.textContent = "Please enter a name and select at least two participants.";
+        nameInputError.style.display = "block";
+        return;
+      }
+
+      // requestAnimationFrame(() => {
+        ChatApp.ui.createChat({
+          name,
+          recipients: ChatApp.state.selectedUsers.map(u => u.recipients[0]),
+          image: ChatApp.state.defaultGroupImage,
+        });
+      // });
     });
 
     footer.appendChild(backBtn);
@@ -287,11 +361,23 @@ initChatTabs() {
     container.appendChild(footer);
   },
 
-  async createChat({ name = null, recipients = [], image = null }) {    
+  async createChat({ name = null, recipients = [], image = null }) {
     if (!recipients.length) return;
     try {
       await ChatApp.api.fetchGraphQL(ChatApp.graphql.CREATE_CHAT, { name, recipients, image });
-      ChatApp.loader.loadChats(recipients.length === 1 ? "private" : "group", recipients[0]);
+      const chatType = recipients.length === 1 ? "private" : "group";
+      ChatApp.state.filterType = chatType;
+
+      // Update tab visuals
+      const privateBtn = document.getElementById("privateBtn");
+      const groupBtn = document.getElementById("groupBtn");
+
+      privateBtn.classList.remove("active");
+      groupBtn.classList.remove("active");
+      chatType === "private" ? privateBtn.classList.add("active") : groupBtn.classList.add("active");
+
+      // Load chats for the correct tab
+      ChatApp.loader.loadChats(chatType, recipients[0]);
       const resultsBox = ChatApp.utils.getElement("#search-contact-results");
       if (resultsBox) resultsBox.style.display = "none";
     } catch (err) {

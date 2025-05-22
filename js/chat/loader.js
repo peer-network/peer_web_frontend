@@ -44,7 +44,7 @@ ChatApp.loader = {
       const otherUser = chat.chatparticipants.find(p => p.userid !== ChatApp.state.currentUserId) || chat.chatparticipants[0];
       const lastMessage = chat.chatmessages.at(-1);
       const time = lastMessage ? ChatApp.utils.formatTimeAgo(lastMessage.createdat) : "—";
-      const preview = lastMessage?.content || "Start chatting...";
+      const preview =  ChatApp.utils.decodeHTML(lastMessage?.content) || "Start chatting...";
 
       const clone = template.content.cloneNode(true);
       const item = clone.querySelector(".chat-item");
