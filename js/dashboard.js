@@ -777,39 +777,153 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // Function to search for tags via GraphQL
-  async function listTags() {
+  // async function listTags() {
+  //   const accessToken = getCookie("authToken");
+    // const query = `
+    //   query ListTags {
+    //     listTags(offset: 0, limit: 20) {
+    //       status
+    //       counter
+    //       ResponseCode
+    //       affectedRows {
+    //         name
+    //       }
+    //     }
+    //   }
+    // `;
+
+  //   try {
+  //     const response = await fetch(GraphGL, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`
+  //       },
+  //       body: JSON.stringify({ query })
+  //     });
+
+  //     const json = await response.json();
+  //     console.log("Tag search result:", json);
+  //     console.log()
+  //     return json?.data?.listTags?.affectedRows || [];
+  //   } catch (error) {
+  //     console.error("Error listing tags:", error);
+  //     return [];
+  //   }
+  // }
+
+  tagInput.addEventListener("input", () => {
+    let query = tagInput.value.trim();
+    // console.log("Input query:", query);
+    if (query.startsWith("#")) {
+      query = query.slice(1);
+    }
+    if (query.length > 0) {
+      searchTags(query);
+    } 
+  });
+
+  async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
+    // console.log("Tag search result:", tagName);
+
+
     const query = `
-      query ListTags {
-        listTags(offset: 0, limit: 20) {
+      query searchTags ($tagName: String!) {
+        searchTags(tagName: $tagName, limit: 10) {
           status
           counter
           ResponseCode
           affectedRows {
             name
+            
           }
         }
       }
-    `;
+   `;
 
+   
+    const variables = { tagName };
     try {
-      const response = await fetch(GraphGL, {
+      const response = await fetch(GraphGL,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query, variables })
       });
 
       const json = await response.json();
-      console.log("Tag search result:", json);
-      console.log()
-      return json?.data?.listTags?.affectedRows || [];
+      const tags = json?.data?.searchTags?.affectedRows || [];
+      displayTags(tags);
     } catch (error) {
-      console.error("Error listing tags:", error);
-      return [];
+      console.error("Error searching tags:", error);
     }
+  }
+  
+
+  // async function listTags() {
+  //   const accessToken = getCookie("authToken");
+
+  //   const query = `
+  //     query ListTags {
+  //       listTags(offset: 0, limit: 20) {
+  //         status
+  //         counter
+  //         ResponseCode
+  //         affectedRows {
+  //           name
+  //         }
+  //       }
+  //     }
+  //   `;
+
+  //   try {
+  //     const response = await fetch(GraphGL,{
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`
+  //       },
+  //       body: JSON.stringify({ query })
+  //     });
+
+  //     const json = await response.json();
+  //     const tags = json?.data?.listTags?.affectedRows || [];
+  //     displayTags(tags);
+  //   } catch (error) {
+  //     console.error("Error listing tags:", error);
+  //   }
+  // }
+
+  const tagDropdown = document.getElementById("tagDropdown");
+  function displayTags(tags) {
+    tagDropdown.innerHTML = "";
+
+      if (!Array.isArray(tags) || tags.length === 0) {
+        tagDropdown.classList.add("none");
+        return;
+      }else {
+        tagDropdown.classList.remove("none");
+      }
+
+      tags.forEach(tag => {
+        const tagItem = document.createElement("div");
+        tagItem.classList = "dropdown-item";
+        tagItem.textContent = `#${tag.name}`;
+
+        tagItem.addEventListener("click", () => {
+          tagInput.value = `#${tag.name}`;
+          tagDropdown.classList.add("none");
+
+          // Calling the existing listPosts from post.js
+          postsLaden();
+          // getPosts(tag.name);
+        });
+
+        tagDropdown.appendChild(tagItem);
+      });
   }
 
   // Main applyFilters function
@@ -820,7 +934,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (userValue) await searchUsers(userValue);
     // if (titleValue) await searchTitles(titleValue);
-    if (tagValue) await listTags(tagValue);
+    if (tagValue) await searchTags(tagValue);
 
     // Optionally save local storage (optional)
     localStorage.setItem("searchTitle", titleValue);
@@ -836,11 +950,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Trigger on click
   lupe.addEventListener("click", applyFilters);
-  const serchgroup = document.getElementById("searchGroup");
-  const pulldown = serchgroup.querySelectorAll(".dropdown");
+  const searchgroup = document.getElementById("searchGroup");
+  const pulldown = searchgroup.querySelectorAll(".dropdown");
 
    
-    serchgroup.addEventListener("mouseleave", () => {
+    searchgroup.addEventListener("mouseleave", () => {
       pulldown.forEach((item) => {
         item.classList.add("none");
       });
@@ -958,22 +1072,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // );
   let lastScrollTop = 0;
 
-  window.addEventListener(
-    "scroll",
-    debounce(function () {
-      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+  // window.addEventListener(
+  //   "scroll",
+  //   debounce(function () {
+  //     let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
-      if (currentScroll > lastScrollTop) {
-        // Runter gescrollt
-        header.classList.add("none");
-      } else {
-        // Hoch gescrollt
-        header.classList.remove("none");
-      }
+  //     if (currentScroll > lastScrollTop) {
+  //       // Runter gescrollt
+  //       header.classList.add("none");
+  //     } else {
+  //       // Hoch gescrollt
+  //       header.classList.remove("none");
+  //     }
 
-      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-    }, 100) // 100 Millisekunden Verzögerung
-  );
+  //     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+  //   }, 100) // 100 Millisekunden Verzögerung
+  // );
 
   // Liste der Dropzonen und Input-Elemente
   const zones = [
@@ -1209,14 +1323,14 @@ async function postsLaden() {
   const tagInput = normalWords.join(" ");
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-  // console.log(cleanedArray);
+  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",null);
+   console.log(posts);
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.listPosts.affectedRows.forEach((objekt) => {
+    posts.data.listPosts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.id = objekt.id;
@@ -1967,54 +2081,54 @@ async function convertImageToBase64(file) {
 }
 
 
-async function fetchTags(searchStr) {
-  // if (failedSearches.has(searchStr)) {
-  //   return [];
-  // }
-  for (let failed of failedSearches) {
-    if (searchStr.includes(failed)) {
-      return [];
-    }
-  }
-  const accessToken = getCookie("authToken");
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-  const query = `
-      query searchTags($searchstr: String!) {
-          searchTags(tagname: $searchstr, limit: 10) {
-              status
-              counter
-              ResponseCode
-              affectedRows {
-                name
-            }
-          }
-      }
-  `;
+// async function fetchTags(searchStr) {
+//   // if (failedSearches.has(searchStr)) {
+//   //   return [];
+//   // }
+//   for (let failed of failedSearches) {
+//     if (searchStr.includes(failed)) {
+//       return [];
+//     }
+//   }
+//   const accessToken = getCookie("authToken");
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
+//   const query = `
+//       query searchTags($searchstr: String!) {
+//           searchTags(tagName: $searchstr, limit: 10) {
+//               status
+//               counter
+//               ResponseCode
+//               affectedRows {
+//                 name
+//             }
+//           }
+//       }
+//   `;
 
-  const variables = { searchstr: searchStr };
+//   const variables = { searchstr: searchStr };
 
-  try {
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({ query, variables }),
-    });
+//   try {
+//     const response = await fetch(GraphGL, {
+//       method: "POST",
+//       headers: headers,
+//       body: JSON.stringify({ query, variables }),
+//     });
 
-    const result = await response.json();
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(userfriendlymsg(result.data.searchTags.ResponseCode));
-    if (!result.data.searchTags.affectedRows.length) {
-      failedSearches.add(searchStr);
-    }
-    return result.data.searchTags.affectedRows;
-  } catch (error) {
-    // console.error("Error fetching tags:", error);
-    return [];
-  }
-}
+//     const result = await response.json();
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//     if (result.errors) throw new Error(userfriendlymsg(result.data.searchTags.ResponseCode));
+//     if (!result.data.searchTags.affectedRows.length) {
+//       failedSearches.add(searchStr);
+//     }
+//     return result.data.searchTags.affectedRows;
+//   } catch (error) {
+//     // console.error("Error fetching tags:", error);
+//     return [];
+//   }
+// }
 const failedSearches = new Set();
 const tagInput = document.getElementById("tag-input");
 const tagContainer = document.getElementById("tagsContainer");

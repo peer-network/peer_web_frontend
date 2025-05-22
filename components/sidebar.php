@@ -9,12 +9,12 @@
  */
 ?>
 
- <aside class="sidebar">
-            <form id="filter" class="filterContainer">
-                    <div class="dash">
-                        <img class="logo" src="svg/logo_sw.svg" alt="Peer Network Logo" />
+<aside class="sidebar">
+   <form id="filter" class="filterContainer">
+                    <a href="dashboard.php" class="dash">
+                        <img class="logo" src="svg/Home.svg" alt="Peer Network Logo" />
                         <h1 id="h1">Dashboard</h1>
-                    </div>
+                    </a>
                 <div class="filter-sec">
                     <div class="center">
                         &nbsp;Filter
@@ -97,7 +97,7 @@
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="LikesStat" class="progress" style="--progress: 0%;"></div>
+                            <div id="LikesStat" class="progress" ></div>
                         </div>
                     </div>
 
@@ -111,7 +111,7 @@
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="CommentsStat" class="progress" style="--progress: 0%;"></div>
+                            <div id="CommentsStat" class="progress" ></div>
                         </div>
                     </div>
 
@@ -125,10 +125,9 @@
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="PostsStat" class="progress" style="--progress: 0%;"></div>
+                            <div id="PostsStat" class="progress" ></div>
                         </div>
                     </div>
                 </div>
             </form>
-        
-        </aside>
+</aside>

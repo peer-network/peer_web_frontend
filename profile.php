@@ -22,7 +22,7 @@
 
     <?php
         $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
-        //include 'meta.min.php';
+        include 'meta.min.php';
     ?>
     <title>My Profile</title>
 

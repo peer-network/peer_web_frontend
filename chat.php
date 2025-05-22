@@ -33,7 +33,7 @@
 
         <!-- Sidebar section (typically for navigation) -->
         <?php require_once('./components/sidebar.php'); ?>
-
+        <main id="main" class="main">
         <div class="main-content">
             <!-- Load the chat list component -->
             <?php require_once ('./components/chat-list.php'); ?>
@@ -41,16 +41,16 @@
             <!-- Load the chat container component (this holds individual chat windows) -->
             <?php require_once ('./components/chat-container.php'); ?>
         </div>
-
+        </main>
         <!-- Extra Content Area: A right column for profile info or other widgets -->
         <?php require_once('./components/profile.php'); ?>
-
+        
         <div id="footer" class="footer">
             <!--  <img src="svg/logo_farbe.svg" alt="loading" />-->
         </div>
     </article>
 
-    <?php require_once('./components/scripts.php'); ?>
+    <?php require_once('./components/scripts-chat.php'); ?>
     
 </body>
 

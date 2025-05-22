@@ -69,17 +69,17 @@ include 'host.php';
 
                     <div class="search-box">
                         <input name="searchTitle" id="searchTitle" type="text" placeholder="~title" />
-                        <div class="dropdown none" id="titleDropdown"></div>
+                        <div class="dropdown none drop1" id="titleDropdown"></div>
                     </div>
 
                     <div class="divider"></div>
 
                     <div class="search-box">
                         <input name="searchTag" id="searchTag" type="text" placeholder="#tag" />
-                        <div class="dropdown none" id="tagDropdown"></div>
+                        <div class="dropdown none drop2" id="tagDropdown"></div>
                     </div>
 
-                    <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search" style="cursor: pointer;" />
+                    <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search"/>
                 </div>
                 <div id="userResults" class="user-results"></div>
                 <div class="notify" ><img src="svg/bell.svg" alt="notification icon"></div>
@@ -103,10 +103,10 @@ include 'host.php';
         <!-- Sidebar -->
         <aside class="sidebar">
             <form id="filter" class="filterContainer">
-                    <div class="dash">
-                        <img class="logo" src="svg/logo_sw.svg" alt="Peer Network Logo" />
+                    <a href="dashboard.php" class="dash">
+                        <img class="logo" src="svg/Home.svg" alt="Peer Network Logo" />
                         <h1 id="h1">Dashboard</h1>
-                    </div>
+                    </a>
                 <div class="filter-sec">
                     <div class="center">
                         &nbsp;Filter
@@ -189,7 +189,7 @@ include 'host.php';
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="LikesStat" class="progress" style="--progress: 0%;"></div>
+                            <div id="LikesStat" class="progress" ></div>
                         </div>
                     </div>
 
@@ -203,7 +203,7 @@ include 'host.php';
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="CommentsStat" class="progress" style="--progress: 0%;"></div>
+                            <div id="CommentsStat" class="progress" ></div>
                         </div>
                     </div>
 
@@ -217,7 +217,7 @@ include 'host.php';
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="PostsStat" class="progress" style="--progress: 0%;"></div>
+                            <div id="PostsStat" class="progress" ></div>
                         </div>
                     </div>
                 </div>
@@ -284,7 +284,7 @@ include 'host.php';
                     </div>
                 </div>
 
-                <a href="profile.php" class="view-profil stats">
+                <a href="profile.php" class="view-profil stats comming-soon">
                     <img src="svg/profile.svg" alt="">
                     <p>View Profile</p>
                 </a>
@@ -296,7 +296,7 @@ include 'host.php';
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
                 </a>
-                <a class="menu-item ">
+                <a href="chat.php" class="menu-item ">
                     <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                     <p>Chats</p>
                     <div class="notification-badge">8</div>
@@ -317,7 +317,7 @@ include 'host.php';
             <div class="menu stats">
                 <div class="menu-item"  id="btAddPost">
                     <img class="icon" src="svg/newpost.svg" alt="network" />
-                    <p>Create a post</p>
+                    <p>New post</p>
                 </div>
             </div>
         </div>

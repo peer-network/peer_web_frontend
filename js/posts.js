@@ -1,4 +1,11 @@
-async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby = "NEWEST", userid = null) {
+window.listPosts = async function getPosts(tagName) {
+  console.log("Fetching posts for tag:", tagName);
+
+  // Your GraphQL or fetch logic here...
+};
+
+
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID=null) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -6,7 +13,14 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  title = sanitizeString(title);
+  if (typeof title === "string") {
+    title = sanitizeString(title);
+  } else {
+    title = "";
+  }
+
+  // tag = sanitizeString(tag);
+  // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
   let postsList = `query ListPosts {
     listPosts(
@@ -14,11 +28,9 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
-
-      if (userid !== null) {
-        postsList += `, userid: "${userid}"`;
-      }
-
+      
+  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
+  postsList += (userID !== null) ? `, userid: "${userID}"` : "";
   postsList += `) {
         status
         ResponseCode
@@ -68,6 +80,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
     }
 }
 `;
+console.log(postsList);
   var graphql = JSON.stringify({
     query: postsList,
     variables: {},
@@ -86,7 +99,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
       return result;
     })
     .catch((error) => {
-      console.log("error", error);
+      Merror("error", error);
       throw error;
     });
 }
@@ -101,7 +114,7 @@ function viewPost(postid) {
 
   var graphql = JSON.stringify({
     query: `mutation ResolvePostAction {
-        resolvePostAction: "${postid}", action: VIEW) {
+        resolvePostAction(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
         }
@@ -129,7 +142,7 @@ function viewPost(postid) {
     })
     .catch((error) => {
       Merror("View Post failed", error);
-      console.log("error", error);
+      // console.log("error", error);
       return false;
     });
 }
@@ -316,3 +329,4 @@ async function sendCreatePost(variables) {
     return false;
   }
 }
+

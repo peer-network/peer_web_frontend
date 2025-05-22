@@ -9,7 +9,7 @@
  */
 ?>
 
-<aside class="profil">
+ <aside class="profil">
         <div id="profil-container">
             <div class="pro-sec">
                 <!-- Profil-Bild und Name -->
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <a href="profile.php" class="view-profil stats">
+                <a href="profile.php" class="view-profil stats comming-soon">
                     <img src="svg/profile.svg" alt="">
                     <p>View Profile</p>
                 </a>
@@ -54,7 +54,7 @@
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
                 </a>
-                <a class="menu-item ">
+                <a href="chat.php" class="menu-item ">
                     <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                     <p>Chats</p>
                     <div class="notification-badge">8</div>
@@ -75,7 +75,7 @@
             <div class="menu stats">
                 <div class="menu-item"  id="btAddPost">
                     <img class="icon" src="svg/newpost.svg" alt="network" />
-                    <p>Create a post</p>
+                    <p>New post</p>
                 </div>
             </div>
         </div>
