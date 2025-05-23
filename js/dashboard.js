@@ -64,9 +64,9 @@ function commentToDom(c, append = true) {
             });
           }
           // console.log("Ergebnis:", result);
+          // console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
+          // window.location.href = "profile.html?user=" + c.user.id;
         });
-        // console.log("User clicked Comment: " + event.currentTarget.parentElement.id);
-        // window.location.href = "profile.html?user=" + c.user.id;
       },
       { capture: true }
     );
@@ -379,42 +379,49 @@ document.addEventListener("DOMContentLoaded", () => {
   // });
 
   const everything = document.getElementById("everything");
-  everything.addEventListener("click", () => {
-    deleteFilter();
-    location.reload();
-  });
-  const closeComments = document.getElementById("closeComments");
-  closeComments.addEventListener("click", () => {
-    togglePopup("cardClicked");
-    cancelTimeout();
-    document.getElementById("header").classList.remove("none");
-  });
-  const addComment = document.getElementById("addComment");
-  addComment.addEventListener("click", (event) => {
-    const clickedElement = event.currentTarget;
-
-    // Ein Attribut auslesen, z. B. 'data-id'
-    const attributeValue = clickedElement.getAttribute("postID");
-    createModal({
-      title: "Comment",
-      message: "Please enter your comment:",
-      buttons: ["send", "quit"],
-      type: "info",
-      textarea: true,
-    }).then((result) => {
-      // result hat das Format { button: <index>, value: <textarea Inhalt> }
-      if (result !== null && result.button == 0 && result.value !== "") {
-        createComment(attributeValue, result.value).then((result) => {
-          if (result.data.createComment.status === "success") {
-            commentToDom(result.data.createComment.affectedRows[0], false);
-          }
-        });
-      }
-      // console.log("Ergebnis:", result);
+  if (everything) {
+    everything.addEventListener("click", () => {
+      deleteFilter();
+      location.reload();
     });
-    // document.getElementById("commentInput").focus();
-    // createComment(attributeValue, "test");
-  });
+  }
+  const closeComments = document.getElementById("closeComments");
+  if (closeComments) {
+    closeComments.addEventListener("click", () => {
+      togglePopup("cardClicked");
+      cancelTimeout();
+      document.getElementById("header").classList.remove("none");
+    });
+  }
+  const addComment = document.getElementById("addComment");
+  if (addComment) {
+    addComment.addEventListener("click", (event) => {
+      const clickedElement = event.currentTarget;
+
+      // Ein Attribut auslesen, z. B. 'data-id'
+      const attributeValue = clickedElement.getAttribute("postID");
+      createModal({
+        title: "Comment",
+        message: "Please enter your comment:",
+        buttons: ["send", "quit"],
+        type: "info",
+        textarea: true,
+      }).then((result) => {
+        // result hat das Format { button: <index>, value: <textarea Inhalt> }
+        if (result !== null && result.button == 0 && result.value !== "") {
+          createComment(attributeValue, result.value).then((result) => {
+            if (result.data.createComment.status === "success") {
+              commentToDom(result.data.createComment.affectedRows[0], false);
+            }
+          });
+        }
+        // console.log("Ergebnis:", result);
+      });
+      // document.getElementById("commentInput").focus();
+      // createComment(attributeValue, "test");
+    });
+
+  }
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
     document.documentElement.requestFullscreen().catch((err) => {
@@ -453,11 +460,15 @@ document.addEventListener("DOMContentLoaded", () => {
     togglePopup("addPost");
   });
   const closeAddPost = document.getElementById("closeAddPost");
-  closeAddPost.addEventListener("click", () => {
-    header.classList.remove("none");
-    togglePopup("addPost");
-  });
-  document.getElementById("createPostNotes").addEventListener("click", async function createPost(event) {
+  if (closeAddPost) {
+    closeAddPost.addEventListener("click", () => {
+      header.classList.remove("none");
+      togglePopup("addPost");
+    });
+  }
+  const createPostNotes = document.getElementById("createPostNotes");
+  if (createPostNotes) {
+    createPostNotes.addEventListener("click", async function createPost(event) {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleNotes").value;
     const textareaValue = document.getElementById("descriptionNotes").value;
@@ -484,110 +495,122 @@ document.addEventListener("DOMContentLoaded", () => {
       togglePopup("addPost");
       location.reload();
     }
-  });
-  document.getElementById("createPostImage").addEventListener("click", async function createPost(event) {
-    event.preventDefault(); // Prevent form reload
-    const title = document.getElementById("titleImage").value;
-    const beschreibung = document.getElementById("descriptionImage").value;
-    const imageWrappers = document.querySelectorAll(".create-img");
-    const tags = tag_getTagArray();
+    });
+  }
 
-    const combinedBase64 = Array.from(imageWrappers)
-      .map((img) => img.src) // Bildquelle (src) abrufen
-      .filter((src) => src.startsWith("data:image/"));
-    // // const combinedHTML = Array.from(imageWrappers)
-    //   .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-    //   .join(" "); // Concatenate the HTML content with a space in between
-    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-    const maxBytes = 4 * 1024 * 1024;
-    if (gesamtLaenge > maxBytes) {
-      Merror("Error", "The image(s) is too large. Please upload a smaller image(s).");
-      return;
-    }
-    if (
-      await sendCreatePost({
-        title: title,
-        media: combinedBase64,
-        mediadescription: beschreibung,
-        contenttype: "image",
-        tags: tags,
-      })
-    ) {
-      togglePopup("addPost");
-      location.reload();
-    }
-  });
-  document.getElementById("createPostAudio").addEventListener("click", async function createPost(event) {
-    event.preventDefault(); // Prevent form reload
-    const title = document.getElementById("titleAudio").value;
-    const beschreibung = document.getElementById("descriptionImage").value;
-    const imageWrappers = document.querySelectorAll(".create-audio");
-    const tags = tag_getTagArray();
+  const createPostImage = document.getElementById("createPostImage");
+  if (createPostImage) {
+    createPostImage.addEventListener("click", async function createPost(event) {
+      event.preventDefault(); // Prevent form reload
+      const title = document.getElementById("titleImage").value;
+      const beschreibung = document.getElementById("descriptionImage").value;
+      const imageWrappers = document.querySelectorAll(".create-img");
+      const tags = tag_getTagArray();
 
-    const combinedBase64 = Array.from(imageWrappers)
-      .map((img) => img.src) // Bildquelle (src) abrufen
-      .filter((src) => src.startsWith("data:audio/"));
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src) // Bildquelle (src) abrufen
+        .filter((src) => src.startsWith("data:image/"));
+      // // const combinedHTML = Array.from(imageWrappers)
+      //   .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+      //   .join(" "); // Concatenate the HTML content with a space in between
+      const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+      const maxBytes = 4 * 1024 * 1024;
+      if (gesamtLaenge > maxBytes) {
+        Merror("Error", "The image(s) is too large. Please upload a smaller image(s).");
+        return;
+      }
+      if (
+        await sendCreatePost({
+          title: title,
+          media: combinedBase64,
+          mediadescription: beschreibung,
+          contenttype: "image",
+          tags: tags,
+        })
+      ) {
+        togglePopup("addPost");
+        location.reload();
+      }
+    });
+  }
 
-    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-    const maxBytes = 4 * 1024 * 1024;
-    if (gesamtLaenge > maxBytes) {
-      Merror("Error", "The audio is too large. Please upload a smaller audio.");
-      return;
-    }
-    const canvas = document.querySelector("#preview-audio > div > canvas");
-    const cover = document.querySelector("#preview-cover > div > img");
-    let dataURL;
-    if (cover) {
-      dataURL = [cover.src];
-    } else {
-      dataURL = [canvas.toDataURL("image/webp", 0.8)];
-    }
-    if (
-      await sendCreatePost({
-        title: title,
-        media: combinedBase64,
-        cover: dataURL,
-        mediadescription: beschreibung,
-        contenttype: "audio",
-        tags: tags,
-      })
-    ) {
-      togglePopup("addPost");
+  const createPostAudio = document.getElementById("createPostAudio");
+  if (createPostAudio) {
+    createPostAudio.addEventListener("click", async function createPost(event) {
+      event.preventDefault(); // Prevent form reload
+      const title = document.getElementById("titleAudio").value;
+      const beschreibung = document.getElementById("descriptionImage").value;
+      const imageWrappers = document.querySelectorAll(".create-audio");
+      const tags = tag_getTagArray();
 
-      location.reload();
-    }
-  });
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src) // Bildquelle (src) abrufen
+        .filter((src) => src.startsWith("data:audio/"));
 
-  document.getElementById("createPostVideo").addEventListener("click", async function createPost(event) {
-    event.preventDefault(); // Prevent form reload
-    const title = document.getElementById("titleVideo").value;
-    const beschreibung = document.getElementById("descriptionVideo").value;
-    const imageWrappers = document.querySelectorAll(".create-video");
-    const tags = tag_getTagArray();
+      const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+      const maxBytes = 4 * 1024 * 1024;
+      if (gesamtLaenge > maxBytes) {
+        Merror("Error", "The audio is too large. Please upload a smaller audio.");
+        return;
+      }
+      const canvas = document.querySelector("#preview-audio > div > canvas");
+      const cover = document.querySelector("#preview-cover > div > img");
+      let dataURL;
+      if (cover) {
+        dataURL = [cover.src];
+      } else {
+        dataURL = [canvas.toDataURL("image/webp", 0.8)];
+      }
+      if (
+        await sendCreatePost({
+          title: title,
+          media: combinedBase64,
+          cover: dataURL,
+          mediadescription: beschreibung,
+          contenttype: "audio",
+          tags: tags,
+        })
+      ) {
+        togglePopup("addPost");
 
-    const combinedBase64 = Array.from(imageWrappers)
-      .map((img) => img.src) // Bildquelle (src) abrufen
-      .filter((src) => src.startsWith("data:video/"));
-    // .join(" ");
-    const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-    const maxBytes = 4 * 1024 * 1024;
-    if (gesamtLaenge > maxBytes) {
-      Merror("Error", "The video is too large. Please upload a smaller video.");
-      return;
-    }
-    if (
-      await sendCreatePost({
-        title: title,
-        media: combinedBase64,
-        mediadescription: beschreibung,
-        contenttype: "video",
-        tags: tags,
-      })
-    ) {
-      togglePopup("addPost");
-      location.reload();
-    }
-  });
+        location.reload();
+      }
+    });
+  }
+
+  const createPostVideo = document.getElementById("createPostVideo");
+  if (createPostVideo) {
+    createPostVideo.addEventListener("click", async function createPost(event) {
+      event.preventDefault(); // Prevent form reload
+      const title = document.getElementById("titleVideo").value;
+      const beschreibung = document.getElementById("descriptionVideo").value;
+      const imageWrappers = document.querySelectorAll(".create-video");
+      const tags = tag_getTagArray();
+
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src) // Bildquelle (src) abrufen
+        .filter((src) => src.startsWith("data:video/"));
+      // .join(" ");
+      const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+      const maxBytes = 4 * 1024 * 1024;
+      if (gesamtLaenge > maxBytes) {
+        Merror("Error", "The video is too large. Please upload a smaller video.");
+        return;
+      }
+      if (
+        await sendCreatePost({
+          title: title,
+          media: combinedBase64,
+          mediadescription: beschreibung,
+          contenttype: "video",
+          tags: tags,
+        })
+      ) {
+        togglePopup("addPost");
+        location.reload();
+      }
+    });
+  }
 
   // if (titleInput && tagInput && userInput && lupe) {
   //   async function searchUsersByUsername(username) {
@@ -726,7 +749,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadUserProfile(username) {
       window.location.href = `/profile/${username}`;
     }
-}
+  }
   
 
   async function getProfile(userID) {
@@ -812,16 +835,74 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // }
 
-  tagInput.addEventListener("input", () => {
-    let query = tagInput.value.trim();
-    // console.log("Input query:", query);
-    if (query.startsWith("#")) {
-      query = query.slice(1);
+  const titleDropdown = document.getElementById("titleDropdown");
+
+  async function searchTitles(titleQuery) {
+    try {
+      const response = await getPosts(0, 50, "NONE", titleQuery); // use title as a filter
+      const posts = response?.data?.listPosts?.affectedRows || [];
+
+      // Extract and deduplicate matching titles
+      const titleSet = new Set();
+      posts.forEach(post => {
+        if (
+          post.title &&
+          post.title.toLowerCase().includes(titleQuery.toLowerCase())
+        ) {
+          titleSet.add(post.title);
+        }
+      });
+
+      const titles = Array.from(titleSet);
+      displayTitles(titles);
+    } catch (error) {
+      console.error("Error searching titles:", error);
     }
-    if (query.length > 0) {
-      searchTags(query);
-    } 
-  });
+  }
+
+
+  function displayTitles(titles) {
+    titleDropdown.innerHTML = "";
+
+    if (!Array.isArray(titles) || titles.length === 0) {
+      titleDropdown.classList.add("none");
+      return;
+    } else {
+      titleDropdown.classList.remove("none");
+    }
+
+    titles.forEach(title => {
+      const titleItem = document.createElement("div");
+      titleItem.className = "dropdown-item";
+      titleItem.textContent = `~${title}`;
+
+      titleItem.addEventListener("click", () => {
+        titleInput.value = `~${title}`;
+        localStorage.setItem("searchTitle", title);
+        titleDropdown.classList.add("none");
+
+        postsLaden({ title }); // Trigger filtered posts by title
+      });
+
+      titleDropdown.appendChild(titleItem);
+    });
+  }
+
+
+
+
+  if (tagInput) {
+    tagInput.addEventListener("input", () => {
+      let query = tagInput.value.trim();
+      // console.log("Input query:", query);
+      if (query.startsWith("#")) {
+        query = query.slice(1);
+      }
+      if (query.length > 0) {
+        searchTags(query);
+      }
+    });
+  }
 
   async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
@@ -863,40 +944,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
 
-  // async function listTags() {
-  //   const accessToken = getCookie("authToken");
-
-  //   const query = `
-  //     query ListTags {
-  //       listTags(offset: 0, limit: 20) {
-  //         status
-  //         counter
-  //         ResponseCode
-  //         affectedRows {
-  //           name
-  //         }
-  //       }
-  //     }
-  //   `;
-
-  //   try {
-  //     const response = await fetch(GraphGL,{
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${accessToken}`
-  //       },
-  //       body: JSON.stringify({ query })
-  //     });
-
-  //     const json = await response.json();
-  //     const tags = json?.data?.listTags?.affectedRows || [];
-  //     displayTags(tags);
-  //   } catch (error) {
-  //     console.error("Error listing tags:", error);
-  //   }
-  // }
-
   const tagDropdown = document.getElementById("tagDropdown");
   function displayTags(tags) {
     tagDropdown.innerHTML = "";
@@ -915,8 +962,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tagItem.addEventListener("click", () => {
           tagInput.value = `#${tag.name}`;
+          localStorage.setItem("searchTag", tag.name);
           tagDropdown.classList.add("none");
-
           // Calling the existing listPosts from post.js
           postsLaden();
           // getPosts(tag.name);
@@ -933,7 +980,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const tagValue = tagInput.value.trim().toLowerCase();
 
     if (userValue) await searchUsers(userValue);
-    // if (titleValue) await searchTitles(titleValue);
+    if (titleValue) await searchTitles(titleValue);
     if (tagValue) await searchTags(tagValue);
 
     // Optionally save local storage (optional)
@@ -944,22 +991,25 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
   // Add input listeners
-  [titleInput, tagInput, userInput].forEach((input) =>
-    input.addEventListener("input", applyFilters)
-  );
+  if (titleInput && tagInput && userInput) {
+    [titleInput, tagInput, userInput].forEach((input) =>
+      input.addEventListener("input", applyFilters)
+    );
+  }
 
   // Trigger on click
-  lupe.addEventListener("click", applyFilters);
+  if (lupe) {
+    lupe.addEventListener("click", applyFilters);
+  }
   const searchgroup = document.getElementById("searchGroup");
-  const pulldown = searchgroup.querySelectorAll(".dropdown");
-
-   
-    searchgroup.addEventListener("mouseleave", () => {
-      pulldown.forEach((item) => {
-        item.classList.add("none");
+  if (searchgroup) {
+    const pulldown = searchgroup.querySelectorAll(".dropdown");
+      searchgroup.addEventListener("mouseleave", () => {
+        pulldown.forEach((item) => {
+          item.classList.add("none");
+        });
       });
-     
-  });
+  }
 
   
 
@@ -1143,17 +1193,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // Iteration über die Zonen
   zones.forEach(({ dropArea, fileInput }) => {
     // Click-Event für das Öffnen des Dateidialogs
+    if (dropArea) {
     dropArea.addEventListener("click", () => handleClick(fileInput));
+    }
 
     // Drag-and-Drop-Events
-    dropArea.addEventListener("dragover", (e) => handleDragOver(e, dropArea));
-    dropArea.addEventListener("dragleave", () => handleDragLeave(dropArea));
-    dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
-
-    // File-Input-Change-Event
-    fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
+    if (dropArea) {
+      dropArea.addEventListener("dragover", (e) => handleDragOver(e, dropArea));
+      dropArea.addEventListener("dragleave", () => handleDragLeave(dropArea));
+      dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
+    }
+      // File-Input-Change-Event
+    if (fileInput) {
+      fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
+    }
   });
-
   //   const dropArea = document.getElementById("drop-area");
   //   const fileInput = document.getElementById("file-input");
 
@@ -1174,7 +1228,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //     const files = Array.from(e.dataTransfer.files);
   //     if (files.length > 0) {
-  //       processFiles(files);
+  //       processFiles(files); 
   //     }
   //   });
 
@@ -1186,125 +1240,128 @@ document.addEventListener("DOMContentLoaded", () => {
   //   });
   // postsLaden();
   // postsLaden();
-});
 
-async function addScrollBlocker(element) {
-  let isAnimating = false;
-  let lastTouchX = 0;
-  let lastTouchY = 0;
-  element.addEventListener(
-    "wheel",
-    (event) => {
-      handleScroll(event, "mouse", element);
-    },
-    { passive: false }
-  );
-  document.addEventListener("touchend", () => {
-    lastTouchX = null;
-    lastTouchY = null;
-  });
-  element.addEventListener(
-    "touchmove",
-    (event) => {
-      handleScroll(event, "touch", element);
-    },
-    { passive: false }
-  );
-  let stopscroll = false;
-  function handleScroll(event, inputType, el) {
-    //   const scrollableContainer = event.target.closest(".blockscroll");
-    //   if (!scrollableContainer) return; // Nur in bestimmten Containern scrollen
-    if (event.currentTarget.className === "scrollable") stopscroll = true;
-    event.stopPropagation();
-    if (event.currentTarget.id === "main" && stopscroll) {
-      event.preventDefault();
-    }
-    if (event.currentTarget.className === "scrollable") return;
-    // event.preventDefault(); // Standard-Scrollverhalten blockieren
-    // event.stopPropagation();
-
-    // Bewegung erfassen
-    // let deltaX = 0,
-    //   deltaY = 0,
-    //   tempo = 1;
-    // if (inputType === "mouse") {
-    //   deltaX = event.deltaX * tempo;
-    //   deltaY = event.deltaY * tempo;
-    //   el.scrollLeft += deltaX - deltaY;
-    //   el.scrollTop += deltaY;
-    // } else if (inputType === "touch") {
-    //   const touch = event.touches[0];
-    //   deltaX = lastTouchX ? touch.clientX - lastTouchX : 0;
-    //   deltaY = lastTouchY ? touch.clientY - lastTouchY : 0;
-
-    //   // Speichere die aktuelle Touch-Position
-    //   lastTouchX = touch.clientX;
-    //   lastTouchY = touch.clientY;
-    //   el.scrollLeft -= deltaX;
-    //   el.scrollTop -= deltaY;
-    // }
-
-    // el.scrollBy({
-    //   left: deltaX,
-    //   top: deltaY,
-    //   behavior: 'smooth'
-    // });
-    // if (isScrollSnapEnabled(el)) {
-    //   ensureSnap(el);
-    // }
-  }
-}
-
-function isScrollSnapEnabled(container) {
-  // Prüfe, ob scroll-snap-type aktiviert ist
-  const style = window.getComputedStyle(container);
-  return style.scrollSnapType && style.scrollSnapType !== "none";
-}
-function ensureSnap(container) {
-  setTimeout(() => {
-    // Snap-Positionen für horizontal und vertikal berechnen
-    const snapPositionsX = Array.from(container.children).map((child) => child.offsetLeft);
-    const snapPositionsY = Array.from(container.children).map((child) => child.offsetTop);
-
-    const currentScrollX = container.scrollLeft;
-    const currentScrollY = container.scrollTop;
-
-    // Nächste Snap-Position für beide Richtungen finden
-    const closestSnapX = snapPositionsX.reduce((prev, curr) => (Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX) ? curr : prev));
-    const closestSnapY = snapPositionsY.reduce((prev, curr) => (Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY) ? curr : prev));
-
-    // Scrolle sanft zur nächsten Snap-Position
-    container.scrollTo({
-      left: closestSnapX,
-      top: closestSnapY,
-      behavior: "smooth",
+  async function addScrollBlocker(element) {
+    console.log("addScrollBlocker called");
+    let isAnimating = false;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    element.addEventListener(
+      "wheel",
+      (event) => {
+        handleScroll(event, "mouse", element);
+      },
+      { passive: false }
+    );
+    document.addEventListener("touchend", () => {
+      lastTouchX = null;
+      lastTouchY = null;
     });
-  }, 100); // Warte, bis die Bewegung abgeschlossen ist
-}
+    element.addEventListener(
+      "touchmove",
+      (event) => {
+        handleScroll(event, "touch", element);
+      },
+      { passive: false }
+    );
+    let stopscroll = false;
+    function handleScroll(event, inputType, el) {
+      console.log("handleScroll called ");
+      //   const scrollableContainer = event.target.closest(".blockscroll");
+      //   if (!scrollableContainer) return; // Nur in bestimmten Containern scrollen
+      console.log("handleScroll");
+      if (event.currentTarget.className === "scrollable") stopscroll = true;
+      event.stopPropagation();
+      if (event.currentTarget.id === "main" && stopscroll) {
+        console.log("stopscroll");
+        event.preventDefault();
+      }
+      if (event.currentTarget.className === "scrollable") return;
+      // event.preventDefault(); // Standard-Scrollverhalten blockieren
+      // event.stopPropagation();
 
-function updateOnlineStatus() {
-  const statusBanner = document.getElementById("h1");
-  if (!navigator.onLine) {
-    // Wenn offline, Banner anzeigen
-    statusBanner.classList.add("offline");
-    statusBanner.textContent = "offlines";
-  } else {
-    // Wenn online, Banner ausblenden
-    statusBanner.classList.remove("offline");
-    statusBanner.textContent = "Dashboard";
+      // Bewegung erfassen
+      // let deltaX = 0,
+      //   deltaY = 0,
+      //   tempo = 1;
+      // if (inputType === "mouse") {
+      //   deltaX = event.deltaX * tempo;
+      //   deltaY = event.deltaY * tempo;
+      //   el.scrollLeft += deltaX - deltaY;
+      //   el.scrollTop += deltaY;
+      // } else if (inputType === "touch") {
+      //   const touch = event.touches[0];
+      //   deltaX = lastTouchX ? touch.clientX - lastTouchX : 0;
+      //   deltaY = lastTouchY ? touch.clientY - lastTouchY : 0;
+
+      //   // Speichere die aktuelle Touch-Position
+      //   lastTouchX = touch.clientX;
+      //   lastTouchY = touch.clientY;
+      //   el.scrollLeft -= deltaX;
+      //   el.scrollTop -= deltaY;
+      // }
+
+      // el.scrollBy({
+      //   left: deltaX,
+      //   top: deltaY,
+      //   behavior: 'smooth'
+      // });
+      // if (isScrollSnapEnabled(el)) {
+      //   ensureSnap(el);
+      // }
+    }
   }
-}
 
-function appendPost(json) {
-  const parentElement = document.getElementById("parent-id"); // Das übergeordnete Element
-  const letztesDiv = parentElement.lastElementChild;
-}
-
-async function postsLaden() {
-  const UserID = getCookie("userID");
-  if (postsLaden.offset === undefined) {
-    postsLaden.offset = 0; // Initialwert
+  function isScrollSnapEnabled(container) {
+    // Prüfe, ob scroll-snap-type aktiviert ist
+    const style = window.getComputedStyle(container);
+    return style.scrollSnapType && style.scrollSnapType !== "none";
   }
+  function ensureSnap(container) {
+    setTimeout(() => {
+      // Snap-Positionen für horizontal und vertikal berechnen
+      const snapPositionsX = Array.from(container.children).map((child) => child.offsetLeft);
+      const snapPositionsY = Array.from(container.children).map((child) => child.offsetTop);
+
+      const currentScrollX = container.scrollLeft;
+      const currentScrollY = container.scrollTop;
+
+      // Nächste Snap-Position für beide Richtungen finden
+      const closestSnapX = snapPositionsX.reduce((prev, curr) => (Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX) ? curr : prev));
+      const closestSnapY = snapPositionsY.reduce((prev, curr) => (Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY) ? curr : prev));
+
+      // Scrolle sanft zur nächsten Snap-Position
+      container.scrollTo({
+        left: closestSnapX,
+        top: closestSnapY,
+        behavior: "smooth",
+      });
+    }, 100); // Warte, bis die Bewegung abgeschlossen ist
+  }
+
+  function updateOnlineStatus() {
+    const statusBanner = document.getElementById("h1");
+    if (!navigator.onLine) {
+      // Wenn offline, Banner anzeigen
+      statusBanner.classList.add("offline");
+      statusBanner.textContent = "offlines";
+    } else {
+      // Wenn online, Banner ausblenden
+      statusBanner.classList.remove("offline");
+      statusBanner.textContent = "Dashboard";
+    }
+  }
+
+  function appendPost(json) {
+    const parentElement = document.getElementById("parent-id"); // Das übergeordnete Element
+    const letztesDiv = parentElement.lastElementChild;
+  }
+
+  async function postsLaden({ title = null, tag = null } = {}) {
+    const UserID = getCookie("userID");
+
+    if (postsLaden.offset === undefined) {
+      postsLaden.offset = 0; // Initial value
 
   const form = document.querySelector("#filter");
 
@@ -1351,175 +1408,519 @@ async function postsLaden() {
     if (objekt.cover) {
       cover = JSON.parse(objekt.cover);
     }
-    if (objekt.contenttype === "image") {
-      if (array.length > 1) postDiv.classList.add("multi");
-      for (const item of array) {
-        img = document.createElement("img");
-        img.onload = () => {
-          img.setAttribute("height", img.naturalHeight);
-          img.setAttribute("width", img.naturalWidth);
-        };
-        img.onerror = (error) => {};
 
-        img.src = tempMedia(item.path);
-        img.alt = "";
-        postDiv.appendChild(img);
+    const form = document.querySelector("#filter");
+    const checkboxes = form.querySelectorAll(".filteritem:checked");
+    const values = Array.from(checkboxes).map(cb => cb.name.replace(/^"|"$/g, ""));
+    const sortbyInput = document.querySelector('#filter input[type="radio"]:checked');
+    const sortby = sortbyInput ? sortbyInput.getAttribute("sortby") : "NEWEST";
+
+    // Use overrides (from function arg) or fallback to DOM inputs
+    const tagElement = document.getElementById("searchTag");
+    const titleElement = document.getElementById("searchTitle");
+
+    if (!title && titleElement) {
+      const { normalWords } = extractWords(titleElement.value.toLowerCase());
+      title = normalWords.join(" ");
+    }
+
+    if (!tag && tagElement) {
+      const { hashtags } = extractWords(tagElement.value.toLowerCase());
+      tag = hashtags.join(" ");
+    }
+
+    const posts = await getPosts(postsLaden.offset, 20, values, title, tag, sortby);
+    const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
+    // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
+    const parentElement = document.getElementById("main"); // Das übergeordnete Element
+    let audio, video;
+    // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
+    posts.data.listPosts.affectedRows.forEach((objekt) => {
+      // Haupt-<section> erstellen
+      const card = document.createElement("section");
+      card.id = objekt.id;
+      card.classList.add("card");
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("content", objekt.contenttype);
+      // card.setAttribute("tags", objekt.tags.join(","));
+      // <div class="post"> erstellen und Bild hinzufügen
+
+      let postDiv;
+      let img;
+      postDiv = document.createElement("div");
+      postDiv.classList.add("post");
+      const array = JSON.parse(objekt.media);
+      let cover = null;
+      if (objekt.cover) {
+        cover = JSON.parse(objekt.cover);
       }
-    } else if (objekt.contenttype === "audio") {
-      if (cover) {
-        img = document.createElement("img");
-        img.onload = () => {
-          img.setAttribute("height", img.naturalHeight);
-          img.setAttribute("width", img.naturalWidth);
-        };
-        img.src = tempMedia(cover[0].path);
-        img.alt = "Cover";
-        postDiv.appendChild(img);
-      }
-      for (const item of array) {
-        audio = document.createElement("audio");
-        audio.id = item.path;
-        audio.src = tempMedia(item.path);
-        audio.controls = true;
-        audio.className = "custom-audio";
-        addMediaListener(audio);
-        postDiv.appendChild(audio);
-      }
-    } else if (objekt.contenttype === "video") {
-      for (const item of array) {
-        if (item.cover) {
+      if (objekt.contenttype === "image") {
+        if (array.length > 1) postDiv.classList.add("multi");
+        for (const item of array) {
           img = document.createElement("img");
           img.onload = () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);
           };
-          img.src = tempMedia(item.cover);
+          img.onerror = (error) => {};
+
+          img.src = tempMedia(item.path);
+          img.alt = "";
+          postDiv.appendChild(img);
+        }
+      } else if (objekt.contenttype === "audio") {
+        if (cover) {
+          img = document.createElement("img");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(cover[0].path);
           img.alt = "Cover";
           postDiv.appendChild(img);
         }
-        video = document.createElement("video");
-        video.muted = true;
-        video.id = extractAfterComma(item.path);
-        video.src = tempMedia(item.path);
-        video.preload = "metadata";
-        video.controls = false;
-        video.className = "custom-video";
-        addMediaListener(video);
-        postDiv.appendChild(video);
-        card.addEventListener("mousemove", function (event) {
-          const video = this.getElementsByTagName("video")[0];
-
-          if (video.readyState >= 2) {
-            const rect = video.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const relativePosition = mouseX / rect.width;
-
-            if (!video.duration) return;
-
-            video.currentTime = relativePosition * video.duration;
-            if (video.paused || video.currentTime === 0) video.play();
+        for (const item of array) {
+          audio = document.createElement("audio");
+          audio.id = item.path;
+          audio.src = tempMedia(item.path);
+          audio.controls = true;
+          audio.className = "custom-audio";
+          addMediaListener(audio);
+          postDiv.appendChild(audio);
+        }
+      } else if (objekt.contenttype === "video") {
+        for (const item of array) {
+          if (item.cover) {
+            img = document.createElement("img");
+            img.onload = () => {
+              img.setAttribute("height", img.naturalHeight);
+              img.setAttribute("width", img.naturalWidth);
+            };
+            img.src = tempMedia(item.cover);
+            img.alt = "Cover";
+            postDiv.appendChild(img);
           }
+          video = document.createElement("video");
+          video.muted = true;
+          video.id = extractAfterComma(item.path);
+          video.src = tempMedia(item.path);
+          video.preload = "metadata";
+          video.controls = false;
+          video.className = "custom-video";
+          addMediaListener(video);
+          postDiv.appendChild(video);
+          card.addEventListener("mousemove", function (event) {
+            const video = this.getElementsByTagName("video")[0];
 
-          // debouncedMoveEnd(video);
+            if (video.readyState >= 2) {
+              const rect = video.getBoundingClientRect();
+              const mouseX = event.clientX - rect.left;
+              const relativePosition = mouseX / rect.width;
+
+              if (!video.duration) return;
+
+              video.currentTime = relativePosition * video.duration;
+              if (video.paused || video.currentTime === 0) video.play();
+            }
+
+            // debouncedMoveEnd(video);
+          });
+          card.addEventListener("mouseleave", function (e) {
+            const allMediaElements = document.querySelectorAll("video");
+            allMediaElements.forEach((otherMedia) => {
+              if (!otherMedia.paused) otherMedia.pause();
+            });
+            // const video = this.getElementsByTagName("video")[0];
+            // video.pause();
+          });
+        }
+      } else if (objekt.contenttype === "text") {
+        for (const item of array) {
+          div = document.createElement("div");
+          // div.id = objekt.id;
+          loadTextFile(tempMedia(item.path), div);
+          div.className = "custom-text";
+          const h1 = document.createElement("h1");
+          h1.textContent = objekt.title;
+          postDiv.appendChild(h1);
+          postDiv.appendChild(div);
+        }
+        card.addEventListener("mousemove", function (event) {
+          const ctext = this.getElementsByClassName("custom-text")[0];
+          // const rect = this.getBoundingClientRect();
+          // const mouseY = event.clientY - rect.top;
+          // const relativePosition = mouseY / rect.height;
+          // setScrollPercent(ctext, relativePosition, true);
+          ctext.classList.add("scroll-shadows");
         });
         card.addEventListener("mouseleave", function (e) {
-          const allMediaElements = document.querySelectorAll("video");
-          allMediaElements.forEach((otherMedia) => {
-            if (!otherMedia.paused) otherMedia.pause();
-          });
-          // const video = this.getElementsByTagName("video")[0];
-          // video.pause();
+          const ctext = this.getElementsByClassName("custom-text")[0];
+          ctext.classList.remove("scroll-shadows");
         });
+      }
+
+      const shadowDiv = document.createElement("div");
+      shadowDiv.classList.add("shadow");
+      postDiv.appendChild(shadowDiv);
+
+      const inhaltDiv = document.createElement("div");
+      inhaltDiv.classList.add("post-inhalt");
+      const userNameSpan = document.createElement("span");
+      userNameSpan.classList.add("post-userName");
+      userNameSpan.textContent = objekt.user.username;
+      const time_ago = document.createElement("span");
+      time_ago.classList.add("post-userName", "timeAgo");
+      time_ago.textContent = timeAgo(objekt.createdat);
+      const userImg = document.createElement("img");
+      userImg.classList.add("post-userImg");
+      userImg.onerror = function () {
+        this.src = "svg/noname.svg";
+      };
+      async function toggleFollowStatus(userid) {
+        const accessToken = getCookie("authToken");
+        const query = `
+          mutation ToggleUserFollowStatus($userid: ID!) {
+            toggleUserFollowStatus(userid: $userid) {
+              status
+              ResponseCode
+              isfollowing
+            }
+          }
+        `;
+
+        const variables = { userid };
+
+        try {
+          const response = await fetch(GraphGL,{
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ query, variables })
+          });
+
+          const result = await response.json();
+
+          if (result.data && result.data.toggleUserFollowStatus) {
+            return result.data.toggleUserFollowStatus.isfollowing;
+          } else {
+            console.error("GraphQL error:", result.errors);
+            return null;
+          }
+        } catch (error) {
+          console.error("Network error:", error);
+          return null;
+        }
+      }
+
+      const followButton = document.createElement("button");
+      followButton.classList.add("follow-button");
+      if (objekt.user.isfollowed) {
+        followButton.classList.add("following");
+        followButton.textContent = "Following"; 
+      } else {
+        followButton.textContent = "Follow +";
+      }
+      followButton.addEventListener("click", async function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const newStatus = await toggleFollowStatus(objekt.user.id);
+
+        if (newStatus !== null) {
+          objekt.user.isfollowed = newStatus;
+          followButton.textContent = newStatus ? "Following" : "Follow +";
+          followButton.classList.toggle("following", newStatus);
+        } else {
+          alert("Failed to update follow status. Please try again.");
+        }
+      });
+      inhaltDiv.appendChild(followButton);
+      userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
+      const h1 = document.createElement("h1");
+      h1.textContent = objekt.title;
+      const p = document.createElement("p");
+      p.classList.add("post-text");
+      p.textContent = objekt.mediadescription;
+      inhaltDiv.appendChild(userImg);
+      inhaltDiv.appendChild(userNameSpan);
+      inhaltDiv.appendChild(time_ago);
+      if (objekt.contenttype === "text") {
+        // const customText = postDiv.querySelector(".custom-text");
+        // customText.prepend(h1);
+      } else {
+        inhaltDiv.appendChild(h1);
+      }
+      inhaltDiv.appendChild(p);
+
+      const svgNS = "http://www.w3.org/2000/svg";
+      // <div class="social"> erstellen mit Social-Icons und leeren <span>
+      const socialDiv = document.createElement("div");
+      socialDiv.classList.add("social");
+      const viewContainer = document.createElement("div");
+
+      // Erstes SVG-Icon mit #post-view
+      const svgView = document.createElementNS(svgNS, "svg");
+      const useView = document.createElementNS(svgNS, "use");
+      useView.setAttribute("href", "#post-view");
+      svgView.appendChild(useView);
+      viewContainer.appendChild(svgView);
+
+      // Leeres <span> für #post-view
+      const spanView = document.createElement("span");
+      spanView.textContent = formatNumber(objekt.amountviews);
+      viewContainer.appendChild(spanView);
+      socialDiv.appendChild(viewContainer);
+
+      // Zweites SVG-Icon mit #post-like
+      const likeContainer = document.createElement("div");
+
+      const svgLike = document.createElementNS(svgNS, "svg");
+      // svgLike.setAttribute("id", objekt.id);
+
+      if (objekt.isliked) {
+        // svgLike.addEventListener("click", function () {
+        //   dislikePost(objekt.id);
+        // });
+        svgLike.classList.add("fill-red"); // Rot hinzufügen
+      } else if (objekt.user.id !== UserID) {
+        svgLike.addEventListener(
+          "click",
+          function handleLikeClick(event) {
+            // event.currentTarget.removeEventListener("click", handleLikeClick);
+            event.stopPropagation();
+            event.preventDefault();
+            likePost(objekt.id).then((success) => {
+              if (success) {
+                objekt.isliked = true;
+                let e = document.getElementById(objekt.id);
+                const Svg = e.querySelector(".social div:nth-of-type(2) svg");
+                Svg.classList.add("fill-red");
+
+                // Prüfen, ob das <span> "K" oder "M" enthält
+                if (Svg.nextElementSibling.textContent.includes("K") || Svg.nextElementSibling.textContent.includes("M")) {
+                  return; // Wenn ja, wird das Hochzählen übersprungen
+                } else {
+                  let currentCount = parseInt(Svg.nextElementSibling.textContent);
+                  if (currentCount !== currentCount) currentCount = 1;
+                  else currentCount++;
+                  Svg.nextElementSibling.textContent = formatNumber(currentCount);
+                  objekt.amountlikes = currentCount;
+                }
+              }
+            });
+          },
+          { capture: true, once: true }
+        );
+      }
+      const useLike = document.createElementNS(svgNS, "use");
+      useLike.setAttribute("href", "#post-like");
+      svgLike.appendChild(useLike);
+      likeContainer.appendChild(svgLike);
+      const spanLike = document.createElement("span");
+      spanLike.textContent = formatNumber(objekt.amountlikes);
+      likeContainer.appendChild(spanLike);
+      socialDiv.appendChild(likeContainer);
+
+      const commentContainer = document.createElement("div");
+      const svgComment = document.createElementNS(svgNS, "svg");
+      const useComment = document.createElementNS(svgNS, "use");
+      useComment.setAttribute("href", "#post-comment");
+      svgComment.appendChild(useComment);
+      commentContainer.appendChild(svgComment);
+
+      // Leeres <span> für #post-comment
+      const spanComment = document.createElement("span");
+      spanComment.textContent = objekt.amountcomments;
+      commentContainer.appendChild(spanComment);
+
+      socialDiv.appendChild(commentContainer);
+
+      // Alles in die Haupt-<section> hinzufügen
+      card.appendChild(postDiv);
+      card.appendChild(inhaltDiv);
+      card.appendChild(socialDiv);
+      card.addEventListener("click", function handleCardClick() {
+        postClicked(objekt);
+      });
+      // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
+      parentElement.appendChild(card);
+    });
+    postsLaden.offset += posts.data.listPosts.affectedRows.length;
+  }
+  function togglePopup(popup) {
+    const mediaElements = document.querySelectorAll("video, audio");
+    mediaElements.forEach((media) => media.pause());
+    if (audioplayer) {
+      audioplayer.pause();
+      audioplayer = null;
+    }
+    document.body.classList.toggle("noscroll");
+    const overlay = document.getElementById("overlay");
+    overlay.classList.toggle("none");
+    const cc = document.getElementById(popup);
+    cc.classList.toggle("none");
+
+    const imageContainer = document.getElementById("comment-img-container");
+    imageContainer.innerHTML = "";
+  }
+  let timerId = null;
+  function cancelTimeout() {
+    clearTimeout(timerId);
+  }
+
+  async function viewed(object) {
+    viewPost(object.id);
+    object.isviewed = true;
+    // console.log(object.id);
+  }
+
+  async function postClicked(objekt) {
+    const UserID = getCookie("userID");
+    if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
+    togglePopup("cardClicked");
+    document.getElementById("header").classList.add("none");
+    const imageContainer = document.getElementById("comment-img-container");
+    // imageContainer.innerHTML = "";
+    const array = JSON.parse(objekt.media);
+
+    if (objekt.contenttype === "audio") {
+      for (const item of array) {
+        const audio = document.createElement("audio");
+        audio.id = "audio2";
+        audio.src = tempMedia(item.path);
+        audio.controls = true;
+        audio.className = "custom-audio";
+
+        // 1. Erzeuge das <div>-Element
+        const audioContainer = document.createElement("div");
+        audioContainer.id = "audio-container"; // Setze die ID
+
+        if (objekt.cover) {
+          const cover = JSON.parse(objekt.cover);
+          img = document.createElement("img");
+          img.classList.add("cover");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(cover[0].path);
+          img.alt = "Cover";
+          audioContainer.appendChild(img);
+        }
+        // 2. Erzeuge das <canvas>-Element
+        const canvas = document.createElement("canvas");
+        canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+
+        // 3. Erzeuge das <button>-Element
+        const button = document.createElement("button");
+        button.id = "play-pause"; // Setze die ID für den Button
+        // button.textContent = "Play"; // Setze den Textinhalt des Buttons
+
+        // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+        let cover = null;
+        if (objekt.cover) {
+          cover = JSON.parse(objekt.cover);
+        }
+        audioContainer.appendChild(canvas);
+        audioContainer.appendChild(button);
+        // audioContainer.appendChild(audio);
+        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+        imageContainer.appendChild(audioContainer);
+
+        initAudioplayer("waveform-preview", audio.src);
+      }
+    } else if (objekt.contenttype === "video") {
+      for (const item of array) {
+        const video = document.createElement("video");
+        video.id = "video2";
+        video.src = tempMedia(extractAfterComma(item.path));
+        video.controls = true;
+        video.className = "custom-video";
+        video.autoplay = true; // Autoplay aktivieren
+        video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
+        video.loop = true; // Video in Endlosschleife abspielen
+
+        // 1. Erzeuge das <div>-Element
+        const videoContainer = document.createElement("div");
+        videoContainer.appendChild(video);
+        videoContainer.id = "video-container"; // Setze die ID
+
+        // videoContainer.appendChild(video);
+        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+        imageContainer.appendChild(videoContainer);
       }
     } else if (objekt.contenttype === "text") {
       for (const item of array) {
-        div = document.createElement("div");
-        // div.id = objekt.id;
-        loadTextFile(tempMedia(item.path), div);
-        div.className = "custom-text";
-        const h1 = document.createElement("h1");
-        h1.textContent = objekt.title;
-        postDiv.appendChild(h1);
-        postDiv.appendChild(div);
+        const div = document.createElement("div");
+        div.id = "text";
+
+        let card = document.getElementById(objekt.id);
+        const textcontainer = card.querySelector(".custom-text");
+
+        div.innerHTML = textcontainer.innerHTML;
+        div.className = "custom-text clicked";
+        imageContainer.appendChild(div);
       }
-      card.addEventListener("mousemove", function (event) {
-        const ctext = this.getElementsByClassName("custom-text")[0];
-        // const rect = this.getBoundingClientRect();
-        // const mouseY = event.clientY - rect.top;
-        // const relativePosition = mouseY / rect.height;
-        // setScrollPercent(ctext, relativePosition, true);
-        ctext.classList.add("scroll-shadows");
-      });
-      card.addEventListener("mouseleave", function (e) {
-        const ctext = this.getElementsByClassName("custom-text")[0];
-        ctext.classList.remove("scroll-shadows");
-      });
-    }
-
-    const shadowDiv = document.createElement("div");
-    shadowDiv.classList.add("shadow");
-    postDiv.appendChild(shadowDiv);
-
-    const inhaltDiv = document.createElement("div");
-    inhaltDiv.classList.add("post-inhalt");
-    const userNameSpan = document.createElement("span");
-    userNameSpan.classList.add("post-userName");
-    userNameSpan.textContent = objekt.user.username;
-    const time_ago = document.createElement("span");
-    time_ago.classList.add("post-userName", "timeAgo");
-    time_ago.textContent = timeAgo(objekt.createdat);
-    const userImg = document.createElement("img");
-    userImg.classList.add("post-userImg");
-    userImg.onerror = function () {
-      this.src = "svg/noname.svg";
-    };
-    userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
-    const h1 = document.createElement("h1");
-    h1.textContent = objekt.title;
-    const p = document.createElement("p");
-    p.classList.add("post-text");
-    p.textContent = objekt.mediadescription;
-    inhaltDiv.appendChild(userImg);
-    inhaltDiv.appendChild(userNameSpan);
-    inhaltDiv.appendChild(time_ago);
-    if (objekt.contenttype === "text") {
-      // const customText = postDiv.querySelector(".custom-text");
-      // customText.prepend(h1);
     } else {
-      inhaltDiv.appendChild(h1);
+      let img;
+      imageContainer.classList.add("comment-img");
+      if (array.length > 1) imageContainer.classList.add("multi");
+      else imageContainer.classList.remove("multi");
+      for (const item of array) {
+        img = document.createElement("img");
+        img.src = tempMedia(item.path);
+        img.alt = "";
+        // img.addEventListener("click", function () {
+        //   showImg(img);
+        // });
+        imageContainer.appendChild(img);
+      }
     }
-    inhaltDiv.appendChild(p);
 
-    const svgNS = "http://www.w3.org/2000/svg";
-    // <div class="social"> erstellen mit Social-Icons und leeren <span>
-    const socialDiv = document.createElement("div");
-    socialDiv.classList.add("social");
-    const viewContainer = document.createElement("div");
+    const title = document.getElementById("comment-title");
+    title.innerText = objekt.title;
+    const text = document.getElementById("comment-text");
+    text.innerText = objekt.mediadescription;
 
-    // Erstes SVG-Icon mit #post-view
-    const svgView = document.createElementNS(svgNS, "svg");
-    const useView = document.createElementNS(svgNS, "use");
-    useView.setAttribute("href", "#post-view");
-    svgView.appendChild(useView);
-    viewContainer.appendChild(svgView);
+    let mostliked = [];
+    const comments = document.getElementById("comments");
+    document.getElementById("comment-sum").innerText = objekt.amountcomments;
+    document.getElementById("addComment").setAttribute("postID", objekt.id);
+    document.getElementById("postViews").innerText = objekt.amountviews;
+    comments.innerHTML = "";
+    objekt.comments
+      .slice()
+      .reverse()
+      .forEach(function (c) {
+        commentToDom(c);
+        fetchChildComments(c.commentid).then((result) => {
+          if (!result) return;
+          result.slice().forEach(function (c2) {
+            commentToDom(c2, true);
+          });
+        });
+      });
+    mostliked.sort((a, b) => b.liked - a.liked);
+    // console.log(mostliked);
+    const mostlikedcontainer = document.getElementById("mostliked");
+    mostlikedcontainer.innerHTML = "";
+    for (let i = 0; i < 3 && i < mostliked.length; i++) {
+      const img = document.createElement("img");
 
-    // Leeres <span> für #post-view
-    const spanView = document.createElement("span");
-    spanView.textContent = formatNumber(objekt.amountviews);
-    viewContainer.appendChild(spanView);
-    socialDiv.appendChild(viewContainer);
-
-    // Zweites SVG-Icon mit #post-like
-    const likeContainer = document.createElement("div");
-
-    const svgLike = document.createElementNS(svgNS, "svg");
-    // svgLike.setAttribute("id", objekt.id);
-
+      img.src = mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
+      mostlikedcontainer.appendChild(img);
+    }
+    // const topcommenter = document.createElement("span");
+    // topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
+    // mostlikedcontainer.appendChild(topcommenter);
+    document.getElementById("postViews").innerText = objekt.amountviews;
+    document.getElementById("postLikes").innerText = objekt.amountlikes;
+    const svgLike = document.getElementById("postLikes").previousElementSibling;
+    svgLike.classList = "";
     if (objekt.isliked) {
-      // svgLike.addEventListener("click", function () {
-      //   dislikePost(objekt.id);
-      // });
-      svgLike.classList.add("fill-red"); // Rot hinzufügen
+      svgLike.classList = "fill-red";
     } else if (objekt.user.id !== UserID) {
       svgLike.addEventListener(
         "click",
@@ -1542,7 +1943,15 @@ async function postsLaden() {
                 if (currentCount !== currentCount) currentCount = 1;
                 else currentCount++;
                 Svg.nextElementSibling.textContent = formatNumber(currentCount);
-                objekt.amountlikes = currentCount;
+              }
+              svgLike.classList = "fill-red";
+              if (svgLike.nextElementSibling.textContent.includes("K") || svgLike.nextElementSibling.textContent.includes("M")) {
+                return; // Wenn ja, wird das Hochzählen übersprungen
+              } else {
+                let currentCount = parseInt(svgLike.nextElementSibling.textContent);
+                if (currentCount !== currentCount) currentCount = 1;
+                else currentCount++;
+                svgLike.nextElementSibling.textContent = formatNumber(currentCount);
               }
             }
           });
@@ -1550,252 +1959,7 @@ async function postsLaden() {
         { capture: true, once: true }
       );
     }
-    const useLike = document.createElementNS(svgNS, "use");
-    useLike.setAttribute("href", "#post-like");
-    svgLike.appendChild(useLike);
-    likeContainer.appendChild(svgLike);
-    const spanLike = document.createElement("span");
-    spanLike.textContent = formatNumber(objekt.amountlikes);
-    likeContainer.appendChild(spanLike);
-    socialDiv.appendChild(likeContainer);
-
-    const commentContainer = document.createElement("div");
-    const svgComment = document.createElementNS(svgNS, "svg");
-    const useComment = document.createElementNS(svgNS, "use");
-    useComment.setAttribute("href", "#post-comment");
-    svgComment.appendChild(useComment);
-    commentContainer.appendChild(svgComment);
-
-    // Leeres <span> für #post-comment
-    const spanComment = document.createElement("span");
-    spanComment.textContent = objekt.amountcomments;
-    commentContainer.appendChild(spanComment);
-
-    socialDiv.appendChild(commentContainer);
-
-    // Alles in die Haupt-<section> hinzufügen
-    card.appendChild(postDiv);
-    card.appendChild(inhaltDiv);
-    card.appendChild(socialDiv);
-    card.addEventListener("click", function handleCardClick() {
-      postClicked(objekt);
-    });
-    // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
-    parentElement.appendChild(card);
-  });
-  postsLaden.offset += posts.data.listPosts.affectedRows.length;
-}
-function togglePopup(popup) {
-  const mediaElements = document.querySelectorAll("video, audio");
-  mediaElements.forEach((media) => media.pause());
-  if (audioplayer) {
-    audioplayer.pause();
-    audioplayer = null;
   }
-  document.body.classList.toggle("noscroll");
-  const overlay = document.getElementById("overlay");
-  overlay.classList.toggle("none");
-  const cc = document.getElementById(popup);
-  cc.classList.toggle("none");
-
-  const imageContainer = document.getElementById("comment-img-container");
-  imageContainer.innerHTML = "";
-}
-let timerId = null;
-function cancelTimeout() {
-  clearTimeout(timerId);
-}
-
-async function viewed(object) {
-  viewPost(object.id);
-  object.isviewed = true;
-  // console.log(object.id);
-}
-
-async function postClicked(objekt) {
-  const UserID = getCookie("userID");
-  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
-  togglePopup("cardClicked");
-  document.getElementById("header").classList.add("none");
-  const imageContainer = document.getElementById("comment-img-container");
-  // imageContainer.innerHTML = "";
-  const array = JSON.parse(objekt.media);
-
-  if (objekt.contenttype === "audio") {
-    for (const item of array) {
-      const audio = document.createElement("audio");
-      audio.id = "audio2";
-      audio.src = tempMedia(item.path);
-      audio.controls = true;
-      audio.className = "custom-audio";
-
-      // 1. Erzeuge das <div>-Element
-      const audioContainer = document.createElement("div");
-      audioContainer.id = "audio-container"; // Setze die ID
-
-      if (objekt.cover) {
-        const cover = JSON.parse(objekt.cover);
-        img = document.createElement("img");
-        img.classList.add("cover");
-        img.onload = () => {
-          img.setAttribute("height", img.naturalHeight);
-          img.setAttribute("width", img.naturalWidth);
-        };
-        img.src = tempMedia(cover[0].path);
-        img.alt = "Cover";
-        audioContainer.appendChild(img);
-      }
-      // 2. Erzeuge das <canvas>-Element
-      const canvas = document.createElement("canvas");
-      canvas.id = "waveform-preview"; // Setze die ID für das Canvas
-
-      // 3. Erzeuge das <button>-Element
-      const button = document.createElement("button");
-      button.id = "play-pause"; // Setze die ID für den Button
-      // button.textContent = "Play"; // Setze den Textinhalt des Buttons
-
-      // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
-      let cover = null;
-      if (objekt.cover) {
-        cover = JSON.parse(objekt.cover);
-      }
-      audioContainer.appendChild(canvas);
-      audioContainer.appendChild(button);
-      // audioContainer.appendChild(audio);
-      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-      imageContainer.appendChild(audioContainer);
-
-      initAudioplayer("waveform-preview", audio.src);
-    }
-  } else if (objekt.contenttype === "video") {
-    for (const item of array) {
-      const video = document.createElement("video");
-      video.id = "video2";
-      video.src = tempMedia(extractAfterComma(item.path));
-      video.controls = true;
-      video.className = "custom-video";
-      video.autoplay = true; // Autoplay aktivieren
-      video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
-      video.loop = true; // Video in Endlosschleife abspielen
-
-      // 1. Erzeuge das <div>-Element
-      const videoContainer = document.createElement("div");
-      videoContainer.appendChild(video);
-      videoContainer.id = "video-container"; // Setze die ID
-
-      // videoContainer.appendChild(video);
-      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-      imageContainer.appendChild(videoContainer);
-    }
-  } else if (objekt.contenttype === "text") {
-    for (const item of array) {
-      const div = document.createElement("div");
-      div.id = "text";
-
-      let card = document.getElementById(objekt.id);
-      const textcontainer = card.querySelector(".custom-text");
-
-      div.innerHTML = textcontainer.innerHTML;
-      div.className = "custom-text clicked";
-      imageContainer.appendChild(div);
-    }
-  } else {
-    let img;
-    imageContainer.classList.add("comment-img");
-    if (array.length > 1) imageContainer.classList.add("multi");
-    else imageContainer.classList.remove("multi");
-    for (const item of array) {
-      img = document.createElement("img");
-      img.src = tempMedia(item.path);
-      img.alt = "";
-      // img.addEventListener("click", function () {
-      //   showImg(img);
-      // });
-      imageContainer.appendChild(img);
-    }
-  }
-
-  const title = document.getElementById("comment-title");
-  title.innerText = objekt.title;
-  const text = document.getElementById("comment-text");
-  text.innerText = objekt.mediadescription;
-
-  let mostliked = [];
-  const comments = document.getElementById("comments");
-  document.getElementById("comment-sum").innerText = objekt.amountcomments;
-  document.getElementById("addComment").setAttribute("postID", objekt.id);
-  document.getElementById("postViews").innerText = objekt.amountviews;
-  comments.innerHTML = "";
-  objekt.comments
-    .slice()
-    .reverse()
-    .forEach(function (c) {
-      commentToDom(c);
-      fetchChildComments(c.commentid).then((result) => {
-        if (!result) return;
-        result.slice().forEach(function (c2) {
-          commentToDom(c2, true);
-        });
-      });
-    });
-  mostliked.sort((a, b) => b.liked - a.liked);
-  // console.log(mostliked);
-  const mostlikedcontainer = document.getElementById("mostliked");
-  mostlikedcontainer.innerHTML = "";
-  for (let i = 0; i < 3 && i < mostliked.length; i++) {
-    const img = document.createElement("img");
-
-    img.src = mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
-    mostlikedcontainer.appendChild(img);
-  }
-  // const topcommenter = document.createElement("span");
-  // topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
-  // mostlikedcontainer.appendChild(topcommenter);
-  document.getElementById("postViews").innerText = objekt.amountviews;
-  document.getElementById("postLikes").innerText = objekt.amountlikes;
-  const svgLike = document.getElementById("postLikes").previousElementSibling;
-  svgLike.classList = "";
-  if (objekt.isliked) {
-    svgLike.classList = "fill-red";
-  } else if (objekt.user.id !== UserID) {
-    svgLike.addEventListener(
-      "click",
-      function handleLikeClick(event) {
-        // event.currentTarget.removeEventListener("click", handleLikeClick);
-        event.stopPropagation();
-        event.preventDefault();
-        likePost(objekt.id).then((success) => {
-          if (success) {
-            objekt.isliked = true;
-            let e = document.getElementById(objekt.id);
-            const Svg = e.querySelector(".social div:nth-of-type(2) svg");
-            Svg.classList.add("fill-red");
-
-            // Prüfen, ob das <span> "K" oder "M" enthält
-            if (Svg.nextElementSibling.textContent.includes("K") || Svg.nextElementSibling.textContent.includes("M")) {
-              return; // Wenn ja, wird das Hochzählen übersprungen
-            } else {
-              let currentCount = parseInt(Svg.nextElementSibling.textContent);
-              if (currentCount !== currentCount) currentCount = 1;
-              else currentCount++;
-              Svg.nextElementSibling.textContent = formatNumber(currentCount);
-            }
-            svgLike.classList = "fill-red";
-            if (svgLike.nextElementSibling.textContent.includes("K") || svgLike.nextElementSibling.textContent.includes("M")) {
-              return; // Wenn ja, wird das Hochzählen übersprungen
-            } else {
-              let currentCount = parseInt(svgLike.nextElementSibling.textContent);
-              if (currentCount !== currentCount) currentCount = 1;
-              else currentCount++;
-              svgLike.nextElementSibling.textContent = formatNumber(currentCount);
-            }
-          }
-        });
-      },
-      { capture: true, once: true }
-    );
-  }
-}
 
 // let isDragging = false;
 // let startX = 0;
@@ -1906,7 +2070,7 @@ async function postClicked(objekt) {
 // postsLaden();
 // Das Footer-Element auswählen
 
-const header = document.getElementById("header");
+  const header = document.getElementById("header");
 // let lastScrollPosition = 0;
 
 // function handleScroll() {
@@ -1939,149 +2103,163 @@ const header = document.getElementById("header");
 
 // Responsiveness: Prüfen bei Fensteränderungen
 
-async function processFiles(files, id) {
-  const lastDashIndex = id.lastIndexOf("-");
-  id = id.substring(lastDashIndex + 1);
+  async function processFiles(files, id) {
+    const lastDashIndex = id.lastIndexOf("-");
+    id = id.substring(lastDashIndex + 1);
 
-  const previewContainer = document.getElementById("preview-" + id);
-  let previewItem;
-  const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
-  let size = 0;
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    size += file.size;
-    if (size > maxSizeMB * 1024 * 1024) {
-      Merror("Error", "The file is too large. Please select a file(s) under 4MB.");
-      return;
+    const previewContainer = document.getElementById("preview-" + id);
+    let previewItem;
+    const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
+    let size = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      size += file.size;
+      if (size > maxSizeMB * 1024 * 1024) {
+        Merror("Error", "The file is too large. Please select a file(s) under 4MB.");
+        return;
+      }
     }
-  }
-  files.forEach(async (file) => {
-    // if (!file.type.startsWith("image/")) {
-    //   info("Information", `${file.name} ist keine Bilddatei.`);
-    //   return;
-    // }
+    files.forEach(async (file) => {
+      // if (!file.type.startsWith("image/")) {
+      //   info("Information", `${file.name} ist keine Bilddatei.`);
+      //   return;
+      // }
 
-    previewItem = document.createElement("div");
-    previewItem.className = "preview-item";
-    const type = file.type.substring(0, 5);
-    if (type === "audio") {
-      previewItem.classList.add("audio-item");
-      previewItem.innerHTML = `
-      <p>${file.name}</p><canvas id="${file.name}"></canvas>
-      <button id="play-pause">Play</button>
-      <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
-      <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-      <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
-    } else if (type === "image") {
-      previewItem.innerHTML = `
-      <p>${file.name}</p>
-      <img class="image-wrapper create-img none" alt="Vorschau" />
-      <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-      <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
-    } else if (type === "video") {
-      previewItem.classList.add("video-item");
-      previewItem.innerHTML = `
-      <p>${file.name}</p>
-      <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
-      <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-      <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
-    }
+      previewItem = document.createElement("div");
+      previewItem.className = "preview-item";
+      const type = file.type.substring(0, 5);
+      if (type === "audio") {
+        previewItem.classList.add("audio-item");
+        previewItem.innerHTML = `
+        <p>${file.name}</p><canvas id="${file.name}"></canvas>
+        <button id="play-pause">Play</button>
+        <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
+        <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+        <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
+      } else if (type === "image") {
+        previewItem.innerHTML = `
+        <p>${file.name}</p>
+        <img class="image-wrapper create-img none" alt="Vorschau" />
+        <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+        <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
+      } else if (type === "video") {
+        previewItem.classList.add("video-item");
+        previewItem.innerHTML = `
+        <p>${file.name}</p>
+        <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
+        <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+        <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
+      }
 
-    previewContainer.appendChild(previewItem);
-    let element;
-    if (type === "image") {
-      element = previewItem.querySelector("img");
-    } else if (type === "audio") {
-      element = previewItem.querySelector("audio");
-    } else if (type === "video") {
-      element = previewItem.querySelector("video");
-    }
-    const base64 = await convertImageToBase64(file);
-    element.src = base64;
-    // imageElement.style.display = "block";
-    element.classList.remove("none");
-    element.nextElementSibling.remove();
-    element.nextElementSibling.classList.remove("none");
-    if (type === "audio") {
-      initAudioplayer(file.name, base64);
-    } else if (type === "video") {
-      element.autoplay = true;
-      element.loop = true;
-      element.muted = true; // Optional: Video ohne Ton abspielen
-    }
-  });
-  document.querySelectorAll(".deletePost").forEach(addDeleteListener);
-}
-function addMediaListener(mediaElement) {
-  if (!mediaElement) return; // Sicherheitshalber prüfen, ob das Element existiert
-
-  mediaElement.addEventListener("play", () => {
-    // Selektiere alle vorhandenen Medienelemente auf der Seite
-    const allMediaElements = document.querySelectorAll("audio, video");
-    allMediaElements.forEach((otherMedia) => {
-      if (otherMedia !== mediaElement && !otherMedia.paused) {
-        otherMedia.pause();
+      previewContainer.appendChild(previewItem);
+      let element;
+      if (type === "image") {
+        element = previewItem.querySelector("img");
+      } else if (type === "audio") {
+        element = previewItem.querySelector("audio");
+      } else if (type === "video") {
+        element = previewItem.querySelector("video");
+      }
+      const base64 = await convertImageToBase64(file);
+      element.src = base64;
+      // imageElement.style.display = "block";
+      element.classList.remove("none");
+      element.nextElementSibling.remove();
+      element.nextElementSibling.classList.remove("none");
+      if (type === "audio") {
+        initAudioplayer(file.name, base64);
+      } else if (type === "video") {
+        element.autoplay = true;
+        element.loop = true;
+        element.muted = true; // Optional: Video ohne Ton abspielen
       }
     });
-  });
-}
+    document.querySelectorAll(".deletePost").forEach(addDeleteListener);
+  }
+  function addMediaListener(mediaElement) {
+    if (!mediaElement) return; // Sicherheitshalber prüfen, ob das Element existiert
+
+    mediaElement.addEventListener("play", () => {
+      // Selektiere alle vorhandenen Medienelemente auf der Seite
+      const allMediaElements = document.querySelectorAll("audio, video");
+      allMediaElements.forEach((otherMedia) => {
+        if (otherMedia !== mediaElement && !otherMedia.paused) {
+          otherMedia.pause();
+        }
+      });
+    });
+  }
 
 // Funktion, die dem Element den Event-Listener hinzufügt
-function addDeleteListener(element) {
-  // Entfernt eventuelle alte Event-Listener, indem eine benannte Funktion verwendet wird
-  element.removeEventListener("click", handleDelete);
+  function addDeleteListener(element) {
+    // Entfernt eventuelle alte Event-Listener, indem eine benannte Funktion verwendet wird
+    element.removeEventListener("click", handleDelete);
 
-  // Fügt den neuen Event-Listener hinzu
-  element.addEventListener("click", handleDelete);
-}
+    // Fügt den neuen Event-Listener hinzu
+    element.addEventListener("click", handleDelete);
+  }
 
 // Die Funktion, die beim Event aufgerufen wird
-function handleDelete(event) {
-  event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
-  // console.log("Post löschen:", event.target);
-  event.target.parentElement.remove();
-  // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
-}
-function isFileLargerThanMB(file, mb) {
-  const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
-  return file.size > maxBytes;
-}
-async function convertImageToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    const type = file.type.substring(0, 5);
-    if (type === "audio") {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
-    } else if (type === "video") {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
-    } else if (type === "image") {
-      const img = new Image();
-      reader.onload = () => {
-        img.src = reader.result;
-      };
-      reader.onerror = reject;
+  function handleDelete(event) {
+    event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
+    // console.log("Post löschen:", event.target);
+    event.target.parentElement.remove();
+    // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
+  }
+  function isFileLargerThanMB(file, mb) {
+    const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
+    return file.size > maxBytes;
+  }
+  async function convertImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      const type = file.type.substring(0, 5);
+      if (type === "audio") {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+      } else if (type === "video") {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+      } else if (type === "image") {
+        const img = new Image();
+        reader.onload = () => {
+          img.src = reader.result;
+        };
+        reader.onerror = reject;
 
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
 
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
 
-        // Konvertiere zu WebP und hole die Base64-Daten
-        const webpDataUrl = canvas.toDataURL("image/webp");
-        resolve(webpDataUrl);
-        // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
-      };
-    }
+          // Konvertiere zu WebP und hole die Base64-Daten
+          const webpDataUrl = canvas.toDataURL("image/webp");
+          resolve(webpDataUrl);
+          // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
+        };
+      }
 
-    reader.readAsDataURL(file);
-  });
-}
+      reader.readAsDataURL(file);
+    });
+  }
 
+
+
+// const failedSearches = new Set();
+// const tagInput = document.getElementById("searchTag");
+// const tagContainer = document.getElementById("tagsContainer");
+// const dropdownMenu = document.getElementById("dropdownMenu");
+// if (tagInput) {
+//   tagInput.addEventListener("input", async function () {
+//     const searchStr = tagInput.value.trim();
+//     if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+//       if (searchStr.length < 3) {
+//         dropdownMenu.innerHTML = "";
+//         dropdownMenu.classList.add("none");
+//         return;
 // async function fetchTags(searchStr) {
 //   // if (failedSearches.has(searchStr)) {
 //   //   return [];
@@ -2107,29 +2285,60 @@ async function convertImageToBase64(file) {
 //             }
 //           }
 //       }
-//   `;
+//     } else {
+//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//       return;
+//     }
 
-//   const variables = { searchstr: searchStr };
+//     const tags = await fetchTags(searchStr);
+//     dropdownMenu.innerHTML = "";
+//     const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
 
-//   try {
-//     const response = await fetch(GraphGL, {
-//       method: "POST",
-//       headers: headers,
-//       body: JSON.stringify({ query, variables }),
+//     tags.forEach((tag) => {
+//       if (!existingTags.includes(tag.name + "X")) {
+//         const option = document.createElement("div");
+//         option.textContent = tag.name;
+//         option.classList.add("dropdown-item");
+//         option.addEventListener("click", () => {
+//           tagInput.value = tag.name;
+//           tag_addTag(tagInput.value.trim());
+//           tagInput.value = "";
+//           tagInput.focus();
+//           dropdownMenu.classList.toggle("none");
+//         });
+//         dropdownMenu.appendChild(option);
+//       }
 //     });
 
+//     dropdownMenu.classList.toggle("none", tags.length == 0);
+//   });
+// }
+
+// if (tagInput) {
+//   tagInput.addEventListener("keypress", function (event) {
+//     if (event.key === "Enter" && tagInput.value.trim() !== "") {
+//       if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+//         tag_addTag(tagInput.value.trim());
+//         tagInput.value = "";
+//       } else {
+//         info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//       }
 //     const result = await response.json();
 //     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 //     if (result.errors) throw new Error(userfriendlymsg(result.data.searchTags.ResponseCode));
 //     if (!result.data.searchTags.affectedRows.length) {
 //       failedSearches.add(searchStr);
 //     }
-//     return result.data.searchTags.affectedRows;
-//   } catch (error) {
-//     // console.error("Error fetching tags:", error);
-//     return [];
-//   }
+//   });
 // }
+
+
+// window.addEventListener("click", function (event) {
+//   if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+//     dropdownMenu.classList.remove("show");
+//   }
+// });
+
 const failedSearches = new Set();
 const tagInput = document.getElementById("tag-input");
 const tagContainer = document.getElementById("tagsContainer");
@@ -2186,6 +2395,7 @@ window.addEventListener("click", function (event) {
     dropdownMenu.classList.remove("show");
   }
 });
+
 ////////////// Tag-System
 // const tag_input = document.getElementById("tag-input");
 // const tagContainer = document.getElementById("tagsContainer");
@@ -2242,86 +2452,92 @@ window.addEventListener("click", function (event) {
 //   }
 // });
 
-function tag_addTag(tagText) {
-  if (tagContainer.children.length >= 10) {
-    info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
-    return;
-  }
-  if (tagContainer.children.length >= 1) {
-    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
-
-    if (existingTags.includes(tagText + "X")) {
-      info("Information", "Tag existiert bereits.");
+  function tag_addTag(tagText) {
+    if (tagContainer.children.length >= 10) {
+      info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
       return;
     }
+    if (tagContainer.children.length >= 1) {
+      const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+
+      if (existingTags.includes(tagText + "X")) {
+        info("Information", "Tag existiert bereits.");
+        return;
+      }
+    }
+    const tag = document.createElement("span");
+    tag.classList.add("tag");
+    tag.textContent = tagText;
+
+    const tag_removeBtn = document.createElement("button");
+    tag_removeBtn.textContent = "X";
+    tag_removeBtn.classList.add("remove-tag");
+    tag_removeBtn.addEventListener("click", function () {
+      tagContainer.removeChild(tag);
+    });
+
+    tag.appendChild(tag_removeBtn);
+    tagContainer.appendChild(tag);
   }
-  const tag = document.createElement("span");
-  tag.classList.add("tag");
-  tag.textContent = tagText;
 
-  const tag_removeBtn = document.createElement("button");
-  tag_removeBtn.textContent = "X";
-  tag_removeBtn.classList.add("remove-tag");
-  tag_removeBtn.addEventListener("click", function () {
-    tagContainer.removeChild(tag);
-  });
+  function tag_removeAllTags() {
+    tagContainer.innerHTML = "";
+  }
+  function tag_getTagArray() {
+    return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
+  }
+  function deleteFilter() {
+    localStorage.removeItem("filterSettings");
+    localStorage.removeItem("tags");
+  }
 
-  tag.appendChild(tag_removeBtn);
-  tagContainer.appendChild(tag);
-}
-
-function tag_removeAllTags() {
-  tagContainer.innerHTML = "";
-}
-function tag_getTagArray() {
-  return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
-}
-function deleteFilter() {
-  localStorage.removeItem("filterSettings");
-  localStorage.removeItem("tags");
-}
-
-function saveFilterSettings() {
-  let filterSettings = {};
-  let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
-
-  checkboxes.forEach((checkbox) => {
-    filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
-  });
-  localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
-  localStorage.setItem("tags", document.getElementById("searchGroup").value);
-}
-function restoreFilterSettings() {
-  let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
-
-  if (filterSettings) {
+  function saveFilterSettings() {
+    let filterSettings = {};
     let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
+
     checkboxes.forEach((checkbox) => {
-      if (filterSettings[checkbox.id] !== undefined) {
-        checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
-      }
+      filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
     });
+    localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
+    localStorage.setItem("tags", document.getElementById("searchGroup").value);
   }
-  document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
-} 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .getRegistrations()
-    .then(function (registrations) {
-      for (let registration of registrations) {
-        registration.unregister().then(function (success) {
-          if (success) {
-            // console.log("Service Worker erfolgreich abgemeldet.");
-          } else {
-            // console.warn("Service Worker konnte nicht abgemeldet werden.");
-          }
-        });
+  function restoreFilterSettings() {
+    let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
+
+    if (filterSettings) {
+      let checkboxes = document.querySelectorAll('#filter input[type="checkbox"], #filter input[type="radio"]');
+      checkboxes.forEach((checkbox) => {
+        if (filterSettings[checkbox.id] !== undefined) {
+          checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
+        }
+      });
+    }
+    if (window.location.pathname.endsWith('dashboard.html')) {
+      const searchTagElem = document.getElementById("searchTag");
+      if (searchTagElem) {
+        searchTagElem.value = localStorage.getItem("tagInput") || "";
       }
-    })
-    .catch(function (error) {
-      // console.error("Fehler beim Abrufen der Registrierungen:", error);
-    });
-}
+    }
+    // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
+  } 
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister().then(function (success) {
+            if (success) {
+              // console.log("Service Worker erfolgreich abgemeldet.");
+            } else {
+              // console.warn("Service Worker konnte nicht abgemeldet werden.");
+            }
+          });
+        }
+      })
+      .catch(function (error) {
+        // console.error("Fehler beim Abrufen der Registrierungen:", error);
+      });
+  }
 // function connectImagesWithGradient(container, img1, img2) {
 //   // Container und Bilder auswählen
 //   const containerEl = document.querySelector(container);
@@ -2404,58 +2620,59 @@ if ("serviceWorker" in navigator) {
 
 
 // daily free actions
-dailyfree();
-async function dailyfree() {
-  const accessToken = getCookie("authToken");
+  dailyfree();
+  async function dailyfree() {
+    const accessToken = getCookie("authToken");
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query getDailyFreeStatus {
-      getDailyFreeStatus {
-        status
-        ResponseCode
-        affectedRows {
-          name
-          used
-          available
-        }
-      }
-   }`,
-  });
-
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
-
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
-
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
-      document.getElementById(entry.name + "used").innerText = entry.used;
-      document.getElementById(entry.name + "available").innerText = entry.available;
-      const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
-      document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
-      console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+    // Create headers
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     });
 
-    return result.data.getDailyFreeStatus;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
+    // Define the GraphQL mutation with variables
+    const graphql = JSON.stringify({
+      query: `query getDailyFreeStatus {
+        getDailyFreeStatus {
+          status
+          ResponseCode
+          affectedRows {
+            name
+            used
+            available
+          }
+        }
+    }`,
+    });
+
+    // Define request options
+    const requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: graphql,
+      redirect: "follow",
+    };
+
+    try {
+      // Send the request and handle the response
+      const response = await fetch(GraphGL, requestOptions);
+      const result = await response.json();
+
+      // Check for errors in response
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (result.errors) throw new Error(result.errors[0].message);
+      result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
+        document.getElementById(entry.name + "used").innerText = entry.used;
+        document.getElementById(entry.name + "available").innerText = entry.available;
+        const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
+        document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
+        console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+      });
+
+      return result.data.getDailyFreeStatus;
+    } catch (error) {
+      console.error("Error:", error.message);
+      throw error;
+    }
   }
-}
+});

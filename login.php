@@ -1,9 +1,29 @@
 <?php
 include 'phpheader.php';
 include 'host.php';
+$message = "";
+if (isset($_GET['message'])) {
+    switch ($_GET['message']) {
+        case 'unauthorized':
+            $message = "You do not have access. Please log in to continue.";
+            break;
+        case 'sessionExpired':
+            $message = "Your session has expired. Please log in again.";
+            break;
+        case 'mustLogin':
+            $message = "Please log in to access your dashboard.";
+            break;
+        case 'walletAccessDenied':
+            $message = "Please log in to access your wallet.";
+            break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">
+<?php if ($message): ?>
+<div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
+<?php endif; ?>
 
 <head>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
