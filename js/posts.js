@@ -82,7 +82,7 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
     }
 }
 `;
-console.log(postsList);
+//console.log(postsList);
   var graphql = JSON.stringify({
     query: postsList,
     variables: {},
