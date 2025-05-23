@@ -1323,14 +1323,16 @@ async function postsLaden() {
   const tagInput = normalWords.join(" ");
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+
+  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",null);
   console.log(posts);
+
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
   let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.listPosts.affectedRows.forEach((objekt) => {
+    posts.data.listPosts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.id = objekt.id;
@@ -2132,56 +2134,52 @@ const failedSearches = new Set();
 const tagInput = document.getElementById("tag-input");
 const tagContainer = document.getElementById("tagsContainer");
 const dropdownMenu = document.getElementById("dropdownMenu");
-if (tagInput) {
-  tagInput.addEventListener("input", async function () {
-    const searchStr = tagInput.value.trim();
-    if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-      if (searchStr.length < 3) {
-        dropdownMenu.innerHTML = "";
-        dropdownMenu.classList.add("none");
-        return;
-      }
-    } else {
-      info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+tagInput.addEventListener("input", async function () {
+  const searchStr = tagInput.value.trim();
+  if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+    if (searchStr.length < 3) {
+      dropdownMenu.innerHTML = "";
+      dropdownMenu.classList.add("none");
       return;
     }
+  } else {
+    info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    return;
+  }
 
-    const tags = await fetchTags(searchStr);
-    dropdownMenu.innerHTML = "";
-    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+  const tags = await fetchTags(searchStr);
+  dropdownMenu.innerHTML = "";
+  const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
 
-    tags.forEach((tag) => {
-      if (!existingTags.includes(tag.name + "X")) {
-        const option = document.createElement("div");
-        option.textContent = tag.name;
-        option.classList.add("dropdown-item");
-        option.addEventListener("click", () => {
-          tagInput.value = tag.name;
-          tag_addTag(tagInput.value.trim());
-          tagInput.value = "";
-          tagInput.focus();
-          dropdownMenu.classList.toggle("none");
-        });
-        dropdownMenu.appendChild(option);
-      }
-    });
-
-    dropdownMenu.classList.toggle("none", tags.length == 0);
-  });
-}
-
-if (tagInput) {
-  tagInput.addEventListener("keypress", function (event) {
-    if (event.key === "Enter" && tagInput.value.trim() !== "") {
-      if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+  tags.forEach((tag) => {
+    if (!existingTags.includes(tag.name + "X")) {
+      const option = document.createElement("div");
+      option.textContent = tag.name;
+      option.classList.add("dropdown-item");
+      option.addEventListener("click", () => {
+        tagInput.value = tag.name;
         tag_addTag(tagInput.value.trim());
         tagInput.value = "";
-      } else {
-        info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-      }
+        tagInput.focus();
+        dropdownMenu.classList.toggle("none");
+      });
+      dropdownMenu.appendChild(option);
     }
   });
-}
+
+  dropdownMenu.classList.toggle("none", tags.length == 0);
+});
+
+tagInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter" && tagInput.value.trim() !== "") {
+    if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+      tag_addTag(tagInput.value.trim());
+      tagInput.value = "";
+    } else {
+      info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    }
+  }
+});
 
 window.addEventListener("click", function (event) {
   if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {

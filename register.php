@@ -1,6 +1,7 @@
 <?php
 include 'phpheader.php';
 include 'host.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -52,7 +53,10 @@ include 'host.php';
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required class="input-text"></input>
             <label id="validationMessage" for="password"></label>
         </div>
-
+        <div class="input-field">
+            <input type="text" id="referral_code" name="referral_code" value="" placeholder="Enter referral code" class="input-text"></input>
+            <label id="validationMessage" for="password"></label>
+        </div>
         <input class="button" type="submit" name="registrieren" value="Registrieren">
 
         <div class="signIn">

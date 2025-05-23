@@ -5,12 +5,14 @@ window.listPosts = async function getPosts(tagName) {
 };
 
 
-async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST") {
+
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID=null) {
   const post = 2;
   const like = 0;
   const dislike = 3;
   const comment = 1;
   
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -32,7 +34,9 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
+      
   postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
+  postsList += (userID !== null) ? `, userid: "${userID}"` : "";
   postsList += `) {
         status
         ResponseCode
@@ -78,6 +82,7 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
     }
 }
 `;
+console.log(postsList);
   var graphql = JSON.stringify({
     query: postsList,
     variables: {},

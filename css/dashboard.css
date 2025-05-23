@@ -110,7 +110,7 @@ h1 {
 
 .sidebar,
 .profil {
-  position: fixed;
+  
   z-index: 3;
   top: 0;
   height: 100dvh;
