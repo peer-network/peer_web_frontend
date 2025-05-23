@@ -21,6 +21,14 @@ function timeAgo(datetime) {
   return `${years} year` + (years > 1 ? "s ago" : " ago");
 }
 function adjustForDSTAndFormat(timestampStr) {
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  };
   // Timestamp-String in Date umwandeln
   const date = new Date(timestampStr.replace(" ", "T"));
 
@@ -28,12 +36,15 @@ function adjustForDSTAndFormat(timestampStr) {
   const jan = new Date(date.getFullYear(), 0, 1);
   const jul = new Date(date.getFullYear(), 6, 1);
   const isDST = Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset()) !== date.getTimezoneOffset();
-
+  date.setHours(date.getHours() + 1);
   // Wenn DST, eine Stunde abziehen
   if (isDST) {
     date.setHours(date.getHours() + 1);
   }
 
   // ISO-String zurückgeben
-  return date.toISOString();
+  return date
+    .toLocaleString(undefined, options)
+    .replace(",", "") // Komma entfernen
+    .replace(/\./g, "."); // Punkte beibehalten
 }

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Grid mit CSS‑Variablen und repeat/minmax</title>
+    <style>
+      /* Basis-Styles */
+      #gridContainer {
+        display: grid;
+        gap: 5px;
+        width: 400px;
+        height: 400px;
+        border: 1px solid #ccc;
+        position: relative;
+        /* Die Grid‑Vorlagen werden über CSS‑Variablen bezogen */
+        grid-template-rows: var(--grid-rows);
+        grid-template-columns: var(--grid-cols);
+      }
+      #draggable {
+        width: 80px;
+        height: 80px;
+        background: lightblue;
+        border: 2px solid #000;
+        position: absolute;
+        cursor: move;
+      }
+      #resizable {
+        width: 100px;
+        height: 100px;
+        background: lightgreen;
+        border: 2px solid #000;
+        transition: width 0.2s, height 0.2s;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Grid-Container mit data‑Attributen.
+       Für die Zeilen wird repeat verwendet und für die Spalten wird ein
+       Leerstring mit 4 Spalten erwartet, z. B. "minmax(1fr, 1fr) minmax(1fr, 1fr) …" -->
+    <div id="gridContainer" data-grid-rows="repeat(4, 100px)" data-grid-cols="minmax(1fr, 1fr) minmax(1fr, 1fr) minmax(1fr, 1fr) minmax(1fr, 1fr)">
+      <div id="draggable"></div>
+    </div>
+    <div id="resizable"></div>
+
+    <script>
+      // Diese Funktion liest die data‑Attribute aus und setzt die CSS‑Variablen für das Grid.
+      function updateGridStyles() {
+        const gridContainer = document.getElementById("gridContainer");
+        const rows = gridContainer.getAttribute("data-grid-rows");
+        const cols = gridContainer.getAttribute("data-grid-cols");
+        let styleElement = document.getElementById("dynamicGridStyles");
+        if (!styleElement) {
+          styleElement = document.createElement("style");
+          styleElement.id = "dynamicGridStyles";
+          document.head.appendChild(styleElement);
+        }
+        styleElement.textContent = `
+        #gridContainer {
+          --grid-rows: ${rows};
+          --grid-cols: ${cols};
+        }
+      `;
+      }
+
+      // Initiales Setzen der Grid‑Styles
+      updateGridStyles();
+
+      const draggable = document.getElementById("draggable");
+      const gridContainer = document.getElementById("gridContainer");
+      const resizable = document.getElementById("resizable");
+      let offsetX, offsetY;
+
+      // Event-Listener für Maus- und Touch‑Events
+      draggable.addEventListener("mousedown", startDrag);
+      draggable.addEventListener("touchstart", startDrag, { passive: false });
+
+      function startDrag(e) {
+        let clientX, clientY;
+        if (e.type === "touchstart") {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+          document.addEventListener("touchmove", drag, { passive: false });
+          document.addEventListener("touchend", stopDrag);
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+          document.addEventListener("mousemove", drag);
+          document.addEventListener("mouseup", stopDrag);
+        }
+        offsetX = clientX - draggable.getBoundingClientRect().left;
+        offsetY = clientY - draggable.getBoundingClientRect().top;
+        e.preventDefault();
+      }
+
+      function drag(e) {
+        let clientX, clientY;
+        if (e.type === "touchmove") {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+
+        const containerRect = gridContainer.getBoundingClientRect();
+        let newLeft = clientX - containerRect.left - offsetX;
+        let newTop = clientY - containerRect.top - offsetY;
+
+        // Begrenzung, damit draggable innerhalb des Containers bleibt
+        newLeft = Math.max(0, Math.min(newLeft, containerRect.width - draggable.offsetWidth));
+        newTop = Math.max(0, Math.min(newTop, containerRect.height - draggable.offsetHeight));
+
+        draggable.style.left = newLeft + "px";
+        draggable.style.top = newTop + "px";
+
+        // Ermittlung der aktuellen Grid-Zelle (bei 4 Spalten und 4 Zeilen)
+        const cellWidth = containerRect.width / 4;
+        const cellHeight = containerRect.height / 4;
+        const col = Math.floor(newLeft / cellWidth);
+        const row = Math.floor(newTop / cellHeight);
+
+        // Erzeuge neue Spaltenwerte.
+        // Standard: Jede Spalte ist "minmax(1fr, 1fr)".
+        // Die aktive Spalte (entsprechend 'col') wird auf "minmax(1fr, 2fr)" geändert.
+        const colsArr = [];
+        for (let i = 0; i < 4; i++) {
+          colsArr.push(i === col ? "minmax(1fr, 2fr)" : "minmax(1fr, 1fr)");
+        }
+
+        // Die Zeilen bleiben unverändert.
+        gridContainer.setAttribute("data-grid-rows", "repeat(4, 100px)");
+        // Setze die neuen Spalten als Leerstring (getrennt durch Leerzeichen)
+        gridContainer.setAttribute("data-grid-cols", colsArr.join(" "));
+        updateGridStyles();
+
+        // Ändere zusätzlich die Größe des resizable Containers anhand der Position
+        const baseWidth = 100;
+        const baseHeight = 100;
+        const newWidth = baseWidth + newLeft;
+        const newHeight = baseHeight + newTop;
+        resizable.style.width = newWidth + "px";
+        resizable.style.height = newHeight + "px";
+
+        if (e.type === "touchmove") {
+          e.preventDefault();
+        }
+      }
+
+      function stopDrag(e) {
+        if (e.type === "touchend") {
+          document.removeEventListener("touchmove", drag);
+          document.removeEventListener("touchend", stopDrag);
+        } else {
+          document.removeEventListener("mousemove", drag);
+          document.removeEventListener("mouseup", stopDrag);
+        }
+      }
+    </script>
+  </body>
+</html>

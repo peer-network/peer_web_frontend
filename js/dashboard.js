@@ -1323,8 +1323,10 @@ async function postsLaden() {
   const tagInput = normalWords.join(" ");
   const tags = hashtags.join(" ");
   const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
+
   const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",null);
-   console.log(posts);
+  console.log(posts);
+
   const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
@@ -2080,7 +2082,6 @@ async function convertImageToBase64(file) {
   });
 }
 
-
 // async function fetchTags(searchStr) {
 //   // if (failedSearches.has(searchStr)) {
 //   //   return [];
@@ -2203,7 +2204,7 @@ window.addEventListener("click", function (event) {
 // async function fetchTags(searchStr) {
 //   const query = `
 //       query Tagsearch($searchstr: String!) {
-//           tagsearch(tagname: $searchstr, limit: 20) {
+//           searchTags(tagname: $searchstr, limit: 20) {
 //               status
 //               counter
 //               ResponseCode
@@ -2224,7 +2225,7 @@ window.addEventListener("click", function (event) {
 //     });
 
 //     const result = await response.json();
-//     return result.data.tagsearch;
+//     return result.data.searchTags;
 //   } catch (error) {
 //     console.error("Error fetching tags:", error);
 //     return [];
