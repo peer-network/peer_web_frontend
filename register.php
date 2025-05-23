@@ -1,6 +1,7 @@
 <?php
 include 'phpheader.php';
 include 'host.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="de">
