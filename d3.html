@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hintergrundgrößenanpassung ohne Positionsänderung</title>
+    <style>
+      :root {
+        --grid-rows: 12rem;
+        --grid-cols: repeat(auto-fit, minmax(200px, 1fr));
+      }
+      #container {
+        display: grid;
+        grid-template-rows: var(--grid-rows);
+        grid-template-columns: var(--grid-cols);
+        gap: 5px;
+        width: 80vw;
+        height: 80vh;
+        margin: 0 auto;
+        position: relative;
+        border: 2px solid #333;
+        overflow: hidden;
+        background-image: url("svg/logo_sw.svg");
+        /* background-repeat: no-repeat; */
+        background-position: center center;
+        background-size: 100% 100%;
+        transition: background-size 0.8s;
+      }
+      #container div {
+        background-color: rgba(255, 255, 255, 0.5);
+        border: 1px solid #ccc;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        height: var(--grid-rows);
+      }
+      #container div:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+      #container div:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container" data-grid-rows="12rem" data-grid-cols="repeat(auto-fit, minmax(200px, 1fr))">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <script>
+      const container = document.getElementById("container");
+      let startX = null;
+      let startY = null;
+      let sizeX = 100;
+      let sizeY = 100;
+      // Aktualisiert nur die Hintergrundgröße (x- und/oder y-Wert), ohne die Position zu ändern
+      function updateBackgroundSize(dx, dy) {
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        const threshold = 5; // Mindestunterschied für eindeutige Richtung
+
+        let direction = "";
+        if (absDx > absDy + threshold) {
+          direction = dx > 0 ? "rechts" : "links";
+        } else if (absDy > absDx + threshold) {
+          direction = dy > 0 ? "unten" : "oben";
+        }
+
+        // Basisgröße in Prozent
+
+        // Bei klarer horizontaler Bewegung: Nur x-Wert anpassen
+        if (direction === "rechts") {
+          sizeX += absDx / 10; // Beispiel: +1% pro 10 Pixel horizontaler Bewegung
+        } else if (direction === "links") {
+          sizeX -= absDx / 10; // Beispiel: +1% pro 10 Pixel horizontaler Bewegung
+        }
+        sizeX = Math.min(Math.max(40, sizeX), 300); // Begrenzung auf 0-300%
+        sizeX = Math.round(sizeX * 1000) / 1000; // Rundet auf 3 Dezimalstellen
+        // Bei klarer vertikaler Bewegung: Nur y-Wert anpassen
+        if (direction === "oben") {
+          sizeY -= absDy / 10;
+        } else if (direction === "unten") {
+          sizeY += absDy / 10;
+        }
+        sizeY = Math.min(Math.max(30, sizeY), 300); // Begrenzung auf 0-300%
+        sizeY = Math.round(sizeY * 1000) / 1000;
+
+        // Setzt die neue Hintergrundgröße; die Position bleibt zentriert
+        container.style.backgroundSize = `${sizeX / 10}% ${sizeY / 10}%`;
+        container.setAttribute("data-size-x", sizeX);
+        container.setAttribute("data-size-y", sizeY + "rem");
+        document.documentElement.style.setProperty("--grid-cols", `repeat(auto-fit, minmax(${sizeX / 3}rem, 1fr))`);
+        document.documentElement.style.setProperty("--grid-rows", `${sizeY / 4}rem`);
+        startX = startX + dx; // Aktualisiert den Startwert für die nächste Bewegung
+        startY = startY + dy; // Aktualisiert den Startwert für die nächste Bewegung
+        console.log("Bewegungsrichtung:", direction, "Neue Hintergrundgröße:", container.style.backgroundSize);
+      }
+
+      // Mausereignisse
+      container.addEventListener("mouseenter", (e) => {
+        // const rect = container.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+
+      container.addEventListener("mousemove", (e) => {
+        if (startX === null || startY === null) return;
+        // const rect = container.getBoundingClientRect();
+        const currentX = e.clientX;
+        const currentY = e.clientY;
+        const dx = currentX - startX;
+        const dy = currentY - startY;
+        updateBackgroundSize(dx, dy);
+      });
+
+      container.addEventListener("mouseleave", () => {
+        startX = null;
+        startY = null;
+        // Optionale Rücksetzung der Hintergrundgröße
+        // container.style.backgroundSize = "100% 100%";
+      });
+
+      // Touchereignisse
+      container.addEventListener(
+        "touchstart",
+        (e) => {
+          const touch = e.touches[0];
+          startX = touch.clientX;
+          startY = touch.clientY;
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      container.addEventListener(
+        "touchmove",
+        (e) => {
+          const touch = e.touches[0];
+          const currentX = touch.clientX;
+          const currentY = touch.clientY;
+          const dx = currentX - startX;
+          const dy = currentY - startY;
+          updateBackgroundSize(dx, dy);
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      container.addEventListener("touchend", () => {
+        startX = null;
+        startY = null;
+        // container.style.backgroundSize = "100% 100%";
+      });
+    </script>
+  </body>
+</html>

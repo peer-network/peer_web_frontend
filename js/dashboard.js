@@ -1362,6 +1362,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (postsLaden.offset === undefined) {
       postsLaden.offset = 0; // Initial value
+
+  const form = document.querySelector("#filter");
+
+  const checkboxes = form.querySelectorAll(".filteritem:checked");
+
+  // Die Werte der angehakten Checkboxen sammeln
+  const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
+
+  // Werte als komma-getrennte Zeichenkette zusammenfügen
+  // const result = values.join(" ");
+
+  // Ergebnis ausgeben
+  const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
+  // const textsearch = document.getElementById("searchText").value;
+  const { hashtags, normalWords } = extractWords(document.getElementById("searchTag").value.toLowerCase());
+  const tagInput = normalWords.join(" ");
+  const tags = hashtags.join(" ");
+  const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
+
+  const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",null);
+  console.log(posts);
+
+  const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
+  // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
+  const parentElement = document.getElementById("main"); // Das übergeordnete Element
+  let audio, video;
+  // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
+    posts.data.listPosts.affectedRows.forEach((objekt) => {
+    // Haupt-<section> erstellen
+    const card = document.createElement("section");
+    card.id = objekt.id;
+    card.classList.add("card");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("content", objekt.contenttype);
+    // card.setAttribute("tags", objekt.tags.join(","));
+    // <div class="post"> erstellen und Bild hinzufügen
+
+    let postDiv;
+    let img;
+    postDiv = document.createElement("div");
+    postDiv.classList.add("post");
+    const array = JSON.parse(objekt.media);
+    let cover = null;
+    if (objekt.cover) {
+      cover = JSON.parse(objekt.cover);
     }
 
     const form = document.querySelector("#filter");
@@ -2202,6 +2247,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+
 // const failedSearches = new Set();
 // const tagInput = document.getElementById("searchTag");
 // const tagContainer = document.getElementById("tagsContainer");
@@ -2214,6 +2260,30 @@ document.addEventListener("DOMContentLoaded", () => {
 //         dropdownMenu.innerHTML = "";
 //         dropdownMenu.classList.add("none");
 //         return;
+// async function fetchTags(searchStr) {
+//   // if (failedSearches.has(searchStr)) {
+//   //   return [];
+//   // }
+//   for (let failed of failedSearches) {
+//     if (searchStr.includes(failed)) {
+//       return [];
+//     }
+//   }
+//   const accessToken = getCookie("authToken");
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
+//   const query = `
+//       query searchTags($searchstr: String!) {
+//           searchTags(tagName: $searchstr, limit: 10) {
+//               status
+//               counter
+//               ResponseCode
+//               affectedRows {
+//                 name
+//             }
+//           }
 //       }
 //     } else {
 //       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
@@ -2253,15 +2323,79 @@ document.addEventListener("DOMContentLoaded", () => {
 //       } else {
 //         info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
 //       }
+//     const result = await response.json();
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//     if (result.errors) throw new Error(userfriendlymsg(result.data.searchTags.ResponseCode));
+//     if (!result.data.searchTags.affectedRows.length) {
+//       failedSearches.add(searchStr);
 //     }
 //   });
 // }
+
 
 // window.addEventListener("click", function (event) {
 //   if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
 //     dropdownMenu.classList.remove("show");
 //   }
 // });
+
+const failedSearches = new Set();
+const tagInput = document.getElementById("tag-input");
+const tagContainer = document.getElementById("tagsContainer");
+const dropdownMenu = document.getElementById("dropdownMenu");
+tagInput.addEventListener("input", async function () {
+  const searchStr = tagInput.value.trim();
+  if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+    if (searchStr.length < 3) {
+      dropdownMenu.innerHTML = "";
+      dropdownMenu.classList.add("none");
+      return;
+    }
+  } else {
+    info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    return;
+  }
+
+  const tags = await fetchTags(searchStr);
+  dropdownMenu.innerHTML = "";
+  const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+
+  tags.forEach((tag) => {
+    if (!existingTags.includes(tag.name + "X")) {
+      const option = document.createElement("div");
+      option.textContent = tag.name;
+      option.classList.add("dropdown-item");
+      option.addEventListener("click", () => {
+        tagInput.value = tag.name;
+        tag_addTag(tagInput.value.trim());
+        tagInput.value = "";
+        tagInput.focus();
+        dropdownMenu.classList.toggle("none");
+      });
+      dropdownMenu.appendChild(option);
+    }
+  });
+
+  dropdownMenu.classList.toggle("none", tags.length == 0);
+});
+
+tagInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter" && tagInput.value.trim() !== "") {
+    if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+      tag_addTag(tagInput.value.trim());
+      tagInput.value = "";
+    } else {
+      info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    }
+  }
+});
+
+window.addEventListener("click", function (event) {
+  if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+    dropdownMenu.classList.remove("show");
+  }
+});
+
 ////////////// Tag-System
 // const tag_input = document.getElementById("tag-input");
 // const tagContainer = document.getElementById("tagsContainer");
@@ -2280,7 +2414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // async function fetchTags(searchStr) {
 //   const query = `
 //       query Tagsearch($searchstr: String!) {
-//           tagsearch(tagname: $searchstr, limit: 20) {
+//           searchTags(tagname: $searchstr, limit: 20) {
 //               status
 //               counter
 //               ResponseCode
@@ -2301,7 +2435,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //     });
 
 //     const result = await response.json();
-//     return result.data.tagsearch;
+//     return result.data.searchTags;
 //   } catch (error) {
 //     console.error("Error fetching tags:", error);
 //     return [];
