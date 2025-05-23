@@ -1,2 +1,5 @@
 .vscode/settings.json
 public/
+.idea
+.htaccess
+tests

@@ -1,4 +1,15 @@
-async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby = "NEWEST") {
+window.listPosts = async function getPosts(tagName) {
+  console.log("Fetching posts for tag:", tagName);
+
+  // Your GraphQL or fetch logic here...
+};
+
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST") {
+  const post = 2;
+  const like = 0;
+  const dislike = 3;
+  const comment = 1;
+  
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -6,7 +17,13 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  title = sanitizeString(title);
+  if (typeof title === "string") {
+    title = sanitizeString(title);
+  } else {
+    title = "";
+  }
+  // tag = sanitizeString(tag);
+  // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
   let postsList = `query ListPosts {
     listPosts(
@@ -14,6 +31,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
+  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
   postsList += `) {
         status
         ResponseCode
@@ -29,6 +47,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
             amountviews
             amountcomments
             amountdislikes
+            amounttrending
             isliked
             isviewed
             isreported
@@ -38,6 +57,7 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
             user {
                 id
                 username
+                slug
                 img
                 isfollowed
                 isfollowing
@@ -48,16 +68,10 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
                 postid
                 parentid
                 content
-                amountlikes
-                isliked
                 createdat
-                user {
-                    id
-                    username
-                    img
-                    isfollowed
-                    isfollowing
-                }
+                amountlikes
+                amountreplies
+                isliked
             }
         }
     }
@@ -78,11 +92,10 @@ async function getPosts(offset = 0, limit, filterBy = null, title = "", sortby =
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       return result;
     })
     .catch((error) => {
-      console.log("error", error);
+      Merror("error", error);
       throw error;
     });
 }
@@ -97,7 +110,7 @@ function viewPost(postid) {
 
   var graphql = JSON.stringify({
     query: `mutation ResolvePostAction {
-        resolvePostAction: "${postid}", action: VIEW) {
+        resolvePostAction(postid: "${postid}", action: VIEW) {
           status
           ResponseCode
         }
@@ -118,19 +131,22 @@ function viewPost(postid) {
     .then((result) => {
       console.log(result);
       if (result.data.resolvePostAction.status == "error") {
-        throw new Error(result.data.resolvePostAction.ResponseCode);
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
     })
     .catch((error) => {
       Merror("View Post failed", error);
-      console.log("error", error);
+      // console.log("error", error);
       return false;
     });
 }
 
-function likePost(postid) {
+async function likePost(postid) {
+  if (!(await LiquiudityCheck(10, "Like Post", like))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -166,9 +182,8 @@ function likePost(postid) {
   return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       if (result.data.resolvePostAction.status == "error") {
-        throw new Error(result.data.resolvePostAction.ResponseCode);
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
         return true;
       }
@@ -180,6 +195,9 @@ function likePost(postid) {
     });
 }
 async function dislikePost(postid) {
+  if (!(await LiquiudityCheck(5, "Dislike Post", dislike))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -208,13 +226,43 @@ async function dislikePost(postid) {
   fetch(GraphGL, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
+    .catch((error) =>  Merror("Dislike failed", error));
 }
 
 function isVariableNameInArray(variableObj, nameArray) {
   return Object.keys(variableObj).some((key) => key.includes(nameArray));
 }
+async function LiquiudityCheck(postCosts, title, action) {
+  const msg = ["like", "comment", "post"];
+  const cancel = 0;
+  const dailyfree = await getDailyFreeStatus();
+  const dailyPostAvailable = dailyfree[action].available;
+  const bitcoinPrice = await getBitcoinPriceEUR();
+  const tokenPrice = 100000 / bitcoinPrice;
+  const token = await getLiquiudity();
+  if (!dailyPostAvailable && token * tokenPrice < postCosts) {
+    Merror(
+      title,
+      `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}.
+      You currently have ${token} Peer Tokens.`
+    );
+    return false;
+  } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
+    let answer = await confirm(
+      title,
+      `You currently have ${token} Peer Tokens.
+       This ${msg[action]} will cost ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens.`
+    );
+    if (answer === null || answer === cancel) {
+      return false;
+    }
+    return true;
+  }
+}
 async function sendCreatePost(variables) {
+  if (!(await LiquiudityCheck(20, "Create Post", post))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   if (!accessToken) {
@@ -305,11 +353,25 @@ async function sendCreatePost(variables) {
     console.log("Mutation Result:", result.data);
 
     if (result.data.createPost.status == "error") {
-      throw new Error(result.data.createPost.ResponseCode);
+      throw new Error(userfriendlymsg(result.data.createPost.ResponseCode));
     } else return result.data;
   } catch (error) {
     Merror("Create Post failed", error);
-    console.error("Error create Post:", error);
+    // console.error("Error create Post:", error);
     return false;
+  }
+}
+// Beispiel: Hole den Bitcoin‐Preis in EUR von CoinGecko
+
+async function getBitcoinPriceEUR() {
+  const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP-Error: ${response.status}`);
+    const data = await response.json();
+    console.log(`1 BTC = ${data.bitcoin.eur} EUR`);
+    return data.bitcoin.eur;
+  } catch (err) {
+    console.error("Fehler beim Abrufen des Bitcoin-Kurses:", err);
   }
 }

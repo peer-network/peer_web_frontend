@@ -15,6 +15,7 @@ function initAudioplayer(canvasID, url) {
 
   // Audiodatei laden und Wellenform erstellen
   async function loadAudio(fileUrl) {
+    // console.log('--> url ', fileUrl);
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const headers = {};
     const response = await fetch(fileUrl, {
