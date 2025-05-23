@@ -287,7 +287,7 @@ checkAuth("unauthorized");
                     </div>
                 </div>
 
-                <a href="profile.php" class="view-profil stats comming-soon">
+                <a href="profile.php" class="view-profil stats ">
                     <img src="svg/profile.svg" alt="">
                     <p>View Profile</p>
                 </a>
@@ -295,10 +295,10 @@ checkAuth("unauthorized");
 
             <!-- Menü -->
             <div class="menu stats">
-                <a href="dashboard.php" class="menu-item active">
+                <div class="menu-item active">
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
-                </a>
+                </div>
                 <a href="chat.php" class="menu-item ">
                     <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                     <p>Chats</p>
@@ -316,7 +316,7 @@ checkAuth("unauthorized");
                     <img class="icon" src="svg/qmark.svg" alt="network" />
                     <p>How Peer Works</p>
                 </a>
-            </div>
+            </di>
             <div class="menu stats">
                 <div class="menu-item"  id="btAddPost">
                     <img class="icon" src="svg/newpost.svg" alt="network" />

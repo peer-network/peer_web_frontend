@@ -2,6 +2,9 @@
     header('Access-Control-Allow-Origin: *');
     include 'phpheader.php';
     include 'host.php';
+    include 'auth.php';
+    checkAuth(); // only checks if logged in
+
 ?>
 <!DOCTYPE html>
 <html lang="de">

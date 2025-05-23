@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <a href="profile.php" class="view-profil stats comming-soon">
+                <a href="profile.php" class="view-profil stats ">
                     <img src="svg/profile.svg" alt="">
                     <p>View Profile</p>
                 </a>
@@ -50,15 +50,15 @@
 
             <!-- Menü -->
             <div class="menu stats">
-                <a href="dashboard.php" class="menu-item active">
+                <a href="dashboard.php" class="menu-item">
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
                 </a>
-                <a href="chat.php" class="menu-item ">
+                <div class="menu-item active">
                     <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                     <p>Chats</p>
                     <div class="notification-badge">8</div>
-                </a>
+                </div>
                 <a href="wallet.php" class="menu-item">
                     <img class="icon" src="svg/wallets.svg" alt="network" />
                     <p>Wallet</p>
