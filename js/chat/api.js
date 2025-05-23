@@ -20,7 +20,6 @@ ChatApp.api = {
     const json = await response.json();
   
     if (json.errors) throw new Error(json.errors[0].message);
-      console.log(json.data);
     return json.data;
   },
 
