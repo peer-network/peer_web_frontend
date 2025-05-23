@@ -16,7 +16,7 @@
 
             <!-- Menü -->
             <div class="menu stats">
-                <a href="dashboard.php" class="menu-item active">
+                <a href="dashboard.php" class="menu-item">
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
                 </a>

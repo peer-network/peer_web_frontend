@@ -16,6 +16,7 @@ checkAuth("unauthorized");
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
+  <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
 
   <?php
   $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -180,7 +181,7 @@ checkAuth("unauthorized");
                     </div>
                 </div>
 
-                <a href="profile.php" class="view-profil stats comming-soon">
+                <a href="profile.php" class="view-profil stats ">
                     <img src="svg/profile.svg" alt="">
                     <p>View Profile</p>
                 </a>
@@ -188,7 +189,7 @@ checkAuth("unauthorized");
 
             <!-- Menü -->
             <div class="menu stats">
-                <a href="dashboard.php" class="menu-item active">
+                <a href="dashboard.php" class="menu-item">
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
                 </a>
@@ -197,10 +198,10 @@ checkAuth("unauthorized");
                     <p>Chats</p>
                     <div class="notification-badge">8</div>
                 </a>
-                <a href="wallet.php" class="menu-item">
+                <div class="menu-item active">
                     <img class="icon" src="svg/wallets.svg" alt="network" />
                     <p>Wallet</p>
-                </a>
+                </div>
                 <a href="wallet.php" class="menu-item comming-soon">
                     <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
                     <p>Settings</p>
