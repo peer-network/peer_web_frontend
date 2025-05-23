@@ -835,22 +835,60 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // }
 
+  const titleDropdown = document.getElementById("titleDropdown");
+
   async function searchTitles(titleQuery) {
     try {
-      const response = await getPosts(0, 100); // Fetch 100 posts, or increase if needed
-      const allPosts = response?.data?.getPosts?.items || [];
+      const response = await getPosts(0, 50, "NONE", titleQuery); // use title as a filter
+      const posts = response?.data?.listPosts?.affectedRows || [];
 
-      // Filter posts whose titles include the search query
-      const matchingPosts = allPosts.filter(post =>
-        post.title.toLowerCase().includes(titleQuery.toLowerCase())
-      );
-      return matchingPosts;
+      // Extract and deduplicate matching titles
+      const titleSet = new Set();
+      posts.forEach(post => {
+        if (
+          post.title &&
+          post.title.toLowerCase().includes(titleQuery.toLowerCase())
+        ) {
+          titleSet.add(post.title);
+        }
+      });
 
+      const titles = Array.from(titleSet);
+      displayTitles(titles);
     } catch (error) {
       console.error("Error searching titles:", error);
-      return [];
     }
   }
+
+
+  function displayTitles(titles) {
+    titleDropdown.innerHTML = "";
+
+    if (!Array.isArray(titles) || titles.length === 0) {
+      titleDropdown.classList.add("none");
+      return;
+    } else {
+      titleDropdown.classList.remove("none");
+    }
+
+    titles.forEach(title => {
+      const titleItem = document.createElement("div");
+      titleItem.className = "dropdown-item";
+      titleItem.textContent = `~${title}`;
+
+      titleItem.addEventListener("click", () => {
+        titleInput.value = `~${title}`;
+        localStorage.setItem("searchTitle", title);
+        titleDropdown.classList.add("none");
+
+        postsLaden({ title }); // Trigger filtered posts by title
+      });
+
+      titleDropdown.appendChild(titleItem);
+    });
+  }
+
+
 
 
   if (tagInput) {
@@ -905,40 +943,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
-
-  // async function listTags() {
-  //   const accessToken = getCookie("authToken");
-
-  //   const query = `
-  //     query ListTags {
-  //       listTags(offset: 0, limit: 20) {
-  //         status
-  //         counter
-  //         ResponseCode
-  //         affectedRows {
-  //           name
-  //         }
-  //       }
-  //     }
-  //   `;
-
-  //   try {
-  //     const response = await fetch(GraphGL,{
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${accessToken}`
-  //       },
-  //       body: JSON.stringify({ query })
-  //     });
-
-  //     const json = await response.json();
-  //     const tags = json?.data?.listTags?.affectedRows || [];
-  //     displayTags(tags);
-  //   } catch (error) {
-  //     console.error("Error listing tags:", error);
-  //   }
-  // }
 
   const tagDropdown = document.getElementById("tagDropdown");
   function displayTags(tags) {
@@ -1353,47 +1357,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const letztesDiv = parentElement.lastElementChild;
   }
 
-  async function postsLaden() {
+  async function postsLaden({ title = null, tag = null } = {}) {
     const UserID = getCookie("userID");
+
     if (postsLaden.offset === undefined) {
-      postsLaden.offset = 0; // Initialwert
+      postsLaden.offset = 0; // Initial value
     }
 
     const form = document.querySelector("#filter");
-
     const checkboxes = form.querySelectorAll(".filteritem:checked");
+    const values = Array.from(checkboxes).map(cb => cb.name.replace(/^"|"$/g, ""));
+    const sortbyInput = document.querySelector('#filter input[type="radio"]:checked');
+    const sortby = sortbyInput ? sortbyInput.getAttribute("sortby") : "NEWEST";
 
-    // Die Werte der angehakten Checkboxen sammeln
-    const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
-
-    // Werte als komma-getrennte Zeichenkette zusammenfügen
-    // const result = values.join(" ");
-
-    // Ergebnis ausgeben
-    const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
-    // // const textsearch = document.getElementById("searchText").value;
-    // let normalWords = [];
-    // let hashtags = [];
-    // const searchTag = document.getElementById("searchTag");
-    // if (searchTag) {
-    //   const { hashtags } = extractWords(searchTag.value.toLowerCase());
-    // }
-   
-    let tagInput = "";
-    let tags = "";
+    // Use overrides (from function arg) or fallback to DOM inputs
     const tagElement = document.getElementById("searchTag");
-    if (tagElement) {
-      const { hashtags } = extractWords(tagElement.value.toLowerCase());
-      tags = hashtags.join(" ");
-    }
     const titleElement = document.getElementById("searchTitle");
-    if (titleElement) {
+
+    if (!title && titleElement) {
       const { normalWords } = extractWords(titleElement.value.toLowerCase());
-      tagInput = normalWords.join(" ");
+      title = normalWords.join(" ");
     }
-    const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
-    const posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-    // console.log(cleanedArray);
+
+    if (!tag && tagElement) {
+      const { hashtags } = extractWords(tagElement.value.toLowerCase());
+      tag = hashtags.join(" ");
+    }
+
+    const posts = await getPosts(postsLaden.offset, 20, values, title, tag, sortby);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("main"); // Das übergeordnete Element

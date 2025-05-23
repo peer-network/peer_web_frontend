@@ -2,6 +2,8 @@
 header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
 include 'host.php';
+require_once 'auth.php';
+checkAuth("unauthorized");
 ?>
 <!DOCTYPE html>
 <html lang="de">
