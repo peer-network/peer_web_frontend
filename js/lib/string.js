@@ -58,3 +58,22 @@ async function readBytes(url, byteCount) {
     // document.getElementById('output').innerText = "Fehler beim Laden der Datei.";
   }
 }
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  };
+
+  return date
+    .toLocaleString("de-DE", options)
+    .replace(",", "") // Komma entfernen
+    .replace(/\./g, "."); // Punkte beibehalten
+}

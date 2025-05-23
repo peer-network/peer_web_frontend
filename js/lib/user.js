@@ -12,7 +12,7 @@ async function fetchHelloData(userid = null) {
       hello {
           currentuserid
       }
-      profile(userid: ${userid}) {
+      getProfile(userid: ${userid}) {
         status
         ResponseCode
         affectedRows {
@@ -104,16 +104,16 @@ async function getUser() {
     profil_container.classList.add("none");
     profil_login.classList.remove("none");
   } else {
-    document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
-    document.getElementById("slug").innerText = "#" + profil.data.profile.affectedRows.slug;
-    document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
-    document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
-    document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
+    document.getElementById("username").innerText = profil.data.getProfile.affectedRows.username;
+    document.getElementById("slug").innerText = "#" + profil.data.getProfile.affectedRows.slug;
+    document.getElementById("userPosts").innerText = profil.data.getProfile.affectedRows.amountposts;
+    document.getElementById("followers").innerText = profil.data.getProfile.affectedRows.amountfollower;
+    document.getElementById("following").innerText = profil.data.getProfile.affectedRows.amountfollowed;
     const img = document.getElementById("profilbild");
     img.onerror = function () {
       this.src = "svg/noname.svg";
     };
-    img.src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
+    img.src = profil.data.getProfile.affectedRows.img ? tempMedia(profil.data.getProfile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
   }
   return profil;
 }
