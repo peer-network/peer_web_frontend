@@ -59,7 +59,7 @@ include 'host.php';
         
         
         <div class="input-field">
-            <input type="text" id="verification_code" name="verification_code" placeholder="Enter the code" required class="input-text"                            ></input>
+            <input type="text" id="verification_code" name="verification_code" placeholder="Enter the code" required class="input-text" ></input>
         </div>
         <div id="response_msg_wrong_code"></div>
 
