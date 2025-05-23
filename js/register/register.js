@@ -1,5 +1,42 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const referralUuid = urlParams.get('referralUuid');
+
+  if (referralUuid) {
+    localStorage.setItem('referralUuid', referralUuid);
+    const referralField = document.getElementById("referral_code");
+    if (referralField) {
+      referralField.value = referralUuid;
+    }
+
+    const deepLink = "peer://invite/" + referralUuid;
+    const androidFallback = "https://play.google.com/store/apps/details?id=eu.peernetwork.app";
+    const iosFallback = "https://apps.apple.com/app/peer-network/id6744612499";
+
+    function openApp() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isAndroid = /android/i.test(userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+      // Try to open the app
+      window.location = deepLink;
+
+      // After a delay, redirect to the appropriate store
+      setTimeout(() => {
+        if (isAndroid) {
+          window.location = androidFallback;
+        } else if (isIOS) {
+          window.location = iosFallback;
+        }
+      }, 1500);
+    }
+
+    // Call immediately after DOM is loaded
+    openApp();
+  }
+});
 // Asynchrone Funktion, um einen Benutzer zu registrieren
-async function registerUser(email, password, username) {
+async function registerUser(email, password, username, referralcode) {
   // GraphQL-Mutation für die Registrierung eines Benutzers
   const query = `
         mutation Register($input: RegistrationInput!) {
@@ -24,6 +61,7 @@ async function registerUser(email, password, username) {
       password: password,
       username: username,
       pkey: null,
+      referralUuid: referralcode,
     },
   };
 
@@ -75,7 +113,9 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   const username = document.getElementById("username").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const referralCode = document.getElementById("referral_code").value;
   const confirmPassword = document.getElementById("confirm_password").value;
+
 
   // Passwortvalidierung
   const passwordMinLength = 8; // Mindestlänge des Passworts
@@ -100,7 +140,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   }
 
   // Registrierung des Benutzers, nachdem die Validierungen bestanden wurden
-  await registerUser(email, password, username);
+  await registerUser(email, password, username, referralCode);
 });
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren

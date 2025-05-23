@@ -19,7 +19,7 @@ async function loginRequest(email, password) {
     variables: {
       email,
       password,
-    },
+    },         
   });
 
   // Define request options

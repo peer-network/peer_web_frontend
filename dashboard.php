@@ -2,6 +2,8 @@
 header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
 include 'host.php';
+require_once 'auth.php';
+checkAuth("unauthorized");
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -12,7 +14,6 @@ include 'host.php';
     <link rel="stylesheet" href="css/scrollshadow.css?<?php echo filemtime('css/scrollshadow.css'); ?>" />
 
     <!-- <script src="sw_instal.min.js" async></script> -->
-
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
@@ -229,6 +230,7 @@ include 'host.php';
         <!-- Main Content Area (Mittlere Spalte mit einem inneren Grid) -->
         <main id="main" class="main">
             <!-- <section class="card" tabindex="0">
+                <button class="follow-btn">Follow +</button>
                 <div class="post">
                     <img src="img/bg.png" alt="">
                 </div>
