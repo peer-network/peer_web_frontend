@@ -1,3 +1,7 @@
 .vscode/settings.json
 public/
 .idea
+.htaccess
+tests
+d2.html
+d3.html
