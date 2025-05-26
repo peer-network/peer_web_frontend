@@ -835,164 +835,145 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // }
 
-  const titleDropdown = document.getElementById("titleDropdown");
-
-  async function searchTitles(titleQuery) {
-    try {
-      const response = await getPosts(0, 50, "NONE", titleQuery); // use title as a filter
-      const posts = response?.data?.listPosts?.affectedRows || [];
-
-      // Extract and deduplicate matching titles
-      const titleSet = new Set();
-      posts.forEach(post => {
-        if (
-          post.title &&
-          post.title.toLowerCase().includes(titleQuery.toLowerCase())
-        ) {
-          titleSet.add(post.title);
-        }
-      });
-
-      const titles = Array.from(titleSet);
-      displayTitles(titles);
-    } catch (error) {
-      console.error("Error searching titles:", error);
-    }
-  }
-
-
-  function displayTitles(titles) {
-    titleDropdown.innerHTML = "";
-
-    if (!Array.isArray(titles) || titles.length === 0) {
-      titleDropdown.classList.add("none");
-      return;
-    } else {
-      titleDropdown.classList.remove("none");
-    }
-
-    titles.forEach(title => {
-      const titleItem = document.createElement("div");
-      titleItem.className = "dropdown-item";
-      titleItem.textContent = `~${title}`;
-
-      titleItem.addEventListener("click", () => {
-        titleInput.value = `~${title}`;
-        localStorage.setItem("searchTitle", title);
-        titleDropdown.classList.add("none");
-
-        postsLaden({ title }); // Trigger filtered posts by title
-      });
-
-      titleDropdown.appendChild(titleItem);
-    });
-  }
-
-
-
-
-  if (tagInput) {
-    tagInput.addEventListener("input", () => {
-      let query = tagInput.value.trim();
-      // console.log("Input query:", query);
-      if (query.startsWith("#")) {
-        query = query.slice(1);
-      }
-      if (query.length > 0) {
-        searchTags(query);
-      }
-    });
-  }
-
-  async function searchTags(tagName) {
-    const accessToken = getCookie("authToken");
-    // console.log("Tag search result:", tagName);
-
-
-    const query = `
-      query searchTags ($tagName: String!) {
-        searchTags(tagName: $tagName, limit: 10) {
-          status
-          counter
-          ResponseCode
-          affectedRows {
-            name
-            
-          }
-        }
-      }
-   `;
-
-   
-    const variables = { tagName };
-    try {
-      const response = await fetch(GraphGL,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ query, variables })
-      });
-
-      const json = await response.json();
-      const tags = json?.data?.searchTags?.affectedRows || [];
-      displayTags(tags);
-    } catch (error) {
-      console.error("Error searching tags:", error);
-    }
-  }
   
 
-  const tagDropdown = document.getElementById("tagDropdown");
-  function displayTags(tags) {
-    tagDropdown.innerHTML = "";
 
-      if (!Array.isArray(tags) || tags.length === 0) {
-        tagDropdown.classList.add("none");
-        return;
-      }else {
-        tagDropdown.classList.remove("none");
-      }
+  // if (tagInput) {
+  //   tagInput.addEventListener("input", () => {
+  //     let query = tagInput.value.trim();
+  //     // console.log("Input query:", query);
+  //     if (query.startsWith("#")) {
+  //       query = query.slice(1);
+  //     }
+  //     if (query.length > 0) {
+  //       searchTags(query);
+  //     }
+  //   });
+  // }
 
-      tags.forEach(tag => {
-        const tagItem = document.createElement("div");
-        tagItem.classList = "dropdown-item";
-        tagItem.textContent = `#${tag.name}`;
+  // async function searchTags(postsList) {
+  //   const accessToken = getCookie("authToken");
+  //   // console.log("Tag search result:", postsList);
 
-        tagItem.addEventListener("click", () => {
-          tagInput.value = `#${tag.name}`;
-          localStorage.setItem("searchTag", tag.name);
-          tagDropdown.classList.add("none");
-          // Calling the existing listPosts from post.js
-          postsLaden();
-          // getPosts(tag.name);
-        });
 
-        tagDropdown.appendChild(tagItem);
-      });
-  }
+  //   const query = `
+  //     query searchTags ($postsList: String!) {
+  //       searchTags(tagName: $postsList, limit: 10) {
+  //         status
+  //         counter
+  //         ResponseCode
+  //         affectedRows {
+  //           name
+            
+  //         }
+  //       }
+  //     }
+  //  `;
+
+   
+  //   const variables = { postsList };
+  //   try {
+  //     const response = await fetch(GraphGL,{
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${accessToken}`
+  //       },
+  //       body: JSON.stringify({ query, variables })
+  //     });
+
+  //     const json = await response.json();
+  //     const tags = json?.data?.searchTags?.affectedRows || [];
+  //     // displayTags(tags);
+  //   } catch (error) {
+  //     console.error("Error searching tags:", error);
+  //   }
+  // }
+  
+
+  // const tagDropdown = document.getElementById("tagDropdown");
+  // function displayTags(tags) {
+  //   tagDropdown.innerHTML = "";
+
+  //     if (!Array.isArray(tags) || tags.length === 0) {
+  //       tagDropdown.classList.add("none");
+  //       return;
+  //     }else {
+  //       tagDropdown.classList.remove("none");
+  //     }
+
+  //     tags.forEach(tag => {
+  //       const tagItem = document.createElement("div");
+  //       tagItem.classList = "dropdown-item";
+  //       tagItem.textContent = `#${tag.name}`;
+
+  //       tagItem.addEventListener("click", () => {
+  //         tagInput.value = `#${tag.name}`;
+  //         localStorage.setItem("searchTag", tag.name);
+  //         tagDropdown.classList.add("none");
+  //         // Calling the existing listPosts from post.js
+  //         handleSearchInput();
+  //         // getPosts(tag.name);
+  //       });
+
+  //       tagDropdown.appendChild(tagItem);
+  //     });
+  // }
+
+  // function handleSearchInput() {
+  //   const { normalWords } = extractWords(titleInput.value.toLowerCase());
+  //   const { hashtags } = extractWords(tagInput.value.toLowerCase());
+
+  //   const parentElements = document.querySelectorAll(".card");
+
+  //   parentElements.forEach((element) => {
+  //     const h1 = element.querySelector("h1");
+  //     const tags = element.getAttribute("tags").split(",");
+
+  //     const isTitleMatch = !normalWords.length || normalWords.some((word) =>
+  //       h1.innerText.toLowerCase().includes(word)
+  //     );
+
+  //     const isTagMatch = !hashtags.length || hashtags.some((hashtag) =>
+  //       tags.some((tag) => tag.toLowerCase().includes(hashtag))
+  //     );
+
+  //     if (isTitleMatch && isTagMatch) {
+  //       element.classList.remove("none");
+  //     } else {
+  //       element.classList.add("none");
+  //     }
+  //   });
+
+  //   // Store inputs
+  //   localStorage.setItem("searchTitle", titleInput.value);
+  //   localStorage.setItem("searchTag", tagInput.value);
+
+  //   // Load updated posts from server
+  //   postsLaden();
+  // }
+
 
   // Main applyFilters function
   async function applyFilters() {
-    const titleValue = titleInput.value.trim().toLowerCase();
+    // const titleValue = titleInput.value.trim().toLowerCase();
     const userValue = userInput.value.trim().toLowerCase();
-    const tagValue = tagInput.value.trim().toLowerCase();
+    // const tagValue = tagInput.value.trim().toLowerCase();
 
     if (userValue) await searchUsers(userValue);
-    if (titleValue) await searchTitles(titleValue);
-    if (tagValue) await searchTags(tagValue);
+    // if (titleValue) await searchTitles(titleValue);
+    // if (tagValue) await searchTags(tagValue);
 
     // Optionally save local storage (optional)
-    localStorage.setItem("searchTitle", titleValue);
-    localStorage.setItem("searchTag", tagValue);
+    // localStorage.setItem("searchTitle", titleValue);
+    // localStorage.setItem("searchTag", tagValue);
     localStorage.setItem("searchUser", userValue);
   }
   
 
   // Add input listeners
-  if (titleInput && tagInput && userInput) {
-    [titleInput, tagInput, userInput].forEach((input) =>
+  if (userInput) {
+    [ userInput].forEach((input) =>
       input.addEventListener("input", applyFilters)
     );
   }
@@ -1015,25 +996,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     
 
-  // const textsearch = document.getElementById("searchGroup");
-  // textsearch.addEventListener("input", () => {
-  //   const { hashtags, normalWords } = extractWords(textsearch.value.toLowerCase());
-  //   const parentElements = document.querySelectorAll(".card");
+  const textsearch = document.getElementById("searchGroup");
+  textsearch.addEventListener("input", () => {
+    const { normalWords } = extractWords(titleInput.value.toLowerCase());
+    const { hashtags } = extractWords(tagInput.value.toLowerCase());
 
-  //   parentElements.forEach((element) => {
-  //     const h1 = element.querySelector("h1");
-  //     const tags = element.getAttribute("tags").split(",");
-  //     const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word.toLowerCase()));
-  //     const isTag = !hashtags.length || tags.some((tag) => tag.includes(hashtags));
-  //     if (isTitle && isTag) {
-  //       element.classList.remove("none");
-  //     } else {
-  //       element.classList.add("none");
-  //     }
-  //   });
-  //   localStorage.setItem("tags", document.getElementById("searchGroup").value);
-  //   postsLaden();
-  // });
+    const parentElements = document.querySelectorAll(".card");
+
+    parentElements.forEach((element) => {
+      const h1 = element.querySelector("h1");
+      const tagAttr = element.getAttribute("tags");
+      const tags = tagAttr ? tagAttr.split(",").map(t => t.toLowerCase()) : [];
+
+      const isTitle = !normalWords.length || normalWords.some((word) =>
+        h1.innerText.toLowerCase().includes(word)
+      );
+
+      // Force exact match for hashtags
+      const isTag = !hashtags.length || hashtags.every((hashtag) =>
+        tags.includes(hashtag.replace(/^#/, ""))
+      );
+
+      if (isTitle && isTag) {
+        element.classList.remove("none");
+      } else {
+        element.classList.add("none");
+      }
+    });
+
+    localStorage.setItem("searchTitle", titleInput.value);
+    localStorage.setItem("searchTag", tagInput.value);
+
+    postsLaden(); // server-side fetch
+  });
+
   const checkboxes = document.querySelectorAll("#filter .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
@@ -1357,34 +1353,48 @@ document.addEventListener("DOMContentLoaded", () => {
     const letztesDiv = parentElement.lastElementChild;
   }
 
-  async function postsLaden({ title = null, tag = null } = {}) {
+  async function postsLaden() {
     const UserID = getCookie("userID");
-
     if (postsLaden.offset === undefined) {
-      postsLaden.offset = 0; // Initial value
+      postsLaden.offset = 0; // Initialwert
     }
 
     const form = document.querySelector("#filter");
+
     const checkboxes = form.querySelectorAll(".filteritem:checked");
-    const values = Array.from(checkboxes).map(cb => cb.name.replace(/^"|"$/g, ""));
-    const sortbyInput = document.querySelector('#filter input[type="radio"]:checked');
-    const sortby = sortbyInput ? sortbyInput.getAttribute("sortby") : "NEWEST";
 
-    // Use overrides (from function arg) or fallback to DOM inputs
+    // Die Werte der angehakten Checkboxen sammeln
+    const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
+
+    // Werte als komma-getrennte Zeichenkette zusammenfügen
+    // const result = values.join(" ");
+
+    // Ergebnis ausgeben
+    const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
+    // // const textsearch = document.getElementById("searchText").value;
+    // let normalWords = [];
+    // let hashtags = [];
+    // const searchTag = document.getElementById("searchTag");
+    // if (searchTag) {
+    //   const { hashtags } = extractWords(searchTag.value.toLowerCase());
+    // }
+    
+   
+    let titleInput = "";
+    let tags = "";
     const tagElement = document.getElementById("searchTag");
-    const titleElement = document.getElementById("searchTitle");
-
-    if (!title && titleElement) {
-      const { normalWords } = extractWords(titleElement.value.toLowerCase());
-      title = normalWords.join(" ");
-    }
-
-    if (!tag && tagElement) {
+    if (tagElement) {
       const { hashtags } = extractWords(tagElement.value.toLowerCase());
-      tag = hashtags.join(" ");
+      tags = hashtags.join(" ");
     }
-
-    const posts = await getPosts(postsLaden.offset, 20, values, title, tag, sortby);
+    const titleElement = document.getElementById("searchTitle");
+    if (titleElement) {
+      const { normalWords } = extractWords(titleElement.value.toLowerCase());
+      titleInput = normalWords.join(" ");
+    }
+    const sortby = document.querySelectorAll('#filter input[type="radio"]:checked');
+    const posts = await getPosts(postsLaden.offset, 20, cleanedArray, titleInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+    // console.log(cleanedArray);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("main"); // Das übergeordnete Element
@@ -2201,67 +2211,127 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+async function fetchTags(searchStr) {
+  // if (failedSearches.has(searchStr)) {
+  //   return [];
+  // }
+  for (let failed of failedSearches) {
+    if (searchStr.includes(failed)) {
+      return [];
+    }
+  }
+  const accessToken = getCookie("authToken");
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+  const query = `
+      query Tagsearch($searchStr: String!) {
+          searchTags(tagname: $searchStr, limit: 10) {
+              status
+              counter
+              ResponseCode
+              affectedRows {
+                name
+            }
+          }
+      }
+  `;
 
-// const failedSearches = new Set();
+  const variables = { postsList: searchStr };
+
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ query, variables }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0]);
+    if (!result.data.searchTags.affectedRows.length) {
+      failedSearches.add(searchStr);
+    }
+    return result.data.searchTags.affectedRows;
+  } catch (error) {
+    // console.error("Error fetching tags:", error);
+    return [];
+  }
+}  
+
+const failedSearches = new Set();
 // const tagInput = document.getElementById("searchTag");
-// const tagContainer = document.getElementById("tagsContainer");
-// const dropdownMenu = document.getElementById("dropdownMenu");
-// if (tagInput) {
-//   tagInput.addEventListener("input", async function () {
-//     const searchStr = tagInput.value.trim();
-//     if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-//       if (searchStr.length < 3) {
-//         dropdownMenu.innerHTML = "";
-//         dropdownMenu.classList.add("none");
-//         return;
-//       }
-//     } else {
-//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-//       return;
-//     }
+const tagContainer = document.getElementById("tagsContainer");
+const dropdownMenu = document.getElementById("dropdownMenu");
+if (tagInput) {
+  tagInput.addEventListener("input", async function () {
+    let searchStr = tagInput.value.trim();
+    
+    // Require # prefix
+    if (!searchStr.startsWith("#")) {
+      dropdownMenu.innerHTML = "";
+      dropdownMenu.classList.add("none");
+      return;
+    }
 
-//     const tags = await fetchTags(searchStr);
-//     dropdownMenu.innerHTML = "";
-//     const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+    // Strip the #
+    searchStr = searchStr.slice(1);
 
-//     tags.forEach((tag) => {
-//       if (!existingTags.includes(tag.name + "X")) {
-//         const option = document.createElement("div");
-//         option.textContent = tag.name;
-//         option.classList.add("dropdown-item");
-//         option.addEventListener("click", () => {
-//           tagInput.value = tag.name;
-//           tag_addTag(tagInput.value.trim());
-//           tagInput.value = "";
-//           tagInput.focus();
-//           dropdownMenu.classList.toggle("none");
-//         });
-//         dropdownMenu.appendChild(option);
-//       }
-//     });
+    if (searchStr.length < 3) {
+      dropdownMenu.innerHTML = "";
+      dropdownMenu.classList.add("none");
+      return;
+    }
 
-//     dropdownMenu.classList.toggle("none", tags.length == 0);
-//   });
-// }
+    const tags = await fetchTags(searchStr);
+    dropdownMenu.innerHTML = "";
+    if (!tags.length) {
+      dropdownMenu.classList.add("none");
+      return;
+    }
 
-// if (tagInput) {
-//   tagInput.addEventListener("keypress", function (event) {
-//     if (event.key === "Enter" && tagInput.value.trim() !== "") {
-//       if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-//         tag_addTag(tagInput.value.trim());
-//         tagInput.value = "";
-//       } else {
-//         info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-//       }
-//     }
-//   });
-// }
+    tags.forEach((tag) => {
+      const option = document.createElement("div");
+      option.textContent = `#${tag.name}`;
+      option.classList.add("dropdown-item");
 
-// window.addEventListener("click", function (event) {
-//   if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
-//     dropdownMenu.classList.remove("show");
-//   }
-// });
+      option.addEventListener("click", () => {
+        tagInput.value = `#${tag.name}`;
+        localStorage.setItem("searchTag", tag.name); // Save tag without #
+        dropdownMenu.classList.add("none");
+        postsLaden(); // Trigger post reload with filter
+      });
+
+      dropdownMenu.appendChild(option);
+    });
+
+    dropdownMenu.classList.remove("none");
+  });
+}else {
+    info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    return;
+  }
+
+
+if (tagInput) {
+  tagInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter" && tagInput.value.trim() !== "") {
+      if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+        tag_addTag(tagInput.value.trim());
+        tagInput.value = "";
+      } else {
+        info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+      }
+    }
+  });
+}
+
+window.addEventListener("click", function (event) {
+  if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+    dropdownMenu.classList.remove("show");
+  }
+});
 ////////////// Tag-System
 // const tag_input = document.getElementById("tag-input");
 // const tagContainer = document.getElementById("tagsContainer");

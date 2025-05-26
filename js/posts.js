@@ -18,6 +18,9 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
   } else {
     title = "";
   }
+  if (typeof tag === "string") {
+    tag = sanitizeString(tag);
+  }
   // tag = sanitizeString(tag);
   // tag = typeof tag === "string" ? sanitizeString(tag) : "";
   if (!sortby) sortby = "NEWEST";
@@ -27,7 +30,7 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}],`;
-  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
+  postsList += (tag && tag.length >= 3) ? `, tag: "${tag}"` : "";
   postsList += (title && title.length >= 2) ? `, title: "${title}"` : "";
   postsList += `) {
         status
