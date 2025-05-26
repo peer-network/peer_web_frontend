@@ -193,7 +193,7 @@ checkAuth("unauthorized");
                     <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
                     <p>Dashboard</p>
                 </a>
-                <a href="chat.php" class="menu-item ">
+                <a href="/" class="menu-item comming-soon">
                     <img class="icon" src="svg/icon-messages.svg" alt="messages" />
                     <p>Chats</p>
                     <div class="notification-badge">8</div>

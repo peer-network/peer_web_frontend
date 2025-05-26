@@ -137,7 +137,7 @@ document.getElementById("registerForm").addEventListener("submit", function (eve
   // Show modal confirmation
   showRegisterConfirmationModal(() => {
     // Called only if user confirmed both checks
-    registerUser(email, password, username);
+    registerUser(email, password, username, referralCode);
   });
 });
 

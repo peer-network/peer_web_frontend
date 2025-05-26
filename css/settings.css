@@ -153,6 +153,19 @@
   cursor: not-allowed;       
 }
 
+#logOut{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .8rem;
+}
+#logOut img {
+	width: 1.3rem;
+}
+#logOut:hover img {
+	filter: brightness(0) invert(1);
+}
+
 
 .setting-layout button.full-width-btn,
 .setting-layout .button.full-width-btn{ 

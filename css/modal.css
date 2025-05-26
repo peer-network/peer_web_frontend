@@ -178,3 +178,28 @@
 .modal-box:hover button{
   cursor: pointer;
 }
+
+.logOut-pop {
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  width: 30rem;
+  height: 20rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.logOut-pop img {
+  width: 4rem;
+}
+.button-row {
+  display: flex;
+  gap: 1rem;
+}
+.button-row button {
+  width: 10rem;
+  height: 4rem;
+}
