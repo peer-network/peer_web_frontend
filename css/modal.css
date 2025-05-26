@@ -138,3 +138,43 @@
     transform: scale(1);
   }
 }
+
+/* Age and Bot checklist */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background-color: var(--background-color);
+  /* color: var(--text-color); */
+  padding: 1rem;
+  border-radius: 1.5rem;
+  width: 12rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.none {
+  display: none !important;
+}
+.modal-box input  {
+  width: .7rem;
+  height: .7rem;
+}
+.modal-box label {
+  position: sticky;
+
+  display: block;
+  font-size: .6rem;
+}
+.modal-box:hover button{
+  cursor: pointer;
+}
