@@ -106,42 +106,41 @@ async function registerUser(email, password, username, referralcode) {
 }
 
 // Event-Listener für das Registrierungsformular, der ausgelöst wird, wenn das Formular abgeschickt wird
-document.getElementById("registerForm").addEventListener("submit", async function (event) {
-  event.preventDefault(); // Verhindern des Standardverhaltens des Formulars (Seiten-Reload)
+document.getElementById("registerForm").addEventListener("submit", function (event) {
+  event.preventDefault(); // Prevent form reload
 
-  // Abrufen der Eingabewerte für Benutzername, E-Mail, Passwort und Passwort-Bestätigung
   const username = document.getElementById("username").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const referralCode = document.getElementById("referral_code").value;
   const confirmPassword = document.getElementById("confirm_password").value;
 
+  // Validation
+  const passwordMinLength = 8;
+  const passwordRegex = /^(?=.*[A-Z]).+$/;
 
-  // Passwortvalidierung
-  const passwordMinLength = 8; // Mindestlänge des Passworts
-  const passwordRegex = /^(?=.*[A-Z]).+$/; // Muss mindestens einen Großbuchstaben enthalten
-
-  // Überprüfung, ob das Passwort die Mindestlänge erfüllt
   if (password.length < passwordMinLength) {
-    info("Das Passwort muss mindestens 8 Zeichen lang sein!");
+    info("The password must be atleast 8 characters long!");
     return;
   }
 
-  // Überprüfung, ob das Passwort einen Großbuchstaben enthält
   if (!passwordRegex.test(password)) {
-    info("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
+    info("The password must contain atleast one Uppercase letter!");
     return;
   }
 
-  // Überprüfung, ob die Passwörter übereinstimmen
   if (password !== confirmPassword) {
-    info("Passwörter stimmen nicht überein!");
+    info("Passwords do not macth!");
     return;
   }
 
-  // Registrierung des Benutzers, nachdem die Validierungen bestanden wurden
-  await registerUser(email, password, username, referralCode);
+  // Show modal confirmation
+  showRegisterConfirmationModal(() => {
+    // Called only if user confirmed both checks
+    registerUser(email, password, username);
+  });
 });
+
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren
 async function verifyUser2(userid) {
