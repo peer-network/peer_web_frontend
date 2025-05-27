@@ -119,17 +119,20 @@ async function dailyfree() {
   }
 }
 function nextmint() {
-  const now = new Date();
-  const nextMintDate = getNext0930(); // Funktion aufrufen, um das nächste 09:30 zu erhalten
-  const dif = nextMintDate - now; // Differenz in Millisekunden
-  const seconds = Math.floor((dif / 1000) % 60);
-  document.getElementById("nextmintseconds").innerText = String(seconds).padStart(2, "0");
-  const minutes = Math.floor((dif / (1000 * 60)) % 60);
-  document.getElementById("nextmintminutes").innerText = String(minutes).padStart(2, "0");
-  const hours = Math.floor((dif / (1000 * 60 * 60)) % 24);
-  document.getElementById("nextminthours").innerText = String(hours).padStart(2, "0");
-  document.getElementById("nextminttime").innerText = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
-  document.getElementById("nextmintRadial").style.setProperty("--progress", percentageOfDayFromDates(now, nextMintDate));
+  const el = document.getElementById("nextmintseconds");
+  if (!el) {
+    const now = new Date();
+    const nextMintDate = getNext0930(); // Funktion aufrufen, um das nächste 09:30 zu erhalten
+    const dif = nextMintDate - now; // Differenz in Millisekunden
+    const seconds = Math.floor((dif / 1000) % 60);
+    document.getElementById("nextmintseconds").innerText = String(seconds).padStart(2, "0");
+    const minutes = Math.floor((dif / (1000 * 60)) % 60);
+    document.getElementById("nextmintminutes").innerText = String(minutes).padStart(2, "0");
+    const hours = Math.floor((dif / (1000 * 60 * 60)) % 24);
+    document.getElementById("nextminthours").innerText = String(hours).padStart(2, "0");
+    document.getElementById("nextminttime").innerText = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+    document.getElementById("nextmintRadial").style.setProperty("--progress", percentageOfDayFromDates(now, nextMintDate));
+  }
 }
 function percentageOfDayFromDates(startDate, endDate) {
   const diffMs = endDate - startDate;

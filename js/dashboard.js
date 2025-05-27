@@ -2563,59 +2563,59 @@ window.addEventListener("click", function (event) {
 
 
 // daily free actions
-  dailyfree();
-  async function dailyfree() {
-    const accessToken = getCookie("authToken");
+  // dailyfree();
+  // async function dailyfree() {
+  //   const accessToken = getCookie("authToken");
 
-    // Create headers
-    const headers = new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    });
+  //   // Create headers
+  //   const headers = new Headers({
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${accessToken}`,
+  //   });
 
-    // Define the GraphQL mutation with variables
-    const graphql = JSON.stringify({
-      query: `query getDailyFreeStatus {
-        getDailyFreeStatus {
-          status
-          ResponseCode
-          affectedRows {
-            name
-            used
-            available
-          }
-        }
-    }`,
-    });
+  //   // Define the GraphQL mutation with variables
+  //   const graphql = JSON.stringify({
+  //     query: `query getDailyFreeStatus {
+  //       getDailyFreeStatus {
+  //         status
+  //         ResponseCode
+  //         affectedRows {
+  //           name
+  //           used
+  //           available
+  //         }
+  //       }
+  //   }`,
+  //   });
 
-    // Define request options
-    const requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: graphql,
-      redirect: "follow",
-    };
+  //   // Define request options
+  //   const requestOptions = {
+  //     method: "POST",
+  //     headers: headers,
+  //     body: graphql,
+  //     redirect: "follow",
+  //   };
 
-    try {
-      // Send the request and handle the response
-      const response = await fetch(GraphGL, requestOptions);
-      const result = await response.json();
+  //   try {
+  //     // Send the request and handle the response
+  //     const response = await fetch(GraphGL, requestOptions);
+  //     const result = await response.json();
 
-      // Check for errors in response
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      if (result.errors) throw new Error(result.errors[0].message);
-      result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
-        document.getElementById(entry.name + "used").innerText = entry.used;
-        document.getElementById(entry.name + "available").innerText = entry.available;
-        const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
-        document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
-        console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
-      });
+  //     // Check for errors in response
+  //     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  //     if (result.errors) throw new Error(result.errors[0].message);
+  //     result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
+  //       document.getElementById(entry.name + "used").innerText = entry.used;
+  //       document.getElementById(entry.name + "available").innerText = entry.available;
+  //       const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
+  //       document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
+  //       console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+  //     });
 
-      return result.data.getDailyFreeStatus;
-    } catch (error) {
-      console.error("Error:", error.message);
-      throw error;
-    }
-  }
+  //     return result.data.getDailyFreeStatus;
+  //   } catch (error) {
+  //     console.error("Error:", error.message);
+  //     throw error;
+  //   }
+  // }
 });
