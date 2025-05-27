@@ -98,3 +98,29 @@ passwordField.addEventListener("input", function () {
 passwordField.addEventListener("focus", function () {
   passwordField.parentElement.classList.remove("valid", "invalid");
 });
+
+
+function showRegisterConfirmationModal(onConfirmCallback) {
+  const modal = document.getElementById("modalOverlay");
+  const confirmBtn = document.getElementById("confirmSubmit");
+  const botCheckbox = document.getElementById("notBot");
+  const ageCheckbox = document.getElementById("ageCheck");
+
+  // Show modal
+  modal.classList.remove("none");
+
+  // Remove previous event listener (if any)
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+  newConfirmBtn.addEventListener("click", function () {
+    if (!botCheckbox.checked || !ageCheckbox.checked) {
+      info("Please confirm that you are not a bot and that you are at least 18+ years old.");
+      return;
+    }
+
+    modal.classList.add("none"); // Hide modal
+    onConfirmCallback(); // Proceed with registration
+  });
+}
+

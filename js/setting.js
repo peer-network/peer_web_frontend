@@ -707,5 +707,31 @@ async function sendUpdateBio(biography) {
     }
 }
 
+// logout functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const logOutBtn = document.getElementById("logOut");
+  const modalOverlay = document.getElementById("modalOverlay");
+  const cancelLogoutBtn = document.getElementById("cancelLogoutBtn");
+  const confirmLogoutBtn = document.getElementById("confirmLogoutBtn");
+
+
+  logOutBtn.addEventListener("click", function (event) {
+    event.preventDefault(); 
+    modalOverlay.classList.remove("none"); 
+  });
+
+ 
+  cancelLogoutBtn.addEventListener("click", function () {
+    modalOverlay.classList.add("none");
+  });
+
+  // Confirm button redirects to login
+  confirmLogoutBtn.addEventListener("click", function () {
+    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = "login.php"; 
+  });
+});
+
+
 
 

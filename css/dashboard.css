@@ -1123,6 +1123,10 @@ h1 {
   aspect-ratio: 3/4.34;
   flex-grow: 1;
 }
+.card[content="text"] {
+  aspect-ratio: 3/4.34;
+  flex-grow: 1;
+}
 /* .card[content="video"]::before {
   content: url("../svg/video.svg");
   position: absolute;

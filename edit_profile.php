@@ -88,8 +88,21 @@ include 'host.php';
                                 <a id="changeEmailbtn" href="#" class="button change-email-btn btn-style-transparent">Change e-mail</a>
                             </div>
                             <div class="logout-deactivate-buttons">
-                                <a href="#" class="button change-pass-btn full-width-btn btn-style-red-border">Deactivate profile</a>
-                                <a href="#" class="button change-email-btn full-width-btn btn-style-red-border">Log out</a>
+                                <a href="#" id="logOut" class="button change-email-btn full-width-btn btn-style-red-border">
+                                    Log Out
+                                    <img src="svg/logOut.svg" alt="">
+                                </a>
+                                <div id="modalOverlay" class="modal-overlay none">
+                                    <div class="logOut-pop" id="logOutPop">
+                                        <img src="svg/error.svg" alt="">
+                                        <p>Are you sure you want to log out?</p>
+                                        <div class="button-row">
+                                            <button id="cancelLogoutBtn" class="btn-style-transparent">Cancel</button>
+                                            <button id="confirmLogoutBtn" class="btn-style-blue">Yes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" id="deactivateProfile" class="button change-pass-btn full-width-btn btn-style-red-border">Deactivate profile</a>
                             </div>
 
                         </div>
