@@ -697,26 +697,6 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ query })
       });
 
-      // userInput.addEventListener("focus", async () => {
-      //   const json = await response.json();
-      //   users = json?.data?.searchUser?.affectedRows || [];
-      //   const dropdown = document.getElementById("userDropdown");
-
-      //   dropdown.innerHTML = "";
-      //   dropdown.style.display = users.length ? "block" : "none";
-
-      //   users.forEach(user => {
-      //     const item = document.createElement("div");
-      //     item.className = "dropdown-item";
-      //     item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
-      //     item.addEventListener("click", () => {
-      //       loadUserProfile(user.username);
-      //       dropdown.style.display = "none";
-      //     });
-      //     dropdown.appendChild(item);
-      //   });
-      // });
-
 
       const json = await response.json();
       const users = json?.data?.searchUser?.affectedRows || [];
@@ -740,7 +720,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         item.addEventListener("click", () => {
-          loadUserProfile(user.username);
+          document.cookie = `userID=${user.id}; path=/; secure; SameSite=Strict`;
+          window.location.href = `/profile/${user.username}`;
           dropdown.classList.add("none");
         });
         dropdown.appendChild(item);
@@ -751,59 +732,8 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error searching users:", error);
       return [];
     }
-
-    function loadUserProfile(username) {
-      window.location.href = `/profile/${username}`;
-    }
   }
   
-
-  async function getProfile(userID) {
-    const accessToken = getCookie("authToken");
-
-    const query = `
-      query GetProfile {
-        getProfile (userID: "${userID}") {
-          status
-          ResponseCode
-          affectedRows {
-              id
-              username
-              status
-              slug
-              img
-              biography
-              isfollowed
-              isfollowing
-              amountposts
-              amounttrending
-              amountfollowed
-              amountfollower
-              amountfriends
-              amountblocked
-          }
-        }
-      }
-    `;
-
-    try {
-      const response = await fetch(GraphGL,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ query })
-      });
-
-      const json = await response.json();
-      return json?.data?.getProfile || null;
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      return null;
-    }
-  }
-
 
   // Function to search for tags via GraphQL
   // async function listTags() {

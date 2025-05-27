@@ -1,15 +1,10 @@
-window.listPosts = async function getPosts(tagName) {
-  console.log("Fetching posts for tag:", tagName);
-
-  // Your GraphQL or fetch logic here...
-};
+const post = 2;
+const like = 0;
+const dislike = 3;
+const comment = 1;
+const accessToken = getCookie("authToken");
 
 async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID=null) {
-  const post = 2;
-  const like = 0;
-  const dislike = 3;
-  const comment = 1;
-  const accessToken = getCookie("authToken");
 
   // Create headers
   const headers = new Headers({

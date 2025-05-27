@@ -9,15 +9,6 @@
 <div class="chat-list">
 
     <div class="top-bar">
-        <!-- Search Bar -->
-        <div class="search-container">
-            <input type="text" placeholder=" " class="input title" />
-            <div class="starter-placeholders">
-                <span>@username</span>
-                <span>Title</span>
-                <img class="searchbtn" src="svg/lupe.svg" alt="Search" />
-            </div>
-        </div>
 
         <div class="chat-switch">
             <button id="privateBtn" data-type="private" class="tab">Private</button>

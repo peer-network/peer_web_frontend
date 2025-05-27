@@ -1,4 +1,9 @@
-
+.chat-main {
+  padding: 0 !important;
+  margin-top: -3rem !important;
+  overflow: hidden !important;
+  scroll-snap-type: none !important;
+}
 
 .main-content {
   height: 100%;
@@ -23,10 +28,33 @@
   position: relative;
 }
 
+.dash h1 {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .sidebar_chats {
   position: absolute;
   bottom: 20px;
 }
+
+.search-group input[placeholder="@username"] {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#searchGroup {
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.lupe {
+  filter: opacity(50%);
+}
+
+#searchUser {
+  border: none;
+  background-color: transparent;
+}
+
 
 /* ====== Chat Area ====== */
 .chat-content-area {
@@ -55,7 +83,7 @@
 
 .active-chat {
   background-color: var(--bg-filter);
-  border-radius: 3rem 0 0 3rem;
+  border-radius: 1.5rem;
 }
 
 /* ====== Avatar ====== */
@@ -469,13 +497,12 @@
 
 /* ====== Chat Container Box ====== */
 .chat-container {
-  height: 100dvh;
   display: inline-block;
   background: var(--background-color);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 0 20px var(--shadow-add);
   width: 63%;
+  height: 100%;
   position: relative;
 }
 
@@ -489,6 +516,7 @@
   padding: 12px 16px;
   font-weight: bold;
   color: var(--text-color);
+  width: 100%;
 }
 
 .chat-header .avatar {

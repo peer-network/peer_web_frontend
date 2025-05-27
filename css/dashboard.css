@@ -131,9 +131,7 @@ h1 {
 
 .profil {
   grid-area: profil;
-  gap: 20px;
   /* scroll-snap-type: y mandatory; */
-  padding-top: 3rem;
   right: 0;
 }
 
@@ -821,12 +819,12 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 #profil-container {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1vw;
 }
 
 .menu-item {
@@ -834,7 +832,7 @@ h1 {
   align-items: center;
   background-color: var(--background-color);
   border-radius: 2.5rem;
-  padding: 1.1rem;
+  padding: .9rem;
   width: 100%;
   position: relative;
   border: 2px solid transparent;
