@@ -420,7 +420,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // document.getElementById("commentInput").focus();
       // createComment(attributeValue, "test");
     });
-
   }
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -454,7 +453,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Footer element not found — cannot observe.");
   }
 
-
   function isStringLargerThanMB(str, mb) {
     const byteSize = new TextEncoder().encode(str).length;
     const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
@@ -475,32 +473,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const createPostNotes = document.getElementById("createPostNotes");
   if (createPostNotes) {
     createPostNotes.addEventListener("click", async function createPost(event) {
-    event.preventDefault(); // Prevent form reload
-    const title = document.getElementById("titleNotes").value;
-    const textareaValue = document.getElementById("descriptionNotes").value;
-    const encoder = new TextEncoder();
-    const encodedData = encoder.encode(textareaValue);
-    const base64String = btoa(String.fromCharCode(...encodedData));
-    const base64WithMime = [`data:text/plain;base64,${base64String}`];
-    const tags = tag_getTagArray();
+      event.preventDefault(); // Prevent form reload
+      const title = document.getElementById("titleNotes").value;
+      const textareaValue = document.getElementById("descriptionNotes").value;
+      const encoder = new TextEncoder();
+      const encodedData = encoder.encode(textareaValue);
+      const base64String = btoa(String.fromCharCode(...encodedData));
+      const base64WithMime = [`data:text/plain;base64,${base64String}`];
+      const tags = tag_getTagArray();
 
-    const gesamtLaenge = base64WithMime.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-    const maxBytes = 4 * 1024 * 1024;
-    if (gesamtLaenge > maxBytes) {
-      Merror("Error", "The text is too large. Please upload a smaller text.");
-      return;
-    }
-    if (
-      await sendCreatePost({
-        title: title,
-        media: base64WithMime,
-        contenttype: "text",
-        tags: tags,
-      })
-    ) {
-      togglePopup("addPost");
-      location.reload();
-    }
+      const gesamtLaenge = base64WithMime.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
+      const maxBytes = 4 * 1024 * 1024;
+      if (gesamtLaenge > maxBytes) {
+        Merror("Error", "The text is too large. Please upload a smaller text.");
+        return;
+      }
+      if (
+        await sendCreatePost({
+          title: title,
+          media: base64WithMime,
+          contenttype: "text",
+          tags: tags,
+        })
+      ) {
+        togglePopup("addPost");
+        location.reload();
+      }
     });
   }
 
@@ -664,7 +662,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("searchUser");
   const lupe = document.querySelector(".lupe");
   const avatar = "https://media.getpeer.eu";
-  
+
   // Function to search for users via GraphQL
   async function searchUsers(username) {
     // let users
@@ -692,9 +690,9 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query }),
       });
 
       // userInput.addEventListener("focus", async () => {
@@ -717,7 +715,6 @@ document.addEventListener("DOMContentLoaded", () => {
       //   });
       // });
 
-
       const json = await response.json();
       const users = json?.data?.searchUser?.affectedRows || [];
 
@@ -729,11 +726,11 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.classList.add("none");
       }
 
-      users.forEach(user => {
+      users.forEach((user) => {
         const item = document.createElement("div");
         item.className = "dropdown-item";
         item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
-        
+
         const img = item.querySelector("img");
         img.onerror = function () {
           this.src = "svg/noname.svg";
@@ -756,7 +753,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = `/profile/${username}`;
     }
   }
-  
 
   async function getProfile(userID) {
     const accessToken = getCookie("authToken");
@@ -787,13 +783,13 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     try {
-      const response = await fetch(GraphGL,{
+      const response = await fetch(GraphGL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query }),
       });
 
       const json = await response.json();
@@ -804,22 +800,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-
   // Function to search for tags via GraphQL
   // async function listTags() {
   //   const accessToken = getCookie("authToken");
-    // const query = `
-    //   query ListTags {
-    //     listTags(offset: 0, limit: 20) {
-    //       status
-    //       counter
-    //       ResponseCode
-    //       affectedRows {
-    //         name
-    //       }
-    //     }
-    //   }
-    // `;
+  // const query = `
+  //   query ListTags {
+  //     listTags(offset: 0, limit: 20) {
+  //       status
+  //       counter
+  //       ResponseCode
+  //       affectedRows {
+  //         name
+  //       }
+  //     }
+  //   }
+  // `;
 
   //   try {
   //     const response = await fetch(GraphGL, {
@@ -841,9 +836,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // }
 
-  
-
-
   // if (tagInput) {
   //   tagInput.addEventListener("input", () => {
   //     let query = tagInput.value.trim();
@@ -861,7 +853,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //   const accessToken = getCookie("authToken");
   //   // console.log("Tag search result:", postsList);
 
-
   //   const query = `
   //     query searchTags ($postsList: String!) {
   //       searchTags(tagName: $postsList, limit: 10) {
@@ -870,13 +861,12 @@ document.addEventListener("DOMContentLoaded", () => {
   //         ResponseCode
   //         affectedRows {
   //           name
-            
+
   //         }
   //       }
   //     }
   //  `;
 
-   
   //   const variables = { postsList };
   //   try {
   //     const response = await fetch(GraphGL,{
@@ -895,7 +885,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //     console.error("Error searching tags:", error);
   //   }
   // }
-  
 
   // const tagDropdown = document.getElementById("tagDropdown");
   // function displayTags(tags) {
@@ -959,7 +948,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //   postsLaden();
   // }
 
-
   // Main applyFilters function
   async function applyFilters() {
     // const titleValue = titleInput.value.trim().toLowerCase();
@@ -975,13 +963,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // localStorage.setItem("searchTag", tagValue);
     localStorage.setItem("searchUser", userValue);
   }
-  
 
   // Add input listeners
   if (userInput) {
-    [ userInput].forEach((input) =>
-      input.addEventListener("input", applyFilters)
-    );
+    [userInput].forEach((input) => input.addEventListener("input", applyFilters));
   }
 
   // Trigger on click
@@ -991,70 +976,66 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchgroup = document.getElementById("searchGroup");
   if (searchgroup) {
     const pulldown = searchgroup.querySelectorAll(".dropdown");
-      searchgroup.addEventListener("mouseleave", () => {
-        pulldown.forEach((item) => {
-          item.classList.add("none");
-        });
+    searchgroup.addEventListener("mouseleave", () => {
+      pulldown.forEach((item) => {
+        item.classList.add("none");
       });
+    });
   }
 
-  
-
-    
-
   const textsearch = document.getElementById("searchGroup");
-  textsearch.addEventListener("input", () => {
-    const { normalWords } = extractWords(titleInput.value.toLowerCase());
-    const { hashtags } = extractWords(tagInput.value.toLowerCase());
+  if (textsearch) {
+    textsearch.addEventListener("input", () => {
+      const { normalWords } = extractWords(titleInput.value.toLowerCase());
+      const { hashtags } = extractWords(tagInput.value.toLowerCase());
 
-    const parentElements = document.querySelectorAll(".card");
+      const parentElements = document.querySelectorAll(".card");
 
-    parentElements.forEach((element) => {
-      const h1 = element.querySelector("h1");
-      const tagAttr = element.getAttribute("tags");
-      const tags = tagAttr ? tagAttr.split(",").map(t => t.toLowerCase()) : [];
+      parentElements.forEach((element) => {
+        const h1 = element.querySelector("h1");
+        const tagAttr = element.getAttribute("tags");
+        const tags = tagAttr ? tagAttr.split(",").map((t) => t.toLowerCase()) : [];
 
-      const isTitle = !normalWords.length || normalWords.some((word) =>
-        h1.innerText.toLowerCase().includes(word)
-      );
+        const isTitle = !normalWords.length || normalWords.some((word) => h1.innerText.toLowerCase().includes(word));
 
-      // Force exact match for hashtags
-      const isTag = !hashtags.length || hashtags.every((hashtag) =>
-        tags.includes(hashtag.replace(/^#/, ""))
-      );
+        // Force exact match for hashtags
+        const isTag = !hashtags.length || hashtags.every((hashtag) => tags.includes(hashtag.replace(/^#/, "")));
 
-      if (isTitle && isTag) {
-        element.classList.remove("none");
-      } else {
-        element.classList.add("none");
-      }
+        if (isTitle && isTag) {
+          element.classList.remove("none");
+        } else {
+          element.classList.add("none");
+        }
+      });
+
+      localStorage.setItem("searchTitle", titleInput.value);
+      localStorage.setItem("searchTag", tagInput.value);
+
+      postsLaden(); // server-side fetch
     });
-
-    localStorage.setItem("searchTitle", titleInput.value);
-    localStorage.setItem("searchTag", tagInput.value);
-
-    postsLaden(); // server-side fetch
-  });
+  }
 
   const checkboxes = document.querySelectorAll("#filter .filteritem");
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", (event) => {
-      saveFilterSettings();
-      const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
-      if (event.target.checked) {
-        elements.forEach((element) => {
-          element.classList.remove("none");
-        });
-        // console.log(`${event.target.name} wurde aktiviert.`);
-      } else {
-        elements.forEach((element) => {
-          element.classList.add("none");
-        });
-        // console.log(`${event.target.name} wurde deaktiviert.`);
-      }
-      location.reload();
+  if (checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        saveFilterSettings();
+        const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
+        if (event.target.checked) {
+          elements.forEach((element) => {
+            element.classList.remove("none");
+          });
+          // console.log(`${event.target.name} wurde aktiviert.`);
+        } else {
+          elements.forEach((element) => {
+            element.classList.add("none");
+          });
+          // console.log(`${event.target.name} wurde deaktiviert.`);
+        }
+        location.reload();
+      });
     });
-  });
+  }
   const radio = document.querySelectorAll("#filter .chkMost");
   radio.forEach((item) => {
     let lastSelected = null;
@@ -1196,7 +1177,7 @@ document.addEventListener("DOMContentLoaded", () => {
   zones.forEach(({ dropArea, fileInput }) => {
     // Click-Event für das Öffnen des Dateidialogs
     if (dropArea) {
-    dropArea.addEventListener("click", () => handleClick(fileInput));
+      dropArea.addEventListener("click", () => handleClick(fileInput));
     }
 
     // Drag-and-Drop-Events
@@ -1205,7 +1186,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dropArea.addEventListener("dragleave", () => handleDragLeave(dropArea));
       dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
     }
-      // File-Input-Change-Event
+    // File-Input-Change-Event
     if (fileInput) {
       fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
     }
@@ -1230,7 +1211,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //     const files = Array.from(e.dataTransfer.files);
   //     if (files.length > 0) {
-  //       processFiles(files); 
+  //       processFiles(files);
   //     }
   //   });
 
@@ -1384,8 +1365,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // if (searchTag) {
     //   const { hashtags } = extractWords(searchTag.value.toLowerCase());
     // }
-    
-   
+
     let titleInput = "";
     let tags = "";
     const tagElement = document.getElementById("searchTag");
@@ -1563,13 +1543,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const variables = { userid };
 
         try {
-          const response = await fetch(GraphGL,{
+          const response = await fetch(GraphGL, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`
+              Authorization: `Bearer ${accessToken}`,
             },
-            body: JSON.stringify({ query, variables })
+            body: JSON.stringify({ query, variables }),
           });
 
           const result = await response.json();
@@ -1590,7 +1570,7 @@ document.addEventListener("DOMContentLoaded", () => {
       followButton.classList.add("follow-button");
       if (objekt.user.isfollowed) {
         followButton.classList.add("following");
-        followButton.textContent = "Following"; 
+        followButton.textContent = "Following";
       } else {
         followButton.textContent = "Follow +";
       }
@@ -1933,147 +1913,147 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-// let isDragging = false;
-// let startX = 0;
-// let startY = 0;
-// let offsetX = 0;
-// let offsetY = 0;
-// let scale = 1;
-// let dragimg;
+  // let isDragging = false;
+  // let startX = 0;
+  // let startY = 0;
+  // let offsetX = 0;
+  // let offsetY = 0;
+  // let scale = 1;
+  // let dragimg;
 
-// function setCSSVariables() {
-//   dragimg.style.setProperty("--translate-x", `${offsetX}px`);
-//   dragimg.style.setProperty("--translate-y", `${offsetY}px`);
-//   dragimg.style.setProperty("--scale", scale);
-// }
-// function getAbsolutePosition(element) {
-//   const rect = element.getBoundingClientRect();
-//   const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
-//   const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  // function setCSSVariables() {
+  //   dragimg.style.setProperty("--translate-x", `${offsetX}px`);
+  //   dragimg.style.setProperty("--translate-y", `${offsetY}px`);
+  //   dragimg.style.setProperty("--scale", scale);
+  // }
+  // function getAbsolutePosition(element) {
+  //   const rect = element.getBoundingClientRect();
+  //   const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+  //   const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
-//   return {
-//     top: rect.top + scrollTop,
-//     left: rect.left + scrollLeft,
-//   };
-// }
-// function getAbsolutePosition2(element) {
-//   let x = 0,
-//     y = 0;
+  //   return {
+  //     top: rect.top + scrollTop,
+  //     left: rect.left + scrollLeft,
+  //   };
+  // }
+  // function getAbsolutePosition2(element) {
+  //   let x = 0,
+  //     y = 0;
 
-//   while (element) {
-//     // Addiere die Position relativ zum Eltern-Element
-//     x += element.offsetLeft - element.scrollLeft + element.clientLeft;
-//     y += element.offsetTop - element.scrollTop + element.clientTop;
+  //   while (element) {
+  //     // Addiere die Position relativ zum Eltern-Element
+  //     x += element.offsetLeft - element.scrollLeft + element.clientLeft;
+  //     y += element.offsetTop - element.scrollTop + element.clientTop;
 
-//     // Wechsle zum übergeordneten Element
-//     element = element.offsetParent;
-//   }
+  //     // Wechsle zum übergeordneten Element
+  //     element = element.offsetParent;
+  //   }
 
-//   return { x, y };
-// }
+  //   return { x, y };
+  // }
 
-// function extractFromGrid() {
-//   const rect = dragimg.getBoundingClientRect();
-//   startX = rect.left;
-//   startY = rect.top;
-//   offsetX = 0;
-//   offsetY = 0;
-//   scale = 1;
-//   // dragimg.style.setProperty("--left", `${rect.left}px`);
-//   // dragimg.style.setProperty("--top", `${rect.top}px`);
-//   dragimg.style.setProperty("--translate-x", `${offsetX}px`);
-//   dragimg.style.setProperty("--translate-y", `${offsetY}px`);
-//   dragimg.style.setProperty("--scale", scale);
-//   // dragimg.classList.add("absolute");
-// }
-// function showImg(img) {
-//   dragimg = img;
-//   extractFromGrid();
+  // function extractFromGrid() {
+  //   const rect = dragimg.getBoundingClientRect();
+  //   startX = rect.left;
+  //   startY = rect.top;
+  //   offsetX = 0;
+  //   offsetY = 0;
+  //   scale = 1;
+  //   // dragimg.style.setProperty("--left", `${rect.left}px`);
+  //   // dragimg.style.setProperty("--top", `${rect.top}px`);
+  //   dragimg.style.setProperty("--translate-x", `${offsetX}px`);
+  //   dragimg.style.setProperty("--translate-y", `${offsetY}px`);
+  //   dragimg.style.setProperty("--scale", scale);
+  //   // dragimg.classList.add("absolute");
+  // }
+  // function showImg(img) {
+  //   dragimg = img;
+  //   extractFromGrid();
 
-//   dragimg.addEventListener("mousedown", (e) => {
-//     isDragging = true;
-//     startX = e.clientX;
-//     startY = e.clientY;
-//     dragimg.style.cursor = "grabbing";
-//   });
+  //   dragimg.addEventListener("mousedown", (e) => {
+  //     isDragging = true;
+  //     startX = e.clientX;
+  //     startY = e.clientY;
+  //     dragimg.style.cursor = "grabbing";
+  //   });
 
-//   document.addEventListener("mousemove", (e) => {
-//     if (!isDragging) return;
+  //   document.addEventListener("mousemove", (e) => {
+  //     if (!isDragging) return;
 
-//     offsetX = e.clientX - startX;
-//     offsetY = e.clientY - startY;
-//     dragimg.style.setProperty("--translate-x", `${offsetX}px`);
-//     dragimg.style.setProperty("--translate-y", `${offsetY}px`);
-//   });
+  //     offsetX = e.clientX - startX;
+  //     offsetY = e.clientY - startY;
+  //     dragimg.style.setProperty("--translate-x", `${offsetX}px`);
+  //     dragimg.style.setProperty("--translate-y", `${offsetY}px`);
+  //   });
 
-//   document.addEventListener("mouseup", () => {
-//     isDragging = false;
-//     dragimg.style.cursor = "grab";
-//   });
-//   dragimg.addEventListener("wheel", (e) => {
-//     e.preventDefault();
+  //   document.addEventListener("mouseup", () => {
+  //     isDragging = false;
+  //     dragimg.style.cursor = "grab";
+  //   });
+  //   dragimg.addEventListener("wheel", (e) => {
+  //     e.preventDefault();
 
-//     const zoomIntensity = 0.01;
-//     const rect = dragimg.getBoundingClientRect();
+  //     const zoomIntensity = 0.01;
+  //     const rect = dragimg.getBoundingClientRect();
 
-//     // Aktuelle Mausposition relativ zum Bild
-//     const mouseX = e.clientX - rect.left;
-//     const mouseY = e.clientY - rect.top;
+  //     // Aktuelle Mausposition relativ zum Bild
+  //     const mouseX = e.clientX - rect.left;
+  //     const mouseY = e.clientY - rect.top;
 
-//     // Berechnung von transform-origin basierend auf Mausposition
-//     const originX = (mouseX / rect.width) * 100;
-//     const originY = (mouseY / rect.height) * 100;
+  //     // Berechnung von transform-origin basierend auf Mausposition
+  //     const originX = (mouseX / rect.width) * 100;
+  //     const originY = (mouseY / rect.height) * 100;
 
-//     dragimg.style.setProperty("--transform-origin-x", `${originX}%`);
-//     dragimg.style.setProperty("--transform-origin-y", `${originY}%`);
+  //     dragimg.style.setProperty("--transform-origin-x", `${originX}%`);
+  //     dragimg.style.setProperty("--transform-origin-y", `${originY}%`);
 
-//     // Zoom anpassen
-//     scale += e.deltaY > 0 ? -zoomIntensity : zoomIntensity;
-//     scale = Math.min(Math.max(scale, 0.5), 3); // Begrenzung des Zooms
-//     dragimg.style.setProperty("--scale", scale);
-//   });
-// }
+  //     // Zoom anpassen
+  //     scale += e.deltaY > 0 ? -zoomIntensity : zoomIntensity;
+  //     scale = Math.min(Math.max(scale, 0.5), 3); // Begrenzung des Zooms
+  //     dragimg.style.setProperty("--scale", scale);
+  //   });
+  // }
 
-// // Beispiel:
-// const element = document.querySelector("#comment-img-container");
-// const position = getAbsolutePosition(element);
-// console.log("Absolute Position:", position);
+  // // Beispiel:
+  // const element = document.querySelector("#comment-img-container");
+  // const position = getAbsolutePosition(element);
+  // console.log("Absolute Position:", position);
 
-// postsLaden();
-// Das Footer-Element auswählen
+  // postsLaden();
+  // Das Footer-Element auswählen
 
   const header = document.getElementById("header");
-// let lastScrollPosition = 0;
+  // let lastScrollPosition = 0;
 
-// function handleScroll() {
-//   const main = document.getElementById("main");
-//   // Überprüfen, ob die Bildschirmbreite die Bedingung erfüllt
-//   if (window.innerWidth < 1200) {
-//     // Beispiel: Nur auf größeren Bildschirmen
-//     const currentScrollPosition = main.scrollY;
+  // function handleScroll() {
+  //   const main = document.getElementById("main");
+  //   // Überprüfen, ob die Bildschirmbreite die Bedingung erfüllt
+  //   if (window.innerWidth < 1200) {
+  //     // Beispiel: Nur auf größeren Bildschirmen
+  //     const currentScrollPosition = main.scrollY;
 
-//     // Header aus dem Viewport scrollen lassen
-//     if (currentScrollPosition > lastScrollPosition) {
-//       // Runterscrollen: Header verschwindet
-//       header.style.top = `-${header.offsetHeight}px`;
-//     } else {
-//       // Hochscrollen: Header erscheint wieder
-//       header.style.top = "0";
-//     }
+  //     // Header aus dem Viewport scrollen lassen
+  //     if (currentScrollPosition > lastScrollPosition) {
+  //       // Runterscrollen: Header verschwindet
+  //       header.style.top = `-${header.offsetHeight}px`;
+  //     } else {
+  //       // Hochscrollen: Header erscheint wieder
+  //       header.style.top = "0";
+  //     }
 
-//     // Aktuelle Scroll-Position speichern
-//     lastScrollPosition = currentScrollPosition;
-//   } else {
-//     // Auf kleinen Bildschirmen: Header bleibt sichtbar
-//     header.style.top = "0";
-//   }
-// }
+  //     // Aktuelle Scroll-Position speichern
+  //     lastScrollPosition = currentScrollPosition;
+  //   } else {
+  //     // Auf kleinen Bildschirmen: Header bleibt sichtbar
+  //     header.style.top = "0";
+  //   }
+  // }
 
-// const main = document.getElementById("main");
-// // Scroll-Event-Listener hinzufügen
-// main.addEventListener("scroll", handleScroll);
+  // const main = document.getElementById("main");
+  // // Scroll-Event-Listener hinzufügen
+  // main.addEventListener("scroll", handleScroll);
 
-// Responsiveness: Prüfen bei Fensteränderungen
+  // Responsiveness: Prüfen bei Fensteränderungen
 
   async function processFiles(files, id) {
     const lastDashIndex = id.lastIndexOf("-");
@@ -2162,7 +2142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-// Funktion, die dem Element den Event-Listener hinzufügt
+  // Funktion, die dem Element den Event-Listener hinzufügt
   function addDeleteListener(element) {
     // Entfernt eventuelle alte Event-Listener, indem eine benannte Funktion verwendet wird
     element.removeEventListener("click", handleDelete);
@@ -2171,7 +2151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     element.addEventListener("click", handleDelete);
   }
 
-// Die Funktion, die beim Event aufgerufen wird
+  // Die Funktion, die beim Event aufgerufen wird
   function handleDelete(event) {
     event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
     // console.log("Post löschen:", event.target);
@@ -2218,21 +2198,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-async function fetchTags(searchStr) {
-  // if (failedSearches.has(searchStr)) {
-  //   return [];
-  // }
-  for (let failed of failedSearches) {
-    if (searchStr.includes(failed)) {
-      return [];
+  async function fetchTags(searchStr) {
+    // if (failedSearches.has(searchStr)) {
+    //   return [];
+    // }
+    for (let failed of failedSearches) {
+      if (searchStr.includes(failed)) {
+        return [];
+      }
     }
-  }
-  const accessToken = getCookie("authToken");
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-  const query = `
+    const accessToken = getCookie("authToken");
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    });
+    const query = `
       query Tagsearch($searchStr: String!) {
           searchTags(tagname: $searchStr, limit: 10) {
               status
@@ -2245,155 +2225,154 @@ async function fetchTags(searchStr) {
       }
   `;
 
-  const variables = { postsList: searchStr };
+    const variables = { postsList: searchStr };
 
-  try {
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({ query, variables }),
-    });
-
-    const result = await response.json();
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.searchTags.affectedRows.length) {
-      failedSearches.add(searchStr);
-    }
-    return result.data.searchTags.affectedRows;
-  } catch (error) {
-    // console.error("Error fetching tags:", error);
-    return [];
-  }
-}  
-
-const failedSearches = new Set();
-// const tagInput = document.getElementById("searchTag");
-const tagContainer = document.getElementById("tagsContainer");
-const dropdownMenu = document.getElementById("dropdownMenu");
-if (tagInput) {
-  tagInput.addEventListener("input", async function () {
-    let searchStr = tagInput.value.trim();
-    
-    // Require # prefix
-    if (!searchStr.startsWith("#")) {
-      dropdownMenu.innerHTML = "";
-      dropdownMenu.classList.add("none");
-      return;
-    }
-
-    // Strip the #
-    searchStr = searchStr.slice(1);
-
-    if (searchStr.length < 3) {
-      dropdownMenu.innerHTML = "";
-      dropdownMenu.classList.add("none");
-      return;
-    }
-
-    const tags = await fetchTags(searchStr);
-    dropdownMenu.innerHTML = "";
-    if (!tags.length) {
-      dropdownMenu.classList.add("none");
-      return;
-    }
-
-    tags.forEach((tag) => {
-      const option = document.createElement("div");
-      option.textContent = `#${tag.name}`;
-      option.classList.add("dropdown-item");
-
-      option.addEventListener("click", () => {
-        tagInput.value = `#${tag.name}`;
-        localStorage.setItem("searchTag", tag.name); // Save tag without #
-        dropdownMenu.classList.add("none");
-        postsLaden(); // Trigger post reload with filter
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({ query, variables }),
       });
 
-      dropdownMenu.appendChild(option);
-    });
+      const result = await response.json();
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (result.errors) throw new Error(result.errors[0]);
+      if (!result.data.searchTags.affectedRows.length) {
+        failedSearches.add(searchStr);
+      }
+      return result.data.searchTags.affectedRows;
+    } catch (error) {
+      // console.error("Error fetching tags:", error);
+      return [];
+    }
+  }
 
-    dropdownMenu.classList.remove("none");
-  });
-}else {
+  const failedSearches = new Set();
+  // const tagInput = document.getElementById("searchTag");
+  const tagContainer = document.getElementById("tagsContainer");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  if (tagInput) {
+    tagInput.addEventListener("input", async function () {
+      let searchStr = tagInput.value.trim();
+
+      // Require # prefix
+      if (!searchStr.startsWith("#")) {
+        dropdownMenu.innerHTML = "";
+        dropdownMenu.classList.add("none");
+        return;
+      }
+
+      // Strip the #
+      searchStr = searchStr.slice(1);
+
+      if (searchStr.length < 3) {
+        dropdownMenu.innerHTML = "";
+        dropdownMenu.classList.add("none");
+        return;
+      }
+
+      const tags = await fetchTags(searchStr);
+      dropdownMenu.innerHTML = "";
+      if (!tags.length) {
+        dropdownMenu.classList.add("none");
+        return;
+      }
+
+      tags.forEach((tag) => {
+        const option = document.createElement("div");
+        option.textContent = `#${tag.name}`;
+        option.classList.add("dropdown-item");
+
+        option.addEventListener("click", () => {
+          tagInput.value = `#${tag.name}`;
+          localStorage.setItem("searchTag", tag.name); // Save tag without #
+          dropdownMenu.classList.add("none");
+          postsLaden(); // Trigger post reload with filter
+        });
+
+        dropdownMenu.appendChild(option);
+      });
+
+      dropdownMenu.classList.remove("none");
+    });
+  } else {
     info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
     return;
   }
 
-
-if (tagInput) {
-  tagInput.addEventListener("keypress", function (event) {
-    if (event.key === "Enter" && tagInput.value.trim() !== "") {
-      if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-        tag_addTag(tagInput.value.trim());
-        tagInput.value = "";
-      } else {
-        info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+  if (tagInput) {
+    tagInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter" && tagInput.value.trim() !== "") {
+        if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+          tag_addTag(tagInput.value.trim());
+          tagInput.value = "";
+        } else {
+          info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+        }
       }
+    });
+  }
+
+  window.addEventListener("click", function (event) {
+    if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+      dropdownMenu.classList.remove("show");
     }
   });
-}
+  ////////////// Tag-System
+  // const tag_input = document.getElementById("tag-input");
+  // const tagContainer = document.getElementById("tagsContainer");
+  // const tag_createButton = document.getElementById("tagCreate");
 
-window.addEventListener("click", function (event) {
-  if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
-    dropdownMenu.classList.remove("show");
-  }
-});
-////////////// Tag-System
-// const tag_input = document.getElementById("tag-input");
-// const tagContainer = document.getElementById("tagsContainer");
-// const tag_createButton = document.getElementById("tagCreate");
+  // tag_input.addEventListener("keypress", function (event) {
+  //   if (event.key === "Enter" && tag_input.value.trim() !== "") {
+  //     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
+  //       tag_addTag(tag_input.value.trim());
+  //       tag_input.value = "";
+  //     } else {
+  //       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+  //     }
+  //   }
+  // });
+  // async function fetchTags(searchStr) {
+  //   const query = `
+  //       query Tagsearch($searchstr: String!) {
+  //           tagsearch(tagname: $searchstr, limit: 20) {
+  //               status
+  //               counter
+  //               ResponseCode
+  //               affectedRows
+  //           }
+  //       }
+  //   `;
 
-// tag_input.addEventListener("keypress", function (event) {
-//   if (event.key === "Enter" && tag_input.value.trim() !== "") {
-//     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
-//       tag_addTag(tag_input.value.trim());
-//       tag_input.value = "";
-//     } else {
-//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-//     }
-//   }
-// });
-// async function fetchTags(searchStr) {
-//   const query = `
-//       query Tagsearch($searchstr: String!) {
-//           tagsearch(tagname: $searchstr, limit: 20) {
-//               status
-//               counter
-//               ResponseCode
-//               affectedRows
-//           }
-//       }
-//   `;
+  //   const variables = { searchstr: searchStr };
 
-//   const variables = { searchstr: searchStr };
+  //   try {
+  //     const response = await fetch("YOUR_GRAPHQL_ENDPOINT", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ query, variables }),
+  //     });
 
-//   try {
-//     const response = await fetch("YOUR_GRAPHQL_ENDPOINT", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ query, variables }),
-//     });
-
-//     const result = await response.json();
-//     return result.data.tagsearch;
-//   } catch (error) {
-//     console.error("Error fetching tags:", error);
-//     return [];
-//   }
-// }
-// tag_createButton.addEventListener("click", function () {
-//   if (tag_input.value.trim() !== "") {
-//     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
-//       tag_addTag(tag_input.value.trim());
-//       tag_input.value = "";
-//     } else {
-//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-//     }
-//   }
-// });
+  //     const result = await response.json();
+  //     return result.data.tagsearch;
+  //   } catch (error) {
+  //     console.error("Error fetching tags:", error);
+  //     return [];
+  //   }
+  // }
+  // tag_createButton.addEventListener("click", function () {
+  //   if (tag_input.value.trim() !== "") {
+  //     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
+  //       tag_addTag(tag_input.value.trim());
+  //       tag_input.value = "";
+  //     } else {
+  //       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+  //     }
+  //   }
+  // });
 
   function tag_addTag(tagText) {
     if (tagContainer.children.length >= 10) {
@@ -2455,14 +2434,14 @@ window.addEventListener("click", function (event) {
         }
       });
     }
-    if (window.location.pathname.endsWith('dashboard.html')) {
+    if (window.location.pathname.endsWith("dashboard.html")) {
       const searchTagElem = document.getElementById("searchTag");
       if (searchTagElem) {
         searchTagElem.value = localStorage.getItem("tagInput") || "";
       }
     }
     // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
-  } 
+  }
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker
       .getRegistrations()
@@ -2481,88 +2460,87 @@ window.addEventListener("click", function (event) {
         // console.error("Fehler beim Abrufen der Registrierungen:", error);
       });
   }
-// function connectImagesWithGradient(container, img1, img2) {
-//   // Container und Bilder auswählen
-//   const containerEl = document.querySelector(container);
-//   const img1El = document.querySelector(img1);
-//   const img2El = document.querySelector(img2);
+  // function connectImagesWithGradient(container, img1, img2) {
+  //   // Container und Bilder auswählen
+  //   const containerEl = document.querySelector(container);
+  //   const img1El = document.querySelector(img1);
+  //   const img2El = document.querySelector(img2);
 
-//   // Sicherstellen, dass Elemente existieren
-//   if (!containerEl || !img1El || !img2El) {
-//     console.error("Eines der Elemente wurde nicht gefunden.");
-//     return;
-//   }
+  //   // Sicherstellen, dass Elemente existieren
+  //   if (!containerEl || !img1El || !img2El) {
+  //     console.error("Eines der Elemente wurde nicht gefunden.");
+  //     return;
+  //   }
 
-//   // Sicherstellen, dass der Container relativ positioniert ist
-//   const computedStyle = getComputedStyle(containerEl);
-//   if (computedStyle.position === "static") {
-//     containerEl.style.position = "relative";
-//   }
+  //   // Sicherstellen, dass der Container relativ positioniert ist
+  //   const computedStyle = getComputedStyle(containerEl);
+  //   if (computedStyle.position === "static") {
+  //     containerEl.style.position = "relative";
+  //   }
 
-//   // SVG erstellen
-//   const svgNS = "http://www.w3.org/2000/svg";
-//   const svg = document.createElementNS(svgNS, "svg");
-//   const defs = document.createElementNS(svgNS, "defs");
-//   const gradient = document.createElementNS(svgNS, "linearGradient");
-//   const path = document.createElementNS(svgNS, "path");
+  //   // SVG erstellen
+  //   const svgNS = "http://www.w3.org/2000/svg";
+  //   const svg = document.createElementNS(svgNS, "svg");
+  //   const defs = document.createElementNS(svgNS, "defs");
+  //   const gradient = document.createElementNS(svgNS, "linearGradient");
+  //   const path = document.createElementNS(svgNS, "path");
 
-//   // Gradient definieren
-//   gradient.setAttribute("id", "gradient");
-//   gradient.setAttribute("x1", "0%");
-//   gradient.setAttribute("y1", "0%");
-//   gradient.setAttribute("x2", "100%");
-//   gradient.setAttribute("y2", "0%");
+  //   // Gradient definieren
+  //   gradient.setAttribute("id", "gradient");
+  //   gradient.setAttribute("x1", "0%");
+  //   gradient.setAttribute("y1", "0%");
+  //   gradient.setAttribute("x2", "100%");
+  //   gradient.setAttribute("y2", "0%");
 
-//   // Farbverlauf von Weiß zu Transparent
-//   const stop1 = document.createElementNS(svgNS, "stop");
-//   stop1.setAttribute("offset", "0%");
-//   stop1.setAttribute("stop-color", "white");
-//   stop1.setAttribute("stop-opacity", "1");
+  //   // Farbverlauf von Weiß zu Transparent
+  //   const stop1 = document.createElementNS(svgNS, "stop");
+  //   stop1.setAttribute("offset", "0%");
+  //   stop1.setAttribute("stop-color", "white");
+  //   stop1.setAttribute("stop-opacity", "1");
 
-//   const stop2 = document.createElementNS(svgNS, "stop");
-//   stop2.setAttribute("offset", "100%");
-//   stop2.setAttribute("stop-color", "white");
-//   stop2.setAttribute("stop-opacity", "0");
+  //   const stop2 = document.createElementNS(svgNS, "stop");
+  //   stop2.setAttribute("offset", "100%");
+  //   stop2.setAttribute("stop-color", "white");
+  //   stop2.setAttribute("stop-opacity", "0");
 
-//   gradient.appendChild(stop1);
-//   gradient.appendChild(stop2);
-//   defs.appendChild(gradient);
+  //   gradient.appendChild(stop1);
+  //   gradient.appendChild(stop2);
+  //   defs.appendChild(gradient);
 
-//   // SVG-Eigenschaften setzen
-//   svg.style.position = "absolute";
-//   svg.style.top = "0";
-//   svg.style.left = "0";
-//   svg.style.width = "100%";
-//   svg.style.height = "100%";
-//   svg.style.pointerEvents = "none"; // SVG nicht anklickbar machen
-//   svg.appendChild(defs);
-//   svg.appendChild(path);
-//   containerEl.appendChild(svg);
+  //   // SVG-Eigenschaften setzen
+  //   svg.style.position = "absolute";
+  //   svg.style.top = "0";
+  //   svg.style.left = "0";
+  //   svg.style.width = "100%";
+  //   svg.style.height = "100%";
+  //   svg.style.pointerEvents = "none"; // SVG nicht anklickbar machen
+  //   svg.appendChild(defs);
+  //   svg.appendChild(path);
+  //   containerEl.appendChild(svg);
 
-//   // Path für den Bogen setzen
-//   const rect1 = img1El.getBoundingClientRect();
-//   const rect2 = img2El.getBoundingClientRect();
-//   const containerRect = containerEl.getBoundingClientRect();
+  //   // Path für den Bogen setzen
+  //   const rect1 = img1El.getBoundingClientRect();
+  //   const rect2 = img2El.getBoundingClientRect();
+  //   const containerRect = containerEl.getBoundingClientRect();
 
-//   // Koordinaten relativ zum Container berechnen
-//   const x1 = rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
-//   const y1 = rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
-//   const x2 = rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
-//   const y2 = rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
+  //   // Koordinaten relativ zum Container berechnen
+  //   const x1 = rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
+  //   const y1 = rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
+  //   const x2 = rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
+  //   const y2 = rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
 
-//   // Kontrollpunkt für den Bogen berechnen (Mitte zwischen Punkten, leicht nach oben versetzt)
-//   const controlX = (x1 + x2) / 2;
-//   const controlY = Math.min(y1, y2) - 50;
+  //   // Kontrollpunkt für den Bogen berechnen (Mitte zwischen Punkten, leicht nach oben versetzt)
+  //   const controlX = (x1 + x2) / 2;
+  //   const controlY = Math.min(y1, y2) - 50;
 
-//   const d = `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2}`;
-//   path.setAttribute("d", d);
-//   path.setAttribute("fill", "none");
-//   path.setAttribute("stroke", "url(#gradient)");
-//   path.setAttribute("stroke-width", 2);
-// }
+  //   const d = `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2}`;
+  //   path.setAttribute("d", d);
+  //   path.setAttribute("fill", "none");
+  //   path.setAttribute("stroke", "url(#gradient)");
+  //   path.setAttribute("stroke-width", 2);
+  // }
 
-
-// daily free actions
+  // daily free actions
   // dailyfree();
   // async function dailyfree() {
   //   const accessToken = getCookie("authToken");

@@ -14,23 +14,22 @@ checkAuth("unauthorized");
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
 
   <!-- <script src="sw_instal.min.js" async></script> -->
-  <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
   <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
+  <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
 
   <?php
   $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
   include 'meta.min.php';
   ?>
   <title>Wallet</title>
+
 </head>
 
 <body>
   <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
   <header>
-    <svg class="none">
-
-    </svg>
+    <?php include 'svg/icons.svg'; ?>
   </header>
 
   <article id="dashboard" class="dashboard">
@@ -40,7 +39,6 @@ checkAuth("unauthorized");
           <img src="svg/logo_sw.svg" alt="Peer Network Logo" />
           <h1 id="h1">Wallet</h1>
         </div>
-
       </div>
     </header>
 
@@ -128,7 +126,9 @@ checkAuth("unauthorized");
         <div class="kurs">
           <div>
             <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
-            <img src="svg/steigend.svg" alt="">
+            <svg>
+              <use href="#steigend"></use>
+            </svg>
           </div>
 
           <span>1 Gem ≈ 133 PeerTokens</span>
@@ -149,79 +149,94 @@ checkAuth("unauthorized");
 
     <!-- Extra Content Area (Rechte Spalte) -->
     <aside class="profil">
-        <div id="profil-container">
-            <div class="pro-sec">
-                <!-- Profil-Bild und Name -->
-                <div class="profile-header">
-                    <div id="cropContainer" class="cropContainer">
-                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
-                        <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
-                            <img id="cropButton" src="svg/ok.svg" alt="edit"> -->
-                    </div>
-                    <!-- <div id="badge" class="badge"></div> -->
-                    <div class="pro-name">
-                        <h2 id="username">&nbsp;</h2>
-                        <p id="slug" class="username">&nbsp;</p>
-                    </div>
-                </div>
+      <div id="profil-container">
+        <div class="pro-sec">
+          <!-- Profil-Bild und Name -->
+          <div class="profile-header">
+            <div id="cropContainer" class="cropContainer">
+              <svg id="profilbild" alt="Profile Picture" class="profile-picture">
+                <use href="#noname"></use>
+              </svg>
 
-                <!-- Statistiken -->
-                <div class="stats">
-                    <div class="stat">
-                        <span id="userPosts">&nbsp;</span>
-                        <p>Posts</p>
-                    </div>
-                    <div class="stat">
-                        <span id="followers">&nbsp;</span>
-                        <p>Followers</p>
-                    </div>
-                    <div class="stat">
-                        <span id="following">&nbsp;</span>
-                        <p>Following</p>
-                    </div>
-                </div>
+            </div>
+            <!-- <div id="badge" class="badge"></div> -->
+            <div class="pro-name">
+              <h2 id="username">&nbsp;</h2>
+              <p id="slug" class="username">&nbsp;</p>
+            </div>
+          </div>
 
-                <a href="profile.php" class="view-profil stats ">
-                    <img src="svg/profile.svg" alt="">
-                    <p>View Profile</p>
-                </a>
+          <!-- Statistiken -->
+          <div class="stats">
+            <div class="stat">
+              <span id="userPosts">&nbsp;</span>
+              <p>Posts</p>
             </div>
+            <div class="stat">
+              <span id="followers">&nbsp;</span>
+              <p>Followers</p>
+            </div>
+            <div class="stat">
+              <span id="following">&nbsp;</span>
+              <p>Following</p>
+            </div>
+          </div>
 
-            <!-- Menü -->
-            <div class="menu stats">
-                <a href="dashboard.php" class="menu-item">
-                    <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
-                    <p>Dashboard</p>
-                </a>
-                <a href="/" class="menu-item comming-soon">
-                    <img class="icon" src="svg/icon-messages.svg" alt="messages" />
-                    <p>Chats</p>
-                    <div class="notification-badge">8</div>
-                </a>
-                <div class="menu-item active">
-                    <img class="icon" src="svg/wallets.svg" alt="network" />
-                    <p>Wallet</p>
-                </div>
-                <a href="wallet.php" class="menu-item comming-soon">
-                    <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
-                    <p>Settings</p>
-                </a>
-                <a class="menu-item comming-soon">
-                    <img class="icon" src="svg/qmark.svg" alt="network" />
-                    <p>How Peer Works</p>
-                </a>
-            </div>
-            <div class="menu stats">
-                <div class="menu-item"  id="btAddPost">
-                    <img class="icon" src="svg/newpost.svg" alt="network" />
-                    <p>New post</p>
-                </div>
-            </div>
+          <a href="profile.php" class="view-profil stats ">
+            <svg>
+              <use href="#profile"></use>
+            </svg>
+            <p>View Profile</p>
+          </a>
         </div>
-        <div id="profil-login" class="none">
-            <a href="/login.php">login</a>
-            <a href="/register.php">register</a>
+
+        <!-- Menü -->
+        <div class="menu stats">
+          <a href="dashboard.php" class="menu-item">
+            <svg class="icon" alt="dashboard">
+              <use href="#dashboard"></use>
+            </svg>
+            <p>Dashboard</p>
+          </a>
+          <a href="/" class="menu-item comming-soon">
+            <svg class="icon" alt="messages">
+              <use href="#messages"></use>
+            </svg>
+            <p>Chats</p>
+            <div class="notification-badge">8</div>
+          </a>
+          <div class="menu-item active">
+            <svg class="icon" alt="wallet">
+              <use href="#wallet"></use>
+            </svg>
+            <p>Wallet</p>
+          </div>
+          <a href="settings.php" class="menu-item comming-soon">
+            <svg class="icon icon-group " alt="settings">
+              <use href="#settings"></use>
+            </svg>
+            <p>Settings</p>
+          </a>
+          <a class="menu-item comming-soon">
+            <svg class="icon" alt="network">
+              <use href="#qmark"></use>
+            </svg>
+            <p>How Peer Works</p>
+          </a>
         </div>
+        <div class="menu stats">
+          <div class="menu-item" id="btAddPost">
+            <svg class="icon" alt="new post">
+              <use href="#newpost"></use>
+            </svg>
+            <p>New post</p>
+          </div>
+        </div>
+      </div>
+      <div id="profil-login" class="none">
+        <a href="/login.php">login</a>
+        <a href="/register.php">register</a>
+      </div>
     </aside>
 
   </article>

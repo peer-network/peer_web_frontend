@@ -280,7 +280,7 @@ h1 {
 
 .dropdown {
   position: absolute;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   top: 100%;
   z-index: 999;
   width: 38rem;
@@ -298,13 +298,13 @@ h1 {
 
 .dropdown-item {
   display: flex;
-  padding:.6rem 1rem !important;
+  padding: 0.6rem 1rem !important;
   width: 100% !important;
   cursor: pointer;
   color: var(--text-color) !important;
   align-items: center;
   background-color: var(--bg-filter) !important;
-  gap : 0.5rem;
+  gap: 0.5rem;
 }
 
 .dropdown-item:hover {
@@ -319,7 +319,7 @@ h1 {
 }
 
 .search-group input[placeholder="#tag"] {
-  color: #0069FF;
+  color: #0069ff;
 }
 
 .search-group input[placeholder="@username"] {
@@ -641,8 +641,8 @@ h1 {
   opacity: 0.6; /* Optionale Transparenz */
 }
 .filterGroup input[type="checkbox"]:checked + label span,
-.filterGroup input[type="radio"]:checked + label span{
-  color: #77AFFF;
+.filterGroup input[type="radio"]:checked + label span {
+  color: #77afff;
 }
 .filterGroup input[type="checkbox"]:checked + label img,
 .filterGroup input[type="radio"]:checked + label img,
@@ -781,7 +781,6 @@ h1 {
   justify-content: space-around;
   border-radius: 12px;
   padding: 1rem;
-  
 }
 .view-profil {
   background-color: var(--background-color);
@@ -791,10 +790,12 @@ h1 {
   justify-content: flex-start;
   gap: 1rem;
 }
+.view-profil svg,
 .view-profil img {
   width: 1.5rem;
+  height: 1.5rem;
 }
-.view-profil p{
+.view-profil p {
   margin-top: 0.3rem;
 }
 
@@ -880,7 +881,7 @@ h1 {
 .notification-badge {
   position: absolute;
   right: 10px;
-  background-color: #0069FF;
+  background-color: #0069ff;
   color: var(--text-color);
   border-radius: 50%;
   padding: 0.3rem 0.8rem;
@@ -920,7 +921,8 @@ h1 {
 
 .icon {
   width: 1.3rem;
-  height: auto;
+  /* height: auto; */
+  height: 1.3rem;
 }
 
 .icon.settings {
@@ -1162,7 +1164,7 @@ h1 {
   z-index: 9;
   transform: scale(0.8);
 } */
- .follow-button {
+.follow-button {
   right: 1rem;
   top: 1rem;
   background-color: transparent;
@@ -1174,9 +1176,9 @@ h1 {
   font-size: 1rem;
   transition: background-color 0.3s ease;
   box-shadow: 0.1rem 0.1rem 0.5rem var(--shadow-color);
- }
+}
 .follow-button.following {
-  background-color: #0069FF;
+  background-color: #0069ff;
   color: var(--text-color);
   filter: drop-shadow(0 0 0.3rem var(--button-hover));
   cursor: pointer;

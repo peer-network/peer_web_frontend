@@ -79,6 +79,14 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
                 amountlikes
                 amountreplies
                 isliked
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                }
             }
         }
     }
@@ -264,8 +272,8 @@ async function LiquiudityCheck(postCosts, title, action) {
     if (answer === null || answer === cancel) {
       return false;
     }
-    return true;
   }
+  return true;
 }
 async function sendCreatePost(variables) {
   if (!(await LiquiudityCheck(20, "Create Post", post))) {

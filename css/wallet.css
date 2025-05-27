@@ -162,9 +162,9 @@
 .kurs .peerkurs {
   color: #aaff67;
 }
-.kurs img {
+.kurs svg {
   width: 0.7rem;
-  height: auto;
+  height: 0.7rem;
   display: inline-block;
 }
 .token > div {

@@ -52,7 +52,7 @@ async function getLiquiudity() {
 async function currentliquidity() {
   const token = await getLiquiudity();
 
-  if (token !== null) {
+  if (token !== null && document.getElementById("token")) {
     document.getElementById("token").innerText = token;
     const formatted = (token * 0.1).toFixed(2).replace(".", ",") + " €";
     document.getElementById("money").innerText = formatted;
@@ -120,7 +120,7 @@ async function dailyfree() {
 }
 function nextmint() {
   const el = document.getElementById("nextmintseconds");
-  if (!el) {
+  if (el) {
     const now = new Date();
     const nextMintDate = getNext0930(); // Funktion aufrufen, um das nächste 09:30 zu erhalten
     const dif = nextMintDate - now; // Differenz in Millisekunden
@@ -189,55 +189,56 @@ async function dailywin() {
     body: graphql,
     redirect: "follow",
   };
+  if (document.getElementById("history-container")) {
+    try {
+      // Send the request and handle the response
+      const response = await fetch(GraphGL, requestOptions);
+      const result = await response.json();
 
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
+      // Check for errors in response
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (result.errors) throw new Error(result.errors[0].message);
+      const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
+      sortedDescending.forEach((entry) => {
+        const historyItem = document.createElement("div");
+        historyItem.className = "history-item";
 
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
-    sortedDescending.forEach((entry) => {
-      const historyItem = document.createElement("div");
-      historyItem.className = "history-item";
+        const typeDiv = document.createElement("div");
+        typeDiv.className = "type";
+        typeDiv.textContent = entry.action == 2 ? "Like" : entry.action == 5 ? "Post create" : entry.action == 4 ? "Comment" : "unknown";
 
-      const typeDiv = document.createElement("div");
-      typeDiv.className = "type";
-      typeDiv.textContent = entry.action == 2 ? "Like" : entry.action == 5 ? "Post create" : entry.action == 4 ? "Comment" : "unknown";
+        const dateDiv = document.createElement("div");
+        dateDiv.className = "date";
+        dateDiv.textContent = adjustForDSTAndFormat(entry.createdat); // Formatieren des Datums
 
-      const dateDiv = document.createElement("div");
-      dateDiv.className = "date";
-      dateDiv.textContent = adjustForDSTAndFormat(entry.createdat); // Formatieren des Datums
+        const centerDiv = document.createElement("div");
+        centerDiv.className = "center";
 
-      const centerDiv = document.createElement("div");
-      centerDiv.className = "center";
+        const amountSpan = document.createElement("span");
+        amountSpan.className = "amount";
+        amountSpan.textContent = entry.numbers.toString().replace(/,/g, ".");
 
-      const amountSpan = document.createElement("span");
-      amountSpan.className = "amount";
-      amountSpan.textContent = entry.numbers.toString().replace(/,/g, ".");
+        const logoImg = document.createElement("img");
+        logoImg.src = "svg/logo_sw.svg";
+        logoImg.alt = "";
 
-      const logoImg = document.createElement("img");
-      logoImg.src = "svg/logo_sw.svg";
-      logoImg.alt = "";
+        centerDiv.appendChild(amountSpan);
+        centerDiv.appendChild(logoImg);
 
-      centerDiv.appendChild(amountSpan);
-      centerDiv.appendChild(logoImg);
+        historyItem.appendChild(typeDiv);
+        historyItem.appendChild(dateDiv);
+        historyItem.appendChild(centerDiv);
 
-      historyItem.appendChild(typeDiv);
-      historyItem.appendChild(dateDiv);
-      historyItem.appendChild(centerDiv);
+        // Füge das Element z. B. zu einem Container im DOM hinzu
 
-      // Füge das Element z. B. zu einem Container im DOM hinzu
+        document.getElementById("history-container").appendChild(historyItem);
+      });
 
-      document.getElementById("history-container").appendChild(historyItem);
-    });
-
-    return result.data.fetchwinslog;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
+      return result.data.fetchwinslog;
+    } catch (error) {
+      console.error("Error:", error.message);
+      throw error;
+    }
   }
 }
 async function dailypays() {
