@@ -98,3 +98,11 @@ function warnig(title, text = "") {
     type: "warning",
   });
 }
+function confirm(title, text = "") {
+  return createModal({
+    title: title,
+    message: userfriendlymsg(text),
+    buttons: ["Cancel", "Confirm"],
+    type: "warning",
+  });
+}

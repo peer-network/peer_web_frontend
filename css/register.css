@@ -125,6 +125,9 @@ body {
   justify-content: center;
   padding: 1rem 2rem;
 }
+.form-container.hide{
+  display: none;
+}
 
 .heading {
   font-weight: 500;
@@ -201,7 +204,18 @@ body {
   transform-origin: 100% 100%;
   border: none;
 }
-
+a.button {
+	text-decoration: none;
+	display: inline-block;
+  text-align: center;
+}
+a.button.disable {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+.button:disabled {
+	cursor: not-allowed;
+}
 .button:hover {
   background: var(--button-hover);
 }
