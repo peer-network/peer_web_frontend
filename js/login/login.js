@@ -100,4 +100,3 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     submitButton.disabled = false;
   }
 });
-

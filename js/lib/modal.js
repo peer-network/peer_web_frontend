@@ -1,4 +1,4 @@
-let responsecodes = [];
+responsecodes = [];
 function createModal({ title = "", message = "", buttons = [], type = "info", textarea = false }) {
   return new Promise((resolve) => {
     const modal = document.createElement("div");

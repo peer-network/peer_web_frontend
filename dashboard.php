@@ -18,8 +18,6 @@ checkAuth("unauthorized");
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
     <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
-    <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
-
 
 
     <?php
@@ -32,7 +30,32 @@ checkAuth("unauthorized");
 <body>
     <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <header>
-        <?php include "svg/icons.svg" ?>;
+        <svg class="none">
+            <symbol id="post-comment" viewBox="0 0 44 45">
+                <path
+                    d="m4.4 33c0.092-0.449 0.0274-0.915-0.183-1.32-1.42-2.74-2.22-5.86-2.22-9.17 0-3.96 1.17-7.82 3.37-11.1 2.2-3.29 5.32-5.85 8.98-7.37s7.68-1.91 11.6-1.14c3.88 0.772 7.44 2.68 10.2 5.47 2.8 2.8 4.7 6.36 5.47 10.2s0.376 7.9-1.14 11.6c-1.51 3.65-4.08 6.78-7.37 8.98s-7.16 3.37-11.1 3.37c-3.31 0-6.43-0.8-9.17-2.22-0.407-0.21-0.873-0.275-1.32-0.183l-8.94 1.83 1.83-8.94z"
+                    fill="none"
+                    stroke="#FFFAFA"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="4" />
+            </symbol>
+            <symbol id="post-like" viewBox="0 0 48 45">
+                <path id="mener" d="m34.3 2.5c-4.5 0-8.38 2.66-10.3 6.54-1.95-3.88-5.83-6.54-10.3-6.54-6.45 0-11.7 5.46-11.7 12.2s4 12.9 9.16 17.9 12.8 9.88 12.8 9.88 7.42-4.74 12.8-9.88c5.78-5.48 9.16-11.2 9.16-17.9s-5.22-12.2-11.7-12.2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+            </symbol>
+            <symbol id="post-view" fill="none" viewBox="0 0 56 39">
+                <g stroke="#FFFAFA" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+                    <path d="m36.4 19.5c0 2.22-0.885 4.34-2.46 5.91s-3.71 2.45-5.94 2.45-4.36-0.88-5.94-2.45-2.46-3.69-2.46-5.91c0-2.22 0.885-4.34 2.46-5.91 1.58-1.57 3.71-2.45 5.94-2.45s4.36 0.88 5.94 2.45c1.58 1.57 2.46 3.69 2.46 5.91z" />
+                    <path d="m28 37c-11.9 0-21.5-7.17-25.8-17.5 4.36-10.3 14-17.5 25.8-17.5s21.5 7.17 25.8 17.5c-4.36 10.3-14 17.5-25.8 17.5z" />
+                </g>
+            </symbol>
+            <symbol id="multi" viewBox="0 0 100 100">
+                <g fill="none" stroke="#00bdff" stroke-linejoin="round" stroke-width="9">
+                    <rect x="10" y="10" width="65" height="65" />
+                    <rect x="25" y="25" width="65" height="65" />
+                </g>
+            </symbol>
+        </svg>
     </header>
 
     <article id="dashboard" class="dashboard">
@@ -58,10 +81,10 @@ checkAuth("unauthorized");
                         <div class="dropdown none drop2" id="tagDropdown"></div>
                     </div>
 
-                    <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search" />
+                    <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search"/>
                 </div>
                 <div id="userResults" class="user-results"></div>
-                <div class="notify"><img src="svg/bell.svg" alt="notification icon"></div>
+                <div class="notify" ><img src="svg/bell.svg" alt="notification icon"></div>
                 <div class="postOptions">
                     <div id="everything" class="postOptionsButton" title="show everything">
                         <span>Everything</span>
@@ -82,10 +105,10 @@ checkAuth("unauthorized");
         <!-- Sidebar -->
         <aside class="sidebar">
             <form id="filter" class="filterContainer">
-                <a href="dashboard.php" class="dash">
-                    <img class="logo" src="svg/Home.svg" alt="Peer Network Logo" />
-                    <h1 id="h1">Dashboard</h1>
-                </a>
+                    <a href="dashboard.php" class="dash">
+                        <img class="logo" src="svg/Home.svg" alt="Peer Network Logo" />
+                        <h1 id="h1">Dashboard</h1>
+                    </a>
                 <div class="filter-sec">
                     <div class="center">
                         &nbsp;Filter
@@ -94,22 +117,22 @@ checkAuth("unauthorized");
                         <div class="filterGroup">
                             <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" />
                             <label for="filterImage" class="filterButton" title="Fotos">
-                                <img src="svg/photo.svg" alt="Image filter" />
+                                <img src="svg/photo.svg" alt="Image filter"/>
                                 <span>Photo</span>
                             </label>
                             <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" />
                             <label for="filterVideo" class="filterButton" title="Video">
-                                <img src="svg/videos.svg" alt="Video filter" />
+                                <img src="svg/videos.svg" alt="Video filter"/>
                                 <span>Video</span>
                             </label>
                             <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" />
                             <label for="filterNotes" class="filterButton" title="Notes" name="notes">
-                                <img src="svg/text.svg" alt="Notes filter" />
+                                <img src="svg/text.svg" alt="Notes filter"/>
                                 <span>Text</span>
                             </label>
                             <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" />
                             <label for="filterAdio" class="filterButton" title="Audio">
-                                <img src="svg/music.svg" alt="Audio filter" />
+                                <img src="svg/music.svg" alt="Audio filter"/>
                                 <span>Music</span>
                             </label>
                             <!-- <input checked id="filterPodcast" type="checkbox" name="PODCAST" />
@@ -135,22 +158,22 @@ checkAuth("unauthorized");
                         <div class="filterGroup">
                             <input id="filterMostLiked" sortby="LIKES" class="chkMost" type="radio" name="sortby" />
                             <label for="filterMostLiked" class="filterButton most" title="Sort by most liked">
-                                <img src="svg/post-like.svg" alt="MostLiked filter" />
+                                <img src="svg/post-like.svg" alt="MostLiked filter"/>
                                 <span>Likes</span>
                             </label>
-                            <input id="filterMostCommented" sortby="COMMENTS" class="chkMost" type="radio" name="sortby" />
+                            <input id="filterMostCommented" sortby="COMMENTS" class="chkMost" type="radio" name="sortby"/>
                             <label for="filterMostCommented" class="filterButton most" title="Sort by most commented">
-                                <img src="svg/post-comment.svg" alt="MostCommented filter" />
+                                <img src="svg/post-comment.svg" alt="MostCommented filter"/>
                                 <span>Comments</span>
                             </label>
                             <input id="filterMostPopular" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
-                            <label for="filterMostPopular" class="filterButton most" title="Sort by most popular" />
-                            <img src="svg/popular.svg" alt="MostPopular filter">
-                            <span>Popular</span>
+                            <label for="filterMostPopular" class="filterButton most" title="Sort by most popular"/>
+                                <img src="svg/popular.svg" alt="MostPopular filter">
+                                <span>Popular</span>
                             </label>
                             <input id="filterMostControversial" sortby="DISLIKES" class="chkMost" type="radio" name="sortby" />
                             <label for="filterMostControversial" class="filterButton most" title="Sort by most controversial">
-                                <img src="svg/controversial.svg" alt="MostControversial filter" />
+                                <img src="svg/controversial.svg" alt="MostControversial filter"/>
                                 <span>Discussing</span>
                             </label>
                         </div>
@@ -168,7 +191,7 @@ checkAuth("unauthorized");
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="LikesStat" class="progress"></div>
+                            <div id="LikesStat" class="progress" ></div>
                         </div>
                     </div>
 
@@ -182,7 +205,7 @@ checkAuth("unauthorized");
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="CommentsStat" class="progress"></div>
+                            <div id="CommentsStat" class="progress" ></div>
                         </div>
                     </div>
 
@@ -196,12 +219,12 @@ checkAuth("unauthorized");
                             <span>&nbsp;left)</span>
                         </div>
                         <div class="progress-bar">
-                            <div id="PostsStat" class="progress"></div>
+                            <div id="PostsStat" class="progress" ></div>
                         </div>
                     </div>
                 </div>
             </form>
-
+        
         </aside>
 
         <!-- Main Content Area (Mittlere Spalte mit einem inneren Grid) -->
@@ -231,81 +254,81 @@ checkAuth("unauthorized");
                 </div>
             </section> -->
         </main>
-        <aside class="profil">
-            <div id="profil-container">
-                <div class="pro-sec">
-                    <!-- Profil-Bild und Name -->
-                    <div class="profile-header">
-                        <div id="cropContainer" class="cropContainer">
-                            <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
-                            <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
+    <aside class="profil">
+        <div id="profil-container">
+            <div class="pro-sec">
+                <!-- Profil-Bild und Name -->
+                <div class="profile-header">
+                    <div id="cropContainer" class="cropContainer">
+                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
+                        <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
                             <img id="cropButton" src="svg/ok.svg" alt="edit"> -->
-                        </div>
-                        <!-- <div id="badge" class="badge"></div> -->
-                        <div class="pro-name">
-                            <h2 id="username">&nbsp;</h2>
-                            <p id="slug" class="username">&nbsp;</p>
-                        </div>
                     </div>
-
-                    <!-- Statistiken -->
-                    <div class="stats">
-                        <div class="stat">
-                            <span id="userPosts">&nbsp;</span>
-                            <p>Posts</p>
-                        </div>
-                        <div class="stat">
-                            <span id="followers">&nbsp;</span>
-                            <p>Followers</p>
-                        </div>
-                        <div class="stat">
-                            <span id="following">&nbsp;</span>
-                            <p>Following</p>
-                        </div>
-                    </div>
-
-                    <a href="profile.php" class="view-profil stats ">
-                        <img src="svg/profile.svg" alt="">
-                        <p>View Profile</p>
-                    </a>
-                </div>
-
-                <!-- Menü -->
-                <div class="menu stats">
-                    <div class="menu-item active">
-                        <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
-                        <p>Dashboard</p>
-                    </div>
-                    <a href="/" class="menu-item comming-soon ">
-                        <img class="icon" src="svg/icon-messages.svg" alt="messages" />
-                        <p>Chats</p>
-                        <div class="notification-badge">8</div>
-                    </a>
-                    <a href="wallet.php" class="menu-item">
-                        <img class="icon" src="svg/wallets.svg" alt="network" />
-                        <p>Wallet</p>
-                    </a>
-                    <a href="wallet.php" class="menu-item comming-soon">
-                        <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
-                        <p>Settings</p>
-                    </a>
-                    <a class="menu-item comming-soon">
-                        <img class="icon" src="svg/qmark.svg" alt="network" />
-                        <p>How Peer Works</p>
-                    </a>
-                    </di>
-                    <div class="menu stats">
-                        <div class="menu-item" id="btAddPost">
-                            <img class="icon" src="svg/newpost.svg" alt="network" />
-                            <p>New post</p>
-                        </div>
+                    <!-- <div id="badge" class="badge"></div> -->
+                    <div class="pro-name">
+                        <h2 id="username">&nbsp;</h2>
+                        <p id="slug" class="username">&nbsp;</p>
                     </div>
                 </div>
-                <div id="profil-login" class="none">
-                    <a href="/login.php">login</a>
-                    <a href="/register.php">register</a>
+
+                <!-- Statistiken -->
+                <div class="stats">
+                    <div class="stat">
+                        <span id="userPosts">&nbsp;</span>
+                        <p>Posts</p>
+                    </div>
+                    <div class="stat">
+                        <span id="followers">&nbsp;</span>
+                        <p>Followers</p>
+                    </div>
+                    <div class="stat">
+                        <span id="following">&nbsp;</span>
+                        <p>Following</p>
+                    </div>
                 </div>
-        </aside>
+
+                <a href="profile.php" class="view-profil stats ">
+                    <img src="svg/profile.svg" alt="">
+                    <p>View Profile</p>
+                </a>
+            </div>
+
+            <!-- Menü -->
+            <div class="menu stats">
+                <a href="dashboard.php" class="menu-item">
+                    <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
+                    <p>Dashboard</p>
+                </a>
+                <a href="chat.php" class="menu-item ">
+                    <img class="icon" src="svg/icon-messages.svg" alt="messages" />
+                    <p>Chats</p>
+                    <div class="notification-badge">8</div>
+                </a>
+                <div class="menu-item active">
+                    <img class="icon" src="svg/wallets.svg" alt="network" />
+                    <p>Wallet</p>
+                </div>
+                <a href="wallet.php" class="menu-item comming-soon">
+                    <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
+                    <p>Settings</p>
+                </a>
+                <a class="menu-item comming-soon">
+                    <img class="icon" src="svg/qmark.svg" alt="network" />
+                    <p>How Peer Works</p>
+                </a>
+            </div>
+            <div class="menu stats">
+                <div class="menu-item"  id="btAddPost">
+                    <img class="icon" src="svg/newpost.svg" alt="network" />
+                    <p>New post</p>
+                </div>
+            </div>
+        </div>
+        <div id="profil-login" class="none">
+            <a href="/login.php">login</a>
+            <a href="/register.php">register</a>
+        </div>
+    </aside>
         <div id="footer" class="footer">
             <img src="svg/logo_farbe.svg" alt="loading" />
         </div>

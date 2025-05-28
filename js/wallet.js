@@ -178,8 +178,8 @@ async function dailywin() {
         status
         counter
         ResponseCode
-    }
-}`,
+     }
+    }`,
   });
 
   // Define request options

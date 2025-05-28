@@ -3,12 +3,6 @@ const like = 0;
 const dislike = 3;
 const comment = 1;
 
-window.listPosts = async function getPosts(tagName) {
-  console.log("Fetching posts for tag:", tagName);
-
-  // Your GraphQL or fetch logic here...
-};
-
 async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
   const accessToken = getCookie("authToken");
 
@@ -248,10 +242,14 @@ async function dislikePost(postid) {
 function isVariableNameInArray(variableObj, nameArray) {
   return Object.keys(variableObj).some((key) => key.includes(nameArray));
 }
+
 async function LiquiudityCheck(postCosts, title, action) {
+  console.log("Liquidity Check for action:", action);
+  
   const msg = ["like", "comment", "post"];
   const cancel = 0;
   const dailyfree = await getDailyFreeStatus();
+  console.log("dailyfree ", dailyfree)
   const dailyPostAvailable = dailyfree[action].available;
   const bitcoinPrice = await getBitcoinPriceEUR();
   const tokenPrice = 100000 / bitcoinPrice;

@@ -1,37 +1,37 @@
 <?php
 include 'phpheader.php';
 include 'host.php';
-$message = "";
-if (isset($_GET['message'])) {
-    switch ($_GET['message']) {
-        case 'unauthorized':
-            $message = "You do not have access. Please log in to continue.";
-            break;
-        case 'sessionExpired':
-            $message = "Your session has expired. Please log in again.";
-            break;
-        case 'mustLogin':
-            $message = "Please log in to access your dashboard.";
-            break;
-        case 'walletAccessDenied':
-            $message = "Please log in to access your wallet.";
-            break;
-    }
-}
+// $message = "";
+// if (isset($_GET['message'])) {
+//     switch ($_GET['message']) {
+//         case 'unauthorized':
+//             $message = "You do not have access. Please log in to continue.";
+//             break;
+//         case 'sessionExpired':
+//             $message = "Your session has expired. Please log in again.";
+//             break;
+//         case 'mustLogin':
+//             $message = "Please log in to access your dashboard.";
+//             break;
+//         case 'walletAccessDenied':
+//             $message = "Please log in to access your wallet.";
+//             break;
+//     }
+// }
 ?>
 <!DOCTYPE html>
 <html lang="de">
-<?php if ($message): ?>
+<!-- <?php if ($message): ?>
 <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
-<?php endif; ?>
+<?php endif; ?> -->
 
 <head>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
+    <script src="js/lib/const.js?<?php echo filemtime('js/lib/const.js'); ?>" defer></script>
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
-    <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <!-- <script src="sw_instal.min.js" async></script> -->
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';

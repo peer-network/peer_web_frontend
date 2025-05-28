@@ -2,8 +2,8 @@
     header('Access-Control-Allow-Origin: *');
     include 'phpheader.php';
     include 'host.php';
-    require_once 'auth.php';
-    checkAuth("unauthorized");
+    // require_once 'auth.php';
+    // checkAuth("unauthorized");
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -35,7 +35,7 @@
 
         <!-- Sidebar section (typically for navigation) -->
         <?php require_once('./components/sidebar.php'); ?>
-        <main id="main" class="main">
+        <main id="main" class="main chat-main">
             <div class="main-content">
                 <!-- Load the chat list component -->
                 <?php require_once ('./components/chat-list.php'); ?>
