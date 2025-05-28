@@ -73,6 +73,14 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
                 amountlikes
                 amountreplies
                 isliked
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                }
             }
         }
     }
