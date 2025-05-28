@@ -616,7 +616,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> ae32b7d (search update)
   const titleInput = document.getElementById("searchTitle");
   const tagInput = document.getElementById("searchTag");
   const userInput = document.getElementById("searchUser");
@@ -677,6 +681,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         item.addEventListener("click", () => {
+<<<<<<< HEAD
+=======
+          // document.cookie = `userID=${user.id}; path=/; secure; SameSite=Strict`;
+>>>>>>> ae32b7d (search update)
           window.location.href = `/profile/${user.id}`;
           dropdown.classList.add("none");
         });
@@ -747,12 +755,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+<<<<<<< HEAD
       localStorage.setItem("searchTitle", titleInput.value);
       localStorage.setItem("searchTag", tagInput.value);
 
       postsLaden();
     });
   }
+=======
+      const isTitle = !normalWords.length || normalWords.some((word) =>
+        h1.innerText.toLowerCase().includes(word.toLowerCase())
+      );
+
+      // Force exact match for hashtags
+      const isTag = !hashtags.length || tags.some((tag) =>
+        tag.includes(hashtags)
+      );
+
+      if (isTitle && isTag) {
+        element.classList.remove("none");
+      } else {
+        element.classList.add("none");
+      }
+    });
+
+    localStorage.setItem("tags", document.getElementById("searchTag").value);
+    postsLaden(); 
+  });
+>>>>>>> ae32b7d (search update)
 
   const checkboxes = document.querySelectorAll("#filter .filteritem");
   if (checkboxes) {
@@ -1098,7 +1128,31 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ergebnis ausgeben
     const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
     // // const textsearch = document.getElementById("searchText").value;
+<<<<<<< HEAD
     
+=======
+    // // let normalWords = [];
+    // // let hashtags = [];
+    // // const searchTag = document.getElementById("searchTag");
+    // // if (searchTag) {
+    // //   const { hashtags } = extractWords(searchTag.value.toLowerCase());
+    // // }
+    
+   
+    // let titleInput = "";
+    // let tags = "";
+    // const tagElement = document.getElementById("searchTag");
+    // if (tagElement) {
+    //   const { hashtags } = extractWords(tagElement.value.toLowerCase());
+    //   tags = hashtags.join(" ");
+    //   tags = hashtags.join(" ");
+    // }
+    // const titleElement = document.getElementById("searchTitle");
+    // if (titleElement) {
+    //   const { normalWords } = extractWords(titleElement.value.toLowerCase());
+    //   titleInput = normalWords.join(" ");
+    // }
+>>>>>>> ae32b7d (search update)
     const { normalWords } = extractWords(titleInput.value.toLowerCase());
     const { hashtags } = extractWords(tagInput.value.toLowerCase());
     let title = normalWords.join(" ");
@@ -1951,6 +2005,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const variables = { postsList: searchStr };
 
+<<<<<<< HEAD
     try {
       const response = await fetch(GraphGL, {
         method: "POST",
@@ -1984,6 +2039,77 @@ document.addEventListener("DOMContentLoaded", () => {
           dropdownMenu.classList.add("none");
           return;
         }
+=======
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ query, variables }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0]);
+    if (!result.data.searchTags.affectedRows.length) {
+      failedSearches.add(searchStr);
+    }
+    return result.data.searchTags.affectedRows;
+  } catch (error) {
+    // console.error("Error fetching tags:", error);
+    return [];
+  }
+}  
+
+const failedSearches = new Set();
+const tagsInput = document.getElementById("tag-input");
+const tagContainer = document.getElementById("tagsContainer");
+const dropdownMenu = document.getElementById("dropdownMenu");
+if (tagsInput) {
+  tagsInput.addEventListener("input", async function () {
+    const searchStr = tagsInput.value.trim();
+    if (/^[a-zA-Z0-9]+$/.test(tagsInput.value.trim())) {
+      if (searchStr.length < 3) {
+        dropdownMenu.innerHTML = "";
+        dropdownMenu.classList.add("none");
+        return;
+      }
+    } else {
+      info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+      return;
+    }
+
+    const tags = await fetchTags(searchStr);
+    dropdownMenu.innerHTML = "";
+    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+
+    tags.forEach((tag) => {
+      if (!existingTags.includes(tag.name + "X")) {
+        const option = document.createElement("div");
+        option.textContent = tag.name;
+        option.classList.add("dropdown-item");
+        option.addEventListener("click", () => {
+          tagsInput.value = tag.name;
+          tag_addTag(tagsInput.value.trim());
+          tagsInput.value = "";
+          tagsInput.focus();
+          dropdownMenu.classList.toggle("none");
+        });
+        dropdownMenu.appendChild(option);
+      }
+    });
+
+    dropdownMenu.classList.remove("none");
+  });
+}
+
+
+if (tagsInput) {
+  tagsInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter" && tagsInput.value.trim() !== "") {
+      if (/^[a-zA-Z0-9]+$/.test(tagsInput.value.trim())) {
+        tag_addTag(tagsInput.value.trim());
+        tagsInput.value = "";
+>>>>>>> ae32b7d (search update)
       } else {
         info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
         return;
@@ -2035,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // const tagContainer = document.getElementById("tagsContainer");
   // const tag_createButton = document.getElementById("tagCreate");
 
+<<<<<<< HEAD
   // tag_input.addEventListener("keypress", function (event) {
   //   if (event.key === "Enter" && tag_input.value.trim() !== "") {
   //     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
@@ -2067,6 +2194,41 @@ document.addEventListener("DOMContentLoaded", () => {
   //       },
   //       body: JSON.stringify({ query, variables }),
   //     });
+=======
+window.addEventListener("click", function (event) {
+  if (!tagsInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+    dropdownMenu.classList.remove("show");
+  }
+});
+////////////// Tag-System
+// const tag_input = document.getElementById("tag-input");
+// const tagContainer = document.getElementById("tagsContainer");
+// const tag_createButton = document.getElementById("tagCreate");
+
+// tag_input.addEventListener("keypress", function (event) {
+//   if (event.key === "Enter" && tag_input.value.trim() !== "") {
+//     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
+//       tag_addTag(tag_input.value.trim());
+//       tag_input.value = "";
+//     } else {
+//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//     }
+//   }
+// });
+// async function fetchTags(searchStr) {
+//   const query = `
+//       query Tagsearch($searchStr: String!) {
+//           tagsearch(tagname: $searchStr, limit: 20) {
+//               status
+//               counter
+//               ResponseCode
+//               affectedRows
+//           }
+//       }
+//   `;
+
+//   const variables = { searchStr: searchStr };
+>>>>>>> ae32b7d (search update)
 
   //     const result = await response.json();
   //     return result.data.tagsearch;

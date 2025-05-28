@@ -57,6 +57,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   });
+
+  function getUserIdFromUrl() {
+    const parts = window.location.pathname.split('/');
+    return parts[2]; // ["", "profile", "12345"]
+  }
+
+  async function loadProfilePage() {
+    const userId = getUserIdFromUrl();
+    const profileData = await fetchHelloData(userId);
+    // Render profile details...
+  }
+  loadProfilePage();
+
+  // async function loadProfilePage() {
+  //   const userId = getUserIdFromUrl();
+  //   console.log('Parsed userId:', userId);
+
+  //   try {
+  //     const profileData = await fetchHelloData(userId);
+  //     console.log('Fetched profileData:', profileData);
+
+  //     // Check if data exists
+  //     if (
+  //       profileData &&
+  //       profileData.data &&
+  //       profileData.data.getProfile &&
+  //       profileData.data.getProfile.affectedRows
+  //     ) {
+  //       // Render profile details...
+  //       document.getElementById("username").innerText = profileData.data.getProfile.affectedRows.username;
+  //       // ... render the rest
+  //     } else {
+  //       console.error("Profile data missing or incomplete", profileData);
+  //       document.body.innerHTML = "<h2>User not found.</h2>";
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to load profile:", error);
+  //     document.body.innerHTML = "<h2>Failed to load profile.</h2>";
+  //   }
+  // }
+
+
+
   //window.addEventListener("online", updateOnlineStatus);
   //window.addEventListener("offline", updateOnlineStatus);
   //updateOnlineStatus();
