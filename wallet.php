@@ -212,7 +212,7 @@ checkAuth("unauthorized");
             </svg>
             <p>Wallet</p>
           </div>
-          <a href="settings.php" class="menu-item comming-soon">
+          <a href="edit_profile.php" class="menu-item ">
             <svg class="icon icon-group " alt="settings">
               <use href="#settings"></use>
             </svg>

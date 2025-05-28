@@ -63,7 +63,7 @@
                     <img class="icon" src="svg/wallets.svg" alt="network" />
                     <p>Wallet</p>
                 </a>
-                <a href="wallet.php" class="menu-item comming-soon">
+                <a href="edit_profile.php" class="menu-item ">
                     <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
                     <p>Settings</p>
                 </a>

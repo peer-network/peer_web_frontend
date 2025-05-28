@@ -17,6 +17,7 @@ checkAuth("unauthorized");
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
+    <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
     <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
 
 
@@ -304,11 +305,11 @@ checkAuth("unauthorized");
                     <p>Chats</p>
                     <div class="notification-badge">8</div>
                 </a>
-                <div class="menu-item active">
+                <a href="wallet.php" class="menu-item active">
                     <img class="icon" src="svg/wallets.svg" alt="network" />
                     <p>Wallet</p>
-                </div>
-                <a href="wallet.php" class="menu-item comming-soon">
+                </a>
+                <a href="edit_profile.php" class="menu-item ">
                     <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
                     <p>Settings</p>
                 </a>
