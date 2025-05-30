@@ -96,7 +96,7 @@ async function hello() {
   }
 }
 async function getUser() {
-  const profil = await fetchHelloData(id);
+  const profil = await fetchHelloData();
   const id = getCookie("userID");
   if (!id) {
     const profil_container = document.getElementById("profil-container");

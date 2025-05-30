@@ -24,9 +24,21 @@ function handleMouseMoveEnd(video) {
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
   hello();
+  const parts = window.location.pathname.split('/');
+  const urlId = parts.length > 2 ? parseInt(parts[2], 10) : null;
   getUser().then(profile2 => {
-    
-   
+  
+  // if (
+  //   !profile2 ||
+  //   !profile2.data ||
+  //   !profile2.data.getProfile ||
+  //   !profile2.data.getProfile.affectedRows
+  // ) {
+  //   console.error("Invalid profile data:", profile2);
+  //   document.getElementById("biography").innerText = "Biography not available";
+  //   return;
+  // }
+  
   const bioPath = profile2.data.getProfile.affectedRows.biography;
 
   
@@ -57,49 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   });
-
-  function getUserIdFromUrl() {
-    const parts = window.location.pathname.split('/');
-    return parts[2]; // ["", "profile", "12345"]
-  }
-
-  async function loadProfilePage() {
-    const userId = getUserIdFromUrl();
-    const profileData = await fetchHelloData(userId);
-    // Render profile details...
-  }
-  loadProfilePage();
-
-  // async function loadProfilePage() {
-  //   const userId = getUserIdFromUrl();
-  //   console.log('Parsed userId:', userId);
-
-  //   try {
-  //     const profileData = await fetchHelloData(userId);
-  //     console.log('Fetched profileData:', profileData);
-
-  //     // Check if data exists
-  //     if (
-  //       profileData &&
-  //       profileData.data &&
-  //       profileData.data.getProfile &&
-  //       profileData.data.getProfile.affectedRows
-  //     ) {
-  //       // Render profile details...
-  //       document.getElementById("username").innerText = profileData.data.getProfile.affectedRows.username;
-  //       // ... render the rest
-  //     } else {
-  //       console.error("Profile data missing or incomplete", profileData);
-  //       document.body.innerHTML = "<h2>User not found.</h2>";
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to load profile:", error);
-  //     document.body.innerHTML = "<h2>Failed to load profile.</h2>";
-  //   }
-  // }
-
-
-
   //window.addEventListener("online", updateOnlineStatus);
   //window.addEventListener("offline", updateOnlineStatus);
   //updateOnlineStatus();

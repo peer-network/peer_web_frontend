@@ -674,9 +674,8 @@ document.addEventListener("DOMContentLoaded", () => {
         img.onerror = function () {
           this.src = "svg/noname.svg";
         };
-
         item.addEventListener("click", () => {
-          window.location.href = `/profile/${user.id}`;
+          window.location.href = `/profile.php?user=${user.id}`;
           dropdown.classList.add("none");
         });
         dropdown.appendChild(item);
@@ -2004,7 +2003,7 @@ document.addEventListener("DOMContentLoaded", () => {
           dropdownMenu.appendChild(option);
         }
       });
-      dropdownMenu.classList.remove("none");
+      dropdownMenu.classList.toggle("none", tags.length == 0);
     });
   }
 
@@ -2015,7 +2014,7 @@ document.addEventListener("DOMContentLoaded", () => {
           tag_addTag(tagsInput.value.trim());
           tagsInput.value = "";
         } else {
-          info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+          info("Information", "Only letters and numbers are allowed.");
         }
       }
     });
