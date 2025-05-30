@@ -15,6 +15,7 @@ checkAuth("unauthorized");
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   	<link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
+    
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
     
@@ -47,44 +48,56 @@ checkAuth("unauthorized");
             <h1 id="h1">Wallet</h1>
           </header>
         
-          <aside class="left-sidebar left-sidebar-profile">
+          <aside class="left-sidebar left-sidebar-wallet">
           <div class="inner-scroll">
             <!-- Load sidebar widgets -->
-            <?php //require_once ('./template-parts/sidebars/widget-filter.php'); ?>
+            
+            
+          
+          
+          <?php require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
+            <?php require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
            	<?php require_once ('./template-parts/sidebars/widget-daily-action.php'); ?>
            
            	
           </div>
           </aside>
         
-          <main class="site-main site-main-edit-profile">
+          <main class="site-main site-main-wallet">
           
         
-        	<div id="wallet">
-        <div class="token">
-          <h2>Total Tokens</h2>
-          <div>
-            <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
-            <span id="token"></span>
-            <div class="money">
-              <span>~</span>
-              <span id="money"></span>
-              <span id="tokenpercent"></span>
-            </div>
-          </div>
+        	 
 
-        </div>
-
-        <div class="kurs">
-          <div>
-            <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
-            <img src="svg/steigend.svg" alt="">
-          </div>
-
-          <span>1 Gem ≈ 133 PeerTokens</span>
+      <div class="main-header">
+        <div class="transfer-wrapper">
+          <div class="transfer-dropdown hidden" id="transferDropdown"></div>
         </div>
       </div>
-      		<div id="wallet-transaction">
+
+          <div id="wallet">
+            <div class="token">
+              <h2>Total Tokens</h2>
+              <div>
+                <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
+                <span id="token"></span>
+                <div class="money">
+                  <span>~</span>
+                  <span id="money"></span>
+                  <span id="tokenpercent"></span>
+                </div>
+              </div>
+            </div>
+    
+            <div class="kurs">
+              <div>
+                <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
+                <img src="svg/steigend.svg" alt="">
+              </div>
+    
+              <span>1 Gem ≈ 133 PeerTokens</span>
+            </div>
+          </div>
+      <div id="wallet-transaction">
         <h2>List of transactions</h2>
         <div id="history-container" class="history-container">
           <div class="history-header">
@@ -92,14 +105,14 @@ checkAuth("unauthorized");
             <span class="date">Date</span>
             <span class="amount">Amount</span>
           </div>
-
         </div>
       </div>
+    
        		 
          
           </main>
         
-          <aside class="right-sidebar right-sidebar-edit-profile">
+          <aside class="right-sidebar right-sidebar-wallet">
           <div class="inner-scroll">
            <!-- Load sidebar widgets -->
            <?php require_once ('./template-parts/sidebars/widget-profile.php'); ?>
