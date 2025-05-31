@@ -2,6 +2,8 @@
 header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
 include 'host.php';
+require_once 'auth.php';
+checkAuth("unauthorized");
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -12,6 +14,8 @@ include 'host.php';
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
 
   <!-- <script src="sw_instal.min.js" async></script> -->
+  
+  <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
 
@@ -20,14 +24,13 @@ include 'host.php';
   include 'meta.min.php';
   ?>
   <title>Wallet</title>
+
 </head>
 
 <body>
   <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
   <header>
-    <svg class="none">
-
-    </svg>
+    <?php include 'svg/icons.svg'; ?>
   </header>
 
   <article id="dashboard" class="dashboard">
@@ -37,7 +40,6 @@ include 'host.php';
           <img src="svg/logo_sw.svg" alt="Peer Network Logo" />
           <h1 id="h1">Wallet</h1>
         </div>
-
       </div>
     </header>
 
@@ -125,7 +127,9 @@ include 'host.php';
         <div class="kurs">
           <div>
             <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
-            <img src="svg/steigend.svg" alt="">
+            <svg>
+              <use href="#steigend"></use>
+            </svg>
           </div>
 
           <span>1 Gem ≈ 133 PeerTokens</span>
@@ -147,54 +151,88 @@ include 'host.php';
     <!-- Extra Content Area (Rechte Spalte) -->
     <aside class="profil">
       <div id="profil-container">
-        <!-- Profil-Bild und Name -->
-        <div class="profile-header">
-          <div id="cropContainer" class="cropContainer">
-            <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
-            <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
-                        <img id="cropButton" src="svg/ok.svg" alt="edit"> -->
-          </div>
-          <!-- <div id="badge" class="badge"></div> -->
-          <h2 id="username">&nbsp;</h2>
-          <p id="slug" class="username">&nbsp;</p>
-        </div>
+        <div class="pro-sec">
+          <!-- Profil-Bild und Name -->
+          <div class="profile-header">
+            <div id="cropContainer" class="cropContainer">
+              <svg id="profilbild" alt="Profile Picture" class="profile-picture">
+                <use href="#noname"></use>
+              </svg>
 
-        <!-- Statistiken -->
-        <div class="stats">
-          <div class="stat">
-            <span id="userPosts">&nbsp;</span>
-            <p>Posts</p>
+            </div>
+            <!-- <div id="badge" class="badge"></div> -->
+            <div class="pro-name">
+              <h2 id="username">&nbsp;</h2>
+              <p id="slug" class="username">&nbsp;</p>
+            </div>
           </div>
-          <div class="stat">
-            <span id="followers">&nbsp;</span>
-            <p>Followers</p>
+
+          <!-- Statistiken -->
+          <div class="stats">
+            <div class="stat">
+              <span id="userPosts">&nbsp;</span>
+              <p>Posts</p>
+            </div>
+            <div class="stat">
+              <span id="followers">&nbsp;</span>
+              <p>Followers</p>
+            </div>
+            <div class="stat">
+              <span id="following">&nbsp;</span>
+              <p>Following</p>
+            </div>
           </div>
-          <div class="stat">
-            <span id="following">&nbsp;</span>
-            <p>Following</p>
-          </div>
+
+          <a href="profile.php" class="view-profil stats ">
+            <svg>
+              <use href="#profile"></use>
+            </svg>
+            <p>View Profile</p>
+          </a>
         </div>
 
         <!-- Menü -->
-        <a href="dashboard.php" class="menu-item ">
-          <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
-          <p>Dashboard</p>
-        </a>
-        <div class="menu-item comming-soon">
-          <img class="icon" src="svg/icon-messages.svg" alt="messages" />
-          <p>Messages</p>
-          <div class="notification-badge">8</div>
+        <div class="menu stats">
+          <a href="dashboard.php" class="menu-item">
+            <svg class="icon" alt="dashboard">
+              <use href="#dashboard"></use>
+            </svg>
+            <p>Dashboard</p>
+          </a>
+          <a href="/" class="menu-item comming-soon">
+            <svg class="icon" alt="messages">
+              <use href="#messages"></use>
+            </svg>
+            <p>Chats</p>
+            <div class="notification-badge">8</div>
+          </a>
+          <div class="menu-item active">
+            <svg class="icon" alt="wallet">
+              <use href="#wallet"></use>
+            </svg>
+            <p>Wallet</p>
+          </div>
+          <a href="edit_profile.php" class="menu-item ">
+            <svg class="icon icon-group " alt="settings">
+              <use href="#settings"></use>
+            </svg>
+            <p>Settings</p>
+          </a>
+          <a class="menu-item comming-soon">
+            <svg class="icon" alt="network">
+              <use href="#qmark"></use>
+            </svg>
+            <p>How Peer Works</p>
+          </a>
         </div>
-        <div class="menu-item comming-soon">
-          <img class="icon" src="svg/icon-network.svg" alt="network" />
-          <p>Network</p>
+        <div class="menu stats">
+          <div class="menu-item" id="btAddPost">
+            <svg class="icon" alt="new post">
+              <use href="#newpost"></use>
+            </svg>
+            <p>New post</p>
+          </div>
         </div>
-        <div class="menu-item active">
-          <img class="icon" src="svg/icon-wallet.svg" alt="wallet" />
-          <p>Wallet</p>
-        </div>
-
-      </div>
       </div>
       <div id="profil-login" class="none">
         <a href="/login.php">login</a>

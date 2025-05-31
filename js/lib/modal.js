@@ -1,3 +1,4 @@
+responsecodes = [];
 function createModal({ title = "", message = "", buttons = [], type = "info", textarea = false }) {
   return new Promise((resolve) => {
     const modal = document.createElement("div");
@@ -95,6 +96,14 @@ function warnig(title, text = "") {
     title: title,
     message: userfriendlymsg(text),
     buttons: ["OK"],
+    type: "warning",
+  });
+}
+function confirm(title, text = "") {
+  return createModal({
+    title: title,
+    message: userfriendlymsg(text),
+    buttons: ["Cancel", "Confirm"],
     type: "warning",
   });
 }
