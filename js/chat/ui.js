@@ -5,7 +5,7 @@ ChatApp.ui = {
     const privateBtn = document.getElementById("privateBtn");
     const groupBtn = document.getElementById("groupBtn");
 
-    const updateTab = (type) =>{
+    const updateTab = (type) => {
       ChatApp.state.filterType = type;
 
       const privateBtn = document.getElementById("privateBtn");
@@ -17,6 +17,9 @@ ChatApp.ui = {
 
       const isOverlayActive = ChatApp.state.isInCreateOverlay;
       const isOnReviewScreen = ChatApp.state.isInReviewScreen;
+      
+      console.log("isOverlayActive ", isOverlayActive)
+      console.log("isOnReviewScreen ", isOnReviewScreen)
 
       if (isOverlayActive && isOnReviewScreen) {
         ChatApp.state.isInCreateOverlay = false;
@@ -116,7 +119,10 @@ ChatApp.ui = {
       const isTabClick = event.target.closest("#privateBtn, #groupBtn");
       const isSearchInput = event.target.closest("#search-contacts");
 
-      if (!isInsideResults && !isTabClick && !isSearchInput) resultsBox.style.display = "none";
+      if (!isInsideResults && !isTabClick && !isSearchInput) {
+        resultsBox.style.display = "none";
+        ChatApp.state.isInCreateOverlay = false;
+      } 
     });
   },
 
