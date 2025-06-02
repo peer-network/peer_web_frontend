@@ -56,6 +56,9 @@ checkAuth("unauthorized");
            	<div id="profile-back-btn" class="profile-back-button hide" >
                 <a href="edit_profile.php" class="button btn-transparent" >Back</a>
             </div>
+            <div id="main-profile-back-btn" class="profile-back-button" >
+                <a href="                                    profile.php" class="button btn-transparent" >Back to Profile</a>
+            </div>
           </div>
           </aside>
         

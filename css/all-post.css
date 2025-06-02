@@ -179,6 +179,7 @@
 	border-radius: 50%;
 	border: 1px solid var(--text-color);
 	object-fit: cover;
+  cursor: pointer;
 }
 .card  .post-userName {
 	position: absolute;
@@ -189,6 +190,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	z-index: 2;
+  cursor: pointer;
 	text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
 	filter: drop-shadow(0 0 5px black);
 }
@@ -289,11 +291,9 @@ text-shadow: 1px 1px 2px black;
   border-radius: 0.2rem;
   margin-top: 3rem;
 }
-[content="text"] h3 {
-  /* background-color: var(--background-color); */
-}
+/*
 .card[content="text"]:hover h3 {
-  /* top: 3rem !important; */
+ 
   z-index: 100 !important;
   text-align: center;
   padding: 0.3rem 1rem;
@@ -308,10 +308,10 @@ text-shadow: 1px 1px 2px black;
 .card[content="text"] > h3:hover ~ .post-inhalt,
 .card[content="text"]:hover ~ .post-inhalt {
   background-color: whitesmoke;
-  z-index: 100;
+ 
   height: fit-content;
   color: #000;
-}
+}*/
 .card[content="text"]:hover .post-text {
   display: none;
 }
@@ -322,7 +322,7 @@ text-shadow: 1px 1px 2px black;
 .card[content="text"]:hover > .post {
   text-wrap: pretty;
   overflow-wrap: break-word;
-  z-index: 99;
+  /*z-index: 99;*/
 }
 .card[content="text"] > div:hover > .custom-text,
 .card[content="text"] > h3:hover + .custom-text,

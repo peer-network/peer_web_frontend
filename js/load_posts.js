@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     });
   });
+
   const radio = document.querySelectorAll(".filterContainer .chkMost");
   radio.forEach((item) => {
     let lastSelected = null;
@@ -361,7 +362,7 @@ function commentToDom(c, append = true) {
     const letztesDiv = parentElement.lastElementChild;
   }
 
-  async function postsLaden(load_only_current_user_post=false) {
+  async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
     if (postsLaden.offset === undefined) {
       postsLaden.offset = 0; // Initialwert
@@ -394,6 +395,7 @@ function commentToDom(c, append = true) {
       const { hashtags } = extractWords(tagElement.value.toLowerCase());
       tags = hashtags.join(" ");
     }
+    //console.log(tags);
     const titleElement = document.getElementById("searchTitle");
     if (titleElement) {
       const { normalWords } = extractWords(titleElement.value.toLowerCase());
@@ -401,8 +403,8 @@ function commentToDom(c, append = true) {
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
 	let  posts;
-	if(load_only_current_user_post===true){
-		  posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",UserID);
+	if(postbyUserID!=null){
+		  posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
 	}else{
 	  posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
 	}
@@ -557,6 +559,14 @@ function commentToDom(c, append = true) {
       userImg.onerror = function () {
         this.src = "svg/noname.svg";
       };
+      const redirectToProfile = () => {
+        window.location.href = `view-profile.php?user=${objekt.user.id}`;
+      };
+
+      userNameSpan.addEventListener("click", redirectToProfile);
+      userImg.addEventListener("click", redirectToProfile);
+
+
       async function toggleFollowStatus(userid) {
         const accessToken = getCookie("authToken");
         const query = `

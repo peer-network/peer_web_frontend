@@ -126,52 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
 
-  async function getProfile(userID) {
-    const accessToken = getCookie("authToken");
-
-    const query = `
-      query GetProfile {
-        getProfile (userID: "${userID}") {
-          status
-          ResponseCode
-          affectedRows {
-              id
-              username
-              status
-              slug
-              img
-              biography
-              isfollowed
-              isfollowing
-              amountposts
-              amounttrending
-              amountfollowed
-              amountfollower
-              amountfriends
-              amountblocked
-          }
-        }
-      }
-    `;
-
-    try {
-      const response = await fetch(GraphGL,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ query })
-      });
-
-      const json = await response.json();
-      return json?.data?.getProfile || null;
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      return null;
-    }
-  }
-
+  
 
    //Function to search for tags via GraphQL
    async function listTags() {
@@ -227,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
-    // console.log("Tag search result:", tagName);
+    //console.log("Tag search result:", tagName);
 
 
     const query = `
@@ -298,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function applyFilters() {
     // const titleValue = titleInput.value.trim().toLowerCase();
     const userValue = userInput.value.trim().toLowerCase();
-    // const tagValue = tagInput.value.trim().toLowerCase();
+    const tagValue = tagInput.value.trim().toLowerCase();
+    //console.log(tagValue);
 
     if (userValue) await searchUsers(userValue);
     // if (titleValue) await searchTitles(titleValue);
@@ -308,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // localStorage.setItem("searchTitle", titleValue);
     // localStorage.setItem("searchTag", tagValue);
     localStorage.setItem("searchUser", userValue);
+    
   }
   
 

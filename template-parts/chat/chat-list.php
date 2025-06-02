@@ -25,7 +25,7 @@
 
     <template id="chat-sidebar-item-template">
         <div class="chat-item">
-            <img class="avatar" src="./img/ender.png" alt="Avatar" />
+            <img class="avatar" src="" alt="Avatar" />
             <div class="chat-details">
                 <div class="chat-row">
                     <span class="name">Name</span>
