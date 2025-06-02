@@ -259,7 +259,6 @@ function commentToDom(c, append = true) {
 
 
   async function addScrollBlocker(element) {
-    console.log("addScrollBlocker called");
     let isAnimating = false;
     let lastTouchX = 0;
     let lastTouchY = 0;
@@ -409,9 +408,6 @@ function commentToDom(c, append = true) {
 	  posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
 	}
 	
-	
-   
-	
     // console.log(cleanedArray);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
@@ -492,22 +488,27 @@ function commentToDom(c, append = true) {
           video.className = "custom-video";
           addMediaListener(video);
           postDiv.appendChild(video);
+          /* On mouse move over the card, scrub through the video based on cursor position
+          / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
-            const video = this.getElementsByTagName("video")[0];
+          const video = this.getElementsByTagName("video")[0];
 
-            if (video.readyState >= 2) {
-              const rect = video.getBoundingClientRect();
-              const mouseX = event.clientX - rect.left;
-              const relativePosition = mouseX / rect.width;
+          if (video.readyState >= 2) {
+            const rect = video.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const relativePosition = mouseX / rect.width;
 
-              if (!video.duration) return;
+            if (!video.duration) return;
 
-              video.currentTime = relativePosition * video.duration;
-              if (video.paused || video.currentTime === 0) video.play();
+            video.currentTime = relativePosition * video.duration;
+            /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
+            requestAnimationFrame(() => {
+            if (video.paused || video.currentTime === 0) 
+              video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
+              });
             }
-
-            // debouncedMoveEnd(video);
           });
+
           card.addEventListener("mouseleave", function (e) {
             const allMediaElements = document.querySelectorAll("video");
             allMediaElements.forEach((otherMedia) => {

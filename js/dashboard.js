@@ -1,12 +1,8 @@
 // :TODO VIEWS
 
 document.addEventListener("DOMContentLoaded", () => {
-  
-
-
- 
-
   const post_loader = document.getElementById("post_loader");
+  
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
@@ -23,11 +19,39 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (post_loader) {
+    console.log(post_loader)
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
-  } else {
+
+    
+    // If post_loader is already visible on load (e.g. big screen), load posts
+    window.addEventListener("load", () => {
+      const rect = post_loader.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        postsLaden();
+      } else {
+        requestAnimationFrame(ensurePostLoaderVisible); // Try again next frame
+      }
+    });
+
+    // 3. Manual check on scroll (in case layout shifts after interaction)
+    window.addEventListener("scroll", () => {
+      const rect = post_loader.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        console.log("🖱️ Fallback load triggered (on scroll)");
+        postsLaden();
+      }
+    }, { passive: true });
+
+   } else {
     console.warn("⚠️ Post Loader element not found — cannot observe.");
   }
+  console.log("post_loader:", post_loader);
+  console.log("Loader exists:", post_loader, post_loader.getBoundingClientRect());
+
+  // Use requestAnimationFrame to wait until the next render frame before checking visibility
+  // Ensures layout is stable (e.g. images loaded, DOM settled) before trying to load posts
+  // requestAnimationFrame(ensurePostLoaderVisible);
 
   const titleInput = document.getElementById("searchTitle");
   const tagInput = document.getElementById("searchTag");

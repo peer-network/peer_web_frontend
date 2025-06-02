@@ -496,6 +496,7 @@ textarea {
 .none { display: none !important;}
 #post_loader {
 	text-align: center;
+	min-height: 20px;
 }
 #post_loader img, .loading {
 	animation: loading 4s ease 0s infinite;
