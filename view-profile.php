@@ -29,7 +29,7 @@ checkAuth("unauthorized");
 <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
 <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
-<script src="js/profile.js?<?php echo filemtime('js/profile.js'); ?>" defer></script>
+<script src="js/viewprofile.js?<?php echo filemtime('js/viewprofile.js'); ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
@@ -77,12 +77,12 @@ checkAuth("unauthorized");
     </svg>
     <div class="profile_header" id="profil-container">
       <div class="profile_picture">
-        <div class="cropContainer"><span class="online_status"></span><img id="profilbild" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
+        <div class="cropContainer"><img id="profilbild2" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
       </div>
       <div class="profile_info">
-        <h2 class="profile_title"><span  id="username">&nbsp;</span><span id="slug" class="profile_no">&nbsp;</span></h2>
-        <div class="profile_description" id="biography"> </div>
-        <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Posts</span> <span class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span class="following_count"><em id="following">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers">0</em> Peers</span> </div>
+        <h2 class="profile_title"><span  id="username2">&nbsp;</span><span id="slug2" class="profile_no">&nbsp;</span></h2>
+        <div class="profile_description" id="biography2"> </div>
+        <div class="profile_stats"> <span class="post_count"><em id="userPosts2">&nbsp;</em> Posts</span> <span class="followers_count"><em id="followers2">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span class="following_count"><em id="following2">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers-2">0</em> Peers</span> </div>
       </div>
       
     </div>
