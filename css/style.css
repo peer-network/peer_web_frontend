@@ -823,6 +823,36 @@ footer {grid-area: footer;}
 /*-----------Web Version Widget-------------*/
 
 /*--------------------------------------------------------------
+# 404 Page
+--------------------------------------------------------------*/
+
+.error-404.not-found {
+	padding-top: 100px;
+	padding-bottom: 100px;
+	text-align: center;
+	
+	color: #fff;
+	height: calc(100vh - 70px);
+}
+.error-404.not-found h1 {
+	color: #000;
+	font-size: clamp(6.25rem, -0.9754rem + 23.1214vw, 18.75rem);
+	line-height: 0.75em;
+	margin: 0px;
+	font-weight: 700;
+	text-shadow: 2px 2px 0px #43DE9C, -2px -2px 0px #3390c1, 0px 0px 8px #2d4954;
+}
+.error-404.not-found .page-content {
+	max-width: 600px;
+	padding-top: 30px;
+	font-size: 20px;
+	margin: 0 auto;
+}
+
+.error-404.not-found .page-content .homebtn{ margin-top: 30px;}
+
+
+/*--------------------------------------------------------------
 # Content Parts Block CSS
 --------------------------------------------------------------*/
 /*-----------Post Search Filter-------------*/

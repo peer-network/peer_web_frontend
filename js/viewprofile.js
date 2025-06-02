@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
         if(userprofile.ResponseCode=='30201' && userprofile.status=='error'){
           //No User Found;
-          console.log('dddd');
+          window.location.href = "404.php";
           return;
         }
 

@@ -557,6 +557,14 @@ function commentToDom(c, append = true) {
       userImg.onerror = function () {
         this.src = "svg/noname.svg";
       };
+      const redirectToProfile = () => {
+        window.location.href = `view-profile.php?user=${objekt.user.id}`;
+      };
+
+      userNameSpan.addEventListener("click", redirectToProfile);
+      userImg.addEventListener("click", redirectToProfile);
+
+
       async function toggleFollowStatus(userid) {
         const accessToken = getCookie("authToken");
         const query = `

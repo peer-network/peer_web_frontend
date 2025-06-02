@@ -140,12 +140,26 @@
 	bottom:30px;
 }
 .profile-back-button a {
-	display: block;
+	display: block; 
+	min-width: 256px;
 }
 .setting-content .input-field{
 	margin: 0 0 1.5rem 0;
 }
-
+.profile-back-button a::before {
+	content: "";
+	display: inline-block;
+	background-image: url(../svg/back-arrow.svg);
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
+	margin-right: 15px;
+}
+.profile-back-button a:hover::before {
+	filter: brightness(0) invert(0);
+}
 .setting-content .input-field.transparent {
 	padding: 1rem 2rem;
 	background: var(--bg-filter);
