@@ -1,13 +1,13 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-
+  const CurrentUserID = getCookie("userID");
   getUser().then(profile2 => {
     const bioPath = profile2.data.getProfile.affectedRows.biography;
 
-  
+    const biography = document.getElementById("biography");
 
   // Check if bioPath is valid
-  if (bioPath) {
+  if (bioPath && biography) {
   const fullPath = tempMedia(profile2.data.getProfile.affectedRows.biography);
 
 
@@ -32,14 +32,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   });
-  
+
+     
+   
   
    const post_loader = document.getElementById("post_loader");
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        postsLaden(true);
+        postsLaden(CurrentUserID);
         // console.log("Der Footer ist jetzt im Viewport sichtbar!");
       }
     });
@@ -60,3 +62,4 @@ document.addEventListener("DOMContentLoaded", () => {
   
   
 });
+

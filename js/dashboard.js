@@ -126,52 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
 
-  async function getProfile(userID) {
-    const accessToken = getCookie("authToken");
-
-    const query = `
-      query GetProfile {
-        getProfile (userID: "${userID}") {
-          status
-          ResponseCode
-          affectedRows {
-              id
-              username
-              status
-              slug
-              img
-              biography
-              isfollowed
-              isfollowing
-              amountposts
-              amounttrending
-              amountfollowed
-              amountfollower
-              amountfriends
-              amountblocked
-          }
-        }
-      }
-    `;
-
-    try {
-      const response = await fetch(GraphGL,{
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ query })
-      });
-
-      const json = await response.json();
-      return json?.data?.getProfile || null;
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      return null;
-    }
-  }
-
+  
 
    //Function to search for tags via GraphQL
    async function listTags() {

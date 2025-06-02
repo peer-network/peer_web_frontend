@@ -8,11 +8,13 @@ function toggle_profile_blocks(activeId) {
 
   // Show the selected widget
    const backProfileBtn = document.getElementById('profile-back-btn');
+   const mainbackProfileBtn = document.getElementById('main-profile-back-btn');
   const activeElement = document.getElementById(activeId);
   if (activeElement) {
     activeElement.classList.remove('hide');
     activeElement.classList.add('active');
     backProfileBtn.classList.remove('hide');
+    mainbackProfileBtn.classList.add('hide');
    
   }
 }
