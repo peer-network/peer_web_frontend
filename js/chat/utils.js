@@ -14,24 +14,13 @@ ChatApp.utils = {
     return `${Math.floor(diff / 1440)}d`;
   },
 
-  getAvatarUrl(path) {
-    return "svg/logo_sw.svg"; // just for test purposes later need to change it back
-    if (!path) return "svg/logo_sw.svg";
-
-    // If it's already a full URL (http, https), use as-is
-    if (path.startsWith("http")) return path;
-
-    // Otherwise, assume it's a relative path
-    return `/peer_web_frontend/img/${path}`;
-  },
-
   decodeHTML(str) {
-  if (typeof str !== "string") return "";
+    if (typeof str !== "string") return "";
 
-  const txt = document.createElement("textarea");
-  txt.innerHTML = str;
-  return txt.value;
-},
+    const txt = document.createElement("textarea");
+    txt.innerHTML = str;
+    return txt.value;
+  },
 
   getElement(selector) {
     return document.querySelector(selector);

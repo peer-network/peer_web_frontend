@@ -139,7 +139,7 @@
     <div class="chat-messages"></div>
     
     <div class="chat-input">
-        <img src="./img/ender.png" class="avatar">
+        <img src="" class="avatar">
         <textarea name="" id="sendPrivateMessage" cols="30" rows="4" placeholder="Write a message ..."></textarea>
     </div>
 
