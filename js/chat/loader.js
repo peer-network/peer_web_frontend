@@ -19,7 +19,7 @@ ChatApp.loader = {
       const chatList = typedChats.map(chat => ({
         id: chat.id,
         name: chat.name,
-        image: chat.image,
+        image: ChatApp.utils.getAvatarUrl(chat.img),
         type: chat.type,
         senderId: chat.senderid,
         chatmessages: [...(chat.chatmessages || [])].sort((a, b) => new Date(a.createdat) - new Date(b.createdat)),
@@ -45,11 +45,11 @@ ChatApp.loader = {
       const lastMessage = chat.chatmessages.at(-1);
       const time = lastMessage ? ChatApp.utils.formatTimeAgo(lastMessage.createdat) : "—";
       const preview =  ChatApp.utils.decodeHTML(lastMessage?.content) || "Start chatting...";
-
       const clone = template.content.cloneNode(true);
       const item = clone.querySelector(".chat-item");
       item.setAttribute("data-chatid", chat.id);
       item.querySelector(".avatar").alt = otherUser.username;
+      item.querySelector(".avatar").src = ChatApp.utils.getAvatarUrl(otherUser.img);
       item.querySelector(".name").textContent = chat.type === "private" ? otherUser.username : chat.name;
       item.querySelector(".time").textContent = time;
       item.querySelector(".message-preview").textContent = preview;

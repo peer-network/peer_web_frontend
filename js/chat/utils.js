@@ -14,24 +14,38 @@ ChatApp.utils = {
     return `${Math.floor(diff / 1440)}d`;
   },
 
-  getAvatarUrl(path) {
-    return "svg/logo_sw.svg"; // just for test purposes later need to change it back
-    if (!path) return "svg/logo_sw.svg";
+  getAvatarUrl(apiPath) {
+    const fallback = "./svg/logo_sw.svg";
 
-    // If it's already a full URL (http, https), use as-is
-    if (path.startsWith("http")) return path;
+    if (!apiPath || typeof apiPath !== "string") return fallback;
 
-    // Otherwise, assume it's a relative path
-    return `/peer_web_frontend/img/${path}`;
+    const fileName = apiPath.split("/").pop();
+    const localPath = `/peer_web_frontend/img/${fileName}`;
+
+    try {
+      this.checkImageExists(localPath);
+      return localPath;
+    } catch {
+      return fallback;
+    }
+  },
+
+  checkImageExists(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => resolve(true);
+      img.onerror = () => reject(false);
+    });
   },
 
   decodeHTML(str) {
-  if (typeof str !== "string") return "";
+    if (typeof str !== "string") return "";
 
-  const txt = document.createElement("textarea");
-  txt.innerHTML = str;
-  return txt.value;
-},
+    const txt = document.createElement("textarea");
+    txt.innerHTML = str;
+    return txt.value;
+  },
 
   getElement(selector) {
     return document.querySelector(selector);

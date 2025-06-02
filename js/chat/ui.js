@@ -17,9 +17,6 @@ ChatApp.ui = {
 
       const isOverlayActive = ChatApp.state.isInCreateOverlay;
       const isOnReviewScreen = ChatApp.state.isInReviewScreen;
-      
-      console.log("isOverlayActive ", isOverlayActive)
-      console.log("isOnReviewScreen ", isOnReviewScreen)
 
       if (isOverlayActive && isOnReviewScreen) {
         ChatApp.state.isInCreateOverlay = false;
@@ -77,7 +74,7 @@ ChatApp.ui = {
           const message = clone.querySelector(".message");
 
           message.classList.add("right");
-          message.querySelector(".avatar").src = ChatApp.utils.getAvatarUrl("/img/ender.png"); // or user's real avatar
+          message.querySelector(".avatar").src = ChatApp.utils.getAvatarUrl(),
           message.querySelector(".message-text").textContent = content;
           message.querySelector(".time").textContent = new Date().toLocaleTimeString([], {
             hour: "2-digit",
@@ -272,7 +269,7 @@ ChatApp.ui = {
     const nameInput = document.createElement("input");
     nameInput.placeholder = "*Give a name to a chat";
     nameInput.className = "input title";
-	 nameInput.type = "text";
+	  nameInput.type = "text";
     nameInput.id = "chatNameInput";
     container.appendChild(nameInput);
 
@@ -403,7 +400,7 @@ ChatApp.ui = {
     headerAvatar.src = ChatApp.utils.getAvatarUrl(otherUser?.img);
 
     container.innerHTML = "";
-
+    // console.log(chat);
     chat.chatmessages.forEach(msg => {
       const isCurrentUser = msg.senderid === ChatApp.state.currentUserId;
       const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
