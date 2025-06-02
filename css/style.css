@@ -548,7 +548,7 @@ header.site-header .logo {
 	height: auto;
 }
 header.site-header h1{ margin:0;}
-.left-sidebar { grid-area: left; margin-top:100px;  display: flex;  flex-direction: column; position: sticky; height: fit-content; top:0; overflow: clip hidden;
+.left-sidebar { grid-area: left; padding-top:100px;  display: flex;  flex-direction: column; position: sticky; height: fit-content; top:0; overflow: clip hidden;
   overscroll-behavior: contain; height: 100vh;}
 
 .right-sidebar {grid-area: right;  display: flex;  flex-direction: column; position: sticky; height: fit-content; top:0; overflow: clip hidden;

@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     });
   });
+
   const radio = document.querySelectorAll(".filterContainer .chkMost");
   radio.forEach((item) => {
     let lastSelected = null;
@@ -394,6 +395,7 @@ function commentToDom(c, append = true) {
       const { hashtags } = extractWords(tagElement.value.toLowerCase());
       tags = hashtags.join(" ");
     }
+    //console.log(tags);
     const titleElement = document.getElementById("searchTitle");
     if (titleElement) {
       const { normalWords } = extractWords(titleElement.value.toLowerCase());

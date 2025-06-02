@@ -41,7 +41,7 @@ checkAuth("unauthorized");
 
 			<div class="page-content">
 				<p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
-				<div class="homebtn"><a href="/dashboard.php" class="button btn-blue">Dashboard</a></div>
+				<div class="homebtn"><a href="dashboard.php" class="button btn-blue">Dashboard</a></div>
 				
 				
 

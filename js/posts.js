@@ -28,7 +28,7 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
       sortBy: ${sortby},
       limit: ${limit},
       offset: ${offset},
-      filterBy: [${filterBy}],`;
+      filterBy: [${filterBy}]`;
       
   postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
 

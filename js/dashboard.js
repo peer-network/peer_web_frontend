@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
-    // console.log("Tag search result:", tagName);
+    //console.log("Tag search result:", tagName);
 
 
     const query = `
@@ -253,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function applyFilters() {
     // const titleValue = titleInput.value.trim().toLowerCase();
     const userValue = userInput.value.trim().toLowerCase();
-    // const tagValue = tagInput.value.trim().toLowerCase();
+    const tagValue = tagInput.value.trim().toLowerCase();
+    //console.log(tagValue);
 
     if (userValue) await searchUsers(userValue);
     // if (titleValue) await searchTitles(titleValue);
@@ -263,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // localStorage.setItem("searchTitle", titleValue);
     // localStorage.setItem("searchTag", tagValue);
     localStorage.setItem("searchUser", userValue);
+    
   }
   
 
