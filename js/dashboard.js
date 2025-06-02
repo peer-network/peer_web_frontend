@@ -46,12 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
    } else {
     console.warn("⚠️ Post Loader element not found — cannot observe.");
   }
-  console.log("post_loader:", post_loader);
-  console.log("Loader exists:", post_loader, post_loader.getBoundingClientRect());
-
-  // Use requestAnimationFrame to wait until the next render frame before checking visibility
-  // Ensures layout is stable (e.g. images loaded, DOM settled) before trying to load posts
-  // requestAnimationFrame(ensurePostLoaderVisible);
 
   const titleInput = document.getElementById("searchTitle");
   const tagInput = document.getElementById("searchTag");
