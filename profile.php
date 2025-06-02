@@ -23,12 +23,13 @@ checkAuth("unauthorized");
 
 <!-- <script src="sw_instal.min.js" async></script> -->
 <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
- <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
+<script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
 <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
 <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
 <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
 <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
+<script src="js/list_follow.js?<?php echo filemtime('js/list_follow.js'); ?>" defer></script>
 <script src="js/profile.js?<?php echo filemtime('js/profile.js'); ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -88,7 +89,8 @@ checkAuth("unauthorized");
       <div class="profile_info">
         <h2 class="profile_title"><span  id="username">&nbsp;</span><span id="slug" class="profile_no">&nbsp;</span></h2>
         <div class="profile_description" id="biography"> </div>
-        <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Posts</span> <span class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span class="following_count"><em id="following">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers">0</em> Peers</span> </div>
+        <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Publications</span> <span id="followers_count" class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span id="following_count" class="following_count"><em id="following">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers">0</em> Peers</span> </div>
+        <div id="modalOverlay" class="modalOverlay none"></div>
       </div>
       <div class="profile_edit_box"><a class="button btn-white edit-profile" href="edit_profile.php">Edit profile</a></div>
     </div>

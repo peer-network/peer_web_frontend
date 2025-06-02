@@ -59,7 +59,4 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Post Loader element not found — cannot observe.");
   }
   
-  
-  
 });
-
