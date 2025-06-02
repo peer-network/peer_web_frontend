@@ -74,7 +74,6 @@ ChatApp.ui = {
           const message = clone.querySelector(".message");
 
           message.classList.add("right");
-          message.querySelector(".avatar").src = ChatApp.utils.getAvatarUrl(),
           message.querySelector(".message-text").textContent = content;
           message.querySelector(".time").textContent = new Date().toLocaleTimeString([], {
             hour: "2-digit",
@@ -171,7 +170,8 @@ ChatApp.ui = {
     item.classList.add("chat-list-item");
 
     const avatar = document.createElement("img");
-    avatar.src = ChatApp.utils.getAvatarUrl(contact.img);
+    avatar.src = tempMedia(contact.img.replace("media/", ""));
+    avatar.onerror = () => this.src = "./svg/noname.svg";
     avatar.alt = contact.username;
 
     const imgSpan = document.createElement("span");
@@ -290,7 +290,8 @@ ChatApp.ui = {
       item.classList.add("chat-list-item");
 
       const avatar = document.createElement("img");
-      avatar.src = ChatApp.utils.getAvatarUrl(user.img);
+      avatar.src = tempMedia(contact.img.replace("media/", ""))
+      avatar.onerror = () => this.src = "./svg/noname.svg";
       avatar.alt = user.name;
 
       const imgSpan = document.createElement("span");
@@ -397,8 +398,8 @@ ChatApp.ui = {
 
     const otherUser = chat.chatparticipants.find(u => u.userid !== ChatApp.state.currentUserId);
     header.textContent = chat.type === "private" ? otherUser?.username : chat.name;
-    headerAvatar.src = ChatApp.utils.getAvatarUrl(otherUser?.img);
-
+    headerAvatar.src = tempMedia(otherUser?.img.replace("media/", ""));
+    headerAvatar.onerror = () => this.src = "./svg/noname.svg";
     container.innerHTML = "";
     // console.log(chat);
     chat.chatmessages.forEach(msg => {
@@ -409,7 +410,8 @@ ChatApp.ui = {
       const clone = template.content.cloneNode(true);
       const message = clone.querySelector(".message");
       message.classList.add(isCurrentUser ? "right" : "left");
-      message.querySelector(".avatar").src = ChatApp.utils.getAvatarUrl(sender?.img);
+      message.querySelector(".avatar").src = tempMedia(sender?.img.replace("media/", ""));
+      message.querySelector(".avatar").onerror = () => this.src = "./svg/noname.svg";
 
       const textEl = message.querySelector(".message-text");
       if (chat.type === "group") {
