@@ -42,6 +42,7 @@ ChatApp.ui = {
       ChatApp.loader.loadChats(type);
     };
 
+    // ChatApp.utils.setAvatar(document.querySelector(".chat-input .avatar"));
     privateBtn.addEventListener("click", () => updateTab("private"));
     groupBtn.addEventListener("click", () => updateTab("group"));
 
@@ -126,7 +127,7 @@ ChatApp.ui = {
     const data = await ChatApp.api.fetchGraphQL(ChatApp.graphql.LIST_FRIENDS);
     const contactList = data?.listFriends?.affectedRows || [];
 
-    // ✅ Keep isInCreateOverlay true so tab switch shows filtered contacts properly
+    // Keep isInCreateOverlay true so tab switch shows filtered contacts properly
     ChatApp.state.isInReviewScreen = false;
     ChatApp.state.isInCreateOverlay = true;
     ChatApp.state.fullContactList = contactList;
@@ -396,6 +397,9 @@ ChatApp.ui = {
     const header = document.querySelector(".chat-header .username");
     const headerAvatar = document.querySelector(".chat-header .avatar");
 
+    const sendMessageTextInput = document.getElementById("sendMessageTextInput");
+
+
     const otherUser = chat.chatparticipants.find(u => u.userid !== ChatApp.state.currentUserId);
     header.textContent = chat.type === "private" ? otherUser?.username : chat.name;
     headerAvatar.src = tempMedia(otherUser?.img.replace("media/", ""));
@@ -406,6 +410,9 @@ ChatApp.ui = {
       const isCurrentUser = msg.senderid === ChatApp.state.currentUserId;
       const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
       const time = new Date(msg.createdat).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      
+      sendMessageTextInput.src = tempMedia(otherUser?.img.replace("media/", ""));
+      sendMessageTextInput.onerror = () => this.src = "./svg/noname.svg";
 
       const clone = template.content.cloneNode(true);
       const message = clone.querySelector(".message");

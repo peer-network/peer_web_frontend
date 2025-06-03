@@ -2,7 +2,7 @@ window.ChatApp = window.ChatApp || {};
 
 ChatApp.loader = {
   async loadChats(filterType = "private", userId = null) {
-    const token = ChatApp.utils.getCookie("authToken");
+    // const token = ChatApp.utils.getCookie("authToken");
     const query = ChatApp.graphql.LIST_CHATS;
 
     try {

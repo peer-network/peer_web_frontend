@@ -139,14 +139,7 @@
     <div class="chat-messages"></div>
     
     <div class="chat-input">
-        <img src="" class="avatar">
+        <img id="sendMessageTextInput" src="" class="avatar">
         <textarea name="" id="sendPrivateMessage" cols="30" rows="4" placeholder="Write a message ..."></textarea>
     </div>
-
-    <!--<div class="chat-input">
-        <img src="https://i.pravatar.cc/40?img=2" class="avatar">
-        <button id="emoji-trigger" type="button">ddddddd😀</button>
-        <textarea id="sendPrivateMessage" cols="30" rows="4" placeholder="Write a message ..."></textarea>
-    </div>-->
-
 </div>
