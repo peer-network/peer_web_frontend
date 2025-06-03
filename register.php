@@ -58,7 +58,14 @@ include 'host.php';
             <label id="validationMessage" for="password"></label>
         </div>
         <input class="button" type="submit" name="registrieren" value="Registrieren">
-
+        <div id="modalOverlay" class="modal-overlay none">
+            <div class="modal-box">
+                <h2>Confirm Your Identity</h2>
+                <label for="notBot"><input type="checkbox" id="notBot"/> I'm not a bot</label><br/>
+                <label for="ageCheck"><input type="checkbox" id="ageCheck"/> I'm 18+ years old</label><br/>
+                <button id="confirmSubmit">Continue</button>
+            </div>
+        </div>
         <div class="signIn">
             <span class="description">Already have an account?&nbsp;</span>
             <a class="link" href="login.php">Sign&nbsp;in</a>

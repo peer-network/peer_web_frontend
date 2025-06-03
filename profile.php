@@ -90,7 +90,7 @@ checkAuth("unauthorized");
         <h2 class="profile_title"><span  id="username">&nbsp;</span><span id="slug" class="profile_no">&nbsp;</span></h2>
         <div class="profile_description" id="biography"> </div>
         <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Publications</span> <span id="followers_count" class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span id="following_count" class="following_count"><em id="following">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers">0</em> Peers</span> </div>
-        <div id="modalOverlay" class="modalOverlay none"></div>
+        <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       <div class="profile_edit_box"><a class="button btn-white edit-profile" href="edit_profile.php">Edit profile</a></div>
     </div>
