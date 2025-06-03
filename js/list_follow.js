@@ -1,13 +1,19 @@
+  function getEffectiveUserID() {
+    const params = new URLSearchParams(window.location.search);
+    const queryUser = params.get('user');
+    return queryUser || getCookie("userID");
+    }
+  const userID = getEffectiveUserID();
   document.getElementById("followers_count").addEventListener("click", () => {
-    modalOverlay("followers");
+    modalOverlay(userID, "followers");
   });
   document.getElementById("following_count").addEventListener("click", () => {
-    modalOverlay("following");
+    modalOverlay(userID, "following");
   });
 
   const avatar = "https://media.getpeer.eu";
-  async function modalOverlay(type) {
-    const modal = document.getElementById("modalOverlay");
+  async function modalOverlay(userID, type) {
+    const modal = document.getElementById("modal_Overlay");
     modal.classList.remove("none");
     modal.innerHTML = `
       <div class="modal-content">
@@ -23,7 +29,7 @@
     const accessToken = getCookie("authToken");
     const query = `
       query {
-        listFollowRelations{
+        listFollowRelations (userid: "${userID}"){
           affectedRows {
             followers {
               id
@@ -69,8 +75,12 @@
 
       users.forEach(user => {
         const item = document.createElement("div");
-        item.className = "dropdown-item";
+        item.className = "dropdown-item clickable-user";
         item.innerHTML = `<div class="profilStats"><img src="${avatar}/${user.img}" alt="${user.username}" /> ${user.username}  #${user.slug}</div>`;
+        
+        item.addEventListener("click", () => {
+            window.location.href = `view-profile.php?user=${user.id}`;
+        });
 
         const img = item.querySelector("img");
         img.onerror = function () {
@@ -80,6 +90,10 @@
         const followButton = document.createElement("button");
         followButton.classList.add("follow-button");
         followButton.dataset.userid = user.id;
+
+        followButton.addEventListener("click", async function (event) {
+            event.stopPropagation(); 
+        });
 
         if (user.isfollowed) {
           followButton.classList.add("following");

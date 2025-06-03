@@ -101,6 +101,14 @@
   justify-content: center;
   z-index: 1000;
 }
+.modalOverlay .modal-header {
+	display: flex;
+	padding: inherit;
+}
+.modalOverlay .modal-body {
+	height: 20rem;
+	overflow-y: auto;
+}
 .modal-content .dropdown-item {
 	display: flex;
 	align-items: center;
@@ -118,10 +126,9 @@
 .modalOverlay .modal-close {
 	color: var(--text-color);
 	font-size: 2rem;
-	top: .1rem;
+	top: 1.2rem;
 	background: none;
-	margin-bottom: .5rem;
-	padding: 0 .5rem;
+	padding: 0 1rem;
 	border: none;
 	font-weight: normal;
 }
