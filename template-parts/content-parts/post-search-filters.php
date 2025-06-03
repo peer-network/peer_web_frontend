@@ -16,10 +16,11 @@
 
         <div class="search-box">
             <input name="searchTag" id="searchTag" type="text" placeholder="#hastags" />
-            <div class="dropdown none drop2" id="tagDropdown"></div>
+            
         </div>
 
         <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search"/>
+        <div class="dropdown drop2" id="tagDropdown"></div>
     </div>
     <div id="userResults" class="user-results"></div>
     <div class="notify" ><img src="svg/bell.svg" alt="notification icon"></div>

@@ -361,11 +361,17 @@ function commentToDom(c, append = true) {
     const letztesDiv = parentElement.lastElementChild;
   }
 
+  //let manualLoad = false;
+  let postoffset=0;
+
   async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
     if (postsLaden.offset === undefined) {
       postsLaden.offset = 0; // Initialwert
     }
+    //console.log("✅ postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
+    //manualLoad = false;
+
 
     const form = document.querySelector(".filterContainer");
 
@@ -403,12 +409,12 @@ function commentToDom(c, append = true) {
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
 	let  posts;
 	if(postbyUserID!=null){
-		  posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
+		  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
 	}else{
-	  posts = await getPosts(postsLaden.offset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+	  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
 	}
 	
-    // console.log(cleanedArray);
+    //console.log(posts);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
@@ -739,7 +745,7 @@ function commentToDom(c, append = true) {
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
     });
-    postsLaden.offset += posts.data.listPosts.affectedRows.length;
+    postoffset += posts.data.listPosts.affectedRows.length;
 	 
   }
   

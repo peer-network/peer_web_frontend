@@ -1,6 +1,6 @@
 
 .list_all_post {
-	grid-area: main;
+	
 	/* display: grid; */
 	gap: 2rem;
 	width: 100%;
@@ -16,7 +16,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	/* flex-flow: column wrap; */
-	justify-content: space-between;
+	/*justify-content: space-between;*/
 	align-items: stretch;
 	align-content: stretch;
 	min-width: 22rem;
@@ -241,7 +241,7 @@ text-shadow: 1px 1px 2px black;
 } */
 .card[content="video"] {
   aspect-ratio: 3/4.34;
-  flex-grow: 1;
+  
 }
 /* .card[content="video"]::before {
   content: url("../svg/video.svg");
@@ -266,7 +266,7 @@ text-shadow: 1px 1px 2px black;
 .card[content="audio"] {
   width: 20cqh;
   aspect-ratio: 3/4.34;
-  flex-grow: 1;
+  
 }
 /* .card[content="audio"]::before {
   content: url("../svg/audio.svg");
