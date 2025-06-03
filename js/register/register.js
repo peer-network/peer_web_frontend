@@ -139,8 +139,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     return;
   }
 
-  // Registrierung des Benutzers, nachdem die Validierungen bestanden wurden
-  await registerUser(email, password, username, referralCode);
+  showRegisterConfirmationModal(() => {
+    // Called only if user confirmed both checks
+    registerUser(email, password, username, referralCode);
+  });
 });
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren

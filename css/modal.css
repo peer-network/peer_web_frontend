@@ -92,7 +92,8 @@
 	/* font-size: 14px; */
 	cursor: pointer;
 	border: none;
-	
+	padding: 0 1rem;
+  border-radius: 1rem;
 
 	min-width: unset;
 	text-transform: uppercase;

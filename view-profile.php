@@ -29,6 +29,7 @@ checkAuth("unauthorized");
 <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
 <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
+<script src="js/list_follow.js?<?php echo filemtime('js/list_follow.js'); ?>" defer></script>
 <script src="js/viewprofile.js?<?php echo filemtime('js/viewprofile.js'); ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -82,7 +83,8 @@ checkAuth("unauthorized");
       <div class="profile_info">
         <h2 class="profile_title"><span  id="username2">&nbsp;</span><span id="slug2" class="profile_no">&nbsp;</span></h2>
         <div class="profile_description" id="biography2"> </div>
-        <div class="profile_stats"> <span class="post_count"><em id="userPosts2">&nbsp;</em> Posts</span> <span class="followers_count"><em id="followers2">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span class="following_count"><em id="following2">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers-2">0</em> Peers</span> </div>
+        <div class="profile_stats"> <span class="post_count"><em id="userPosts2">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers2">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span id="following_count" class="following_count"><em id="following2">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers-2">0</em> Peers</span> </div>
+        <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       
     </div>
