@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const post_loader = document.getElementById("post_loader");
-  
+  let observer;
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
@@ -19,20 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (post_loader) {
-    console.log(post_loader)
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    //console.log(post_loader)
+     observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
 
     
     // If post_loader is already visible on load (e.g. big screen), load posts
-    window.addEventListener("load", () => {
+   /* window.addEventListener("load", () => {
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        postsLaden();
+        //postsLaden();
       } else {
         requestAnimationFrame(ensurePostLoaderVisible); // Try again next frame
       }
-    });
+    });*/
 
     // 3. Manual check on scroll (in case layout shifts after interaction)
     window.addEventListener("scroll", () => {
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const titleInput = document.getElementById("searchTitle");
-  const tagInput = document.getElementById("searchTag");
+ 
   const userInput = document.getElementById("searchUser");
   const lupe = document.querySelector(".lupe");
   const avatar = "https://media.getpeer.eu";
@@ -184,18 +184,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
 
-
+  const tagInput = document.getElementById("searchTag");
   if (tagInput) {
-    tagInput.addEventListener("input", () => {
+    tagInput.addEventListener("click", handleTagSearch);
+    tagInput.addEventListener("input", handleTagSearch);
+    tagInput.addEventListener("focus", handleTagSearch);
+    tagInput.addEventListener("blur", ()=>{
+
+      const parentBox = tagInput.closest(".search-box");
+      if (parentBox) {
+        parentBox.classList.remove("active");
+      }
+    });
+
+
+    function handleTagSearch() {
+      const parentBox = tagInput.closest(".search-box");
+      if (parentBox) {
+        parentBox.classList.add("active");
+      }
+
       let query = tagInput.value.trim();
-      // console.log("Input query:", query);
+       //console.log("Input query:", query);
       if (query.startsWith("#")) {
         query = query.slice(1);
       }
       if (query.length > 0) {
         searchTags(query);
       }
-    });
+    }
   }
 
   async function searchTags(tagName) {
@@ -243,10 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
     tagDropdown.innerHTML = "";
 
       if (!Array.isArray(tags) || tags.length === 0) {
-        tagDropdown.classList.add("none");
+        tagDropdown.classList.remove("active");
         return;
       }else {
-        tagDropdown.classList.remove("none");
+        tagDropdown.classList.add("active");
       }
 
       tags.forEach(tag => {
@@ -257,10 +274,34 @@ document.addEventListener("DOMContentLoaded", () => {
         tagItem.addEventListener("click", () => {
           tagInput.value = `#${tag.name}`;
           localStorage.setItem("searchTag", tag.name);
-          tagDropdown.classList.add("none");
-          // Calling the existing listPosts from post.js
-          postsLaden();
-          // getPosts(tag.name);
+          tagDropdown.classList.add("active");
+            try {
+
+            // Temporarily stop the observer to prevent duplicate postsLaden call
+              if (observer && post_loader) {
+                observer.unobserve(post_loader);
+              }
+
+
+              //console.log("Calling postsLaden() from tag click...");
+              const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
+              parentElement.innerHTML="";
+              postoffset=0;
+              //manualLoad = true;
+              postsLaden(); // Check if this runs
+
+                tagDropdown.classList.remove("active");
+                // Re-enable observer if you need infinite scroll after loading
+                setTimeout(() => {
+                  if (observer && post_loader) {
+                    observer.observe(post_loader);
+                  }
+                }, 1000); // Delay allows DOM to update (optional)
+
+
+            } catch (err) {
+              console.error("Error in postsLaden():", err);
+            }
         });
 
         tagDropdown.appendChild(tagItem);
@@ -302,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pulldown = searchgroup.querySelectorAll(".dropdown");
       searchgroup.addEventListener("mouseleave", () => {
         pulldown.forEach((item) => {
-          item.classList.add("none");
+          item.classList.remove("active");
         });
       });
   }
