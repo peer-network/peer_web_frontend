@@ -49,9 +49,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const titleInput = document.getElementById("searchTitle");
  
-  const userInput = document.getElementById("searchUser");
+  
   const lupe = document.querySelector(".lupe");
   const avatar = "https://media.getpeer.eu";
+
+
+
+  const userInput = document.getElementById("searchUser");
+  if (userInput) {
+    userInput.addEventListener("click", handleUserSearch);
+    userInput.addEventListener("input", handleUserSearch);
+    userInput.addEventListener("focus", handleUserSearch);
+    userInput.addEventListener("blur", ()=>{
+
+      const parentBox = userInput.closest(".search-box");
+      if (parentBox) {
+        parentBox.classList.remove("active");
+      }
+    });
+
+
+    function handleUserSearch() {
+      const parentBox2 = userInput.closest(".search-box");
+      if (parentBox2) {
+        parentBox2.classList.add("active");
+      }
+
+      let uquery = userInput.value.trim().toLowerCase();
+       //console.log("Input uquery:", query);
+      if (uquery.startsWith("@")) {
+        uquery = uquery.slice(1);
+      }
+      if (uquery.length > 0) {
+        searchUsers(uquery);
+      }
+    }
+  }
   
   // Function to search for users via GraphQL
   async function searchUsers(username) {
@@ -85,36 +118,16 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ query })
       });
 
-      // userInput.addEventListener("focus", async () => {
-      //   const json = await response.json();
-      //   users = json?.data?.searchUser?.affectedRows || [];
-      //   const dropdown = document.getElementById("userDropdown");
-
-      //   dropdown.innerHTML = "";
-      //   dropdown.style.display = users.length ? "block" : "none";
-
-      //   users.forEach(user => {
-      //     const item = document.createElement("div");
-      //     item.className = "dropdown-item";
-      //     item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
-      //     item.addEventListener("click", () => {
-      //       loadUserProfile(user.username);
-      //       dropdown.style.display = "none";
-      //     });
-      //     dropdown.appendChild(item);
-      //   });
-      // });
-
-
+      
       const json = await response.json();
       const users = json?.data?.searchUser?.affectedRows || [];
 
       const dropdown = document.getElementById("userDropdown");
       dropdown.innerHTML = "";
       if (users.length) {
-        dropdown.classList.remove("none");
+        dropdown.classList.add("active");
       } else {
-        dropdown.classList.add("none");
+        dropdown.classList.remove("active");
       }
 
       users.forEach(user => {
@@ -129,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         item.addEventListener("click", () => {
           window.location.href = `view-profile.php?user=${user.id}`;
-          dropdown.classList.add("none");
+          dropdown.classList.remove("active");
         });
         dropdown.appendChild(item);
       });
@@ -311,28 +324,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // Main applyFilters function
   async function applyFilters() {
     // const titleValue = titleInput.value.trim().toLowerCase();
-    const userValue = userInput.value.trim().toLowerCase();
-    const tagValue = tagInput.value.trim().toLowerCase();
+    //const userValue = userInput.value.trim().toLowerCase();
+    //const tagValue = tagInput.value.trim().toLowerCase();
     //console.log(tagValue);
 
-    if (userValue) await searchUsers(userValue);
+    //if (userValue) await searchUsers(userValue);
     // if (titleValue) await searchTitles(titleValue);
     // if (tagValue) await searchTags(tagValue);
 
     // Optionally save local storage (optional)
     // localStorage.setItem("searchTitle", titleValue);
     // localStorage.setItem("searchTag", tagValue);
-    localStorage.setItem("searchUser", userValue);
+    //localStorage.setItem("searchUser", userValue);
     
   }
   
 
   // Add input listeners
-  if (userInput) {
+ /* if (userInput) {
     [ userInput].forEach((input) =>
       input.addEventListener("input", applyFilters)
     );
-  }
+  }*/
 
   // Trigger on click
   if (lupe) {

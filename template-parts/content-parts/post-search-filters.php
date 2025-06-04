@@ -2,7 +2,7 @@
     <div class="search-group" id="searchGroup">
         <div class="search-box">
             <input name="searchUser" id="searchUser" type="text" placeholder="@username" />
-            <div class="dropdown none" id="userDropdown"></div>
+            <div class="dropdown" id="userDropdown"></div>
         </div>
 
         <div class="divider"></div>
@@ -16,11 +16,11 @@
 
         <div class="search-box">
             <input name="searchTag" id="searchTag" type="text" placeholder="#hastags" />
-            
+            <div class="dropdown drop2" id="tagDropdown"></div>
         </div>
 
         <img class="lupe" id="searchBtn" src="svg/lupe.svg" alt="search"/>
-        <div class="dropdown drop2" id="tagDropdown"></div>
+        
     </div>
     <div id="userResults" class="user-results"></div>
     <div class="notify" ><img src="svg/bell.svg" alt="notification icon"></div>
