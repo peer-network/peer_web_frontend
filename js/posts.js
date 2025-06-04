@@ -155,7 +155,7 @@ function viewPost(postid) {
 }
 
 async function likePost(postid) {
-  if (!(await LiquiudityCheck(10, "Like Post", like))) {
+  if (!(await LiquiudityCheck(10, "You're out of free likes", like))) {
     return false;
   }
   const accessToken = getCookie("authToken");
@@ -261,8 +261,8 @@ async function LiquiudityCheck(postCosts, title, action) {
   } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
     let answer = await confirm(
       title,
-      `You currently have ${token} Peer Tokens.
-       This ${msg[action]} will cost ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens.`
+      // `You currently have ${token} Peer Tokens.
+      `Liking this post will cost ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens.`
     );
     if (answer === null || answer === cancel) {
       return false;

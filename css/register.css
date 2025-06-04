@@ -225,7 +225,16 @@ a.button.disable {
   /* justify-content: center; */
   /* align-items: center; */
 }
-
+.sign {
+  display: flex;
+  gap: 0.2rem;
+  flex-direction: row;
+  align-items: center;
+  margin: 1.2rem 0;
+}
+.sign span {
+  font-size: 0.6rem;
+}
 .link {
   font-weight: 700;
   font-size: 0.6rem;

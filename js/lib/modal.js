@@ -1,7 +1,17 @@
-function createModal({ title = "", message = "", buttons = [], type = "info", textarea = false }) {
+function createModal({ title = "", message = "", buttons = [], type = "info", textarea = false, dontShowOption = false }) {
   return new Promise((resolve) => {
+
+    if (id && localStorage.getItem(`hideModal:${id}`) === "true") {
+      resolve({ skipped: true });
+      return;
+    }
+
     const modal = document.createElement("div");
     modal.classList.add("modal-container");
+
+    const dontShowCheckbox = dontShowOption
+      ? `<label class="dont-show-again"><input type="checkbox" id="dontShowAgain"> Don't show this again</label>`
+      : "";
 
     // Erstelle den HTML-Inhalt des Modals, optional mit Textarea
     modal.innerHTML = `
@@ -10,6 +20,7 @@ function createModal({ title = "", message = "", buttons = [], type = "info", te
                 <h2 class="modal-title">${title}</h2>
                 <p class="modal-message">${message}</p>
                 ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
+                ${dontShowCheckbox}
                 <div class="modal-buttons">
                     ${buttons.map((btn, index) => `<button class="modal-button" data-index="${index}">${btn}</button>`).join("")}
                 </div>
@@ -25,6 +36,12 @@ function createModal({ title = "", message = "", buttons = [], type = "info", te
       btn.addEventListener("click", (event) => {
         const index = event.target.getAttribute("data-index");
         const textareaElement = modal.querySelector(".modal-textarea");
+        const dontShowAgainChecked = modal.querySelector("#dontShowAgain")?.checked;
+        
+        if (id && dontShowAgainChecked) {
+          localStorage.setItem(`hideModal:${id}`, "true");
+        }
+
         if (textareaElement) {
           resolve({ button: Number(index), value: textareaElement.value });
         } else {
@@ -98,11 +115,13 @@ function warnig(title, text = "") {
     type: "warning",
   });
 }
-function confirm(title, text = "") {
+function confirm(title, text = "", options = {}) {
+  const { id = "", dontShowOption = false } = options;
   return createModal({
     title: title,
     message: userfriendlymsg(text),
     buttons: ["Cancel", "Confirm"],
     type: "warning",
+    dontShowOption: dontShowOption,
   });
 }

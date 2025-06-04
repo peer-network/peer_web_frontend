@@ -58,7 +58,7 @@ if (isset($_GET['message'])) {
     <form id="registerForm" class="form-container">
         <h1 class="heading">Welcome back!</h1>
         <p class="description">Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!</p>
-        <div class="auth">
+        <!-- <div class="auth">
             <div class="vector">
                 <img class="bubbles" alt="bubbles" src="svg/bubbles.svg" width="351" height="128">
                 <div class="buttons">
@@ -67,8 +67,8 @@ if (isset($_GET['message'])) {
                     <img src="svg/apple.svg" height="48" width="48" alt="Login with Apple">
                 </div>
             </div>
-        </div>
-        <div class="line-with-text"><span>or</span></div>
+        </div> -->
+        <!-- <div class="line-with-text"><span>or</span></div> -->
         <div class="input-field">
             <input type="email" id="email" name="e_mail" placeholder="E-Mail" required class="input-text" autocomplete="on"></input>
         </div>
@@ -81,7 +81,12 @@ if (isset($_GET['message'])) {
         <input id="submit" class="button" type="submit" name="Login" value="Login">
 
         <div class="signIn">
-            <a class="link" href="forgotpassword.php">forgot&nbsp;password</a>
+            <a class="link" href="forgotpassword.php">Forgot&nbsp;password?</a>
+        </div>
+
+        <div class="sign">
+            <span>Don't have an account?&nbsp;</span>
+            <a class="link" href="register.php">Register</a>
         </div>
         <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
     </form>
