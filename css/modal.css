@@ -11,6 +11,7 @@
   justify-content: center;
   align-items: center;
   opacity: 1;
+  -webkit-backdrop-filter: blur(1.5px);
   backdrop-filter: blur(1.5px);
   transition: opacity, backdrop-filter 0.3s ease;
 }
@@ -34,11 +35,11 @@
   animation: modal-scale-in 0.3s ease-out;
 }
 .modal-textarea {
-	border-radius: 1rem;
-	font-size: 0.9rem;
-	resize: vertical;
-	max-height: 70vh;
-	margin-bottom: 30px;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  resize: vertical;
+  max-height: 70vh;
+  margin-bottom: 30px;
 }
 /* Typen */
 .modal-content.info {
@@ -89,19 +90,19 @@
 }
 
 .modal-buttons .modal-button {
-	/* font-size: 14px; */
-	cursor: pointer;
-	border: none;
-	padding: 0 1rem;
+  /* font-size: 14px; */
+  cursor: pointer;
+  border: none;
+  padding: 0 1rem;
   border-radius: 1rem;
 
-	min-width: unset;
-	text-transform: uppercase;
-	line-height: 50px;
+  min-width: unset;
+  text-transform: uppercase;
+  line-height: 50px;
 }
-.modal-buttons .modal-button[data-index="0"]{
-	background-color: var(--button-hover);
-	border-color: var(--button-hover);
+.modal-buttons .modal-button[data-index="0"] {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
 }
 
 .modal-buttons .modal-button:hover {
@@ -144,7 +145,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,22 +158,22 @@
   padding: 1rem;
   border-radius: 1.5rem;
   width: 12rem;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 .none {
   display: none !important;
 }
-.modal-box input  {
-  width: .7rem;
-  height: .7rem;
+.modal-box input {
+  width: 0.7rem;
+  height: 0.7rem;
 }
 .modal-box label {
   position: sticky;
 
   display: block;
-  font-size: .6rem;
+  font-size: 0.6rem;
 }
-.modal-box:hover button{
+.modal-box:hover button {
   cursor: pointer;
 }
 .logOut-pop {
@@ -186,7 +187,7 @@
   border-radius: 1.5rem;
   width: 30rem;
   height: 20rem;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 .logOut-pop img {
   width: 4rem;
@@ -198,4 +199,7 @@
 .button-row button {
   width: 10rem;
   height: 4rem;
+}
+.modal-checkbox {
+  margin: 0.5em 0;
 }
