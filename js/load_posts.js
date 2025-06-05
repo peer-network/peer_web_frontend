@@ -600,29 +600,49 @@ async function postsLaden(postbyUserID = null) {
       }
     }
 
-    const followButton = document.createElement("button");
-    followButton.classList.add("follow-button");
-    if (objekt.user.isfollowed) {
-      followButton.classList.add("following");
-      followButton.textContent = "Following";
-    } else {
-      followButton.textContent = "Follow +";
-    }
-    followButton.addEventListener("click", async function (event) {
-      event.stopPropagation();
-      event.preventDefault();
+    function renderFollowButton(objekt, currentUserId) {
+      if (objekt.user.id === currentUserId) return;
 
-      const newStatus = await toggleFollowStatus(objekt.user.id);
+      const followButton = document.createElement("button");
+      followButton.classList.add("follow-button");
 
-      if (newStatus !== null) {
-        objekt.user.isfollowed = newStatus;
-        followButton.textContent = newStatus ? "Following" : "Follow +";
-        followButton.classList.toggle("following", newStatus);
+      const followerCountSpan = document.getElementById("following");
+
+      if (objekt.user.isfollowed) {
+        followButton.classList.add("following");
+        followButton.textContent = "Following";
       } else {
-        alert("Failed to update follow status. Please try again.");
+        followButton.textContent = "Follow +";
       }
-    });
-    inhaltDiv.appendChild(followButton);
+
+      followButton.addEventListener("click", async function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const newStatus = await toggleFollowStatus(objekt.user.id);
+
+        if (newStatus !== null) {
+          objekt.user.isfollowed = newStatus;
+
+          if (followerCountSpan) {
+            let count = parseInt(followerCountSpan.textContent, 10) || 0;
+            count = newStatus ? count + 1 : Math.max(0, count - 1);
+            followerCountSpan.textContent = count;
+          } else {
+            followButton.textContent = newStatus ? "Following" : "Follow +";
+          }
+
+          followButton.textContent = newStatus ? "Following" : "Follow +";
+          followButton.classList.toggle("following", newStatus);
+        } else {
+          alert("Failed to update follow status. Please try again.");
+        }
+      });
+
+      inhaltDiv.appendChild(followButton);
+    }
+    renderFollowButton(objekt, UserID);
+
     userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
     const h1 = document.createElement("h3");
     h1.textContent = objekt.title;

@@ -20,14 +20,7 @@
   }
 }
 
-/* Schriftart lokal im CSS einbinden */
-@font-face {
-  font-family: "Poppins";
-  src: url("../fonts/Poppins-Medium.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+
 
 html {
   scroll-behavior: smooth;
@@ -36,6 +29,7 @@ html {
 
 body {
   font-family: "Poppins", sans-serif;
+  font-size: 18px;
   margin: 0;
   background: var(--background-color);
   color: var(--text-color);
@@ -209,7 +203,7 @@ a.button {
 	display: inline-block;
   text-align: center;
 }
-a.button.disable {
+a.disable {
 	cursor: not-allowed;
 	pointer-events: none;
 }
@@ -472,16 +466,19 @@ label {
 }
 
 #validationMessage {
-  color: red;
-  transition-property: color;
-  transition-duration: 1s;
-  transition-delay: 0s;
+	color: red;
+	transition-property: color;
+	transition-duration: 1s;
+	transition-delay: 0s;
+	max-width: 700px;
+	font-size: 16px;
+	line-height: 18px;
 }
 
-.notvalid {
-  color: #fff !important;
-  height: 2rem !important;
-  padding: 2% 3% !important;
+.notvalid,.error {
+  
+  color: red;
+  
 }
 
 input:focus + label {
@@ -520,4 +517,16 @@ input:focus + label {
 }
 .checkbox:checked + .disclaimer-container {
   display: none;
+}
+/*----Forget Password----*/
+.form-container .input-field{
+
+  position: relative;
+}
+.form-container .input-field .loader{
+  display: none;
+}
+.form-container .input-field .loader.active
+{
+  display: block;
 }

@@ -3,8 +3,10 @@ function displayValidationMessage(message) {
   let element;
   // Display error message in the UI (instead of using alert)
   element = document.getElementById("validationMessage");
-  element.classList.add("notvalid");
-  element.innerText = message;
+  if(element){
+    element.classList.add("notvalid");
+    element.innerText = message;
+  }
 }
 // Eingabefeld abrufen
 const usernameInput = document.getElementById("username");
