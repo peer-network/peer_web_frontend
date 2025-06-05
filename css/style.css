@@ -148,8 +148,8 @@ img {
   border: 0;
 }
 h1 {
-font-size: 64px;
-font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);
+font-size: 35px;
+/*font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);*/
 line-height: 1.2;
 font-weight: 400;
 margin:0 0 25px 0;
@@ -158,8 +158,8 @@ letter-spacing: 0.02em; /* 2% = 0.02em */
 
 }
 h2 {
-font-size: 40px;
-font-size: clamp(1.875rem, 1.5909rem + 0.9091vw, 2.5rem);
+font-size: 35px;
+
 line-height: 1.2;
 font-weight: 400;
 margin:0 0 25px 0;
@@ -168,16 +168,16 @@ letter-spacing: 0;
 
 }
 h3 {
-  font-size: 30px;
+  font-size: 28px;
  
-  font-size: clamp(1.5rem, 1.3125rem + 0.6vw, 1.875rem);
+  
   line-height: 1.2;
   font-weight: 400;
   margin:0 0 22px 0;
 }
 h4 {
   font-size:22px;
-  font-size: clamp(1.125rem, 1.0114rem + 0.3636vw, 1.375rem);
+  
 line-height: 1.2;
 font-weight: 700;
 margin:0 0 22px 0;
@@ -547,7 +547,7 @@ header.site-header {
 
 }
 header.site-header .logo {
-	/*width: 1.7rem;*/
+	width: 1.7rem;
 	height: auto;
 }
 header.site-header h1{ margin:0;}
@@ -592,7 +592,7 @@ footer {grid-area: footer;}
 	display: none;
 }
 .widget .filterGroup span {
-	/*font-size: 0.8rem;*/
+	
 	word-break: break-all;
 }
 
@@ -601,7 +601,7 @@ footer {grid-area: footer;}
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 1rem;
+	padding: 0;
 	gap: 0.5rem;
 	border-radius: 15px;
 	height: 100%;
@@ -741,12 +741,13 @@ footer {grid-area: footer;}
 	text-decoration: none;
 	color: var(--text-color);
 }
+
 .widget ul.menu li a .icon {
-	
+	width: 1.3rem;
 	height: auto;
-	margin-right:1rem;
-	aspect-ratio: 1 / 1;
+	margin-right: 10px;
 }
+
 
 .widget ul.menu li a .notification-badge {
 	position: absolute;
@@ -756,7 +757,7 @@ footer {grid-area: footer;}
 	border-radius: 100%;
 	padding: 0.3rem 0.8rem;
 	aspect-ratio: 1/1;
-	height: calc(100% - 3rem);
+	height: auto;
 	text-align: center;
 	display: flex;
 	justify-content: center;
@@ -879,7 +880,7 @@ footer {grid-area: footer;}
 .search-group {
 	display: flex;
 	width: 100%;
-	max-width: 45.5%;
+	max-width: 70%;
 	gap: 0.5rem;
 	align-items: center;
 	padding: 0 2%;
@@ -1021,8 +1022,59 @@ footer {grid-area: footer;}
 /*--------------------------------------------------------------
 # Media Queries  Block CSS
 --------------------------------------------------------------*/
+@media screen and (min-width: 2000px) {
+	
+	body, button, input, select, optgroup, textarea {
+		
+		font-size: 18px;
+		
+	}
+	header.site-header .logo {
+	 	width: 2.2rem; 
+		height: auto;
+	}
 
-@media screen and (min-width: 2300px) {
+	h1 {
+		font-size: 45px;
+		
+		
+	}
+	h3 {
+		font-size: 28px;
+		
+	
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="url"],
+	input[type="password"],
+	input[type="search"],
+	input[type="number"],
+	input[type="tel"],
+	input[type="range"],
+	input[type="date"],
+	input[type="month"],
+	input[type="week"],
+	input[type="time"],
+	input[type="datetime"],
+	input[type="datetime-local"],
+	input[type="color"],
+	textarea
+	 {
+		font-size: 20px;
+    	
+		height: 5.12rem;
+	}
+	.post-search-filters .notify {
+		width: 82px;
+		height: auto;
+		aspect-ratio: 1 / 1;
+	}
+}
+@media screen and (min-width: 3000px) {
+	
+
 	body, button, input, select, optgroup, textarea {
 		
 		font-size: 28px;
@@ -1044,6 +1096,11 @@ footer {grid-area: footer;}
 		grid-template-columns: 650px 1fr 650px;
 	}
 	header.site-header {	padding: 80px 100px 50px;}
+
+	header.site-header .logo {
+	width: auto; 
+	height: auto;
+	}
 	.left-sidebar {
 	padding-top: 122px;
 	}
@@ -1054,6 +1111,11 @@ footer {grid-area: footer;}
 	main.site-main {
 	
 	padding-top: 80px;
+	}
+	.search-group {
+	
+		max-width: 50%;
+	
 	}
 	.search-group .divider {
 	
@@ -1097,9 +1159,14 @@ footer {grid-area: footer;}
 		padding: 1.1rem 2.5rem;
 		line-height: 5rem;
 	}
-	.widget .widget-type-box {
-	
-		padding: 2.5rem;
+	.widget ul.menu li a .notification-badge {
+		height: calc(100% - 3rem);
+	}
+	.widget ul.menu li a .icon {
+		width:auto;
+		height: auto;
+		margin-right:1rem;
+		aspect-ratio: 1 / 1;
 	}
 	
 }
