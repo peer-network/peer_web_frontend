@@ -498,20 +498,19 @@
 
 .site-main-wallet .action-buttons button {
   flex: 1;
-  border: none;
-  padding: 12px 16px;
-  font-size: 14px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s ease;
+  
 }
-
+.site-main-wallet .action-buttons button img {
+	width: 1rem !important;
+	height: auto !important;
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 10px;
+}
 .site-main-wallet .action-buttons .repeat {
   background: white;
   color: black;
-  height: "18px";
-  margin-Left: "6px";
+ 
 }
 
 .site-main-wallet .action-buttons .receipt {
