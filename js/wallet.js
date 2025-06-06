@@ -260,6 +260,7 @@ async function dailywin() {
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
+
     const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
     sortedDescending.forEach((entry) => {
       const historyItem = document.createElement("div");
@@ -267,7 +268,7 @@ async function dailywin() {
 
       const typeDiv = document.createElement("div");
       typeDiv.className = "type";
-      typeDiv.textContent = entry.action == 2 ? "Like" : entry.action == 5 ? "Post create" : entry.action == 4 ? "Comment" : "unknown";
+      typeDiv.textContent = entry.action == 2 ? "Like" : entry.action == 5 ? "Post create" : entry.action == 4 ? "Comment" : entry.action == 18 ? "Token Transfer" : "unknown";
 
       const dateDiv = document.createElement("div");
       dateDiv.className = "date";
