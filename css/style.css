@@ -1078,7 +1078,7 @@ footer {grid-area: footer;}
 	 {
 		font-size: 20px;
     	
-		height: 5.12rem;
+		/*height: 5.12rem;*/
 	}
 	.post-search-filters .notify {
 		width: 82px;
