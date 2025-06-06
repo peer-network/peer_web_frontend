@@ -157,7 +157,8 @@
   /* color: var(--text-color); */
   padding: 1rem;
   border-radius: 1.5rem;
-  width: 12rem;
+  width: 12vw;
+  height: 6vw;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 .none {

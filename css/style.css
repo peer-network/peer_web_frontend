@@ -498,6 +498,11 @@ textarea {
 	text-align: center;
 	min-height: 60px;
 }
+.hideloader {
+	 opacity: 0; 
+	
+}
+
 #post_loader img, .loading {
 	animation: loading 4s ease 0s infinite;
 	height: 3rem;
@@ -511,7 +516,16 @@ textarea {
       transform: rotate(360deg);
     }
   }
-
+.no_post_found {
+	display: none;
+	text-align: center;
+	max-width: 500px;
+	margin: 0 auto;
+	border: 1px solid;
+	padding: 30px;
+	border-radius: 20px;
+}
+.no_post_found.active{ display: block;}
 /*--------------------------------------------------------------
 # Site Layout
 --------------------------------------------------------------*/

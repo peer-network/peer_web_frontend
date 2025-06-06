@@ -32,13 +32,14 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
 
   postsList += tag && tag.length >= 2 ? `, tag: "${tag}"` : "";
 
-  postsList += title && title.length >= 2 ? `, title: "${title}"` : "";
+  postsList += title && title.length >= 1 ? `, title: "${title}"` : "";
 
   postsList += userID !== null ? `, userid: "${userID}"` : "";
 
   postsList += `) {
         status
         ResponseCode
+        counter
         affectedRows {
             id
             contenttype

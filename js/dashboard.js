@@ -38,17 +38,21 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", () => {
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        console.log("🖱️ Fallback load triggered (on scroll)");
+        console.log("Fallback load triggered (on scroll)");
         postsLaden();
       }
     }, { passive: true });
 
    } else {
-    console.warn("⚠️ Post Loader element not found — cannot observe.");
+    console.warn(" Post Loader element not found — cannot observe.");
   }
 
   const titleInput = document.getElementById("searchTitle");
- 
+  if (titleInput) {
+      
+      titleInput.addEventListener("input", handleSearch);
+    
+  }
   
   const lupe = document.querySelector(".lupe");
   const avatar = "https://media.getpeer.eu";
@@ -159,41 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
 
-   //Function to search for tags via GraphQL
-   async function listTags() {
-     const accessToken = getCookie("authToken");
-     const query = `
-       query ListTags {
-         listTags(offset: 0, limit: 20) {
-           status
-           counter
-           ResponseCode
-           affectedRows {
-             name
-           }
-         }
-       }
-     `;
-
-     try {
-       const response = await fetch(GraphGL, {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-           Authorization: `Bearer ${accessToken}`
-         },
-         body: JSON.stringify({ query })
-       });
-
-       const json = await response.json();
-       console.log("Tag search result:", json);
-       console.log()
-       return json?.data?.listTags?.affectedRows || [];
-     } catch (error) {
-       console.error("Error listing tags:", error);
-       return [];
-     }
-   }
+ 
 
   
 
@@ -224,6 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (query.length > 0) {
         searchTags(query);
+      }else{
+        
+        //handleSearch();
       }
     }
   }
@@ -288,33 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
           tagInput.value = `#${tag.name}`;
           localStorage.setItem("searchTag", tag.name);
           tagDropdown.classList.add("active");
-            try {
-
-            // Temporarily stop the observer to prevent duplicate postsLaden call
-              if (observer && post_loader) {
-                observer.unobserve(post_loader);
-              }
-
-
-              //console.log("Calling postsLaden() from tag click...");
-              const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
-              parentElement.innerHTML="";
-              postoffset=0;
-              //manualLoad = true;
-              postsLaden(); // Check if this runs
-
-                tagDropdown.classList.remove("active");
-                // Re-enable observer if you need infinite scroll after loading
-                setTimeout(() => {
-                  if (observer && post_loader) {
-                    observer.observe(post_loader);
-                  }
-                }, 1000); // Delay allows DOM to update (optional)
-
-
-            } catch (err) {
-              console.error("Error in postsLaden():", err);
-            }
+          handleSearch();
+            
         });
 
         tagDropdown.appendChild(tagItem);
@@ -361,7 +309,35 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
+  function handleSearch(){
+    try {
 
+      // Temporarily stop the observer to prevent duplicate postsLaden call
+        if (observer && post_loader) {
+          observer.unobserve(post_loader);
+        }
+
+
+        //console.log("Calling postsLaden() from tag click...");
+        const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
+        parentElement.innerHTML="";
+        postoffset=0;
+        //manualLoad = true;
+        postsLaden(); // Check if this runs
+
+          // tagDropdown.classList.remove("active");
+          // Re-enable observer if you need infinite scroll after loading
+          setTimeout(() => {
+            if (observer && post_loader) {
+            //observer.observe(post_loader);
+            }
+          }, 1000); // Delay allows DOM to update (optional)
+
+
+    } catch (err) {
+      console.error("Error in postsLaden():", err);
+    }
+  }
  
 
 });

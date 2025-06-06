@@ -380,7 +380,7 @@ async function postsLaden(postbyUserID = null) {
   //   const { hashtags } = extractWords(searchTag.value.toLowerCase());
   // }
 
-  let tagInput = "";
+  let titleInput = "";
   let tags = "";
   const tagElement = document.getElementById("searchTag");
   if (tagElement) {
@@ -391,14 +391,14 @@ async function postsLaden(postbyUserID = null) {
   const titleElement = document.getElementById("searchTitle");
   if (titleElement) {
     const { normalWords } = extractWords(titleElement.value.toLowerCase());
-    tagInput = normalWords.join(" ");
+    titleInput = normalWords.join(" ");
   }
   const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
   let posts;
   if (postbyUserID != null) {
-    posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST", postbyUserID);
+    posts = await getPosts(postoffset, 20, cleanedArray, titleInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST", postbyUserID);
   } else {
-    posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+    posts = await getPosts(postoffset, 20, cleanedArray, titleInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
   }
 
   //console.log(posts);
@@ -753,8 +753,23 @@ async function postsLaden(postbyUserID = null) {
     // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
     parentElement.appendChild(card);
   });
+ 
   postoffset += posts.data.listPosts.affectedRows.length;
+
+  const post_loader = document.getElementById("post_loader");
+  
+  const no_post_found = document.getElementById("no_post_found");
+  //console.log(posts.data.listPosts.counter +"---"+posts.data.listPosts.affectedRows.length);
+  if(posts.data.listPosts.counter==0 && posts.data.listPosts.affectedRows.length==0) // no  post found 
+  {
+     no_post_found.classList.add("active");
+     post_loader.classList.add("hideloader");
+  }else{
+      no_post_found.classList.remove("active");
+      post_loader.classList.remove("hideloader");
+  }
 }
+
 
 let timerId = null;
 function cancelTimeout() {
