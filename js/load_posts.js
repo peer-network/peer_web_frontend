@@ -38,9 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // result hat das Format { button: <index>, value: <textarea Inhalt> }
         if (result !== null && result.button == 0 && result.value !== "") {
           createComment(attributeValue, result.value).then((result) => {
+            if (result) {
             if (result.data.createComment.status === "success") {
               commentToDom(result.data.createComment.affectedRows[0], false);
             }
+          }
           });
         }
         // console.log("Ergebnis:", result);
