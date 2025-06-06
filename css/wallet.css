@@ -12,30 +12,35 @@
   /* display: flex; */
   align-items: baseline;
 }
+
 #wallet-amount img {
   width: 2rem;
   height: auto;
   display: inline-block;
 }
+
 #wallet-amount {
   grid-column: span 2;
   display: flex;
   justify-content: space-around;
 }
-#wallet-amount > div {
+
+#wallet-amount>div {
   display: grid;
   gap: 0.5rem;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-#wallet-amount > div > p {
+
+#wallet-amount>div>p {
   grid-column: span 2;
 }
 
 #wallet-transaction {
   width: 100%;
 }
+
 #wallet-transaction h2 {
   margin-bottom: 1.5rem;
 }
@@ -59,10 +64,12 @@
   width: var(--progress);
   transition: width 0.3s ease;
 }
+
 .radial-progress {
   --size: 11rem;
   --thickness: 0.5rem;
-  --progress: 65; /* in Prozent (0–100) */
+  --progress: 65;
+  /* in Prozent (0–100) */
 
   width: var(--size);
   height: var(--size);
@@ -109,12 +116,14 @@
   width: 100%;
   padding: 0.5rem 1rem;
 }
+
 .history-item {
   background-color: #252525;
   border-radius: 1.5rem;
   margin: 0.5rem;
   padding: 2rem;
 }
+
 .history-item img {
   width: 1rem;
   height: auto;
@@ -126,29 +135,35 @@
   justify-content: space-around;
   align-items: center;
 }
+
 .kurs div {
   display: inline-block;
 }
+
 .kurs .peerkurs {
   color: #aaff67;
 }
+
 .kurs img {
   width: 0.7rem;
   height: auto;
   display: inline-block;
 }
-.token > div {
+
+.token>div {
   display: flex;
   /* justify-content: space-between; */
   align-items: center;
   width: 100%;
 }
-.token > div > span {
+
+.token>div>span {
   font-size: 3rem;
   font-weight: bold;
   margin-left: 1rem;
 }
-.token > h2 {
+
+.token>h2 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
 }
@@ -157,12 +172,15 @@
   margin-left: 3rem;
   font-size: 1.5rem;
 }
+
 .amount {
   margin-right: 0.5rem;
 }
+
 .blue {
   color: #5f8ccc;
 }
+
 .type {
   width: 10rem;
 }
@@ -175,6 +193,7 @@
   background-position: -29rem -7rem;
   padding: 2rem;
 }
+
 /* wallet-to-wallet transfer */
 /* First screen — Transfer Dropdown */
 .main-header {
@@ -191,24 +210,29 @@
 }
 
 .site-main-wallet .transfer-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 450px;
-  max-height: 600px;
-  overflow-y: auto;
-  background: #1f1f1f;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  margin-top: 8px;
-  z-index: 999;
-  padding: 10px 12px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 25vw;
+    max-height: 20vw;
+    overflow-y: auto;
+    background: #1f1f1f;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    margin-top: 8px;
+    z-index: 999;
+    padding: 10px 12px;
+    overflow: hidden;
+    overscroll-behavior: contain;
+    min-height: 20vw;
 }
 
 .site-main-wallet .user-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 155px;
+  overflow: auto;
 }
 
 .site-main-wallet .user-list .user-item {
@@ -259,8 +283,9 @@
   background: #1f1f1f;
   border-radius: 16px;
   padding: 24px;
-
   color: white;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 
 .site-main-wallet .transfer-form-screen .transfer-header {
@@ -270,12 +295,13 @@
   font-size: 20px;
   margin-bottom: 20px;
 }
+
 .site-main-wallet .transfer-form-screen .transfer-header .close-transfer {
-	padding: 0;
-	width: 50px;
-	height: 50px;
-	line-height: 50px;
-	font-size: 30px;
+  padding: 0;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 30px;
 }
 
 .site-main-wallet .transfer-form-screen .recipient-info {
@@ -335,10 +361,6 @@
   gap: 12px;
 }
 
-
-
-
-
 .site-main-wallet .transfer-form-screen .recipient-info label {
   font-size: 14px;
   color: #aaa;
@@ -353,6 +375,8 @@
   z-index: 1000;
   margin-top: 0 !important;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+  min-width: 450px;
+  min-height: 450px;
 }
 
 /* Backdrop when modal is active */
@@ -375,4 +399,137 @@
   margin-top: 6px;
   color: #ccc;
   font-size: 14px;
+}
+
+.transfer-header .loaderSvg {
+  display: block;
+  width: 100%;
+  height: 200px;
+}
+
+.loader-screen-contents .loader-screen-contents-p1 {
+  font-weight: 500;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.loader-screen-contents .loader-screen-contents-p2 {
+  width: 100%;
+}
+
+.transfer-header .tick-true {
+  width: 100px;
+  margin: 0 auto;
+  border: 3px solid;
+  border-radius: 100%;
+  height: 100px;
+  padding: 20px;
+}
+
+/* Final Confirmation Screen — Safe Scoped Additions */
+
+.site-main-wallet {
+  text-align: center;
+  padding-top: 40px;
+}
+
+.site-main-wallet .transfer-header .tick-true {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  padding: 20px;
+  margin: 0 auto 20px;
+  border: 2px solid #fff;
+}
+
+.site-main-wallet .transferred-amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* adds space between number and icon */
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  height: 30px;
+}
+
+.site-main-wallet .transferred-amount small {
+  font-size: 14px;
+  color: #aaa;
+  margin-left: 8px;
+}
+
+.site-main-wallet .user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 12px;
+}
+
+.site-main-wallet .user-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.site-main-wallet .user-info .details {
+  text-align: left;
+  color: white;
+}
+
+.site-main-wallet .user-info .details .label {
+  color: #888;
+  font-size: 12px;
+}
+
+.site-main-wallet .user-info .details .username {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.site-main-wallet .action-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.site-main-wallet .action-buttons button {
+  flex: 1;
+  border: none;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.site-main-wallet .action-buttons .repeat {
+  background: white;
+  color: black;
+  height: "18px";
+  margin-Left: "6px";
+}
+
+.site-main-wallet .action-buttons .receipt {
+  background: #007bff;
+  color: white;
+}
+
+.site-main-wallet .btn-new-user {
+  margin-top: 70px;
+}
+
+.site-main-wallet .search-user-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 30px;
+  background: #2a2a2a;
+  color: white;
+  border: none;
+  margin-bottom: 12px;
+  font-size: 15px;
 }

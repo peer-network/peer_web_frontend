@@ -39,8 +39,8 @@ async function getUserInfo() {
             updatedat
             invited
         }
-    }
-}`,
+      }
+    }`,
   });
 
   // Define request options
@@ -389,92 +389,140 @@ async function dailypays() {
   }
 }
 
-document.getElementById("openTransferDropdown").addEventListener("click", async () => {
+document.getElementById("openTransferDropdown").addEventListener("click", async () => { renderUsers() });
+
+async function renderUsers() {
   const dropdown = document.getElementById("transferDropdown");
-
-  if (!dropdown.classList.contains("hidden")) {
-    closeModal();
-    return;
-  }
-
-  // Setup modal
+  dropdown.innerHTML = "";
   dropdown.classList.remove("hidden");
   dropdown.classList.add("modal-mode");
-  if (!document.querySelector(".transfer-backdrop")) {
+
+  // Backdrop
+  const existingBackdrop = document.querySelector(".transfer-backdrop");
+  if (!existingBackdrop) {
     const backdrop = document.createElement("div");
     backdrop.className = "transfer-backdrop";
     backdrop.onclick = closeModal;
     document.body.appendChild(backdrop);
   }
 
-  // Reset scroll pagination
-  userOffset = 1;
-  isFetchingUsers = false;
-  hasMoreUsers = true;
-  dropdown.innerHTML = "";
-
-  // Create wrapper
+  // Wrapper
   const wrapper = document.createElement("div");
   wrapper.className = "transfer-form-screen";
 
   // Header
   const header = document.createElement("div");
   header.className = "transfer-header";
+
   const h2 = document.createElement("h2");
   h2.textContent = "Transfer";
+
   const closeBtn = document.createElement("button");
-  closeBtn.className = "close-transfer btn-white";
+  closeBtn.className = "close-transfer";
   closeBtn.innerHTML = "&times;";
   closeBtn.onclick = closeModal;
+
   header.append(h2, closeBtn);
   wrapper.appendChild(header);
 
-  // ✅ Create and append search bar FIRST
-  const searchBar = document.createElement("input");
-  searchBar.type = "text";
-  searchBar.id = "userSearch";
-  searchBar.placeholder = "Search user...";
-  searchBar.style.marginBottom = "10px"; // Optional styling
-  wrapper.appendChild(searchBar);
+  // Always-visible Search Input
+  const searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.placeholder = "@Search User";
+  searchInput.className = "search-user-input";
+  wrapper.appendChild(searchInput);
 
-  // ✅ Create and append container AFTER search bar
-  const container = document.createElement("div");
-  container.className = "user-list";
-  container.id = "userListContainer";
-  wrapper.appendChild(container);
+  // User results container
+  const userList = document.createElement("div");
+  userList.className = "user-list";
+  wrapper.appendChild(userList);
 
-  // ✅ Hook up the search listener
-  searchBar.addEventListener("input", () => {
-    searchUser(container, searchBar.value.trim());
+  // Add new recipient button
+  // const addNew = document.createElement("button");
+  // addNew.className = "btn-new-user";
+  // addNew.textContent = "Add new recipient +";
+  // addNew.onclick = () => {
+  //   console.log("Custom logic for adding new recipient...");
+  // };
+  // wrapper.appendChild(addNew);
+
+  // Search logic on input
+  searchInput.addEventListener("input", async () => {
+    const search = searchInput.value.trim();
+    
+    userList.innerHTML = "";
+
+    if (!search) return;
+
+    const results = await searchUser(search);
+    if (!results.length) return;
+
+    results.forEach(user => {
+      const item = document.createElement("div");
+      item.className = "user-item";
+
+      const avatar = document.createElement("img");
+      avatar.src = tempMedia(user.img.replace("media/", ""));
+      avatar.onerror = () => (avatar.src = "./svg/noname.svg");
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const name = document.createElement("strong");
+      name.textContent = user.username;
+
+      const slug = document.createElement("span");
+      slug.textContent = `#${user.slug}`;
+
+      info.append(name, slug);
+      item.append(avatar, info);
+
+      item.onclick = () => renderTransferFormView(user);
+      userList.appendChild(item);
+    });
   });
 
-  // Append wrapper to dropdown
   dropdown.appendChild(wrapper);
+}
 
-  // Load users
-  await loadUsers(container);
-
-  // Scroll pagination
-  dropdown.addEventListener("scroll", async () => {
-    const nearBottom =
-      dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight - 50;
-    if (nearBottom && !isFetchingUsers && hasMoreUsers) {
-      await loadUsers(container);
-    }
+async function searchUser(username = null) {
+  const accessToken = getCookie("authToken");
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
   });
-});
 
-
-function searchUser(container, query) {
-  const items = container.querySelectorAll(".user-item");
-  const lowerQuery = query.toLowerCase();
-
-  items.forEach(item => {
-    const nameEl = item.querySelector(".info strong");
-    const name = nameEl ? nameEl.textContent.toLowerCase() : "";
-
-    item.style.display = name.includes(lowerQuery) ? "" : "none";
+  const graphql = JSON.stringify({
+    query: `
+      query SearchUser($username: String) {
+        searchUser(username: $username) {
+          affectedRows {
+            id
+            username
+            slug
+            img
+            status
+            biography
+          }
+        }
+      }
+    `,
+    variables: { username },
   });
+
+  try {
+    const res = await fetch(GraphGL, {
+      method: "POST",
+      headers,
+      body: graphql,
+    });
+
+    const json = await res.json();
+    return json?.data?.searchUser?.affectedRows || [];
+  } catch (err) {
+    console.error("searchUser() failed:", err);
+    return [];
+  }
 }
 
 function renderTransferFormView(user) {
@@ -517,9 +565,11 @@ function renderTransferFormView(user) {
   const meta = document.createElement("div");
   const name = document.createElement("strong");
   name.textContent = user.username;
-  const slug = document.createElement("span");
-  slug.textContent = "#" + user.slug;
-  meta.append(name, slug);
+  //const slug = document.createElement("span");
+  //slug.textContent = "#" + user.slug;
+  // meta.append(name, slug);
+  meta.append(name);
+  
   infoWrap.append(img, meta);
   const check = document.createElement("div");
   check.className = "check-circle";
@@ -604,14 +654,11 @@ function renderCheckoutScreen(user, amount) {
   const infoWrap = document.createElement("div");
   infoWrap.className = "info";
   const img = document.createElement("img");
-  // img.src = user.img || "svg/logo_sw.svg";
   img.src = "svg/logo_sw.svg";
   const meta = document.createElement("div");
   const name = document.createElement("strong");
   name.textContent = user.username;
-  const slug = document.createElement("span");
-  slug.textContent = "#" + user.slug;
-  meta.append(name, slug);
+  meta.append(name);
   infoWrap.append(img, meta);
   recipientInfo.append(infoWrap, recipientLabel);
 
@@ -635,18 +682,18 @@ function renderCheckoutScreen(user, amount) {
   commissionSection.appendChild(commissionTitle);
 
   breakdown.forEach(detail => {
-  const row = document.createElement("div");
-  row.className = "row";
+    const row = document.createElement("div");
+    row.className = "row";
 
-  const label = document.createElement("span");
-  label.textContent = detail.label;
+    const label = document.createElement("span");
+    label.textContent = detail.label;
 
-  const amountEl = document.createElement("span");
-  amountEl.innerHTML = `${detail.amount.toFixed(2)} <img src="svg/logo_sw.svg" style="height: 16px;" />`;
+    const amountEl = document.createElement("span");
+    amountEl.innerHTML = `${detail.amount.toFixed(2)} <img src="svg/logo_sw.svg" style="height: 16px;" />`;
 
-  row.append(label, amountEl);
-  commissionSection.appendChild(row);
-});
+    row.append(label, amountEl);
+    commissionSection.appendChild(row);
+  });
 
   // Actions
   const actions = document.createElement("div");
@@ -663,9 +710,11 @@ function renderCheckoutScreen(user, amount) {
 
   transferBtn.onclick = async () => {
     const totalAmount = calculateTotalWithFee(parseFloat(amount), isInvited);
+
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
       if (!confirmContinue) return;
+
       balance = await getLiquiudity();
       if (balance < totalAmount) {
         info("Still insufficient balance.");
@@ -674,23 +723,28 @@ function renderCheckoutScreen(user, amount) {
     }
 
     try {
+      // Show loader first
+      renderLoaderScreen();
+
+      // Attempt transfer
       const res = await resolveTransfer(user.id, totalAmount);
+
       if (res.status === "success") {
-        alert("Transfer successful!");
+        renderFinalScreen(totalAmount, user);
       } else {
         alert(`Transfer failed: ${res.ResponseCode}`);
+        closeModal();
       }
     } catch (err) {
       alert("Transfer error occurred.");
       console.error(err);
+      closeModal();
     }
-
-    closeModal();
   };
 
   actions.append(backBtn, transferBtn);
 
-  // Append all elements
+  // Final render
   wrapper.append(
     header,
     recipientInfo,
@@ -699,6 +753,171 @@ function renderCheckoutScreen(user, amount) {
     commissionSection,
     actions
   );
+
+  dropdown.appendChild(wrapper);
+}
+
+function renderLoaderScreen() {
+  const dropdown = document.getElementById("transferDropdown");
+  dropdown.innerHTML = "";
+  dropdown.classList.add("modal-mode");
+
+  if (!document.querySelector(".transfer-backdrop")) {
+    const backdrop = document.createElement("div");
+    backdrop.className = "transfer-backdrop";
+    backdrop.onclick = closeModal;
+    document.body.appendChild(backdrop);
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "transfer-form-screen";
+
+  const header = document.createElement("div");
+  header.className = "transfer-header";
+
+  const loaderSvg = document.getElementById("loaderSvg");
+  loaderSvg.className = "loaderSvg";
+  header.appendChild(loaderSvg);
+  wrapper.appendChild(header);
+
+  const content = document.createElement("div");
+  content.className = "loader-screen-contents";
+
+  const p1 = document.createElement("p");
+  p1.className = "loader-screen-contents-p1";
+  p1.textContent = "Approving your transaction";
+
+  const p2 = document.createElement("p");
+  p2.className = "loader-screen-contents-p2";
+  p2.textContent = "This may take some time...";
+
+  content.appendChild(p1);
+  content.appendChild(p2);
+  wrapper.appendChild(content);
+  dropdown.appendChild(wrapper);
+}
+
+function renderFinalScreen(transferredAmount, user) {
+  const dropdown = document.getElementById("transferDropdown");
+  dropdown.innerHTML = "";
+  dropdown.classList.add("modal-mode");
+  dropdown.classList.add("modal-mode");
+  dropdown.classList.remove("hidden");
+
+  // Backdrop
+  if (!document.querySelector(".transfer-backdrop")) {
+    const backdrop = document.createElement("div");
+    backdrop.className = "transfer-backdrop";
+    backdrop.onclick = closeModal;
+    document.body.appendChild(backdrop);
+  }
+
+  // Main wrapper
+  const wrapper = document.createElement("div");
+  wrapper.className = "transfer-form-screen final-screen";
+
+  // Header with tick
+  const header = document.createElement("div");
+  header.className = "transfer-header";
+
+  const img = document.createElement("img");
+  img.className = "tick-true";
+  img.src = "./svg/tick.svg";
+  header.appendChild(img);
+  wrapper.appendChild(header);
+
+  const content = document.createElement("div");
+  content.className = "loader-screen-contents";
+
+  const transferredAmountDiv = document.createElement("div");
+  transferredAmountDiv.className = "transferred-amount";
+
+  const amountSpan = document.createElement("span");
+  amountSpan.textContent = `- ${transferredAmount} `;
+  transferredAmountDiv.appendChild(amountSpan);
+
+  const coinIcon = document.createElement("img");
+  coinIcon.src = "./svg/logo_sw.svg";
+  coinIcon.alt = "coin";
+  coinIcon.onerror = () => (coinIcon.src = "./svg/noname.svg");
+
+  transferredAmountDiv.appendChild(coinIcon);
+
+  const euro = document.createElement("small");
+  euro.textContent = ` ~ ${balance}€ `;
+  transferredAmountDiv.appendChild(euro);
+
+  content.appendChild(transferredAmountDiv);
+
+  const userInfo = document.createElement("div");
+  userInfo.className = "user-info";
+
+  const label = document.createElement("span");
+  label.className = "label";
+  label.textContent = "Where to";
+
+  const avatar = document.createElement("img");
+  avatar.className = "user-avatar";
+  avatar.src = tempMedia(user?.img.replace("media/", ""));
+  avatar.onerror = () => { this.src = "./svg/noname.svg" };
+
+  const username = document.createElement("span");
+  username.innerHTML = `<strong>${user.username}</strong> #${user.slug}`;
+
+  const nameWrapper = document.createElement("div");
+  nameWrapper.style.display = "flex";
+  nameWrapper.style.alignItems = "center";
+  nameWrapper.style.gap = "10px";
+  nameWrapper.appendChild(label);
+  nameWrapper.appendChild(avatar);
+  nameWrapper.appendChild(username);
+
+  const infoWrap = document.createElement("div");
+  infoWrap.style.display = "flex";
+  infoWrap.style.flexDirection = "column";
+  infoWrap.style.alignItems = "center";
+  infoWrap.appendChild(nameWrapper);
+
+  userInfo.appendChild(infoWrap);
+  content.appendChild(userInfo);
+
+  wrapper.appendChild(content);
+
+  // Action Buttons
+  const actions = document.createElement("div");
+  actions.className = "action-buttons";
+
+  // Repeat Button
+  const repeatBtn = document.createElement("button");
+  repeatBtn.className = "repeat";
+
+  const repeatIcon = document.createElement("img");
+  repeatIcon.src = "./svg/repeat.svg";
+  repeatIcon.alt = "Repeat";
+
+  repeatBtn.textContent = "Repeat";
+  repeatBtn.appendChild(repeatIcon);
+  repeatBtn.onclick = () => renderUsers(true);
+
+  // Receipt Button
+  const receiptBtn = document.createElement("button");
+  receiptBtn.className = "receipt";
+
+  const receiptIcon = document.createElement("img");
+  receiptIcon.src = "./svg/download.svg";
+  receiptIcon.alt = "Download";
+  receiptIcon.style.height = "18px";
+  receiptIcon.style.marginLeft = "6px";
+
+  receiptBtn.textContent = "Get the receipt";
+  receiptBtn.appendChild(receiptIcon);
+  receiptBtn.onclick = () => alert("Download receipt");
+
+  // Append buttons
+  actions.appendChild(repeatBtn);
+  actions.appendChild(receiptBtn);
+  wrapper.appendChild(actions);
+
   dropdown.appendChild(wrapper);
 }
 
@@ -739,41 +958,6 @@ async function resolveTransfer(recipientId, numberOfTokens) {
   }
 
   return result.data.resolveTransfer;
-}
-
-async function listUsers(offset = 1, limit = 20) {
-  const accessToken = getCookie("authToken");
-
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-
-  const graphql = JSON.stringify({
-    query: `query ListUsers($offset: Int, $limit: Int) {
-      listUsers(offset: $offset, limit: $limit) {
-        affectedRows {
-          id
-          username
-          status
-          slug
-          img
-        }
-      }
-    }`,
-    variables: {
-      offset,
-      limit
-    },
-  });
-
-  const res = await fetch(GraphGL, {
-    method: "POST",
-    headers,
-    body: graphql
-  });
-  const json = await res.json();
-  return json ?.data ?.listUsers ?.affectedRows || [];
 }
 
 function calculateTotalWithFee(amount, isInvited) {
@@ -825,41 +1009,4 @@ function closeModal() {
 
   const backdrop = document.querySelector(".transfer-backdrop");
   if (backdrop) backdrop.remove();
-}
-
-async function loadUsers(container) {
-  isFetchingUsers = true;
-
-  const users = await listUsers(userOffset, 20);
-  if (users.length < 20) {
-    hasMoreUsers = false;
-  }
-
-  users.forEach(user => {
-    const item = document.createElement("div");
-    item.className = "user-item";
-
-    const avatar = document.createElement("img");
-    avatar.src = "svg/logo_sw.svg";
-    avatar.alt = user.username;
-
-    const info = document.createElement("div");
-    info.className = "info";
-    const name = document.createElement("strong");
-    name.textContent = user.username;
-    // const slug = document.createElement("span");
-    // slug.textContent = "#" + user.slug;
-    // info.append(name, slug);
-    info.append(name);
-
-    item.append(avatar, info);
-    item.addEventListener("click", () => {
-      renderTransferFormView(user);
-    });
-
-    container.appendChild(item);
-  });
-
-  userOffset += 20;
-  isFetchingUsers = false;
 }
