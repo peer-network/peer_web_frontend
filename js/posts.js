@@ -1,9 +1,9 @@
 const post = 2;
-  const like = 0;
-  const dislike = 3;
-  const comment = 1;
-  
-async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID=null) {
+const like = 0;
+const dislike = 3;
+const comment = 1;
+
+async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
   const post = 2;
   const like = 0;
   const dislike = 3;
@@ -29,12 +29,12 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
       limit: ${limit},
       offset: ${offset},
       filterBy: [${filterBy}]`;
-      
-  postsList += (tag && tag.length >= 2) ? `, tag: "${tag}"` : "";
 
-  postsList += (title && title.length >= 2) ? `, title: "${title}"` : "";
+  postsList += tag && tag.length >= 2 ? `, tag: "${tag}"` : "";
 
-  postsList += (userID !== null) ? `, userid: "${userID}"` : "";
+  postsList += title && title.length >= 2 ? `, title: "${title}"` : "";
+
+  postsList += userID !== null ? `, userid: "${userID}"` : "";
 
   postsList += `) {
         status
@@ -87,7 +87,7 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
     }
 }
 `;
-//console.log(postsList);
+  //console.log(postsList);
   var graphql = JSON.stringify({
     query: postsList,
     variables: {},
@@ -237,21 +237,37 @@ async function dislikePost(postid) {
   fetch(GraphGL, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
-    .catch((error) =>  Merror("Dislike failed", error));
+    .catch((error) => Merror("Dislike failed", error));
 }
 
 async function LiquiudityCheck(postCosts, title, action) {
-  console.log("Liquidity Check for action:", action);
-
+  // console.log("Liquidity Check for action:", action);
+  const limitIDs = [
+    ["Likesused", "Likesavailable", "LikesStat"],
+    ["Commentsused", "Commentsavailable", "CommentsStat"],
+    ["Postsused", "Postsavailable", "PostsStat"],
+  ];
   const msg = ["like", "comment", "post"];
+  const freeActions = ["3", "4", "1"];
   const cancel = 0;
   const dailyfree = await getDailyFreeStatus();
-  console.log("dailyfree ", dailyfree)
+  // console.log("dailyfree ", dailyfree);
   const dailyPostAvailable = dailyfree[action].available;
   const bitcoinPrice = await getBitcoinPriceEUR();
   const tokenPrice = 100000 / bitcoinPrice;
   const token = await getLiquiudity();
-  if (!dailyPostAvailable && token * tokenPrice < postCosts) {
+
+  if (dailyPostAvailable) {
+    let answer = await confirm(title, `🎉 This ${msg[action]} is free! You have ${freeActions[action]} free ${msg[action]}${freeActions[action] > 1 ? "s" : ""} available every 24 hours.`, (dontShowOption = true));
+    if (answer === null || answer === cancel) {
+      return false;
+    }
+    const freeused = parseInt(document.getElementById(limitIDs[action][0]).innerText) + 1;
+    const freeavailable = parseInt(document.getElementById(limitIDs[action][1]).innerText) - 1;
+    document.getElementById(limitIDs[action][0]).innerText = freeused;
+    document.getElementById(limitIDs[action][1]).innerText = freeavailable;
+    document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+  } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
     Merror(
       title,
       `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}.
@@ -267,7 +283,11 @@ async function LiquiudityCheck(postCosts, title, action) {
     if (answer === null || answer === cancel) {
       return false;
     }
+  } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
+    await Merror(title, `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`);
+    return false;
   }
+
   return true;
 }
 
@@ -276,9 +296,9 @@ function isVariableNameInArray(variableObj, nameArray) {
 }
 
 async function sendCreatePost(variables) {
-  /*if (!(await LiquiudityCheck(20, "Create Post", post))) {
+  if (!(await LiquiudityCheck(20, "Create Post", post))) {
     return false;
-  }*/
+  }
   const accessToken = getCookie("authToken");
 
   if (!accessToken) {

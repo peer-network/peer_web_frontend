@@ -1,4 +1,7 @@
 async function likeComment(commentId) {
+  if (!(await LiquiudityCheck(10, "Like Comment", like))) {
+    return false;
+  }
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -44,7 +47,7 @@ async function likeComment(commentId) {
 }
 
 async function createComment(postId, content, parentId = null) {
-  if (!(await LiquiudityCheck(3, "Comment Post", "comment"))) {
+  if (!(await LiquiudityCheck(3, "Comment Post", 1))) {
     return false;
   }
   const accessToken = getCookie("authToken");
@@ -85,17 +88,17 @@ async function createComment(postId, content, parentId = null) {
   const variables = {
     postId,
     content,
-    parentId
+    parentId,
   };
 
   return fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        query,
-        variables
-      }),
-    })
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log("Antwort:", data);
@@ -145,18 +148,18 @@ async function fetchChildComments(parentId) {
 
   // Setze die Variable für den Request
   const variables = {
-    parent: parentId
+    parent: parentId,
   };
 
   // Ersetze die URL mit der deines GraphQL-Endpunkts
   return fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        query,
-        variables
-      }),
-    })
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  })
     .then((response) => response.json())
     .then((res) => {
       // if (res.data.listChildComments.status === "error" && res.data.listChildComments.ResponseCode !== "This is not a commentId") {
@@ -165,8 +168,8 @@ async function fetchChildComments(parentId) {
       } else {
         return res.data.listChildComments.affectedRows;
       }
-
-    }).catch((error) => {
+    })
+    .catch((error) => {
       console.error("Fehler:", error);
       return null;
     });
