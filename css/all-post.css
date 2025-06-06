@@ -2,7 +2,7 @@
 .list_all_post {
 	
 	/* display: grid; */
-	gap: 1rem;
+	gap: 2rem;
 	width: 100%;
 	padding: 2rem 0;
 	overflow: auto;
@@ -657,7 +657,7 @@ text-shadow: 1px 1px 2px black;
 @media screen and (min-width: 3000px) {
 
 	.list_all_post {
-		gap: 2rem;
+		gap: 4rem;
 	}
 	.card {
 	  height: 46rem;
@@ -677,7 +677,9 @@ text-shadow: 1px 1px 2px black;
     right: 1.875rem;
     top: 1.875rem;
     line-height: 66px;
-	
+    font-size: 28px;
+		font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+    padding: 0 35px;   
   }
   .card .post-userName {
     top: 2.2rem;

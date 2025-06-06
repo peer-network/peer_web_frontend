@@ -970,7 +970,7 @@ footer {grid-area: footer;}
 .search-group .dropdown.active {
 	height: 25rem;
 	max-height: 25rem;
-	padding-top: 80px;
+	padding-top: 60px;
 }
 
 .search-group .dropdown .dropdown-item {
