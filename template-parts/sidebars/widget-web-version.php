@@ -2,7 +2,7 @@
     	
     	<div class="widget-inner widget-version">
         
-        	<p>Version 1.2.3</p>
+        	<p>Version 1.0.0</p>
         
     	</div>
     </div>
