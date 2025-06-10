@@ -438,41 +438,19 @@ async function renderUsers() {
   userList.className = "user-list";
   wrapper.appendChild(userList);
 
-  //loadFrinds
-  const frindsList = await loadFrinds();
-  if (frindsList) {
-    frindsList.forEach(user => {
-      const item = document.createElement("div");
-      item.className = "user-item";
-
-      const avatar = document.createElement("img");
-      avatar.src = tempMedia(user.img.replace("media/", ""));
-      avatar.onerror = () => (avatar.src = "./svg/noname.svg");
-
-      const info = document.createElement("div");
-      info.className = "info";
-
-      const name = document.createElement("strong");
-      name.textContent = user.username;
-
-      const slug = document.createElement("span");
-      slug.textContent = `#${user.slug}`;
-
-      info.append(name, slug);
-      item.append(avatar, info);
-
-      item.onclick = () => renderTransferFormView(user);
-      userList.appendChild(item);
-    });
-  }
-
+  //load/render friends-list
+  renderFriendListUI(userList);
   // Search logic on input
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
-    
     userList.innerHTML = "";
 
-    if (!search) return;
+    if (!search) {
+      console.log("i am here");
+      //load/render friends-list
+      renderFriendListUI(userList);
+      return;
+    }
 
     const results = await searchUser(search);
     if (!results.length) return;
@@ -503,6 +481,36 @@ async function renderUsers() {
   });
 
   dropdown.appendChild(wrapper);
+}
+
+async function renderFriendListUI(container) {
+   //loadFrinds
+  const frindsList = await loadFrinds();
+  if (frindsList) {
+    frindsList.forEach(user => {
+      const item = document.createElement("div");
+      item.className = "user-item";
+
+      const avatar = document.createElement("img");
+      avatar.src = tempMedia(user.img.replace("media/", ""));
+      avatar.onerror = () => (avatar.src = "./svg/noname.svg");
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const name = document.createElement("strong");
+      name.textContent = user.username;
+
+      const slug = document.createElement("span");
+      slug.textContent = `#${user.slug}`;
+
+      info.append(name, slug);
+      item.append(avatar, info);
+
+      item.onclick = () => renderTransferFormView(user);
+      container.appendChild(item);
+    });
+  }
 }
 
 async function loadFrinds() {
