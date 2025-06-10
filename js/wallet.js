@@ -726,7 +726,6 @@ function renderCheckoutScreen(user, amount) {
     try {
       // Show loader first
       renderLoaderScreen();
-
       // Attempt transfer
       const res = await resolveTransfer(user.id, totalAmount);
 

@@ -287,7 +287,9 @@
   overflow-y: scroll;
   scrollbar-width: none;
 }
-
+.site-main-wallet .transfer-dropdown .transfer-form-screen .loader-screen-contents {
+	text-align: center;
+}
 .site-main-wallet .transfer-form-screen .transfer-header {
   display: flex;
   justify-content: space-between;
@@ -295,7 +297,11 @@
   font-size: 20px;
   margin-bottom: 20px;
 }
-
+.site-main-wallet .transfer-dropdown .transfer-form-screen label {
+	padding-bottom: 10px;
+	display: block;
+	color: rgba(255,255,255,0.5);
+}
 .site-main-wallet .transfer-form-screen .transfer-header .close-transfer {
   padding: 0;
   width: 50px;
@@ -313,7 +319,13 @@
   justify-content: space-between;
   margin-bottom: 16px;
 }
-
+.site-main-wallet .transfer-form-screen .recipient-info .check-circle {
+	border: 1px solid;
+	width: 32px;
+	line-height: 30px;
+	border-radius: 100%;
+  text-align: center;
+}
 .site-main-wallet .transfer-form-screen .recipient-info .info {
   display: flex;
   align-items: center;
@@ -334,13 +346,11 @@
 
 .site-main-wallet .transfer-form-screen .amount-input input {
   width: 100%;
-  padding: 10px 40px 10px 10px;
-  border-radius: 12px;
-  border: none;
-  background: #2a2a2a;
-  color: white;
+ 
 }
-
+.site-main-wallet .transfer-form-screen .amount-input input[type="number"] {
+  appearance: textfield; /* Sometimes useful for new browsers */
+}
 .site-main-wallet .transfer-form-screen .amount-input img {
   position: absolute;
   right: 10px;
@@ -360,10 +370,15 @@
   justify-content: space-between;
   gap: 12px;
 }
-
+.site-main-wallet .transfer-form-screen .modal-actions button {
+	flex: 1;
+	margin-top: 20px;
+}
 .site-main-wallet .transfer-form-screen .recipient-info label {
-  font-size: 14px;
-  color: #aaa;
+	font-size: 14px;
+	color: #aaa;
+	padding-bottom: 0;
+	padding-right: 20px;
 }
 
 /* Only apply when .modal-mode is added */
@@ -377,6 +392,7 @@
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
   min-width: 450px;
   min-height: 450px;
+  text-align: left;
 }
 
 /* Backdrop when modal is active */
