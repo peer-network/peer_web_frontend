@@ -440,7 +440,32 @@ async function renderUsers() {
 
   //loadFrinds
   const frindsList = await loadFrinds();
-  console.log(frindsList);
+  if (frindsList) {
+    frindsList.forEach(user => {
+      const item = document.createElement("div");
+      item.className = "user-item";
+
+      const avatar = document.createElement("img");
+      avatar.src = tempMedia(user.img.replace("media/", ""));
+      avatar.onerror = () => (avatar.src = "./svg/noname.svg");
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const name = document.createElement("strong");
+      name.textContent = user.username;
+
+      const slug = document.createElement("span");
+      slug.textContent = `#${user.slug}`;
+
+      info.append(name, slug);
+      item.append(avatar, info);
+
+      item.onclick = () => renderTransferFormView(user);
+      userList.appendChild(item);
+    });
+  }
+
   // Search logic on input
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
@@ -772,7 +797,7 @@ function renderCheckoutScreen(user, amount) {
       renderLoaderScreen();
 
       // Attempt transfer
-      const res = await resolveTransfer(user.id, totalAmount);
+      const res = await resolveTransfer(user.userid, totalAmount);
 
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
