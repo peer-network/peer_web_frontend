@@ -131,7 +131,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (users.length) {
         dropdown.classList.add("active");
       } else {
-        dropdown.classList.remove("active");
+        dropdown.classList.add("active");
+         const item = document.createElement("div");
+          item.className = "dropdown-item";
+          item.innerHTML ='No users found. Try different search terms.';
+          dropdown.appendChild(item);
       }
 
       users.forEach(user => {
