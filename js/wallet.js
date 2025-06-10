@@ -506,7 +506,6 @@ async function renderFriendListUI(container) {
 
       info.append(name, slug);
       item.append(avatar, info);
-
       item.onclick = () => renderTransferFormView(user);
       container.appendChild(item);
     });
@@ -801,10 +800,13 @@ function renderCheckoutScreen(user, amount) {
     }
 
     try {
+         console.log(user);
       // Show loader first
       renderLoaderScreen();
       // Attempt transfer
-      const res = await resolveTransfer(user.userid, totalAmount);
+   
+      const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
+      const res = await resolveTransfer(userId, totalAmount);
 
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
@@ -852,8 +854,15 @@ function renderLoaderScreen() {
   const header = document.createElement("div");
   header.className = "transfer-header";
 
-  const loaderSvg = document.getElementById("loaderSvg");
-  loaderSvg.className = "loaderSvg";
+  let loaderSvg = document.getElementById("loaderSvg");
+
+  if (!loaderSvg) {
+    loaderSvg = document.createElement("img");
+    loaderSvg.id = "loaderSvg";
+    loaderSvg.src = "./svg/loader.svg"; // adjust path as needed
+    loaderSvg.className = "loaderSvg";
+  }
+
   header.appendChild(loaderSvg);
   wrapper.appendChild(header);
 
@@ -999,6 +1008,7 @@ function renderFinalScreen(transferredAmount, user) {
 }
 
 async function resolveTransfer(recipientId, numberOfTokens) {
+  console.log('recipientId ', recipientId)
   const accessToken = getCookie("authToken");
 
   const headers = new Headers({

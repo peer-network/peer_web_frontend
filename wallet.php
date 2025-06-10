@@ -81,13 +81,11 @@ checkAuth("unauthorized");
             </div>
           </div>
         </div>
-
         <div class="kurs">
           <div>
             <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
             <img src="svg/steigend.svg" alt="">
           </div>
-
           <span>1 Gem ≈ 133 PeerTokens</span>
         </div>
       </div>
@@ -101,11 +99,7 @@ checkAuth("unauthorized");
           </div>
         </div>
       </div>
-
-
-
     </main>
-
     <aside class="right-sidebar right-sidebar-wallet">
       <div class="inner-scroll">
         <!-- Load sidebar widgets -->
@@ -115,15 +109,7 @@ checkAuth("unauthorized");
         <?php require_once ('./template-parts/sidebars/widget-web-version.php'); ?>
       </div>
     </aside>
-
     <?php require_once ('./template-parts/footer.php'); ?>
-
-
-
-
-
-
-
   </div>
 </body>
 
