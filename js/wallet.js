@@ -438,15 +438,9 @@ async function renderUsers() {
   userList.className = "user-list";
   wrapper.appendChild(userList);
 
-  // Add new recipient button
-  // const addNew = document.createElement("button");
-  // addNew.className = "btn-new-user";
-  // addNew.textContent = "Add new recipient +";
-  // addNew.onclick = () => {
-  //   console.log("Custom logic for adding new recipient...");
-  // };
-  // wrapper.appendChild(addNew);
-
+  //loadFrinds
+  const frindsList = await loadFrinds();
+  console.log(frindsList);
   // Search logic on input
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
@@ -484,6 +478,56 @@ async function renderUsers() {
   });
 
   dropdown.appendChild(wrapper);
+}
+
+async function loadFrinds() {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+  query: `query ListFriends {
+                listFriends {
+                    status
+                    counter
+                    ResponseCode
+                    affectedRows {
+                      userid
+                      img
+                      username
+                      slug
+                      biography
+                      updatedat
+                    }
+                }
+            }
+          `,
+  });
+
+  // Define request options
+  const requestOptions = {
+  method: "POST",
+  headers: headers,
+  body: graphql
+  };
+
+  try {
+  // Send the request and handle the response
+  const response = await fetch(GraphGL, requestOptions);
+  const result = await response.json();
+  // Check for errors in response
+  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  if (result.errors) throw new Error(result.errors[0].message);
+    return result.data.listFriends.affectedRows;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+    }
 }
 
 async function searchUser(username = null) {
