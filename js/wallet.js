@@ -438,14 +438,33 @@ async function renderUsers() {
   userList.className = "user-list";
   wrapper.appendChild(userList);
 
-  // Add new recipient button
-  // const addNew = document.createElement("button");
-  // addNew.className = "btn-new-user";
-  // addNew.textContent = "Add new recipient +";
-  // addNew.onclick = () => {
-  //   console.log("Custom logic for adding new recipient...");
-  // };
-  // wrapper.appendChild(addNew);
+  //loadFrinds
+  const frindsList = await loadFrinds();
+  if (frindsList) {
+    frindsList.forEach(user => {
+      const item = document.createElement("div");
+      item.className = "user-item";
+
+      const avatar = document.createElement("img");
+      avatar.src = tempMedia(user.img.replace("media/", ""));
+      avatar.onerror = () => (avatar.src = "./svg/noname.svg");
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const name = document.createElement("strong");
+      name.textContent = user.username;
+
+      const slug = document.createElement("span");
+      slug.textContent = `#${user.slug}`;
+
+      info.append(name, slug);
+      item.append(avatar, info);
+
+      item.onclick = () => renderTransferFormView(user);
+      userList.appendChild(item);
+    });
+  }
 
   // Search logic on input
   searchInput.addEventListener("input", async () => {
@@ -484,6 +503,56 @@ async function renderUsers() {
   });
 
   dropdown.appendChild(wrapper);
+}
+
+async function loadFrinds() {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+  query: `query ListFriends {
+                listFriends {
+                    status
+                    counter
+                    ResponseCode
+                    affectedRows {
+                      userid
+                      img
+                      username
+                      slug
+                      biography
+                      updatedat
+                    }
+                }
+            }
+          `,
+  });
+
+  // Define request options
+  const requestOptions = {
+  method: "POST",
+  headers: headers,
+  body: graphql
+  };
+
+  try {
+  // Send the request and handle the response
+  const response = await fetch(GraphGL, requestOptions);
+  const result = await response.json();
+  // Check for errors in response
+  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  if (result.errors) throw new Error(result.errors[0].message);
+    return result.data.listFriends.affectedRows;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+    }
 }
 
 async function searchUser(username = null) {
@@ -727,7 +796,7 @@ function renderCheckoutScreen(user, amount) {
       // Show loader first
       renderLoaderScreen();
       // Attempt transfer
-      const res = await resolveTransfer(user.id, totalAmount);
+      const res = await resolveTransfer(user.userid, totalAmount);
 
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
