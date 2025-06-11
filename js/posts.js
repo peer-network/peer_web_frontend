@@ -260,7 +260,7 @@ async function LiquiudityCheck(postCosts, title, action) {
 
   if (dailyPostAvailable) {
     let answer = await confirm(title, `🎉 This ${msg[action]} is free! You have ${freeActions[action]} free ${msg[action]}${freeActions[action] > 1 ? "s" : ""} available every 24 hours.`, (dontShowOption = true));
-    if (answer === null || answer === cancel) {
+    if (answer === null || answer.button === cancel) {
       return false;
     }
     const freeused = parseInt(document.getElementById(limitIDs[action][0]).innerText) + 1;
@@ -269,19 +269,33 @@ async function LiquiudityCheck(postCosts, title, action) {
     document.getElementById(limitIDs[action][1]).innerText = freeavailable;
     document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
-    Merror(
-      title,
-      `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}.
-      You currently have ${token} Peer Tokens.`
+    let answer = await confirm(
+      title='<div class="title-char"><img class="title-icon" src="/svg/Exclude.svg" ><span>Insufficient Tokens</span></div>',
+      `<div class="modal-message">
+        <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+      </div>
+
+      <div class="modal-message">
+        <div>Like cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+      </div>`,
+      (dontShowOption = true)
     );
-    return false;
+    if (answer === null || answer.button === cancel) {
+      return false;
+    }
   } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
     let answer = await confirm(
-      title,
-      `You currently have ${token} Peer Tokens.
-       This ${msg[action]} will cost ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens.`
+      title='<div class="title-char"><span>Posts Like</span></div>',
+      `<div class="modal-message">
+        <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+      </div>
+
+      <div class="modal-message">
+        <div>Like cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+      </div>`,
+      (dontShowOption = true)
     );
-    if (answer === null || answer === cancel) {
+    if (answer === null || answer.button === cancel) {
       return false;
     }
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {

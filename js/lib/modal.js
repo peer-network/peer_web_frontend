@@ -16,8 +16,8 @@ function createModal({
     const checkboxHTML = dontShowOption
       ? `
         <div class="modal-checkbox">
-          <input type="checkbox" id="dont-show-checkbox" />
           <label for="dont-show-checkbox">Do not show this message again</label>
+          <input type="checkbox" id="dont-show-checkbox" />
         </div>`
       : "";
 
@@ -30,7 +30,11 @@ function createModal({
         ${checkboxHTML}
         ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
         <div class="modal-buttons">
-          ${buttons.map((btn, index) => `<button class="modal-button" data-index="${index}">${btn}</button>`).join("")}
+          ${buttons.map((btn, index) => {
+            const label = typeof btn === "string" ? btn : btn.text;
+            const extraClass = typeof btn === "object" && btn.className ? ` ${btn.className}` : "";
+            return `<button class="modal-button${extraClass}" data-index="${index}">${label}</button>`;
+          }).join("")}
         </div>
       </div>
     `;
@@ -131,7 +135,7 @@ function info(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "info",
     dontShowOption: dontShowOption,
   });
@@ -151,7 +155,7 @@ function warnig(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "warning",
     dontShowOption: dontShowOption,
   });
@@ -160,7 +164,7 @@ function confirm(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["Cancel", "Confirm"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "warning",
     dontShowOption: dontShowOption,
   });
