@@ -136,6 +136,7 @@ ChatApp.ui = {
   },
 
   renderContacts(contactList) {
+    console.log("i ma in renderContacts")
     const chatMode = ChatApp.state.filterType;
     const container = ChatApp.utils.getElement(".chat-pannel-widget");
 
@@ -143,11 +144,13 @@ ChatApp.ui = {
 
     ChatApp.state.fullContactList = contactList;
 
+    console.log("before if")
     if (ChatApp.state.isInReviewScreen) {
       ChatApp.state.isInCreateOverlay = false;
       return ChatApp.ui.renderReviewScreen(container);
     }
 
+    console.log("after if")
     ChatApp.state.isInCreateOverlay = true;
     ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(Boolean);
 
@@ -289,9 +292,8 @@ ChatApp.ui = {
 
       const item = document.createElement("div");
       item.classList.add("chat-list-item");
-
       const avatar = document.createElement("img");
-      avatar.src = tempMedia(contact.img.replace("media/", ""))
+      avatar.src = tempMedia(user.img.replace("media/", ""))
       avatar.onerror = () => this.src = "./svg/noname.svg";
       avatar.alt = user.name;
 
@@ -312,7 +314,8 @@ ChatApp.ui = {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
         );
-        requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
+        if (ChatApp.state.selectedUsers.length === 0) { ChatApp.ui.renderContacts(ChatApp.state.fullContactList); ChatApp.state.isInReviewScreen = false }
+        else requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
       });
 
       item.appendChild(imgSpan);
