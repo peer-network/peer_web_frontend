@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         bioResult.updateBio.status === "success" &&
         bioResult.updateBio.ResponseCode === "11003";
 
-      
+       
         msgElem.classList.add(bioResult.updateBio.status);
         msgElem.innerHTML = userfriendlymsg(bioResult.updateBio.ResponseCode);
       if (imageSuccess && bioSuccess) {
@@ -689,12 +689,12 @@ async function sendUpdateBio(biography) {
       if (result.errors) {
         throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
       }
-      console.log("Mutation Result:", result.data);
+      //console.log("Mutation Result:", result.data);
 
       return result.data;
 
     } catch (error) {
-      Merror("Update e-mail failed", error);
+      Merror("Update Bio failed", error);
       // console.error("Error create Post:", error);
       return false;
     }
