@@ -131,8 +131,10 @@ checkAuth("unauthorized");
                                 <div class="image-preview-wrapper">
                                     <img id="previewImage" src="" alt="Preview" />
                                 </div>
-                                <label>Zoom</label>
-                                <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" />
+                                <div class="img-zoom">
+                                    <label>Zoom</label>
+                                    <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" />
+                                </div>
                                 <div class="button-row">
                                     <button id="cancelBtn" class="btn-transparent">Cancel</button>
                                     <button id="applyBtn" class="btn-blue">Apply</button>

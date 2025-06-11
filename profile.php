@@ -97,6 +97,7 @@ checkAuth("unauthorized");
     <!-- Load Posts Container -->
     <div id="allpost" class="list_all_post"> </div>
     <div id="post_loader"><img src="svg/logo_farbe.svg" alt="loading" /></div>
+    <div id="no_post_found" class="no_post_found">No Post found...</div>
     <!-- End: Load Posts Container --> 
   </main>
   <aside class="right-sidebar right-sidebar-profile"> 

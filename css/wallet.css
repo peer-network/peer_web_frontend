@@ -213,8 +213,8 @@
     position: absolute;
     top: 100%;
     left: 0;
-    width: 25vw;
-    max-height: 20vw;
+    
+    
     overflow-y: auto;
     background: #1f1f1f;
     border-radius: 12px;
@@ -224,7 +224,7 @@
     padding: 10px 12px;
     overflow: hidden;
     overscroll-behavior: contain;
-    min-height: 20vw;
+   
 }
 
 .site-main-wallet .user-list {
@@ -390,8 +390,8 @@
   z-index: 1000;
   margin-top: 0 !important;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-  min-width: 450px;
-  min-height: 450px;
+  min-width: 520px;
+  min-height: 520px;
   text-align: left;
 }
 
@@ -510,6 +510,7 @@
   justify-content: space-between;
   gap: 12px;
   margin-top: 30px;
+  min-width: 520px;
 }
 
 .site-main-wallet .action-buttons button {
