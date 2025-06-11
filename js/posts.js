@@ -156,7 +156,7 @@ function viewPost(postid) {
 }
 
 async function likePost(postid) {
-  if (!(await LiquiudityCheck(10, "Like Post", like))) {
+  if (!(await LiquiudityCheck(3, "Like Post", like))) {
     return false;
   }
   const accessToken = getCookie("authToken");
@@ -242,7 +242,7 @@ async function dislikePost(postid) {
 }
 
 async function LiquiudityCheck(postCosts, title, action) {
-  // console.log("Liquidity Check for action:", action);
+  console.log("Liquidity Check for postCosts:", postCosts);
   const limitIDs = [
     ["Likesused", "Likesavailable", "LikesStat"],
     ["Commentsused", "Commentsavailable", "CommentsStat"],
@@ -271,21 +271,22 @@ async function LiquiudityCheck(postCosts, title, action) {
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
     Merror(
       title,
-      `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}.
-      You currently have ${token} Peer Tokens.`
+      //`You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}. //updated
+      `You need ${(postCosts).toFixed(2)} Peer Tokens to ${msg[action]}.
+       You currently have ${token} Peer Tokens.`
     );
     return false;
   } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
     let answer = await confirm(
       title,
       `You currently have ${token} Peer Tokens.
-       This ${msg[action]} will cost ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens.`
+       This ${msg[action]} will cost ${(postCosts).toFixed(2)} Peer Tokens.` //updated
     );
     if (answer === null || answer === cancel) {
       return false;
     }
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
-    await Merror(title, `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`);
+    await Merror(title, `You need ${(postCosts).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`); //updated
     return false;
   }
 

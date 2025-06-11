@@ -1,5 +1,5 @@
 async function likeComment(commentId) {
-  if (!(await LiquiudityCheck(10, "Like Comment", like))) {
+  if (!(await LiquiudityCheck(3, "Like Comment", like))) {
     return false;
   }
   const accessToken = getCookie("authToken");
@@ -47,7 +47,7 @@ async function likeComment(commentId) {
 }
 
 async function createComment(postId, content, parentId = null) {
-  if (!(await LiquiudityCheck(3, "Comment Post", 1))) {
+  if (!(await LiquiudityCheck(0.5, "Comment Post", 1))) {
     return false;
   }
   const accessToken = getCookie("authToken");
