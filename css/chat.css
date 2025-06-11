@@ -278,7 +278,6 @@ color:rgba(255, 255, 255, 1);
 
 .chat-list-overlay .chat-list-item .profile-name {
   flex: 1;
-
   font-size: 14px;
 }
 .chat-list-overlay .chat-list-item button {
@@ -306,6 +305,12 @@ color:rgba(255, 255, 255, 1);
 .chat-list-overlay .chat-list-item .profile-pic img {
   display: block;
   width: 100%;
+}
+
+.chat-list-overlay .chat-list-item .chat-icon {
+  cursor: pointer;
+  width: 30px;
+  height: 5px;
 }
 
 .chat-list-overlay .chat-list-item input[type="checkbox"] {
