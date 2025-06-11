@@ -24,13 +24,13 @@
   display: flex;
 justify-content: space-between;
   width: 100%;
-  
+  gap: 15px;
 }
 
 .main-chat .chat-list .chat-switch .tab {
 	min-width:170px;
 	color:rgba(255, 255, 255, 0.5);
-
+  flex: 1;
 }
 
 .main-chat .chat-list .chat-switch .tab.active {
