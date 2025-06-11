@@ -58,7 +58,7 @@ async function getUserInfo() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const result = await response.json();
     // Check for errors in GraphQL response
-    if (result.errors) throw new Error(result.errors[0].message);
+    if (result.errors) throw new Error(result.errors[0].message);    
     isInvited = result.data.getUserInfo.affectedRows.invited;
   } catch (error) {
     console.error("Error:", error.message);
@@ -446,7 +446,6 @@ async function renderUsers() {
     userList.innerHTML = "";
 
     if (!search) {
-      console.log("i am here");
       //load/render friends-list
       renderFriendListUI(userList);
       return;
@@ -667,7 +666,8 @@ function renderTransferFormView(user) {
 
   const feeLabel = document.createElement("div");
   feeLabel.className = "fee-label";
-  feeLabel.textContent = "Price fee: 0.4% would apply";
+  const percentage = isInvited === "" ? "4%" : "5%";
+  feeLabel.textContent = `Price fee: ${percentage} would apply`;
 
   const actions = document.createElement("div");
   actions.className = "modal-actions";
@@ -706,7 +706,7 @@ function renderCheckoutScreen(user, amount) {
     document.body.appendChild(backdrop);
   }
 
-  const totalAmount = calculateTotalWithFee(amount, isInvited);
+  const totalAmount = calculateTotalWithFee(amount);
   const { breakdown } = getCommissionBreakdown(amount);
 
   const wrapper = document.createElement("div");
@@ -786,7 +786,7 @@ function renderCheckoutScreen(user, amount) {
   transferBtn.innerHTML = `Transfer &rarr;`;
 
   transferBtn.onclick = async () => {
-    const totalAmount = calculateTotalWithFee(parseFloat(amount), isInvited);
+    const totalAmount = calculateTotalWithFee(parseFloat(amount));
 
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
@@ -800,11 +800,8 @@ function renderCheckoutScreen(user, amount) {
     }
 
     try {
-         console.log(user);
       // Show loader first
       renderLoaderScreen();
-      // Attempt transfer
-   
       const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
       const res = await resolveTransfer(userId, totalAmount);
 
@@ -1008,7 +1005,6 @@ function renderFinalScreen(transferredAmount, user) {
 }
 
 async function resolveTransfer(recipientId, numberOfTokens) {
-  console.log('recipientId ', recipientId)
   const accessToken = getCookie("authToken");
 
   const headers = new Headers({
@@ -1040,21 +1036,19 @@ async function resolveTransfer(recipientId, numberOfTokens) {
   const result = await response.json();
 
   if (result.errors) {
-    console.error("GraphQL Error:", result.errors);
     throw new Error(result.errors[0].message);
   }
 
   return result.data.resolveTransfer;
 }
 
-function calculateTotalWithFee(amount, isInvited) {
-
+function calculateTotalWithFee(amount) {
  const feePercent = isInvited === "" ? 0.04 : 0.05;
   const fee = amount * feePercent;
   return parseFloat(amount + fee);
 }
 
-function getCommissionBreakdown(transferAmount, isInvited = "") {
+function getCommissionBreakdown(transferAmount) {
   const baseAmount = transferAmount;
   const breakdown = [];
 

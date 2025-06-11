@@ -136,7 +136,6 @@ ChatApp.ui = {
   },
 
   renderContacts(contactList) {
-    console.log("i ma in renderContacts")
     const chatMode = ChatApp.state.filterType;
     const container = ChatApp.utils.getElement(".chat-pannel-widget");
 
@@ -146,6 +145,7 @@ ChatApp.ui = {
 
     console.log("before if")
     if (ChatApp.state.isInReviewScreen) {
+      console.log("i ma inside if ")
       ChatApp.state.isInCreateOverlay = false;
       return ChatApp.ui.renderReviewScreen(container);
     }
@@ -314,7 +314,7 @@ ChatApp.ui = {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
         );
-        if (ChatApp.state.selectedUsers.length === 0) { ChatApp.ui.renderContacts(ChatApp.state.fullContactList); ChatApp.state.isInReviewScreen = false }
+        if (ChatApp.state.selectedUsers.length === 0) { ChatApp.state.isInReviewScreen = false; ChatApp.ui.renderContacts(ChatApp.state.fullContactList);  }
         else requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
       });
 
