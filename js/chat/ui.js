@@ -305,12 +305,17 @@ ChatApp.ui = {
       nameSpan.classList.add("profile-name");
       nameSpan.textContent = user.name;
 
-      const removeBtn = document.createElement("img");
-      removeBtn.className = "chat-icon";
-      removeBtn.src = "svg/remove.svg";
-      removeBtn.alt = "remove";
+      const removeIconSpan = document.createElement("span");
+      removeIconSpan.className = "remove-user-group";
+      removeIconSpan.textContent = "remove";
 
-      removeBtn.addEventListener("click", () => {
+      // const removeBtn = document.createElement("img");
+      // removeBtn.className = "chat-icon";
+      // removeBtn.src = "svg/remove.svg";
+      // removeBtn.alt = "remove";
+
+
+      removeIconSpan.addEventListener("click", () => {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
         );
@@ -320,7 +325,7 @@ ChatApp.ui = {
 
       item.appendChild(imgSpan);
       item.appendChild(nameSpan);
-      item.appendChild(removeBtn);
+      item.appendChild(removeIconSpan);
       div.appendChild(item);
       container.appendChild(div);
     });
