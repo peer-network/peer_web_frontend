@@ -33,7 +33,6 @@
   border-radius: 1.5rem;
   background-color: var(--background-color);
   width: min(30rem, 100vw);
-  height: 20rem;
   position: relative;
   animation: modal-scale-in 0.3s ease-out;
 }
