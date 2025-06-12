@@ -314,7 +314,6 @@ ChatApp.ui = {
       // removeBtn.src = "svg/remove.svg";
       // removeBtn.alt = "remove";
 
-
       removeIconSpan.addEventListener("click", () => {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
