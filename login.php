@@ -77,11 +77,14 @@ if (isset($_GET['message'])) {
             <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
             <label id="validationMessage" for="password"></label>
         </div>
-
+        <div class="signIn">
+            <a class="link" href="forgotpassword.php">forgot&nbsp;password</a>
+        </div>
         <input id="submit" class="button" type="submit" name="Login" value="Login">
 
         <div class="signIn">
-            <a class="link" href="forgotpassword.php">forgot&nbsp;password</a>
+            <span class="description">Don't have an account?&nbsp;</span>
+            <a class="link" href="register.php">Register&nbsp;</a>
         </div>
         <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
     </form>
