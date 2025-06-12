@@ -25,6 +25,12 @@
     document.querySelector(".modal-close").addEventListener("click", () => {
       modal.classList.add("none");
     });
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.classList.add("none");
+      }
+    });
  
     const accessToken = getCookie("authToken");
     const query = `
