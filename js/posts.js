@@ -270,13 +270,13 @@ async function LiquiudityCheck(postCosts, title, action) {
     document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
     let answer = await confirm(
-      title='<div class="title-char"><img class="title-icon" src="/svg/Exclude.svg" ><span>Insufficient Tokens</span></div>',
-      `<div class="modal-message">Add commentMore actions
-        <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+      title='<div class="title-char"><img class="title-icon" src="svg/Exclude.svg" ><span>Insufficient Tokens</span></div>',
+      `<div class="modal-message">
+        <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>
 
       <div class="modal-message">
-        <div>Like cost:</div> <div class="pricee"><span>${(postCosts).toFixed(2)}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+        <div>Like cost:</div> <div class="pricee"><span>${(postCosts).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>`,
       (dontShowOption = true)
     );
@@ -287,11 +287,11 @@ async function LiquiudityCheck(postCosts, title, action) {
     let answer = await confirm(
        title='<div class="title-char"><span>Posts Like</span></div>',
       `<div class="modal-message">
-        <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>Add commentMore actions
+        <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>
 
       <div class="modal-message">
-        <div>Like cost:</div> <div class="pricee"><span>${(postCosts).toFixed(2)}</span> <img src="/svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+        <div>Like cost:</div> <div class="pricee"><span>${(postCosts).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>`,
       (dontShowOption = true)
     );
