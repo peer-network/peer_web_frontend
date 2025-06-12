@@ -115,7 +115,6 @@ ChatApp.ui = {
       const isInsideResults = ChatApp.utils.getElement(".chat-list").contains(event.target);
       const isTabClick = event.target.closest("#privateBtn, #groupBtn");
       const isSearchInput = event.target.closest("#search-contacts");
-
       if (!isInsideResults && !isTabClick && !isSearchInput) {
         resultsBox.style.display = "none";
         ChatApp.state.isInCreateOverlay = false;
@@ -142,15 +141,11 @@ ChatApp.ui = {
     [...container.querySelectorAll(".chat-list-overlay, .chat_buttons, .input.title, #validationMessage")].forEach(el => el.remove());
 
     ChatApp.state.fullContactList = contactList;
-
-    console.log("before if")
     if (ChatApp.state.isInReviewScreen) {
-      console.log("i ma inside if ")
       ChatApp.state.isInCreateOverlay = false;
       return ChatApp.ui.renderReviewScreen(container);
     }
 
-    console.log("after if")
     ChatApp.state.isInCreateOverlay = true;
     ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(Boolean);
 
@@ -314,12 +309,18 @@ ChatApp.ui = {
       // removeBtn.src = "svg/remove.svg";
       // removeBtn.alt = "remove";
 
-
       removeIconSpan.addEventListener("click", () => {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
         );
-        if (ChatApp.state.selectedUsers.length === 0) { ChatApp.state.isInReviewScreen = false; ChatApp.ui.renderContacts(ChatApp.state.fullContactList);  }
+        if (ChatApp.state.selectedUsers.length === 0) { 
+          ChatApp.state.isInReviewScreen = false; 
+          ChatApp.state.isInCreateOverlay = true; 
+          requestAnimationFrame(() => { 
+            ChatApp.ui.renderContacts(ChatApp.state.fullContactList);  
+          });
+        }
+        
         else requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
       });
 
@@ -413,7 +414,6 @@ ChatApp.ui = {
     headerAvatar.src = tempMedia(otherUser?.img.replace("media/", ""));
     headerAvatar.onerror = () => this.src = "./svg/noname.svg";
     container.innerHTML = "";
-    // console.log(chat);
     chat.chatmessages.forEach(msg => {
       const isCurrentUser = msg.senderid === ChatApp.state.currentUserId;
       const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);

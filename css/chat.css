@@ -270,8 +270,8 @@ color:rgba(255, 255, 255, 1);
 }
 
 .chat-list-overlay .chat-list-item img[alt="chat"] {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   filter: brightness(0) invert(1); 
   flex-shrink: 0;
 } 
