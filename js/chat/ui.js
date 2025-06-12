@@ -115,8 +115,8 @@ ChatApp.ui = {
       const isInsideResults = ChatApp.utils.getElement(".chat-list").contains(event.target);
       const isTabClick = event.target.closest("#privateBtn, #groupBtn");
       const isSearchInput = event.target.closest("#search-contacts");
-
       if (!isInsideResults && !isTabClick && !isSearchInput) {
+        console.log("document event called")
         resultsBox.style.display = "none";
         ChatApp.state.isInCreateOverlay = false;
       } 
@@ -160,12 +160,15 @@ ChatApp.ui = {
     });
 
     if (chatMode === "group") {
+      console.log("i am in chatMode for footerbuttons")
       const footer = ChatApp.ui.createFooterButtons();
       container.appendChild(footer);
     }
   },
 
   createUserCard(contact, chatMode) {
+    console.log("chatMode " + chatMode)
+    console.log("i am in createUserCard")
     const div = document.createElement("div");
     div.classList.add("chat-list-overlay");
     div.dataset.userId = contact.userid;
@@ -318,7 +321,14 @@ ChatApp.ui = {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
         );
-        if (ChatApp.state.selectedUsers.length === 0) { ChatApp.state.isInReviewScreen = false; ChatApp.ui.renderContacts(ChatApp.state.fullContactList);  }
+        if (ChatApp.state.selectedUsers.length === 0) { 
+          ChatApp.state.isInReviewScreen = false; 
+          ChatApp.state.isInCreateOverlay = true; 
+          requestAnimationFrame(() => { 
+            ChatApp.ui.renderContacts(ChatApp.state.fullContactList);  
+          });
+        }
+        
         else requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
       });
 
