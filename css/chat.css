@@ -280,6 +280,23 @@ color:rgba(255, 255, 255, 1);
   flex: 1;
  font-weight: 600;
 }
+.chat-list-overlay .chat-list-item .remove-user-group {
+	cursor: pointer;
+	position: relative;
+	font-size: 0;
+	display: block;
+	width: 30px;
+	height: 30px;
+}
+.chat-list-overlay .chat-list-item .remove-user-group::before {
+	content: "";
+	width: 100%;
+	border: 1px solid;
+	position: absolute;
+	top: 50%;
+	margin-top: -2px;
+}
+
 .chat-list-overlay .chat-list-item button {
 	padding: 0;
 	min-width: unset;
@@ -378,19 +395,18 @@ color:rgba(255, 255, 255, 1);
   position: relative;
   font-weight: 700;
   width: 49%;
+  display: flex;
+  align-items: center;
 }
 
 .chat-pannel-widget .chat_buttons .next-btn::after {
-  content: "";
-  background-image: url("../svg/next-arrow.svg");
-  background-repeat: no-repeat;
-  width: 18px;
-  height: 20px;
-  background-size: contain;
-  position: absolute;
-  margin-left: 12px;
-  float: right;
-  top: 14px;
+	content: "";
+	background-image: url("../svg/next-arrow.svg");
+	background-repeat: no-repeat;
+	width: 20px;
+	height: 20px;
+	background-size: contain;
+	margin-left: auto;
 }
 
 .chat-pannel-widget .chat_buttons .back-btn {
@@ -402,9 +418,9 @@ color:rgba(255, 255, 255, 1);
   padding: 0 25px;
   border-radius: 50px;
   position: relative;
-  font-weight: 700;
+  font-weight: 400;
   width: 49%;
-  border: 1px solid;
+ 
 }
 
 
