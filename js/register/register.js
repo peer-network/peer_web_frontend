@@ -123,19 +123,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
   // Überprüfung, ob das Passwort die Mindestlänge erfüllt
   if (password.length < passwordMinLength) {
-    info("Das Passwort muss mindestens 8 Zeichen lang sein!");
+    displayValidationMessage(userfriendlymsg ("Das Passwort muss mindestens 8 Zeichen lang sein!"));
     return;
   }
 
   // Überprüfung, ob das Passwort einen Großbuchstaben enthält
   if (!passwordRegex.test(password)) {
-    info("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
+    displayValidationMessage(userfriendlymsg ("Das Passwort muss mindestens einen Großbuchstaben enthalten!"));
     return;
   }
 
   // Überprüfung, ob die Passwörter übereinstimmen
   if (password !== confirmPassword) {
-    info("Passwörter stimmen nicht überein!");
+    displayValidationMessage(userfriendlymsg ("Passwörter stimmen nicht überein!"));
     return;
   }
 
