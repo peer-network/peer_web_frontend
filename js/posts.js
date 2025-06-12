@@ -156,9 +156,11 @@ function viewPost(postid) {
 }
 
 async function likePost(postid) {
+  
   if (!(await LiquiudityCheck(3, "Like Post", like))) {
     return false;
   }
+ 
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -284,6 +286,7 @@ async function LiquiudityCheck(postCosts, title, action) {
       return false;
     }
   } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
+    
     let answer = await confirm(
        title='<div class="title-char"><span>Posts Like</span></div>',
       `<div class="modal-message">
@@ -295,9 +298,12 @@ async function LiquiudityCheck(postCosts, title, action) {
       </div>`,
       (dontShowOption = true)
     );
-    if (answer === null || answer.button === cancel) {
+    console.log(answer);
+    if (answer === null || answer.button === cancel ) {
+     
       return false;
     }
+    
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
     await Merror(title, `You need ${(postCosts).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`); //updated
     return false;

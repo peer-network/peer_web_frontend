@@ -7,7 +7,7 @@ function createModal({
   dontShowOption = false, // Neu: Standardmäßig keine Checkbox anzeigen
 }) {
   if (localStorage.getItem("modalDoNotShow") === "true" && dontShowOption) {
-    return Promise.resolve({ button: 0, dontShow: true });
+    return Promise.resolve({ button: 1, dontShow: true });
   }
   return new Promise((resolve) => {
     const modal = document.createElement("div");
@@ -56,7 +56,8 @@ function createModal({
         const isChecked = checkboxElement ? checkboxElement.checked : false;
 
         // Wenn Checkbox da ist und angehakt, in localStorage speichern
-        if (dontShowOption && isChecked) {
+        
+        if (dontShowOption && isChecked &&  index) {
           localStorage.setItem("modalDoNotShow", "true");
         }
 
