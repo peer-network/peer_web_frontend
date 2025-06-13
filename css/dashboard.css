@@ -88,7 +88,7 @@ header {
   z-index: 3;
 }
 h1 {
-  /* display: inline; */
+  font-size: 2rem;
 }
 
 /* Hauptgrid */
@@ -117,22 +117,24 @@ h1 {
   max-height: 100dvh;
   justify-content: center;
   padding: 1.5rem;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   background-color: var(--background-color);
-  box-shadow: 0rem 0 3rem var(--shadow-color);
+  /* box-shadow: 0rem 0 3rem var(--shadow-color); */
 }
 
 .sidebar {
   grid-area: sidebar;
   display: flex;
   padding-top: 3rem;
+  left: 0;
 }
 
 .profil {
   grid-area: profil;
   gap: 20px;
   /* scroll-snap-type: y mandatory; */
-  padding-top: 4rem;
+  padding-top: 3rem;
+  right: 0;
 }
 
 .header {
@@ -176,11 +178,13 @@ h1 {
 }
 .dash {
   display: flex;
+  text-decoration: none;
   align-items: center;
+  color: var(--text-color);
   gap: 1rem;
 }
 .dash h1 {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
 }
 
 /* Wallet section */
@@ -202,6 +206,7 @@ h1 {
 }
 
 .progress-bar {
+  --progress: 0%;
   background: #333;
   border-radius: 4px;
   height: 8px;
@@ -264,7 +269,8 @@ h1 {
   width: 100%;
   max-width: 10rem;
   font-size: 1rem;
-  background-color: #fff;
+  background-color: var(--bg-filter);
+  /* background-color: #fff; */
 }
 
 .search-box {
@@ -286,6 +292,10 @@ h1 {
   gap: 1rem;
 }
 
+.drop2 {
+  margin-left: -25rem !important;
+}
+
 .dropdown-item {
   display: flex;
   padding:.6rem 1rem !important;
@@ -299,6 +309,7 @@ h1 {
 
 .dropdown-item:hover {
   background-color: #f0f0f0 !important;
+  color: var(--bg-filter) !important;
 }
 
 .header div img {
@@ -308,7 +319,7 @@ h1 {
 }
 
 .search-group input[placeholder="#tag"] {
-  color: #77AFFF;
+  color: #0069FF;
 }
 
 .search-group input[placeholder="@username"] {
@@ -349,16 +360,16 @@ h1 {
 .main {
   grid-area: main;
   /* display: grid; */
-  gap: 1.5rem 1.5rem;
-  padding: 0.2rem;
+  gap: 2rem;
+  width: 100%;
+  padding: 2rem;
   overflow: auto;
-  overflow-x: auto;
-  margin-top: 3.5rem;
+  margin-top: 2rem;
   scroll-snap-type: y mandatory;
   overflow-x: hidden;
   /* justify-content: space-evenly; */
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto;
+  /* grid-template-columns: auto auto auto; */
+  /* grid-template-rows: auto; */
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -1109,10 +1120,10 @@ h1 {
   width: 28rem;
 } */
 .card[content="video"] {
-  aspect-ratio: 3/6;
+  aspect-ratio: 3/4.34;
   flex-grow: 1;
 }
-.card[content="video"]::before {
+/* .card[content="video"]::before {
   content: url("../svg/video.svg");
   position: absolute;
   width: 2rem;
@@ -1121,7 +1132,7 @@ h1 {
   right: 1rem;
   z-index: 9;
   transform: scale(0.8);
-}
+} */
 .card[content="video"] h1 {
   margin-top: 20cqh;
 }
@@ -1134,8 +1145,10 @@ h1 {
 }
 .card[content="audio"] {
   width: 20cqh;
+  aspect-ratio: 3/4.34;
+  flex-grow: 1;
 }
-.card[content="audio"]::before {
+/* .card[content="audio"]::before {
   content: url("../svg/audio.svg");
   position: absolute;
   width: 2rem;
@@ -1144,6 +1157,25 @@ h1 {
   right: 1rem;
   z-index: 9;
   transform: scale(0.8);
+} */
+ .follow-button {
+  right: 1rem;
+  top: 1rem;
+  background-color: transparent;
+  position: absolute;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  border: 1px solid var(--text-color);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  box-shadow: 0.1rem 0.1rem 0.5rem var(--shadow-color);
+ }
+.follow-button.following {
+  background-color: #0069FF;
+  color: var(--text-color);
+  filter: drop-shadow(0 0 0.3rem var(--button-hover));
+  cursor: pointer;
 }
 .card[content="text"] h1 {
   z-index: 9;
@@ -1202,8 +1234,8 @@ h1 {
 }
 .post-userName {
   position: absolute;
-  top: 0rem;
-  left: 3rem;
+  top: 0.5rem;
+  left: 4rem;
   height: 2rem;
   display: flex;
   align-items: center;
@@ -1213,14 +1245,14 @@ h1 {
   filter: drop-shadow(0 0 5px black);
 }
 .timeAgo {
-  top: 1.1rem;
+  top: 1.7rem;
   font-size: 0.8em;
   color: #ddd;
 }
 .post-userImg {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  top: 1rem;
+  left: 1rem;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -1360,11 +1392,10 @@ h1 {
   left: 0;
   width: 100vw;
   height: 100dvh;
-  z-index: 2;
+  z-index: 5;
   background-color: #4848487d;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
-  z-index: 2;
 }
 
 #cardClicked {
@@ -1374,7 +1405,7 @@ h1 {
   transform: translate(-50%, -50%);
   top: 50%;
   position: fixed;
-  /* z-index: 5; */
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-areas: "img comment";

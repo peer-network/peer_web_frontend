@@ -1,0 +1,264 @@
+#cardClicked {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 5;
+  background-color: #4848487d;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+#cardClicked .inner-container {
+  width: 90vw;
+  height: 90vh;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  position: fixed;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "img comment";
+  align-items: center;
+  justify-items: center;
+  border-radius: 2rem;
+  box-shadow: 1rem 1rem 3rem black, 0 0 2rem black inset;
+  background-color: var(--background-color);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  background-image: radial-gradient(circle at top right, rgba(119, 175, 255, 0.11) 0%, rgba(55, 153, 182, 0) 31%), radial-gradient(circle at bottom left, rgba(119, 175, 255, 0.11) 0%, rgba(255, 255, 255, 0) 33%);
+}
+
+#cardClicked .inner-container .cImg {
+  grid-area: img;
+  position: relative;
+  display: grid;
+  grid-template-rows: 70% auto auto auto;
+  grid-template-columns: 1fr;
+  height: 95%;
+  width: 95%;
+}
+
+#cardClicked .inner-container #comment-img-container {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  /* scroll-behavior: smooth; */
+  display: flex;
+  grid-row: 1;
+  /* box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000; */
+  margin: auto;
+  height: 50vh;
+  max-height: 50vh;
+  scroll-snap-type: x mandatory;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#cardClicked .inner-container #comment-img-container img,
+#cardClicked .inner-container #comment-img-container video {
+  max-height: 97%;
+  height: auto;
+  max-width: 100%;
+  width: 100%;
+  border-radius: 1rem;
+  scroll-snap-align: start;
+  height: 100%;
+  width: auto;
+}
+
+
+
+#cardClicked .inner-container #comments-container {
+  grid-area: comment;
+  /* height: 94%; */
+  max-height: 95%;
+  width: 95%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+#cardClicked .inner-container #comments-container .flex {
+  display: flex;
+  gap: 1rem;
+}
+#cardClicked .inner-container #comments-container .centvert {
+  align-items: center;
+}
+#cardClicked .inner-container #comments-container .csum {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+
+#cardClicked .inner-container #comments-container .icon-add {
+  border: 0.2rem solid;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cardClicked .inner-container #comments-container .icon-add:hover,
+#cardClicked .inner-container #comments-container .icon-group:hover {
+  filter: brightness(2) drop-shadow(0 0 0.5rem var(--shadow-add));
+  cursor: pointer;
+}
+#cardClicked .inner-container #comments-container .icon {
+  width: 1.3rem;
+  height: auto;
+}
+
+#cardClicked .inner-container #comments-container #comments-header {
+  margin-bottom: 3rem;
+}
+
+#cardClicked .inner-container .commentsButtons {
+  grid-row: 2;
+  display: flex;
+  width: 95%;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+#cardClicked .inner-container .commentsButtons #comments-buttons,
+#cardClicked .inner-container .commentsButtons .postViews {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+#cardClicked .inner-container .btn,
+#cardClicked .inner-container .commentsButtons .postViews svg,
+#cardClicked .inner-container .commentsButtons #comments-buttons img {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+#cardClicked .inner-container #comment-title {
+  grid-row: 3;
+  font-size: 1.6rem;
+  font-weight: bold;
+  align-self: end;
+}
+
+#cardClicked .inner-container #comment-text {
+  grid-row: 4;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#cardClicked .inner-container .btClose {
+  z-index: 2;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  padding: 0.5rem;
+  transform: rotateZ(45deg);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: auto;
+  cursor: pointer;
+}
+
+
+#cardClicked .inner-container #comments-container .comments {
+  /* top: -14%; */
+
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#cardClicked .inner-container #comments-container  .comments .comment p {
+  padding-bottom: 0.7rem;
+}
+
+
+#cardClicked .inner-container #comments-container  .comments .comment {
+  position: relative;
+  /* background: hsla(0, 0%, 100%, 0.5); */
+  color: #ffffff;
+  padding: 0.3rem 1rem;
+  border-radius: 1rem;
+  /* display: flex;
+  flex-direction: column; */
+  display: grid;
+  grid-template-columns: 5rem auto 5rem;
+  grid-template-areas:
+    "image name liked"
+    "image comment liked";
+}
+
+#cardClicked .inner-container #comments-container  .comments .comment .likeComment svg {
+  fill: none;
+  stroke: #fff;
+}
+
+#cardClicked .inner-container #comments-container  .comments .comment .commentUser {
+  font-weight: bold;
+}
+
+.commentHeader {
+  grid-area: name;
+}
+
+#cardClicked .inner-container #comments-container  .comments .comment img {
+  grid-area: image;
+  height: 100%;
+  width: auto;
+  margin: 0 !important;
+}
+
+#cardClicked .inner-container #comments-container  .comments .comment .likeComment {
+  grid-area: liked;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#cardClicked .inner-container #comments-container  .comments .comment .likeComment svg {
+  height: 1.7rem;
+  width: 1.7rem;
+}
+
+#cardClicked .inner-container #comments-container #mostliked {
+  display: flex;
+  align-items: center;
+  padding-left: 1.5rem;
+  margin-top: 2rem;
+}
+
+#cardClicked .inner-container #comments-container #mostliked img,
+#cardClicked .inner-container #comments-container  .comments .comment img {
+  position: relative;
+  border-radius: 50%;
+  height: 4rem;
+  width: 4rem;
+  margin-left: -1.5rem;
+  border: 3px solid #111;
+  object-fit: cover;
+}
+
+#cardClicked .inner-container #comments-container #mostliked span {
+  margin-left: 2rem;
+}
+
+#cardClicked .inner-container #comments-container #mostliked img:nth-of-type(1) {
+  z-index: 5;
+}
+
+#cardClicked .inner-container #comments-container #mostliked img:nth-of-type(2) {
+  z-index: 4;
+}

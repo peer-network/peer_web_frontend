@@ -20,6 +20,7 @@
   }
 }
 
+<<<<<<< HEAD
 /* Schriftart lokal im CSS einbinden */
 @font-face {
   font-family: "Poppins";
@@ -28,6 +29,9 @@
   font-style: normal;
   font-display: swap;
 }
+=======
+
+>>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
 
 html {
   scroll-behavior: smooth;
@@ -36,6 +40,10 @@ html {
 
 body {
   font-family: "Poppins", sans-serif;
+<<<<<<< HEAD
+=======
+  font-size: 18px;
+>>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
   margin: 0;
   background: var(--background-color);
   color: var(--text-color);
@@ -125,6 +133,9 @@ body {
   justify-content: center;
   padding: 1rem 2rem;
 }
+.form-container.hide{
+  display: none;
+}
 
 .heading {
   font-weight: 500;
@@ -173,7 +184,7 @@ body {
   max-width: 30rem;
   background: var(--input-background);
   border-radius: 800px;
-  margin: 0.2rem 0;
+  margin: 0.3rem 0;
   position: relative;
 }
 
@@ -201,7 +212,18 @@ body {
   transform-origin: 100% 100%;
   border: none;
 }
-
+a.button {
+	text-decoration: none;
+	display: inline-block;
+  text-align: center;
+}
+a.disable {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+.button:disabled {
+	cursor: not-allowed;
+}
 .button:hover {
   background: var(--button-hover);
 }
@@ -449,7 +471,7 @@ label {
   left: 7%;
   /* color: red; */
   background: red;
-  width: 80%;
+  width: 100%;
   padding: 0;
   border-radius: 0 0 6px 6px;
   height: 0;
@@ -458,16 +480,19 @@ label {
 }
 
 #validationMessage {
-  color: red;
-  transition-property: color;
-  transition-duration: 1s;
-  transition-delay: 0s;
+	color: red;
+	transition-property: color;
+	transition-duration: 1s;
+	transition-delay: 0s;
+	max-width: 700px;
+	font-size: 16px;
+	line-height: 18px;
 }
 
-.notvalid {
-  color: #fff !important;
-  height: 2rem !important;
-  padding: 2% 3% !important;
+.notvalid,.error {
+  
+  color: red;
+  
 }
 
 input:focus + label {
@@ -506,4 +531,16 @@ input:focus + label {
 }
 .checkbox:checked + .disclaimer-container {
   display: none;
+}
+/*----Forget Password----*/
+.form-container .input-field{
+
+  position: relative;
+}
+.form-container .input-field .loader{
+  display: none;
+}
+.form-container .input-field .loader.active
+{
+  display: block;
 }
