@@ -3,8 +3,10 @@ function displayValidationMessage(message) {
   let element;
   // Display error message in the UI (instead of using alert)
   element = document.getElementById("validationMessage");
-  element.classList.add("notvalid");
-  element.innerText = message;
+  if(element){
+    element.classList.add("notvalid");
+    element.innerText = message;
+  }
 }
 // Eingabefeld abrufen
 const usernameInput = document.getElementById("username");
@@ -98,3 +100,34 @@ passwordField.addEventListener("input", function () {
 passwordField.addEventListener("focus", function () {
   passwordField.parentElement.classList.remove("valid", "invalid");
 });
+
+
+function showRegisterConfirmationModal(onConfirmCallback) {
+  const modal = document.getElementById("modalOverlay");
+  const confirmBtn = document.getElementById("confirmSubmit");
+  const botCheckbox = document.getElementById("notBot");
+  const ageCheckbox = document.getElementById("ageCheck");
+
+  // Show modal
+  modal.classList.remove("none");
+
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      modal.classList.add("none");
+    }
+  });
+
+  // Remove previous event listener (if any)
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+  newConfirmBtn.addEventListener("click", function () {
+    if (!botCheckbox.checked || !ageCheckbox.checked) {
+      Merror("Please confirm that you are not a bot and that you are at least 18+ years old.");
+      return;
+    }
+
+    modal.classList.add("none"); // Hide modal
+    onConfirmCallback(); // Proceed with registration
+  });
+}
