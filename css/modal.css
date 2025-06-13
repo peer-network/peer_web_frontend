@@ -11,6 +11,7 @@
   justify-content: center;
   align-items: center;
   opacity: 1;
+  -webkit-backdrop-filter: blur(1.5px);
   backdrop-filter: blur(1.5px);
   transition: opacity, backdrop-filter 0.3s ease;
 }
@@ -25,25 +26,22 @@
 }
 
 .modal-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   padding: 20px;
-  border-radius: 10px;
-  width: min(35rem, 100vw);
-  box-shadow: 0 4px 1rem rgb(0 0 0 / 80%), 0 0 1rem #8b8b8b inset;
-  text-align: center;
+  border-radius: 1.5rem;
+  background-color: var(--background-color);
+  width: min(30rem, 100vw);
   position: relative;
   animation: modal-scale-in 0.3s ease-out;
 }
 .modal-textarea {
-  margin: 1rem auto 2rem auto;
-  width: 80%;
-  height: 5rem;
   border-radius: 1rem;
-  background-color: #b0b0b0;
-  padding: 1rem;
-  color: #000;
   font-size: 0.9rem;
   resize: vertical;
   max-height: 70vh;
+  margin-bottom: 30px;
 }
 /* Typen */
 .modal-content.info {
@@ -51,26 +49,60 @@
   color: #1d1d1d;
 }
 
-.modal-content.warning {
-  background-color: #fcf8e3;
-  /* Gelb für Warnung */
-  color: #8a6d3b;
+ .modal-content.confirm {
+  background-color: #dff0d8;
+  /* Grün für Bestätigung */
+  color: #3c763d;
 }
 
+/* .modal-content.warning {
+  /* Gelb für Warnung */
+  /* color: #8a6d3b; */
+/* }  */
+
 .modal-content.error {
-  background-color: #f2dede;
   /* Rot für Fehler */
   color: #a94442;
 }
 
+.peer-token {
+  width: 1.5rem;
+}
+.title-icon {
+  width: 2rem;
+}
+
+.warning .modal-message {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pricee {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.title-char {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  font-weight: bold;
+}
+
 .modal-close {
-  color: #aaa;
+  /* color: #aaa;
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 28px;
   font-weight: bold;
-  cursor: pointer;
+  cursor: pointer; */
+  display: none;
 }
 
 .modal-close:hover {
@@ -80,6 +112,7 @@
 .modal-title {
   font-size: 24px;
   margin-bottom: 10px;
+  color: red;
 }
 
 .modal-message {
@@ -90,23 +123,30 @@
 .modal-buttons {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 1rem;
 }
 
-.modal-button {
-  padding: 10px 20px;
-  font-size: 14px;
-  cursor: pointer;
+.modal-buttons .modal-button {
+  /* font-size: 14px; */
+  /* cursor: pointer;
   border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s ease;
+  padding: 0 1rem;
+  border-radius: 1.5rem;
+  width: 100%;
+  min-width: unset;
+  text-transform: uppercase;
+  line-height: 50px; */
+  flex: 1;
+  margin-top: 1rem;
 }
+/* .modal-buttons .modal-button[data-index="0"] {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
+} */
 
-.modal-button:hover {
+/* .modal-buttons .modal-button:hover {
   background-color: #0056b3;
-}
+} */
 
 /* Animationen */
 @keyframes modal-fadeIn {
@@ -137,4 +177,83 @@
   to {
     transform: scale(1);
   }
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background-color: var(--background-color);
+  /* color: var(--text-color); */
+  padding: 1rem;
+  border-radius: 1.5rem;
+  width: min(14rem, 100vw);
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.none {
+  display: none !important;
+}
+.modal-box input {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.modal-box label {
+  position: static;
+  display: block;
+  font-size: 0.6rem;
+}
+.modal-box:hover button {
+  cursor: pointer;
+}
+.logOut-pop {
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  width: 30rem;
+  height: 20rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.logOut-pop img {
+  width: 4rem;
+}
+.button-row {
+  display: flex;
+  gap: 1rem;
+}
+.button-row button {
+  width: 10rem;
+  height: 4rem;
+}
+.modal-checkbox {
+  margin: 0.5em 0;
+  display: flex;
+  justify-content: space-between;
+}
+.modal-checkbox input {
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+}
+.modal-checkbox label {
+  color: rgba(255, 255, 255, 0.3)
 }

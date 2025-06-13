@@ -1,0 +1,713 @@
+
+.list_all_post {
+	
+	/* display: grid; */
+	gap: 2rem;
+	width: 100%;
+	padding: 2rem 0;
+	overflow: auto;
+	margin-top: 2rem;
+	scroll-snap-type: y mandatory;
+	overflow-x: hidden;
+	/* justify-content: space-evenly; */
+	/* grid-template-columns: auto auto auto; */
+	/* grid-template-rows: auto; */
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	/* flex-flow: column wrap; */
+	/*justify-content: space-between;*/
+	align-items: stretch;
+	align-content: stretch;
+	min-width: 22rem;
+}
+
+.card {
+  background-color: var(--background-color);
+  height: 24rem;
+  position: relative;
+  display: flex;
+  /* flex-direction: column-reverse; */
+  /* align-items: flex-end; */
+  /* background-color: red; */
+  /*width: 100%;*/
+  aspect-ratio: 3/4.34;
+  /* box-shadow: .3rem .3rem 6px #3d3d3d; */
+  /* justify-content: flex-start; */
+  overflow: hidden;
+  border-radius: 1.5rem;
+  scroll-snap-align: start;
+  scroll-margin-top: 1rem;
+  transform-origin: center;
+  animation: scaleIn 0.2s ease-out forwards;
+  max-height: 30em;
+  flex-shrink: 1;
+  flex-grow: 1;
+}
+
+/* .card:hover {
+  margin-left: -100%;
+  width: 200%;
+  z-index: 99;
+  transition: all 0.4s ease-out;
+} */
+
+.card .post {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  padding: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.card  .post img,
+.card .custom-text {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	object-fit: cover;
+}
+
+.card .custom-text {
+  
+  
+  
+  width: 100%;
+  
+  border: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
+  overflow-y: auto;
+  height: 57%;
+  position: relative;
+}
+
+/* Stil für das Audio-Element */
+.card .custom-audio {
+  display: none;
+  width: 90%; /* Breite des Players */
+  height: 4rem; /* Höhe des Players */
+  background-color: #f0f0f0; /* Hintergrundfarbe */
+  border: 2px solid #007bff; /* Blauer Rahmen */
+  border-radius: 8px; /* Abgerundete Ecken */
+  padding: 5px; /* Abstand im Player */
+}
+
+/* Optional: Hover-Effekt */
+ .card .custom-audio:hover {
+  background-color: #e0e0e0;
+  border-color: #0056b3;
+}
+ .card .create-video,
+.card .custom-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 85%;
+  object-fit: cover;
+}
+.card .custom-video {
+  margin-top: 1rem;
+}
+.noscroll {
+  overflow: hidden;
+}
+.card[content="text"] .post-text {
+  display: none;
+  height: 7rem;
+}
+
+.card  .post .shadow {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  box-shadow: inset 0 0 2rem rgba(0, 0, 0, 0.1), inset 0 -3rem 2rem rgba(0, 0, 0, 0.5), inset 0 2rem 2rem rgba(0, 0, 0, 0.5);
+  position: absolute;
+}
+
+
+.card  .post-inhalt {
+	position: absolute;
+	top: 0rem;
+	height: 80%;
+	width: 100%;
+	padding: 1rem;
+	left: 0;
+	color: var(--white);
+	z-index: 2;
+	display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.card .post-inhalt h3 {
+	text-shadow: 1px 1px 2px black;
+	margin: 0 !important;
+	font-weight: 700;
+  font-size: 20px;
+}
+
+.card .follow-button {
+	right: 1rem;
+	top: 1rem;
+	position: absolute;
+	/*font-size: 0.8rem;*/
+	min-width: unset;
+  
+	
+	font-size: 14px;
+	line-height: 34px;
+	padding: 0 16px;
+
+	
+	background-color:transparent;
+	border-color: var(--white);
+}
+.card .follow-button.following {
+ background-color:var(--button-hover);
+	border-color: var(--button-hover);
+}
+.card  .post-userImg {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	border: 1px solid var(--text-color);
+	object-fit: cover;
+  cursor: pointer;
+}
+.card  .post-userName {
+	position: absolute;
+	top: 0.5rem;
+	left: 4rem;
+	height: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	z-index: 2;
+  cursor: pointer;
+	text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
+	/*filter: drop-shadow(0 0 5px black);*/
+  font-weight: 700;
+  font-style: italic;
+  font-size: 16px;
+}
+
+.card .timeAgo {
+	top: 1.7rem;
+	font-weight: 400;
+  font-style: normal;
+  font-size: 12px;
+}
+
+
+.card .post-text {
+
+text-shadow: 1px 1px 2px black;
+}
+
+.card .social {
+	position: absolute;
+	width: 100%;
+	
+	display: flex;
+	justify-content: space-evenly;
+	bottom: 1.7rem;
+	font-size: 1.1rem;
+	margin: 0 ;
+	flex-direction: row;
+	align-items: center;
+	padding: 0 1rem;
+	font-size: 1.1rem;
+}
+.card .social div {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+  cursor: pointer;
+}
+.card .social svg {
+	height: 1.4rem;
+	aspect-ratio: 1 / 1;
+}
+
+.card  .social svg use,
+.commentsButtons svg use {
+  fill: transparent;
+  stroke: var(--text-color);
+}
+/* .card[content="image"] {
+  width: 28rem;
+} */
+.card[content="video"] {
+  aspect-ratio: 3/4.34;
+  
+}
+/* .card[content="video"]::before {
+  content: url("../svg/video.svg");
+  position: absolute;
+  width: 2rem;
+  height: auto;
+  top: 0.75rem;
+  right: 1rem;
+  z-index: 9;
+  transform: scale(0.8);
+} */
+.card[content="video"] h3 {
+  margin-top: 20px;
+}
+.card[content="audio"] h3,
+.card[content="image"] h3 {
+  margin-top: 20px;
+}
+.card[content="audio"] h3 {
+  margin-top: 20px;
+}
+.card[content="audio"] {
+
+  /*width: 20cqh;*/
+  aspect-ratio: 3/4.34;
+  
+}
+/* .card[content="audio"]::before {
+  content: url("../svg/audio.svg");
+  position: absolute;
+  width: 2rem;
+  height: auto;
+  top: 0.6rem;
+  right: 1rem;
+  z-index: 9;
+  transform: scale(0.8);
+} */
+.card[content="text"] h3 {
+  /*z-index: 9;
+   position: absolute; 
+  width: 100%;
+  top: 2.5rem;*/
+  margin-bottom: 0.4rem;
+  text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
+  filter: drop-shadow(0 0 5px black);
+  font-weight: 700;
+  margin-top: 3rem;
+  font-size: 20px;
+}
+/*
+.card[content="text"]:hover h3 {
+ 
+  z-index: 100 !important;
+  text-align: center;
+  padding: 0.3rem 1rem;
+  background-color: #ffffffeb;
+  filter: none;
+  text-shadow: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+.card[content="text"] > div:hover > .post-inhalt,
+.card[content="text"] > h3:hover ~ .post-inhalt,
+.card[content="text"]:hover ~ .post-inhalt {
+  background-color: whitesmoke;
+ 
+  height: fit-content;
+  color: #000;
+}*/
+.card[content="text"]:hover .post-text {
+  display: none;
+}
+.card[content="text"]:hover span {
+  filter: none;
+  text-shadow: none;
+}
+.card[content="text"]:hover > .post {
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  /*z-index: 99;*/
+}
+.card[content="text"] > div:hover > .custom-text,
+.card[content="text"] > h3:hover + .custom-text,
+.card[content="text"]:hover > .custom-text {
+ /* height: calc(100% - 9rem);
+  background-color: whitesmoke;
+  color: #000;*/
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  25% {
+    transform: scale(0.7);
+  }
+
+  50% {
+    transform: scale(1);
+  }
+
+  75% {
+    transform: scale(0.7);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+.fill-red use {
+  fill: red !important;
+  stroke: red !important;
+  transform-origin: 50% 50%;
+  animation: pulse 2s;
+}
+
+.cover {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: -1;
+  /* width: auto; */
+  object-fit: cover;
+  left: 0;
+  max-width: 100%;
+}
+.postViewShow {
+  display: block !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: #4848487d;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  z-index: 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.btAdd {
+  position: absolute;
+  top: -0rem;
+  right: -0rem;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  padding: 0.5rem;
+  transform: rotateZ(45deg);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: auto;
+  background-color: red;
+  cursor: pointer;
+}
+
+.deletePost {
+  z-index: 5;
+  top: -1rem;
+  right: -1rem;
+}
+
+
+
+
+
+
+
+
+
+
+.icon.settings {
+  font-size: 1.2em;
+}
+
+.offline {
+  background-color: red;
+  color: var(--black);
+  font-weight: bold;
+  padding: 0.2rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.audio-item {
+  width: 96%;
+  height: auto;
+}
+.audio-item canvas {
+  width: 100%;
+  height: auto;
+}
+#audio-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  height: 100%;
+}
+#audio-container canvas {
+  width: 48%;
+  height: 10%;
+  top: 70%;
+  position: absolute;
+  left: 32%;
+}
+#play-pause {
+  position: absolute;
+  top: 70%;
+  /* right: 9dvw; */
+  height: 10%;
+  aspect-ratio: 1 / 1 !important;
+  background: url("../svg/play.svg") no-repeat center;
+  border: none;
+  background-size: 50% 50%;
+  /* max-width: 10%; */
+  left: 80%;
+}
+#play-pause::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 0.5%;
+  background: linear-gradient(to left, white, transparent);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 0.5%), white 100%);
+  mask: radial-gradient(farthest-side, transparent 85%, white 100%);
+  pointer-events: none;
+}
+
+#play-pause.paused {
+  background-image: url("../svg/pause.svg");
+}
+
+
+
+
+
+.multi::after {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  background: no-repeat center/contain;
+  background-image: url("../svg/multi.svg");
+  /* SVG referenzieren */
+  pointer-events: none;
+  /* Klicks durchlassen */
+}
+
+/* .button {
+  width: calc(80% + 1.2rem);
+  max-width: 31.2rem;
+  background: var(--button-bg);
+  border-radius: 800px;
+  font-weight: 500;
+  font-size: .8rem;
+  color: var(--button-color);
+  margin: 1.7rem 0;
+  padding: .5rem;
+  cursor: pointer;
+  transform-origin: 100% 100%;
+  border: none;
+}
+.button:hover {
+  background: var(--button-hover);
+} */
+/* Stil für das Audio-Element */
+.custom-audio {
+  display: none;
+  width: 90%; /* Breite des Players */
+  height: 4rem; /* Höhe des Players */
+  background-color: #f0f0f0; /* Hintergrundfarbe */
+  border: 2px solid #007bff; /* Blauer Rahmen */
+  border-radius: 8px; /* Abgerundete Ecken */
+  padding: 5px; /* Abstand im Player */
+}
+
+/* Optional: Hover-Effekt */
+.custom-audio:hover {
+  background-color: #e0e0e0;
+  border-color: #0056b3;
+}
+.create-video,
+.custom-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 85%;
+  object-fit: cover;
+}
+.custom-video {
+  margin-top: 1rem;
+}
+.noscroll {
+  overflow: hidden;
+}
+#dropdownMenu {
+  position: absolute;
+  z-index: 4;
+  margin-left: 1rem;
+  margin-top: -1rem;
+}
+.dropdown-item {
+  padding: 0.3rem;
+  background-color: #ddd;
+  color: #000;
+  border-radius: 0.5rem;
+  margin: 0.1rem 0 0.1rem 0;
+  width: 13rem;
+}
+.dropdown-item:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+#commentInput {
+  width: 0;
+  height: 3rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: #b0b0b0;
+  padding-left: 0;
+  color: #000;
+  font-size: 0.9rem;
+  transition: all 0.5s;
+  resize: vertical;
+  max-width: calc(100cqw - 12rem);
+  position: absolute;
+  z-index: 3;
+  transform: translateY(8rem);
+}
+#commentInput:focus {
+  border: 1px solid #eee;
+  width: 90cqw;
+  padding-left: 1rem;
+}
+
+.comment-reply {
+  margin-left: 3rem;
+}
+
+
+@media screen and (min-width: 2000px) and (max-width: 3000px){
+
+    .card {
+	    height: 30rem;
+	  }
+    .card .post-inhalt h3,
+    .card[content="text"] h3,
+    .card .social  {
+    
+      font-size: 28px;
+		font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+    }
+    
+    .card .post-userImg {
+
+    width: 2.375rem;
+    height: 2.375rem;
+    }
+    .card .follow-button {
+    font-size: 18px;
+    line-height: 40px;
+    padding: 0 20px;
+    }
+
+}
+
+@media screen and (min-width: 3000px) {
+
+	.list_all_post {
+		gap: 2rem;
+	}
+	.card {
+	  height: 46rem;
+	}
+  .card .post-inhalt,
+  .card .post {
+  	padding: 1.875rem;
+	
+  }
+  .card .post-userImg {
+    top: 1.875rem;
+    left: 1.875rem;
+    width: 4.375rem;
+    height: 4.375rem;
+  }
+  .card .follow-button {
+    right: 1.875rem;
+    top: 1.875rem;
+    line-height: 66px;
+	
+  }
+  .card .post-userName {
+    top: 2.2rem;
+	  left: 7rem;
+    
+	  font-size: 28px;
+	  font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+
+	}
+  .card .timeAgo {
+	  top: 4.3rem;
+ 
+  }
+  .card .post-inhalt h3,
+  .card[content="text"] h3 {
+	
+	  font-size: 35px;
+    font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
+	  font-weight: 700;
+  }
+  .card .social {
+	
+	font-size: 35px;
+	font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
+  }
+  .card .social svg {
+    height: 2.18rem;
+    
+  }
+
+}
+
