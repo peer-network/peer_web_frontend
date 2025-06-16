@@ -138,9 +138,17 @@
 	color: inherit;
 }
 .followers_count,
-.following_count {
+.following_count,
+.peer_count {
 	cursor: pointer;
 }
+
+.following,
+.peer {
+	background-color: var(--button-hover);
+    border-color: var(--button-hover);
+}
+
 .modalOverlay .follow-button{
 	margin: 0;
 	display: flex;
