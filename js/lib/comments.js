@@ -1,5 +1,6 @@
 async function likeComment(commentId) {
-  if (!(await LiquiudityCheck(3, "Like Comment", like))) {
+  // likeCost is a global variable and updated in global.js -> getActionPrices();
+  if (!(await LiquiudityCheck(likeCost, "Like Comment", like))) {
     return false;
   }
   const accessToken = getCookie("authToken");
@@ -47,7 +48,8 @@ async function likeComment(commentId) {
 }
 
 async function createComment(postId, content, parentId = null) {
-  if (!(await LiquiudityCheck(0.5, "Comment Post", 1))) {
+  // commentCost is a global variable and updated in global.js -> getActionPrices();
+  if (!(await LiquiudityCheck(commentCost, "Comment Post", 1))) {
     return false;
   }
   const accessToken = getCookie("authToken");
