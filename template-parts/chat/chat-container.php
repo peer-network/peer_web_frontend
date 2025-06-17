@@ -139,7 +139,10 @@
     <div class="chat-messages"></div>
     
     <div class="chat-input">
-        <img id="sendMessageTextInput" src="" class="avatar">
+        <img id="sendMessageUserImg" src="" class="avatar">
         <textarea name="" id="sendPrivateMessage" cols="30" rows="4" placeholder="Write a message ..."></textarea>
+        <div class="error-block" id="sendMessageTextError">
+            <label>Message must be 500 characters or fewer</label>
+        </div>
     </div>
 </div>

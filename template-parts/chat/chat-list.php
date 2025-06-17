@@ -20,6 +20,7 @@
 
     <div class="chat-pannel" id="search-contact-results">
         <div class="chat-pannel-widget">
+            <div id="no_post_found" class="no_post_found">No Friend found...</div>
         </div>
     </div>
 

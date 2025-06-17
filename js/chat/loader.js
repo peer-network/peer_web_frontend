@@ -54,6 +54,7 @@ ChatApp.loader = {
       item.querySelector(".name").textContent = chat.type === "private" ? otherUser.username : chat.name;
       item.querySelector(".time").textContent = time;
       item.querySelector(".message-preview").textContent = preview;
+      item.onerror = () => this.src = "./svg/noname.svg";
 
       item.addEventListener("click", () => {
         document.querySelectorAll(".chat-item").forEach(el => el.classList.remove("active-chat"));
