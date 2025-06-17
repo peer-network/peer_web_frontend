@@ -63,7 +63,6 @@ ChatApp.ui = {
       const content = input.value.trim();
       if (!chatid || !content) return;
       if (content.length > 500) {
-        console.log("i ma here")
         const sendMessageTextError = document.getElementById("sendMessageTextError");
         sendMessageTextError.style.display = "block";
         return;
@@ -136,10 +135,11 @@ ChatApp.ui = {
     ChatApp.state.isInCreateOverlay = true;
 
     if (contactList.length === 0) {
+      document.getElementById("no_friend_found").classList.add("active");
+    } else {
+      document.getElementById("no_friend_found").classList.remove("active");
       ChatApp.state.fullContactList = contactList;
       ChatApp.ui.renderContacts(contactList);
-    } else {
-     
     }
   },
 
@@ -163,7 +163,7 @@ ChatApp.ui = {
       container.appendChild(userCard);
     });
 
-    if (chatMode === "group") {
+    if (chatMode === "group" && contactList.length > 0) {
       const footer = ChatApp.ui.createFooterButtons();
       container.appendChild(footer);
     }

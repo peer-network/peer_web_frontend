@@ -485,14 +485,6 @@ color:rgba(255, 255, 255, 1);
   background-color: var(--button-hover);
 }
 
-/* ====== Tabs & Add Button ====== */
-
-
-
-
-
-
-
 /* ====== Chat Container Box ====== */
 .chat-container {
 	border-radius: 30px;
@@ -502,6 +494,24 @@ color:rgba(255, 255, 255, 1);
 	overflow: hidden;
 }
 
+.chat-container .no_post_found {
+  position: absolute;
+  width: 100%;
+  margin: 0;
+  max-width: 100%;
+  background-color: #000;
+  border: 0;
+  height: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+}
+
+.chat-container .no_post_found.active {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
 /* ====== Chat Header ====== */
 .chat-header {
 	position: relative;
@@ -645,7 +655,6 @@ color:rgba(255, 255, 255, 1);
 	align-items: end;
 	padding: 30px 20px;
   flex-wrap: wrap;
-  
 }
 
 .chat-input textarea {
@@ -673,5 +682,5 @@ flex: 1;
 
 .no_post_found {
   margin: 20px auto;
-  display: block;
+  max-width: 100%;
 }
