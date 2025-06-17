@@ -780,6 +780,18 @@ function commentToDom(c, append = true) {
       parentElement.appendChild(card);
     });
     postoffset += posts.data.listPosts.affectedRows.length;
+
+     const post_loader = document.getElementById("post_loader");
+    const no_post_found = document.getElementById("no_post_found");
+    //console.log(posts.data.listPosts.counter +"---"+posts.data.listPosts.affectedRows.length);
+    if(posts.data.listPosts.counter==0 && posts.data.listPosts.affectedRows.length==0) // no  post found 
+    { 
+      no_post_found.classList.add("active");
+      post_loader.classList.add("hideloader");
+    }else{
+      no_post_found.classList.remove("active");
+      post_loader.classList.remove("hideloader");
+    }
 	 
   }
   
