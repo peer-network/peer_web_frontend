@@ -622,13 +622,16 @@ function commentToDom(c, append = true) {
 
         const followerCountSpan = document.getElementById("following");
 
-        if (objekt.user.isfollowed) {
+        // Check for peer status initially
+        if (objekt.user.isfollowed && objekt.user.isfollowing) {
+          followButton.classList.add("following");
+          followButton.textContent = "Peer";
+        } else if (objekt.user.isfollowed) {
           followButton.classList.add("following");
           followButton.textContent = "Following";
         } else {
           followButton.textContent = "Follow +";
         }
-
 
         followButton.addEventListener("click", async function (event) {
           event.stopPropagation();
@@ -637,20 +640,26 @@ function commentToDom(c, append = true) {
           const newStatus = await toggleFollowStatus(objekt.user.id);
 
           if (newStatus !== null) {
-           
             objekt.user.isfollowed = newStatus;
+
+            const isfollowed = objekt.user.isfollowed;
+            const isfollowing = objekt.user.isfollowing;
 
             if (followerCountSpan) {
               let count = parseInt(followerCountSpan.textContent, 10) || 0;
               count = newStatus ? count + 1 : Math.max(0, count - 1);
               followerCountSpan.textContent = count;
-            } else {
-              followButton.textContent = newStatus ? "Following" : "Follow +";
             }
-          
 
-            followButton.textContent = newStatus ? "Following" : "Follow +";
-            followButton.classList.toggle("following", newStatus);
+            followButton.classList.toggle("following", isfollowed);
+
+            if (isfollowed && isfollowing) {
+              followButton.textContent = "Peer";
+            } else if (isfollowed) {
+              followButton.textContent = "Following";
+            } else {
+              followButton.textContent = "Follow +";
+            }
           } else {
             alert("Failed to update follow status. Please try again.");
           }
