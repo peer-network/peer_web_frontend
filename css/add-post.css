@@ -1,5 +1,4 @@
-
-#addPost  {
+#addPost {
   position: fixed;
   top: 0;
   left: 0;
@@ -28,9 +27,6 @@
   padding: 2vh 3vw;
 }
 
-
-
-
 #addPost .filter .center {
   flex-direction: column;
   margin-bottom: 5rem;
@@ -39,27 +35,27 @@
   margin-bottom: 2rem;
 }
 
-
-
-#addPost .filterGroup input[type="checkbox"], #addPost .filterGroup input[type="radio"], #addPost input[type="radio"] {
-	display: none;
+#addPost .filterGroup input[type="checkbox"],
+#addPost .filterGroup input[type="radio"],
+#addPost input[type="radio"] {
+  display: none;
 }
 
 #addPost .filter {
-	background-color: var(--bg-filter);
-	border-radius: 2rem;
-	padding: 1rem;
-	  grid-column: 1;
+  background-color: var(--bg-filter);
+  border-radius: 2rem;
+  padding: 1rem;
+  grid-column: 1;
 }
 
 #addPost .filter .filterGroup {
-	width: 100%;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	align-items: center;
-	gap: 1rem;
-	transition: filter 0.3s ease;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  gap: 1rem;
+  transition: filter 0.3s ease;
 }
 #addPost .filter .filterGroup label {
   display: flex;
@@ -96,16 +92,13 @@
   margin-bottom: 1rem;
 }
 
-
-
 #addPost .filter .filterGroup img {
   width: 2em;
   height: auto;
 }
 
 #addPost .filter .filterGroup input[type="checkbox"],
-#addPost .filter .filterGroup input[type="radio"]
-{
+#addPost .filter .filterGroup input[type="radio"] {
   display: none;
 }
 #labelCreatePodcast img,
@@ -117,8 +110,8 @@
   opacity: 0.6; /* Optionale Transparenz */
 }
 #addPost .filter .filterGroup input[type="checkbox"]:checked + label span,
-#addPost .filter .filterGroup input[type="radio"]:checked + label span{
-  color: #77AFFF;
+#addPost .filter .filterGroup input[type="radio"]:checked + label span {
+  color: #77afff;
 }
 #addPost .filter .filterGroup input[type="checkbox"]:checked + label img,
 #addPost .filter .filterGroup input[type="radio"]:checked + label img,
@@ -144,16 +137,12 @@
 #addPost .upload {
   grid-column: 2;
 
-	
-	overflow-y: scroll;
-	height: 100%;
-	
-	display: none;
-	position:relative;
+  overflow-y: scroll;
+  height: 100%;
+
+  display: none;
+  position: relative;
 }
-
-
-
 
 #createPostNotes,
 #createPostImage,
@@ -162,7 +151,6 @@
   position: absolute;
   right: 4rem;
   bottom: 4rem;
- 
 }
 
 #addPost .preview-container {
@@ -192,7 +180,6 @@
   align-content: center;
   align-items: center;
 }
-
 
 #addPost .preview-item p {
   z-index: 2;
@@ -254,25 +241,25 @@
   margin-top: 5rem;
 }
 #addPost .remove-tag {
-	margin-left: 0.5rem;
-	border: none;
-	padding: 0;
-	min-width: unset;
-	line-height: 25px;
-	width: 25px;
-	font-size: 15px;
-	margin-bottom: 0;
-	background-color:var(--button-hover);
-	border-color: var(--button-hover);
+  margin-left: 0.5rem;
+  border: none;
+  padding: 0;
+  min-width: unset;
+  line-height: 25px;
+  width: 25px;
+  font-size: 15px;
+  margin-bottom: 0;
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
 }
 #addPost #tagsContainer > span {
-	padding: 5px 5px 5px 14px;
-	background-color: #fff;
-	display: inline-block;
-	border-radius: 50px;
-	margin: 0.2rem;
-	color: #000;
-	font-size: 15px;
+  padding: 5px 5px 5px 14px;
+  background-color: #fff;
+  display: inline-block;
+  border-radius: 50px;
+  margin: 0.2rem;
+  color: #000;
+  font-size: 15px;
 }
 #addPost #tagCreate {
   position: absolute;
@@ -305,8 +292,6 @@
   min-height: 25rem;
 }
 
-
-
 #addPost .drop-area {
   border: 3px dashed #cccccc00;
   padding: 1rem;
@@ -335,7 +320,7 @@
 }
 #addPost .inner-container .btClose {
   z-index: 2;
-  position: fixed;
+  position: absolute;
   top: 1rem;
   right: 1rem;
   width: 1rem;
@@ -350,4 +335,3 @@
   height: auto;
   cursor: pointer;
 }
-
