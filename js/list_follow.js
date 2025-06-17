@@ -16,8 +16,8 @@ document.getElementById("following_count").addEventListener("click", () => {
   openModal(userID, "following");
 });
 
-if (document.getElementById("Peers")) {
-  document.getElementById("Peers").addEventListener("click", () => {
+if (document.getElementById("peer_count")) {
+  document.getElementById("peer_count").addEventListener("click", () => {
     openModal(userID, "peers");
   });
 }
