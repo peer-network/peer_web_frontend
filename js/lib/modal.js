@@ -1,68 +1,139 @@
-function createModal({ title = "", message = "", buttons = [], type = "info", textarea = false }) {
+function createModal({
+  title = "",
+  message = "",
+  buttons = [],
+  type = "info",
+  textarea = false,
+  dontShowOption = false, // Neu: Standardmäßig keine Checkbox anzeigen
+  typeKey = null, // e.g., 'like', 'dislike', 'post', 'comment'
+}) {
+ 
+  const savedSettings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
+ 
+  if (typeKey && dontShowOption && savedSettings[typeKey] === true) {
+    return Promise.resolve({ button: 1, dontShow: true });
+  }
   return new Promise((resolve) => {
     const modal = document.createElement("div");
     modal.classList.add("modal-container");
+    // Baue das HTML für die Checkbox nur ein, wenn dontShowOption true ist
+    const checkboxHTML = dontShowOption
+      ? `
+        <div class="modal-checkbox">
+          <label for="dont-show-checkbox">Do not show this message again</label>
+          <input type="checkbox" id="dont-show-checkbox" />
+        </div>`
+      : "";
 
-    // Erstelle den HTML-Inhalt des Modals, optional mit Textarea
+    // Erstelle den kompletten innerHTML-String
     modal.innerHTML = `
-            <div class="modal-content ${type}">
-                <span class="modal-close">&times;</span>
-                <h2 class="modal-title">${title}</h2>
-                <p class="modal-message">${message}</p>
-                ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
-                <div class="modal-buttons">
-                    ${buttons.map((btn, index) => `<button class="modal-button" data-index="${index}">${btn}</button>`).join("")}
-                </div>
-            </div>
-        `;
+      <div class="modal-content ${type}">
+        <span class="modal-close">&times;</span>
+        <h2 class="modal-title">${title}</h2>
+        <p class="modal-message">${message}</p>
+        ${checkboxHTML}
+        ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
+        <div class="modal-buttons">
+          ${buttons.map((btn, index) => {
+            const label = typeof btn === "string" ? btn : btn.text;
+            const extraClass = typeof btn === "object" && btn.className ? ` ${btn.className}` : "";
+            return `<button class="modal-button${extraClass}" data-index="${index}">${label}</button>`;
+          }).join("")}
+        </div>
+      </div>
+    `;
 
     document.body.appendChild(modal);
-
     setTimeout(() => modal.classList.add("modal-show"), 10);
 
+    // Falls Checkbox angezeigt wird: Referenz holen
+    const checkboxElement = dontShowOption ? modal.querySelector("#dont-show-checkbox") : null;
+
+    // Falls Textarea vorhanden
+    const textareaElement = modal.querySelector(".modal-textarea");
+
+    // Button-Handler
     const buttonElements = modal.querySelectorAll(".modal-button");
     buttonElements.forEach((btn) => {
       btn.addEventListener("click", (event) => {
-        const index = event.target.getAttribute("data-index");
-        const textareaElement = modal.querySelector(".modal-textarea");
+        const index = Number(event.target.getAttribute("data-index"));
+        const isChecked = checkboxElement ? checkboxElement.checked : false;
+
+        // Wenn Checkbox da ist und angehakt, in localStorage speichern
+        
+        /*if (dontShowOption && isChecked &&  index) {
+          localStorage.setItem("modalDoNotShow", "true");
+        }*/
+        
+        if (dontShowOption && isChecked && typeKey && index === 1) {
+          savedSettings[typeKey] = true;
+          localStorage.setItem("modalDoNotShow", JSON.stringify(savedSettings));
+        }
+
         if (textareaElement) {
-          resolve({ button: Number(index), value: textareaElement.value });
+          resolve({ button: index, value: textareaElement.value, dontShow: isChecked });
+        } else if (dontShowOption) {
+          resolve({ button: index, dontShow: isChecked });
         } else {
-          resolve(Number(index));
+          resolve(index);
         }
         closeModal(modal);
       });
     });
 
+    // Close-Icon (×)
     const closeButton = modal.querySelector(".modal-close");
     closeButton.addEventListener("click", () => {
-      resolve(null);
+      const isChecked = checkboxElement ? checkboxElement.checked : false;
+
+      if (dontShowOption && isChecked) {
+        localStorage.setItem("modalDoNotShow", "true");
+      }
+
+      if (dontShowOption) {
+        resolve({ button: null, dontShow: isChecked });
+      } else {
+        resolve(null);
+      }
       closeModal(modal);
     });
 
+    // Klick auf den Hintergrund schließt ebenfalls
     modal.addEventListener("click", (event) => {
       if (event.target === modal) {
-        resolve(null);
+        const isChecked = checkboxElement ? checkboxElement.checked : false;
+
+        if (dontShowOption && isChecked) {
+          localStorage.setItem("modalDoNotShow", "true");
+        }
+
+        if (dontShowOption) {
+          resolve({ button: null, dontShow: isChecked });
+        } else {
+          resolve(null);
+        }
         closeModal(modal);
       }
     });
-    const tarea = document.querySelector(".modal-content textarea");
 
-    if (tarea) {
+    // Fokus auf Textarea, falls vorhanden
+    if (textareaElement) {
       setTimeout(() => {
-        tarea.focus();
+        textareaElement.focus();
       }, 10);
     }
   });
 
-  function closeModal(modalElement) {
+  
+}
+
+
+function closeModal(modalElement) {
     modalElement.classList.add("modal-fade-out");
     setTimeout(() => {
-      modalElement.innerHTML = "";
       modalElement.remove();
     }, 300);
   }
-}
 function userfriendlymsg(code) {
   let msg;
   if (code in responsecodes.data) {
@@ -72,29 +143,42 @@ function userfriendlymsg(code) {
   }
   return msg;
 }
-function info(title, text = "") {
+function info(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "info",
+    dontShowOption: dontShowOption,
   });
 }
 
-function Merror(title, text = "") {
+function Merror(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
     buttons: ["OK"],
     type: "error",
+    dontShowOption: dontShowOption,
   });
 }
 
-function warnig(title, text = "") {
+function warnig(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "warning",
+    dontShowOption: dontShowOption,
+  });
+}
+function confirm(title, text = "", dontShowOption = false,typeKey = null) {
+  return createModal({
+    title: title,
+    message: userfriendlymsg(text),
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
+    type: "warning",
+    dontShowOption: dontShowOption,
+    typeKey: typeKey, // Pass down to createModal
   });
 }
