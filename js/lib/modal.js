@@ -5,8 +5,12 @@ function createModal({
   type = "info",
   textarea = false,
   dontShowOption = false, // Neu: Standardmäßig keine Checkbox anzeigen
+  typeKey = null, // e.g., 'like', 'dislike', 'post', 'comment'
 }) {
-  if (localStorage.getItem("modalDoNotShow") === "true" && dontShowOption) {
+ 
+  const savedSettings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
+ 
+  if (typeKey && dontShowOption && savedSettings[typeKey] === true) {
     return Promise.resolve({ button: 1, dontShow: true });
   }
   return new Promise((resolve) => {
@@ -57,8 +61,13 @@ function createModal({
 
         // Wenn Checkbox da ist und angehakt, in localStorage speichern
         
-        if (dontShowOption && isChecked &&  index) {
+        /*if (dontShowOption && isChecked &&  index) {
           localStorage.setItem("modalDoNotShow", "true");
+        }*/
+        
+        if (dontShowOption && isChecked && typeKey && index === 1) {
+          savedSettings[typeKey] = true;
+          localStorage.setItem("modalDoNotShow", JSON.stringify(savedSettings));
         }
 
         if (textareaElement) {
@@ -115,13 +124,16 @@ function createModal({
     }
   });
 
-  function closeModal(modalElement) {
+  
+}
+
+
+function closeModal(modalElement) {
     modalElement.classList.add("modal-fade-out");
     setTimeout(() => {
       modalElement.remove();
     }, 300);
   }
-}
 function userfriendlymsg(code) {
   let msg;
   if (code in responsecodes.data) {
@@ -160,12 +172,13 @@ function warnig(title, text = "", dontShowOption = false) {
     dontShowOption: dontShowOption,
   });
 }
-function confirm(title, text = "", dontShowOption = false) {
+function confirm(title, text = "", dontShowOption = false,typeKey = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
     buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "warning",
     dontShowOption: dontShowOption,
+    typeKey: typeKey, // Pass down to createModal
   });
 }

@@ -83,7 +83,7 @@ checkAuth("unauthorized");
         </div>
         <div class="kurs">
           <div>
-            <span class="peerkurs">1 Peer Token ≈ 0.01€</span>
+            <span class="peerkurs">1 Peer Token ≈ 0.1€</span>
             <img src="svg/steigend.svg" alt="">
           </div>
           <span>1 Gem ≈ 133 PeerTokens</span>

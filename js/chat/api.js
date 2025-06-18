@@ -2,7 +2,7 @@ window.ChatApp = window.ChatApp || {};
 
 ChatApp.api = {
   async fetchGraphQL(query, variables = {}) {
- 
+
     const token = ChatApp.utils.getCookie("authToken");
     const headers = new Headers({
       "Content-Type": "application/json",
@@ -22,14 +22,9 @@ ChatApp.api = {
     if (json.errors) throw new Error(json.errors[0].message);
     return json.data;
   },
-
-  async getCurrentUserId() {
-    const cookieMatch = document.cookie.match(/(?:^|;\s*)userID=([^;]+)/);
-    if (cookieMatch) return cookieMatch[1];
-
-    const result = await ChatApp.api.fetchGraphQL(`query { currentuserid }`);
-    const userId = result?.currentuserid;
-    if (userId) document.cookie = `userID=${userId}; path=/; SameSite=Strict`;
-    return userId;
-  },
+  
+  async fetchUserProfile() {
+    const result = await ChatApp.api.fetchGraphQL(ChatApp.graphql.GET_PROFILE);
+    return result.getProfile.affectedRows;
+  }
 };

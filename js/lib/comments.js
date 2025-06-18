@@ -1,10 +1,10 @@
 async function likeComment(commentId) {
-<<<<<<< HEAD
-=======
-  if (!(await LiquiudityCheck(3, "Like Comment", like))) {
+
+  // likeCost is a global variable and updated in global.js -> getActionPrices();
+  if (!(await LiquiudityCheck(likeCost, "Like Comment", like))) {
     return false;
   }
->>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -50,7 +50,8 @@ async function likeComment(commentId) {
 }
 
 async function createComment(postId, content, parentId = null) {
-  if (!(await LiquiudityCheck(0.5, "Comment Post", 1))) {
+  // commentCost is a global variable and updated in global.js -> getActionPrices();
+  if (!(await LiquiudityCheck(commentCost, "Comment Post", 1))) {
     return false;
   }
   const accessToken = getCookie("authToken");

@@ -1,7 +1,14 @@
+// likeCost, dislikeCost, commentCost and postCost are global variables and updated in getActionPrices();
+let likeCost = 0.3, dislikeCost = 0.5, commentCost = 0.05, postCost = 2; 
+
 document.addEventListener("DOMContentLoaded", () => {
+
+    
+
 	hello();
   	getUser();
 	 dailyfree();
+   getActionPrices(); // This function set the price for global variables
 	
   
 	  window.addEventListener("online", updateOnlineStatus);
@@ -224,48 +231,48 @@ function addMediaListener(mediaElement) {
     }
   }
   
- 	 async function getLiquiudity() {
-  const accessToken = getCookie("authToken");
+ 	async function getLiquiudity() {
+    const accessToken = getCookie("authToken");
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
+    // Create headers
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    });
 
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query Balance {
-    balance {
-        status
-        ResponseCode
-        currentliquidity
+      // Define the GraphQL mutation with variables
+      const graphql = JSON.stringify({
+          query: `query Balance {
+          balance {
+              status
+              ResponseCode
+              currentliquidity
+          }
+        }`,
+      });
+
+    // Define request options
+    const requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: graphql,
+      redirect: "follow",
+    };
+
+    try {
+      // Send the request and handle the response
+      const response = await fetch(GraphGL, requestOptions);
+
+      // Check for errors in response
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const result = await response.json();
+      // Check for errors in GraphQL response
+      if (result.errors) throw new Error(result.errors[0].message);
+      return result.data.balance.currentliquidity;
+    } catch (error) {
+      console.error("Error:", error.message);
+      throw error;
     }
-}`,
-  });
-
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
-
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
-    // Check for errors in GraphQL response
-    if (result.errors) throw new Error(result.errors[0].message);
-    return result.data.balance.currentliquidity;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
 	}
 	async function currentliquidity() {
 	  const token = await getLiquiudity();
@@ -317,6 +324,60 @@ function addMediaListener(mediaElement) {
 		if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 		if (result.errors) throw new Error(result.errors[0].message);
 		return result.data.getDailyFreeStatus.affectedRows;
+	  } catch (error) {
+		console.error("Error:", error.message);
+		throw error;
+	  }
+	}
+
+  async function  getActionPrices() {
+	  const accessToken = getCookie("authToken");
+	
+	  // Create headers
+	  const headers = new Headers({
+		"Content-Type": "application/json",
+		Authorization: `Bearer ${accessToken}`,
+	  });
+	
+	  // Define the GraphQL mutation with variables
+	  const graphql = JSON.stringify({
+		query: `query GetActionPrices {
+		getActionPrices {
+		  status
+		  ResponseCode
+		  affectedRows {
+        postPrice
+        likePrice
+        dislikePrice
+        commentPrice
+		  }
+		}
+	  }`,
+	  });
+	
+	  // Define request options
+	  const requestOptions = {
+		method: "POST",
+		headers: headers,
+		body: graphql,
+		redirect: "follow",
+	  };
+	
+	  try {
+		// Send the request and handle the response
+		const response = await fetch(GraphGL, requestOptions);
+		const result = await response.json();
+	
+		// Check for errors in response
+		if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+		if (result.errors) throw new Error(result.errors[0].message);
+      // likeCost, dislikeCost, commentCost and postCost are global variables
+      likeCost= result.data.getActionPrices.affectedRows.likePrice;
+      dislikeCost= result.data.getActionPrices.affectedRows.dislikePrice;
+      commentCost= result.data.getActionPrices.affectedRows.commentPrice;
+      postCost= result.data.getActionPrices.affectedRows.postPrice;
+
+		return result.data.getActionPrices.affectedRows;
 	  } catch (error) {
 		console.error("Error:", error.message);
 		throw error;
