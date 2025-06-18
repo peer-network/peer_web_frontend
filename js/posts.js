@@ -3,11 +3,9 @@ const like = 0;
 const dislike = 3;
 const comment = 1;
 
+
 async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
-  const post = 2;
-  const like = 0;
-  const dislike = 3;
-  const comment = 1;
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -156,8 +154,9 @@ function viewPost(postid) {
 }
 
 async function likePost(postid) {
-  
-  if (!(await LiquiudityCheck(3, "Like Post", like))) {
+
+  // likeCost is a global variable and updated in global.js -> getActionPrices();
+  if (!(await LiquiudityCheck(likeCost, "Like Post", like))) {
     return false;
   }
  
@@ -209,7 +208,10 @@ async function likePost(postid) {
     });
 }
 async function dislikePost(postid) {
-  if (!(await LiquiudityCheck(5, "Dislike Post", dislike))) {
+
+// dislikeCost is a global variables and updated in global.js -> getActionPrices();
+
+  if (!(await LiquiudityCheck(dislikeCost, "Dislike Post", dislike))) {
     return false;
   }
   const accessToken = getCookie("authToken");
@@ -254,14 +256,15 @@ async function LiquiudityCheck(postCosts, title, action) {
   const freeActions = ["3", "4", "1"];
   const cancel = 0;
   const dailyfree = await getDailyFreeStatus();
-  // console.log("dailyfree ", dailyfree);
+  //console.log("dailyfree ", dailyfree);
   const dailyPostAvailable = dailyfree[action].available;
   const bitcoinPrice = await getBitcoinPriceEUR();
-  const tokenPrice = 100000 / bitcoinPrice;
+  //const tokenPrice = 100000 / bitcoinPrice;
+  const tokenPrice = 10;
   const token = await getLiquiudity();
-
+  //console.log(dailyPostAvailable+"---"+dailyfree);
   if (dailyPostAvailable) {
-    let answer = await confirm(title, `🎉 This ${msg[action]} is free! You have ${freeActions[action]} free ${msg[action]}${freeActions[action] > 1 ? "s" : ""} available every 24 hours.`, (dontShowOption = true));
+    let answer = await confirm(title, `🎉 This ${msg[action]} is free! You have ${freeActions[action]} free ${msg[action]}${freeActions[action] > 1 ? "s" : ""} available every 24 hours.`, (dontShowOption = true),msg[action] );
     if (answer === null || answer.button  === cancel) {
       return false;
     }
@@ -270,6 +273,16 @@ async function LiquiudityCheck(postCosts, title, action) {
     document.getElementById(limitIDs[action][0]).innerText = freeused;
     document.getElementById(limitIDs[action][1]).innerText = freeavailable;
     document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+
+    if(freeavailable===0){ // if consumed free then reset popup for paid likes or comments or post
+      const settings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
+      const key_to_remove=msg[action];
+      delete settings[key_to_remove];
+      localStorage.setItem("modalDoNotShow", JSON.stringify(settings));
+      //localStorage.removeItem("modalDoNotShow");
+    }
+
+
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
     let answer = await confirm(
       title='<div class="title-char"><img class="title-icon" src="svg/Exclude.svg" ><span>Insufficient Tokens</span></div>',
@@ -278,34 +291,36 @@ async function LiquiudityCheck(postCosts, title, action) {
       </div>
 
       <div class="modal-message">
-        <div>Like cost:</div> <div class="pricee"><span>${(postCosts).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+        <div>Like cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>`,
-      (dontShowOption = true)
+      //(dontShowOption = true)
     );
     if (answer === null || answer.button === cancel) {
       return false;
     }
   } else if (!dailyPostAvailable && token * tokenPrice >= postCosts) {
-    
+    //console.log(postCosts +'*'+ tokenPrice);
     let answer = await confirm(
-       title='<div class="title-char"><span>Posts Like</span></div>',
+       title=`<div class="title-char"><span>Post ${msg[action]}</span></div>`,
       `<div class="modal-message">
         <div>Current balance:</div> <div class="pricee"><span>${token}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>
 
       <div class="modal-message">
-        <div>Like cost:</div> <div class="pricee"><span>${(postCosts).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+        <div>${msg[action]} cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
       </div>`,
-      (dontShowOption = true)
+      true, // show "Do not show" checkbox
+      msg[action] // this is the typeKey for storage
+      //(dontShowOption = true)
     );
-    console.log(answer);
+    //console.log(answer);
     if (answer === null || answer.button === cancel ) {
      
       return false;
     }
     
   } else if (!dailyPostAvailable && token * tokenPrice < postCosts) {
-    await Merror(title, `You need ${(postCosts).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`); //updated
+    await Merror(title, `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`); //updated
     return false;
   }
 
@@ -317,7 +332,8 @@ function isVariableNameInArray(variableObj, nameArray) {
 }
 
 async function sendCreatePost(variables) {
-  if (!(await LiquiudityCheck(20, "Create Post", post))) {
+  // postCost is a global variable and updated in global.js -> getActionPrices();
+  if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
     return false;
   }
   const accessToken = getCookie("authToken");

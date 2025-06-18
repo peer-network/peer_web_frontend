@@ -19,7 +19,7 @@ ChatApp.loader = {
       const chatList = typedChats.map(chat => ({
         id: chat.id,
         name: chat.name,
-        image: "./svg/noname.svg",
+        image: "svg/noname.svg",
         type: chat.type,
         senderId: chat.senderid,
         chatmessages: [...(chat.chatmessages || [])].sort((a, b) => new Date(a.createdat) - new Date(b.createdat)),
@@ -27,7 +27,18 @@ ChatApp.loader = {
         unreadCount: 0,
       }));
 
-      ChatApp.loader.renderSidebar(chatList, userId);
+      if (chatList.length === 0) {
+       document.getElementById("no_chatList_found").classList.add("active");
+       document.getElementById("no_chatMessage_found").classList.add("active");
+       const sidebar = document.querySelector(".chat-list");
+       sidebar.querySelectorAll(".chat-item").forEach(el => el.remove());
+       return;
+      } else {
+       document.getElementById("no_chatList_found").classList.remove("active");
+       document.getElementById("no_chatMessage_found").classList.remove("active");
+      }
+
+       ChatApp.loader.renderSidebar(chatList, userId);
 
     } catch (error) {
       console.error("Error loading chats:", error);
@@ -50,10 +61,11 @@ ChatApp.loader = {
       item.setAttribute("data-chatid", chat.id);
       item.querySelector(".avatar").alt = otherUser.username;
       item.querySelector(".avatar").src = tempMedia(otherUser.img.replace("media/", ""));
-      item.querySelector(".avatar").onerror = () => this.src = "./svg/noname.svg";
+      item.querySelector(".avatar").onerror = () => this.src = "svg/noname.svg";
       item.querySelector(".name").textContent = chat.type === "private" ? otherUser.username : chat.name;
       item.querySelector(".time").textContent = time;
       item.querySelector(".message-preview").textContent = preview;
+      item.onerror = () => this.src = "svg/noname.svg";
 
       item.addEventListener("click", () => {
         document.querySelectorAll(".chat-item").forEach(el => el.classList.remove("active-chat"));
@@ -67,7 +79,7 @@ ChatApp.loader = {
       if (shouldAutoSelect) {
         item.classList.add("active-chat");
         ChatApp.ui.renderMessages(chat);
-      }
+      } 
     });
   }
 };

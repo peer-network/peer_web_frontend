@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const slug2 = document.getElementById("slug2");
       const following2 = document.getElementById("following2");
       const followers2 = document.getElementById("followers2");
+      const Peers2 = document.getElementById("Peers2");
       const userPosts2 = document.getElementById("userPosts2");
       const biography2 = document.getElementById("biography2");
       const bioPath2 = userprofile.affectedRows.biography;
@@ -45,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if(followers2){
         followers2.innerText= userprofile.affectedRows.amountfollower;
+      }
+      if(Peers2){
+        Peers2.innerText= userprofile.affectedRows.amountfriends;
       }
 
       // Check if bioPath is valid
