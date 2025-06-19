@@ -527,28 +527,7 @@ function commentToDom(c, append = true) {
           });
         }
       } else if (objekt.contenttype === "text") {
-        for (const item of array) {
-          div = document.createElement("div");
-          // div.id = objekt.id;
-          loadTextFile(tempMedia(item.path), div);
-          div.className = "custom-text";
-          const h1 = document.createElement("h3");
-          h1.textContent = objekt.title;
-          postDiv.appendChild(h1);
-          postDiv.appendChild(div);
-        }
-        card.addEventListener("mousemove", function (event) {
-          const ctext = this.getElementsByClassName("custom-text")[0];
-          // const rect = this.getBoundingClientRect();
-          // const mouseY = event.clientY - rect.top;
-          // const relativePosition = mouseY / rect.height;
-          // setScrollPercent(ctext, relativePosition, true);
-          ctext.classList.add("scroll-shadows");
-        });
-        card.addEventListener("mouseleave", function (e) {
-          const ctext = this.getElementsByClassName("custom-text")[0];
-          ctext.classList.remove("scroll-shadows");
-        });
+          //console.log( objekt);
       }
 
       const shadowDiv = document.createElement("div");
@@ -560,9 +539,12 @@ function commentToDom(c, append = true) {
       const userNameSpan = document.createElement("span");
       userNameSpan.classList.add("post-userName");
       userNameSpan.textContent = objekt.user.username;
-      const time_ago = document.createElement("span");
-      time_ago.classList.add("post-userName", "timeAgo");
-      time_ago.textContent = timeAgo(objekt.createdat);
+      const userprofileID = document.createElement("span");
+      userprofileID.classList.add("post-userName", "profile_id");
+      userprofileID.textContent = `#${objekt.user.slug}`;
+      //const time_ago = document.createElement("span");
+      //time_ago.classList.add("post-userName", "timeAgo");
+      //time_ago.textContent = timeAgo(objekt.createdat);
       const userImg = document.createElement("img");
       userImg.classList.add("post-userImg");
       userImg.onerror = function () {
@@ -575,6 +557,24 @@ function commentToDom(c, append = true) {
       userNameSpan.addEventListener("click", redirectToProfile);
       userImg.addEventListener("click", redirectToProfile);
 
+      userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
+      const title = document.createElement("h3");
+      title.textContent = objekt.title;
+      title.classList.add("post-title");
+
+      const card_header = document.createElement("div");
+      card_header.classList.add("card-header");
+
+      const card_header_right = document.createElement("div");
+      card_header_right.classList.add("card-header-left");
+      card_header_right.appendChild(userImg);
+      const user_slug_span = document.createElement("span");
+      user_slug_span.classList.add("username-slug");
+      user_slug_span.appendChild(userNameSpan);
+      user_slug_span.appendChild(userprofileID);
+      card_header_right.appendChild(user_slug_span);
+
+      card_header.appendChild(card_header_right);
 
       async function toggleFollowStatus(userid) {
         const accessToken = getCookie("authToken");
@@ -664,34 +664,65 @@ function commentToDom(c, append = true) {
             alert("Failed to update follow status. Please try again.");
           }
         });
+        const card_header_right = document.createElement("div");
+        card_header_right.classList.add("card-header-right");
+        card_header_right.appendChild(followButton);
 
-        inhaltDiv.appendChild(followButton);
+        card_header.appendChild(card_header_right);
       }
       renderFollowButton(objekt, UserID);
 
-      userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
-      const h1 = document.createElement("h3");
-      h1.textContent = objekt.title;
-      const p = document.createElement("p");
-      p.classList.add("post-text");
-      p.textContent = objekt.mediadescription;
-      inhaltDiv.appendChild(userImg);
-      inhaltDiv.appendChild(userNameSpan);
-      inhaltDiv.appendChild(time_ago);
+      inhaltDiv.appendChild(card_header);
+
+      const postContentspacer = document.createElement("div");
+      postContentspacer.classList.add("post-spacer");
+      inhaltDiv.appendChild(postContentspacer);
+
+      const postContent = document.createElement("div");
+      postContent.classList.add("post-content");
+      postContent.appendChild(title);
+
+      const post_text_div = document.createElement("div");
+      post_text_div.classList.add("post-text");
+      
+      
       if (objekt.contenttype === "text") {
-        // const customText = postDiv.querySelector(".custom-text");
-        // customText.prepend(h1);
+        for (const item of array) {
+          loadTextFile(tempMedia(item.path), post_text_div);
+        
+        }
+
+         
+
+
       } else {
-        inhaltDiv.appendChild(h1);
+        post_text_div.textContent = objekt.mediadescription;
+
+        
       }
-      inhaltDiv.appendChild(p);
+      const divtag = document.createElement("div");
+          divtag.className = "hashtags";
+
+          // Check if tags exist and are an array
+          if (Array.isArray(objekt.tags)) {
+            objekt.tags.forEach((tag) => {
+              const span = document.createElement("span");
+              span.className = "hashtag";
+              span.textContent = `#${tag}`;
+              divtag.appendChild(span);
+            });
+          }
+      postContent.appendChild(post_text_div);
+      postContent.appendChild(divtag);
+      inhaltDiv.appendChild(postContent);
+      
 
       const svgNS = "http://www.w3.org/2000/svg";
       // <div class="social"> erstellen mit Social-Icons und leeren <span>
       const socialDiv = document.createElement("div");
       socialDiv.classList.add("social");
       const viewContainer = document.createElement("div");
-
+      viewContainer.classList.add("post-view");
       // Erstes SVG-Icon mit #post-view
       const svgView = document.createElementNS(svgNS, "svg");
       const useView = document.createElementNS(svgNS, "use");
@@ -707,7 +738,7 @@ function commentToDom(c, append = true) {
 
       // Zweites SVG-Icon mit #post-like
       const likeContainer = document.createElement("div");
-
+      likeContainer.classList.add("post-like");
       const svgLike = document.createElementNS(svgNS, "svg");
       // svgLike.setAttribute("id", objekt.id);
 
@@ -717,7 +748,7 @@ function commentToDom(c, append = true) {
         // });
         svgLike.classList.add("fill-red"); // Rot hinzufügen
       } else if (objekt.user.id !== UserID) {
-        svgLike.addEventListener(
+        likeContainer.addEventListener(
           "click",
           function handleLikeClick(event) {
             // event.currentTarget.removeEventListener("click", handleLikeClick);
@@ -755,7 +786,58 @@ function commentToDom(c, append = true) {
       likeContainer.appendChild(spanLike);
       socialDiv.appendChild(likeContainer);
 
+
+      
+      // Zweites SVG-Icon mit #post-dislike
+      const dislikeContainer = document.createElement("div");
+      dislikeContainer.classList.add("post-dislike");
+      const svgdisLike = document.createElementNS(svgNS, "svg");
+      // svgLike.setAttribute("id", objekt.id);
+
+      if (objekt.isdisliked) {
+        
+        svgdisLike.classList.add("fill-red"); // Rot hinzufügen
+      } else if (objekt.user.id !== UserID) {
+        dislikeContainer.addEventListener(
+          "click",
+          function handledisLikeClick(event) {
+            // event.currentTarget.removeEventListener("click", handleLikeClick);
+            event.stopPropagation();
+            event.preventDefault();
+            dislikePost(objekt.id).then((success) => {
+              if (success) {
+                objekt.isdisliked = true;
+                let e = document.getElementById(objekt.id);
+                const Svg = e.querySelector(".social div:nth-of-type(3) svg");
+                Svg.classList.add("fill-red");
+
+                // Prüfen, ob das <span> "K" oder "M" enthält
+                if (Svg.nextElementSibling.textContent.includes("K") || Svg.nextElementSibling.textContent.includes("M")) {
+                  return; // Wenn ja, wird das Hochzählen übersprungen
+                } else {
+                  let currentCount = parseInt(Svg.nextElementSibling.textContent);
+                  if (currentCount !== currentCount) currentCount = 1;
+                  else currentCount++;
+                  Svg.nextElementSibling.textContent = formatNumber(currentCount);
+                  objekt.amountdislikes = currentCount;
+                }
+              }
+            });
+          },
+          { capture: true}
+        );
+      }
+      const usedisLike = document.createElementNS(svgNS, "use");
+      usedisLike.setAttribute("href", "#post-dislike");
+      svgdisLike.appendChild(usedisLike);
+      dislikeContainer.appendChild(svgdisLike);
+      const spandisLike = document.createElement("span");
+      spandisLike.textContent = formatNumber(objekt.amountdislikes);
+      dislikeContainer.appendChild(spandisLike);
+      socialDiv.appendChild(dislikeContainer);
+
       const commentContainer = document.createElement("div");
+      commentContainer.classList.add("post-comments");
       const svgComment = document.createElementNS(svgNS, "svg");
       const useComment = document.createElementNS(svgNS, "use");
       useComment.setAttribute("href", "#post-comment");
@@ -769,10 +851,11 @@ function commentToDom(c, append = true) {
 
       socialDiv.appendChild(commentContainer);
 
+      inhaltDiv.appendChild(socialDiv);
       // Alles in die Haupt-<section> hinzufügen
       card.appendChild(postDiv);
       card.appendChild(inhaltDiv);
-      card.appendChild(socialDiv);
+      
       card.addEventListener("click", function handleCardClick() {
         postClicked(objekt);
       });
@@ -887,10 +970,10 @@ function commentToDom(c, append = true) {
         div.id = "text";
 
         let card = document.getElementById(objekt.id);
-        const textcontainer = card.querySelector(".custom-text");
+        const textcontainer = card.querySelector(".post-text");
 
         div.innerHTML = textcontainer.innerHTML;
-        div.className = "custom-text clicked";
+        div.className = "post-text clicked";
         imageContainer.appendChild(div);
       }
     } else {
@@ -1023,7 +1106,7 @@ function commentToDom(c, append = true) {
         }
       });
     }
-    if (window.location.pathname.endsWith('dashboard.html')) {
+    if (window.location.pathname.endsWith('dashboard.php')) {
       const searchTagElem = document.getElementById("searchTag");
       if (searchTagElem) {
         searchTagElem.value = localStorage.getItem("tagInput") || "";

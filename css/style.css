@@ -13,7 +13,7 @@
   --link-hover-color:  hsl(210, 100%, 75%);
   --shadow-color: hsl(0, 0%, 12%);
   --background-gradient: 180deg, hsl(0, 0%, 13%), hsl(0, 0%, 15%);
-  --bg-filter: hsl(0, 0%, 21%);
+  --bg-filter: hsla(0, 0%, 19%, 1);
   --border-select: hsl(0, 0%, 33%);
   --bg-badge: hsl(33, 93%, 54%);
   --stat-p: hsl(0, 0%, 67%);
@@ -482,6 +482,7 @@ textarea {
   height: auto;
   border-radius: 50%;
   aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 .online_status {
 	width: 15px;
@@ -684,6 +685,7 @@ footer {grid-area: footer;}
 	height: auto;
 	border-radius: 50%;
 	aspect-ratio: 1 / 1;
+	object-fit: cover;
 }
 .widget .widget-profile .pro-name {
 	display: flex;

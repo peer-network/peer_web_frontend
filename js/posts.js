@@ -192,7 +192,7 @@ async function likePost(postid) {
     redirect: "follow",
   };
 
-  return fetch(GraphGL, requestOptions)
+    return fetch(GraphGL, requestOptions)
     .then((response) => response.json())
     .then((result) => {
       if (result.data.resolvePostAction.status == "error") {
@@ -222,13 +222,14 @@ async function dislikePost(postid) {
     Authorization: `Bearer ${accessToken}`,
   });
 
-  var graphql = JSON.stringify({
-    query: `mutation DeletePost {
-        deletePost(input: { postid: "${postid}" }) {
+   var graphql = JSON.stringify({
+    query: `mutation ResolvePostAction {
+        resolvePostAction(postid: "${postid}", action: DISLIKE) {
           status
           ResponseCode
         }
       }`,
+
     variables: {},
   });
 
@@ -239,10 +240,20 @@ async function dislikePost(postid) {
     redirect: "follow",
   };
 
-  fetch(GraphGL, requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => Merror("Dislike failed", error));
+    return fetch(GraphGL, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.data.resolvePostAction.status == "error") {
+        throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
+      } else {
+        return true;
+      }
+    })
+    .catch((error) => {
+      Merror("DisLike Post failed", error);
+      //console.log("error", error);
+      return false;
+    });
 }
 
 async function LiquiudityCheck(postCosts, title, action) {
@@ -251,13 +262,19 @@ async function LiquiudityCheck(postCosts, title, action) {
     ["Likesused", "Likesavailable", "LikesStat"],
     ["Commentsused", "Commentsavailable", "CommentsStat"],
     ["Postsused", "Postsavailable", "PostsStat"],
+    ["disLikesused", "disLikesavailable", "disLikesStat"],
   ];
-  const msg = ["like", "comment", "post"];
-  const freeActions = ["3", "4", "1"];
+  const msg = ["like", "comment", "post","dislike"];
+  const freeActions = ["3", "4", "1","0"];
   const cancel = 0;
   const dailyfree = await getDailyFreeStatus();
   //console.log("dailyfree ", dailyfree);
-  const dailyPostAvailable = dailyfree[action].available;
+  let dailyPostAvailable=0;
+  //console.log(action);
+  if(action!='3'){ // 3 means dislike and dislike is paid
+    dailyPostAvailable = dailyfree[action].available;
+  }
+  
   const bitcoinPrice = await getBitcoinPriceEUR();
   //const tokenPrice = 100000 / bitcoinPrice;
   const tokenPrice = 10;
