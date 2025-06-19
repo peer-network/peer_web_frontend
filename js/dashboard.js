@@ -163,13 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
    
   }
-  
-
-  
-
- 
-
-  
 
   const tagInput = document.getElementById("searchTag");
   if (tagInput) {
