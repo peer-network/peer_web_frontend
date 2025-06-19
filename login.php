@@ -56,36 +56,34 @@ if (isset($_GET['message'])) {
     </aside>
 
     <form id="registerForm" class="form-container">
-        <h1 class="heading">Welcome back!</h1>
-        <p class="description">Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!</p>
-        <div class="auth">
-            <div class="vector">
-                <img class="bubbles" alt="bubbles" src="svg/bubbles.svg" width="351" height="128">
-                <div class="buttons">
-                    <img src="svg/github.svg" height="48" width="48" alt="Login with GitHub">
-                    <img src="svg/google.svg" height="48" width="48" alt="Login with Google">
-                    <img src="svg/apple.svg" height="48" width="48" alt="Login with Apple">
-                </div>
-            </div>
+        <div class="peerLogo">
+            <img src="svg/logo_farbe.svg" alt="Peer logo"/>
+            <h1>peer</h1>
         </div>
-        <div class="line-with-text"><span>or</span></div>
+        <div class="head">
+            <h1 class="heading">Hey there, <span class="waving-hand">👋</span><br> Welcome back!</h1>
+            <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
+        </div>
         <div class="input-field">
+            <img src="svg/email-icon.svg"  alt="">
             <input type="email" id="email" name="e_mail" placeholder="E-Mail" required class="input-text" autocomplete="on"></input>
         </div>
 
         <div class="input-field">
+            <img src="svg/lock1.svg" alt="">
             <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
             <label id="validationMessage" for="password"></label>
         </div>
-        <div class="signIn">
-            <a class="link" href="forgotpassword.php">forgot&nbsp;password</a>
+        <div class="rem-for">
+            <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
+            <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
         </div>
         <input id="submit" class="button" type="submit" name="Login" value="Login">
-
-        <div class="signIn">
-            <span class="description">Don't have an account?&nbsp;</span>
-            <a class="link" href="register.php">Register&nbsp;</a>
-        </div>
+        <div class="line-with-text"><span>or</span></div>
+        <a href="register.php" class="button reg">
+            <span>Register&nbsp;now</span>
+            <img src="svg/arrow1.svg" alt="">
+        </a>
         <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
     </form>
 

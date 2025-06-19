@@ -118,18 +118,111 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1rem 2rem;
+  margin: auto;
+  width: 80%;
+  max-width: 40rem;
 }
 .form-container.hide{
   display: none;
 }
 
 .heading {
-  font-weight: 500;
+  font-weight: 400;
   font-size: clamp(1rem, 6vh, 2rem);
-  line-height: 1.8rem;
+  line-height: 2.5rem;
   letter-spacing: 0.02em;
-  text-align: center;
   margin-bottom: 0.5rem;
+}
+
+.waving-hand {
+  display: inline-block;
+  animation: wave 2s infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+
+.peerLogo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3rem;
+  width: 85%;
+}
+
+.peerLogo img {
+  width: 1.7rem;
+}
+
+.peerLogo h1 {
+  font-weight: 900;
+  font-size: 1.4rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.02em;
+  color: var(--text-color);
+}
+
+.rem-for {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 85%;
+  padding: 0.5rem;
+}
+
+.rem-for label{
+  display: flex;
+  flex-direction: row;
+  position: static !important;
+  color: var(--text-color);
+  background: none;
+  font-size: 0.6rem;
+  font-weight: 700;
+  align-items: center;
+}
+
+.rem-for input {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--text-color);
+}
+
+.head {
+  width: 85%;
+}
+
+.reg {
+  background: var(--input-background) !important;
+  color: var(--background-color) !important;
+  align-items: center;
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.reg img {
+  width: 0.9rem;
+}
+
+.reg:hover img {
+  filter: invert(1) brightness(2);
+}
+
+.reg:hover {
+  background: var(--button-bg) !important;
+  color: var(--button-color) !important;
 }
 
 .description {
@@ -137,8 +230,7 @@ body {
   font-size: 0.6rem;
   line-height: 0.8rem;
   letter-spacing: 0.02em;
-  text-align: center;
-  max-width: 18rem;
+  max-width: 20rem;
 }
 
 .br {
@@ -165,13 +257,19 @@ body {
 
 .input-field {
   display: flex;
-  padding: 0.6rem;
-  width: 80%;
-  max-width: 30rem;
+  padding: 0.6rem ;
+  width: 82%;
+  max-width: 33rem;
   background: var(--input-background);
   border-radius: 800px;
   margin: 0.3rem 0;
   position: relative;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.input-field img {
+  width: 1.1rem;
 }
 
 .input-text {
@@ -185,8 +283,8 @@ body {
 }
 
 .button {
-  width: calc(80% + 1.2rem);
-  max-width: 31.2rem;
+  width: calc(82% + 1.2rem);
+  max-width: 33rem;
   background: var(--button-bg);
   border-radius: 800px;
   font-weight: 500;
@@ -211,7 +309,8 @@ a.disable {
 	cursor: not-allowed;
 }
 .button:hover {
-  background: var(--button-hover);
+  background: var(--text-color);
+  color: var(--background-color);
 }
 
 .signIn {
@@ -224,7 +323,7 @@ a.disable {
   font-weight: 700;
   font-size: 0.6rem;
   text-decoration: underline;
-  color: var(--link-color);
+  color: var(--text-color);
 }
 
 input::placeholder {
@@ -320,19 +419,6 @@ body::-webkit-scrollbar {
   transform: translate(-50%, -50%);
 }
 
-.auth {
-  position: relative;
-  display: flex;
-  align-items: center;
-  /* align-self: center; */
-  width: 8rem;
-  margin: 2rem;
-  justify-content: center;
-  /* align-content: center; */
-  /* flex-direction: row; */
-  /* height: 4rem; */
-}
-
 .buttons {
   width: 105%;
   height: 100%;
@@ -426,6 +512,7 @@ body::-webkit-scrollbar {
   color: #333;
   margin: 20px 0;
   width: 70%;
+  max-width: 25rem;
 }
 
 .line-with-text::before,
