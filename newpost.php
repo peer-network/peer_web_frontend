@@ -34,7 +34,7 @@ checkAuth("unauthorized");
     <div id="config" class="none"
         data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>">
     </div>
-    <div id="edit-profile" class="site_layout">
+    <div id="addPost" class="site_layout">
         <header class="site-header header-profile">
             <img class="logo" src="svg/plus2.svg" alt="Peer Network">
             <h1 id="h1">New Post</h1>

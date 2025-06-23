@@ -1,5 +1,9 @@
 <div class="widget">
-    <div class="widget-inner widget-type-box widget-main-menu">
+    <div class="widget-inner widget-type-box widget-main-menu create-post-filters">
+        <input id="createImage" type="radio" name="postArt" value="image/*" checked />
+        <input id="createNotes" type="radio" name="postArt" value=".txt" />
+        <input id="createAudio" type="radio" name="postArt" value="audio/*" />
+        <input id="createVideo" type="radio" name="postArt" value="video/*" />
         <ul class="menu">
             <li class="menu-item">
                 <a href="#" id="labelCreateImage">

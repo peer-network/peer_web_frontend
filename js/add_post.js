@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("btAddPost").addEventListener("click", function startAddPost() {
-   
     togglePopup("addPost");
   });
   const closeAddPost = document.getElementById("closeAddPost");
@@ -228,8 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
   
-});
-
 
 function tag_getTagArray() {
     return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
@@ -286,97 +283,97 @@ function tag_getTagArray() {
 	}
 	
 	 const failedSearches = new Set();
- const tagInput = document.getElementById("tag-input");
- const tagContainer = document.getElementById("tagsContainer");
- const dropdownMenu = document.getElementById("dropdownMenu");
- if (tagInput) {
-   tagInput.addEventListener("input", async function () {
-     const searchStr = tagInput.value.trim();
-     if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-       if (searchStr.length < 3) {
-         dropdownMenu.innerHTML = "";
-         dropdownMenu.classList.add("none");
-         return;
-       }
-     } else {
-       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-       return;
-     }
+//  const tagInput = document.getElementById("tag-input");
+//  const tagContainer = document.getElementById("tagsContainer");
+//  const dropdownMenu = document.getElementById("dropdownMenu");
+//  if (tagInput) {
+//    tagInput.addEventListener("input", async function () {
+//      const searchStr = tagInput.value.trim();
+//      if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+//        if (searchStr.length < 3) {
+//          dropdownMenu.innerHTML = "";
+//          dropdownMenu.classList.add("none");
+//          return;
+//        }
+//      } else {
+//        info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//        return;
+//      }
 
-     const tags = await fetchTags(searchStr);
-     dropdownMenu.innerHTML = "";
-     const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+//      const tags = await fetchTags(searchStr);
+//      dropdownMenu.innerHTML = "";
+//      const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
 
-     tags.forEach((tag) => {
-       if (!existingTags.includes(tag.name + "X")) {
-         const option = document.createElement("div");
-         option.textContent = tag.name;
-         option.classList.add("dropdown-item");
-         option.addEventListener("click", () => {
-           tagInput.value = tag.name;
-           tag_addTag(tagInput.value.trim());
-           tagInput.value = "";
-           tagInput.focus();
-           dropdownMenu.classList.toggle("none");
-         });
-         dropdownMenu.appendChild(option);
-       }
-     });
+//      tags.forEach((tag) => {
+//        if (!existingTags.includes(tag.name + "X")) {
+//          const option = document.createElement("div");
+//          option.textContent = tag.name;
+//          option.classList.add("dropdown-item");
+//          option.addEventListener("click", () => {
+//            tagInput.value = tag.name;
+//            tag_addTag(tagInput.value.trim());
+//            tagInput.value = "";
+//            tagInput.focus();
+//            dropdownMenu.classList.toggle("none");
+//          });
+//          dropdownMenu.appendChild(option);
+//        }
+//      });
 
-     dropdownMenu.classList.toggle("none", tags.length == 0);
-   });
- }
+//      dropdownMenu.classList.toggle("none", tags.length == 0);
+//    });
+//  }
 
- if (tagInput) {
-   tagInput.addEventListener("keypress", function (event) {
-     if (event.key === "Enter" && tagInput.value.trim() !== "") {
-       if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-         tag_addTag(tagInput.value.trim());
-         tagInput.value = "";
-       } else {
-         info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-       }
-     }
-   });
- }
+//  if (tagInput) {
+//    tagInput.addEventListener("keypress", function (event) {
+//      if (event.key === "Enter" && tagInput.value.trim() !== "") {
+//        if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+//          tag_addTag(tagInput.value.trim());
+//          tagInput.value = "";
+//        } else {
+//          info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//        }
+//      }
+//    });
+//  }
 
- window.addEventListener("click", function (event) {
-   if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
-     dropdownMenu.classList.remove("show");
-   }
- });
+//  window.addEventListener("click", function (event) {
+//    if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+//      dropdownMenu.classList.remove("show");
+//    }
+//  });
  
-   function tag_addTag(tagText) {
-    if (tagContainer.children.length >= 10) {
-      info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
-      return;
-    }
-    if (tagContainer.children.length >= 1) {
-      const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+//    function tag_addTag(tagText) {
+//     if (tagContainer.children.length >= 10) {
+//       info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
+//       return;
+//     }
+//     if (tagContainer.children.length >= 1) {
+//       const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
 
-      if (existingTags.includes(tagText + "X")) {
-        info("Information", "Tag existiert bereits.");
-        return;
-      }
-    }
-    const tag = document.createElement("span");
-    tag.classList.add("tag");
-    tag.textContent = tagText;
+//       if (existingTags.includes(tagText + "X")) {
+//         info("Information", "Tag existiert bereits.");
+//         return;
+//       }
+//     }
+//     const tag = document.createElement("span");
+//     tag.classList.add("tag");
+//     tag.textContent = tagText;
 
-    const tag_removeBtn = document.createElement("button");
-    tag_removeBtn.textContent = "X";
-    tag_removeBtn.classList.add("remove-tag");
-    tag_removeBtn.addEventListener("click", function () {
-      tagContainer.removeChild(tag);
-    });
+//     const tag_removeBtn = document.createElement("button");
+//     tag_removeBtn.textContent = "X";
+//     tag_removeBtn.classList.add("remove-tag");
+//     tag_removeBtn.addEventListener("click", function () {
+//       tagContainer.removeChild(tag);
+//     });
 
-    tag.appendChild(tag_removeBtn);
-    tagContainer.appendChild(tag);
-  }
+//     tag.appendChild(tag_removeBtn);
+//     tagContainer.appendChild(tag);
+//   }
 
-  function tag_removeAllTags() {
-    tagContainer.innerHTML = "";
-  }
+//   function tag_removeAllTags() {
+//     tagContainer.innerHTML = "";
+//   }
   
   
     async function processFiles(files, id) {
@@ -452,3 +449,30 @@ function tag_getTagArray() {
     });
     document.querySelectorAll(".deletePost").forEach(addDeleteListener);
   }
+
+  const postRadios = document.querySelectorAll("input[name='postArt']");
+  
+  const postForms = {
+    newImagePost : document.getElementById("newImagePost"),
+    newNotesPost : document.getElementById("newNotesPost"),
+    newAudioPost: document.getElementById("newAudioPost"),
+    newVideoPost: document.getElementById("newVideoPost")
+  }
+
+  function updatePostFormVisibility() {
+    Object.values(postForms).forEach(form => {
+       if (form) form.style.display = "none" 
+    });
+
+    const selectedRadio = document.querySelector("input[name='postArt']:checked");
+    if (selectedRadio && postForms[selectedRadio.id])
+      postForms[selectedRadio.id].style.display = "block"
+  }
+
+  postRadios.forEach(radio => {
+    radio.addEventListener("change", updatePostFormVisibility)
+  })
+
+  updatePostFormVisibility();
+
+});

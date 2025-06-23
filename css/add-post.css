@@ -23,9 +23,6 @@
 
 
 
-#addPost .filterGroup input[type="checkbox"], #addPost .filterGroup input[type="radio"], #addPost input[type="radio"] {
-	display: none;
-}
 
 #addPost .filter {
 	background-color: var(--bg-filter);
@@ -78,66 +75,24 @@
   margin-bottom: 1rem;
 }
 
-
+/* #newImagePost,
+#newNotesPost,
+#newAudioPost,
+#newVideoPost {
+  display: none;
+} */
 
 #addPost .filter .filterGroup img {
   width: 2em;
   height: auto;
 }
 
-#addPost .filter .filterGroup input[type="checkbox"],
-#addPost .filter .filterGroup input[type="radio"]
-{
-  display: none;
-}
-#labelCreatePodcast img,
-#labelCreateShorts img,
-#labelCreatePolls img,
-#labelCreateQuiz img,
-#labelCreateEvent img {
-  cursor: not-allowed; /* Zeigt den nicht erlaubten Mauszeiger */
-  opacity: 0.6; /* Optionale Transparenz */
-}
-#addPost .filter .filterGroup input[type="checkbox"]:checked + label span,
-#addPost .filter .filterGroup input[type="radio"]:checked + label span{
-  color: #77AFFF;
-}
-#addPost .filter .filterGroup input[type="checkbox"]:checked + label img,
-#addPost .filter .filterGroup input[type="radio"]:checked + label img,
-#createImage:checked ~ menu .filterGroup > #labelCreateImage img,
-#createNotes:checked ~ menu .filterGroup > #labelCreateNotes img,
-#createAudio:checked ~ menu .filterGroup > #labelCreateAudio img,
-#createVideo:checked ~ menu .filterGroup > #labelCreateVideo img,
-#createPodcast:checked ~ menu .filterGroup > #labelCreatePodcast img,
-#createShorts:checked ~ menu .filterGroup > #labelCreateShorts img,
-#createPolls:checked ~ menu .filterGroup > #labelCreatePolls img,
-#createQuiz:checked ~ menu .filterGroup > #labelCreateQuiz img,
-#createEvent:checked ~ menu .filterGroup > #labelCreateEvent img {
-  filter: brightness(1);
-  background-color: transparent !important;
-}
-#createNotes:checked ~ #newNotesPost,
-#createImage:checked ~ #newImagePost,
-#createVideo:checked ~ #newVideoPost,
-#createAudio:checked ~ #newAudioPost {
-  display: block !important;
-}
-
 #addPost .upload {
   grid-column: 2;
 	overflow-y: scroll;
 	height: 100%;
-	display: none;
+	/* display: none; */
 	position:relative;
-}
-
-#createPostNotes,
-#createPostImage,
-#createPostAudio,
-#createPostVideo {
-  position: absolute;
-  right: 4rem;
-  bottom: 4rem;
 }
 
 #addPost .preview-container {

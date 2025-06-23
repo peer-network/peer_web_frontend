@@ -1,11 +1,5 @@
-<div id="addPost" class="create_post">
+<div class="create_post">
     <div class="inner-container">
-        <input id="createImage" type="radio" name="postArt" value="image/*" checked />
-        <input id="createNotes" type="radio" name="postArt" value=".txt" />
-        <input id="createAudio" type="radio" name="postArt" value="audio/*" />
-        <input id="createVideo" type="radio" name="postArt" value="video/*" />
-        
-      
         <form id="newImagePost" class="upload" method="post">
             <h2>Upload File</h2>
             <div id="drop-area-image" class="drop-area">
@@ -120,46 +114,4 @@
             <button class="btn-blue" id="createPostVideo">Upload</button>
         </form>
     </div>
-
-      <menu class="filter select">
-            <div class="center">
-                <h2>Create a new Post</h2>
-                <p>Choose a category to get started:</p>
-            </div>
-            <div class="filterGroup">
-                <label id="labelCreateImage" for="createImage" class="filterButton" title="Fotos">
-                    <img src="svg/filterImage.svg" alt="Image create" /></label>
-                <label id="labelCreateNotes" for="createNotes" class="filterButton" title="Notes" name="notes"><img
-                        src="svg/filterNotes.svg" alt="Notes create" /></label>
-                <label id="labelCreateAudio" for="createAudio" class="filterButton" title="Audio"><img
-                        src="svg/filterMusic.svg" alt="Audio create" /></label>
-            </div>
-            <div class="filterGroup">
-                <label id="labelCreateVideo" for="createVideo" class="filterButton" title="Video"><img
-                        src="svg/filterVideo.svg" alt="Video create" /></label>
-                <label id="labelCreatePodcast" for="createPodcast" class="filterButton" title="playlist"><img
-                        src="svg/filterPodcast.svg" alt="Podcast create" /></label>
-                <label id="labelCreateShorts" for="createShorts" class="filterButton" title="local"><img
-                        src="svg/filterFickFuck.svg" alt="Shorty create" /></label>
-            </div>
-            <div class="filterGroup">
-                <label id="labelCreatePolls" for="createPolls" class="filterButton" title="Polls"><img
-                        src="svg/filterPolls.svg" alt="Polls create" /></label>
-                <label id="labelCreateQuiz" for="createQuiz" class="filterButton" title="Quiz"><img
-                        src="svg/filterQuiz.svg" alt="Quiz create" /></label>
-                <label id="labelCreateEvent" for="createEvent" class="filterButton" title="Event"><img
-                        src="svg/filterEvent.svg" alt="Event create" /></label>
-            </div>
-        </menu>
-
-           <div class="addTags">
-            <h4># Add tags</h4>
-            <p>include up to 10 tags</p>
-            <input id="tag-input" type="text" placeholder="Search or create tags" />
-            <div class="dropdown-content" id="dropdownMenu">
-            </div>
-            <div id="tagsContainer"></div>
-            <!-- <button id="tagCreate">+ Create tag</button> -->
-        </div>
-
 </div>
