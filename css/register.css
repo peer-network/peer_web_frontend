@@ -172,23 +172,8 @@ body {
 
 
 
-.peerLogo {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.peerLogo img {
-  width: 1.7rem;
-}
-
-.peerLogo h1 {
-  font-weight: 900;
-  font-size: 1.4rem;
-  line-height: 1.5rem;
-  letter-spacing: 0.02em;
-  color: var(--text-color);
+.peerLogo img{
+  width: 5rem;
 }
 
 .rem-for {
@@ -202,7 +187,6 @@ body {
 .rem-for label{
   display: flex;
   flex-direction: row;
-  position: static !important;
   color: var(--white-opacity-50);
   background: none;
   font-size: 0.6rem;
@@ -277,7 +261,7 @@ body {
     -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
     -webkit-text-fill-color: #000 !important;
     transition: background-color 5000s ease-in-out 0s;
-    font-size: 0.8rem !important;
+    font-size: 0.8rem;
   }
 }
 
@@ -448,6 +432,10 @@ body::-webkit-scrollbar {
     font-size: clamp(0.4rem, 1vw, 0.6rem);
   }
 
+  .validationMessage {
+    font-size: clamp(0.5rem, 1vw, 16px);
+  }
+
   
 }
 
@@ -598,29 +586,11 @@ body::-webkit-scrollbar {
   color: var( --white-opacity-50);
 }
 
-label {
-  position: absolute;
-  top: 100%;
-  font-size: x-small;
-  left: 7%;
-  /* color: red; */
-  background: red;
-  width: 100%;
-  padding: 0;
-  border-radius: 0 0 6px 6px;
-  height: 0;
-  transition-property: height;
-  transition-duration: 1s;
-}
-
-#validationMessage {
+.validationMessage {
 	color: red;
-	transition-property: color;
-	transition-duration: 1s;
-	transition-delay: 0s;
-	max-width: 700px;
-	font-size: 16px;
 	line-height: 18px;
+  display: block;
+  text-align: center;
 }
 
 .notvalid,.error {
