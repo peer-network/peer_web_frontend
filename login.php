@@ -59,8 +59,7 @@ if (isset($_GET['message'])) {
     <div class="cont"> 
         <form id="registerForm" class="form-container">
             <div class="peerLogo">
-                <img src="svg/logo_farbe.svg" alt="Peer logo"/>
-                <h1>peer</h1>
+                <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
             </div>
             <div class="head">
                 <h1 class="heading">Hey there, <span class="waving-hand">👋</span><br> Welcome back!</h1>
@@ -75,9 +74,9 @@ if (isset($_GET['message'])) {
             <div class="input-field password-field">
                 <img class="password-icon" src="svg/lock1.svg" alt="">
                 <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
-                <label id="validationMessage" for="password"></label>
                 <img class="seePass" src="svg/seePass.png" alt="See Password" id="togglePassword">
             </div>
+            <div class="validationMessage" id="validationMessage" for="password"  aria-live="polite"></div>
             <div class="rem-for">
                 <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
                 <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
