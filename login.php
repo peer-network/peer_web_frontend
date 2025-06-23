@@ -26,6 +26,7 @@ if (isset($_GET['message'])) {
 <?php endif; ?>
 
 <head>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
@@ -55,38 +56,46 @@ if (isset($_GET['message'])) {
         <img class="logo" src="svg/logo_farbe.svg" alt="Peer logo" width="96" height="96" />
     </aside>
 
-    <form id="registerForm" class="form-container">
-        <div class="peerLogo">
-            <img src="svg/logo_farbe.svg" alt="Peer logo"/>
-            <h1>peer</h1>
-        </div>
-        <div class="head">
-            <h1 class="heading">Hey there, <span class="waving-hand">👋</span><br> Welcome back!</h1>
-            <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
-        </div>
-        <div class="input-field">
-            <img src="svg/email-icon.svg"  alt="">
-            <input type="email" id="email" name="e_mail" placeholder="E-Mail" required class="input-text" autocomplete="on"></input>
-        </div>
+    <div class="cont"> 
+        <form id="registerForm" class="form-container">
+            <div class="peerLogo">
+                <img src="svg/logo_farbe.svg" alt="Peer logo"/>
+                <h1>peer</h1>
+            </div>
+            <div class="head">
+                <h1 class="heading">Hey there, <span class="waving-hand">👋</span><br> Welcome back!</h1>
+                <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
+            </div>
+            <div class="input-field">
+                <img class="email-icon" src="svg/email-icon.svg"  alt="email icon">
+                <input type="email" id="email" name="e_mail" placeholder="E-mail" required class="input-text" autocomplete="on"></input>
+                <img class="tick" src="svg/tick-icon.png" alt="tick">
+            </div>
 
-        <div class="input-field">
-            <img src="svg/lock1.svg" alt="">
-            <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
-            <label id="validationMessage" for="password"></label>
+            <div class="input-field password-field">
+                <img class="password-icon" src="svg/lock1.svg" alt="">
+                <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
+                <label id="validationMessage" for="password"></label>
+                <img class="seePass" src="svg/seePass.png" alt="See Password" id="togglePassword">
+            </div>
+            <div class="rem-for">
+                <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
+                <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
+            </div>
+            <input id="submit" class="button" type="submit" name="Login" value="Login">
+            <div class="line-with-text"><span>OR</span></div>
+            <a href="register.php" class="button reg">
+                <span>Register&nbsp;now</span>
+                <img src="svg/arrow1.svg" alt="">
+            </a>
+            <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
+             
+        </form>
+        <div class="footer">
+            <a href="" class="privacy">Privacy Policy</a>
+            <p class="version">Version 1.0.0</p>
         </div>
-        <div class="rem-for">
-            <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
-            <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
-        </div>
-        <input id="submit" class="button" type="submit" name="Login" value="Login">
-        <div class="line-with-text"><span>or</span></div>
-        <a href="register.php" class="button reg">
-            <span>Register&nbsp;now</span>
-            <img src="svg/arrow1.svg" alt="">
-        </a>
-        <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
-    </form>
-
+    </div>
 </body>
 
 </html>
