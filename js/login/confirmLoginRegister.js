@@ -7,8 +7,10 @@ function displayValidationMessage(message) {
     element.innerText = message;
   }
   // Das Eingabefeld auswählen
+  const inputField = document.querySelector(".input-field");
   const emailField = document.getElementById("email");
-  if (emailField) {
+  const statusIcon = document.querySelector(".tick");
+  if (emailField && inputField ) {
     // Regulärer Ausdruck für E-Mail-Validierung
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
@@ -25,14 +27,24 @@ function displayValidationMessage(message) {
         emailField.parentElement.classList.remove("valid");
       }
     });
+
+    emailField.addEventListener("focus", function () {
+      inputField.classList.add("focused");
+    });
+
+    emailField.addEventListener("blur", function () {
+      inputField.classList.remove("focused");
+    });
     
     // Optional: Entfernen der Klassen bei Fokus (zurücksetzen des Felds)
     emailField.addEventListener("focus", function () {
       emailField.parentElement.classList.remove("valid", "invalid");
-    });
+    }); 
   }
+
+  const passField = document.querySelector(".password-field");
   const passwordField = document.getElementById("password");
-  if (passwordField) {
+  if (passwordField && passField) {
     // Regulärer Ausdruck für Passwort-Validierung: Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Zahl
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
     
@@ -51,9 +63,30 @@ function displayValidationMessage(message) {
         passwordField.parentElement.classList.remove("valid");
       }
     });
+
+    passwordField.addEventListener("focus", function () {
+      passField.classList.add("focused");
+    });
+
+    passwordField.addEventListener("blur", function () {
+      passField.classList.remove("focused");
+    });
     
     // Optional: Entfernen der Klassen bei Fokus (zurücksetzen des Felds)
     passwordField.addEventListener("focus", function () {
       passwordField.parentElement.classList.remove("valid", "invalid");
     });
   }
+
+  const togglePasswordIcon = document.getElementById("togglePassword");
+
+  togglePasswordIcon.addEventListener("click", function () {
+    const isPasswordVisible = passwordField.type === "text";
+
+    passwordField.type = isPasswordVisible ? "password" : "text";
+
+    // Swap icon image
+    togglePasswordIcon.src = isPasswordVisible
+      ? "svg/seePass.png"          // Hidden → show "eye"
+      : "svg/hidePass.png";   // Visible → show "eye with slash"
+  });
