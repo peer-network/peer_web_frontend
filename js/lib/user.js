@@ -12,7 +12,11 @@ async function fetchHelloData(userid = null) {
       hello {
           currentuserid
       }
+<<<<<<< HEAD
+      profile(userid: ${userid}) {
+=======
       getProfile(userid: ${userid}) {
+>>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
         status
         ResponseCode
         affectedRows {

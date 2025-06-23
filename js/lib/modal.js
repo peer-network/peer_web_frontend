@@ -134,7 +134,6 @@ function closeModal(modalElement) {
       modalElement.remove();
     }, 300);
   }
-
 function userfriendlymsg(code) {
   let msg;
   if (code in responsecodes.data) {

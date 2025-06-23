@@ -79,7 +79,6 @@ function displayValidationMessage(message) {
   }
 
   const togglePasswordIcon = document.getElementById("togglePassword");
-
   togglePasswordIcon.addEventListener("click", function () {
     const isPasswordVisible = passwordField.type === "text";
 
