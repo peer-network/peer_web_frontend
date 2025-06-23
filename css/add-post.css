@@ -1,35 +1,17 @@
 
 #addPost  {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
-  z-index: 5;
-  background-color: #4848487d;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+
 }
 #addPost .inner-container {
   display: block;
-  position: fixed;
-  top: 0vh;
-  left: 0vw;
-  width: 100vw;
-  height: 100dvh;
-  background-color: #363636e6;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   z-index: 2;
   display: grid;
   grid-template-columns: 16rem auto 18rem;
   border-radius: 2rem;
-  gap: 3vw;
-  padding: 2vh 3vw;
+  /* gap: 3vw; */
 }
-
-
-
 
 #addPost .filter .center {
   flex-direction: column;
@@ -143,17 +125,11 @@
 
 #addPost .upload {
   grid-column: 2;
-
-	
 	overflow-y: scroll;
 	height: 100%;
-	
 	display: none;
 	position:relative;
 }
-
-
-
 
 #createPostNotes,
 #createPostImage,
@@ -162,7 +138,6 @@
   position: absolute;
   right: 4rem;
   bottom: 4rem;
- 
 }
 
 #addPost .preview-container {
@@ -304,8 +279,6 @@
   padding: 1.5rem;
   min-height: 25rem;
 }
-
-
 
 #addPost .drop-area {
   border: 3px dashed #cccccc00;

@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function tag_getTagArray() {
     return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
-  }
+}
   
   
   async function fetchTags(searchStr) {
