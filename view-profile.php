@@ -83,14 +83,17 @@ checkAuth("unauthorized");
       <div class="profile_info">
         <h2 class="profile_title"><span  id="username2">&nbsp;</span><span id="slug2" class="profile_no">&nbsp;</span></h2>
         <div class="profile_description" id="biography2"> </div>
-        <div class="profile_stats"> <span class="post_count"><em id="userPosts2">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers2">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span id="following_count" class="following_count"><em id="following2">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers-2">0</em> Peers</span> </div>
+        <div class="profile_stats"> <span class="post_count"><em id="userPosts2">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers2">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span id="following_count" class="following_count"><em id="following2">&nbsp;</em> Following</span> <span class="peer_count"><em id="Peers2">0</em> Peers</span>  </div>
+        
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
-      
+      <!-- rendering via js code written in viewprofile.js -->
+      <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#"></a></div>
     </div>
     <!-- Load Posts Container -->
     <div id="allpost" class="list_all_post"> </div>
     <div id="post_loader"><img src="svg/logo_farbe.svg" alt="loading" /></div>
+    <div id="no_post_found" class="no_post_found">No Post found...</div>
     <!-- End: Load Posts Container --> 
   </main>
   <aside class="right-sidebar right-sidebar-profile"> 

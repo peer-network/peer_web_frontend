@@ -28,5 +28,27 @@ ChatApp.utils = {
 
   getActiveChatType() {
     return document.getElementById("privateBtn").classList.contains("active") ? "private" : "group";
+  },
+
+  async getCurrentUserId() {
+    const cookieMatch = document.cookie.match(/(?:^|;\s*)userID=([^;]+)/);
+    if (cookieMatch) return cookieMatch[1];
+
+    const result = await ChatApp.api.fetchUserProfile();
+    const userId = result?.id;
+    if (userId) document.cookie = `userID=${userId}; path=/; SameSite=Strict`;
+  
+    return userId;
+  },
+
+  async getCurrentUserImage() {
+    const cookieMatch = document.cookie.match(/(?:^|;\s*)userImg=([^;]+)/);
+    if (cookieMatch) return cookieMatch[1];
+
+    const result = await ChatApp.api.fetchUserProfile();
+    const userImg = result?.img;
+    if (userImg) document.cookie = `userImg=${userImg}; path=/; SameSite=Strict`;
+  
+    return userImg;
   }
 };

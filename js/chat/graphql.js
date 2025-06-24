@@ -3,7 +3,7 @@ window.ChatApp = window.ChatApp || {};
 ChatApp.graphql = {
   LIST_CHATS: `
     query ListChats {
-      listChats {
+      listChats (limit: 20, offset: 0) {
         affectedRows {
           id
           image
@@ -60,5 +60,17 @@ ChatApp.graphql = {
           chatid
         }
       }
+    }`,
+
+  GET_PROFILE: `
+    query GetProfile {
+      getProfile {
+          status
+          ResponseCode
+          affectedRows {
+              id
+              img
+          }
+      }
     }`
-};
+  };

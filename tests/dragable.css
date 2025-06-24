@@ -1,0 +1,62 @@
+/* Allgemeiner Container */
+#draggable-resizable-container {
+    position: relative;
+    width: fit-content;
+    touch-action: none;
+  }
+  
+  /* Titelleiste */
+  .header {
+    width: 100%;
+    height: 40px;
+    background-color: #007acc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Positioniert den Titel links und den Pfeil rechts */
+    padding: 0 10px;
+    cursor: grab;
+    user-select: none; /* Kein Textauswählen in der Titelleiste */
+  }
+  
+  /* Dropdown-Toggle-Button */
+  .dropdown-toggle {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .dropdown-toggle:focus {
+    outline: none;
+  }
+  
+  /* Box (Inhalt des Containers) */
+  .box {
+    width: 200px;
+    height: 200px;
+    min-width: 10ch; /* Mindestbreite: 10 Zeichen */
+    background-color: lightblue;
+    overflow: hidden; /* Versteckt den Inhalt bei kleiner Höhe */
+    transition: height 0.3s ease, opacity 0.3s ease;
+    position: relative;
+  }
+  
+  /* Versteckter Zustand */
+  .box.hidden {
+    height: 0;
+    opacity: 0;
+  }
+  
+  /* Resizing-Handle */
+  .resize-handle {
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><line x1="0" y1="20" x2="20" y2="0" stroke="%23000" stroke-width="2"/><line x1="10" y1="20" x2="20" y2="10" stroke="%23000" stroke-width="2"/></svg>') no-repeat center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: se-resize;
+  }
+  

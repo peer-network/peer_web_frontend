@@ -207,30 +207,36 @@ document.addEventListener("DOMContentLoaded", () => {
     //console.log(base64Image);
     
     // If no image and no biography, do nothing
-    if (!base64Image && !biographyText) {
-     // console.warn("No image or biography to update.");
-      return;
-    }
+    //if (!base64Image) {
+     //console.warn("No image or biography to update.");
+     // return;
+    //}
     
     // Encode biography to base64 and format as required
     const base64Biography = biographyText
     ? `data:text/plain;base64,${btoa(unescape(encodeURIComponent(biographyText)))}`
-    : null;
+    : '';
+
+        const msgElem         = document.getElementById("response_msg_bio");
+        msgElem.innerHTML='';
+        msgElem.classList.remove('error');
+        msgElem.classList.remove('success');
 
  try {
       
+   
+
 
       // Call both functions in parallel
       const [imageResult, bioResult] = await Promise.all([
         base64Image
           ? sendUpdateProfileImage({ img: base64Image })
           : Promise.resolve({ updateProfileImage: { status: "success", ResponseCode: "11004" } }),
-        base64Biography
-          ? sendUpdateBio(base64Biography)
-          : Promise.resolve({ updateBio: { status: "success",ResponseCode: "11003" } }),
+        
+          sendUpdateBio(base64Biography),
       ]);
 
-      console.log(base64Biography);
+      //console.log(base64Biography);
 
       const imageSuccess =
         imageResult.updateProfileImage.status === "success" &&
@@ -239,12 +245,16 @@ document.addEventListener("DOMContentLoaded", () => {
         bioResult.updateBio.status === "success" &&
         bioResult.updateBio.ResponseCode === "11003";
 
+       
+        msgElem.classList.add(bioResult.updateBio.status);
+        msgElem.innerHTML = userfriendlymsg(bioResult.updateBio.ResponseCode);
       if (imageSuccess && bioSuccess) {
         location.reload();
       } else {
+        
         console.error("One or both updates failed.");
       }
-  
+        
 
       
     } catch (error) {
@@ -656,7 +666,7 @@ async function sendUpdateBio(biography) {
       }`;
 
   
-
+    
 
     try {
       const response = await fetch(GraphGL, {
@@ -679,12 +689,12 @@ async function sendUpdateBio(biography) {
       if (result.errors) {
         throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
       }
-      console.log("Mutation Result:", result.data);
+      //console.log("Mutation Result:", result.data);
 
       return result.data;
 
     } catch (error) {
-      Merror("Update e-mail failed", error);
+      Merror("Update Bio failed", error);
       // console.error("Error create Post:", error);
       return false;
     }

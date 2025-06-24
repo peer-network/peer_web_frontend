@@ -5,9 +5,13 @@ function createModal({
   type = "info",
   textarea = false,
   dontShowOption = false, // Neu: Standardmäßig keine Checkbox anzeigen
+  typeKey = null, // e.g., 'like', 'dislike', 'post', 'comment'
 }) {
-  if (localStorage.getItem("modalDoNotShow") === "true" && dontShowOption) {
-    return Promise.resolve({ button: 0, dontShow: true });
+ 
+  const savedSettings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
+ 
+  if (typeKey && dontShowOption && savedSettings[typeKey] === true) {
+    return Promise.resolve({ button: 1, dontShow: true });
   }
   return new Promise((resolve) => {
     const modal = document.createElement("div");
@@ -16,8 +20,8 @@ function createModal({
     const checkboxHTML = dontShowOption
       ? `
         <div class="modal-checkbox">
-          <input type="checkbox" id="dont-show-checkbox" />
           <label for="dont-show-checkbox">Do not show this message again</label>
+          <input type="checkbox" id="dont-show-checkbox" />
         </div>`
       : "";
 
@@ -30,7 +34,11 @@ function createModal({
         ${checkboxHTML}
         ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
         <div class="modal-buttons">
-          ${buttons.map((btn, index) => `<button class="modal-button" data-index="${index}">${btn}</button>`).join("")}
+          ${buttons.map((btn, index) => {
+            const label = typeof btn === "string" ? btn : btn.text;
+            const extraClass = typeof btn === "object" && btn.className ? ` ${btn.className}` : "";
+            return `<button class="modal-button${extraClass}" data-index="${index}">${label}</button>`;
+          }).join("")}
         </div>
       </div>
     `;
@@ -52,8 +60,14 @@ function createModal({
         const isChecked = checkboxElement ? checkboxElement.checked : false;
 
         // Wenn Checkbox da ist und angehakt, in localStorage speichern
-        if (dontShowOption && isChecked) {
+        
+        /*if (dontShowOption && isChecked &&  index) {
           localStorage.setItem("modalDoNotShow", "true");
+        }*/
+        
+        if (dontShowOption && isChecked && typeKey && index === 1) {
+          savedSettings[typeKey] = true;
+          localStorage.setItem("modalDoNotShow", JSON.stringify(savedSettings));
         }
 
         if (textareaElement) {
@@ -110,14 +124,16 @@ function createModal({
     }
   });
 
-  function closeModal(modalElement) {
+  
+}
+
+
+function closeModal(modalElement) {
     modalElement.classList.add("modal-fade-out");
     setTimeout(() => {
       modalElement.remove();
     }, 300);
   }
-}
-
 function userfriendlymsg(code) {
   let msg;
   if (code in responsecodes.data) {
@@ -131,7 +147,7 @@ function info(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "info",
     dontShowOption: dontShowOption,
   });
@@ -151,17 +167,18 @@ function warnig(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "warning",
     dontShowOption: dontShowOption,
   });
 }
-function confirm(title, text = "", dontShowOption = false) {
+function confirm(title, text = "", dontShowOption = false,typeKey = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["Cancel", "Confirm"],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "warning",
     dontShowOption: dontShowOption,
+    typeKey: typeKey, // Pass down to createModal
   });
 }

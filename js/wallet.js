@@ -58,7 +58,7 @@ async function getUserInfo() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const result = await response.json();
     // Check for errors in GraphQL response
-    if (result.errors) throw new Error(result.errors[0].message);
+    if (result.errors) throw new Error(result.errors[0].message);    
     isInvited = result.data.getUserInfo.affectedRows.invited;
   } catch (error) {
     console.error("Error:", error.message);
@@ -194,13 +194,11 @@ function nextmint() {
   document.getElementById("nextminttime").innerText = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
   document.getElementById("nextmintRadial").style.setProperty("--progress", percentageOfDayFromDates(now, nextMintDate));
 }
-
 function percentageOfDayFromDates(startDate, endDate) {
   const diffMs = endDate - startDate;
   const oneDayMs = 24 * 60 * 60 * 1000;
   return (diffMs / oneDayMs) * 100;
 }
-
 function getNext0930() {
   const now = new Date();
 
@@ -260,7 +258,6 @@ async function dailywin() {
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-
     const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
     sortedDescending.forEach((entry) => {
       const historyItem = document.createElement("div");
@@ -438,22 +435,18 @@ async function renderUsers() {
   userList.className = "user-list";
   wrapper.appendChild(userList);
 
-  // Add new recipient button
-  // const addNew = document.createElement("button");
-  // addNew.className = "btn-new-user";
-  // addNew.textContent = "Add new recipient +";
-  // addNew.onclick = () => {
-  //   console.log("Custom logic for adding new recipient...");
-  // };
-  // wrapper.appendChild(addNew);
-
+  //load/render friends-list
+  renderFriendListUI(userList);
   // Search logic on input
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
-    
     userList.innerHTML = "";
 
-    if (!search) return;
+    if (!search) {
+      //load/render friends-list
+      renderFriendListUI(userList);
+      return;
+    }
 
     const results = await searchUser(search);
     if (!results.length) return;
@@ -484,6 +477,85 @@ async function renderUsers() {
   });
 
   dropdown.appendChild(wrapper);
+}
+
+async function renderFriendListUI(container) {
+   //loadFrinds
+  const frindsList = await loadFrinds();
+  if (frindsList) {
+    frindsList.forEach(user => {
+      const item = document.createElement("div");
+      item.className = "user-item";
+
+      const avatar = document.createElement("img");
+      avatar.src = tempMedia(user.img.replace("media/", ""));
+      avatar.onerror = () => (avatar.src = "./svg/noname.svg");
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const name = document.createElement("strong");
+      name.textContent = user.username;
+
+      const slug = document.createElement("span");
+      slug.textContent = `#${user.slug}`;
+
+      info.append(name, slug);
+      item.append(avatar, info);
+      item.onclick = () => renderTransferFormView(user);
+      container.appendChild(item);
+    });
+  }
+}
+
+async function loadFrinds() {
+  const accessToken = getCookie("authToken");
+
+  // Create headers
+  const headers = new Headers({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+  query: `query ListFriends {
+                listFriends {
+                    status
+                    counter
+                    ResponseCode
+                    affectedRows {
+                      userid
+                      img
+                      username
+                      slug
+                      biography
+                      updatedat
+                    }
+                }
+            }
+          `,
+  });
+
+  // Define request options
+  const requestOptions = {
+  method: "POST",
+  headers: headers,
+  body: graphql
+  };
+
+  try {
+  // Send the request and handle the response
+  const response = await fetch(GraphGL, requestOptions);
+  const result = await response.json();
+  // Check for errors in response
+  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  if (result.errors) throw new Error(result.errors[0].message);
+    return result.data.listFriends.affectedRows;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+    }
 }
 
 async function searchUser(username = null) {
@@ -591,7 +663,8 @@ function renderTransferFormView(user) {
 
   const feeLabel = document.createElement("div");
   feeLabel.className = "fee-label";
-  feeLabel.textContent = "Price fee: 0.4% would apply";
+  const percentage = isInvited === "" ? "4%" : "5%";
+  feeLabel.textContent = `Price fee: ${percentage} would apply`;
 
   const actions = document.createElement("div");
   actions.className = "modal-actions";
@@ -630,7 +703,7 @@ function renderCheckoutScreen(user, amount) {
     document.body.appendChild(backdrop);
   }
 
-  const totalAmount = calculateTotalWithFee(amount, isInvited);
+  const totalAmount = calculateTotalWithFee(amount);
   const { breakdown } = getCommissionBreakdown(amount);
 
   const wrapper = document.createElement("div");
@@ -710,7 +783,7 @@ function renderCheckoutScreen(user, amount) {
   transferBtn.innerHTML = `Transfer &rarr;`;
 
   transferBtn.onclick = async () => {
-    const totalAmount = calculateTotalWithFee(parseFloat(amount), isInvited);
+    const totalAmount = calculateTotalWithFee(parseFloat(amount));
 
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
@@ -726,9 +799,8 @@ function renderCheckoutScreen(user, amount) {
     try {
       // Show loader first
       renderLoaderScreen();
-
-      // Attempt transfer
-      const res = await resolveTransfer(user.id, totalAmount);
+      const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
+      const res = await resolveTransfer(userId, totalAmount);
 
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
@@ -776,8 +848,15 @@ function renderLoaderScreen() {
   const header = document.createElement("div");
   header.className = "transfer-header";
 
-  const loaderSvg = document.getElementById("loaderSvg");
-  loaderSvg.className = "loaderSvg";
+  let loaderSvg = document.getElementById("loaderSvg");
+
+  if (!loaderSvg) {
+    loaderSvg = document.createElement("img");
+    loaderSvg.id = "loaderSvg";
+    loaderSvg.src = "./svg/loader.svg"; // adjust path as needed
+    loaderSvg.className = "loaderSvg";
+  }
+
   header.appendChild(loaderSvg);
   wrapper.appendChild(header);
 
@@ -954,21 +1033,19 @@ async function resolveTransfer(recipientId, numberOfTokens) {
   const result = await response.json();
 
   if (result.errors) {
-    console.error("GraphQL Error:", result.errors);
     throw new Error(result.errors[0].message);
   }
 
   return result.data.resolveTransfer;
 }
 
-function calculateTotalWithFee(amount, isInvited) {
-
+function calculateTotalWithFee(amount) {
  const feePercent = isInvited === "" ? 0.04 : 0.05;
   const fee = amount * feePercent;
   return parseFloat(amount + fee);
 }
 
-function getCommissionBreakdown(transferAmount, isInvited = "") {
+function getCommissionBreakdown(transferAmount) {
   const baseAmount = transferAmount;
   const breakdown = [];
 

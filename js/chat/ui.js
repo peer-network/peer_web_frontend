@@ -62,9 +62,13 @@ ChatApp.ui = {
       const chatid = document.querySelector(".chat-item.active-chat")?.getAttribute("data-chatid");
       const content = input.value.trim();
       if (!chatid || !content) return;
+      if (content.length > 500) {
+        const sendMessageTextError = document.getElementById("sendMessageTextError");
+        sendMessageTextError.style.display = "block";
+        return;
+      }
 
       isSending = true;
-
       try {
         const success = await ChatApp.ui.sendMessage(chatid, content);
 
@@ -115,7 +119,6 @@ ChatApp.ui = {
       const isInsideResults = ChatApp.utils.getElement(".chat-list").contains(event.target);
       const isTabClick = event.target.closest("#privateBtn, #groupBtn");
       const isSearchInput = event.target.closest("#search-contacts");
-
       if (!isInsideResults && !isTabClick && !isSearchInput) {
         resultsBox.style.display = "none";
         ChatApp.state.isInCreateOverlay = false;
@@ -130,9 +133,14 @@ ChatApp.ui = {
     // Keep isInCreateOverlay true so tab switch shows filtered contacts properly
     ChatApp.state.isInReviewScreen = false;
     ChatApp.state.isInCreateOverlay = true;
-    ChatApp.state.fullContactList = contactList;
 
-    ChatApp.ui.renderContacts(contactList);
+    if (contactList.length === 0) {
+      document.getElementById("no_friend_found").classList.add("active");
+    } else {
+      document.getElementById("no_friend_found").classList.remove("active");
+      ChatApp.state.fullContactList = contactList;
+      ChatApp.ui.renderContacts(contactList);
+    }
   },
 
   renderContacts(contactList) {
@@ -142,7 +150,6 @@ ChatApp.ui = {
     [...container.querySelectorAll(".chat-list-overlay, .chat_buttons, .input.title, #validationMessage")].forEach(el => el.remove());
 
     ChatApp.state.fullContactList = contactList;
-
     if (ChatApp.state.isInReviewScreen) {
       ChatApp.state.isInCreateOverlay = false;
       return ChatApp.ui.renderReviewScreen(container);
@@ -156,7 +163,7 @@ ChatApp.ui = {
       container.appendChild(userCard);
     });
 
-    if (chatMode === "group") {
+    if (chatMode === "group" && contactList.length > 0) {
       const footer = ChatApp.ui.createFooterButtons();
       container.appendChild(footer);
     }
@@ -289,9 +296,8 @@ ChatApp.ui = {
 
       const item = document.createElement("div");
       item.classList.add("chat-list-item");
-
       const avatar = document.createElement("img");
-      avatar.src = tempMedia(contact.img.replace("media/", ""))
+      avatar.src = tempMedia(user.img.replace("media/", ""))
       avatar.onerror = () => this.src = "./svg/noname.svg";
       avatar.alt = user.name;
 
@@ -303,21 +309,33 @@ ChatApp.ui = {
       nameSpan.classList.add("profile-name");
       nameSpan.textContent = user.name;
 
-      const removeBtn = document.createElement("img");
-      removeBtn.className = "chat-icon";
-      removeBtn.src = "svg/remove.svg";
-      removeBtn.alt = "remove";
+      const removeIconSpan = document.createElement("span");
+      removeIconSpan.className = "remove-user-group";
+      removeIconSpan.textContent = "remove";
 
-      removeBtn.addEventListener("click", () => {
+      // const removeBtn = document.createElement("img");
+      // removeBtn.className = "chat-icon";
+      // removeBtn.src = "svg/remove.svg";
+      // removeBtn.alt = "remove";
+
+      removeIconSpan.addEventListener("click", () => {
         ChatApp.state.selectedUsers = ChatApp.state.selectedUsers.filter(
           u => u.recipients[0] !== user.recipients[0]
         );
-        requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
+        if (ChatApp.state.selectedUsers.length === 0) { 
+          ChatApp.state.isInReviewScreen = false; 
+          ChatApp.state.isInCreateOverlay = true; 
+          requestAnimationFrame(() => { 
+            ChatApp.ui.renderContacts(ChatApp.state.fullContactList);  
+          });
+        }
+        
+        else requestAnimationFrame(() => { ChatApp.ui.renderReviewScreen(container)  })
       });
 
       item.appendChild(imgSpan);
       item.appendChild(nameSpan);
-      item.appendChild(removeBtn);
+      item.appendChild(removeIconSpan);
       div.appendChild(item);
       container.appendChild(div);
     });
@@ -396,40 +414,38 @@ ChatApp.ui = {
     const template = document.getElementById("chat-message-template");
     const header = document.querySelector(".chat-header .username");
     const headerAvatar = document.querySelector(".chat-header .avatar");
-
-    const sendMessageTextInput = document.getElementById("sendMessageTextInput");
-
+    let sender;
 
     const otherUser = chat.chatparticipants.find(u => u.userid !== ChatApp.state.currentUserId);
     header.textContent = chat.type === "private" ? otherUser?.username : chat.name;
     headerAvatar.src = tempMedia(otherUser?.img.replace("media/", ""));
     headerAvatar.onerror = () => this.src = "./svg/noname.svg";
     container.innerHTML = "";
-    // console.log(chat);
+   
+
     chat.chatmessages.forEach(msg => {
       const isCurrentUser = msg.senderid === ChatApp.state.currentUserId;
-      const sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
+     
+      sender = chat.chatparticipants.find(u => u.userid === msg.senderid);
       const time = new Date(msg.createdat).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      
-      sendMessageTextInput.src = tempMedia(otherUser?.img.replace("media/", ""));
-      sendMessageTextInput.onerror = () => this.src = "./svg/noname.svg";
-
       const clone = template.content.cloneNode(true);
       const message = clone.querySelector(".message");
       message.classList.add(isCurrentUser ? "right" : "left");
       message.querySelector(".avatar").src = tempMedia(sender?.img.replace("media/", ""));
       message.querySelector(".avatar").onerror = () => this.src = "./svg/noname.svg";
-
       const textEl = message.querySelector(".message-text");
       if (chat.type === "group") {
         textEl.innerHTML = `<div class="sender-name">${isCurrentUser ? "– you" : `@${sender?.username}`}</div>` + ChatApp.utils.decodeHTML(msg.content);
       } else {
         textEl.textContent = ChatApp.utils.decodeHTML(msg.content);
       }
-
       message.querySelector(".time").textContent = time;
       container.appendChild(clone);
     });
+
+    const sendMessageUserImg = document.getElementById("sendMessageUserImg");
+    sendMessageUserImg.src = tempMedia(ChatApp.state.currentUserImg.replace("media/", ""));
+    sendMessageUserImg.onerror = () => sendMessageUserImg.src = "./svg/noname.svg";
 
     container.scrollTop = container.scrollHeight;
   }

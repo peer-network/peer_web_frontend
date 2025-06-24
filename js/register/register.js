@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       referralField.value = referralUuid;
     }
 
-    const deepLink = "peer://invite/" + referralUuid;
+    /*const deepLink = "peer://invite/" + referralUuid;
     const androidFallback = "https://play.google.com/store/apps/details?id=eu.peernetwork.app";
     const iosFallback = "https://apps.apple.com/app/peer-network/id6744612499";
 
@@ -29,10 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location = iosFallback;
         }
       }, 1500);
-    }
+    }*/
 
     // Call immediately after DOM is loaded
-    openApp();
+    //openApp();
   }
 });
 // Asynchrone Funktion, um einen Benutzer zu registrieren
@@ -123,19 +123,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
   // Überprüfung, ob das Passwort die Mindestlänge erfüllt
   if (password.length < passwordMinLength) {
-    info("Das Passwort muss mindestens 8 Zeichen lang sein!");
+    displayValidationMessage(userfriendlymsg ("Das Passwort muss mindestens 8 Zeichen lang sein!"));
     return;
   }
 
   // Überprüfung, ob das Passwort einen Großbuchstaben enthält
   if (!passwordRegex.test(password)) {
-    info("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
+    displayValidationMessage(userfriendlymsg ("Das Passwort muss mindestens einen Großbuchstaben enthalten!"));
     return;
   }
 
   // Überprüfung, ob die Passwörter übereinstimmen
   if (password !== confirmPassword) {
-    info("Passwörter stimmen nicht überein!");
+    displayValidationMessage(userfriendlymsg ("Passwörter stimmen nicht überein!"));
     return;
   }
 

@@ -123,7 +123,7 @@ function showRegisterConfirmationModal(onConfirmCallback) {
 
   newConfirmBtn.addEventListener("click", function () {
     if (!botCheckbox.checked || !ageCheckbox.checked) {
-      info("Please confirm that you are not a bot and that you are at least 18+ years old.");
+      Merror("Please confirm that you are not a bot and that you are at least 18+ years old.");
       return;
     }
 

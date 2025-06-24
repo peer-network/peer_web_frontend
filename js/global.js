@@ -1,3 +1,9 @@
+// likeCost, dislikeCost, commentCost and postCost are global variables and updated in getActionPrices();
+let likeCost = 0.3,
+  dislikeCost = 0.5,
+  commentCost = 0.05,
+  postCost = 2;
+
 document.addEventListener("DOMContentLoaded", () => {
   hello();
   getUser();
@@ -234,12 +240,12 @@ async function getLiquiudity() {
   // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
     query: `query Balance {
-    balance {
-        status
-        ResponseCode
-        currentliquidity
-    }
-}`,
+          balance {
+              status
+              ResponseCode
+              currentliquidity
+          }
+        }`,
   });
 
   // Define request options

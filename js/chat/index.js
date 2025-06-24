@@ -1,8 +1,9 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  const { state, api, ui, loader } = window.ChatApp;
+  const { state, api, ui, loader, utils } = window.ChatApp;
 
   try {
-    state.currentUserId = await api.getCurrentUserId();
+    state.currentUserId = await utils.getCurrentUserId();
+    state.currentUserImg = await utils.getCurrentUserImage();
     ui.initChatTabs();
     ui.initSearch();
     ui.bindSendMessageHandler();

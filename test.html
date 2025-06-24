@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG-Favicon dynamisch ändern</title>
+
+    <!-- Initiales Favicon -->
+    <link
+      id="favicon"
+      rel="icon"
+      href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iI2ZmNTcwMCIvPjwvc3ZnPg=="
+      type="image/svg+xml"
+    />
+  </head>
+  <body>
+    <h1>SVG-Favicon dynamisch ändern</h1>
+    <button onclick="changeFaviconToBlue()">Favicon auf Blau ändern</button>
+    <button onclick="changeFaviconToGreen()">Favicon auf Grün ändern</button>
+
+    <script>
+      function setFavicon(svgContent) {
+        // Favicon-Link-Tag finden
+        let favicon = document.getElementById("favicon");
+        if (!favicon) {
+          favicon = document.createElement("link");
+          favicon.id = "favicon";
+          favicon.rel = "icon";
+          document.head.appendChild(favicon);
+        }
+        // SVG-Inhalt als Base64 kodieren und setzen
+        const svgBase64 = btoa(svgContent);
+        favicon.href = `data:image/svg+xml;base64,${svgBase64}`;
+      }
+      function setFavicon2(svgContent) {
+        // Favicon-Link-Tag finden
+        let favicon = document.getElementById("favicon");
+        if (!favicon) {
+          favicon = document.createElement("link");
+          favicon.id = "favicon";
+          favicon.rel = "icon";
+          document.head.appendChild(favicon);
+        }
+        // SVG-Inhalt als Base64 kodieren und setzen
+        favicon.href = svgContent;
+      }
+
+      async function changeFaviconToBlue() {
+        let x = 0;
+        let svgContent = "";
+        do {
+        //   svgContent = `
+        //       <svg
+        //   viewBox="0 0 50 50"
+        //   xmlns="http://www.w3.org/2000/svg"
+        //   xmlns:xlink="http://www.w3.org/1999/xlink"
+        // >
+
+        //   <defs>
+        //     <style>
+        //         svg {
+        //             transform: rotate(${x}deg);
+        //         }
+        //     </style>
+        //     <linearGradient
+        //       id="wg"
+        //       x1="3.4"
+        //       x2="34"
+        //       y1="-34"
+        //       y2="38"
+        //       gradientUnits="userSpaceOnUse"
+        //       xlink:href="#we"
+        //     />
+        //     <linearGradient
+        //       id="we"
+        //       x1="71"
+        //       x2="88"
+        //       y1="167"
+        //       y2="37"
+        //       gradientTransform="matrix(.36 0 0 .36 20 21)"
+        //       gradientUnits="userSpaceOnUse"
+        //     >
+        //       <stop stop-color="#5d30ff" offset="0" />
+        //       <stop stop-color="#00bdff" offset="1" />
+        //     </linearGradient>
+        //     <linearGradient
+        //       id="wf"
+        //       x1="14"
+        //       x2="14"
+        //       y1="80"
+        //       y2="-36"
+        //       gradientUnits="userSpaceOnUse"
+        //       xlink:href="#we"
+        //     />
+        //   </defs>
+
+        //   <path
+        //     d="m14 25s-0.93-18 18-18c9.2 0 18 7.2 18 18 0 20-18 25-25 25-6.4 0-11-2-11-2 2.6-9.8 10-12 11-12 8.9-1.3 11-6.4 11-12 0-8.2-5.9-11-11-11s-11 4.2-11 11z"
+        //     fill="url(#wg)"
+        //     fill-rule="evenodd"
+        //   />
+        //   <path
+        //     d="m14 48s-14-5.9-14-22c0-17 13-25 25-25 17 0 25 15 25 25 0 0-1.1-18-18-18-8 0-18 6.1-18 18-0.038 12 0 22 0 22z"
+        //     fill="url(#wf)"
+        //     fill-rule="evenodd"
+        //   />
+        // </svg>
+        //     `;
+            svgContent= 'data:image/svg+xml,%3Csvg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" %3E%3Cdefs%3E%3Cstyle%3E svg %7B transform: rotate(' + x + 'deg); %7D %3C/style%3E%3ClinearGradient id="wg" x1="3.4" x2="34" y1="-34" y2="38" gradientUnits="userSpaceOnUse" xlink:href="%23we" /%3E%3ClinearGradient id="we" x1="71" x2="88" y1="167" y2="37" gradientTransform="matrix(.36 0 0 .36 20 21)" gradientUnits="userSpaceOnUse" %3E%3Cstop stop-color="%235d30ff" offset="0" /%3E%3Cstop stop-color="%2300bdff" offset="1" /%3E%3C/linearGradient%3E%3ClinearGradient id="wf" x1="14" x2="14" y1="80" y2="-36" gradientUnits="userSpaceOnUse" xlink:href="%23we" /%3E%3C/defs%3E%3Cpath d="m14 25s-0.93-18 18-18c9.2 0 18 7.2 18 18 0 20-18 25-25 25-6.4 0-11-2-11-2 2.6-9.8 10-12 11-12 8.9-1.3 11-6.4 11-12 0-8.2-5.9-11-11-11s-11 4.2-11 11z" fill="url(%23wg)" fill-rule="evenodd" /%3E%3Cpath d="m14 48s-14-5.9-14-22c0-17 13-25 25-25 17 0 25 15 25 25 0 0-1.1-18-18-18-8 0-18 6.1-18 18-0.038 12 0 22 0 22z" fill="url(%23wf)" fill-rule="evenodd" /%3E%3C/svg%3E';
+          setFavicon2(svgContent);
+          x=x+2;
+          await wait(20);
+
+        } while (x < 3600);
+        alert("fertig");
+      }
+
+      function changeFaviconToGreen() {
+        const svgContent = `
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle fill="green" cx="50" cy="50" r="45">
+          <animate
+            attributeName="r"
+            from="45"
+            to="0"
+            dur="2s"
+            repeatCount="indefinite"
+          />
+        </circle>
+      </svg>
+            `;
+        setFavicon(svgContent);
+      }
+      function wait(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+    </script>
+  </body>
+</html>

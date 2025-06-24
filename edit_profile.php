@@ -88,8 +88,9 @@ checkAuth("unauthorized");
                             <div class="profile-fields">
                                 <div class="input-field transparent">
                                     <label>Description</label>
-                                    <textarea cols="40" rows="5" maxlength="2000" class="input-textarea"  id="biography"  name="profile-description" placeholder="Write a description to your profile..." ></textarea>
+                                    <textarea cols="40" rows="5" maxlength="5000" class="input-textarea"  id="biography"  name="profile-description" placeholder="Write a description to your profile..." ></textarea>
                                 </div>
+                                <div id="response_msg_bio" class="response_msg"></div>
                                 <div class="input-field transparent">
                                     <label>Username</label>
                                     <span>@<span  id="pusername">&nbsp;</span></span>
@@ -131,8 +132,10 @@ checkAuth("unauthorized");
                                 <div class="image-preview-wrapper">
                                     <img id="previewImage" src="" alt="Preview" />
                                 </div>
-                                <label>Zoom</label>
-                                <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" />
+                                <div class="img-zoom">
+                                    <label>Zoom</label>
+                                    <input type="range" id="zoomSlider" min="1" max="3" step="0.1" value="1" />
+                                </div>
                                 <div class="button-row">
                                     <button id="cancelBtn" class="btn-transparent">Cancel</button>
                                     <button id="applyBtn" class="btn-blue">Apply</button>

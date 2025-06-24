@@ -7,20 +7,33 @@
   --text-color: hsl(0, 100%, 99%);
   --gradient1: hsl(195, 100%, 55%);
   --gradient2: hsl(220, 72%, 56%);
-  --button-bg: hsl(218, 50%, 50%);
+  --button-bg: hsl(218, 100%, 50%);
   --button-color: white;
   --button-hover: hsl(210, 100%, 75%);
   --link-color: hsl(192, 70%, 75%);
+  --white-opacity-50: hsla(0, 0%, 100%, 0.5);
+  --black-opacity-50: hsla(0, 0%, 0%, 0.5);
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     --background-color: hsl(0, 100%, 99%);
     --text-color: hsl(0, 0%, 15%);
   }
+} */
+
+<<<<<<< HEAD
+/* Schriftart lokal im CSS einbinden */
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/Poppins-Medium.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
+=======
 
-
+>>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
 
 html {
   scroll-behavior: smooth;
@@ -29,18 +42,26 @@ html {
 
 body {
   font-family: "Poppins", sans-serif;
+<<<<<<< HEAD
+=======
   font-size: 18px;
+>>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
   margin: 0;
   background: var(--background-color);
   color: var(--text-color);
-  width: 100vw;
-  min-height: 100vh;
+  overflow: hidden;
   display: grid;
   grid-template-areas: "bild form";
-  grid-template-columns: 60% 1fr;
+  grid-template-columns: 60% 40%;
   /* grid-template-rows: 100vh; */
   justify-content: center;
+  height: 100vh;
   /* scrollbar-width: none; */
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 @media (orientation: portrait) {
@@ -111,38 +132,134 @@ body {
   }
 }
 
+.cont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: url('../svg/blueglow1.svg') no-repeat bottom left;
+  background-size: contain;
+  overflow-y: auto;
+}
+
+.container{
+  background: url('../svg/blueglow.svg') no-repeat top right;
+  background-size: contain;
+}
+
+
+
 .form-container {
   grid-area: form;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   padding: 1rem 2rem;
+  height: 100%;
 }
 .form-container.hide{
   display: none;
 }
 
 .heading {
-  font-weight: 500;
+  font-weight: 400;
   font-size: clamp(1rem, 6vh, 2rem);
-  line-height: 1.8rem;
-  letter-spacing: 0.02em;
-  text-align: center;
+  line-height: 2.5rem;
+  letter-spacing: 2%;
   margin-bottom: 0.5rem;
+}
+
+.waving-hand {
+  display: inline-block;
+  animation: wave 15s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  2% { transform: rotate(14deg); }
+  4% { transform: rotate(-8deg); }
+  6% { transform: rotate(14deg); }
+  8% { transform: rotate(-4deg); }
+  10% { transform: rotate(10deg); }
+  12% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+
+
+.peerLogo img{
+  width: 5rem;
+}
+
+.rem-for {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.rem-for label{
+  display: flex;
+  flex-direction: row;
+  color: var(--white-opacity-50);
+  background: none;
+  font-size: 0.6rem;
+  font-weight: 400;
+  align-items: center;
+}
+
+.rem-for input {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--white-opacity-50);
+}
+
+.reg {
+  background: var(--input-background) !important;
+  color: var(--background-color) !important;
+  align-items: center;
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.reg img {
+  width: 0.9rem;
+}
+
+.reg:hover img {
+  filter: invert(1) brightness(2);
+}
+
+.reg:hover {
+  background: var(--button-bg) !important;
+  color: var(--button-color) !important;
 }
 
 .description {
   font-weight: 400;
   font-size: 0.6rem;
   line-height: 0.8rem;
-  letter-spacing: 0.02em;
-  text-align: center;
-  max-width: 18rem;
+  letter-spacing: 2%;
+  max-width: 20rem;
+  color: var( --white-opacity-50);
 }
 
 .br {
   min-height: 0.6rem;
+}
+
+.footer p {
+  color: var(--white-opacity-50);
+  font-size: 0.6rem;
+}
+
+.footer a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.6rem;
 }
 
 @layer base {
@@ -159,19 +276,23 @@ body {
     -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
     -webkit-text-fill-color: #000 !important;
     transition: background-color 5000s ease-in-out 0s;
-    font-size: 0.8rem !important;
+    font-size: 0.8rem;
   }
 }
 
 .input-field {
   display: flex;
-  padding: 0.6rem;
-  width: 80%;
-  max-width: 30rem;
   background: var(--input-background);
   border-radius: 800px;
-  margin: 0.2rem 0;
+  margin: 0.3rem 0;
   position: relative;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+
+.input-field img {
+  width: 1.1rem;
 }
 
 .input-text {
@@ -182,21 +303,21 @@ body {
   border: none;
   background-color: transparent !important;
   caret-color: #000;
+  line-height: 50px;
 }
 
 .button {
-  width: calc(80% + 1.2rem);
-  max-width: 31.2rem;
+  width: 100%;
   background: var(--button-bg);
   border-radius: 800px;
   font-weight: 500;
   font-size: 0.8rem;
   color: var(--button-color);
   margin: 1.7rem 0;
-  padding: 0.5rem;
   cursor: pointer;
   transform-origin: 100% 100%;
   border: none;
+  line-height: 50px;
 }
 a.button {
 	text-decoration: none;
@@ -211,7 +332,8 @@ a.disable {
 	cursor: not-allowed;
 }
 .button:hover {
-  background: var(--button-hover);
+  background: var(--text-color);
+  color: var(--background-color);
 }
 
 .signIn {
@@ -221,14 +343,17 @@ a.disable {
 }
 
 .link {
-  font-weight: 700;
+  font-weight: 400;
+  letter-spacing: 2%;
   font-size: 0.6rem;
   text-decoration: underline;
-  color: var(--link-color);
+  color: var( --white-opacity-50);
 }
 
 input::placeholder {
-  color: var(--input_placeholder);
+  color: var( --black-opacity-50);
+  font-weight: 400;
+  letter-spacing: 2%;
 }
 
 input:focus {
@@ -288,6 +413,47 @@ body::-webkit-scrollbar {
   box-shadow: inset 0 2px 5px hsla(0, 0%, 0%, 0.5);
 }
 
+@media (max-width: 1500px) {
+  .heading {
+    font-size: clamp(0.6rem, 4vh, 1.4rem);
+    line-height: 1.5rem;
+  }
+
+  .input-text,
+  .button {
+    line-height: 40px;
+    font-size: clamp(0.6rem, 1vw, 0.8rem);
+  }
+
+  .input-field img {
+    width: clamp(0.8rem, 1vw, 1.1rem);
+  }
+
+  .button img {
+    width: clamp(0.6rem, 1vw, 0.9rem);
+  }
+
+  .button {
+    margin: 0.8rem 0;
+  }
+
+  .rem-for label,
+  .link{
+    font-size: clamp(0.5rem, 1vw, 0.6rem);
+  }
+
+  .footer p,
+  .footer a {
+    font-size: clamp(0.4rem, 1vw, 0.6rem);
+  }
+
+  .validationMessage {
+    font-size: clamp(0.5rem, 1vw, 16px);
+  }
+
+  
+}
+
 @keyframes infinite-slide {
   0% {
     transform: translateX(0) scale(1) rotate(0deg) skew(0deg, 0deg);
@@ -318,19 +484,6 @@ body::-webkit-scrollbar {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-
-.auth {
-  position: relative;
-  display: flex;
-  align-items: center;
-  /* align-self: center; */
-  width: 8rem;
-  margin: 2rem;
-  justify-content: center;
-  /* align-content: center; */
-  /* flex-direction: row; */
-  /* height: 4rem; */
 }
 
 .buttons {
@@ -423,16 +576,14 @@ body::-webkit-scrollbar {
   display: flex;
   align-items: center;
   text-align: center;
-  color: #333;
-  margin: 20px 0;
-  width: 70%;
+  color: var( --white-opacity-50);
 }
 
 .line-with-text::before,
 .line-with-text::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #ffffff;
+  border-bottom: 1px solid var(--white-opacity-50);
   /* width: 10vw; */
 }
 
@@ -447,32 +598,14 @@ body::-webkit-scrollbar {
 .line-with-text span {
   font-weight: bold;
   padding: 0 10px;
-  color: var(--text-color);
+  color: var( --white-opacity-50);
 }
 
-label {
-  position: absolute;
-  top: 100%;
-  font-size: x-small;
-  left: 7%;
-  /* color: red; */
-  background: red;
-  width: 80%;
-  padding: 0;
-  border-radius: 0 0 6px 6px;
-  height: 0;
-  transition-property: height;
-  transition-duration: 1s;
-}
-
-#validationMessage {
+.validationMessage {
 	color: red;
-	transition-property: color;
-	transition-duration: 1s;
-	transition-delay: 0s;
-	max-width: 700px;
-	font-size: 16px;
 	line-height: 18px;
+  display: block;
+  text-align: center;
 }
 
 .notvalid,.error {
@@ -483,6 +616,34 @@ label {
 
 input:focus + label {
   display: none;
+}
+
+.input-field.focused .email-icon{
+  opacity: 0;
+  pointer-events: none;
+}
+
+.password-field.focused .password-icon{
+  opacity: 0;
+  pointer-events: none;
+}
+
+.input-field.focused {
+  padding: 0 1rem 0 0;
+}
+
+.input-field.valid .tick {
+  filter: brightness(0) saturate(100%) invert(48%) sepia(91%) saturate(363%) hue-rotate(63deg) brightness(92%) contrast(92%);
+}
+
+.tick {
+  opacity: 0.5;
+}
+
+.seePass {
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
 }
 
 .valid {
