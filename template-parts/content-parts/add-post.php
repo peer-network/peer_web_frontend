@@ -58,19 +58,18 @@
             <div id="preview-image" class="blockscroll preview-container"></div>
             <button class="btn-blue" id="createPostImage">Upload</button>
             <div id="crop-container" class="none">
-                <label>
-                    Seitenverhältnis:
-                    <select id="aspectRatioSelect">
-                        <option value="1">1:1</option>
-                        <option value="4/3">4:3</option>
-                        <option value="16/9">16:9</option>
-                    </select>
-                </label>
-                <br />
                 <canvas id="cropcanvas" width="2000" height="2000"></canvas>
                 <canvas id="croppedCanvas" width="500" height="500"></canvas>
-                <button id="cropBtn">Crop</button>
-                <button id="cropQuit">Quit</button>
+                <div id="cropButtons">
+                    <button id="cropQuit">back</button>
+                    <button id="cropBtn">save</button>
+                </div>
+                <div id="aspectRatioSelect" class="aspect-ratio-toggle">
+                    <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
+                    <label for="ar-1">1:1 Square</label>
+                    <input type="radio" id="ar-2" name="aspectRatio" value="0.8">
+                    <label for="ar-2">4:5 Vertical</label>
+                </div>
             </div>
         </form>
         <form id="newNotesPost" class="upload" method="post">
