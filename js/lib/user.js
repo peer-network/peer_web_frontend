@@ -12,11 +12,7 @@ async function fetchHelloData(userid = null) {
       hello {
           currentuserid
       }
-<<<<<<< HEAD
-      profile(userid: ${userid}) {
-=======
       getProfile(userid: ${userid}) {
->>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
         status
         ResponseCode
         affectedRows {
@@ -113,7 +109,9 @@ async function getUser() {
     document.getElementById("userPosts").innerText = profil.data.getProfile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.getProfile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.getProfile.affectedRows.amountfollowed;
-    document.getElementById("Peers").innerText = profil.data.getProfile.affectedRows.amountfriends;
+    if (document.getElementById("Peers")) {
+      document.getElementById("Peers").innerText = profil.data.getProfile.affectedRows.amountfriends;
+    }
 
     const img = document.getElementById("profilbild");
     img.onerror = function () {

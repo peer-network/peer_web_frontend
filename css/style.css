@@ -19,7 +19,13 @@
   --stat-p: hsl(0, 0%, 67%);
   --black: hsl(0, 0%, 0%);
   --white: hsl(0, 0%, 100%);
+  --white-secondary:rgba(255, 255, 255, 0.50);
+  --blue:#0069FF;
   --shadow-add: hsl(0, 0%, 51%);
+
+  --dark-inactive:#323232;
+  --black-dark: #252525;
+  --Field-Hover-Black: #393939;
 
   --translate-x: 0px;
   /* X-Verschiebung */
@@ -143,11 +149,11 @@ a {
 }
 
 
-b,strong {  font-weight: bold;}
+b,strong,.bold {  font-weight: bold;}
 img {
   border: 0;
 }
-h1 {
+h1,.xxl_font_size {
 font-size: 35px;
 /*font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);*/
 line-height: 1.2;
@@ -157,6 +163,11 @@ letter-spacing: 0.02em; /* 2% = 0.02em */
   text-transform: none;
 
 }
+.xxl_font_size { font-weight: 700;}
+.xl_font_size{font-size: 20px;}
+
+
+
 h2 {
 font-size: 35px;
 
@@ -208,6 +219,15 @@ input[type="submit"] {
 button[disabled],
 html input[disabled] {
   cursor: default;
+}
+.txt-color-white{
+	color:var(--white, #fff);
+}
+.txt-color-gray{
+	color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+}
+.txt-color-blue{
+	color: var(--blue, #0069FF);
 }
 /*--------------------------------------------------------------
 ## Links
@@ -435,6 +455,41 @@ textarea {
   padding: 2rem;
   width: 100%;
 }
+
+/*--------------------------------------------------------------
+# Fancy Scroll bar
+--------------------------------------------------------------*/
+
+.fancy-scrollbar {
+  
+  overflow-y: auto;
+  padding-right: 20px;
+  scrollbar-width: thin;             /* Firefox */
+  scrollbar-color: var( --black-dark, #252525) transparent;  /* Firefox */
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+.fancy-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 10px;
+}
+
+.fancy-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.fancy-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var( --black-dark, #252525), var( --black-dark, #252525));
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;
+}
+
+.fancy-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var( --black-dark, #252525), var( --black-dark, #252525));
+}
+
+
 /*--------------------------------------------------------------
 # Accessibility
 --------------------------------------------------------------*/
@@ -478,7 +533,7 @@ textarea {
 # Site Globals
 --------------------------------------------------------------*/
 .profile-picture {
-  width: 80%;
+  width: 2rem;
   height: auto;
   border-radius: 50%;
   aspect-ratio: 1 / 1;
@@ -683,9 +738,7 @@ footer {grid-area: footer;}
 .widget .widget-profile .profile-picture {
 	width: 80%;
 	height: auto;
-	border-radius: 50%;
-	aspect-ratio: 1 / 1;
-	object-fit: cover;
+	
 }
 .widget .widget-profile .pro-name {
 	display: flex;
@@ -891,8 +944,7 @@ footer {grid-area: footer;}
 # Content Parts Block CSS
 --------------------------------------------------------------*/
 /*-----------Post Search Filter-------------*/
-.post-search-filters{ display: flex;justify-content: end;
-  flex-wrap: wrap; gap: 1rem;}
+.post-search-filters{ display: flex;justify-content: center;  flex-wrap: wrap; gap: 1rem;}
 .search-group {
 	display: flex;
 	width: 100%;
@@ -1050,17 +1102,22 @@ footer {grid-area: footer;}
 		height: auto;
 	}
 
-	h1 {
+	h1,.xxl_font_size {
 		font-size: 45px;
+		font-size: clamp(1.875rem, 1.4063rem + 0.75vw, 2.8125rem);
 		
 		
 	}
-	h3 {
-		font-size: 28px;
+	.xl_font_size {
+		font-size: 30px;
+		font-size: clamp(1.5rem, 1.3125rem + 0.3vw, 1.875rem); /*==== 3k to 1k*/
 		
 	
 	}
-
+	h3,.md_font_size{
+		font-size: 25px;
+		font-size: clamp(1.25rem, 1.0938rem + 0.25vw, 1.5625rem);
+	}
 	input[type="text"],
 	input[type="email"],
 	input[type="url"],
@@ -1078,9 +1135,9 @@ footer {grid-area: footer;}
 	input[type="color"],
 	textarea
 	 {
-		font-size: 20px;
+		font-size: 18px;
     	
-		/*height: 5.12rem;*/
+		
 	}
 	.post-search-filters .notify {
 		width: 82px;
@@ -1094,20 +1151,25 @@ footer {grid-area: footer;}
 	body, button, input, select, optgroup, textarea {
 		
 		font-size: 28px;
-		font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
 	}
 
-	h1 {
+	h1,.xxl_font_size {
 		font-size: 64px;
-		font-size: clamp(3.125rem, 1.9412rem + 0.8235vw, 4rem);
+		
+		font-size: clamp(2.5rem, 1rem + 1.2vw, 4rem);
 		
 	}
-	h3 {
+	.xl_font_size {
 		font-size: 45px;
-		font-size: clamp(2.5rem, 2.0772rem + 0.2941vw, 2.8125rem);
+		
+		font-size: clamp(1.875rem, 0.9375rem + 0.75vw, 2.8125rem);
 	
 	}
-
+	h3,.md_font_size{
+		font-size: 35px;
+		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+	}
 	.site_layout {
 		grid-template-columns: 650px 1fr 650px;
 	}
@@ -1156,7 +1218,7 @@ footer {grid-area: footer;}
 	textarea
 	 {
 		font-size: 35px;
-    	font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
+		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 		height: 8.12rem;
 	}
 	.post-search-filters .notify {
@@ -1168,7 +1230,7 @@ footer {grid-area: footer;}
 	.widget .widget-profile .pro-name,
 	.widget .widget-profile .stats .stat span {
 		font-size: 35px;
-		font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
+		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 	}
 
 	.widget ul.menu li a {

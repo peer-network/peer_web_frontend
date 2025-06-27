@@ -72,11 +72,13 @@ async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby 
                 parentid
                 content
                 amountlikes
+                amountreplies
                 isliked
                 createdat
                 user {
                     id
                     username
+                    slug
                     img
                     isfollowed
                     isfollowing
@@ -285,12 +287,25 @@ async function LiquiudityCheck(postCosts, title, action) {
     if (answer === null || answer.button  === cancel) {
       return false;
     }
-    const freeused = parseInt(document.getElementById(limitIDs[action][0]).innerText) + 1;
-    const freeavailable = parseInt(document.getElementById(limitIDs[action][1]).innerText) - 1;
-    document.getElementById(limitIDs[action][0]).innerText = freeused;
-    document.getElementById(limitIDs[action][1]).innerText = freeavailable;
-    document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
-
+    let freeused = 0;
+    let freeavailable = 0;
+    const usedObjID=document.getElementById(limitIDs[action][0]);
+    const availableObjID=document.getElementById(limitIDs[action][1]);
+    if (usedObjID ) {
+       freeused = parseInt(usedObjID.innerText) + 1;
+       usedObjID.innerText = freeused;
+    }
+    if (availableObjID ) {
+       freeavailable = parseInt(availableObjID.innerText) - 1;
+       availableObjID.innerText = freeavailable;
+    }
+    // Safely update progress bar if third ID exists
+    const progressBar = document.getElementById(limitIDs[action][2]);
+    if (progressBar && (freeused + freeavailable) > 0) {
+      const percentage = (100 * freeavailable) / (freeused + freeavailable);
+      progressBar.style.setProperty("--progress", percentage + "%");
+    }
+    
     if(freeavailable===0){ // if consumed free then reset popup for paid likes or comments or post
       const settings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
       const key_to_remove=msg[action];
