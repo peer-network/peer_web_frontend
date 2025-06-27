@@ -5,17 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const params = new URLSearchParams(window.location.search);
     const userID = params.get('user');
-
+    let isfollowed, isfollowing = null;
     //console.log(userID); // Outputs: 90fd2510-b682-4fe3-8a3a-2456c5a8d170
 
     getProfile(userID).then(userprofile => {
       
-        if(userprofile.ResponseCode=='30201' && userprofile.status=='error'){
-          //No User Found;
-          window.location.href = "404.php";
-          return;
-        }
-
+      if(userprofile.ResponseCode=='30201' && userprofile.status=='error'){
+        //No User Found;
+        window.location.href = "404.php";
+        return;
+      }
 
       const profileimg = document.getElementById("profilbild2");
       const username2 = document.getElementById("username2");
@@ -26,10 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const userPosts2 = document.getElementById("userPosts2");
       const biography2 = document.getElementById("biography2");
       const bioPath2 = userprofile.affectedRows.biography;
+      // follow btn logic on view-profile
+      isfollowed = userprofile.affectedRows.isfollowed;
+      isfollowing = userprofile.affectedRows.isfollowing;
+      document.getElementById("followbtn").textContent = (isfollowing && isfollowed ? "Peer" : isfollowing ? "Following" : "Follow +");
 
-        profileimg.onerror = function () {
-          this.src = "svg/noname.svg";
-        };
+      profileimg.onerror = function () {
+        this.src = "svg/noname.svg";
+      };
       profileimg.src = userprofile.affectedRows.img ? tempMedia(userprofile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
 
       if(username2){
@@ -75,9 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       
     });
-
-  
-   
   
    const post_loader = document.getElementById("post_loader");
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
@@ -101,10 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.warn("⚠️ Post Loader element not found — cannot observe.");
   }
-  
-  
-  
-});
 
 async function getProfile(userID) {
     const accessToken = getCookie("authToken");
@@ -145,10 +141,34 @@ async function getProfile(userID) {
       });
 
       const json = await response.json();
-      console.log("GraphQL Response:", json); // add this
       return json?.data?.getProfile || null;
     } catch (error) {
       console.error("Error fetching profile:", error);
       return null;
     }
-  }
+}
+
+document.getElementById("followbtn").addEventListener("click", async function () {
+    const followerCountSpan = document.getElementById("following");
+    try {
+      const result = await toggleFollowStatus(userID); 
+      if (result !== null) {
+        // Update class
+        this.classList.toggle("following", result);
+        // Update button text
+        this.textContent = (result && isfollowed ? "Peer" : result ? "Following" : "Follow +");
+        // Update follower count
+        if (followerCountSpan) {
+          let count = parseInt(followerCountSpan.textContent, 10) || 0;
+          count = result ? count + 1 : Math.max(0, count - 1);
+          followerCountSpan.textContent = count;
+        }
+      } else {
+        alert("Failed to update follow status. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error updating follow status:", err);
+      alert("Something went wrong. Try again later.");
+    }
+  });
+});
