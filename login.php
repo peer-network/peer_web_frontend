@@ -26,6 +26,7 @@ if (isset($_GET['message'])) {
 <?php endif; ?>
 
 <head>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
@@ -55,40 +56,45 @@ if (isset($_GET['message'])) {
         <img class="logo" src="svg/logo_farbe.svg" alt="Peer logo" width="96" height="96" />
     </aside>
 
-    <form id="registerForm" class="form-container">
-        <h1 class="heading">Welcome back!</h1>
-        <p class="description">Almost like with any social media you can share the content you love, but with peer, you earn on the side – no fame needed!</p>
-        <div class="auth">
-            <div class="vector">
-                <img class="bubbles" alt="bubbles" src="svg/bubbles.svg" width="351" height="128">
-                <div class="buttons">
-                    <img src="svg/github.svg" height="48" width="48" alt="Login with GitHub">
-                    <img src="svg/google.svg" height="48" width="48" alt="Login with Google">
-                    <img src="svg/apple.svg" height="48" width="48" alt="Login with Apple">
-                </div>
+    <div class="cont"> 
+        <form id="registerForm" class="form-container">
+            <div class="peerLogo">
+                <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
             </div>
-        </div>
-        <div class="line-with-text"><span>or</span></div>
-        <div class="input-field">
-            <input type="email" id="email" name="e_mail" placeholder="E-Mail" required class="input-text" autocomplete="on"></input>
-        </div>
+            <div class="head">
+                <h1 class="heading">Hey there, <span class="waving-hand">👋</span><br> Welcome back!</h1>
+                <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
+            </div>
+            <div class="input-field">
+                <img class="email-icon" src="svg/email-icon.svg"  alt="email icon">
+                <input type="email" id="email" name="e_mail" placeholder="E-mail" required class="input-text" autocomplete="on"></input>
+                <img class="tick" src="svg/tick-icon.png" alt="tick">
+            </div>
 
-        <div class="input-field">
-            <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
-            <label id="validationMessage" for="password"></label>
+            <div class="input-field password-field">
+                <img class="password-icon" src="svg/lock1.svg" alt="">
+                <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
+                <img class="seePass" src="svg/seePass.png" alt="See Password" id="togglePassword">
+            </div>
+            <div class="validationMessage" id="validationMessage" for="password"  aria-live="polite"></div>
+            <div class="rem-for">
+                <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
+                <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
+            </div>
+            <input id="submit" class="button" type="submit" name="Login" value="Login">
+            <div class="line-with-text"><span>OR</span></div>
+            <a href="register.php" class="button reg">
+                <span>Register&nbsp;now</span>
+                <img src="svg/arrow1.svg" alt="">
+            </a>
+            <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
+             
+        </form>
+        <div class="footer">
+            <a href="" class="privacy">Privacy Policy</a>
+            <p class="version">Version 1.0.0</p>
         </div>
-        <div class="signIn">
-            <a class="link" href="forgotpassword.php">forgot&nbsp;password</a>
-        </div>
-        <input id="submit" class="button" type="submit" name="Login" value="Login">
-
-        <div class="signIn">
-            <span class="description">Don't have an account?&nbsp;</span>
-            <a class="link" href="register.php">Register&nbsp;</a>
-        </div>
-        <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
-    </form>
-
+    </div>
 </body>
 
 </html>
