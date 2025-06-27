@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
   --input-background: hsl(0, 0%, 85%);
   --input-textcolor: hsl(212, 100%, 3%);
   --input_placeholder: hsl(0, 0%, 22%);

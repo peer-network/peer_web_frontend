@@ -21,10 +21,6 @@ if (isset($_GET['message'])) {
 ?>
 <!DOCTYPE html>
 <html lang="de">
-<?php if ($message): ?>
-<div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
-<?php endif; ?>
-
 <head>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
@@ -58,6 +54,9 @@ if (isset($_GET['message'])) {
 
     <div class="cont"> 
         <form id="registerForm" class="form-container">
+            <?php if ($message): ?>
+            <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
+            <?php endif; ?>
             <div class="peerLogo">
                 <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
             </div>

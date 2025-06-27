@@ -39,7 +39,11 @@ function extractWords(str) {
 
   const normalWords = words.filter((word) => !word.startsWith("#") && !word.startsWith("@"));
 
-  return { hashtags, usernames, normalWords };
+  return {
+    hashtags,
+    usernames,
+    normalWords
+  };
 }
 
 function debounce(func, wait) {
@@ -74,11 +78,13 @@ function addMediaListener(mediaElement) {
     });
   });
 }
+
 function addEditImageListener(element) {
   element.removeEventListener("click", handleEditImage);
   element.addEventListener("click", handleEditImage);
 }
 let cropOrg = null;
+
 function handleEditImage(event) {
   event.preventDefault();
   document.getElementById("crop-container").classList.remove("none");
@@ -101,6 +107,7 @@ function handleDelete(event) {
   event.target.parentElement.remove();
   // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
+
 function isFileLargerThanMB(file, mb) {
   const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
   return file.size > maxBytes;
@@ -154,8 +161,8 @@ function togglePopup(popup) {
   const cc = document.getElementById(popup);
   cc.classList.toggle("none");
 
-  const imageContainer = document.getElementById("comment-img-container");
-  imageContainer.innerHTML = "";
+  // const imageContainer = document.getElementById("comment-img-container");
+  // imageContainer.innerHTML = "";
 }
 
 // daily free actions
@@ -317,23 +324,34 @@ async function getDailyFreeStatus() {
     const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
- if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .getRegistrations()
-      .then(function (registrations) {
-        for (let registration of registrations) {
-          registration.unregister().then(function (success) {
-            if (success) {
-              // console.log("Service Worker erfolgreich abgemeldet.");
-            } else {
-              // console.warn("Service Worker konnte nicht abgemeldet werden.");
-            }
-          });
-        }
-      })
-      .catch(function (error) {
-        // console.error("Fehler beim Abrufen der Registrierungen:", error);
-      });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then(function (registrations) {
+          for (let registration of registrations) {
+            registration.unregister().then(function (success) {
+              if (success) {
+                // console.log("Service Worker erfolgreich abgemeldet.");
+              } else {
+                // console.warn("Service Worker konnte nicht abgemeldet werden.");
+              }
+            });
+          }
+        })
+        .catch(function (error) {
+          // console.error("Fehler beim Abrufen der Registrierungen:", error);
+        });
+    }
+
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
+    return result.data.getDailyFreeStatus.affectedRows;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
 }
 
 function calctimeAgo(datetime) {
@@ -350,21 +368,11 @@ function calctimeAgo(datetime) {
   const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
   const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
 
-  if (seconds < 60) return `${seconds} sec` ;
+  if (seconds < 60) return `${seconds} sec`;
   if (minutes < 60) return `${minutes} min`;
-  if (hours < 24) return `${hours}h` ;
+  if (hours < 24) return `${hours}h`;
   if (days < 7) return `${days}d`;
   if (weeks < 4) return `${weeks}w`;
   if (months < 12) return `${months}m`;
   return `${years} y`;
 }
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    return result.data.getDailyFreeStatus.affectedRows;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
-}
-
