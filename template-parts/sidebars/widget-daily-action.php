@@ -17,6 +17,7 @@
                             <div id="LikesStat" class="progress" ></div>
                         </div>
                     </div>
+                    
 
                     <div class="limit-container">
                         <div class="label">

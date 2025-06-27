@@ -62,6 +62,7 @@ async function createComment(postId, content, parentId = null) {
     Authorization: `Bearer ${accessToken}`,
   });
 
+  
   const query = `
     mutation CreateComment($postId: ID!, $content: String!, $parentId: ID) {
       createComment(action: COMMENT, postid: $postId, content: $content, parentid: $parentId) {
@@ -74,6 +75,7 @@ async function createComment(postId, content, parentId = null) {
           content
           createdat
           amountlikes
+          amountreplies
           isliked
           postid
           parentid

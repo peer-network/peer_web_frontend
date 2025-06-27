@@ -317,6 +317,47 @@ async function getDailyFreeStatus() {
     const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
+ if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister().then(function (success) {
+            if (success) {
+              // console.log("Service Worker erfolgreich abgemeldet.");
+            } else {
+              // console.warn("Service Worker konnte nicht abgemeldet werden.");
+            }
+          });
+        }
+      })
+      .catch(function (error) {
+        // console.error("Fehler beim Abrufen der Registrierungen:", error);
+      });
+}
+
+function calctimeAgo(datetime) {
+  const now = Date.now(); // Aktuelle Zeit in Millisekunden
+  const timestamp = new Date(adjustForDSTAndFormat(datetime)); // ISO-konforme Umwandlung
+
+  const elapsed = now - timestamp - 3600000; // Verstrichene Zeit in Millisekunden
+
+  const seconds = Math.floor(elapsed / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
+  const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
+
+  if (seconds < 60) return `${seconds} sec` ;
+  if (minutes < 60) return `${minutes} min`;
+  if (hours < 24) return `${hours}h` ;
+  if (days < 7) return `${days}d`;
+  if (weeks < 4) return `${weeks}w`;
+  if (months < 12) return `${months}m`;
+  return `${years} y`;
+}
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
@@ -327,21 +368,3 @@ async function getDailyFreeStatus() {
   }
 }
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .getRegistrations()
-    .then(function (registrations) {
-      for (let registration of registrations) {
-        registration.unregister().then(function (success) {
-          if (success) {
-            // console.log("Service Worker erfolgreich abgemeldet.");
-          } else {
-            // console.warn("Service Worker konnte nicht abgemeldet werden.");
-          }
-        });
-      }
-    })
-    .catch(function (error) {
-      // console.error("Fehler beim Abrufen der Registrierungen:", error);
-    });
-}

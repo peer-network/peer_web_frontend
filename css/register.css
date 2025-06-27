@@ -22,18 +22,6 @@
   }
 } */
 
-<<<<<<< HEAD
-/* Schriftart lokal im CSS einbinden */
-@font-face {
-  font-family: "Poppins";
-  src: url("../fonts/Poppins-Medium.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-=======
-
->>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
 
 html {
   scroll-behavior: smooth;
@@ -42,10 +30,7 @@ html {
 
 body {
   font-family: "Poppins", sans-serif;
-<<<<<<< HEAD
-=======
   font-size: 18px;
->>>>>>> 2549ae380ddaa952504a38d8a0151f559b756297
   margin: 0;
   background: var(--background-color);
   color: var(--text-color);

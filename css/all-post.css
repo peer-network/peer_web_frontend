@@ -1,7 +1,7 @@
 
 .list_all_post {
 	
-	/* display: grid; */
+	
 	gap: 2rem;
 	width: 100%;
 	padding: 2rem 0;
@@ -9,31 +9,24 @@
 	margin-top: 2rem;
 	scroll-snap-type: y mandatory;
 	overflow-x: hidden;
-	/* justify-content: space-evenly; */
-	/* grid-template-columns: auto auto auto; */
-	/* grid-template-rows: auto; */
+	
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	/* flex-flow: column wrap; */
-	/*justify-content: space-between;*/
+	
 	align-items: stretch;
 	align-content: stretch;
 	min-width: 22rem;
 }
 
 .card {
-  background-color: var(--background-color);
+  background-color: var(--bg-filter);
   height: 24rem;
   position: relative;
   display: flex;
-  /* flex-direction: column-reverse; */
-  /* align-items: flex-end; */
-  /* background-color: red; */
-  /*width: 100%;*/
+  
   aspect-ratio: 3/4.34;
-  /* box-shadow: .3rem .3rem 6px #3d3d3d; */
-  /* justify-content: flex-start; */
+ 
   overflow: hidden;
   border-radius: 1.5rem;
   scroll-snap-align: start;
@@ -43,20 +36,19 @@
   max-height: 30em;
   flex-shrink: 1;
   flex-grow: 1;
+  cursor: pointer;
+}
+.card.double-card {
+	flex: 0 0 calc(2 * (100% / 4) - 2rem);
+	aspect-ratio: 3 / 2.17;
 }
 
-/* .card:hover {
-  margin-left: -100%;
-  width: 200%;
-  z-index: 99;
-  transition: all 0.4s ease-out;
-} */
 
 .card .post {
   height: 100%;
   width: 100%;
   left: 0;
-  padding: 1rem;
+  
   position: relative;
   display: flex;
   flex-direction: column;
@@ -64,8 +56,7 @@
   align-items: flex-start;
 }
 
-.card  .post img,
-.card .custom-text {
+.card  .post img{
 	position: absolute;
 	height: 100%;
 	width: 100%;
@@ -76,38 +67,9 @@
 	object-fit: cover;
 }
 
-.card .custom-text {
-  
-  
-  
-  width: 100%;
-  
-  border: none;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-  word-break: break-word;
-  overflow-y: auto;
-  height: 57%;
-  position: relative;
-}
 
 /* Stil für das Audio-Element */
-.card .custom-audio {
-  display: none;
-  width: 90%; /* Breite des Players */
-  height: 4rem; /* Höhe des Players */
-  background-color: #f0f0f0; /* Hintergrundfarbe */
-  border: 2px solid #007bff; /* Blauer Rahmen */
-  border-radius: 8px; /* Abgerundete Ecken */
-  padding: 5px; /* Abstand im Player */
-}
 
-/* Optional: Hover-Effekt */
- .card .custom-audio:hover {
-  background-color: #e0e0e0;
-  border-color: #0056b3;
-}
  .card .create-video,
 .card .custom-video {
   position: absolute;
@@ -115,34 +77,38 @@
   left: 0;
   z-index: 2;
   width: 100%;
-  height: 85%;
+  height: 100%;
   object-fit: cover;
 }
-.card .custom-video {
-  margin-top: 1rem;
-}
-.noscroll {
-  overflow: hidden;
-}
-.card[content="text"] .post-text {
-  display: none;
-  height: 7rem;
-}
+
+
 
 .card  .post .shadow {
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  box-shadow: inset 0 0 2rem rgba(0, 0, 0, 0.1), inset 0 -3rem 2rem rgba(0, 0, 0, 0.5), inset 0 2rem 2rem rgba(0, 0, 0, 0.5);
+ 
   position: absolute;
-}
+  
+ 
+background: linear-gradient(to bottom,  rgba(0,0,0,0.16) 0%,rgba(0,0,0,0.01) 26%,rgba(0,0,0,0) 27%,rgba(0,0,0,0) 55%,rgba(0,0,0,0) 56%,rgba(0,0,0,0.22) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 
+
+background-blend-mode: normal, luminosity, normal, normal;
+	z-index: 1;
+ 
+  transition: 0.3s all;
+
+}
+.card:hover .post .shadow {
+  background-color: rgba(0,0,0,0.3);
+}
 
 .card  .post-inhalt {
 	position: absolute;
 	top: 0rem;
-	height: 80%;
+	height: 100%;
 	width: 100%;
 	padding: 1rem;
 	left: 0;
@@ -150,97 +116,148 @@
 	z-index: 2;
 	display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  gap: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
 }
 
-.card .post-inhalt h3 {
-	text-shadow: 1px 1px 2px black;
-	margin: 0 !important;
-	font-weight: 700;
-  font-size: 20px;
+.card .post-inhalt .card-header {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+.card-header-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.card-header-left .username-slug span {
+	display: block;
+}
+.card-header-left .username-slug span.profile_id{
+  font-style: normal;
+  font-weight: 400;
+  opacity: 0.7;
 }
 
-.card .follow-button {
-	right: 1rem;
-	top: 1rem;
-	position: absolute;
-	/*font-size: 0.8rem;*/
-	min-width: unset;
-  
+.card .post-inhalt .post-content {
+	margin-top: 20px;
+}
+
+.card .post-inhalt .post-title {
 	
-	font-size: 14px;
-	line-height: 34px;
+	margin: 0 !important;
+	
+  position: relative;
+  padding-right: 83px;
+}
+
+.card .post-inhalt .post-title  .timeAgo {
+	
+	font-weight: 400;
+  font-style: normal;
+  opacity: 0.7;
+  position: absolute;
+  right: 0;
+  top: 5px;
+  
+}
+.card .post-inhalt .post-text{
+  margin-top: 16px;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  
+}
+.card-header-right .follow-button {
+	
+line-height: 40px;
+  font-size: 16px;
 	padding: 0 16px;
+  margin-bottom: 0;
 
 	
 	background-color:transparent;
 	border-color: var(--white);
 }
-.card .follow-button.following {
+.card-header-right .follow-button.following {
  background-color:var(--button-hover);
 	border-color: var(--button-hover);
 }
 .card  .post-userImg {
-	position: absolute;
-	top: 1rem;
-	left: 1rem;
-	width: 2rem;
-	height: 2rem;
-	border-radius: 50%;
+	
+	
 	border: 1px solid var(--text-color);
-	object-fit: cover;
-  cursor: pointer;
+	
 }
 .card  .post-userName {
-	position: absolute;
-	top: 0.5rem;
-	left: 4rem;
-	height: 2rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	z-index: 2;
+	
   cursor: pointer;
-	text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
-	/*filter: drop-shadow(0 0 5px black);*/
+	/*text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
+	filter: drop-shadow(0 0 5px black);*/
   font-weight: 700;
   font-style: italic;
-  font-size: 16px;
-}
-
-.card .timeAgo {
-	top: 1.7rem;
-	font-weight: 400;
-  font-style: normal;
-  font-size: 12px;
+  
 }
 
 
-.card .post-text {
 
-text-shadow: 1px 1px 2px black;
+
+.card .post-inhalt .hashtags {
+	color: var(--blue-text, #0069FF);
+  margin-top: 20px;
+}
+.card .post-inhalt .hashtags span {
+	padding-right: 12px;
+	display: inline-block;
+	padding-bottom: 7px;
 }
 
 .card .social {
-	position: absolute;
-	width: 100%;
-	
 	display: flex;
-	justify-content: space-evenly;
-	bottom: 1.7rem;
-	font-size: 1.1rem;
-	margin: 0 ;
+	
+	margin: 0;
 	flex-direction: row;
 	align-items: center;
-	padding: 0 1rem;
-	font-size: 1.1rem;
+	width: 100%;
+	margin-top: auto;
+	gap: 5%;
 }
 .card .social div {
 	display: flex;
 	align-items: center;
 	gap: 0.4rem;
   cursor: pointer;
+}
+.card .social div i {
+	line-height: 0;
+}
+.card .social div.active i{
+  color: red;
+  animation: pulse 2s;
+  
+}
+.card .social div.post-like.active i::before {
+	content: "\e9a1";
+	font-family: uicons-solid-rounded !important;
+	
+  
+}
+.card .social div.post-dislike.active i::before {
+	content: "\e9a5";
+	font-family: uicons-solid-rounded !important;
+
+}
+
+.card .social div.post-view {
+	order: 4;
+	margin-left: auto;
+	flex-direction: row-reverse;
+	opacity: 0.5;
 }
 .card .social svg {
 	height: 1.4rem;
@@ -252,101 +269,184 @@ text-shadow: 1px 1px 2px black;
   fill: transparent;
   stroke: var(--text-color);
 }
-/* .card[content="image"] {
-  width: 28rem;
-} */
-.card[content="video"] {
-  aspect-ratio: 3/4.34;
-  
-}
-/* .card[content="video"]::before {
-  content: url("../svg/video.svg");
-  position: absolute;
-  width: 2rem;
-  height: auto;
-  top: 0.75rem;
-  right: 1rem;
-  z-index: 9;
-  transform: scale(0.8);
-} */
-.card[content="video"] h3 {
-  margin-top: 20px;
-}
-.card[content="audio"] h3,
-.card[content="image"] h3 {
-  margin-top: 20px;
-}
-.card[content="audio"] h3 {
-  margin-top: 20px;
-}
-.card[content="audio"] {
+/*--------Text---------*/
 
-  /*width: 20cqh;*/
-  aspect-ratio: 3/4.34;
+.card[content="text"] .post .shadow{ display: none;}
+
+.card[content="text"] .post-inhalt .post-text{
+  
+  line-clamp: 4;
+  -webkit-line-clamp: 4;
+ 
   
 }
-/* .card[content="audio"]::before {
-  content: url("../svg/audio.svg");
-  position: absolute;
-  width: 2rem;
+
+/*-------- Image ----------*/
+.card[content="image"]  .post-inhalt {
+	
+	justify-content: end;
+}
+
+.card[content="image"]  .post-inhalt .card-header {
+	margin-bottom: auto;
+}
+
+.card[content="image"] .social {
+	
+	margin-top: 0; 
+	
+}
+.card[content="image"] .post-inhalt .post-content {
+	transition: 0.3s all;
+	transform: translateY(100%);
+	
+	overflow: hidden;
+  opacity: 0;
+}
+.card[content="image"] .post-inhalt:hover .post-content {
+	transform: translateY(0);
+	overflow: visible;
   height: auto;
-  top: 0.6rem;
-  right: 1rem;
-  z-index: 9;
-  transform: scale(0.8);
-} */
-.card[content="text"] h3 {
-  /*z-index: 9;
-   position: absolute; 
-  width: 100%;
-  top: 2.5rem;*/
-  margin-bottom: 0.4rem;
-  text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
-  filter: drop-shadow(0 0 5px black);
-  font-weight: 700;
-  margin-top: 3rem;
-  font-size: 20px;
+  opacity: 1;
+  
 }
-/*
-.card[content="text"]:hover h3 {
- 
-  z-index: 100 !important;
-  text-align: center;
-  padding: 0.3rem 1rem;
-  background-color: #ffffffeb;
-  filter: none;
-  text-shadow: none;
-  color: rgb(0, 0, 0);
-  font-weight: bold;
-  font-size: 1.5rem;
+
+/*--------Video ------------*/
+.card[content="video"]  .post-inhalt .video-player {
+	flex: 1;
+	align-items: end;
+	display: flex;
+  cursor: pointer;
+  transform: translateY(20px);
+transition: 0.6s all;
 }
-.card[content="text"] > div:hover > .post-inhalt,
-.card[content="text"] > h3:hover ~ .post-inhalt,
-.card[content="text"]:hover ~ .post-inhalt {
-  background-color: whitesmoke;
- 
-  height: fit-content;
-  color: #000;
-}*/
-.card[content="text"]:hover .post-text {
+.card[content="video"] .post-inhalt:hover .video-player {
+	transform: translateY(0);
+}
+.card[content="video"]  .post-inhalt  .video-player img {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%);
+	margin-top: -80px;
+	transition: 0.3s all;
+	opacity: 0;
+}
+.card[content="video"]  .post-inhalt  .video-player .video-ratio {
+	display: flex;
+	line-height: 62px;
+	border-radius: 50px;
+	background: rgba(0, 105, 255, 0.50);
+	backdrop-filter: blur(2.5px);
+	padding: 0 30px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+.card[content="video"] .post-inhalt:hover .video-player img {
+  opacity: 1;
+}
+.card[content="video"]  .post-inhalt {
+	
+	justify-content: end;
+}
+.card[content="video"]  .post-inhalt .card-header {
+	margin-bottom: auto;
+}
+
+.card[content="video"] .social {
+	
+	margin-top: 0; 
+	
+}
+.card[content="video"] .post-inhalt .post-content {
+	transition: 0.3s all;
+	transform: translateY(100%);
+	height: 0;
+	overflow: hidden;
+  opacity: 0;
+}
+.card[content="video"] .post-inhalt:hover .post-content {
+	transform: translateY(0);
+	overflow: visible;
+  height: auto;
+  opacity: 1;
+  
+}
+
+/*----------Audio---------------*/
+
+
+.card[content="audio"] .post{
+  background-image: url(../img/audio-bg.png);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: none;
+}
+.card[content="audio"] .post-inhalt .audio-player{
+transform: translateY(20px);
+transition: 0.6s all;
+}
+.card[content="audio"] .post-inhalt:hover .audio-player {
+	transform: translateY(0);
+}
+.card[content="audio"] .post-inhalt .audio-player{
+  position: relative;
+}
+.card[content="audio"] .post-inhalt .audio-player span{
+  position: absolute;
+  left: 0;
+  bottom: 16px;
+  opacity: 0.7;
+}
+.card[content="audio"] .post-inhalt .audio-player img {
+	display: block;
+	width: 100%;
+}
+.card[content="audio"]  .post-inhalt {
+	
+	justify-content: end;
+}
+.card[content="audio"]  .post-inhalt .card-header {
+	margin-bottom: auto;
+}
+.card[content="audio"] .social {
+	
+	margin-top: 0; 
+	
+}
+.card[content="audio"] .post-inhalt .post-content {
+	transition: 0.3s all;
+	transform: translateY(100%);
+	height: 0;
+	overflow: hidden;
+  opacity: 0;
+}
+.card[content="audio"] .post-inhalt:hover .post-content {
+	transform: translateY(0);
+	overflow: visible;
+  height: auto;
+  opacity: 1;
+  
+}
+
+
+.custom-audio {
   display: none;
+  width: 90%; /* Breite des Players */
+  height: 4rem; /* Höhe des Players */
+  background-color: #f0f0f0; /* Hintergrundfarbe */
+  border: 2px solid #007bff; /* Blauer Rahmen */
+  border-radius: 8px; /* Abgerundete Ecken */
+  padding: 5px; /* Abstand im Player */
 }
-.card[content="text"]:hover span {
-  filter: none;
-  text-shadow: none;
+
+/* Optional: Hover-Effekt */
+.custom-audio:hover {
+  background-color: #e0e0e0;
+  border-color: #0056b3;
 }
-.card[content="text"]:hover > .post {
-  text-wrap: pretty;
-  overflow-wrap: break-word;
-  /*z-index: 99;*/
-}
-.card[content="text"] > div:hover > .custom-text,
-.card[content="text"] > h3:hover + .custom-text,
-.card[content="text"]:hover > .custom-text {
- /* height: calc(100% - 9rem);
-  background-color: whitesmoke;
-  color: #000;*/
-}
+
 
 @keyframes scaleIn {
   from {
@@ -387,16 +487,7 @@ text-shadow: 1px 1px 2px black;
   animation: pulse 2s;
 }
 
-.cover {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  z-index: -1;
-  /* width: auto; */
-  object-fit: cover;
-  left: 0;
-  max-width: 100%;
-}
+
 .postViewShow {
   display: block !important;
   position: fixed;
@@ -466,56 +557,6 @@ text-shadow: 1px 1px 2px black;
   border-radius: 0.5rem;
 }
 
-.audio-item {
-  width: 96%;
-  height: auto;
-}
-.audio-item canvas {
-  width: 100%;
-  height: auto;
-}
-#audio-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  height: 100%;
-}
-#audio-container canvas {
-  width: 48%;
-  height: 10%;
-  top: 70%;
-  position: absolute;
-  left: 32%;
-}
-#play-pause {
-  position: absolute;
-  top: 70%;
-  /* right: 9dvw; */
-  height: 10%;
-  aspect-ratio: 1 / 1 !important;
-  background: url("../svg/play.svg") no-repeat center;
-  border: none;
-  background-size: 50% 50%;
-  /* max-width: 10%; */
-  left: 80%;
-}
-#play-pause::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  padding: 0.5%;
-  background: linear-gradient(to left, white, transparent);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 0.5%), white 100%);
-  mask: radial-gradient(farthest-side, transparent 85%, white 100%);
-  pointer-events: none;
-}
-
-#play-pause.paused {
-  background-image: url("../svg/pause.svg");
-}
 
 
 
@@ -553,34 +594,9 @@ text-shadow: 1px 1px 2px black;
   background: var(--button-hover);
 } */
 /* Stil für das Audio-Element */
-.custom-audio {
-  display: none;
-  width: 90%; /* Breite des Players */
-  height: 4rem; /* Höhe des Players */
-  background-color: #f0f0f0; /* Hintergrundfarbe */
-  border: 2px solid #007bff; /* Blauer Rahmen */
-  border-radius: 8px; /* Abgerundete Ecken */
-  padding: 5px; /* Abstand im Player */
-}
 
-/* Optional: Hover-Effekt */
-.custom-audio:hover {
-  background-color: #e0e0e0;
-  border-color: #0056b3;
-}
-.create-video,
-.custom-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  width: 100%;
-  height: 85%;
-  object-fit: cover;
-}
-.custom-video {
-  margin-top: 1rem;
-}
+
+
 .noscroll {
   overflow: hidden;
 }
@@ -628,86 +644,74 @@ text-shadow: 1px 1px 2px black;
   margin-left: 3rem;
 }
 
+@media screen and (max-width: 2000px) {
 
+    .card .post-userName {	font-size: 15px;}
+    .card .post-inhalt .post-title {	padding-right: 30px;	font-size: 20px;}
+    .card .post-inhalt .post-text {  margin-top: 5px;  font-size: 16px;  line-height: 20px;}
+    .card .post-inhalt .post-title .timeAgo {	font-size: 14px;}
+    .card-header-right .follow-button {	line-height: 36px;	font-size: 13px;}
+    .card .social {	font-size: 17px;}
+    .card .post-inhalt .hashtags {	display: flex;	flex-wrap: wrap;}
+    .card .post-inhalt .hashtags span {	padding-right: 7px;padding-bottom: 4px;	font-size: 14px;	line-height: 18px;}
+    .card[content="video"] .post-inhalt .video-player .video-ratio {line-height: 35px;	padding: 0 20px;	font-size: 15px;}
+    .card[content="video"] .post-inhalt .video-player img {	margin-top: -20px;	width: 30px;}
+    .card[content="audio"] .post-inhalt .audio-player span {	bottom: 11px;	font-size: 12px;}
+    .card .post-inhalt .post-content {	margin-top: 0;}
+
+}
 @media screen and (min-width: 2000px) and (max-width: 3000px){
 
     .card {
 	    height: 30rem;
 	  }
-    .card .post-inhalt h3,
-    .card[content="text"] h3,
-    .card .social  {
-    
-      font-size: 28px;
-		font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
-    }
+   
     
     .card .post-userImg {
 
     width: 2.375rem;
     height: 2.375rem;
     }
-    .card .follow-button {
-    font-size: 18px;
+    .card-header-right .follow-button {
+    
     line-height: 40px;
     padding: 0 20px;
+    font-size: 18px;
     }
+
+  
 
 }
 
 @media screen and (min-width: 3000px) {
 
 	.list_all_post {
-		gap: 2rem;
+		gap: 4rem;
 	}
 	.card {
 	  height: 46rem;
 	}
-  .card .post-inhalt,
-  .card .post {
+  .card .post-inhalt {
   	padding: 1.875rem;
 	
   }
   .card .post-userImg {
-    top: 1.875rem;
-    left: 1.875rem;
+   
     width: 4.375rem;
     height: 4.375rem;
   }
-  .card .follow-button {
-    right: 1.875rem;
-    top: 1.875rem;
+  .card-header-right .follow-button {
+    min-width: 180px;
     line-height: 66px;
+    border-width: 3px;
+   font-size: 28px;
+    font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
 	
   }
-  .card .post-userName {
-    top: 2.2rem;
-	  left: 7rem;
-    
-	  font-size: 28px;
-	  font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
-
-	}
-  .card .timeAgo {
-	  top: 4.3rem;
+  
+  
+  
  
-  }
-  .card .post-inhalt h3,
-  .card[content="text"] h3 {
-	
-	  font-size: 35px;
-    font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
-	  font-weight: 700;
-  }
-  .card .social {
-	
-	font-size: 35px;
-	font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
-  }
-  .card .social svg {
-    height: 2.18rem;
-    
-  }
 
 }
 
