@@ -180,6 +180,11 @@
 	border-color: var(--white);
 }
 
+.profile-header-right .follow-button.following {
+ background-color:var(--button-hover);
+	border-color: var(--button-hover);
+}
+
 .viewpost .profile-header-left .post-userImg,
   .viewpost .comment_list .commenter-pic  img {
     width: 4rem;
@@ -434,6 +439,7 @@
 	background: var(--white-secondary, rgba(255, 255, 255, 0.50));
 	display: flex;
 	width: 54px;
+  height: 54px;
 	padding: 12px;
 	flex-direction: column;
 	justify-content: center;
@@ -488,7 +494,7 @@
   .post_comment {
 	  height: 130px;
   }
-  .post_comment button {	width: 76px;	padding: 15px;}
+  .post_comment button {	width: 76px;	padding: 15px; height: 76px;}
   .post_comment textarea {	height: 26px;}
   .post_comment button i {
 	  
@@ -551,6 +557,7 @@
   .post_comment button {
     width: 110px;
     padding: 24px;
+    height: 110px;
 	
   }
   .post_comment textarea {	height: 40px;}
