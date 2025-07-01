@@ -83,7 +83,11 @@ function handleEditImage(event) {
   event.preventDefault();
   document.getElementById("crop-container").classList.remove("none");
   cropOrg = event.target.parentElement.childNodes[3];
-  cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
+  if (sessionStorage.getItem(event.target.parentElement.childNodes[1].innerText)) {
+    cropImg.src = sessionStorage.getItem(event.target.parentElement.childNodes[1].innerText);
+  } else {
+    cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
+  }
 }
 // Funktion, die dem Element den Event-Listener hinzufügt
 function addDeleteListener(element) {

@@ -1,25 +1,23 @@
-
 .list_all_post {
-	
-	/* display: grid; */
-	gap: 2rem;
-	width: 100%;
-	padding: 2rem 0;
-	overflow: auto;
-	margin-top: 2rem;
-	scroll-snap-type: y mandatory;
-	overflow-x: hidden;
-	/* justify-content: space-evenly; */
-	/* grid-template-columns: auto auto auto; */
-	/* grid-template-rows: auto; */
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	/* flex-flow: column wrap; */
-	/*justify-content: space-between;*/
-	align-items: stretch;
-	align-content: stretch;
-	min-width: 22rem;
+  /* display: grid; */
+  gap: 2rem;
+  width: 100%;
+  padding: 2rem 0;
+  overflow: auto;
+  margin-top: 2rem;
+  scroll-snap-type: y mandatory;
+  overflow-x: hidden;
+  /* justify-content: space-evenly; */
+  /* grid-template-columns: auto auto auto; */
+  /* grid-template-rows: auto; */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* flex-flow: column wrap; */
+  /*justify-content: space-between;*/
+  align-items: stretch;
+  align-content: stretch;
+  min-width: 22rem;
 }
 
 .card {
@@ -64,24 +62,21 @@
   align-items: flex-start;
 }
 
-.card  .post img,
+.card .post img,
 .card .custom-text {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	top: 0;
-	left: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	object-fit: cover;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  object-fit: cover;
 }
 
 .card .custom-text {
-  
-  
-  
   width: 100%;
-  
+
   border: none;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -104,11 +99,11 @@
 }
 
 /* Optional: Hover-Effekt */
- .card .custom-audio:hover {
+.card .custom-audio:hover {
   background-color: #e0e0e0;
   border-color: #0056b3;
 }
- .card .create-video,
+.card .create-video,
 .card .custom-video {
   position: absolute;
   top: 0;
@@ -129,7 +124,7 @@
   height: 7rem;
 }
 
-.card  .post .shadow {
+.card .post .shadow {
   top: 0;
   left: 0;
   height: 100%;
@@ -138,116 +133,111 @@
   position: absolute;
 }
 
-
-.card  .post-inhalt {
-	position: absolute;
-	top: 0rem;
-	height: 80%;
-	width: 100%;
-	padding: 1rem;
-	left: 0;
-	color: var(--white);
-	z-index: 2;
-	display: flex;
+.card .post-inhalt {
+  position: absolute;
+  top: 0rem;
+  height: 80%;
+  width: 100%;
+  padding: 1rem;
+  left: 0;
+  color: var(--white);
+  z-index: 2;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
 }
 
 .card .post-inhalt h3 {
-	text-shadow: 1px 1px 2px black;
-	margin: 0 !important;
-	font-weight: 700;
+  text-shadow: 1px 1px 2px black;
+  margin: 0 !important;
+  font-weight: 700;
   font-size: 20px;
 }
 
 .card .follow-button {
-	right: 1rem;
-	top: 1rem;
-	position: absolute;
-	/*font-size: 0.8rem;*/
-	min-width: unset;
-  
-	
-	font-size: 14px;
-	line-height: 34px;
-	padding: 0 16px;
+  right: 1rem;
+  top: 1rem;
+  position: absolute;
+  /*font-size: 0.8rem;*/
+  min-width: unset;
 
-	
-	background-color:transparent;
-	border-color: var(--white);
+  font-size: 14px;
+  line-height: 34px;
+  padding: 0 16px;
+
+  background-color: transparent;
+  border-color: var(--white);
 }
 .card .follow-button.following {
- background-color:var(--button-hover);
-	border-color: var(--button-hover);
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
 }
-.card  .post-userImg {
-	position: absolute;
-	top: 1rem;
-	left: 1rem;
-	width: 2rem;
-	height: 2rem;
-	border-radius: 50%;
-	border: 1px solid var(--text-color);
-	object-fit: cover;
+.card .post-userImg {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--text-color);
+  object-fit: cover;
   cursor: pointer;
 }
-.card  .post-userName {
-	position: absolute;
-	top: 0.5rem;
-	left: 4rem;
-	height: 2rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	z-index: 2;
+.card .post-userName {
+  position: absolute;
+  top: 0.5rem;
+  left: 4rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 2;
   cursor: pointer;
-	text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
-	/*filter: drop-shadow(0 0 5px black);*/
+  text-shadow: 0 0 4px var(--black), 1px 1px 1px black;
+  /*filter: drop-shadow(0 0 5px black);*/
   font-weight: 700;
   font-style: italic;
   font-size: 16px;
 }
 
 .card .timeAgo {
-	top: 1.7rem;
-	font-weight: 400;
+  top: 1.7rem;
+  font-weight: 400;
   font-style: normal;
   font-size: 12px;
 }
 
-
 .card .post-text {
-
-text-shadow: 1px 1px 2px black;
+  text-shadow: 1px 1px 2px black;
 }
 
 .card .social {
-	position: absolute;
-	width: 100%;
-	
-	display: flex;
-	justify-content: space-evenly;
-	bottom: 1.7rem;
-	font-size: 1.1rem;
-	margin: 0 ;
-	flex-direction: row;
-	align-items: center;
-	padding: 0 1rem;
-	font-size: 1.1rem;
+  position: absolute;
+  width: 100%;
+
+  display: flex;
+  justify-content: space-evenly;
+  bottom: 1.7rem;
+  font-size: 1.1rem;
+  margin: 0;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: 1.1rem;
 }
 .card .social div {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   cursor: pointer;
 }
 .card .social svg {
-	height: 1.4rem;
-	aspect-ratio: 1 / 1;
+  height: 1.4rem;
+  aspect-ratio: 1 / 1;
 }
 
-.card  .social svg use,
+.card .social svg use,
 .commentsButtons svg use {
   fill: transparent;
   stroke: var(--text-color);
@@ -257,7 +247,6 @@ text-shadow: 1px 1px 2px black;
 } */
 .card[content="video"] {
   aspect-ratio: 3/4.34;
-  
 }
 /* .card[content="video"]::before {
   content: url("../svg/video.svg");
@@ -280,10 +269,8 @@ text-shadow: 1px 1px 2px black;
   margin-top: 20px;
 }
 .card[content="audio"] {
-
   /*width: 20cqh;*/
   aspect-ratio: 3/4.34;
-  
 }
 /* .card[content="audio"]::before {
   content: url("../svg/audio.svg");
@@ -343,7 +330,7 @@ text-shadow: 1px 1px 2px black;
 .card[content="text"] > div:hover > .custom-text,
 .card[content="text"] > h3:hover + .custom-text,
 .card[content="text"]:hover > .custom-text {
- /* height: calc(100% - 9rem);
+  /* height: calc(100% - 9rem);
   background-color: whitesmoke;
   color: #000;*/
 }
@@ -379,7 +366,6 @@ text-shadow: 1px 1px 2px black;
   }
 }
 
-
 .fill-red use {
   fill: red !important;
   stroke: red !important;
@@ -410,17 +396,6 @@ text-shadow: 1px 1px 2px black;
   z-index: 2;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 .btAdd {
   position: absolute;
   top: -0rem;
@@ -443,16 +418,11 @@ text-shadow: 1px 1px 2px black;
   z-index: 5;
   top: -1rem;
   right: -1rem;
+  transition: all 0.3s ease-in-out;
 }
-
-
-
-
-
-
-
-
-
+.deletePost:hover {
+  background-color: red;
+}
 
 .icon.settings {
   font-size: 1.2em;
@@ -516,10 +486,6 @@ text-shadow: 1px 1px 2px black;
 #play-pause.paused {
   background-image: url("../svg/pause.svg");
 }
-
-
-
-
 
 .multi::after {
   content: "";
@@ -628,45 +594,38 @@ text-shadow: 1px 1px 2px black;
   margin-left: 3rem;
 }
 
+@media screen and (min-width: 2000px) and (max-width: 3000px) {
+  .card {
+    height: 30rem;
+  }
+  .card .post-inhalt h3,
+  .card[content="text"] h3,
+  .card .social {
+    font-size: 28px;
+    font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+  }
 
-@media screen and (min-width: 2000px) and (max-width: 3000px){
-
-    .card {
-	    height: 30rem;
-	  }
-    .card .post-inhalt h3,
-    .card[content="text"] h3,
-    .card .social  {
-    
-      font-size: 28px;
-		font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
-    }
-    
-    .card .post-userImg {
-
+  .card .post-userImg {
     width: 2.375rem;
     height: 2.375rem;
-    }
-    .card .follow-button {
+  }
+  .card .follow-button {
     font-size: 18px;
     line-height: 40px;
     padding: 0 20px;
-    }
-
+  }
 }
 
 @media screen and (min-width: 3000px) {
-
-	.list_all_post {
-		gap: 2rem;
-	}
-	.card {
-	  height: 46rem;
-	}
+  .list_all_post {
+    gap: 2rem;
+  }
+  .card {
+    height: 46rem;
+  }
   .card .post-inhalt,
   .card .post {
-  	padding: 1.875rem;
-	
+    padding: 1.875rem;
   }
   .card .post-userImg {
     top: 1.875rem;
@@ -678,36 +637,28 @@ text-shadow: 1px 1px 2px black;
     right: 1.875rem;
     top: 1.875rem;
     line-height: 66px;
-	
   }
   .card .post-userName {
     top: 2.2rem;
-	  left: 7rem;
-    
-	  font-size: 28px;
-	  font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+    left: 7rem;
 
-	}
+    font-size: 28px;
+    font-size: clamp(1.25rem, 0.5735rem + 0.4706vw, 1.75rem);
+  }
   .card .timeAgo {
-	  top: 4.3rem;
- 
+    top: 4.3rem;
   }
   .card .post-inhalt h3,
   .card[content="text"] h3 {
-	
-	  font-size: 35px;
+    font-size: 35px;
     font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
-	  font-weight: 700;
+    font-weight: 700;
   }
   .card .social {
-	
-	font-size: 35px;
-	font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
+    font-size: 35px;
+    font-size: clamp(1.625rem, 0.864rem + 0.5294vw, 2.1875rem);
   }
   .card .social svg {
     height: 2.18rem;
-    
   }
-
 }
-
