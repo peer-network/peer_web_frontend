@@ -239,10 +239,11 @@
 .button-row {
   display: flex;
   gap: 1rem;
+  width: 100%;
 }
-.button-row button {
-  width: 10rem;
-  height: 4rem;
+.button-row button,
+.button-row a {
+  width: 100%;
 }
 .modal-checkbox {
   margin: 0.5em 0;
