@@ -32,30 +32,33 @@
         </menu>
         <form id="newImagePost" class="upload" method="post">
             <h2>Upload File</h2>
-            <div id="drop-area-image" class="drop-area">
-                <div>
-                    <p>Drag and Drop file here</p>
-                    <p>
-                        or
-                        <u>Choose File</u>
-                    </p>
-                </div>
+            <div id="preview-image" class="drop-preview-area preview-container">
+                <!-- <div id="" class="blockscroll"></div> -->
+                <div id="drop-area-image" class="drop-area">
+                    <div>
+                        <p>Drag and Drop file here</p>
+                        <p>
+                            or
+                            <u>Choose File</u>
+                        </p>
+                    </div>
 
-                <img class="filterButton" src="svg/filterImage.svg" alt="Image upload" />
-                <div>
-                    <p>Supported formats:</p>
-                    <p>.png, .jpg, .jpeg, .gif, .webp</p>
-                </div>
+                    <img class="filterButton" src="svg/filterImage.svg" alt="Image upload" />
+                    <div>
+                        <p>Supported formats:</p>
+                        <p>.png, .jpg, .jpeg, .gif, .webp</p>
+                    </div>
 
-                <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
+                    <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
+                    <p>The maximum file size is 4MB</p>
+                </div>
             </div>
-            <p>The maximum file size is 4MB</p>
-
             <!-- <label for="bildueberschrift">Überschrift:</label> -->
             <input type="text" id="titleImage" placeholder="Add title" name="text-input" maxlength="150" required />
             <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
             <textarea id="descriptionImage" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
-            <div id="preview-image" class="blockscroll preview-container"></div>
+
+
             <button class="btn-blue" id="createPostImage">Upload</button>
             <div id="crop-container" class="none">
                 <canvas id="cropcanvas" width="2000" height="2000"></canvas>
