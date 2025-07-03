@@ -4,22 +4,35 @@
             
             <div class="post_gallery">
             </div>
-            <div class="social md_font_size">
-                <div class="post-view txt-color-gray">
-                    <i class="fi fi-rr-eye"></i>   
-                    <span>0</span>
+            <div class="postview_footer">
+                <div class="social md_font_size">
+                    <div class="post-view txt-color-gray">
+                        <i class="fi fi-rr-eye"></i>   
+                        <span>0</span>
+                    </div>
+                    <div class="post-like">
+                        <i class="fi fi-rr-heart"></i>    
+                        <span>0</span>
+                    </div>
+                    <div class="post-dislike">
+                        <i class="fi fi-rr-heart-crack"></i>    
+                        <span>0</span>
+                    </div>
+                    <div class="post-comments">
+                        <i class="fi fi-rr-comment-dots"></i>    
+                        <span>0</span>
+                    </div>
                 </div>
-                <div class="post-like">
-                    <i class="fi fi-rr-heart"></i>    
-                    <span>0</span>
-                </div>
-                <div class="post-dislike">
-                    <i class="fi fi-rr-heart-crack"></i>    
-                    <span>0</span>
-                </div>
-                <div class="post-comments">
-                    <i class="fi fi-rr-comment-dots"></i>    
-                    <span>0</span>
+                <div class="more md_font_size">
+                    <ul>
+                        <li><a href="#" class="morebtn"><span class="textval">More</span> <span class="dots"></span></a></li>
+                        <ul class="sublist">
+                            <li><a href="#" class="reportpost"><i class="fi fi-rr-triangle-warning"></i> Report post</a></li>
+                            <li><a href="#" class="download"><i class="fi fi-rr-down-to-line"></i> Download</a></li>
+                            <li><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a></li>
+                            <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
+                        </ul>
+                    </ul>
                 </div>
             </div>
             
@@ -83,4 +96,19 @@
         <div id="closePost" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
     </div>
     
+</div>
+
+<div id="sliderModal" class="slider-modal hidden">
+    <span class="close-modal">&times;</span>
+    <div class="inner">
+    <button class="modal-nav prev"><i class="fi fi-rr-angle-left"></i></button>
+    <div class="slider-modal-content">
+        
+        <div class="modal-slider-track"></div>
+        
+    </div>
+    <button class="modal-nav next"><i class="fi fi-rr-angle-right"></i></button>
+    </div>
+  <div class="modal-thumbnails"></div> <!-- Thumbnail container -->
+
 </div>
