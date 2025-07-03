@@ -133,7 +133,7 @@ function closeModal(modalElement) {
     setTimeout(() => {
       modalElement.remove();
     }, 300);
-  }
+}
 
 function userfriendlymsg(code) {
   let msg;

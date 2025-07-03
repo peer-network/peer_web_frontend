@@ -71,23 +71,56 @@ async function loginRequest(email, password) {
   }
 }
 
+const rememberMeCheckbox = document.getElementById("rememberMe");
+const emailInput = document.getElementById("email");
+
+const accessToken = localStorage.getItem('accessToken');
+const refreshToken = localStorage.getItem('refreshToken');
+const storedEmail = localStorage.getItem('userEmail');
+
+if (accessToken && refreshToken) {
+  rememberMeCheckbox.checked = true;
+}
+if (storedEmail) {
+  emailInput.value = storedEmail;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const heading = document.querySelector(".heading");
+  const rememberedEmail = localStorage.getItem("rememberedEmail");
+
+  if (rememberedEmail && heading) {
+    // Extract only letters before the '@'
+    const rawName = rememberedEmail.split("@")[0];
+    const name = rawName.replace(/[0-9]/g, ''); // Remove digits
+
+    heading.innerHTML = `Hey ${name}, <span class="waving-hand">👋</span><br>Welcome back!`;
+  }
+});
+
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
-  event.preventDefault(); // Prevent form reload
+  event.preventDefault();
 
-  // Retrieve input values for email and password
-  const email = document.getElementById("email").value;
+  const email = emailInput.value;
   const password = document.getElementById("password").value;
-
-  // Disable form and show loading indicator (optional UI improvement)
+  const rememberMeChecked = rememberMeCheckbox.checked;
   const submitButton = document.getElementById("submit");
   submitButton.disabled = true;
 
   try {
-    // Attempt to register the user after passing validations
     const result = await loginRequest(email, password);
 
-    // Handle successful registration (e.g., redirect or display success message)
     if (result.status === "success" && result.ResponseCode === "10801") {
+      if (rememberMeChecked) {
+        localStorage.setItem('accessToken', result.accessToken);
+        localStorage.setItem('refreshToken', result.refreshToken);
+        localStorage.setItem('userEmail', email);
+      } else {
+        sessionStorage.setItem('accessToken', result.accessToken);
+        sessionStorage.setItem('refreshToken', result.refreshToken);
+        localStorage.removeItem('userEmail');
+      }
+
       window.location.href = "dashboard.php";
     } else {
       displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");
@@ -96,7 +129,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     console.error("Error during login request:", error);
     displayValidationMessage("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
   } finally {
-    // Re-enable the form and hide loading indicator
     submitButton.disabled = false;
   }
 });
