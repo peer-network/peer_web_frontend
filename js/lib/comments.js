@@ -1,8 +1,10 @@
 async function likeComment(commentId) {
+
   // likeCost is a global variable and updated in global.js -> getActionPrices();
   if (!(await LiquiudityCheck(likeCost, "Like Comment", like))) {
     return false;
   }
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -60,6 +62,7 @@ async function createComment(postId, content, parentId = null) {
     Authorization: `Bearer ${accessToken}`,
   });
 
+  
   const query = `
     mutation CreateComment($postId: ID!, $content: String!, $parentId: ID) {
       createComment(action: COMMENT, postid: $postId, content: $content, parentid: $parentId) {
@@ -72,6 +75,7 @@ async function createComment(postId, content, parentId = null) {
           content
           createdat
           amountlikes
+          amountreplies
           isliked
           postid
           parentid
@@ -111,7 +115,6 @@ async function createComment(postId, content, parentId = null) {
       return error;
     });
 }
-
 async function fetchChildComments(parentId) {
   // Definiere den GraphQL-Query mit einer Variablen
   const accessToken = getCookie("authToken");

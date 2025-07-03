@@ -194,13 +194,11 @@ function nextmint() {
   document.getElementById("nextminttime").innerText = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
   document.getElementById("nextmintRadial").style.setProperty("--progress", percentageOfDayFromDates(now, nextMintDate));
 }
-
 function percentageOfDayFromDates(startDate, endDate) {
   const diffMs = endDate - startDate;
   const oneDayMs = 24 * 60 * 60 * 1000;
   return (diffMs / oneDayMs) * 100;
 }
-
 function getNext0930() {
   const now = new Date();
 
@@ -260,7 +258,6 @@ async function dailywin() {
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-
     const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
     sortedDescending.forEach((entry) => {
       const historyItem = document.createElement("div");

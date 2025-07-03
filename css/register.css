@@ -25,7 +25,6 @@
 } */
 
 
-
 html {
   scroll-behavior: smooth;
   font-size: clamp(12px, 3vmax, 1.6rem);

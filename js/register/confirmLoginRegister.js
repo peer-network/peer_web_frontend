@@ -96,7 +96,9 @@ emailField.addEventListener("focus", function () {
 //       return;
 //     }
 
-//     modal.classList.add("none"); // Hide modal
+
+//    modal.classList.add("none"); // Hide modal
 //     onConfirmCallback(); // Proceed with registration
 //   });
 // }
+

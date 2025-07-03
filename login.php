@@ -21,7 +21,6 @@ if (isset($_GET['message'])) {
 ?>
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
     <link rel="stylesheet" href="css/password.css?<?php echo filemtime('css/password.css'); ?>">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>

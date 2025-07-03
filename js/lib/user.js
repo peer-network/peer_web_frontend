@@ -109,7 +109,9 @@ async function getUser() {
     document.getElementById("userPosts").innerText = profil.data.getProfile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.getProfile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.getProfile.affectedRows.amountfollowed;
-    document.getElementById("Peers").innerText = profil.data.getProfile.affectedRows.amountfriends;
+    if (document.getElementById("Peers")) {
+      document.getElementById("Peers").innerText = profil.data.getProfile.affectedRows.amountfriends;
+    }
 
     const img = document.getElementById("profilbild");
     img.onerror = function () {
