@@ -1,11 +1,19 @@
 // Utility functions for UI feedback
-function displayValidationMessage(message) {
-  let element;
-  // Display error message in the UI (instead of using alert)
-  element = document.getElementById("validationMessage");
-  if(element){
+function displayValidationMessage(message, elementId) {
+  const element = document.getElementById(elementId);
+  if (element) {
     element.classList.add("notvalid");
     element.innerText = message;
+  } else {
+    console.warn(`Element with ID "${elementId}" not found.`);
+  }
+}
+
+function clearValidationMessage(elementId) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.innerText = "";
+    element.classList.remove("notvalid");
   }
 }
 // Eingabefeld abrufen
@@ -28,7 +36,9 @@ usernameInput.addEventListener("input", function () {
 });
 
 // Das Eingabefeld auswählen
+// const inputField = document.querySelector(".input-field");
 const emailField = document.getElementById("email");
+const statusIcon = document.querySelector(".tick");
 
 // Regulärer Ausdruck für E-Mail-Validierung
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,87 +57,48 @@ emailField.addEventListener("input", function () {
   }
 });
 
+// emailField.addEventListener("focus", function () {
+//   inputField.classList.add("focused");
+// });
+
+// emailField.addEventListener("blur", function () {
+//   inputField.classList.remove("focused");
+// });
+
 // Optional: Entfernen der Klassen bei Fokus (zurücksetzen des Felds)
 emailField.addEventListener("focus", function () {
   emailField.parentElement.classList.remove("valid", "invalid");
 });
 
-const passwordField = document.getElementById("password");
-const passwordConfirm = document.getElementById("confirm_password");
 
-// Regulärer Ausdruck für Passwort-Validierung: Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Zahl
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-if (passwordConfirm) {
-  passwordConfirm.addEventListener("input", function () {
-    document.getElementById("validationMessage").innerText = "";
-    document.getElementById("validationMessage").classList.remove("notvalid");
-    // Überprüfen, ob das Passwort gültig ist
-    if (passwordRegex.test(passwordConfirm.value) && passwordConfirm.value === passwordField.value) {
-      // Gültiges Passwort: Klasse 'valid-password' hinzufügen und 'invalid-password' entfernen
-      passwordConfirm.parentElement.classList.add("valid");
-      passwordConfirm.parentElement.classList.remove("invalid");
-    } else {
-      // Ungültiges Passwort: Klasse 'invalid-password' hinzufügen und 'valid-password' entfernen
-      passwordConfirm.parentElement.classList.add("invalid");
-      passwordConfirm.parentElement.classList.remove("valid");
-    }
-  });
-}
-// Event-Listener für das Verlassen des Eingabefelds (blur)
-passwordField.addEventListener("input", function () {
-  document.getElementById("validationMessage").innerText = "";
-  document.getElementById("validationMessage").classList.remove("notvalid");
-  // Überprüfen, ob das Passwort gültig ist
-  if (passwordRegex.test(passwordField.value)) {
-    // Gültiges Passwort: Klasse 'valid-password' hinzufügen und 'invalid-password' entfernen
-    passwordField.parentElement.classList.add("valid");
-    passwordField.parentElement.classList.remove("invalid");
-    if (passwordConfirm.value === passwordField.value) {
-      passwordConfirm.parentElement.classList.add("valid");
-      passwordConfirm.parentElement.classList.remove("invalid");
-    } else {
-      passwordConfirm.parentElement.classList.add("invalid");
-      passwordConfirm.parentElement.classList.remove("valid");
-    }
-  } else {
-    // Ungültiges Passwort: Klasse 'invalid-password' hinzufügen und 'valid-password' entfernen
-    passwordField.parentElement.classList.add("invalid");
-    passwordField.parentElement.classList.remove("valid");
-  }
-});
+// function showRegisterConfirmationModal(onConfirmCallback) {
+//   const modal = document.getElementById("modalOverlay");
+//   const confirmBtn = document.getElementById("confirmSubmit");
+//   const botCheckbox = document.getElementById("notBot");
+//   const ageCheckbox = document.getElementById("ageCheck");
 
-// Optional: Entfernen der Klassen bei Fokus (zurücksetzen des Felds)
-passwordField.addEventListener("focus", function () {
-  passwordField.parentElement.classList.remove("valid", "invalid");
-});
+//   // Show modal
+//   modal.classList.remove("none");
+
+//   modal.addEventListener("click", function (event) {
+//     if (event.target === modal) {
+//       modal.classList.add("none");
+//     }
+//   });
+
+//   // Remove previous event listener (if any)
+//   const newConfirmBtn = confirmBtn.cloneNode(true);
+//   confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+//   newConfirmBtn.addEventListener("click", function () {
+//     if (!botCheckbox.checked || !ageCheckbox.checked) {
+//       Merror("Please confirm that you are not a bot and that you are at least 18+ years old.");
+//       return;
+//     }
 
 
-function showRegisterConfirmationModal(onConfirmCallback) {
-  const modal = document.getElementById("modalOverlay");
-  const confirmBtn = document.getElementById("confirmSubmit");
-  const botCheckbox = document.getElementById("notBot");
-  const ageCheckbox = document.getElementById("ageCheck");
+//    modal.classList.add("none"); // Hide modal
+//     onConfirmCallback(); // Proceed with registration
+//   });
+// }
 
-  // Show modal
-  modal.classList.remove("none");
-
-  modal.addEventListener("click", function (event) {
-    if (event.target === modal) {
-      modal.classList.add("none");
-    }
-  });
-
-  // Remove previous event listener (if any)
-  const newConfirmBtn = confirmBtn.cloneNode(true);
-  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-  newConfirmBtn.addEventListener("click", function () {
-    if (!botCheckbox.checked || !ageCheckbox.checked) {
-      Merror("Please confirm that you are not a bot and that you are at least 18+ years old.");
-      return;
-    }
-
-    modal.classList.add("none"); // Hide modal
-    onConfirmCallback(); // Proceed with registration
-  });
-}

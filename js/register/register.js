@@ -1,40 +1,152 @@
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const referralUuid = urlParams.get('referralUuid');
+  const referralCodeFromRef = urlParams.get("ref");
+  const referralCodeFromUuid = urlParams.get("referralUuid");
 
-  if (referralUuid) {
-    localStorage.setItem('referralUuid', referralUuid);
-    const referralField = document.getElementById("referral_code");
-    if (referralField) {
-      referralField.value = referralUuid;
+  const referralInputs = document.querySelectorAll("#referral_code");
+  const validationMsg = document.getElementById("refValidationMessage");
+  const staticUUID = "8e2b5672-84bd-4a5c-a5d0-f4bfc212ec2a";
+  let autoFillCode = null;
+
+  const formSteps = document.querySelectorAll(".form-step");
+  const multiStepForm = document.getElementById("multiStepForm");
+  const registerForm = document.getElementById("registerForm");
+  const backBtn = document.getElementById("back-btn");
+  const noCodeLink = document.getElementById("noCodeLink");
+  const step1Section = document.querySelector('.form-step[data-step="1"]');
+  const step2Section = document.querySelector('.form-step[data-step="2"]');
+  const referralCode = referralCodeFromRef || referralCodeFromUuid;
+
+  if (referralCode) {
+    // If from referralUuid param, store in localStorage
+    if (referralCodeFromUuid) {
+      localStorage.setItem('referralUuid', referralCodeFromUuid);
     }
 
-    /*const deepLink = "peer://invite/" + referralUuid;
-    const androidFallback = "https://play.google.com/store/apps/details?id=eu.peernetwork.app";
-    const iosFallback = "https://apps.apple.com/app/peer-network/id6744612499";
-
-    function openApp() {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      const isAndroid = /android/i.test(userAgent);
-      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-
-      // Try to open the app
-      window.location = deepLink;
-
-      // After a delay, redirect to the appropriate store
-      setTimeout(() => {
-        if (isAndroid) {
-          window.location = androidFallback;
-        } else if (isIOS) {
-          window.location = iosFallback;
-        }
-      }, 1500);
-    }*/
-
-    // Call immediately after DOM is loaded
-    //openApp();
+    // Fill input(s) and validate
+    referralInputs.forEach(input => input.value = referralCode);
+    validateReferralCode(referralCode);
   }
+
+  showStep(1);
+  // If user clicks "Don't have a code?"
+  noCodeLink?.addEventListener("click", (e) => {
+    e.preventDefault();
+    autoFillCode = staticUUID; // Store the static code
+    showStep(2);
+  });
+
+  // Step 1 form submission → show loader, go to register
+  multiStepForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (!step1Section.classList.contains("none")) {
+      const referralValue = referralInputs[0]?.value.trim();
+      const isValid = validateReferralCode(referralValue);
+
+      if (!isValid) return; // Stop here if referral code is invalid or empty
+
+      const inputField = multiStepForm.querySelector(".input-field");
+      const loader = inputField.querySelector(".loader");
+
+      if (loader.style.display === "block") return;
+      loader.style.display = "block";
+
+      setTimeout(() => {
+        loader.style.display = "none";
+        multiStepForm.classList.add("none");
+        registerForm.classList.remove("none");
+        multiStepForm.reset();
+
+        localStorage.setItem("isOnRegister", "true");
+
+      }, 3000);
+    }
+  });
+
+
+  // Back button from register → return to step 1
+  backBtn.addEventListener("click", () => {
+    localStorage.removeItem("isOnRegister");
+
+    registerForm.classList.add("none");
+    multiStepForm.classList.remove("none");
+
+    const inputField = multiStepForm.querySelector(".input-field");
+    const loader = inputField.querySelector(".loader");
+    loader.style.display = "none";
+
+    showStep(1);
+  });
+
+  function showStep(step) {
+    formSteps.forEach(section => {
+      section.classList.toggle("none", section.dataset.step !== String(step));
+    });
+  }
+
+  document.getElementById('submitStep2').addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const inputField = step2Section.querySelector(".input-field");
+    const loader = inputField.querySelector(".loader");
+
+    if (loader.style.display === "block") return;
+    loader.style.display = "block";
+
+    setTimeout(() => {
+      loader.style.display = "none";
+      showStep(1);
+
+      // Autofill referral input only if user had clicked "Don't have a code?"
+      if (autoFillCode) {
+        referralInputs.forEach(input => input.value = autoFillCode);
+        validateReferralCode(autoFillCode);
+      }
+    }, 3000);
+  });
+
+  // Validation function (checks empty or invalid format)
+  function validateReferralCode(code) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    if (!code || !uuidRegex.test(code)) {
+      if (validationMsg) {
+        validationMsg.innerText = "Invalid or missing referral code.";
+        validationMsg.classList.add("notvalid");
+      }
+      return false;
+    } else {
+      if (validationMsg) {
+        validationMsg.innerText = "";
+        validationMsg.classList.remove("notvalid");
+      }
+      return true;
+    }
+  }
+
+  const isOnRegister = localStorage.getItem("isOnRegister") === "true";
+
+  if (isOnRegister) {
+    multiStepForm.classList.add("none");
+    registerForm.classList.remove("none");
+  } else {
+    showStep(1); 
+  }
+
+  // Function to copy input value to clipboard
+  document.getElementById("copyIcon").addEventListener("click", function () {
+    const input = document.getElementById("referral_code");
+    input.select();
+    input.setSelectionRange(0, 99999); 
+
+    navigator.clipboard.writeText(input.value).then(() => {
+    })
+  });
+
 });
+
+
 // Asynchrone Funktion, um einen Benutzer zu registrieren
 async function registerUser(email, password, username, referralcode) {
   // GraphQL-Mutation für die Registrierung eines Benutzers
@@ -86,64 +198,125 @@ async function registerUser(email, password, username, referralcode) {
 
     // Das Ergebnis als JSON parsen
     const result = await response.json();
+    const validationMessage = document.getElementById("ageValidationMessage");
 
     // Erfolgreiche Registrierung
     if (result.data.register.status === "success") {
-      console.log("Registrierung erfolgreich! Benutzer-ID:", result.data.register.userid);
+      // console.log("Registrierung erfolgreich! Benutzer-ID:", result.data.register.userid);
+      // validationMessage.innerText = "";
+      // validationMessage.classList.add("validText");
+      // displayValidationMessage(userfriendlymsg("User registered successfully"), "ageValidationMessage");
+      // displayValidationMessage(userfriendlymsg(result.data.register.ResponseCode), "ageValidationMessage");
       // Benutzer nach erfolgreicher Registrierung verifizieren
       verifyUser2(result.data.register.userid);
+      return true;
     }
     // Fehler: Benutzername bereits vergeben
     else {
       // Merror("Register failed", result.data.register.ResponseCode);
-      Merror("Register failed", userfriendlymsg(result.data.register.ResponseCode));
+      validationMessage.classList.remove("validText");
+      displayValidationMessage("Registration failed. " + userfriendlymsg(result.data.register.ResponseCode), "regValidationMessage");
       console.error("Register failed:" + result.data.register.ResponseCode);
+      return false;
     }
   } catch (error) {
     // Fehlerbehandlung bei Netzwerkfehlern oder anderen Problemen
-    console.error("Ein Fehler ist aufgetreten:", error);
+    console.error("An Error occured:", error);
   }
 }
 
 // Event-Listener für das Registrierungsformular, der ausgelöst wird, wenn das Formular abgeschickt wird
-document.getElementById("registerForm").addEventListener("submit", async function (event) {
-  event.preventDefault(); // Verhindern des Standardverhaltens des Formulars (Seiten-Reload)
+document.addEventListener("DOMContentLoaded", () => {
+  const registerForm = document.getElementById("registerForm");
+  const ageConfirmation = document.getElementById("ageConfirmation");
+  const formSteps = ageConfirmation.querySelectorAll(".ageConfirm");
+  const confirmButton = document.getElementById("confirmAge");
+  const cancelButton = document.getElementById("cancelAge");
+  const loader = document.getElementById("registerLoader");
 
-  // Abrufen der Eingabewerte für Benutzername, E-Mail, Passwort und Passwort-Bestätigung
-  const username = document.getElementById("username").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const referralCode = document.getElementById("referral_code").value;
-  const confirmPassword = document.getElementById("confirm_password").value;
+  const passwordMinLength = 8;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;
 
-
-  // Passwortvalidierung
-  const passwordMinLength = 8; // Mindestlänge des Passworts
-  const passwordRegex = /^(?=.*[A-Z]).+$/; // Muss mindestens einen Großbuchstaben enthalten
-
-  // Überprüfung, ob das Passwort die Mindestlänge erfüllt
-  if (password.length < passwordMinLength) {
-    displayValidationMessage(userfriendlymsg ("Das Passwort muss mindestens 8 Zeichen lang sein!"));
-    return;
+  function showAgeStep(stepNumber) {
+    formSteps.forEach(section => {
+      section.style.display = section.dataset.step === String(stepNumber) ? "flex" : "none";
+    });
   }
 
-  // Überprüfung, ob das Passwort einen Großbuchstaben enthält
-  if (!passwordRegex.test(password)) {
-    displayValidationMessage(userfriendlymsg ("Das Passwort muss mindestens einen Großbuchstaben enthalten!"));
-    return;
-  }
+  registerForm.addEventListener("submit", function (event) {
+    event.preventDefault();
 
-  // Überprüfung, ob die Passwörter übereinstimmen
-  if (password !== confirmPassword) {
-    displayValidationMessage(userfriendlymsg ("Passwörter stimmen nicht überein!"));
-    return;
-  }
+    clearValidationMessage("regValidationMessage");
 
-  showRegisterConfirmationModal(() => {
-    // Called only if user confirmed both checks
-    registerUser(email, password, username, referralCode);
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+    
+
+    // Validation
+    if (username === "" || email === "" || password === "" || confirmPassword === "") {
+      return displayValidationMessage(userfriendlymsg("All fields must be filled out!!"), "regValidationMessage");
+    }
+    if (password.length < passwordMinLength) {
+      return displayValidationMessage(userfriendlymsg("Password too short (min. 8 chars)!!"), "regValidationMessage");
+    }
+    if (!/[A-Z]/.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Add at least 1 uppercase letter!!"), "regValidationMessage");
+    }
+    if (!/\d/.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Add at least 1 number!!"), "regValidationMessage");
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Include a special character (!@#$...)!!"), "regValidationMessage");
+    }
+    if (!passwordRegex.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Password does not meet requirements!!"), "regValidationMessage");
+    }
+    if (password !== confirmPassword) {
+      return displayValidationMessage(userfriendlymsg("Passwords do not match!!"), "regValidationMessage");
+    }
+
+    loader.classList.add("active");
+    setTimeout(() => {
+      loader.classList.remove("active");
+      registerForm.classList.add("none");
+      ageConfirmation.classList.remove("none");
+      showAgeStep(1);
+    }, 3000);
+  });
+
+  confirmButton.addEventListener("click", async () => {
+    const referralCode = document.getElementById("referral_code").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      const status = await registerUser(email, password, username, referralCode);
+      if (status === true) {
+        setTimeout(() => { 
+          showAgeStep(3);
+        }, 5000);
+      } else {
+        setTimeout(() => { 
+          ageConfirmation.classList.add("none");
+          registerForm.classList.remove("none");
+        }, 3000);
+        
+      }
+      
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+  });
+
+  cancelButton.addEventListener("click", () => {
+    showAgeStep(2); // No registration called
   });
 });
+
+
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren
 async function verifyUser2(userid) {
@@ -173,11 +346,20 @@ async function verifyUser2(userid) {
       console.log("Mutation result:", data);
       // Ergebnis der Mutation verarbeiten
       const { status, ResponseCode } = data.data.verifyAccount;
-      console.log("Status:", status);
-      console.log("Error Message:", ResponseCode);
+      const validationMessage = document.getElementById("finalValidationMessage");
+      // console.log("Status:", status);
+      // console.log("Error Message:", ResponseCode);
       if (status === "success") {
-        info(ResponseCode);
-        window.location.href = "login.php";
+        // Erfolgreiche Verifizierung
+        validationMessage.innerText = "";
+        validationMessage.classList.add("validText");
+        displayValidationMessage(userfriendlymsg(ResponseCode), "finalValidationMessage");
+        // Optional: Weiterleitung oder andere Aktionen nach erfolgreicher Verifizierung
+        // window.location.href = "login.php"; // Beispiel: Weiterleitung zur Login-Seite
+      } else {
+        // Fehler bei der Verifizierung
+        validationMessage.innerText = "";
+        validationMessage.classList.remove("validText");
       }
     })
     .catch((error) => {
@@ -192,3 +374,6 @@ function getCookie(name) {
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
+
+
+
