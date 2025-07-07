@@ -1,0 +1,86 @@
+#cropcanvas,
+#croppedCanvas {
+  /* border: 1px solid #ccc; */
+  display: block;
+  margin-top: 10px;
+  cursor: grab;
+  height: 70vmin;
+  width: 70vmin;
+}
+#croppedCanvas {
+  display: none;
+}
+#cropcanvas:active {
+  cursor: grabbing;
+}
+#crop-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#aspectRatioSelect {
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+#cropButtons button {
+  border: 1px solid #fff;
+}
+#cropButtons {
+  display: flex;
+  justify-content: space-evenly;
+  width: 50%;
+}
+
+.aspect-ratio-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.aspect-ratio-toggle input[type="radio"] {
+  display: none;
+}
+
+.aspect-ratio-toggle label {
+  padding: 0.5em 1.2em;
+  border: 1px solid #888;
+  margin-left: -1px;
+  cursor: pointer;
+  position: relative;
+  background: #fff;
+  z-index: 1;
+  transition: background 0.2s;
+  min-width: 12em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2em !important;
+  left: 0 !important;
+}
+
+.aspect-ratio-toggle label:first-of-type {
+  border-radius: 5px 0 0 5px;
+  margin-left: 0;
+  margin-right: -1em;
+  z-index: 2;
+}
+.aspect-ratio-toggle label:nth-of-type(2) {
+  margin-left: -1em !important;
+}
+.aspect-ratio-toggle input[type="radio"]:checked + label {
+  background: #337ab7 !important;
+  color: #fff;
+  z-index: 3;
+  border-color: #337ab7;
+}
+
+/* 
+implement in all-post.css
+*/

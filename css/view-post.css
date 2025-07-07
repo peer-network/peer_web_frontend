@@ -1,4 +1,4 @@
-#cardClicked {
+.viewpost {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,7 +10,8 @@
   backdrop-filter: blur(5px);
 }
 
-#cardClicked .inner-container {
+
+.viewpost .inner-container {
   width: 90vw;
   height: 90vh;
   left: 50%;
@@ -18,247 +19,963 @@
   top: 50%;
   position: fixed;
   z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "img comment";
-  align-items: center;
-  justify-items: center;
-  border-radius: 2rem;
-  box-shadow: 1rem 1rem 3rem black, 0 0 2rem black inset;
-  background-color: var(--background-color);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(10px);
-  background-image: radial-gradient(circle at top right, rgba(119, 175, 255, 0.11) 0%, rgba(55, 153, 182, 0) 31%), radial-gradient(circle at bottom left, rgba(119, 175, 255, 0.11) 0%, rgba(255, 255, 255, 0) 33%);
-}
+  
+   border-radius: 70px;
+  background: var(--dark-inactive, #323232);
 
-#cardClicked .inner-container .cImg {
-  grid-area: img;
-  position: relative;
-  display: grid;
-  grid-template-rows: 70% auto auto auto;
-  grid-template-columns: 1fr;
-  height: 95%;
-  width: 95%;
-}
-
-#cardClicked .inner-container #comment-img-container {
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  /* scroll-behavior: smooth; */
   display: flex;
-  grid-row: 1;
-  /* box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000; */
-  margin: auto;
-  height: 50vh;
-  max-height: 50vh;
-  scroll-snap-type: x mandatory;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  position: relative;
-}
-
-#cardClicked .inner-container #comment-img-container img,
-#cardClicked .inner-container #comment-img-container video {
-  max-height: 97%;
-  height: auto;
-  max-width: 100%;
-  width: 100%;
-  border-radius: 1rem;
-  scroll-snap-align: start;
-  height: 100%;
-  width: auto;
-}
-
-
-
-#cardClicked .inner-container #comments-container {
-  grid-area: comment;
-  /* height: 94%; */
-  max-height: 95%;
-  width: 95%;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-#cardClicked .inner-container #comments-container .flex {
-  display: flex;
-  gap: 1rem;
-}
-#cardClicked .inner-container #comments-container .centvert {
-  align-items: center;
-}
-#cardClicked .inner-container #comments-container .csum {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-
-#cardClicked .inner-container #comments-container .icon-add {
-  border: 0.2rem solid;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#cardClicked .inner-container #comments-container .icon-add:hover,
-#cardClicked .inner-container #comments-container .icon-group:hover {
-  filter: brightness(2) drop-shadow(0 0 0.5rem var(--shadow-add));
-  cursor: pointer;
-}
-#cardClicked .inner-container #comments-container .icon {
-  width: 1.3rem;
-  height: auto;
-}
-
-#cardClicked .inner-container #comments-container #comments-header {
-  margin-bottom: 3rem;
-}
-
-#cardClicked .inner-container .commentsButtons {
-  grid-row: 2;
-  display: flex;
-  width: 95%;
+  padding: 80px;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-start;
+  gap:50px;
+  
+}
+.viewpost .inner-container .btClose {
+	z-index: 2;
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	display: flex;
+	padding: 0.5rem;
+	transform: rotateZ(45deg);
+	border-radius: 50%;
+	justify-content: center;
+	align-items: center;
+	width: 3rem;
+	height: auto;
+	cursor: pointer;
+}
+.viewpost .viewpost-left{
+  display: flex;
+  width: 53%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+  
+
+}
+.viewpost .viewpost-left .post_content {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	overflow-x: hidden;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	margin-bottom: 25px;
+}
+.viewpost .viewpost-right{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+ 
+  align-self: stretch;
+
+}
+.viewpost[content="text"] .viewpost-right .post_content{
+  display: none;
+}
+.viewpost[content="text"] .viewpost-left .post_gallery {
+  display: none;
 }
 
-#cardClicked .inner-container .commentsButtons #comments-buttons,
-#cardClicked .inner-container .commentsButtons .postViews {
+.viewpost .post_content .post_title{
+  padding-right: 60px;
+  position: relative;
+}
+.viewpost .post_content .post_title .xxl_font_size {
+	margin-bottom: 0;
+}
+
+.viewpost .post_content .post_title span.timeagao {
+	position: absolute;
+	right: 14px;
+	bottom: 5px;
+}
+.viewpost .post_content .post_text{
+  margin-top: 16px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
+  
+}
+.viewpost .post_content .hashtags {
+
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.viewpost .post_content .hashtags span {
+	padding-right: 12px;
+	display: inline-block;
+	padding-bottom: 7px;
+}
+.viewpost .postview_footer {
+	display: flex;
+	gap: 40px;
+	width: 100%;
+}
+.viewpost .postview_footer .more{
+  position: relative;
+
+}
+.viewpost .postview_footer .more a.morebtn {
+	text-decoration: none;
+	color: var(--white);
+	position: relative;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  z-index: 1;
+  transition: all 0.3s;
 }
-#cardClicked .inner-container .btn,
-#cardClicked .inner-container .commentsButtons .postViews svg,
-#cardClicked .inner-container .commentsButtons #comments-buttons img {
-  height: 1.5rem;
-  width: 1.5rem;
+.viewpost .postview_footer .more a.morebtn span.dots {
+	position: relative;
+	border: 3px solid;
+	display: inline-block;
+	border-radius: 100px;
+	margin-left: 60px;
+}
+.viewpost .postview_footer .more a.morebtn span.dots::before, 
+.viewpost .postview_footer .more a.morebtn span.dots::after {
+	content: "";
+	display: inline-block;
+	border: 3px solid;
+	position: absolute;
+	border-radius: 100%;
+	top: -3px;
+	left: -35px;
+}
+.viewpost .postview_footer .more a.morebtn span.dots::after {
+  left: -20px;
+}
+.viewpost .postview_footer .more ul.sublist {
+	position: absolute;
+	bottom: -7px;
+	width: 350px;
+	right: -40px;
+	border-radius: 50px;
+	background: var(--dark-inactive, #323232);
+	box-shadow: 0px 4px 50px 0px rgba(0, 0, 0, 0.50);
+	display: flex;
+	padding: 40px 40px 80px;
+	flex-direction: column-reverse;
+	align-items: flex-end;
+	gap: 20px;
+  
+  transition: all 0.3s;
+  opacity: 0;
+  visibility: hidden;
+ 
+}
+.viewpost .postview_footer .more:hover ul.sublist{
+  
+    opacity:1;
+    visibility: visible;
+ 
+ 
+}
+.viewpost .postview_footer .more:hover a.morebtn span.textval {
+	opacity: 0;
+}
+.viewpost .postview_footer .more ul.sublist li {
+	width: 100%;
+}
+.viewpost .postview_footer .more ul.sublist li a {
+	border-radius: 70px;
+	color: var(--white);
+	border: 2px solid var(--white, #FFF);
+	backdrop-filter: blur(10px);
+	display: flex;
+	width: 100%;
+	line-height: 60px;
+	padding: 0px 20px;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	text-decoration: none;
+	text-align: center;
+}
+.viewpost .postview_footer .more ul.sublist li a i {
+	line-height: 0;
+}
+.viewpost .postview_footer .more ul.sublist li a.reportpost {
+	border-color: var(--red-accent, #FF3B3B);
+	color: var(--red-accent, #FF3B3B);
+}
+.viewpost .postview_footer .more ul.sublist li a:hover {
+	background-color: var(--white,#fff);
+	color: var(--black);
+}
+.viewpost .postview_footer .more ul.sublist li a.reportpost:hover {
+	background-color: var(--red-accent, #FF3B3B);
+	color: var(--white,#fff);
 }
 
-#cardClicked .inner-container #comment-title {
-  grid-row: 3;
-  font-size: 1.6rem;
-  font-weight: bold;
-  align-self: end;
+
+.viewpost  .social{
+	display: flex;
+	margin: 0;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	margin-top: auto;
+	gap: 30px;
+}
+.viewpost .social  div {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+  cursor: pointer;
 }
 
-#cardClicked .inner-container #comment-text {
-  grid-row: 4;
-  overflow-x: hidden;
-  overflow-y: auto;
+.viewpost .social div i {
+	line-height: 0;
+}
+.viewpost .social div.active i{
+  color: red;
+  animation: pulse 2s;
+  
+}
+.viewpost .social div.post-like.active i::before {
+	content: "\e9a1";
+	font-family: uicons-solid-rounded !important;
+	
+  
+}
+.viewpost .social div.post-dislike.active i::before {
+	content: "\e9a5";
+	font-family: uicons-solid-rounded !important;
+
 }
 
-#cardClicked .inner-container .btClose {
-  z-index: 2;
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  width: 1rem;
-  height: 1rem;
-  display: flex;
-  padding: 0.5rem;
-  transform: rotateZ(45deg);
-  border-radius: 50%;
-  justify-content: center;
-  align-items: center;
-  width: 3rem;
-  height: auto;
+
+.viewpost  .social  div.post-view {
+	order: 4;
+	margin-left: auto;
+	flex-direction: row-reverse;
+	opacity: 0.5;
+}
+
+
+
+
+
+.viewpost .profile-header {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	align-items: center;
+	margin-bottom: 30px;
+}
+.viewpost .profile-header-left {
+	display: flex;
+	align-items: center;
+	gap: 20px;
   cursor: pointer;
 }
 
 
-#cardClicked .inner-container #comments-container .comments {
-  /* top: -14%; */
+.viewpost .profile-header-left .username-slug span {
+	display: block;
+}
+.viewpost .profile-header-left .username-slug span.profile_id{
+  font-style: normal;
 
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+}
+.profile-header-right .follow-button {
+	
+	line-height: 40px;
+  min-width: 120px;
+	padding: 0 16px;
+	margin-bottom: 0;
+	background-color: transparent;
+	border-color: var(--white);
 }
 
-#cardClicked .inner-container #comments-container  .comments .comment p {
-  padding-bottom: 0.7rem;
+.profile-header-right .follow-button.following {
+ background-color:var(--button-hover);
+	border-color: var(--button-hover);
+}
+
+.viewpost .profile-header-left .post-userImg,
+  .viewpost .comment_list .commenter-pic  img {
+    width: 4rem;
+    
+  }
+
+
+.viewpost .post_gallery {
+
+	height: calc(100% - 50px);
+	width: 100%;
+	position: relative;
+  overflow: hidden;
+}
+.viewpost .post_gallery.images {
+	display: flex;
+	align-items: flex-start;
 }
 
 
-#cardClicked .inner-container #comments-container  .comments .comment {
-  position: relative;
-  /* background: hsla(0, 0%, 100%, 0.5); */
-  color: #ffffff;
-  padding: 0.3rem 1rem;
-  border-radius: 1rem;
-  /* display: flex;
-  flex-direction: column; */
-  display: grid;
-  grid-template-columns: 5rem auto 5rem;
-  grid-template-areas:
-    "image name liked"
-    "image comment liked";
+.viewpost .post_gallery.images .slider-wrapper {
+	display: flex;
+	height: 100%;
+}
+.viewpost .post_gallery.images .image_item {
+	display: flex;
+	border-radius: 40px;
+	overflow: hidden;
+	max-height: 100%;
+	position: relative;
+}
+.viewpost .post_gallery.images .image_item img {
+	display: block;
+	max-height: 100%;
+	height: auto;
+	max-width: 100%;
+	width: auto;
+	scroll-snap-align: start;
+	object-fit: cover;
+}
+.viewpost .post_gallery.images .image_item .zoom {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	z-index: 3;
+	right: 20px;
+	bottom: 30px;
+	border-radius: 70px;
+	background: var(--dark-inactive, #323232);
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s linear;
+	
+}
+.viewpost .post_gallery.images .image_item .zoom i {
+	line-height: 0;
+}
+.viewpost .post_gallery.images .image_item .zoom:hover {
+	background: var(--white-secondary, rgba(255, 255, 255, 0.50));
+	color: var(--black,#000);
+}
+/*---- Start: Multi Images carousle -----*/
+.viewpost .post_gallery.images.multi .slider-wrapper {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 20px;
+}
+.viewpost .post_gallery.images.multi .slider-wrapper  .slider-track {
+	display: flex;
+	transition: transform 0.3s ease-in-out;
+	gap: 30px;
+	align-items: flex-start;
+	will-change: transform;
+	height: calc(100% - 110px);
+}
+.viewpost .post_gallery.images.multi .slider-wrapper .image_item {
+	
+	flex-shrink: 0;
+	width: 70%;
+	display: flex;
+	scroll-snap-align: start;
+}
+.viewpost .post_gallery.images.multi .slider-wrapper .image_item img {
+	display: block;
+	max-height: 100%;
+	height: auto;
+	max-width: 100%;
+	width: 100%;
+	scroll-snap-align: start;
+	object-fit: cover;
+}
+.viewpost .post_gallery.images .slider-wrapper .slider-thumbnails{
+	display: none;
+	gap: 10px;
+	max-width: 100%;
+	width: 100%;
+	position: relative;
+}
+.viewpost .post_gallery.images.multi .slider-wrapper .slider-thumbnails {
+	display: flex;
+	
 }
 
-#cardClicked .inner-container #comments-container  .comments .comment .likeComment svg {
-  fill: none;
-  stroke: #fff;
-}
+.viewpost .post_gallery.images .slider-wrapper .slider-thumbnails img {
+	
+	width: 70px;
+	height: 90px;
+	object-fit: cover;
+	cursor: pointer;
+	opacity: 0.3;
+	transition: border 0.3s, opacity 0.3s;
+	border-radius: 20px;
+	position: relative;
 
-#cardClicked .inner-container #comments-container  .comments .comment .commentUser {
-  font-weight: bold;
 }
-
-.commentHeader {
-  grid-area: name;
+.viewpost .post_gallery.images .slider-wrapper .slider-thumbnails img.active,
+.viewpost .post_gallery.images .slider-wrapper .slider-thumbnails img:hover {
+	opacity: 1;
 }
+/*---- End Multi Images carousle -----*/
 
-#cardClicked .inner-container #comments-container  .comments .comment img {
-  grid-area: image;
-  height: 100%;
+.post_gallery.video video  {
+	max-height: 100%;
+	height: auto;
+	max-width: 100%;
   width: auto;
-  margin: 0 !important;
+	
+	border-radius: 70px;
+	scroll-snap-align: start;
+	
+}
+.post_gallery.video video  {
+	object-fit: cover;
+	position: absolute;
+  width: 100%;
 }
 
-#cardClicked .inner-container #comments-container  .comments .comment .likeComment {
-  grid-area: liked;
+.post_gallery.audio .audio-item {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	height: 100%;
+	border-radius: 70px;
+	overflow: hidden;
+	padding: 0;
+	background-image: url(../img/audio-bg.png);
+	background-size: cover;
+	background-position: center center;
+	background-repeat: none;
+}
+.post_gallery.audio  .audio-item img.cover {
+	
+	height: 100%;
+
+	width: 100%;
+	object-fit: cover;
+	
+}
+.post_gallery.audio .audio-item .audio_player_con {
+	background: linear-gradient(to bottom, rgba(30,87,153,0) 0%,rgba(0,0,0,0.55) 50%,rgba(3,4,5,0.56) 51%,rgba(125,185,232,0) 100%);
+	display: flex;
+	align-items: center;
+  justify-content: center;
+	gap: 20px;
+	width: 100%;
+	padding: 30px;
+	box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+}
+
+.post_gallery.audio #waveform-preview {
+	width: auto;
+	flex: 1;
+}
+.post_gallery.audio #play-pause {
+	height: 200px;
+	aspect-ratio: 1 / 1 !important;
+	background: url("../svg/play.svg") no-repeat center;
+	background-size: 94%;
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+
+.post_gallery.audio #play-pause.paused {
+  background-image: url("../svg/pause.svg");
+}
+
+/*---- Slider Popup -----------*/
+.slider-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
   display: flex;
+  gap: 30px;
   align-items: center;
+  justify-content: center;
+  z-index: 9999;
   flex-direction: column;
-  gap: 0.5rem;
+}
+.slider-modal::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	backdrop-filter: blur(5px);
+	background: #00000082;
+}
+.slider-modal .inner {
+	display: flex;
+	gap: 40px;
+	align-items: center;
+}
+.slider-modal.hidden {
+  display: none;
 }
 
-#cardClicked .inner-container #comments-container  .comments .comment .likeComment svg {
-  height: 1.7rem;
-  width: 1.7rem;
+.slider-modal-content {
+  position: relative;
+   display: flex;
+  overflow: hidden;
+  transition: all 0.3s linear;
 }
 
-#cardClicked .inner-container #comments-container #mostliked {
+.slider-modal .modal-slider-track {
   display: flex;
   align-items: center;
-  padding-left: 1.5rem;
-  margin-top: 2rem;
+  transition: transform 0.3s ease-in-out;
 }
 
-#cardClicked .inner-container #comments-container #mostliked img,
-#cardClicked .inner-container #comments-container  .comments .comment img {
+
+.slider-modal .modal-slider-track img {
+  max-height: 70vh;
+  max-width: 100%;
+  object-fit: contain;
+  flex-shrink: 0;
+  min-width: 100%;
+  opacity: 0;
+  transition: all 0.3s;
+}
+.slider-modal .modal-slider-track img.active {
+	opacity: 1;
+}
+
+
+.slider-modal .modal-nav {
+	color: white;
+	border: none;
+	font-size: 20px;
+	cursor: pointer;
+	z-index: 1;
+	border-radius: 300px;
+	background: var(--black-dark, #252525);
+	display: flex ;
+	width: 60px;
+	height: 60px;
+	padding: 10px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+	aspect-ratio: 1/1;
+	line-height: 0;
+}
+
+
+
+.slider-modal .close-modal {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.slider-modal .modal-thumbnails {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	
+	max-width: 100%;
+	width: 100%;
+	position: relative;
+}
+
+.slider-modal .modal-thumbnail {
+	width: 100px;
+	height: 140px;
+	object-fit: cover;
+	cursor: pointer;
+	opacity: 0.3;
+	
+	transition: border 0.3s, opacity 0.3s;
+	border-radius: 20px;
+	position: relative;
+}
+
+.slider-modal .modal-thumbnail.active {
+ 
+  opacity: 1;
+}
+/*---- End: Slider Popup -----------*/
+/*---- Start: Comments -----------*/
+.comments-container {
+	height: 100%;
+	flex-direction: column;
+	display: flex;
+	width: 100%;
+	position: relative;
+	flex-grow: 1;
+}
+
+.comments-container .comments-header {
+	display: flex;
+	gap: 20px;
+	align-items: baseline;
+}
+.comments-container .comments-header   .comment_conter{ 
   position: relative;
-  border-radius: 50%;
-  height: 4rem;
-  width: 4rem;
-  margin-left: -1.5rem;
-  border: 3px solid #111;
-  object-fit: cover;
 }
 
-#cardClicked .inner-container #comments-container #mostliked span {
-  margin-left: 2rem;
+.comments-container .comments-header .cmt-scroll{
+  margin-left: auto;
+}
+.comment_list {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	min-height: 0;
+	flex-shrink: 1;
+	flex-direction: column;
+	display: flex;
+	position: relative;
+	flex-grow: 1;
+  margin-bottom: 30px;
+}
+.comment_list .inner {
+	border: 0;
+	box-sizing: content-box;
+	flex-grow: 1;
+	height: calc(100% - 32px);
+	left: 0;
+	margin: 0;
+	overflow-y: scroll;
+	padding: 16px;
+	position: absolute;
+	scrollbar-width: none;
+	vertical-align: baseline;
+	width: calc(100% - 32px);
+}
+.comment_list .comment_item {
+	display: flex;
+	gap: 12px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+.comment_list .comment_item .commenter-pic .profile-picture {
+	cursor: pointer;
+}
+.comment_list .comment_item .comment_like {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.comment_list .comment_item  .comment_like i {
+	line-height: 0;
+}
+.comment_list .comment_item  .comment_like.active i{
+  color: red;
+  animation: pulse 2s;
+  
+}
+.comment_list .comment_item  .comment_like.active i::before {
+	content: "\e9a1";
+	font-family: uicons-solid-rounded !important;
 }
 
-#cardClicked .inner-container #comments-container #mostliked img:nth-of-type(1) {
-  z-index: 5;
+.comment_list .comment_item .comment_body {
+	flex: 1;
 }
 
-#cardClicked .inner-container #comments-container #mostliked img:nth-of-type(2) {
-  z-index: 4;
+.comment_list .comment_item .commenter_info {
+	margin-bottom: 10px;
+}
+.comment_list .comment_item .timeagao {
+	position: relative;
+	padding-left: 20px;
+}
+.comment_list .comment_item .timeagao::before {
+	content: "";
+	border: 3px solid;
+	border-radius: 100%;
+	position: absolute;
+	left: 8px;
+	top: 11px;
+}
+.comment_list .comment_item .cmt_profile_id {
+	padding-left: 10px;
+}
+
+.comment_list .comment_item .comment_reply_container{
+  margin-top: 10px;
+}
+.comment_list .comment_item .comment_reply_container .reply_btn,
+.comment_list .comment_item .comment_reply_container .show_reply  {
+	display: block;
+  margin-bottom: 20px;
+}
+
+.comment_list .comment_item .comment_reply_container  .reply_btn a {
+	text-decoration: none;
+	color: var(--white);
+  position: relative;
+}
+.comment_list .comment_item .comment_reply_container  .reply_btn a:hover {
+  color: var(--white-secondary);
+}
+.comment_list .comment_item .comment_reply_container .reply_btn a span {
+	position: relative;
+	border: 3px solid;
+	display: inline-block;
+	border-radius: 100px;
+	margin-left: 60px;
+}
+.comment_list .comment_item .comment_reply_container .reply_btn a span::before,
+.comment_list .comment_item .comment_reply_container .reply_btn a span::after {
+	content: "";
+	display: inline-block;
+	border: 3px solid;
+	position: absolute;
+	border-radius: 100%;
+	top: -3px;
+	left: -35px;
+}
+.comment_list .comment_item .comment_reply_container .reply_btn a span::after {
+
+	left: -20px;
+}
+
+.post_comment{
+  margin-top: auto;
+  display: flex;
+  height: 100px;
+  padding: 10px 10px 10px 40px;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 196px;
+  background: var(--black-dark, #252525);
+  box-shadow: 4px 0px 43.4px 12px rgba(0, 0, 0, 0.10);
+}
+
+.post_comment textarea {
+	border-radius: 0;
+	padding: 0;
+	height: 20px;
+	background: transparent;
+	resize: none;
+	line-height: 0.9;
+}
+.post_comment button {
+	margin: 0;
+	border-radius: 80px;
+	background: var(--white-secondary, rgba(255, 255, 255, 0.50));
+	display: flex;
+	width: 54px;
+  height: 54px;
+	padding: 12px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	flex: 1 0 0;
+	aspect-ratio: 1/1;
+	border: 0;
+	color: var(--black,#000);
+}
+
+.post_comment button i {
+	line-height: 0;
+	font-size: 30px;
+}
+.post_comment:hover{
+  background: var(--Field-Hover-Black, #393939);
+}
+.post_comment:hover button{
+  background-color: #fff;
+}
+
+@media screen and (min-width: 2000px) {
+  .viewpost .post_content .post_title {
+    padding-right: 100px;
+    
+  }
+  
+  .viewpost .inner-container {
+    width: 85vw;
+  }
+  .viewpost .profile-header-right .follow-button {
+    min-width: 180px;
+    line-height: 45px;
+    border-width: 2px;
+  }
+ .comment_list .comment_item {
+    gap: 20px;
+  }
+  .comment_list .comment_item .timeagao {
+    
+    padding-left: 30px;
+  }
+  .comment_list .comment_item .timeagao::before {
+		border-width: 3px;
+	  left: 11px;
+	  top: 10px;
+  }
+  
+  .comment_list .comment_item .commenter_info {
+    margin-bottom: 15px;
+  }
+  .comment_list .comment_item .comment_reply_container {
+    margin-top: 15px;
+  }
+  .post_comment {
+	  height: 130px;
+  }
+  .post_comment button {	width: 76px;	padding: 15px; height: 76px;}
+  .post_comment textarea {	height: 26px;}
+  .post_comment button i {
+	  
+	  font-size: 65px;
+  }
+  .viewpost .post_gallery {
+	height: calc(100% - 100px);
+	
+	}
+	.viewpost .post_gallery.images.multi .slider-wrapper {
+		gap: 40px;
+		
+	}
+  	.viewpost .post_gallery.images.multi .slider-wrapper  .slider-track {
+	height: calc(100% - 200px);
+	}
+
+  
+  .viewpost .post_gallery.images .slider-wrapper .slider-thumbnails {
+	gap: 20px;
+	}
+	.viewpost .post_gallery.images .slider-wrapper .slider-thumbnails img {
+	width: 70px;
+	height: 90px;
+	}
+	.viewpost .post_gallery.images .image_item .zoom {
+	
+		width: 100px;
+		height: 100px;
+		
+		right: 30px;
+		bottom: 50px;
+		
+		font-size: 40px;
+		
+		
+	}
+	.slider-modal .modal-nav {
+		font-size: 30px;
+		
+		width: 100px;
+		height: 100px;
+		
+	}
+   
+}
+
+
+@media screen and (min-width: 3000px) {
+  .viewpost .post_content .post_title {
+    padding-right: 150px;
+    }
+  .viewpost .post_content .post_text {
+    margin-top: 30px;
+  }
+  .viewpost .inner-container {
+    width: 68vw;
+  }
+
+  .viewpost .profile-header-left .post-userImg,
+  .viewpost .comment_list .commenter-pic  img {
+    width: 8rem;
+    
+  }
+  
+  .viewpost .profile-header-right .follow-button {
+    min-width: 250px;
+    line-height: 66px;
+    border-width: 3px;
+  
+  }
+  .comment_list .comment_item {
+    gap: 40px;
+  }
+  .comment_list .comment_item .timeagao {
+    
+    padding-left: 40px;
+  }
+  .comment_list .comment_item .timeagao::before {
+		border-width: 5px;
+	  left: 16px;
+	  top: 15px;
+  }
+  .comment_list .comment_item .commenter_info {
+    margin-bottom: 27px;
+  }
+  .comment_list .comment_item .comment_reply_container {
+    margin-top: 30px;
+  }
+  .comment_list .comment_item .comment_reply_container .reply_btn a span,
+  .viewpost .postview_footer .more a.morebtn span.dots {
+	 border-width: 5px;
+    margin-left: 80px;
+  }
+  .comment_list .comment_item .comment_reply_container .reply_btn a span::before, 
+  .comment_list .comment_item .comment_reply_container .reply_btn a span::after ,
+  .viewpost .postview_footer .more a.morebtn span.dots::before, 
+  .viewpost .postview_footer .more a.morebtn span.dots::after{
+    
+    top: -4px;
+    left: -35px;
+    border-width: 5px;
+  }
+  .comment_list .comment_item .comment_reply_container .reply_btn a span::after,
+  .viewpost .postview_footer .more a.morebtn span.dots::after {
+    left: -20px;
+  }
+  
+  .post_comment button {
+    width: 110px;
+    padding: 24px;
+    height: 110px;
+	
+  }
+  .post_comment textarea {	height: 40px;}
+  .viewpost .postview_footer .more ul.sublist 
+  {
+	  width: 500px;
+    padding: 40px 40px 80px;
+  }
+  .viewpost .postview_footer .more ul.sublist li a {
+  line-height: 130px;
+  }
+
+  .slider-modal .modal-nav {
+	width: 150px;
+	height: 150px;
+	font-size: 55px;
+	}
+  
 }

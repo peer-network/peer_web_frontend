@@ -21,16 +21,12 @@ if (isset($_GET['message'])) {
 ?>
 <!DOCTYPE html>
 <html lang="de">
-<?php if ($message): ?>
-<div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
-<?php endif; ?>
-
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/password.css?<?php echo filemtime('css/password.css'); ?>">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
+    <script src="js/password.js?<?php echo filemtime('js/password.js'); ?>" defer></script>
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
@@ -60,11 +56,14 @@ if (isset($_GET['message'])) {
 
     <div class="cont"> 
         <form id="registerForm" class="form-container">
+            <?php if ($message): ?>
+            <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
+            <?php endif; ?>
             <div class="peerLogo">
                 <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
             </div>
             <div class="head">
-                <h1 class="heading">Hey there, <span class="waving-hand">👋</span><br> Welcome back!</h1>
+                <h1 class="heading">Hey there,<br> Welcome back!</h1>
                 <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
             </div>
             <div class="input-field">
@@ -72,13 +71,9 @@ if (isset($_GET['message'])) {
                 <input type="email" id="email" name="e_mail" placeholder="E-mail" required class="input-text" autocomplete="on"></input>
                 <img class="tick" src="svg/tick-icon.png" alt="tick">
             </div>
+            <!-- Password Component -->
+            <div class="password-component" data-show-strength="false" data-show-message="true" data-name="password"></div>
 
-            <div class="input-field password-field">
-                <img class="password-icon" src="svg/lock1.svg" alt="">
-                <input type="password" id="password" name="password" placeholder="Password" required class="input-text"></input>
-                <img class="seePass" src="svg/seePass.png" alt="See Password" id="togglePassword">
-            </div>
-            <div class="validationMessage" id="validationMessage" for="password"  aria-live="polite"></div>
             <div class="rem-for">
                 <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
                 <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>

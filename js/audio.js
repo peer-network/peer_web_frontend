@@ -2,8 +2,11 @@ let audioplayer;
 function initAudioplayer(canvasID, url) {
   const canvas = document.getElementById(canvasID);
   const canvasContext = canvas.getContext("2d");
-  canvas.width = 800;
-  canvas.height = 100;
+  canvas.width = 700;
+  canvas.height = 130;
+  const currentTimeDisplay = document.getElementById("current-time");
+  const durationDisplay = document.getElementById("duration");
+
   if (audioplayer) {
     audioplayer.pause();
   }
@@ -40,49 +43,87 @@ function initAudioplayer(canvasID, url) {
     drawWaveform(); // Zeichne die statische Wellenform
   }
 
+  audioplayer.addEventListener("loadedmetadata", () => {
+  durationDisplay.textContent = formatTime(audioplayer.duration);
+});
+
   // Wellenform zeichnen
-  function drawWaveform(progressPosition = null) {
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-    const middle = canvas.height / 2;
-    const scale = middle;
+function drawWaveform(progressPosition = null) {
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+  const middle = canvas.height / 2;
+  const barWidth = 8; // Width of each vertical bar
+  const gap = 8; // Gap between bars
+  const totalBars = Math.floor(canvas.width / (barWidth + gap));
 
-    // Zeichne die statische Welle
-    canvasContext.beginPath();
-    waveformData.forEach((value, index) => {
-      const x = index;
-      const y = middle - value * scale;
-      canvasContext.moveTo(x, y);
-      canvasContext.lineTo(x, canvas.height - y);
-    });
-    // canvasContext.lineTo(canvas.width, middle);
-    canvasContext.strokeStyle = "#007aff"; // Graue Welle für Vorschau
-    canvasContext.lineWidth = 1;
-    canvasContext.lineCap = "round";
-    canvasContext.stroke();
+  const progressX = progressPosition !== null ? Math.floor(progressPosition * canvas.width) : -1;
 
-    // Zeichne die Fortschrittslinie, wenn progressPosition vorhanden ist
-    if (progressPosition !== null) {
-      const progressX = Math.floor(progressPosition * canvas.width);
-      canvasContext.beginPath();
-      canvasContext.moveTo(progressX, 0);
-      canvasContext.lineTo(progressX, canvas.height);
-      canvasContext.strokeStyle = "#fff"; // Blau für die Fortschrittslinie
-      canvasContext.lineWidth = 2;
-      canvasContext.stroke();
+  for (let i = 0; i < totalBars; i++) {
+    const value = waveformData[i] || 0;
+    const barHeight = value * canvas.height * 0.9;
+    const x = i * (barWidth + gap);
+    const y = middle - barHeight / 2;
+    const radius = barWidth / 2;
+
+    // 👇 Change color based on progress
+    if (progressX !== -1 && x < progressX) {
+      canvasContext.fillStyle = "rgba(255, 255, 255, 1)"; // Full white
+    } else {
+      canvasContext.fillStyle = "rgba(255, 255, 255, 0.50)"; // Semi-transparent white
     }
+
+    // Draw rounded vertical capsule
+    canvasContext.beginPath();
+    canvasContext.moveTo(x + radius, y);
+    canvasContext.lineTo(x + radius, y + barHeight - radius);
+    canvasContext.quadraticCurveTo(x + radius, y + barHeight, x, y + barHeight);
+    canvasContext.quadraticCurveTo(x - radius, y + barHeight, x - radius, y + barHeight - radius);
+    canvasContext.lineTo(x - radius, y + radius);
+    canvasContext.quadraticCurveTo(x - radius, y, x, y);
+    canvasContext.quadraticCurveTo(x + radius, y, x + radius, y + radius);
+    canvasContext.closePath();
+    canvasContext.fill();
   }
+
+  // Draw progress line
+  if (progressX !== -1) {
+    canvasContext.beginPath();
+    canvasContext.moveTo(progressX, 0);
+    canvasContext.lineTo(progressX, canvas.height);
+    canvasContext.strokeStyle = "#00ffcc"; // Progress line color
+    canvasContext.lineWidth = 5;
+    canvasContext.stroke();
+  }
+}
+
+
 
   // Fortschritt aktualisieren
-  function updateProgress() {
-    if (audioplayer && !audioplayer.paused) {
-      const progress = audioplayer.currentTime / audioplayer.duration; // Fortschritt berechnen
-      drawWaveform(progress); // Fortschrittslinie zeichnen
-      requestAnimationFrame(updateProgress); // Aktualisiere bei laufendem  audioplayer
-      playPauseButton.classList.add("paused"); // Klasse hinzufügen
+function updateProgress() {
+  if (audioplayer && !isNaN(audioplayer.duration)) {
+    const current = audioplayer.currentTime;
+    const duration = audioplayer.duration;
+
+    const progress = current / duration;
+    drawWaveform(progress);
+
+    // Update time display
+    currentTimeDisplay.textContent = formatTime(current);
+    durationDisplay.textContent = formatTime(duration);
+
+    if (!audioplayer.paused) {
+      requestAnimationFrame(updateProgress);
+      playPauseButton.classList.add("paused");
     } else {
-      playPauseButton.classList.remove("paused"); // Klasse entfernen
+      playPauseButton.classList.remove("paused");
     }
   }
+}
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? "0" + s : s}`;
+}
+
 
   // Play/Pause-Toggle
   playPauseButton.addEventListener("click", async () => {
