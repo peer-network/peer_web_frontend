@@ -1056,8 +1056,18 @@ async function viewed(object) {
         if (objekt.cover) {
           cover = JSON.parse(objekt.cover);
         }
-        audioContainer.appendChild(canvas);
-        audioContainer.appendChild(button);
+        const audio_player = document.createElement("div");
+        audio_player.className = "audio_player_con";
+        const timeinfo = document.createElement("div");
+        timeinfo.className = "time-info";
+        timeinfo.innerHTML = `
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        `;
+        audio_player.appendChild(timeinfo);
+        audio_player.appendChild(canvas);
+        audio_player.appendChild(button);
+        
+        audioContainer.appendChild(audio_player);
         // audioContainer.appendChild(audio);
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
         post_gallery.appendChild(audioContainer);
@@ -1098,15 +1108,78 @@ async function viewed(object) {
       post_gallery.classList.add("images");
       if (array.length > 1) post_gallery.classList.add("multi");
       else post_gallery.classList.remove("multi");
-      for (const item of array) {
-        img = document.createElement("img");
-        img.src = tempMedia(item.path);
+
+      
+        post_gallery.innerHTML = `
+            <div class="slider-wrapper">
+              <div class="slider-track"></div>
+              <div class="slider-thumbnails"></div>
+              </div>
+          `;
+
+      const sliderTrack = post_gallery.querySelector(".slider-track");
+      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+      const imageSrcArray = [];
+      array.forEach((item, index) => {
+        const image_item = document.createElement("div");
+        image_item.classList.add("image_item");
+
+        const img = document.createElement("img");
+        const timg = document.createElement("img");
+        const src = tempMedia(item.path);
+        img.src = src;
+        timg.src = src;
         img.alt = "";
-        // img.addEventListener("click", function () {
-        //   showImg(img);
-        // });
-        post_gallery.appendChild(img);
-      }
+        timg.alt = "";
+
+        
+        
+        image_item.appendChild(timg);
+        sliderThumb.appendChild(img);
+
+        const zoomElement = document.createElement("span");
+        zoomElement.className = "zoom";
+        zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+        image_item.appendChild(zoomElement);
+       
+        sliderTrack.appendChild(image_item);
+
+
+let currentIndex = 0;
+
+function updateSlider(index) {
+  currentIndex = index;
+
+  const targetItem = sliderTrack.children[index];
+  const offsetLeft = targetItem.offsetLeft;
+
+  sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+  // Manage active class
+  sliderThumb.querySelectorAll("img").forEach((thumb, i) => {
+    thumb.classList.toggle("active", i === index);
+  });
+}
+
+// Initialize active thumbnail
+updateSlider(0);
+
+// Add click listener to each thumbnail
+sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
+  thumb.addEventListener("click", () => {
+    updateSlider(index);
+  });
+});
+
+
+
+        imageSrcArray.push(src);
+
+        // Open modal on click
+        zoomElement.addEventListener("click", () => {
+          openSliderModal(imageSrcArray, index);
+        });
+      });
     }
 
     /*const title = document.getElementById("comment-title");
@@ -1250,6 +1323,103 @@ async function viewed(object) {
   }
 
 
+  function openSliderModal(images, startIndex = 0) {
+    const modal = document.getElementById("sliderModal");
+    const track = modal.querySelector(".modal-slider-track");
+    const closeBtn = modal.querySelector(".close-modal");
+    const modalContent = modal.querySelector(".slider-modal-content");
+    const thumbnailContainer = modal.querySelector(".modal-thumbnails");
+
+    // Reset track
+    track.innerHTML = "";
+    thumbnailContainer.innerHTML = "";
+
+    images.forEach((src, index) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.classList.add("modal-image");
+       if (index === startIndex) img.classList.add("active");
+      track.appendChild(img);
+    });
+    // Add thumbnails
+    images.forEach((src, index) => {
+      const thumb = document.createElement("img");
+      thumb.src = src;
+      thumb.classList.add("modal-thumbnail");
+      if (index === startIndex) thumb.classList.add("active");
+      thumb.addEventListener("click", () => {
+        current = index;
+        update();
+      });
+      thumbnailContainer.appendChild(thumb);
+    });
+
+
+    let current = startIndex;
+    const total = images.length;
+    const imageElements = track.querySelectorAll(".modal-image");
+    const thumbnailElements = thumbnailContainer.querySelectorAll(".modal-thumbnail");
+
+    function update() {
+      imageElements.forEach((img, i) => {
+      img.classList.remove("active");
+      });
+
+      const activeImg = imageElements[current];
+      activeImg.classList.add("active");
+
+      // Wait for image to load before getting dimensions
+      if (activeImg.complete) {
+        setModalWidth(activeImg);
+      } else {
+        activeImg.onload = () => setModalWidth(activeImg);
+      }
+      // Highlight active thumbnail
+      thumbnailElements.forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === current);
+      });
+      
+    }
+    function setModalWidth(img) {
+    
+    if (img) {
+       const width = img.naturalWidth;
+      modalContent.style.maxWidth  = `${width}px`;
+      track.style.transform = `translateX(-${current * 100}%)`;
+    }
+  }
+
+    modal.querySelector(".modal-nav.prev").onclick = () => {
+      current = (current - 1 + total) % total;
+      update();
+    };
+
+    modal.querySelector(".modal-nav.next").onclick = () => {
+      current = (current + 1) % total;
+      update();
+    };
+
+    closeBtn.onclick = () => modal.classList.add("hidden");
+    modal.onclick = (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    };
+
+    update();
+    const navPrev = modal.querySelector(".modal-nav.prev");
+  const navNext = modal.querySelector(".modal-nav.next");
+
+  // Hide navigation if only one image
+  if (total <= 1) {
+    navPrev.style.display = "none";
+    navNext.style.display = "none";
+    thumbnailContainer.style.display = "none";
+  } else {
+    navPrev.style.display = "flex";
+    navNext.style.display = "flex";
+    thumbnailContainer.style.display = "flex";
+  }
+    modal.classList.remove("hidden");
+  }
 
 
   function deleteFilter() {

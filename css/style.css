@@ -26,6 +26,7 @@
   --dark-inactive:#323232;
   --black-dark: #252525;
   --Field-Hover-Black: #393939;
+	--red-accent: #FF3B3B;
 
   --translate-x: 0px;
   /* X-Verschiebung */
@@ -386,6 +387,28 @@ input[type="submit"].btn-red-transparent:hover{
 	border-color: #FF3B3B;
 	color: var(--white);
 }
+
+/*--- Button Red  ---*/
+button.btn-red,.button.btn-red,
+input[type="button"].btn-red,
+input[type="reset"].btn-red,
+input[type="submit"].btn-red,
+input[type="submit"].btn-red{
+	background-color:#FF3B3B;
+	border-color: #FF3B3B;
+	color: var(--white);
+}
+
+button.btn-red:hover,.button.btn-red:hover,
+input[type="button"].btn-red:hover,
+input[type="reset"].btn-red:hover,
+input[type="submit"].btn-red:hover,
+input[type="submit"].btn-red:hover{
+	background-color:transparent;
+	border-color: #FF3B3B;
+	color: #FF3B3B;
+}
+
 /*---- End Red Transparent --*/
 
 button:active, button:focus,

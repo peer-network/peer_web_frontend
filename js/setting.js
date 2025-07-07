@@ -719,10 +719,19 @@ document.addEventListener("DOMContentLoaded", function () {
     modalOverlay.classList.add("none");
   });
 
-  // Confirm button redirects to login
   confirmLogoutBtn.addEventListener("click", function () {
-    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "login.php"; 
+    // Clear localStorage and sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Delete all cookies
+    document.cookie.split(";").forEach(function (cookie) {
+      const name = cookie.split("=")[0].trim();
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
+
+    // Redirect to login
+    window.location.href = "login.php";
   });
 });
 

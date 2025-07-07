@@ -405,6 +405,7 @@ async function processFiles(files, id) {
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
+      previewContainer.appendChild(previewItem);
     } else if (type === "image") {
       previewItem.innerHTML = `
         <p>${file.name}</p>
@@ -412,6 +413,7 @@ async function processFiles(files, id) {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
+      previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
     } else if (type === "video") {
       previewItem.classList.add("video-item");
       previewItem.innerHTML = `
@@ -419,9 +421,9 @@ async function processFiles(files, id) {
         <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
+      previewContainer.appendChild(previewItem);
     }
 
-    previewContainer.appendChild(previewItem);
     let element;
     if (type === "image") {
       element = previewItem.querySelector("img");
@@ -431,6 +433,7 @@ async function processFiles(files, id) {
       element = previewItem.querySelector("video");
     }
     const base64 = await convertImageToBase64(file);
+    sessionStorage.setItem(file.name, base64);
     element.src = base64;
     // imageElement.style.display = "block";
     element.classList.remove("none");

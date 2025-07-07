@@ -15,8 +15,8 @@ let offset = { x: 0, y: 0 };
 let scale = 1;
 let aspect_Ratio = 1;
 
-const MIN_SCALE = 0.1;
-const MAX_SCALE = 5;
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 8;
 
 cropImg.onload = () => {
   scale = 1;
