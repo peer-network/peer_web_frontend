@@ -1,209 +1,914 @@
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("btAddPost").addEventListener("click", function startAddPost() {
-    togglePopup("addPost");
-  });
+
+const MAX_TAGS = 10;
+
+// DOM references
+const tagInput = document.getElementById("tag-input");
+const tagContainer = document.getElementById("tagsContainer");
+const historyContainer = document.getElementById("tagHistoryContainer");
+const selectedContainer = document.getElementById("tagsSelected");
+const clearTagHistoryBtn = document.getElementById("clearTagHistory");
+
+updateTagUIVisibility(); // suggestions + selected
+
+
+  document.getElementById("btAddPost").addEventListener("click", () => togglePopup("addPost"));
   const closeAddPost = document.getElementById("closeAddPost");
   if (closeAddPost) {
-    closeAddPost.addEventListener("click", () => {
-      //header.classList.remove("none");
-      togglePopup("addPost");
-    });
-  }
-  const createPostNotes = document.getElementById("createPostNotes");
-  if (createPostNotes) {
-    createPostNotes.addEventListener("click", async function createPost(event) {
-      event.preventDefault(); // Prevent form reload
-      const title = document.getElementById("titleNotes").value;
-      const textareaValue = document.getElementById("descriptionNotes").value;
-      const encoder = new TextEncoder();
-      const encodedData = encoder.encode(textareaValue);
-      const base64String = btoa(String.fromCharCode(...encodedData));
-      const base64WithMime = [`data:text/plain;base64,${base64String}`];
-      const tags = tag_getTagArray();
-
-      const gesamtLaenge = base64WithMime.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-      const maxBytes = 4 * 1024 * 1024;
-      if (gesamtLaenge > maxBytes) {
-        Merror("Error", "The text is too large. Please upload a smaller text.");
-        return;
-      }
-      if (
-        await sendCreatePost({
-          title: title,
-          media: base64WithMime,
-          contenttype: "text",
-          tags: tags,
-        })
-      ) {
-        togglePopup("addPost");
-        location.reload();
-      }
-    });
+    closeAddPost.addEventListener("click", () => togglePopup("addPost"));
   }
 
+/**************/
+  // const createPostNotes = document.getElementById("createPostNotes");
+  // if (createPostNotes) {
+  //   createPostNotes.addEventListener("click", async (event) => {
+  //     event.preventDefault();
+  //     const title = document.getElementById("titleNotes").value;
+  //     const textareaValue = document.getElementById("descriptionNotes").value;
+  //     const base64String = btoa(new TextEncoder().encode(textareaValue).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+  //     const base64WithMime = [`data:text/plain;base64,${base64String}`];
+  //     const tags = getTagHistory();
+
+  //     if (base64WithMime.join("").length > 4 * 1024 * 1024) {
+  //       Merror("Error", "The text is too large. Please upload a smaller text.");
+  //       return;
+  //     }
+
+  //     if (await sendCreatePost({
+  //         title,
+  //         media: base64WithMime,
+  //         contenttype: "text",
+  //         tags
+  //       })) {
+  //       togglePopup("addPost");
+  //       location.reload();
+  //     }
+  //   });
+  // }
+
+const createPostNotes = document.getElementById("createPostNotes");
+if (createPostNotes) {
+  createPostNotes.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    // Elements
+    const titleEl = document.getElementById("titleNotes");
+    const descEl = document.getElementById("descriptionNotes");
+    const tagErrorEl = document.getElementById("tagError");
+    const titleErrorEl = document.getElementById("titleError");
+    const descErrorEl = document.getElementById("descriptionError");
+
+    const title = titleEl.value.trim();
+    const description = descEl.value.trim();
+    const tags = getTagHistory();
+
+    // Clear old errors
+    titleErrorEl.textContent = "";
+    descErrorEl.textContent = "";
+    tagErrorEl.textContent = "";
+
+    // Validation
+    let hasError = false;
+
+    if (!title) {
+      titleErrorEl.textContent = "Title is required.";
+      hasError = true;
+    } else if (title.length < 5) {
+      titleErrorEl.textContent = "Title must be at least 5 characters.";
+      hasError = true;
+    }
+
+    if (!description) {
+      descErrorEl.textContent = "Description is required.";
+      hasError = true;
+    } else if (description.length < 10) {
+      descErrorEl.textContent = "Description must be at least 10 characters.";
+      hasError = true;
+    }
+
+    if (tags.length === 0) {
+      tagErrorEl.textContent = "Please add at least one tag.";
+      hasError = true;
+    }
+
+    // Convert to base64
+    const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+    const base64WithMime = [`data:text/plain;base64,${base64String}`];
+
+    if (base64WithMime.join("").length > 4 * 1024 * 1024) {
+      descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
+      hasError = true;
+    }
+
+    // If any error, stop
+    if (hasError) return;
+
+    // Submit
+    const success = await sendCreatePost({
+      title,
+      media: base64WithMime,
+      contenttype: "text",
+      tags
+    });
+
+    if (success) {
+      // togglePopup("addPost");
+      location.reload();
+    }
+  });
+}
+
+document.querySelectorAll('.resettable-form').forEach(form => {
+  form.addEventListener('reset', function (event) {
+    const tagInput = event.target.querySelector('#tag-input');
+    const tagHistory = event.target.querySelector('#tagHistoryContainer');
+    const tagSuggestions = event.target.querySelector('#tagsContainer');
+    const selectedTags = event.target.querySelector('#tagsSelected');
+    const tagError = event.target.querySelector('#tagError');
+
+    if (tagInput) tagInput.value = '';
+    if (tagSuggestions) tagSuggestions.innerHTML = '';
+    if (selectedTags) selectedTags.innerHTML = '';
+    if (tagError) tagError.textContent = '';
+
+    const historySection = event.target.querySelector('#tag-history-section');
+    const suggestionsSection = event.target.querySelector('#tag-suggestions-section');
+    const selectedTagsSection = event.target.querySelector('#selected-tags-section');
+
+    if (tagHistory) {
+      tagHistory.innerHTML = '';
+      if (tagHistory.children.length === 0 && historySection) {
+        historySection.classList.add('hidden');
+        historySection.classList.remove('visible');
+      }
+    }
+
+    if (suggestionsSection) {
+      suggestionsSection.classList.add('hidden');
+      suggestionsSection.classList.remove('visible');
+    }
+
+    if (selectedTagsSection) {
+      selectedTagsSection.classList.add('hidden');
+      selectedTagsSection.classList.remove('is-visible');
+    }
+  });
+});
+
+
+/**********************************************************************/
   const createPostImage = document.getElementById("createPostImage");
   if (createPostImage) {
-    createPostImage.addEventListener("click", async function createPost(event) {
-      event.preventDefault(); // Prevent form reload
+    createPostImage.addEventListener("click", async (event) => {
+      event.preventDefault();
       const title = document.getElementById("titleImage").value;
       const beschreibung = document.getElementById("descriptionImage").value;
       const imageWrappers = document.querySelectorAll(".create-img");
       const tags = tag_getTagArray();
 
       const combinedBase64 = Array.from(imageWrappers)
-        .map((img) => img.src) // Bildquelle (src) abrufen
+        .map((img) => img.src)
         .filter((src) => src.startsWith("data:image/"));
-      // // const combinedHTML = Array.from(imageWrappers)
-      //   .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-      //   .join(" "); // Concatenate the HTML content with a space in between
-      const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-      const maxBytes = 4 * 1024 * 1024;
-      if (gesamtLaenge > maxBytes) {
-        Merror("Error", "The image(s) is too large. Please upload a smaller image(s).");
+
+      if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+        Merror("Error", "The image(s) are too large.");
         return;
       }
-      if (
-        await sendCreatePost({
-          title: title,
+
+      if (await sendCreatePost({
+          title,
           media: combinedBase64,
           mediadescription: beschreibung,
           contenttype: "image",
-          tags: tags,
-        })
-      ) {
+          tags
+        })) {
         togglePopup("addPost");
         location.reload();
       }
     });
   }
-
   const createPostAudio = document.getElementById("createPostAudio");
   if (createPostAudio) {
-    createPostAudio.addEventListener("click", async function createPost(event) {
-      event.preventDefault(); // Prevent form reload
+    createPostAudio.addEventListener("click", async (event) => {
+      event.preventDefault();
       const title = document.getElementById("titleAudio").value;
-      const beschreibung = document.getElementById("descriptionImage").value;
-      const imageWrappers = document.querySelectorAll(".create-audio");
+      const beschreibung = document.getElementById("descriptionAudio").value;
+      const audioWrappers = document.querySelectorAll(".create-audio");
       const tags = tag_getTagArray();
 
-      const combinedBase64 = Array.from(imageWrappers)
-        .map((img) => img.src) // Bildquelle (src) abrufen
+      const combinedBase64 = Array.from(audioWrappers)
+        .map((audio) => audio.src)
         .filter((src) => src.startsWith("data:audio/"));
 
-      const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-      const maxBytes = 4 * 1024 * 1024;
-      if (gesamtLaenge > maxBytes) {
-        Merror("Error", "The audio is too large. Please upload a smaller audio.");
+      if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+        Merror("Error", "The audio is too large.");
         return;
       }
-      const canvas = document.querySelector("#preview-audio > div > canvas");
-      const cover = document.querySelector("#preview-cover > div > img");
-      let dataURL;
-      if (cover) {
-        dataURL = [cover.src];
-      } else {
-        dataURL = [canvas.toDataURL("image/webp", 0.8)];
-      }
-      if (
-        await sendCreatePost({
-          title: title,
+
+      const coverImg = document.querySelector("#preview-cover img");
+      const canvas = document.querySelector("#preview-audio canvas");
+      const cover = coverImg ? [coverImg.src] : [canvas ?.toDataURL("image/webp", 0.8)];
+
+      if (await sendCreatePost({
+          title,
           media: combinedBase64,
-          cover: dataURL,
+          cover,
           mediadescription: beschreibung,
           contenttype: "audio",
-          tags: tags,
-        })
-      ) {
+          tags
+        })) {
         togglePopup("addPost");
-
         location.reload();
       }
     });
   }
-
   const createPostVideo = document.getElementById("createPostVideo");
   if (createPostVideo) {
-    createPostVideo.addEventListener("click", async function createPost(event) {
-      event.preventDefault(); // Prevent form reload
+    createPostVideo.addEventListener("click", async (event) => {
+      event.preventDefault();
       const title = document.getElementById("titleVideo").value;
       const beschreibung = document.getElementById("descriptionVideo").value;
-      const imageWrappers = document.querySelectorAll(".create-video");
+      const videoWrappers = document.querySelectorAll(".create-video");
       const tags = tag_getTagArray();
 
-      const combinedBase64 = Array.from(imageWrappers)
-        .map((img) => img.src) // Bildquelle (src) abrufen
+      const combinedBase64 = Array.from(videoWrappers)
+        .map((vid) => vid.src)
         .filter((src) => src.startsWith("data:video/"));
-      // .join(" ");
-      const gesamtLaenge = combinedBase64.reduce((summe, aktuellerString) => summe + aktuellerString.length, 0);
-      const maxBytes = 4 * 1024 * 1024;
-      if (gesamtLaenge > maxBytes) {
-        Merror("Error", "The video is too large. Please upload a smaller video.");
+
+      if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+        Merror("Error", "The video is too large.");
         return;
       }
-      if (
-        await sendCreatePost({
-          title: title,
+
+      if (await sendCreatePost({
+          title,
           media: combinedBase64,
           mediadescription: beschreibung,
           contenttype: "video",
-          tags: tags,
-        })
-      ) {
+          tags
+        })) {
         togglePopup("addPost");
         location.reload();
       }
     });
   }
 
-  // Liste der Dropzonen und Input-Elemente
-  const zones = [
-    {
+  /******************************************************************** */
+  // if (tagInput) {
+  //   tagInput.value = "";
+  //   clearTagContainer();
+  //   // toggleTagUI(false);
+
+  //   tagInput.addEventListener("focus", () => {
+  //     clearTagContainer();
+  //     const history = getTagHistory();
+  //     const hasUserTyped = tagInput.value.trim().length > 0;
+
+  //     if (history.length > 0 || hasUserTyped) {
+  //       renderTagHistory();
+  //       toggleTagUI(true, false); // 👈 show history only
+  //     } else {
+  //       toggleTagUI(false);
+  //     }
+  //   });
+
+  //   tagInput.addEventListener("keyup", async (event) => {
+  //     const searchStr = tagInput.value.trim();
+  //     clearTagContainer();
+
+  //     if (searchStr === "") {
+  //       toggleTagUI(false);
+  //       return;
+  //     }
+
+  //     if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
+  //       alert("Only letters and numbers allowed.");
+  //       return;
+  //     }
+
+  //     if (searchStr.length >= 3) {
+  //       try {
+  //         const tags = await fetchTags(searchStr); // your existing fetch
+  //         if (tags && tags.length > 0) {
+            
+  //           tags.forEach(tag => tag_addTag(tag.name, false));
+  //           toggleTagUI(true, true); // 👈 show both history + suggestions now
+          
+  //         } else {
+  //           toggleTagUI(true, true);
+  //         } 
+  //         // else {
+  //         //   tag_addTag(searchStr, false);
+  //         // }
+
+          
+  //       } catch (error) {
+  //         console.error("Tag fetch error:", error);
+  //       }
+  //     }
+  //   });
+
+
+  //   tagInput.addEventListener("keydown", (e) => {
+  //     if (e.key === "Enter") {
+  //       const val = tagInput.value.trim();
+  //       if (val && /^[a-zA-Z0-9]+$/.test(val)) {
+  //         tag_addTag(val);
+  //         tagInput.value = "";
+  //         clearTagContainer();
+  //         toggleTagUI(false);
+  //       }
+  //     }
+  //   });
+
+  //   clearTagHistoryBtn.addEventListener("click", () => {
+  //     localStorage.removeItem("tagHistory");
+  //     clearTagContainer();
+  //     toggleTagUI(false);
+  //   });
+
+  // }
+
+  // function clearTagContainer() {
+  //   tagContainer.innerHTML = "";
+  // }
+
+  // function toggleTagUI(show, showSuggestions = false) {
+  //   const historyHeader = document.querySelector(".history-header");
+  //   const historyTags = document.getElementById("tagHistoryContainer");
+  //   const suggestionsLabel = document.querySelector(".selected-header");
+  //   const tagContainer = document.getElementById("tagsContainer");
+
+  //   // Toggle history section
+  //   [historyHeader, historyTags].forEach(el => {
+  //     if (!el) return;
+  //     el.classList.toggle("hidden", !show);
+  //     el.classList.toggle("is-visible", show);
+  //   });
+
+  //   // Toggle suggestions section only if explicitly allowed
+  //   [suggestionsLabel, tagContainer].forEach(el => {
+  //     if (!el) return;
+  //     el.classList.toggle("hidden", !showSuggestions);
+  //     el.classList.toggle("is-visible", showSuggestions);
+  //   });
+  // }
+
+  // function tag_addTag(tagText, silent = false) {
+  //   const existing = Array.from(document.querySelectorAll("#tagsContainer .tag")).map(tag =>
+  //     tag.textContent.replace("X", "").trim()
+  //   );
+
+  //   if (existing.includes(tagText)) return;
+  //   if (document.querySelector("#tagsContainer").children.length >= 10) {
+  //     if (!silent) info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
+  //     return;
+  //   }
+
+  //   const tag = createTagElement(tagText);
+  //   document.getElementById("tagsContainer").appendChild(tag);
+  //   // saveTagToHistory(tagText);
+  // }
+
+  // function tag_removeTag(tagText) {
+  //   const tagElements = document.querySelectorAll(`#tagsContainer .tag[data-tag="${tagText}"]`);
+
+  //   tagElements.forEach(tagEl => {
+  //     tagEl.classList.add("removing");
+  //     setTimeout(() => tagEl.remove(), 200);
+  //   });
+
+  //   // Optional: You can also remove it from history here if needed
+  //   // let history = getTagHistory().filter(tag => tag !== tagText);
+  //   // localStorage.setItem("tagHistory", JSON.stringify(history));
+  // }
+
+  // function createTagElement(tagText, isHistory = false) {
+  //   const tag = document.createElement("span");
+  //   tag.classList.add("tag");
+  //   tag.textContent = tagText;
+
+  //   if (!isHistory) {
+  //     const removeBtn = document.createElement("button");
+  //     removeBtn.textContent = "X";
+  //     removeBtn.classList.add("remove-tag");
+  //     removeBtn.addEventListener("click", (e) => {
+  //       e.stopPropagation();
+  //       tag.classList.add("removing");
+  //       setTimeout(() => tag.remove(), 200);
+  //       tag_removeTag(tagText);
+  //     });
+  //     tag.appendChild(removeBtn);
+  //   }
+
+  //   tag.addEventListener("click", () => {
+  //     if (isHistory) {
+  //       // Add to selected
+  //       tag_addTag(tagText);
+
+  //       // Remove from history DOM
+  //       const historyTag = document.querySelector(`#tagHistoryContainer .tag[data-tag="${tagText}"]`);
+  //       if (historyTag) {
+  //         historyTag.classList.add("removing");
+  //         setTimeout(() => historyTag.remove(), 200);
+  //       }
+  //     } else {
+  //       // Remove from selected
+  //       tag.classList.add("removing");
+  //       setTimeout(() => tag.remove(), 200);
+  //       tag_removeTag(tagText);
+  //     }
+  //   });
+
+
+  //   tag.setAttribute("data-tag", tagText);
+  //   requestAnimationFrame(() => tag.classList.add("show"));
+  //   return tag;
+  // }
+
+  // function getTagHistory() {
+  //   const history = localStorage.getItem("tagHistory");
+  //   return history ? JSON.parse(history) : [];
+  // }
+
+  // // function renderTagHistory() {
+  // //   const history = getTagHistory();
+  // //   if (history.length > 0) {
+  // //     history.forEach(tag => tag_addTag(tag, true));
+  // //     return true;
+  // //   }
+
+  // //   return false;
+  // // }
+  // function renderTagHistory() {
+  //   const history = getTagHistory();
+  //   const historyContainer = document.getElementById("tagHistoryContainer");
+
+  //   if (history.length === 0) return false;
+
+  //   historyContainer.innerHTML = "";
+
+  //   history.forEach(tagText => {
+  //     const tag = createTagElement(tagText, true); // history mode
+  //     historyContainer.appendChild(tag);
+  //   });
+
+  //   return true;
+  // }
+
+  // function saveTagToHistory(tagText) {
+  //   let history = getTagHistory();
+
+  //   // Remove if exists
+  //   history = history.filter(tag => tag !== tagText);
+
+  //   // Add to top
+  //   history.unshift(tagText);
+
+  //   // Limit to last 20 tags
+  //   if (history.length > 20) {
+  //     history = history.slice(0, 20);
+  //   }
+
+  //   localStorage.setItem("tagHistory", JSON.stringify(history));
+  // }
+
+// ===== INITIAL SETUP =====
+if (tagInput) {
+  tagInput.value = "";
+
+  tagInput.addEventListener("focus", () => {
+    const history = getTagHistory();
+    if (history.length > 0) renderTagHistory();
+    if (tagInput.value.trim().length > 0) updateTagUIVisibility();
+  });
+
+  tagInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      const val = tagInput.value.trim();
+      const formatted = val.replace(/^#+/, "").trim();
+      const clean = formatted.toLowerCase();
+
+      const existingTags = getAllUsedTagsSet();
+
+      if (val.length >= 3 && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
+        tag_addTag(formatted);
+        tagInput.value = "";
+        clearTagContainer();
+        updateTagUIVisibility();
+      }
+    }
+  });
+
+  tagInput.addEventListener("keyup", async (e) => {
+    const searchStr = tagInput.value.trim();
+
+    if (searchStr === "") {
+      clearTagContainer();
+      renderTagHistory();
+      updateTagUIVisibility();
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
+      alert("Only letters and numbers allowed.");
+      return;
+    }
+
+    if (searchStr.length < 3) return;
+
+    try {
+      const tags = await fetchTags(searchStr);
+      const existingTags = getAllUsedTagsSet();
+
+      clearTagContainer();
+
+      tags.forEach(tag => {
+        if ((tag.count === 0 || tag.records === 0)) return;
+
+        const original = tag.name.replace(/^#+/, "").trim();
+        const clean = original.toLowerCase();
+
+        if (!existingTags.has(clean)) {
+          const el = createTagElement(original, "suggestion");
+          tagContainer.appendChild(el);
+          existingTags.add(clean);
+        }
+      });
+
+      updateTagUIVisibility();
+    } catch (error) {
+      console.error("Tag fetch error:", error);
+    }
+  });
+
+  clearTagHistoryBtn.addEventListener("click", () => {
+    localStorage.removeItem("tagHistory");
+    renderTagHistory();
+    updateTagUIVisibility();
+  });
+}
+
+// ===== TAG MANAGEMENT =====
+function tag_addTag(tagText, silent = false) {
+  const cleanText = tagText.replace(/^#+/, "");
+
+  if (selectedContainer.querySelector(`[data-tag="${cleanText}"]`)) return;
+
+  if (selectedContainer.children.length >= MAX_TAGS) {
+    if (!silent) alert("Es dürfen maximal 10 Tags erstellt werden.");
+    return;
+  }
+
+  const tag = createTagElement(cleanText, "selected");
+  selectedContainer.appendChild(tag);
+
+  if (!silent) saveTagToHistory(cleanText);
+  updateTagUIVisibility();
+}
+
+function tag_removeTag(tagText) {
+  const clean = tagText.replace(/^#+/, "");
+  const tagElements = selectedContainer.querySelectorAll(`.tag[data-tag="${clean}"]`);
+
+  tagElements.forEach(tagEl => {
+    tagEl.classList.add("removing");
+    setTimeout(() => tagEl.remove(), 200);
+  });
+
+  removeFromHistory(clean);
+  updateTagUIVisibility();
+}
+
+// ===== TAG ELEMENT CREATION =====
+function createTagElement(tagText, source = "suggestion") {
+  const cleanText = tagText.replace(/^#+/, "");
+  const tag = document.createElement("span");
+  tag.classList.add("tag");
+  tag.textContent = `#${cleanText}`;
+  tag.setAttribute("data-tag", cleanText);
+  tag.setAttribute("data-source", source);
+
+  // Only selected tags get the remove button
+  if (source === "selected") {
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "X";
+    removeBtn.classList.add("remove-tag");
+    removeBtn.type = "button";
+    removeBtn.addEventListener("click", (e) => {
+      e.preventDefault(); 
+      e.stopPropagation();
+      tag.classList.add("removing");
+      setTimeout(() => {
+        tag.remove();
+        removeFromHistory(cleanText); // remove from history
+        updateTagUIVisibility();
+      }, 200);
+    });
+    tag.appendChild(removeBtn);
+  }
+
+  tag.addEventListener("mousedown", e => e.preventDefault());
+
+  // Click to select (history or suggestions)
+  if (source !== "selected") {
+    tag.addEventListener("click", () => {
+      if (selectedContainer.querySelector(`[data-tag="${cleanText}"]`)) return;
+
+      const selectedTag = createTagElement(cleanText, "selected");
+      selectedContainer.appendChild(selectedTag);
+      saveTagToHistory(cleanText);
+
+      tagInput.value = ""; // Reset input immediately
+
+      // Remove from UI
+      tag.classList.add("removing");
+      setTimeout(() => {
+        tag.remove();
+        renderTagHistory();
+        updateTagUIVisibility();
+      }, 200);
+
+      tagInput.value = "";
+    });
+  }
+
+  requestAnimationFrame(() => tag.classList.add("show"));
+  return tag;
+}
+
+// ===== CREATE CUSTOM TAG OPTION =====
+function renderCreateTagOption(input) {
+  const clean = input.replace(/^#+/, "").toLowerCase().trim();
+
+  const existsInSuggestions = tagContainer.querySelector(`[data-tag="${clean}"]`);
+  const existsInSelected = selectedContainer.querySelector(`[data-tag="${clean}"]`);
+  const existsInHistory = getTagHistory().some(tag => tag.toLowerCase().trim() === clean);
+
+  if (existsInSuggestions || existsInSelected || existsInHistory) return; // ✅ Prevent duplicate create
+
+  tagContainer.innerHTML = "";
+
+  const el = document.createElement("span");
+  el.classList.add("tag", "create-tag");
+  el.textContent = `+ Create tag: #${clean}`;
+  el.setAttribute("data-tag", clean);
+
+  el.addEventListener("mousedown", e => e.preventDefault());
+  el.addEventListener("click", () => {
+    tag_addTag(clean);
+    tagInput.value = "";
+    clearTagContainer();
+    updateTagUIVisibility();
+  });
+
+  tagContainer.appendChild(el);
+}
+
+// ===== RENDER HISTORY =====
+function renderTagHistory() {
+  const historyContainer = document.getElementById("tagHistoryContainer");
+  const historySection = document.getElementById("tag-history-section");
+
+  // Get selected tags from DOM
+  const selectedTags = new Set(
+    Array.from(selectedContainer.children)
+      .map(el => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map(tag => tag.toLowerCase().trim())
+  );
+
+  // Get suggested tags from DOM
+  const suggestedTags = new Set(
+    Array.from(tagContainer.children)
+      .map(el => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map(tag => tag.toLowerCase().trim())
+  );
+
+  // Load history from localStorage
+  const history = localStorage.getItem("tagHistory");
+  const parsed = history ? JSON.parse(history) : [];
+
+  // If corrupted
+  if (!Array.isArray(parsed)) {
+    historyContainer.innerHTML = "";
+    historySection.classList.remove("visible");
+    return false;
+  }
+
+  // Filter out tags already shown
+  const filtered = parsed.filter(tag => {
+    const clean = tag.toLowerCase().trim();
+    return !selectedTags.has(clean) && !suggestedTags.has(clean);
+  });
+
+  // Update DOM
+  historyContainer.innerHTML = "";
+
+  if (filtered.length === 0) {
+    historySection.classList.remove("visible");
+    return false;
+  }
+
+  filtered.forEach(tagText => {
+    const tag = createTagElement(tagText, "history");
+    historyContainer.appendChild(tag);
+  });
+
+  historySection.classList.add("visible");
+  return true;
+}
+
+// ===== LOCAL STORAGE UTILS =====
+function getTagHistory() {
+  const history = localStorage.getItem("tagHistory");
+  return history ? JSON.parse(history) : [];
+}
+
+function saveTagToHistory(tagText) {
+  const clean = tagText.replace(/^#+/, "");
+  let history = getTagHistory();
+
+  history = history.filter(tag => tag !== clean); // remove if exists
+  history.unshift(clean); // add to front
+
+  if (history.length > 20) {
+    history = history.slice(0, 20);
+  }
+
+  localStorage.setItem("tagHistory", JSON.stringify(history));
+}
+
+function removeFromHistory(tagText) {
+  const clean = tagText.replace(/^#+/, "");
+  const updated = getTagHistory().filter(tag => tag !== clean);
+  localStorage.setItem("tagHistory", JSON.stringify(updated));
+}
+
+// ===== UI UTILS =====
+function clearTagContainer() {
+  tagContainer.innerHTML = "";
+}
+
+function updateTagUIVisibility() {
+  const suggestionSection = document.getElementById("tag-suggestions-section");
+  const selectedSection = document.getElementById("selected-tags-section");
+  const historySection = document.getElementById("tag-history-section");
+  const historyContainer = document.getElementById("tagHistoryContainer");
+  const tagContainer = document.getElementById("tagsContainer"); 
+  const tagSuggestionSection = document.getElementById("tag-suggestions-section");
+
+  // ===== Suggestions visibility =====
+  if (tagContainer && tagContainer.children.length > 0) {
+    suggestionSection.classList.remove("hidden");
+    tagContainer.classList.add("is-visible");
+    tagSuggestionSection.classList.add("visible");
+  } else {
+    suggestionSection.classList.add("hidden");
+    tagContainer.classList.remove("is-visible");
+    tagSuggestionSection.classList.remove("visible");
+  }
+
+  // ===== Selected tags visibility =====
+  if (selectedContainer && selectedContainer.children.length > 0) {
+     selectedSection.classList.remove("hidden");
+     selectedSection.classList.add("is-visible");
+  } else {
+    selectedSection.classList.add("hidden");
+     selectedSection.classList.remove("is-visible");
+  }
+
+  // ===== History visibility =====
+  const hasHistory = historyContainer && historyContainer.children.length > 0;
+  if (historySection) {
+    if (hasHistory) {
+      historySection.classList.add("visible");
+    } else {
+      historySection.classList.remove("visible");
+    }
+  }
+}
+
+function getAllUsedTagsSet() {
+  return new Set([
+    ...Array.from(selectedContainer.children)
+      .map(el => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map(tag => tag.toLowerCase().trim()),
+    ...getTagHistory().map(tag => tag.toLowerCase().trim())
+  ]);
+}
+
+document.querySelectorAll('.form-tab-js a').forEach(tab => {
+  tab.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // Remove 'active' from all menu items
+    document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
+
+    // Add 'active' to clicked tab's parent <li>
+    this.parentElement.classList.add('active');
+
+    // Hide all forms
+    document.querySelectorAll('.upload').forEach(form => form.classList.remove('active'));
+
+    // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
+    const id = this.id.replace('create', 'new') + 'Post';
+    const form = document.getElementById(id);
+    if (form) form.classList.add('active');
+  });
+});
+/********************************************************************/
+
+
+  async function fetchTags(searchStr) {
+    for (let failed of failedSearches) {
+      if (searchStr.includes(failed)) return [];
+    }
+
+    const accessToken = getCookie("authToken");
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    });
+
+    const query = `
+      query searchTags($searchstr: String!) {
+        searchTags(tagName: $searchstr, limit: 10) {
+          affectedRows {
+            name
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          query,
+          variables: {
+            searchstr: searchStr
+          }
+        }),
+      });
+      const result = await response.json();
+      if (!result.data.searchTags.affectedRows.length) {
+        failedSearches.add(searchStr);
+      }
+      return result.data.searchTags.affectedRows;
+    } catch {
+      return [];
+    }
+  }
+
+  const failedSearches = new Set();
+
+  const zones = [{
       dropArea: document.getElementById("drop-area-image"),
-      fileInput: document.getElementById("file-input-image"),
+      fileInput: document.getElementById("file-input-image")
     },
     {
       dropArea: document.getElementById("drop-area-audio"),
-      fileInput: document.getElementById("file-input-audio"),
+      fileInput: document.getElementById("file-input-audio")
     },
     {
       dropArea: document.getElementById("drop-area-video"),
-      fileInput: document.getElementById("file-input-video"),
+      fileInput: document.getElementById("file-input-video")
     },
     {
       dropArea: document.getElementById("drop-area-cover"),
-      fileInput: document.getElementById("file-input-cover"),
+      fileInput: document.getElementById("file-input-cover")
     },
   ];
 
-  // Gemeinsame Funktionen für die Event-Listener
-  function handleClick(fileInput) {
-    fileInput.click();
+  function handleClick(input) {
+    input.click();
   }
 
-  function handleDragOver(e, dropArea) {
+  function handleDragOver(e, area) {
     e.preventDefault();
-    dropArea.classList.add("hover");
+    area.classList.add("hover");
   }
 
-  function handleDragLeave(dropArea) {
-    dropArea.classList.remove("hover");
+  function handleDragLeave(area) {
+    area.classList.remove("hover");
   }
 
-  async function handleDrop(e, dropArea, processFiles) {
+  async function handleDrop(e, area, processor) {
     e.preventDefault();
-    dropArea.classList.remove("hover");
-
+    area.classList.remove("hover");
     const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      await processFiles(files, e.currentTarget.id);
-    }
+    if (files.length) await processor(files, area.id);
   }
 
-  async function handleFileChange(e, processFiles) {
+  async function handleFileChange(e, processor) {
     const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      await processFiles(files, e.currentTarget.id);
-    }
+    if (files.length) await processor(files, e.currentTarget.id);
   }
 
   // Iteration über die Zonen
@@ -215,6 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Drag-and-Drop-Events
     if (dropArea) {
+      dropArea.addEventListener("click", () => handleClick(fileInput));
       dropArea.addEventListener("dragover", (e) => handleDragOver(e, dropArea));
       dropArea.addEventListener("dragleave", () => handleDragLeave(dropArea));
       dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
