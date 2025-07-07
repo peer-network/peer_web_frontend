@@ -1834,7 +1834,7 @@ h1 {
   color: #000;
   font-size: 0.9rem;
 }
-#tagsContainer {
+/* #tagsContainer {
   background-color: #252525;
   border-radius: 1rem;
   padding: 1rem;
@@ -1862,7 +1862,7 @@ h1 {
   display: inline-block;
   border-radius: 0.6rem;
   margin: 0.2rem;
-}
+} */
 #tagCreate {
   position: absolute;
   bottom: 1rem;

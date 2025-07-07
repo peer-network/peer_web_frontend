@@ -268,11 +268,26 @@ async function LiquiudityCheck(postCosts, title, action) {
     if (answer === null || answer.button  === cancel) {
       return false;
     }
-    const freeused = parseInt(document.getElementById(limitIDs[action][0]).innerText) + 1;
-    const freeavailable = parseInt(document.getElementById(limitIDs[action][1]).innerText) - 1;
-    document.getElementById(limitIDs[action][0]).innerText = freeused;
-    document.getElementById(limitIDs[action][1]).innerText = freeavailable;
-    document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+    // const freeused = parseInt(document.getElementById(limitIDs[action][0]).innerText) + 1;
+    // const freeavailable = parseInt(document.getElementById(limitIDs[action][1]).innerText) - 1;
+    // document.getElementById(limitIDs[action][0]).innerText = freeused;
+    // document.getElementById(limitIDs[action][1]).innerText = freeavailable;
+    // document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+
+    // prevent DOM elements if doesn't exists.
+    let freeused, freeavailable;
+    const usedElem = document.getElementById(limitIDs[action][0]);
+    const availElem = document.getElementById(limitIDs[action][1]);
+    const statElem = document.getElementById(limitIDs[action][2]);
+    if (usedElem && availElem && statElem) {
+      freeused = parseInt(usedElem.innerText) + 1;
+      freeavailable = parseInt(availElem.innerText) - 1;
+
+      usedElem.innerText = freeused;
+      availElem.innerText = freeavailable;
+      statElem.style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+    } 
+    ////////////////////////////////////
 
     if(freeavailable===0){ // if consumed free then reset popup for paid likes or comments or post
       const settings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
