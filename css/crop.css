@@ -6,6 +6,8 @@
   cursor: grab;
   height: 70vmin;
   width: 70vmin;
+  background-color: #000;
+  border-radius: 15px;
 }
 #croppedCanvas {
   display: none;

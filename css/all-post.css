@@ -95,7 +95,10 @@
   height: 100%;
   object-fit: cover;
 }
-
+.card[content="video"] .post-inhalt .video-player .video-ratio:nth-child(3n),
+.card .custom-video:nth-child(3n) {
+	display: none;
+}
 
 
 .card .post .shadow {

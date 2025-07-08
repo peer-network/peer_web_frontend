@@ -1,25 +1,9 @@
-.inner-container {
-  padding: 5rem 9rem;
+.create_post .inner-container {
+  padding: 0 4rem;
 }
 
-#addPost {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
-  z-index: 5;
-  background-color: #4848487d;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
-}
-
-/* ===================== TAGGING SYSTEM ===================== */
-.tag-wrapper {
-  background-color: #333;
-  border-radius: 2rem;
-  padding: 0.5rem 1rem;
-}
+/* ===================== newNotesPost ===================== */
+#newNotesPost {  margin-top: 100px;}
 
 
 /* ===================== UPLOAD CONTROLS ===================== */
@@ -45,23 +29,16 @@
 }
 
 .form-row label {
-  color: #ccc;
+  color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+  margin-top: 10px;
+  display: block;
 }
 
 .form-input {
   flex: 1;
 }
 
-.form-row input,
-.form-row textarea {
-  flex: 1;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 1rem;
-  background: #333;
-  color: #fff;
-  width: 100%;
-}
+
 
 .form-actions {
   display: flex;
@@ -75,26 +52,14 @@
 .right-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .right-actions {
   margin-left: auto;
 }
 
-.form-actions button {
-  display: inline-block;
-  text-align: center;
-  background-color: var(--bg-filter);
-  line-height: 60px;
-  border-radius: 50px;
-  font-family: inherit;
-  text-decoration: none;
-  border: 1px solid var(--bg-filter);
-  color: var(--white);
-  padding: 0 35px;
-  transition: all 0.3s linear;
-}
+
 
 .form-actions span {
   margin-bottom: 20px;
@@ -142,7 +107,7 @@
 .clear-history {
   background: none;
   border: none;
-  color: #ff4b4b;
+  color:var(--red-accent, #FF3B3B);
   cursor: pointer;
   font-weight: 500;
 }
@@ -168,12 +133,12 @@
 /* ===================== PREVIEW CONTAINER ===================== */
 #addPost .preview-container {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   flex: 2 2 0;
-  overflow-y: visible;
+  overflow: hidden;
   gap: 10px;
   align-items: flex-start;
-  overflow-x: scroll;
+ 
   justify-content: flex-start;
   margin: 15px 0px 20px 0px;
 }
@@ -215,165 +180,16 @@
   height: 10px;
 }
 
-#addPost .upload>p,
-#addPost .addTags>p {
-  text-align: right;
-  font-size: small;
-  margin: 1rem 1% 2rem 0;
-}
 
-#addPost #tagsContainer {
-  opacity: 1;
-  visibility: visible;
-  transition: all 0.3s ease;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.5rem;
-  position: relative;
-}
 
-#tagsContainer.is-visible {
-  display: flex !important;
-  opacity: 1;
-  visibility: visible;
-  max-height: 500px;
-  overflow: visible;
-}
 
-#tagsContainer.active {
-  max-height: 500px;
-  opacity: 1;
-  visibility: visible;
-}
-
-#tagsContainer>span.tag {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  padding: 5px 5px 5px 14px;
-  background-color: #fff;
-  display: inline-block;
-  border-radius: 50px;
-  margin: 0.2rem;
-  color: #1414bd;
-  font-weight: 700;
-}
-
-#tagsContainer>span.tag.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-#tagsContainer>span.tag.show:hover {
-  background-color: #f0f0f0;
-  transform: scale(1.05);
-  transition: all 0.3s ease;
-}
-
-#addPost #tagsContainer>span.tag.show:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
 
 .editImage {
   position: absolute;
   height: 25% !important;
-}
-
-/* Hide the remove (X) button by default */
-
-/* ===================== TAG REMOVE ===================== */
-#addPost #tagsContainer>span.tag.show .remove-tag {
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-}
-
-/* Show the remove button only when the tag is hovered */
-#addPost #tagsContainer>span.tag.show:hover .remove-tag {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0px);
-  width: 25px;
-}
-
-#tagsContainer>span.tag.removing {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.2s ease;
-}
-
-#addPost #clearTagHistory {
-  margin-left: auto;
-  order: 999;
-}
-
-#addPost #tagsSelected {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 0.5rem;
-}
-
-#addPost #tagsContainer>p {
-  margin-top: 5rem;
-}
-
-#addPost .remove-tag {
-  margin: 0.5rem;
-  border: none;
-  padding: 0;
-  background-color: transparent;
-  font-weight: 700;
   cursor: pointer;
-  color: red;
-  width: auto;
-  min-width: auto;
-  overflow: visible;
-  line-height: 1;
 }
 
-#addPost .remove-tag:hover {
-  color: #ff4d4f;
-}
-
-/* #addPost #tagsContainer>span {
-  padding: 5px 5px 5px 14px;
-  background-color: #fff;
-  display: inline-block;
-  border-radius: 50px;
-  margin: 0.2rem;
-  color: #000;
-  font-size: 15px;
-} */
-
-#addPost #tagCreate {
-  position: absolute;
-  bottom: 1rem;
-}
-
-#addPost #closeAddPost {
-  border: none;
-}
-
-#addPost .upload textarea {
-  padding: 1rem;
-  resize: vertical;
-  height: 6rem;
-  max-height: 20rem;
-  min-height: 3rem;
-}
-
-#addPost .addTags {
-  grid-column: 3;
-  width: 100%;
-  background-color: #3f4349;
-  border-radius: 1rem;
-  height: fit-content;
-  margin-top: 11rem;
-  padding: 1.5rem;
-  min-height: 25rem;
-}
 
 
 /* ===================== DROP AREA ===================== */
@@ -480,7 +296,7 @@
 }
 
 #addPost .inner-container .btClose {
-  z-index: 2;
+ 
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -507,158 +323,142 @@
   font-weight: 600;
   font-size: 1rem;
 }
-
-#tagHistoryContainer {
+/* ===================== Tags ===================== */
+.tag-wrapper {
+	background-color: var(--bg-filter);
+	border-radius: 70px;
+	padding: 0;
+  overflow: hidden;
+}
+.tag-list{
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 0.5rem;
-  /* margin: 1rem 0 1.5rem 0; */
   transition: all 0.3s ease;
+  
+}
+.tag-list .tag {
+	padding: 0 30px;
+	font-weight: 400;
+	color: var(--blue, #0069FF);
+	border-radius: 70px;
+	border: none;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	text-decoration: none;
+	background-color: #fff;
+	line-height: 60px;
 }
 
-#tagHistoryContainer.is-visible {
-  display: flex !important;
+
+.tag-list .tag:hover,
+.tag-section.selected-tags .tag {
+  	color: var(--white, #ffff);
+    background-color: var(--blue, #0069FF);
 }
 
-#tagHistoryContainer span.tag {
-  background-color: #f9f9f9;
-  color: #1414bd;
-  border: 1px solid #ddd;
-  padding: 6px 12px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
 
-#tagHistoryContainer span.tag:hover {
-  background-color: #e6e6e6;
-  transform: scale(1.05);
-}
-
-.hidden {
-  display: none !important;
-}
-
-.is-visible {
-  display: block !important;
-  opacity: 1;
-  visibility: visible;
-  max-height: 500px;
-  overflow: visible;
-}
 
 .tag-section {
-  margin-top: 1.5rem;
-  display: none;
-  /* hidden by default */
+ 
+ 
+  height: 0;
+  overflow: hidden;
+  transform: translateY(-100px);
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+ 
 }
-
-.section-header {
+.tag-section.visible,
+.tag-section.is-visible {
+   border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+  margin: 0 40px;
+  padding: 40px 0;
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+  max-height: 500px;
+  overflow: visible;
+  transform: translateY(0);
+}
+.tag-section .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 40px;
+}
+.tag-section.selected-tags
+{
+  border: 0;
 }
 
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
 
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  margin: 0.25rem;
-  font-size: 14px;
-  font-weight: 400;
-  color: #2B63F9;
-  background-color: white;
-  border-radius: 2rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
 
-.tag[data-source="selected"] {
-  background-color: #fff;
-  color: #2B63F9;
-}
+.tag-list .tag .remove-tag {
 
-/* Default hidden state */
-.tag[data-source="selected"] .remove-tag {
+	margin: 0;
+	border: 0;
+	padding: 0;
+	background-color: var(--red-accent, #FF3B3B);
+	font-weight: 400;
+	cursor: pointer;
+	color: #fff;
+	width: 30px;
+	overflow: visible;
+	line-height: 30px;
+	height: 30px;
+	font-size: 100%;
+	min-width: 30px;
+	margin-left: -40px;
   opacity: 0;
   visibility: hidden;
-  transform: translateX(8px);
-  transition: all 0.2s ease;
-  margin-left: 0.5rem;
-  background: transparent;
-  border: none;
-  font-size: 14px;
-  color: red;
-  cursor: pointer;
-}
+  transition: all 0.3s ease;
 
-/* On hover over the entire tag */
-.tag[data-source="selected"]:hover .remove-tag {
+}
+.tag-list .tag:hover .remove-tag{
   opacity: 1;
   visibility: visible;
-  transform: translateX(0);
+  margin-left: 20px;
+
 }
 
-.tag[data-source="history"],
-.tag[data-source="suggestion"] {
-  background-color: #f9f9f9;
-  color: #2B63F9;
-  border: 1px solid #ddd;
+.tag-list .tag .remove-tag:hover {
+  color: var(--red-accent, #FF3B3B);
+  background-color: var(--white,#fff);
+  
 }
 
-.selected-container {
-  min-height: 2rem;
-}
+/* ====================End Tags ===================== */
 
-#tag-history-section {
-  display: none !important;
-}
 
-#tag-history-section.visible {
-  display: block !important;
-}
 
-#tag-suggestions-section {
-  display: none !important;
-}
 
-#tag-suggestions-section.visible {
-  display: block !important;
-}
 
-.error-message {
-  color: #ff4d4f;
-  font-size: 0.85em;
-  margin-top: 4px;
-  display: block;
+
+.upload .response_msg {
+	padding-top: 10px;
+	padding-left: 60px;
+	display: block;
+  margin: 0;
 }
 
 .upload.resettable-form .form-row .col-right .textarea-wrapper {
   position: relative;
+  max-height: 250px;
+  display: flex;
 }
 
-.upload.resettable-form .form-row .col-right .textarea-wrapper textarea {
-  width: 100%;
-  box-sizing: border-box;
-}
+
 
 .upload.resettable-form .form-row .col-right .textarea-wrapper .char-counter {
   position: absolute;
-  bottom: 8px;
-  right: 12px;
-  font-size: 12px;
-  color: #888;
+  bottom: 16px;
+  right: 42px;
+ 
+  color: var(--white-secondary, rgba(255, 255, 255, 0.50));
   pointer-events: none;
 }
 
@@ -671,16 +471,42 @@
 .upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper input {
   width: 100%;
   padding-right: 2.5rem;
+  border-radius: 0;
   /* space for icon */
 }
 
 .upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper .search-icon {
   position: absolute;
-  right: 1rem;
+  right: 3rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 1rem;
-  height: 1rem;
+  
   opacity: 0.6;
   pointer-events: none;
+}
+.form-actions button {
+	min-width: 300px;
+}
+@media screen and (min-width: 3000px) {
+  .form-actions button {
+    min-width: 500px;
+  }
+  .tag-list .tag {
+    padding: 0 50px;
+    line-height: 100px;
+  }
+
+  .tag-list .tag .remove-tag {
+
+   
+    width: 40px;
+    
+    line-height: 40px;
+    height: 40px;
+    
+    min-width: 40px;
+   
+
+  }
+
 }

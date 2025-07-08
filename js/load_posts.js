@@ -400,12 +400,12 @@ function commentToDom(c, append = true) {
       tagInput = normalWords.join(" ");
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
-	let  posts;
-	if(postbyUserID!=null){
-		  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
-	}else{
-	  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-	}
+    let  posts;
+    if(postbyUserID!=null){
+        posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
+    }else{
+      posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+    }
 	
     //console.log(postoffset);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
