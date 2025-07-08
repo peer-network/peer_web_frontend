@@ -1121,7 +1121,7 @@ footer {grid-area: footer;}
 		
 	}
 	header.site-header .logo {
-	 	width: 2.2rem; 
+	 	width: 2.2rem !important; 
 		height: auto;
 	}
 

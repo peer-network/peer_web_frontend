@@ -1,14 +1,12 @@
 <div class="create_post">
     <div class="inner-container">
-
-
         <form id="newNotesPost" class="upload active resettable-form" method="post">
             <div class="form-row">
                 <div class="col-left">
                     <label for="titleNotes">Title*</label>
                 </div>
                 <div class="col-right">
-                    <input type="text" id="titleNotes" placeholder="Add title" name="text-input" maxlength="150"
+                    <input type="text" id="titleNotes" placeholder="min. 25 symbols" name="text-input" maxlength="150"
                         required />
                     <span class="error-message" id="titleError"></span>
                 </div>
@@ -19,8 +17,12 @@
                     <label for="descriptionNotes">Description</label>
                 </div>
                 <div class="col-right">
-                    <textarea id="descriptionNotes" rows="8" placeholder="What's on your mind?" name="text-input"
-                        maxlength="1200" required></textarea>
+                    <div class="textarea-wrapper">
+                        <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
+                            maxlength="1200" required></textarea>
+                        <span class="char-counter" data-target="descriptionNotes">0/250</span>
+                    </div>
+
                     <span class="error-message" id="descriptionError"></span>
                 </div>
             </div>
@@ -34,8 +36,12 @@
                 <div class="col-right">
                     <div class="tag-wrapper">
                         <!-- Tag Input -->
-                        <input id="tag-input" type="text" placeholder="Search or create tags" />
-
+                        <div class="input-icon-wrapper">
+                            <input id="tag-input" type="text" placeholder="Click here to add #hastags" />
+                            <!-- Optional: include search icon inside field -->
+                            <!-- Example only if you plan to absolutely position it -->
+                            <img src="svg/search.svg" alt="Search" class="search-icon">
+                        </div>
                         <!-- Recently Used Section -->
                         <div class="tag-section" id="tag-history-section">
                             <div class="section-header">
@@ -60,9 +66,6 @@
                             </div>
                             <div id="tagsSelected" class="tag-list selected-container"></div>
                         </div>
-
-                        <!-- Error for Tags -->
-                       
                     </div>
                     <span class="error-message" id="tagError"></span>
                 </div>
@@ -79,34 +82,41 @@
                 </div>
             </div>
         </form>
-
-
         <form id="newImagePost" class="upload resettable-form" method="post">
             <h2>Upload File</h2>
-            <div id="drop-area-image" class="drop-area image-media">
-                <div>
-                    <p>Drag and Drop file here</p>
-                    <p>
-                        or
-                        <u>Choose File</u>
-                    </p>
+            <div id="preview-image" class="drop-preview-area preview-container">
+                <!-- <div id="" class="blockscroll"></div> -->
+                <!--<div id="drop-area-image" class="drop-area">
+                    <div>
+                        <p>Drag and Drop file here</p>
+                        <p>
+                            or
+                            <u>Choose File</u>
+                        </p>
+                    </div>
+
+                    <img class="filterButton" src="svg/filterImage.svg" alt="Image upload" />
+                    <div>
+                        <p>Supported formats:</p>
+                        <p>.png, .jpg, .jpeg, .gif, .webp</p>
+                    </div>
+
+                    <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
+                    <p>The maximum file size is 4MB</p>
+                </div>-->
+                <div id="drop-area-image" class="drop-area">
+                    <div class="plus-icon">+</div>
+                    <span>Upload media</span>
+                    <input type="file" id="file-input-image" hidden multiple />
                 </div>
 
-                <img class="filterButton" src="svg/filterImage.svg" alt="Image upload" />
-                <div>
-                    <p>Supported formats:</p>
-                    <p>.png, .jpg, .jpeg, .gif, .webp</p>
-                </div>
-
-                <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
             </div>
-            <p>The maximum file size is 4MB</p>
             <div class="form-row">
                 <div class="col-left">
                     <label for="titleNotes">Title*</label>
                 </div>
                 <div class="col-right">
-                    <input type="text" id="titleNotes" placeholder="Add title" name="text-input" maxlength="150"
+                    <input type="text" id="titleImage" placeholder="min. 25 symbols" name="text-input" maxlength="50"
                         required />
                 </div>
             </div>
@@ -116,8 +126,8 @@
                     <label for="descriptionNotes">Description</label>
                 </div>
                 <div class="col-right">
-                    <textarea id="descriptionNotes" rows="8" placeholder="What's on your mind?" name="text-input"
-                        maxlength="1200" required></textarea>
+                    <textarea id="descriptionImage" rows="8" placeholder="What’s new?" name="text-input" maxlength="500"
+                        required></textarea>
                 </div>
             </div>
 
@@ -128,7 +138,40 @@
                     <label for="tag-input">Tags</label>
                 </div>
                 <div class="col-right">
-                    <input type="text" id="tag-input" placeholder="#..." />
+                    <div class="tag-wrapper">
+                        <!-- Tag Input -->
+                        <div class="input-icon-wrapper">
+                            <input id="tag-input" type="text" placeholder="Click here to add #hastags" />
+                            <!-- Optional: include search icon inside field -->
+                            <!-- Example only if you plan to absolutely position it -->
+                            <img src="svg/search.svg" alt="Search" class="search-icon">
+                        </div>
+                        <!-- Recently Used Section -->
+                        <div class="tag-section" id="tag-history-section">
+                            <div class="section-header">
+                                <label>Recently Used</label>
+                                <button id="clearTagHistory" class="clear-history">Clear History</button>
+                            </div>
+                            <div id="tagHistoryContainer" class="tag-list"></div>
+                        </div>
+
+                        <!-- Suggestions from Search -->
+                        <div class="tag-section" id="tag-suggestions-section">
+                            <div class="section-header">
+                                <label>Suggestions</label>
+                            </div>
+                            <div id="tagsContainer" class="tag-list"></div>
+                        </div>
+
+                        <!-- Selected Tags -->
+                        <div class="tag-section" id="selected-tags-section">
+                            <div class="section-header">
+                                <label>Selected Tags</label>
+                            </div>
+                            <div id="tagsSelected" class="tag-list selected-container"></div>
+                        </div>
+                    </div>
+                    <span class="error-message" id="tagError"></span>
                 </div>
             </div>
 
@@ -139,7 +182,21 @@
                 </div>
                 <div class="right-actions">
                     <span class="form-note">You will spend 1 free post</span>
-                    <button class="btn-blue" id="createPostImage">Upload</button>
+                    <button type="submit" class="btn-blue" id="createPostNotes">Post</button>
+                </div>
+            </div>
+            <div id="crop-container" class="none">
+                <canvas id="cropcanvas" width="2000" height="2000"></canvas>
+                <canvas id="croppedCanvas" width="500" height="500"></canvas>
+                <div id="cropButtons">
+                    <button id="cropQuit">back</button>
+                    <button id="cropBtn">save</button>
+                </div>
+                <div id="aspectRatioSelect" class="aspect-ratio-toggle">
+                    <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
+                    <label for="ar-1">1:1 Square</label>
+                    <input type="radio" id="ar-2" name="aspectRatio" value="0.8">
+                    <label for="ar-2">4:5 Vertical</label>
                 </div>
             </div>
         </form>
@@ -198,31 +255,71 @@
 
             <div class="form-row">
                 <div class="col-left">
-                    <label for="titleNotes">Title</label>
+                    <label for="titleNotes">Title*</label>
                 </div>
                 <div class="col-right">
-                    <input type="text" id="titleAudio" placeholder="Add title" name="text-input" maxlength="150"
+                    <input type="text" id="titleNotes" placeholder="min. 25 symbols" name="text-input" maxlength="150"
                         required />
+                    <span class="error-message" id="titleError"></span>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="col-left">
                     <label for="descriptionNotes">Description</label>
                 </div>
                 <div class="col-right">
-                    <textarea id="descriptionAudio" rows="4" placeholder="Write a caption" name="text-input"
-                        maxlength="200" required></textarea>
+                    <div class="textarea-wrapper">
+                        <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
+                            maxlength="1200" required></textarea>
+                        <span class="char-counter" data-target="descriptionNotes">0/250</span>
+                    </div>
+
+                    <span class="error-message" id="descriptionError"></span>
                 </div>
             </div>
 
-            <p>The maximum file size is 4MB</p>
+            <p class="form-note">Maximum Text size is 4MB</p>
 
             <div class="form-row">
                 <div class="col-left">
                     <label for="tag-input">Tags</label>
                 </div>
                 <div class="col-right">
-                    <input type="text" id="tag-input" placeholder="#..." />
+                    <div class="tag-wrapper">
+                        <!-- Tag Input -->
+                        <div class="input-icon-wrapper">
+                            <input id="tag-input" type="text" placeholder="Click here to add #hastags" />
+                            <!-- Optional: include search icon inside field -->
+                            <!-- Example only if you plan to absolutely position it -->
+                            <img src="svg/search.svg" alt="Search" class="search-icon">
+                        </div>
+                        <!-- Recently Used Section -->
+                        <div class="tag-section" id="tag-history-section">
+                            <div class="section-header">
+                                <label>Recently Used</label>
+                                <button id="clearTagHistory" class="clear-history">Clear History</button>
+                            </div>
+                            <div id="tagHistoryContainer" class="tag-list"></div>
+                        </div>
+
+                        <!-- Suggestions from Search -->
+                        <div class="tag-section" id="tag-suggestions-section">
+                            <div class="section-header">
+                                <label>Suggestions</label>
+                            </div>
+                            <div id="tagsContainer" class="tag-list"></div>
+                        </div>
+
+                        <!-- Selected Tags -->
+                        <div class="tag-section" id="selected-tags-section">
+                            <div class="section-header">
+                                <label>Selected Tags</label>
+                            </div>
+                            <div id="tagsSelected" class="tag-list selected-container"></div>
+                        </div>
+                    </div>
+                    <span class="error-message" id="tagError"></span>
                 </div>
             </div>
 
@@ -233,37 +330,102 @@
                 </div>
                 <div class="right-actions">
                     <span class="form-note">You will spend 1 free post</span>
-                    <button type="submit" class="btn-blue" id="">Post</button>
+                    <button type="submit" class="btn-blue" id="createPostNotes">Post</button>
                 </div>
             </div>
         </form>
         <form id="newVideoPost" class="upload resettable-form" method="post">
             <h2>Upload File</h2>
-            <div id="drop-area-video" class="drop-area">
-                <div>
-                    <p>Drag and Drop file here</p>
-                    <p>
-                        or
-                        <u>Choose File</u>
-                    </p>
+            <div id="drop-area-video" class="drop-preview-area preview-container">
+                <div id="drop-area-video-inner" class="drop-area">
+                    <div class="upload-content">
+                        <div class="plus-icon">+</div>
+                        <span class="upload-label">Upload media</span>
+                    </div>
+                    <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
                 </div>
-                <img class="filterButton" src="svg/filterVideo.svg" alt="Video upload" />
-                <div>
-                    <p>Supported formats:</p>
-                    <p>.mp4, .avi, .mov, .webm</p>
-                </div>
-
-                <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
             </div>
-            <p>The maximum file size is 4MB</p>
+            <div class="form-row">
+                <div class="col-left">
+                    <label for="titleNotes">Title*</label>
+                </div>
+                <div class="col-right">
+                    <input type="text" id="titleVideo" placeholder="min. 25 symbols" name="text-input" maxlength="150"
+                        required />
+                    <span class="error-message" id="titleError"></span>
+                </div>
+            </div>
 
-            <!-- <label for="bildueberschrift">Überschrift:</label> -->
-            <input type="text" id="titleVideo" placeholder="Add title" name="text-input" maxlength="150" required />
-            <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
-            <textarea id="descriptionVideo" rows="4" placeholder="Write a caption" name="text-input" maxlength="200"
-                required></textarea>
-            <div id="preview-video" class="blockscroll preview-container"></div>
-            <button class="btn-blue" id="createPostVideo">Upload</button>
+            <div class="form-row">
+                <div class="col-left">
+                    <label for="descriptionVideo">Description</label>
+                </div>
+                <div class="col-right">
+                    <div class="textarea-wrapper">
+                        <textarea id="descriptionVideo" rows="8" placeholder="What’s new?" name="text-input"
+                            maxlength="1200" required></textarea>
+                        <span class="char-counter" data-target="descriptionVideo">0/250</span>
+                        <div id="preview-video" class="blockscroll preview-container"></div>
+                    </div>
+
+                    <span class="error-message" id="descriptionError"></span>
+                </div>
+            </div>
+
+            <p class="form-note">Maximum Text size is 4MB</p>
+
+            <div class="form-row">
+                <div class="col-left">
+                    <label for="tag-input">Tags</label>
+                </div>
+                <div class="col-right">
+                    <div class="tag-wrapper">
+                        <!-- Tag Input -->
+                        <div class="input-icon-wrapper">
+                            <input id="tag-input" type="text" placeholder="Click here to add #hastags" />
+                            <!-- Optional: include search icon inside field -->
+                            <!-- Example only if you plan to absolutely position it -->
+                            <img src="svg/search.svg" alt="Search" class="search-icon">
+                        </div>
+                        <!-- Recently Used Section -->
+                        <div class="tag-section" id="tag-history-section">
+                            <div class="section-header">
+                                <label>Recently Used</label>
+                                <button id="clearTagHistory" class="clear-history">Clear History</button>
+                            </div>
+                            <div id="tagHistoryContainer" class="tag-list"></div>
+                        </div>
+
+                        <!-- Suggestions from Search -->
+                        <div class="tag-section" id="tag-suggestions-section">
+                            <div class="section-header">
+                                <label>Suggestions</label>
+                            </div>
+                            <div id="tagsContainer" class="tag-list"></div>
+                        </div>
+
+                        <!-- Selected Tags -->
+                        <div class="tag-section" id="selected-tags-section">
+                            <div class="section-header">
+                                <label>Selected Tags</label>
+                            </div>
+                            <div id="tagsSelected" class="tag-list selected-container"></div>
+                        </div>
+                    </div>
+                    <span class="error-message" id="tagError"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <div class="left-actions">
+                    <button type="button">Preview</button>
+                    <button type="reset">Clear Fields</button>
+                </div>
+                <div class="right-actions">
+                    <span class="form-note">You will spend 1 free post</span>
+                    <button type="submit" class="btn-blue" id="createPostNotes">Post</button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
