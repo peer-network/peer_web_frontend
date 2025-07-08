@@ -407,21 +407,23 @@ function commentToDom(c, append = true) {
 	  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
 	}
 	
-    //console.log(posts);
+    //console.log(postoffset);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-    posts.data.listPosts.affectedRows.forEach((objekt) => {
+    posts.data.listPosts.affectedRows.forEach((objekt,i) => {
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
       card.classList.add("card");
       card.setAttribute("tabindex", "0");
+      card.setAttribute("idno", i);
       card.setAttribute("content", objekt.contenttype);
       // card.setAttribute("tags", objekt.tags.join(","));
       // <div class="post"> erstellen und Bild hinzufügen
+      //console.log(objekt.id);
 
       let postDiv;
       let img;
@@ -779,6 +781,7 @@ function commentToDom(c, append = true) {
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
     });
+    //console.log(posts.data.listPosts.affectedRows.length);
     postoffset += posts.data.listPosts.affectedRows.length;
 
      const post_loader = document.getElementById("post_loader");
@@ -952,6 +955,7 @@ async function viewed(object) {
     const post_contentright=containerright.querySelector(".post_content");
     
     const array = JSON.parse(objekt.media);
+    //const arraycover = JSON.parse(objekt.cover);
     let card = document.getElementById(objekt.id);
     /*--------Card profile Header  -------*/
     const card_header =card.querySelector(".card-header");
@@ -1018,6 +1022,9 @@ async function viewed(object) {
 
     if (objekt.contenttype === "audio") {
       post_gallery.classList.add("audio");
+      post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("video");
       for (const item of array) {
         const audio = document.createElement("audio");
         audio.id = "audio2";
@@ -1076,25 +1083,91 @@ async function viewed(object) {
       }
     } else if (objekt.contenttype === "video") {
       post_gallery.classList.add("video");
-      for (const item of array) {
+      if (array.length > 1) post_gallery.classList.add("multi");
+      else post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("audio");
+
+        post_gallery.innerHTML = `
+            <div class="slider-wrapper">
+              <div class="slider-track"></div>
+              <div class="slider-thumbnails"></div>
+              </div>
+          `;
+      const sliderTrack = post_gallery.querySelector(".slider-track");
+      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+      let currentIndex = 0;
+
+      for (const [index, item] of array.entries()) {
+
         const video = document.createElement("video");
         video.id = "video2";
         video.src = tempMedia(extractAfterComma(item.path));
         video.controls = true;
         video.className = "custom-video";
-        video.autoplay = true; // Autoplay aktivieren
-        video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
-        video.loop = true; // Video in Endlosschleife abspielen
-
-        // 1. Erzeuge das <div>-Element
-        const videoContainer = document.createElement("div");
-        videoContainer.appendChild(video);
-        videoContainer.classList.add("video-item");
+        video.autoplay = (index === 0);  // ✅ Autoplay only for the first video
+        video.muted = false;
+        video.loop = true;
         
-        // videoContainer.appendChild(video);
-        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-        post_gallery.appendChild(videoContainer);
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("slide_item");
+        videoContainer.appendChild(video);
+
+        // Thumbnail
+        const img = document.createElement("img");
+        const src = 'img/audio-bg.png';
+        img.src = src;
+        img.alt = "";
+
+        const timg = document.createElement("div");
+        timg.classList.add("timg");
+
+        const playicon = document.createElement("i");
+        playicon.classList.add("fi", "fi-sr-play");
+
+        timg.appendChild(playicon);
+        timg.appendChild(img);
+        sliderThumb.appendChild(timg);
+        sliderTrack.appendChild(videoContainer);
       }
+
+      // === Slider Control Logic Outside the Loop === //
+
+      function updateSlider(index) {
+        currentIndex = index;
+
+        const targetItem = sliderTrack.children[index];
+        const offsetLeft = targetItem.offsetLeft;
+
+        sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+        // Manage active class
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+          thumb.classList.toggle("active", i === index);
+        });
+
+        // Play the current video and pause others
+        sliderTrack.querySelectorAll("video").forEach((vid, i) => {
+          //console.log(index +'--'+i);
+          if (i === index) {
+            vid.play();
+          } else {
+            vid.pause();
+            vid.currentTime = 0;
+          }
+        });
+      }
+
+      // Initialize
+      setTimeout(() => updateSlider(0), 50);
+
+      // Add click listeners
+      sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+        thumb.addEventListener("click", () => {
+          updateSlider(index);
+        });
+      });
+
     } else if (objekt.contenttype === "text") {
       
       if (containerleft && post_contentright) {
@@ -1106,6 +1179,8 @@ async function viewed(object) {
     } else {
       let img;
       post_gallery.classList.add("images");
+      post_gallery.classList.remove("video");
+      post_gallery.classList.remove("audio");
       if (array.length > 1) post_gallery.classList.add("multi");
       else post_gallery.classList.remove("multi");
 
@@ -1122,7 +1197,7 @@ async function viewed(object) {
       const imageSrcArray = [];
       array.forEach((item, index) => {
         const image_item = document.createElement("div");
-        image_item.classList.add("image_item");
+        image_item.classList.add("slide_item");
 
         const img = document.createElement("img");
         const timg = document.createElement("img");
@@ -1135,7 +1210,11 @@ async function viewed(object) {
         
         
         image_item.appendChild(timg);
-        sliderThumb.appendChild(img);
+
+         const timg2 = document.createElement("div");
+         timg2.classList.add("timg");
+          timg2.appendChild(img);
+        sliderThumb.appendChild(timg2);
 
         const zoomElement = document.createElement("span");
         zoomElement.className = "zoom";
@@ -1145,31 +1224,31 @@ async function viewed(object) {
         sliderTrack.appendChild(image_item);
 
 
-let currentIndex = 0;
+        let currentIndex = 0;
 
-function updateSlider(index) {
-  currentIndex = index;
+        function updateSlider(index) {
+          currentIndex = index;
 
-  const targetItem = sliderTrack.children[index];
-  const offsetLeft = targetItem.offsetLeft;
+          const targetItem = sliderTrack.children[index];
+          const offsetLeft = targetItem.offsetLeft;
 
-  sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+          sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
 
-  // Manage active class
-  sliderThumb.querySelectorAll("img").forEach((thumb, i) => {
-    thumb.classList.toggle("active", i === index);
-  });
-}
+          // Manage active class
+          sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+            thumb.classList.toggle("active", i === index);
+          });
+        }
 
-// Initialize active thumbnail
-updateSlider(0);
+        // Initialize active thumbnail
+        updateSlider(0);
 
-// Add click listener to each thumbnail
-sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
-  thumb.addEventListener("click", () => {
-    updateSlider(index);
-  });
-});
+        // Add click listener to each thumbnail
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+          thumb.addEventListener("click", () => {
+            updateSlider(index);
+          });
+        });
 
 
 

@@ -28,12 +28,11 @@ checkAuth("unauthorized");
     <link rel="stylesheet" href="css/all-post.css?<?php echo filemtime('css/all-post.css'); ?>" />
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
-    <link rel="stylesheet" href="css/crop.css?<?php echo filemtime('css/crop.css'); ?>" />
-
+    
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-    <script src="js/crop.js?<?php echo filemtime('js/crop.js'); ?>" defer></script>
+    
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
