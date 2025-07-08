@@ -395,7 +395,8 @@ async function processFiles(files, id) {
     // }
 
     previewItem = document.createElement("div");
-    previewItem.className = "preview-item";
+    previewItem.draggable = true;
+    previewItem.className = "preview-item dragable";
     const type = file.type.substring(0, 5);
     if (type === "audio") {
       previewItem.classList.add("audio-item");
