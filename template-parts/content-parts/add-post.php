@@ -107,7 +107,7 @@
                 <div id="drop-area-image" class="drop-area">
                     <div class="plus-icon">+</div>
                     <span>Upload media</span>
-                    <input type="file" id="file-input-image" hidden multiple />
+                    <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
                 </div>
 
             </div>
@@ -336,13 +336,27 @@
         </form>
         <form id="newVideoPost" class="upload resettable-form" method="post">
             <h2>Upload File</h2>
-            <div id="drop-area-video" class="drop-preview-area preview-container">
-                <div id="drop-area-video-inner" class="drop-area">
+            <div id="preview-video" class="blockscroll preview-container">
+                <div id="drop-area-videocover" class="drop-area none">
+                    <div class="upload-content">
+                        <div class="plus-icon">+</div>
+                        <span class="upload-label">Upload cover</span>
+                    </div>
+                    <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
+                </div>
+                <div id="drop-area-videolong" class="drop-area">
                     <div class="upload-content">
                         <div class="plus-icon">+</div>
                         <span class="upload-label">Upload media</span>
                     </div>
-                    <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
+                    <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
+                </div>
+                <div id="drop-area-videoshort" class="drop-area none">
+                    <div class="upload-content">
+                        <div class="plus-icon">+</div>
+                        <span class="upload-label">Upload short</span>
+                    </div>
+                    <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                 </div>
             </div>
             <div class="form-row">
@@ -365,7 +379,7 @@
                         <textarea id="descriptionVideo" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength="1200" required></textarea>
                         <span class="char-counter" data-target="descriptionVideo">0/250</span>
-                        <div id="preview-video" class="blockscroll preview-container"></div>
+
                     </div>
 
                     <span class="error-message" id="descriptionError"></span>

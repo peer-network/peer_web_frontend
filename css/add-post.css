@@ -2,25 +2,12 @@
   padding: 5rem 9rem;
 }
 
-#addPost {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
-  z-index: 5;
-  background-color: #4848487d;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
-}
-
 /* ===================== TAGGING SYSTEM ===================== */
 .tag-wrapper {
   background-color: #333;
   border-radius: 2rem;
   padding: 0.5rem 1rem;
 }
-
 
 /* ===================== UPLOAD CONTROLS ===================== */
 .upload {
@@ -34,7 +21,6 @@
 .upload.active {
   display: block !important;
 }
-
 
 /* ===================== FORM STYLES ===================== */
 .form-row {
@@ -110,7 +96,6 @@
 
 /**/
 
-
 /* ===================== HISTORY HEADER ===================== */
 .history-header {
   max-height: 0;
@@ -129,7 +114,7 @@
 }
 
 .tag-wrapper .helper-spacing {
-  margin: 1rem 0 2rem
+  margin: 1rem 0 2rem;
 }
 
 /* ===================== CLEAR HISTORY ===================== */
@@ -146,7 +131,6 @@
   cursor: pointer;
   font-weight: 500;
 }
-
 
 /* ===================== TAG HISTORY LIST ===================== */
 .tag-history-list {
@@ -215,8 +199,8 @@
   height: 10px;
 }
 
-#addPost .upload>p,
-#addPost .addTags>p {
+#addPost .upload > p,
+#addPost .addTags > p {
   text-align: right;
   font-size: small;
   margin: 1rem 1% 2rem 0;
@@ -246,7 +230,7 @@
   visibility: visible;
 }
 
-#tagsContainer>span.tag {
+#tagsContainer > span.tag {
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
@@ -259,18 +243,18 @@
   font-weight: 700;
 }
 
-#tagsContainer>span.tag.show {
+#tagsContainer > span.tag.show {
   opacity: 1;
   transform: translateY(0);
 }
 
-#tagsContainer>span.tag.show:hover {
+#tagsContainer > span.tag.show:hover {
   background-color: #f0f0f0;
   transform: scale(1.05);
   transition: all 0.3s ease;
 }
 
-#addPost #tagsContainer>span.tag.show:hover {
+#addPost #tagsContainer > span.tag.show:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -282,21 +266,21 @@
 /* Hide the remove (X) button by default */
 
 /* ===================== TAG REMOVE ===================== */
-#addPost #tagsContainer>span.tag.show .remove-tag {
+#addPost #tagsContainer > span.tag.show .remove-tag {
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s ease;
 }
 
 /* Show the remove button only when the tag is hovered */
-#addPost #tagsContainer>span.tag.show:hover .remove-tag {
+#addPost #tagsContainer > span.tag.show:hover .remove-tag {
   opacity: 1;
   visibility: visible;
   transform: translateX(0px);
   width: 25px;
 }
 
-#tagsContainer>span.tag.removing {
+#tagsContainer > span.tag.removing {
   opacity: 0;
   transform: scale(0.8);
   transition: all 0.2s ease;
@@ -315,7 +299,7 @@
   gap: 0.5rem;
 }
 
-#addPost #tagsContainer>p {
+#addPost #tagsContainer > p {
   margin-top: 5rem;
 }
 
@@ -374,7 +358,6 @@
   padding: 1.5rem;
   min-height: 25rem;
 }
-
 
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
@@ -472,7 +455,6 @@
   width: 100%;
   padding: 40px;
 }
-
 
 /* ===================== IMAGE PREVIEW ===================== */
 .image-media {
@@ -575,7 +557,7 @@
   margin: 0.25rem;
   font-size: 14px;
   font-weight: 400;
-  color: #2B63F9;
+  color: #2b63f9;
   background-color: white;
   border-radius: 2rem;
   border: none;
@@ -586,7 +568,7 @@
 
 .tag[data-source="selected"] {
   background-color: #fff;
-  color: #2B63F9;
+  color: #2b63f9;
 }
 
 /* Default hidden state */
@@ -613,7 +595,7 @@
 .tag[data-source="history"],
 .tag[data-source="suggestion"] {
   background-color: #f9f9f9;
-  color: #2B63F9;
+  color: #2b63f9;
   border: 1px solid #ddd;
 }
 
