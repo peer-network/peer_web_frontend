@@ -1,16 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-const MAX_TAGS = 10;
+  const MAX_TAGS = 10;
 
-// DOM references
-const tagInput = document.getElementById("tag-input");
-const tagContainer = document.getElementById("tagsContainer");
-const historyContainer = document.getElementById("tagHistoryContainer");
-const selectedContainer = document.getElementById("tagsSelected");
-const clearTagHistoryBtn = document.getElementById("clearTagHistory");
+  // DOM references
+  const tagInput = document.getElementById("tag-input");
+  const tagContainer = document.getElementById("tagsContainer");
+  const historyContainer = document.getElementById("tagHistoryContainer");
+  const selectedContainer = document.getElementById("tagsSelected");
+  const clearTagHistoryBtn = document.getElementById("clearTagHistory");
 
-updateTagUIVisibility(); // suggestions + selected
-
+  updateTagUIVisibility(); // suggestions + selected
 
   document.getElementById("btAddPost").addEventListener("click", () => togglePopup("addPost"));
   const closeAddPost = document.getElementById("closeAddPost");
@@ -18,7 +17,7 @@ updateTagUIVisibility(); // suggestions + selected
     closeAddPost.addEventListener("click", () => togglePopup("addPost"));
   }
 
-/**************/
+  /**************/
   // const createPostNotes = document.getElementById("createPostNotes");
   // if (createPostNotes) {
   //   createPostNotes.addEventListener("click", async (event) => {
@@ -46,117 +45,116 @@ updateTagUIVisibility(); // suggestions + selected
   //   });
   // }
 
-const createPostNotes = document.getElementById("createPostNotes");
-if (createPostNotes) {
-  createPostNotes.addEventListener("click", async (event) => {
-    event.preventDefault();
+  const createPostNotes = document.getElementById("createPostNotes");
+  if (createPostNotes) {
+    createPostNotes.addEventListener("click", async (event) => {
+      event.preventDefault();
 
-    // Elements
-    const titleEl = document.getElementById("titleNotes");
-    const descEl = document.getElementById("descriptionNotes");
-    const tagErrorEl = document.getElementById("tagError");
-    const titleErrorEl = document.getElementById("titleError");
-    const descErrorEl = document.getElementById("descriptionError");
+      // Elements
+      const titleEl = document.getElementById("titleNotes");
+      const descEl = document.getElementById("descriptionNotes");
+      const tagErrorEl = document.getElementById("tagError");
+      const titleErrorEl = document.getElementById("titleError");
+      const descErrorEl = document.getElementById("descriptionError");
 
-    const title = titleEl.value.trim();
-    const description = descEl.value.trim();
-    const tags = getTagHistory();
+      const title = titleEl.value.trim();
+      const description = descEl.value.trim();
+      const tags = getTagHistory();
 
-    // Clear old errors
-    titleErrorEl.textContent = "";
-    descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
+      // Clear old errors
+      titleErrorEl.textContent = "";
+      descErrorEl.textContent = "";
+      tagErrorEl.textContent = "";
 
-    // Validation
-    let hasError = false;
+      // Validation
+      let hasError = false;
 
-    if (!title) {
-      titleErrorEl.textContent = "Title is required.";
-      hasError = true;
-    } else if (title.length < 5) {
-      titleErrorEl.textContent = "Title must be at least 5 characters.";
-      hasError = true;
-    }
-
-    if (!description) {
-      descErrorEl.textContent = "Description is required.";
-      hasError = true;
-    } else if (description.length < 10) {
-      descErrorEl.textContent = "Description must be at least 10 characters.";
-      hasError = true;
-    }
-
-    if (tags.length === 0) {
-      tagErrorEl.textContent = "Please add at least one tag.";
-      hasError = true;
-    }
-
-    // Convert to base64
-    const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-    const base64WithMime = [`data:text/plain;base64,${base64String}`];
-
-    if (base64WithMime.join("").length > 4 * 1024 * 1024) {
-      descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
-      hasError = true;
-    }
-
-    // If any error, stop
-    if (hasError) return;
-
-    // Submit
-    const success = await sendCreatePost({
-      title,
-      media: base64WithMime,
-      contenttype: "text",
-      tags
-    });
-
-    if (success) {
-      // togglePopup("addPost");
-      location.reload();
-    }
-  });
-}
-
-document.querySelectorAll('.resettable-form').forEach(form => {
-  form.addEventListener('reset', function (event) {
-    const tagInput = event.target.querySelector('#tag-input');
-    const tagHistory = event.target.querySelector('#tagHistoryContainer');
-    const tagSuggestions = event.target.querySelector('#tagsContainer');
-    const selectedTags = event.target.querySelector('#tagsSelected');
-    const tagError = event.target.querySelector('#tagError');
-
-    if (tagInput) tagInput.value = '';
-    if (tagSuggestions) tagSuggestions.innerHTML = '';
-    if (selectedTags) selectedTags.innerHTML = '';
-    if (tagError) tagError.textContent = '';
-
-    const historySection = event.target.querySelector('#tag-history-section');
-    const suggestionsSection = event.target.querySelector('#tag-suggestions-section');
-    const selectedTagsSection = event.target.querySelector('#selected-tags-section');
-
-    if (tagHistory) {
-      tagHistory.innerHTML = '';
-      if (tagHistory.children.length === 0 && historySection) {
-        historySection.classList.add('hidden');
-        historySection.classList.remove('visible');
+      if (!title) {
+        titleErrorEl.textContent = "Title is required.";
+        hasError = true;
+      } else if (title.length < 5) {
+        titleErrorEl.textContent = "Title must be at least 5 characters.";
+        hasError = true;
       }
-    }
 
-    if (suggestionsSection) {
-      suggestionsSection.classList.add('hidden');
-      suggestionsSection.classList.remove('visible');
-    }
+      if (!description) {
+        descErrorEl.textContent = "Description is required.";
+        hasError = true;
+      } else if (description.length < 10) {
+        descErrorEl.textContent = "Description must be at least 10 characters.";
+        hasError = true;
+      }
 
-    if (selectedTagsSection) {
-      selectedTagsSection.classList.add('hidden');
-      selectedTagsSection.classList.remove('is-visible');
-    }
+      if (tags.length === 0) {
+        tagErrorEl.textContent = "Please add at least one tag.";
+        hasError = true;
+      }
+
+      // Convert to base64
+      const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+      const base64WithMime = [`data:text/plain;base64,${base64String}`];
+
+      if (base64WithMime.join("").length > 4 * 1024 * 1024) {
+        descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
+        hasError = true;
+      }
+
+      // If any error, stop
+      if (hasError) return;
+
+      // Submit
+      const success = await sendCreatePost({
+        title,
+        media: base64WithMime,
+        contenttype: "text",
+        tags
+      });
+
+      if (success) {
+        // togglePopup("addPost");
+        location.reload();
+      }
+    });
+  }
+
+  document.querySelectorAll('.resettable-form').forEach(form => {
+    form.addEventListener('reset', function (event) {
+      const tagInput = event.target.querySelector('#tag-input');
+      const tagHistory = event.target.querySelector('#tagHistoryContainer');
+      const tagSuggestions = event.target.querySelector('#tagsContainer');
+      const selectedTags = event.target.querySelector('#tagsSelected');
+      const tagError = event.target.querySelector('#tagError');
+
+      if (tagInput) tagInput.value = '';
+      if (tagSuggestions) tagSuggestions.innerHTML = '';
+      if (selectedTags) selectedTags.innerHTML = '';
+      if (tagError) tagError.textContent = '';
+
+      const historySection = event.target.querySelector('#tag-history-section');
+      const suggestionsSection = event.target.querySelector('#tag-suggestions-section');
+      const selectedTagsSection = event.target.querySelector('#selected-tags-section');
+
+      if (tagHistory) {
+        tagHistory.innerHTML = '';
+        if (tagHistory.children.length === 0 && historySection) {
+          historySection.classList.add('hidden');
+          historySection.classList.remove('visible');
+        }
+      }
+
+      if (suggestionsSection) {
+        suggestionsSection.classList.add('hidden');
+        suggestionsSection.classList.remove('visible');
+      }
+
+      if (selectedTagsSection) {
+        selectedTagsSection.classList.add('hidden');
+        selectedTagsSection.classList.remove('is-visible');
+      }
+    });
   });
-});
 
-
-/**********************************************************************/
+  /**********************************************************************/
   const createPostImage = document.getElementById("createPostImage");
   if (createPostImage) {
     createPostImage.addEventListener("click", async (event) => {
@@ -187,6 +185,8 @@ document.querySelectorAll('.resettable-form').forEach(form => {
       }
     });
   }
+
+  /**********************************************************************/
   const createPostAudio = document.getElementById("createPostAudio");
   if (createPostAudio) {
     createPostAudio.addEventListener("click", async (event) => {
@@ -254,575 +254,355 @@ document.querySelectorAll('.resettable-form').forEach(form => {
   }
 
   /******************************************************************** */
-  // if (tagInput) {
-  //   tagInput.value = "";
-  //   clearTagContainer();
-  //   // toggleTagUI(false);
-
-  //   tagInput.addEventListener("focus", () => {
-  //     clearTagContainer();
-  //     const history = getTagHistory();
-  //     const hasUserTyped = tagInput.value.trim().length > 0;
-
-  //     if (history.length > 0 || hasUserTyped) {
-  //       renderTagHistory();
-  //       toggleTagUI(true, false); // 👈 show history only
-  //     } else {
-  //       toggleTagUI(false);
-  //     }
-  //   });
-
-  //   tagInput.addEventListener("keyup", async (event) => {
-  //     const searchStr = tagInput.value.trim();
-  //     clearTagContainer();
-
-  //     if (searchStr === "") {
-  //       toggleTagUI(false);
-  //       return;
-  //     }
-
-  //     if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-  //       alert("Only letters and numbers allowed.");
-  //       return;
-  //     }
-
-  //     if (searchStr.length >= 3) {
-  //       try {
-  //         const tags = await fetchTags(searchStr); // your existing fetch
-  //         if (tags && tags.length > 0) {
-            
-  //           tags.forEach(tag => tag_addTag(tag.name, false));
-  //           toggleTagUI(true, true); // 👈 show both history + suggestions now
-          
-  //         } else {
-  //           toggleTagUI(true, true);
-  //         } 
-  //         // else {
-  //         //   tag_addTag(searchStr, false);
-  //         // }
-
-          
-  //       } catch (error) {
-  //         console.error("Tag fetch error:", error);
-  //       }
-  //     }
-  //   });
-
-
-  //   tagInput.addEventListener("keydown", (e) => {
-  //     if (e.key === "Enter") {
-  //       const val = tagInput.value.trim();
-  //       if (val && /^[a-zA-Z0-9]+$/.test(val)) {
-  //         tag_addTag(val);
-  //         tagInput.value = "";
-  //         clearTagContainer();
-  //         toggleTagUI(false);
-  //       }
-  //     }
-  //   });
-
-  //   clearTagHistoryBtn.addEventListener("click", () => {
-  //     localStorage.removeItem("tagHistory");
-  //     clearTagContainer();
-  //     toggleTagUI(false);
-  //   });
-
-  // }
-
-  // function clearTagContainer() {
-  //   tagContainer.innerHTML = "";
-  // }
-
-  // function toggleTagUI(show, showSuggestions = false) {
-  //   const historyHeader = document.querySelector(".history-header");
-  //   const historyTags = document.getElementById("tagHistoryContainer");
-  //   const suggestionsLabel = document.querySelector(".selected-header");
-  //   const tagContainer = document.getElementById("tagsContainer");
-
-  //   // Toggle history section
-  //   [historyHeader, historyTags].forEach(el => {
-  //     if (!el) return;
-  //     el.classList.toggle("hidden", !show);
-  //     el.classList.toggle("is-visible", show);
-  //   });
-
-  //   // Toggle suggestions section only if explicitly allowed
-  //   [suggestionsLabel, tagContainer].forEach(el => {
-  //     if (!el) return;
-  //     el.classList.toggle("hidden", !showSuggestions);
-  //     el.classList.toggle("is-visible", showSuggestions);
-  //   });
-  // }
-
-  // function tag_addTag(tagText, silent = false) {
-  //   const existing = Array.from(document.querySelectorAll("#tagsContainer .tag")).map(tag =>
-  //     tag.textContent.replace("X", "").trim()
-  //   );
-
-  //   if (existing.includes(tagText)) return;
-  //   if (document.querySelector("#tagsContainer").children.length >= 10) {
-  //     if (!silent) info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
-  //     return;
-  //   }
-
-  //   const tag = createTagElement(tagText);
-  //   document.getElementById("tagsContainer").appendChild(tag);
-  //   // saveTagToHistory(tagText);
-  // }
-
-  // function tag_removeTag(tagText) {
-  //   const tagElements = document.querySelectorAll(`#tagsContainer .tag[data-tag="${tagText}"]`);
-
-  //   tagElements.forEach(tagEl => {
-  //     tagEl.classList.add("removing");
-  //     setTimeout(() => tagEl.remove(), 200);
-  //   });
-
-  //   // Optional: You can also remove it from history here if needed
-  //   // let history = getTagHistory().filter(tag => tag !== tagText);
-  //   // localStorage.setItem("tagHistory", JSON.stringify(history));
-  // }
-
-  // function createTagElement(tagText, isHistory = false) {
-  //   const tag = document.createElement("span");
-  //   tag.classList.add("tag");
-  //   tag.textContent = tagText;
-
-  //   if (!isHistory) {
-  //     const removeBtn = document.createElement("button");
-  //     removeBtn.textContent = "X";
-  //     removeBtn.classList.add("remove-tag");
-  //     removeBtn.addEventListener("click", (e) => {
-  //       e.stopPropagation();
-  //       tag.classList.add("removing");
-  //       setTimeout(() => tag.remove(), 200);
-  //       tag_removeTag(tagText);
-  //     });
-  //     tag.appendChild(removeBtn);
-  //   }
-
-  //   tag.addEventListener("click", () => {
-  //     if (isHistory) {
-  //       // Add to selected
-  //       tag_addTag(tagText);
-
-  //       // Remove from history DOM
-  //       const historyTag = document.querySelector(`#tagHistoryContainer .tag[data-tag="${tagText}"]`);
-  //       if (historyTag) {
-  //         historyTag.classList.add("removing");
-  //         setTimeout(() => historyTag.remove(), 200);
-  //       }
-  //     } else {
-  //       // Remove from selected
-  //       tag.classList.add("removing");
-  //       setTimeout(() => tag.remove(), 200);
-  //       tag_removeTag(tagText);
-  //     }
-  //   });
-
-
-  //   tag.setAttribute("data-tag", tagText);
-  //   requestAnimationFrame(() => tag.classList.add("show"));
-  //   return tag;
-  // }
-
-  // function getTagHistory() {
-  //   const history = localStorage.getItem("tagHistory");
-  //   return history ? JSON.parse(history) : [];
-  // }
-
-  // // function renderTagHistory() {
-  // //   const history = getTagHistory();
-  // //   if (history.length > 0) {
-  // //     history.forEach(tag => tag_addTag(tag, true));
-  // //     return true;
-  // //   }
-
-  // //   return false;
-  // // }
-  // function renderTagHistory() {
-  //   const history = getTagHistory();
-  //   const historyContainer = document.getElementById("tagHistoryContainer");
-
-  //   if (history.length === 0) return false;
-
-  //   historyContainer.innerHTML = "";
-
-  //   history.forEach(tagText => {
-  //     const tag = createTagElement(tagText, true); // history mode
-  //     historyContainer.appendChild(tag);
-  //   });
-
-  //   return true;
-  // }
-
-  // function saveTagToHistory(tagText) {
-  //   let history = getTagHistory();
-
-  //   // Remove if exists
-  //   history = history.filter(tag => tag !== tagText);
-
-  //   // Add to top
-  //   history.unshift(tagText);
-
-  //   // Limit to last 20 tags
-  //   if (history.length > 20) {
-  //     history = history.slice(0, 20);
-  //   }
-
-  //   localStorage.setItem("tagHistory", JSON.stringify(history));
-  // }
-
-// ===== INITIAL SETUP =====
-if (tagInput) {
-  tagInput.value = "";
-
-  tagInput.addEventListener("focus", () => {
-    const history = getTagHistory();
-    if (history.length > 0) renderTagHistory();
-    if (tagInput.value.trim().length > 0) updateTagUIVisibility();
-  });
-
-  tagInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-
-      const val = tagInput.value.trim();
-      const formatted = val.replace(/^#+/, "").trim();
-      const clean = formatted.toLowerCase();
-
-      const existingTags = getAllUsedTagsSet();
-
-      if (val.length >= 3 && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
-        tag_addTag(formatted);
-        tagInput.value = "";
-        clearTagContainer();
-        updateTagUIVisibility();
-      }
-    }
-  });
-
-  tagInput.addEventListener("keyup", async (e) => {
-    const searchStr = tagInput.value.trim();
-
-    if (searchStr === "") {
-      clearTagContainer();
-      renderTagHistory();
-      updateTagUIVisibility();
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-      alert("Only letters and numbers allowed.");
-      return;
-    }
-
-    if (searchStr.length < 3) return;
-
-    try {
-      const tags = await fetchTags(searchStr);
-      const existingTags = getAllUsedTagsSet();
-
-      clearTagContainer();
-
-      tags.forEach(tag => {
-        if ((tag.count === 0 || tag.records === 0)) return;
-
-        const original = tag.name.replace(/^#+/, "").trim();
-        const clean = original.toLowerCase();
-
-        if (!existingTags.has(clean)) {
-          const el = createTagElement(original, "suggestion");
-          tagContainer.appendChild(el);
-          existingTags.add(clean);
-        }
-      });
-
-      updateTagUIVisibility();
-    } catch (error) {
-      console.error("Tag fetch error:", error);
-    }
-  });
-
-  clearTagHistoryBtn.addEventListener("click", () => {
-    localStorage.removeItem("tagHistory");
-    renderTagHistory();
-    updateTagUIVisibility();
-  });
-}
-
-// ===== TAG MANAGEMENT =====
-function tag_addTag(tagText, silent = false) {
-  const cleanText = tagText.replace(/^#+/, "");
-
-  if (selectedContainer.querySelector(`[data-tag="${cleanText}"]`)) return;
-
-  if (selectedContainer.children.length >= MAX_TAGS) {
-    if (!silent) alert("Es dürfen maximal 10 Tags erstellt werden.");
-    return;
-  }
-
-  const tag = createTagElement(cleanText, "selected");
-  selectedContainer.appendChild(tag);
-
-  if (!silent) saveTagToHistory(cleanText);
-  updateTagUIVisibility();
-}
-
-function tag_removeTag(tagText) {
-  const clean = tagText.replace(/^#+/, "");
-  const tagElements = selectedContainer.querySelectorAll(`.tag[data-tag="${clean}"]`);
-
-  tagElements.forEach(tagEl => {
-    tagEl.classList.add("removing");
-    setTimeout(() => tagEl.remove(), 200);
-  });
-
-  removeFromHistory(clean);
-  updateTagUIVisibility();
-}
-
-// ===== TAG ELEMENT CREATION =====
-function createTagElement(tagText, source = "suggestion") {
-  const cleanText = tagText.replace(/^#+/, "");
-  const tag = document.createElement("span");
-  tag.classList.add("tag");
-  tag.textContent = `#${cleanText}`;
-  tag.setAttribute("data-tag", cleanText);
-  tag.setAttribute("data-source", source);
-
-  // Only selected tags get the remove button
-  if (source === "selected") {
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "X";
-    removeBtn.classList.add("remove-tag");
-    removeBtn.type = "button";
-    removeBtn.addEventListener("click", (e) => {
-      e.preventDefault(); 
-      e.stopPropagation();
-      tag.classList.add("removing");
-      setTimeout(() => {
-        tag.remove();
-        removeFromHistory(cleanText); // remove from history
-        updateTagUIVisibility();
-      }, 200);
+  // ===== INITIAL SETUP =====
+  if (tagInput) {
+    tagInput.value = "";
+
+    tagInput.addEventListener("focus", () => {
+      const history = getTagHistory();
+      if (history.length > 0) renderTagHistory();
+      if (tagInput.value.trim().length > 0) updateTagUIVisibility();
     });
-    tag.appendChild(removeBtn);
-  }
 
-  tag.addEventListener("mousedown", e => e.preventDefault());
+    tagInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
 
-  // Click to select (history or suggestions)
-  if (source !== "selected") {
-    tag.addEventListener("click", () => {
-      if (selectedContainer.querySelector(`[data-tag="${cleanText}"]`)) return;
+        const val = tagInput.value.trim();
+        const formatted = val.replace(/^#+/, "").trim();
+        const clean = formatted.toLowerCase();
 
-      const selectedTag = createTagElement(cleanText, "selected");
-      selectedContainer.appendChild(selectedTag);
-      saveTagToHistory(cleanText);
+        const existingTags = getAllUsedTagsSet();
 
-      tagInput.value = ""; // Reset input immediately
+        if (val.length >= 3 && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
+          tag_addTag(formatted);
+          tagInput.value = "";
+          clearTagContainer();
+          updateTagUIVisibility();
+        }
+      }
+    });
 
-      // Remove from UI
-      tag.classList.add("removing");
-      setTimeout(() => {
-        tag.remove();
+    tagInput.addEventListener("keyup", async (e) => {
+      const searchStr = tagInput.value.trim();
+
+      if (searchStr === "") {
+        clearTagContainer();
         renderTagHistory();
         updateTagUIVisibility();
-      }, 200);
+        return;
+      }
 
-      tagInput.value = "";
+      if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
+        alert("Only letters and numbers allowed.");
+        return;
+      }
+
+      if (searchStr.length < 3) return;
+
+      try {
+        const tags = await fetchTags(searchStr);
+        const existingTags = getAllUsedTagsSet();
+
+        clearTagContainer();
+
+        tags.forEach(tag => {
+          if ((tag.count === 0 || tag.records === 0)) return;
+
+          const original = tag.name.replace(/^#+/, "").trim();
+          const clean = original.toLowerCase();
+
+          if (!existingTags.has(clean)) {
+            const el = createTagElement(original, "suggestion");
+            tagContainer.appendChild(el);
+            existingTags.add(clean);
+          }
+        });
+
+        updateTagUIVisibility();
+      } catch (error) {
+        console.error("Tag fetch error:", error);
+      }
+    });
+
+    clearTagHistoryBtn.addEventListener("click", () => {
+      localStorage.removeItem("tagHistory");
+      renderTagHistory();
+      updateTagUIVisibility();
     });
   }
 
-  requestAnimationFrame(() => tag.classList.add("show"));
-  return tag;
-}
+  // ===== TAG MANAGEMENT =====
+  function tag_addTag(tagText, silent = false) {
+    const cleanText = tagText.replace(/^#+/, "");
 
-// ===== CREATE CUSTOM TAG OPTION =====
-function renderCreateTagOption(input) {
-  const clean = input.replace(/^#+/, "").toLowerCase().trim();
+    if (selectedContainer.querySelector(`[data-tag="${cleanText}"]`)) return;
 
-  const existsInSuggestions = tagContainer.querySelector(`[data-tag="${clean}"]`);
-  const existsInSelected = selectedContainer.querySelector(`[data-tag="${clean}"]`);
-  const existsInHistory = getTagHistory().some(tag => tag.toLowerCase().trim() === clean);
+    if (selectedContainer.children.length >= MAX_TAGS) {
+      if (!silent) alert("Es dürfen maximal 10 Tags erstellt werden.");
+      return;
+    }
 
-  if (existsInSuggestions || existsInSelected || existsInHistory) return; // ✅ Prevent duplicate create
+    const tag = createTagElement(cleanText, "selected");
+    selectedContainer.appendChild(tag);
 
-  tagContainer.innerHTML = "";
-
-  const el = document.createElement("span");
-  el.classList.add("tag", "create-tag");
-  el.textContent = `+ Create tag: #${clean}`;
-  el.setAttribute("data-tag", clean);
-
-  el.addEventListener("mousedown", e => e.preventDefault());
-  el.addEventListener("click", () => {
-    tag_addTag(clean);
-    tagInput.value = "";
-    clearTagContainer();
+    if (!silent) saveTagToHistory(cleanText);
     updateTagUIVisibility();
-  });
+  }
 
-  tagContainer.appendChild(el);
-}
+  function tag_removeTag(tagText) {
+    const clean = tagText.replace(/^#+/, "");
+    const tagElements = selectedContainer.querySelectorAll(`.tag[data-tag="${clean}"]`);
 
-// ===== RENDER HISTORY =====
-function renderTagHistory() {
-  const historyContainer = document.getElementById("tagHistoryContainer");
-  const historySection = document.getElementById("tag-history-section");
+    tagElements.forEach(tagEl => {
+      tagEl.classList.add("removing");
+      setTimeout(() => tagEl.remove(), 200);
+    });
 
-  // Get selected tags from DOM
-  const selectedTags = new Set(
-    Array.from(selectedContainer.children)
+    removeFromHistory(clean);
+    updateTagUIVisibility();
+  }
+
+  // ===== TAG ELEMENT CREATION =====
+  function createTagElement(tagText, source = "suggestion") {
+    const cleanText = tagText.replace(/^#+/, "");
+    const tag = document.createElement("span");
+    tag.classList.add("tag");
+    tag.textContent = `#${cleanText}`;
+    tag.setAttribute("data-tag", cleanText);
+    tag.setAttribute("data-source", source);
+
+    // Only selected tags get the remove button
+    if (source === "selected") {
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "X";
+      removeBtn.classList.add("remove-tag");
+      removeBtn.type = "button";
+      removeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        tag.classList.add("removing");
+        setTimeout(() => {
+          tag.remove();
+          removeFromHistory(cleanText); // remove from history
+          updateTagUIVisibility();
+        }, 200);
+      });
+      tag.appendChild(removeBtn);
+    }
+
+    tag.addEventListener("mousedown", e => e.preventDefault());
+
+    // Click to select (history or suggestions)
+    if (source !== "selected") {
+      tag.addEventListener("click", () => {
+        if (selectedContainer.querySelector(`[data-tag="${cleanText}"]`)) return;
+
+        const selectedTag = createTagElement(cleanText, "selected");
+        selectedContainer.appendChild(selectedTag);
+        saveTagToHistory(cleanText);
+
+        tagInput.value = ""; // Reset input immediately
+
+        // Remove from UI
+        tag.classList.add("removing");
+        setTimeout(() => {
+          tag.remove();
+          renderTagHistory();
+          updateTagUIVisibility();
+        }, 200);
+
+        tagInput.value = "";
+      });
+    }
+
+    requestAnimationFrame(() => tag.classList.add("show"));
+    return tag;
+  }
+
+  // ===== CREATE CUSTOM TAG OPTION =====
+  function renderCreateTagOption(input) {
+    const clean = input.replace(/^#+/, "").toLowerCase().trim();
+
+    const existsInSuggestions = tagContainer.querySelector(`[data-tag="${clean}"]`);
+    const existsInSelected = selectedContainer.querySelector(`[data-tag="${clean}"]`);
+    const existsInHistory = getTagHistory().some(tag => tag.toLowerCase().trim() === clean);
+
+    if (existsInSuggestions || existsInSelected || existsInHistory) return; // ✅ Prevent duplicate create
+
+    tagContainer.innerHTML = "";
+
+    const el = document.createElement("span");
+    el.classList.add("tag", "create-tag");
+    el.textContent = `+ Create tag: #${clean}`;
+    el.setAttribute("data-tag", clean);
+
+    el.addEventListener("mousedown", e => e.preventDefault());
+    el.addEventListener("click", () => {
+      tag_addTag(clean);
+      tagInput.value = "";
+      clearTagContainer();
+      updateTagUIVisibility();
+    });
+
+    tagContainer.appendChild(el);
+  }
+
+  // ===== RENDER HISTORY =====
+  function renderTagHistory() {
+    const historyContainer = document.getElementById("tagHistoryContainer");
+    const historySection = document.getElementById("tag-history-section");
+
+    // Get selected tags from DOM
+    const selectedTags = new Set(
+      Array.from(selectedContainer.children)
       .map(el => el.getAttribute("data-tag"))
       .filter(Boolean)
       .map(tag => tag.toLowerCase().trim())
-  );
+    );
 
-  // Get suggested tags from DOM
-  const suggestedTags = new Set(
-    Array.from(tagContainer.children)
+    // Get suggested tags from DOM
+    const suggestedTags = new Set(
+      Array.from(tagContainer.children)
       .map(el => el.getAttribute("data-tag"))
       .filter(Boolean)
       .map(tag => tag.toLowerCase().trim())
-  );
+    );
 
-  // Load history from localStorage
-  const history = localStorage.getItem("tagHistory");
-  const parsed = history ? JSON.parse(history) : [];
+    // Load history from localStorage
+    const history = localStorage.getItem("tagHistory");
+    const parsed = history ? JSON.parse(history) : [];
 
-  // If corrupted
-  if (!Array.isArray(parsed)) {
-    historyContainer.innerHTML = "";
-    historySection.classList.remove("visible");
-    return false;
-  }
-
-  // Filter out tags already shown
-  const filtered = parsed.filter(tag => {
-    const clean = tag.toLowerCase().trim();
-    return !selectedTags.has(clean) && !suggestedTags.has(clean);
-  });
-
-  // Update DOM
-  historyContainer.innerHTML = "";
-
-  if (filtered.length === 0) {
-    historySection.classList.remove("visible");
-    return false;
-  }
-
-  filtered.forEach(tagText => {
-    const tag = createTagElement(tagText, "history");
-    historyContainer.appendChild(tag);
-  });
-
-  historySection.classList.add("visible");
-  return true;
-}
-
-// ===== LOCAL STORAGE UTILS =====
-function getTagHistory() {
-  const history = localStorage.getItem("tagHistory");
-  return history ? JSON.parse(history) : [];
-}
-
-function saveTagToHistory(tagText) {
-  const clean = tagText.replace(/^#+/, "");
-  let history = getTagHistory();
-
-  history = history.filter(tag => tag !== clean); // remove if exists
-  history.unshift(clean); // add to front
-
-  if (history.length > 20) {
-    history = history.slice(0, 20);
-  }
-
-  localStorage.setItem("tagHistory", JSON.stringify(history));
-}
-
-function removeFromHistory(tagText) {
-  const clean = tagText.replace(/^#+/, "");
-  const updated = getTagHistory().filter(tag => tag !== clean);
-  localStorage.setItem("tagHistory", JSON.stringify(updated));
-}
-
-// ===== UI UTILS =====
-function clearTagContainer() {
-  tagContainer.innerHTML = "";
-}
-
-function updateTagUIVisibility() {
-  const suggestionSection = document.getElementById("tag-suggestions-section");
-  const selectedSection = document.getElementById("selected-tags-section");
-  const historySection = document.getElementById("tag-history-section");
-  const historyContainer = document.getElementById("tagHistoryContainer");
-  const tagContainer = document.getElementById("tagsContainer"); 
-  const tagSuggestionSection = document.getElementById("tag-suggestions-section");
-
-  // ===== Suggestions visibility =====
-  if (tagContainer && tagContainer.children.length > 0) {
-    suggestionSection.classList.remove("hidden");
-    tagContainer.classList.add("is-visible");
-    tagSuggestionSection.classList.add("visible");
-  } else {
-    suggestionSection.classList.add("hidden");
-    tagContainer.classList.remove("is-visible");
-    tagSuggestionSection.classList.remove("visible");
-  }
-
-  // ===== Selected tags visibility =====
-  if (selectedContainer && selectedContainer.children.length > 0) {
-     selectedSection.classList.remove("hidden");
-     selectedSection.classList.add("is-visible");
-  } else {
-    selectedSection.classList.add("hidden");
-     selectedSection.classList.remove("is-visible");
-  }
-
-  // ===== History visibility =====
-  const hasHistory = historyContainer && historyContainer.children.length > 0;
-  if (historySection) {
-    if (hasHistory) {
-      historySection.classList.add("visible");
-    } else {
+    // If corrupted
+    if (!Array.isArray(parsed)) {
+      historyContainer.innerHTML = "";
       historySection.classList.remove("visible");
+      return false;
+    }
+
+    // Filter out tags already shown
+    const filtered = parsed.filter(tag => {
+      const clean = tag.toLowerCase().trim();
+      return !selectedTags.has(clean) && !suggestedTags.has(clean);
+    });
+
+    // Update DOM
+    historyContainer.innerHTML = "";
+
+    if (filtered.length === 0) {
+      historySection.classList.remove("visible");
+      return false;
+    }
+
+    filtered.forEach(tagText => {
+      const tag = createTagElement(tagText, "history");
+      historyContainer.appendChild(tag);
+    });
+
+    historySection.classList.add("visible");
+    return true;
+  }
+
+  // ===== LOCAL STORAGE UTILS =====
+  function getTagHistory() {
+    const history = localStorage.getItem("tagHistory");
+    return history ? JSON.parse(history) : [];
+  }
+
+  function saveTagToHistory(tagText) {
+    const clean = tagText.replace(/^#+/, "");
+    let history = getTagHistory();
+
+    history = history.filter(tag => tag !== clean); // remove if exists
+    history.unshift(clean); // add to front
+
+    if (history.length > 20) {
+      history = history.slice(0, 20);
+    }
+
+    localStorage.setItem("tagHistory", JSON.stringify(history));
+  }
+
+  function removeFromHistory(tagText) {
+    const clean = tagText.replace(/^#+/, "");
+    const updated = getTagHistory().filter(tag => tag !== clean);
+    localStorage.setItem("tagHistory", JSON.stringify(updated));
+  }
+
+  // ===== UI UTILS =====
+  function clearTagContainer() {
+    tagContainer.innerHTML = "";
+  }
+
+  function updateTagUIVisibility() {
+    const suggestionSection = document.getElementById("tag-suggestions-section");
+    const selectedSection = document.getElementById("selected-tags-section");
+    const historySection = document.getElementById("tag-history-section");
+    const historyContainer = document.getElementById("tagHistoryContainer");
+    const tagContainer = document.getElementById("tagsContainer");
+    const tagSuggestionSection = document.getElementById("tag-suggestions-section");
+
+    // ===== Suggestions visibility =====
+    if (tagContainer && tagContainer.children.length > 0) {
+      suggestionSection.classList.remove("hidden");
+      tagContainer.classList.add("is-visible");
+      tagSuggestionSection.classList.add("visible");
+    } else {
+      suggestionSection.classList.add("hidden");
+      tagContainer.classList.remove("is-visible");
+      tagSuggestionSection.classList.remove("visible");
+    }
+
+    // ===== Selected tags visibility =====
+    if (selectedContainer && selectedContainer.children.length > 0) {
+      selectedSection.classList.remove("hidden");
+      selectedSection.classList.add("is-visible");
+    } else {
+      selectedSection.classList.add("hidden");
+      selectedSection.classList.remove("is-visible");
+    }
+
+    // ===== History visibility =====
+    const hasHistory = historyContainer && historyContainer.children.length > 0;
+    if (historySection) {
+      if (hasHistory) {
+        historySection.classList.add("visible");
+      } else {
+        historySection.classList.remove("visible");
+      }
     }
   }
-}
 
-function getAllUsedTagsSet() {
-  return new Set([
-    ...Array.from(selectedContainer.children)
+  function getAllUsedTagsSet() {
+    return new Set([
+      ...Array.from(selectedContainer.children)
       .map(el => el.getAttribute("data-tag"))
       .filter(Boolean)
       .map(tag => tag.toLowerCase().trim()),
-    ...getTagHistory().map(tag => tag.toLowerCase().trim())
-  ]);
-}
+      ...getTagHistory().map(tag => tag.toLowerCase().trim())
+    ]);
+  }
 
-document.querySelectorAll('.form-tab-js a').forEach(tab => {
-  tab.addEventListener('click', function (e) {
-    e.preventDefault();
+  document.querySelectorAll('.form-tab-js a').forEach(tab => {
+    tab.addEventListener('click', function (e) {
+      e.preventDefault();
 
-    // Remove 'active' from all menu items
-    document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
+      // Remove 'active' from all menu items
+      document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
 
-    // Add 'active' to clicked tab's parent <li>
-    this.parentElement.classList.add('active');
+      // Add 'active' to clicked tab's parent <li>
+      this.parentElement.classList.add('active');
 
-    // Hide all forms
-    document.querySelectorAll('.upload').forEach(form => form.classList.remove('active'));
+      // Hide all forms
+      document.querySelectorAll('.upload').forEach(form => form.classList.remove('active'));
 
-    // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
-    const id = this.id.replace('create', 'new') + 'Post';
-    const form = document.getElementById(id);
-    if (form) form.classList.add('active');
+      // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
+      const id = this.id.replace('create', 'new') + 'Post';
+      const form = document.getElementById(id);
+      if (form) form.classList.add('active');
+    });
   });
-});
-/********************************************************************/
-
+  /********************************************************************/
 
   async function fetchTags(searchStr) {
     for (let failed of failedSearches) {
@@ -908,15 +688,21 @@ document.querySelectorAll('.form-tab-js a').forEach(tab => {
 
   async function handleFileChange(e, processor) {
     const files = Array.from(e.target.files);
-    if (files.length) await processor(files, e.currentTarget.id);
+    if (files.length) {
+      await processor(files, e.currentTarget.id);
+      e.target.value = "";
+    }
   }
 
   // Iteration über die Zonen
-  zones.forEach(({ dropArea, fileInput }) => {
+  zones.forEach(({
+    dropArea,
+    fileInput
+  }) => {
     // Click-Event für das Öffnen des Dateidialogs
-    if (dropArea) {
-      dropArea.addEventListener("click", () => handleClick(fileInput));
-    }
+    // if (dropArea) {
+    //   dropArea.addEventListener("click", () => handleClick(fileInput));
+    // }
 
     // Drag-and-Drop-Events
     if (dropArea) {
@@ -930,159 +716,24 @@ document.querySelectorAll('.form-tab-js a').forEach(tab => {
       fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
     }
   });
-});
 
-function tag_getTagArray() {
-  return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
-}
-
-async function fetchTags(searchStr) {
-  // if (failedSearches.has(searchStr)) {
-  //   return [];
-  // }
-  for (let failed of failedSearches) {
-    if (searchStr.includes(failed)) {
-      return [];
-    }
+  function tag_getTagArray() {
+    return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
   }
-  const accessToken = getCookie("authToken");
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-  const query = `
-	  query searchTags($searchstr: String!) {
-		  searchTags(tagName: $searchstr, limit: 10) {
-			  status
-			  counter
-			  ResponseCode
-			  affectedRows {
-				name
-			}
-		  }
-	  }
-  `;
 
-  const variables = { searchstr: searchStr };
-
-  try {
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({ query, variables }),
-    });
-
-    const result = await response.json();
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0]);
-    if (!result.data.searchTags.affectedRows.length) {
-      failedSearches.add(searchStr);
-    }
-    return result.data.searchTags.affectedRows;
-  } catch (error) {
-    // console.error("Error fetching tags:", error);
-    return [];
+  function tag_removeAllTags() {
+    tagContainer.innerHTML = "";
   }
-}
 
-const failedSearches = new Set();
-const tagInput = document.getElementById("tag-input");
-const tagContainer = document.getElementById("tagsContainer");
-const dropdownMenu = document.getElementById("dropdownMenu");
-if (tagInput) {
-  tagInput.addEventListener("input", async function () {
-    const searchStr = tagInput.value.trim();
-    if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-      if (searchStr.length < 3) {
-        dropdownMenu.innerHTML = "";
-        dropdownMenu.classList.add("none");
-        return;
-      }
-    } else {
-      info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-      return;
-    }
-
-    const tags = await fetchTags(searchStr);
-    dropdownMenu.innerHTML = "";
-    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
-
-    tags.forEach((tag) => {
-      if (!existingTags.includes(tag.name + "X")) {
-        const option = document.createElement("div");
-        option.textContent = tag.name;
-        option.classList.add("dropdown-item");
-        option.addEventListener("click", () => {
-          tagInput.value = tag.name;
-          tag_addTag(tagInput.value.trim());
-          tagInput.value = "";
-          tagInput.focus();
-          dropdownMenu.classList.toggle("none");
-        });
-        dropdownMenu.appendChild(option);
-      }
-    });
-
-    dropdownMenu.classList.toggle("none", tags.length == 0);
-  });
-}
-
-if (tagInput) {
-  tagInput.addEventListener("keypress", function (event) {
-    if (event.key === "Enter" && tagInput.value.trim() !== "") {
-      if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
-        tag_addTag(tagInput.value.trim());
-        tagInput.value = "";
-      } else {
-        info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
-      }
-    }
-  });
-}
-
-window.addEventListener("click", function (event) {
-  if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
-    dropdownMenu.classList.remove("show");
-  }
-});
-
-function tag_addTag(tagText) {
-  if (tagContainer.children.length >= 10) {
-    info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
-    return;
-  }
-  if (tagContainer.children.length >= 1) {
-    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
-
-    if (existingTags.includes(tagText + "X")) {
-      info("Information", "Tag existiert bereits.");
-      return;
-    }
-  }
-  const tag = document.createElement("span");
-  tag.classList.add("tag");
-  tag.textContent = tagText;
-
-  const tag_removeBtn = document.createElement("button");
-  tag_removeBtn.textContent = "X";
-  tag_removeBtn.classList.add("remove-tag");
-  tag_removeBtn.addEventListener("click", function () {
-    tagContainer.removeChild(tag);
-  });
-
-  tag.appendChild(tag_removeBtn);
-  tagContainer.appendChild(tag);
-}
-
-function tag_removeAllTags() {
-  tagContainer.innerHTML = "";
-}
-
-async function processFiles(files, id) {
+ async function processFiles(files, id) {
+ 
+  //  console.log('id --> ', files)
   const lastDashIndex = id.lastIndexOf("-");
   id = id.substring(lastDashIndex + 1);
 
   const previewContainer = document.getElementById("preview-" + id);
+  console.log(' previewContainer ' + previewContainer); 
+   console.log('id --> ', id)
   let previewItem;
   const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
   let size = 0;
@@ -1155,4 +806,5 @@ async function processFiles(files, id) {
   });
   document.querySelectorAll(".deletePost").forEach(addDeleteListener);
   document.querySelectorAll(".editImage").forEach(addEditImageListener);
-}
+ }
+});

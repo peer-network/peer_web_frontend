@@ -14,8 +14,6 @@
   backdrop-filter: blur(5px);
 }
 
-/**/
-
 /* ===================== TAGGING SYSTEM ===================== */
 .tag-wrapper {
   background-color: #333;
@@ -27,6 +25,10 @@
 /* ===================== UPLOAD CONTROLS ===================== */
 .upload {
   display: none;
+  grid-column: 2;
+  /* overflow-y: scroll; */
+  height: 100%;
+  position: relative;
 }
 
 .upload.active {
@@ -130,8 +132,6 @@
   margin: 1rem 0 2rem
 }
 
-/* Optional: consistent label appearance */
-
 /* ===================== CLEAR HISTORY ===================== */
 .clear-history-label {
   font-weight: 600;
@@ -165,9 +165,6 @@
   cursor: pointer;
 }
 
-
-
-
 /* ===================== PREVIEW CONTAINER ===================== */
 #addPost .preview-container {
   display: flex;
@@ -178,7 +175,12 @@
   align-items: flex-start;
   overflow-x: scroll;
   justify-content: flex-start;
-  margin: 0 2rem;
+  margin: 15px 0px 20px 0px;
+}
+
+.drop-preview-area {
+  display: flex;
+  height: 400px;
 }
 
 #addPost .preview-item {
@@ -272,6 +274,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+.editImage {
+  position: absolute;
+  height: 25% !important;
+}
+
 /* Hide the remove (X) button by default */
 
 /* ===================== TAG REMOVE ===================== */
@@ -357,12 +364,6 @@
   min-height: 3rem;
 }
 
-#addPost .upload input::placeholder,
-#addPost .upload textarea::placeholder {
-  font-size: small;
-  color: #00070f;
-}
-
 #addPost .addTags {
   grid-column: 3;
   width: 100%;
@@ -377,7 +378,7 @@
 
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
-  background-color: transparent;
+  /* background-color: transparent;
   text-align: center;
   cursor: pointer;
   border-radius: 1rem;
@@ -386,9 +387,80 @@
   align-items: center;
   justify-content: space-evenly;
   border: 4px dashed var(--white-secondary, rgba(255, 255, 255, 0.50));
+  height: 100%; */
+
+  /* border: 3px dashed #cccccc00; */
+  /* padding: 1rem; */
+  /* text-align: center; */
+  flex: 2 0 0;
+  margin: 0 auto;
+  cursor: pointer;
+  /* border-radius: 3vmin; */
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  justify-content: center;
+  gap: 1.5rem;
+  /* padding: 3%; */
+  /* border: 0.4vmin dashed #929292; */
+  min-width: 20rem;
   height: 100%;
+
+  border: 0.3vmin dashed #888;
+  /* subtle dashed border */
+  border-radius: 1rem;
+  /* smooth rounded corners */
+  background-color: #2b2b2b;
+  /* dark background for contrast */
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  align-items: center;
+  min-height: 18rem;
+  color: #ccc;
+  position: relative;
+  transition: border-color 0.3s ease;
+
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
+#addPost .drop-area.hover {
+  border-color: #2b63f9;
+}
+
+#addPost .drop-area img {
+  width: 2rem;
+  height: auto;
+  margin: 1rem auto;
+}
+
+#addPost .drop-area .upload-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#addPost .drop-area .plus-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #2b63f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: bold;
+}
+
+#addPost .drop-area .upload-label {
+  color: #ccc;
+  font-size: 1rem;
+}
 
 /* ===================== MEDIA PREVIEW ===================== */
 .voice-media {
@@ -405,16 +477,6 @@
 /* ===================== IMAGE PREVIEW ===================== */
 .image-media {
   height: 28rem;
-}
-
-#addPost .drop-area.hover {
-  border-color: green;
-}
-
-#addPost .drop-area img {
-  width: 2rem;
-  height: auto;
-  margin: 1rem auto;
 }
 
 #addPost .inner-container .btClose {
@@ -575,10 +637,50 @@
   display: block !important;
 }
 
-
 .error-message {
   color: #ff4d4f;
   font-size: 0.85em;
   margin-top: 4px;
   display: block;
+}
+
+.upload.resettable-form .form-row .col-right .textarea-wrapper {
+  position: relative;
+}
+
+.upload.resettable-form .form-row .col-right .textarea-wrapper textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.upload.resettable-form .form-row .col-right .textarea-wrapper .char-counter {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 12px;
+  color: #888;
+  pointer-events: none;
+}
+
+/*************/
+.upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper input {
+  width: 100%;
+  padding-right: 2.5rem;
+  /* space for icon */
+}
+
+.upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper .search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.6;
+  pointer-events: none;
 }
