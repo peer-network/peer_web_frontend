@@ -13,7 +13,6 @@
                         </div>
                         <input type="file" id="file-input-image" hidden multiple />
                     </div>
-
                 </div>
                 <span class="response_msg error" id="imageError"></span>
                
@@ -69,6 +68,7 @@
                         </div>
                         <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
                     </div>
+
                     <div id="drop-area-videoshort" class="drop-area none">
                         <div class="upload-content">
                             <div class="plus-icon">+</div>
@@ -76,6 +76,8 @@
                         </div>
                         <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                     </div>
+                    <!-- Add preview block HERE -->
+                    <div id="preview-audio" class="blockscroll preview-container"></div>
                 </div>
                 <span class="response_msg error" id="videoError"></span>
                 

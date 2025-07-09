@@ -41,6 +41,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       passwordField.addEventListener("input", () => {
         const val = passwordField.value.trim();
 
+        if (val.length > 0) {
+          toggleIcon.classList.remove("none");
+        } else {
+          toggleIcon.classList.add("none");
+        }
+
         if (showStrength) {
           if (val.length > 0) {
             strengthBar.classList.remove("none");
@@ -67,11 +73,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
 
           if (isValid) {
-            passwordField.parentElement.classList.add("valid");
+            // passwordField.parentElement.classList.add("valid");
           } else {
             validationMessage.innerText = "";
             validationMessage.classList.add("notvalid");
-            passwordField.parentElement.classList.add("invalid");
+            // passwordField.parentElement.classList.add("invalid");
           }
         }
       });

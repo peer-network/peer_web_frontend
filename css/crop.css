@@ -88,3 +88,28 @@
 /* 
 implement in all-post.css
 */
+
+/* drag&drop */
+
+.draggable {
+  cursor: grab;
+  transition: transform 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+.placeholder {
+  width: 3em;
+  height: 100%;
+  border: 2px dashed #1976d2;
+  background: rgba(25, 118, 210, 0.08);
+  border-radius: 12px;
+  box-sizing: border-box;
+  margin: 0 2px;
+  transition: all 0.2s;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+  z-index: 10;
+}

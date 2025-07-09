@@ -181,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         
       }
-
       
     } catch (error) {
       console.error("Error during create post request:", error);
@@ -190,11 +189,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Re-enable the form and hide loading indicator
       submitButton.disabled = false;
     }
-
   });
 
-  /******************************************************************** */
-  // ===== INITIAL SETUP =====
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
     form.addEventListener("reset", function (event) {
@@ -232,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
 
   if (tagInput) {
     tagInput.value = "";
@@ -579,13 +574,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = this.id.replace("create", "new") + "Post";
       const form = document.getElementById(id);
       if (form) form.classList.add('active');
-
       const postform = document.getElementById('create_new_post');
       if(postform){
         const post_type = e.target.getAttribute('data-post-type');
         postform.setAttribute('data-post-type',post_type);
       }
-
       // Check if it's the audio form (music) and init
       if (id === 'newAudioPost') initAudioEvents(); // attach mic click handler
     });
@@ -654,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput: document.getElementById("file-input-videocover"),
     },
     {
+
       dropArea: document.getElementById("drop-area-videolong"),
       fileInput: document.getElementById("file-input-videolong"),
     },
@@ -830,3 +824,4 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
   }
 });
+
