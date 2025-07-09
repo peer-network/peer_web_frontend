@@ -600,6 +600,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = this.id.replace('create', 'new') + 'Post';
       const form = document.getElementById(id);
       if (form) form.classList.add('active');
+
+      // Check if it's the audio form (music) and init
+      if (id === 'newAudioPost') initAudioEvents(); // attach mic click handler
     });
   });
   /********************************************************************/

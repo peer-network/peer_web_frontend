@@ -213,7 +213,7 @@
                             </p>
                         </div>
 
-                        <img class="filterButton" src="img/voice-icon.png" alt="Audio upload" />
+                        <img class="fileTriggerButton" src="img/voice-icon.png" alt="Audio upload" />
                         <div>
                             <p>Supported formats:</p>
                             <p>.mp3, .wav, .flac, .aac</p>
@@ -223,10 +223,12 @@
                     </div>
                 </div>
                 <div class="col-right">
-                    <div id="drop-area-audio" class="voice-media">
-                        <img class="filterButton" src="img/voice-icon.png" alt="Audio upload" />
-                        <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
+                    <div id="voice-record-wrapper" class="voice-media">
+                        <img class="micButton" src="img/voice-icon.png" alt="Audio upload" />
+                        <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
                     </div>
+                    <!-- Add preview block HERE -->
+                    <div id="preview-audio" class="blockscroll preview-container"></div>
                 </div>
             </div>
             <!--    

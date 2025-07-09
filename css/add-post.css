@@ -468,9 +468,18 @@
   border-radius: 1rem;
 }
 
-.voice-media img {
-  width: 100%;
-  padding: 40px;
+.voice-media img.micButton {
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  object-fit: contain;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 
@@ -683,4 +692,117 @@
   height: 1rem;
   opacity: 0.6;
   pointer-events: none;
+}
+
+/* === Mic Button (before recording) === */
+.micButton {
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 50%;
+  font-size: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.micButton.recording {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* === Recording Box (appears when recording starts) === */
+.recording-box {
+  background: #2d2d2d;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* === Static Waveform Visual Bar (while recording) === */
+.recording-waveform {
+  background: repeating-linear-gradient(
+    to right,
+    white 0px,
+    white 2px,
+    transparent 2px,
+    transparent 6px
+  );
+  height: 16px;
+  opacity: 0.6;
+  animation: pulse 1s linear infinite;
+  border-radius: 1rem;
+}
+
+/* === Timer Display During Recording === */
+#recordingTimer {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 0.25rem;
+}
+
+/* === Pulse Animation === */
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* === Custom Audio Preview (after recording ends) === */
+.audio-preview-box {
+  background: #2d2d2d;
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* === Waveform style (preview version) === */
+.waveform-bar {
+  height: 16px;
+  background: repeating-linear-gradient(
+    to right,
+    white 0,
+    white 2px,
+    transparent 2px,
+    transparent 6px
+  );
+  opacity: 0.3;
+  animation: pulse 1s linear infinite;
+  border-radius: 1rem;
+}
+
+/* === Meta Row with Timer + Button === */
+.record-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* === Play/Pause Circle Button === */
+.play-pause-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Time Text (live timer while playing) === */
+.record-time {
+  color: white;
+  font-size: 1rem;
 }
