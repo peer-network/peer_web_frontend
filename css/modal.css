@@ -258,3 +258,35 @@
 .modal-checkbox label {
   color: rgba(255, 255, 255, 0.3)
 }
+
+@media screen and (min-width: 3000px) {
+
+  .modal-title {
+    font-size: 45px;
+		
+		font-size: clamp(1.875rem, 0.9375rem + 0.75vw, 2.8125rem);
+    margin-bottom: 30px;
+    
+  }
+  .modal-checkbox {
+	  margin: 0.5em 0 1.5em;
+     font-size: 35px;
+    font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+  }
+	.modal-checkbox input {
+    width: 2rem;
+    height: 2rem;
+    
+  }
+
+  .modal-content {
+    padding: 60px;    
+    width: 35vw;    
+  }
+  .modal-message {
+    font-size: 35px;
+    font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+    margin-bottom: 40px;
+  }
+
+}
