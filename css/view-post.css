@@ -511,6 +511,7 @@
 	border: 0;
 	padding: 0;
 	margin: 0;
+	min-width: unset;
 }
 
 
@@ -816,6 +817,7 @@
 	aspect-ratio: 1/1;
 	border: 0;
 	color: var(--black,#000);
+	min-width: unset;
 }
 
 .post_comment button i {
@@ -999,6 +1001,7 @@
 	width: 150px;
 	height: 150px;
 	font-size: 55px;
+	min-width: 100px;
 	}
 	.slider-modal .modal-thumbnail {
 		height: 140px;
