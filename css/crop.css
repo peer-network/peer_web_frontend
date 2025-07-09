@@ -26,6 +26,7 @@
   /* justify-content: center; */
   align-items: center;
   flex-direction: column;
+  z-index: 1;
 }
 #aspectRatioSelect {
   top: 10px;
@@ -51,12 +52,13 @@
 }
 
 .aspect-ratio-toggle label {
-  padding: 0.5em 1.2em;
-  border: 1px solid #888;
+  color: var(--white,#fff);
+  padding: 1.2em;
+  
   margin-left: -1px;
   cursor: pointer;
   position: relative;
-  background: #fff;
+  background: var(--dark-inactive, #323232);
   z-index: 1;
   transition: background 0.2s;
   min-width: 12em;
@@ -77,10 +79,10 @@
   margin-left: -1em !important;
 }
 .aspect-ratio-toggle input[type="radio"]:checked + label {
-  background: #337ab7 !important;
-  color: #fff;
+  background: var(--white,#fff) !important;
+  color:var(--black,#000);
   z-index: 3;
-  border-color: #337ab7;
+  font-weight: bold;
 }
 
 /* 
