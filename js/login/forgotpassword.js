@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loader.classList.add("active"); // Show the loader
       }
 
-      const validmsg = document.getElementById("validationMessage");
+      const validmsg = document.getElementById("emailValidationMessage");
       validmsg.innerText = "";
 
     // Disable form and show loading indicator (optional UI improvement)
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       } else {
         //console.log(userfriendlymsg(result.ResponseCode));
-        displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");
+        displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login." , "forgotValidationMessage");
         if (loader) {
           loader.classList.remove("active"); // Hide the loader
         }
@@ -89,6 +89,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.querySelector('.backBtn').addEventListener('click', function (e) {
+    e.preventDefault(); 
+
+    const forgotForm = document.getElementById('forgotpasswordForm');
+    const verifyForm = document.getElementById('verifycodeForm');
+    const resetForm = document.getElementById('resetpasswordForm');
+
+    if (!resetForm.classList.contains('hide')) {
+        resetForm.classList.add('hide');
+        verifyForm.classList.remove('hide');
+    } else if (!verifyForm.classList.contains('hide')) {
+        verifyForm.classList.add('hide');
+        forgotForm.classList.remove('hide');
+    } else {
+        window.location.href = 'login.php';
+    }
+  });
+
+
   document.getElementById("verifycodeForm").addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent form reload
 
@@ -116,10 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
           msgElem_wrong_code.classList.remove("error", "success");
           msgElem_wrong_code.innerHTML = "";
 
-          // reset fields
-              ["new_password","repeat_password"].forEach(id => 
-                document.getElementById(id).value = ""
-              );
+          // // reset fields
+          //     ["password","confirmPassword"].forEach(id => 
+          //       document.getElementById(id).value = ""
+          //     );
           if (loader) {
             loader.classList.remove("active"); // Show the loader
           }
@@ -128,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (resetpasswordForm) resetpasswordForm.classList.remove("hide");
 
 
-        }, 2000); // 2000ms = 2 seconds
+        }, 3000); // 2000ms = 2 seconds
     }
   });
 
@@ -137,46 +156,40 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault(); // Prevent form reload
 
     // Retrieve input values for email and password
-    const new_password = document.getElementById("new_password").value;
-    const repeat_password = document.getElementById("repeat_password").value;
-    const msgElem         = document.getElementById("response_msg_change_password");
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
     const msgElem_wrong_code        = document.getElementById("response_msg_wrong_code");
-
+    const msgElem = document.getElementById("response_msg_change_password");
     const verifycodeForm = document.getElementById("verifycodeForm");
     const resetpasswordForm = document.getElementById("resetpasswordForm");
     const password_changed_success = document.getElementById("password_changed_success");
 
     const token = localStorage.getItem("verificationcode");
     
-      // clear out any old message classes
-      msgElem.classList.remove("error", "success");
-      msgElem.innerHTML = "";
-
     //  Check match:
-      if (new_password !== repeat_password) {
-        msgElem.classList.add("error");
-        msgElem.innerHTML = "Passwords do not match";
-        return; // stop here
-      }
 
       // Password validation
-        const passwordMinLength = 8; // Minimum password length
-        const passwordRegex = /^(?=.*[A-Z]).+$/; // Must contain at least one capital letter
+        const passwordMinLength = 8;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/; 
 
       // Check if the password meets the minimum length
-      if (new_password.length < passwordMinLength) {
-        msgElem.classList.add("error");
-        msgElem.innerHTML = "The password must be at least 8 characters long!";
-        
-        return;
+      if (password.length < passwordMinLength) {
+        return displayValidationMessage(userfriendlymsg("Password too short (min. 8 chars)!!"), "confirmValidationMessage");
       }
-
-      // Check if the password contains a capital letter
-      if (!passwordRegex.test(new_password)) {
-        msgElem.classList.add("error");
-        msgElem.innerHTML = "The password must contain at least one capital letter!";
-        
-        return;
+      if (!/[A-Z]/.test(password)) {
+        return displayValidationMessage(userfriendlymsg("Add at least 1 uppercase letter!!"), "confirmValidationMessage");
+      }
+      if (!/\d/.test(password)) {
+        return displayValidationMessage(userfriendlymsg("Add at least 1 number!!"), "confirmValidationMessage");
+      }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        return displayValidationMessage(userfriendlymsg("Include a special character (!@#$...)!!"), "confirmValidationMessage");
+      }
+      if (!passwordRegex.test(password)) {
+        return displayValidationMessage(userfriendlymsg("Password does not meet requirements!!"), "confirmValidationMessage");
+      }
+      if (password !== confirmPassword) {
+        return displayValidationMessage(userfriendlymsg("Passwords do not match!!"), "confirmValidationMessage");
       }
   
 
@@ -186,16 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Attempt to register the user after passing validations
-      const result = await resetpasswordRequest(token,new_password);
+      const result = await resetpasswordRequest(token,password);
 
       // Handle successful registration (e.g., redirect or display success message)
       if (result.status === "success" && result.ResponseCode === "11005") {
         
         
-        // reset fields
-          ["new_password","repeat_password"].forEach(id => 
-            document.getElementById(id).value = ""
-          );
           localStorage.removeItem("verificationcode");
           msgElem.classList.add("success");
 
