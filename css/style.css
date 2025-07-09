@@ -25,6 +25,7 @@
 
   --dark-inactive:#323232;
   --black-dark: #252525;
+  --black-secondary: rgba(50, 50, 50, 0.50);
   --Field-Hover-Black: #393939;
 	--red-accent: #FF3B3B;
 
@@ -360,9 +361,9 @@ input[type="button"].btn-blue:hover,
 input[type="reset"].btn-blue:hover,
 input[type="submit"].btn-blue:hover,
 input[type="submit"].btn-blue:hover{
-	background-color:var(--white);
-	border-color: var(--white);
-	color: var(--black);
+	background-color:var(--white,#fff);
+	border-color: var(--white,#fff);
+	color: var(--black,#000);
 }
 
 /*---- End Button Blue --*/
@@ -374,8 +375,8 @@ input[type="reset"].btn-red-transparent,
 input[type="submit"].btn-red-transparent,
 input[type="submit"].btn-red-transparent{
 	background-color:transparent;
-	border-color: #FF3B3B;
-	color: #FF3B3B;
+	border-color: var(--red-accent, #FF3B3B);
+	color: var(--red-accent, #FF3B3B);
 }
 
 button.btn-red-transparent:hover,.button.btn-red-transparent:hover,
@@ -383,10 +384,11 @@ input[type="button"].btn-red-transparent:hover,
 input[type="reset"].btn-red-transparent:hover,
 input[type="submit"].btn-red-transparent:hover,
 input[type="submit"].btn-red-transparent:hover{
-	background-color:#FF3B3B;
-	border-color: #FF3B3B;
+	background-color:var(--red-accent, #FF3B3B);
+	border-color:var(--red-accent, #FF3B3B);
 	color: var(--white);
 }
+/*---- End Red Transparent --*/
 
 /*--- Button Red  ---*/
 button.btn-red,.button.btn-red,
@@ -394,8 +396,8 @@ input[type="button"].btn-red,
 input[type="reset"].btn-red,
 input[type="submit"].btn-red,
 input[type="submit"].btn-red{
-	background-color:#FF3B3B;
-	border-color: #FF3B3B;
+	background-color:var(--red-accent, #FF3B3B);
+	border-color: var(--red-accent, #FF3B3B);
 	color: var(--white);
 }
 
@@ -405,11 +407,34 @@ input[type="reset"].btn-red:hover,
 input[type="submit"].btn-red:hover,
 input[type="submit"].btn-red:hover{
 	background-color:transparent;
-	border-color: #FF3B3B;
-	color: #FF3B3B;
+	border-color: var(--red-accent, #FF3B3B);
+	color: var(--red-accent, #FF3B3B);
 }
 
-/*---- End Red Transparent --*/
+/*---- End button Red --*/
+/*--- Button Gray  ---*/
+button.btn-gray,.button.btn-gray,
+input[type="button"].btn-gray,
+input[type="reset"].btn-gray,
+input[type="submit"].btn-gray,
+input[type="submit"].btn-gray{
+	background-color:var(--white-secondary, rgba(255, 255, 255, 0.50));
+	border-color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+	color: var(--black-secondary, rgba(50, 50, 50, 0.50));
+}
+
+button.btn-gray:hover,.button.btn-gray:hover,
+input[type="button"].btn-gray:hover,
+input[type="reset"].btn-gray:hover,
+input[type="submit"].btn-gray:hover,
+input[type="submit"].btn-gray:hover{
+	background-color:var(--white,#fff);
+	border-color: var(--white,#fff);
+	color: var(--black,#000);
+}
+
+/*---- End button Red --*/
+
 
 button:active, button:focus,
 input[type="button"]:active,
@@ -440,14 +465,14 @@ input[type="datetime"],
 input[type="datetime-local"],
 input[type="color"],
 textarea {
-color: #fff;
+  color: #fff;
   font-family: inherit;
   border: 0;
-  height: 3.5rem;
-  padding: 0 2rem;
+ 
+  padding: 1.5rem 2.5rem;
   width: 100%;
   background: var(--bg-filter);
-  border-radius: 50px;
+  border-radius: 70px;
   margin: 0;
 }
 input[type="text"]:focus,
@@ -475,7 +500,7 @@ select {
 }
 textarea {
   height: auto;
-  padding: 2rem;
+  resize: none;
   width: 100%;
 }
 
@@ -934,6 +959,17 @@ footer {grid-area: footer;}
 /*-----------Web Version Widget-------------*/
 
 /*--------------------------------------------------------------
+# Error + Success
+--------------------------------------------------------------*/
+.response_msg.error {
+	margin-bottom: 1.5rem;
+	color: var(--red-accent, #FF3B3B);
+}
+.response_msg.success {
+	margin-bottom: 1.5rem;
+	color: rgba(170, 255, 103, 1);
+}
+/*--------------------------------------------------------------
 # 404 Page
 --------------------------------------------------------------*/
 
@@ -1171,11 +1207,20 @@ footer {grid-area: footer;}
 @media screen and (min-width: 3000px) {
 	
 
-	body, button, input, select, optgroup, textarea {
+	body, input, select, optgroup, textarea {
 		
 		font-size: 28px;
 		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
 	}
+	button{
+		line-height: 130px;
+		border-radius: 150px;
+		padding: 0 60px;
+		
+		font-size: 35px;
+		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+	}
+
 
 	h1,.xxl_font_size {
 		font-size: 64px;
@@ -1242,7 +1287,8 @@ footer {grid-area: footer;}
 	 {
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
-		height: 8.12rem;
+		padding: 2.5rem;
+		
 	}
 	.post-search-filters .notify {
 		width: 130px;

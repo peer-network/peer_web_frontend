@@ -3,38 +3,42 @@
         <form id="newNotesPost" class="upload active resettable-form" method="post">
             <div class="form-row">
                 <div class="col-left">
-                    <label for="titleNotes">Title*</label>
+                    <label for="titleNotes" class="md_font_size">Title*</label>
                 </div>
                 <div class="col-right">
                     <input type="text" id="titleNotes" placeholder="min. 25 symbols" name="text-input" maxlength="150"
                         required />
-                    <span class="error-message" id="titleError"></span>
+                    <span class="response_msg error" id="titleError"></span>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="col-left">
-                    <label for="descriptionNotes">Description</label>
+                    <label for="descriptionNotes" class="md_font_size">Description</label>
                 </div>
                 <div class="col-right">
                     <div class="textarea-wrapper">
                         <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength="1200" required></textarea>
-                        <span class="char-counter" data-target="descriptionNotes">0/250</span>
+                        <span class="char-counter md_font_size" data-target="descriptionNotes">0/250</span>
                     </div>
 
-                    <span class="error-message" id="descriptionError"></span>
+                    <span class="response_msg error" id="descriptionError"></span>
                 </div>
             </div>
 
-            <p class="form-note">Maximum Text size is 4MB</p>
+            
 
             <div class="form-row">
                 <div class="col-left">
-                    <label for="tag-input">Tags</label>
+                    <label for="tag-input" class="md_font_size">Tags</label>
                 </div>
                 <div class="col-right">
                     <div class="tag-wrapper">
+                        <!-- Selected Tags -->
+                        <div class="tag-section selected-tags" id="selected-tags-section">
+                            <div id="tagsSelected" class="tag-list selected-container"></div>
+                        </div>
                         <!-- Tag Input -->
                         <div class="input-icon-wrapper">
                             <input id="tag-input" type="text" placeholder="Click here to add #hastags" />
@@ -46,7 +50,7 @@
                         <div class="tag-section" id="tag-history-section">
                             <div class="section-header">
                                 <label>Recently Used</label>
-                                <button id="clearTagHistory" class="clear-history">Clear History</button>
+                                <span id="clearTagHistory" class="clear-history">Clear History</span>
                             </div>
                             <div id="tagHistoryContainer" class="tag-list"></div>
                         </div>
@@ -59,26 +63,20 @@
                             <div id="tagsContainer" class="tag-list"></div>
                         </div>
 
-                        <!-- Selected Tags -->
-                        <div class="tag-section" id="selected-tags-section">
-                            <div class="section-header">
-                                <label>Selected Tags</label>
-                            </div>
-                            <div id="tagsSelected" class="tag-list selected-container"></div>
-                        </div>
+                        
                     </div>
-                    <span class="error-message" id="tagError"></span>
+                    <span class="response_msg error" id="tagError"></span>
                 </div>
             </div>
 
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button">Preview</button>
-                    <button type="reset">Clear Fields</button>
+                    <button type="button" class="btn-gray bold">Preview</button>
+                    <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">
                     <span class="form-note">You will spend 1 free post</span>
-                    <button type="submit" class="btn-blue" id="createPostNotes">Post</button>
+                    <button type="submit" class="btn-blue bold" id="createPostNotes">Post</button>
                 </div>
             </div>
         </form>
@@ -107,7 +105,7 @@
                 <div id="drop-area-image" class="drop-area">
                     <div class="plus-icon">+</div>
                     <span>Upload media</span>
-                    <input type="file" id="file-input-image" hidden multiple />
+                    <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
                 </div>
 
             </div>
@@ -213,7 +211,7 @@
                             </p>
                         </div>
 
-                        <img class="filterButton" src="img/voice-icon.png" alt="Audio upload" />
+                        <img class="fileTriggerButton" src="img/voice-icon.png" alt="Audio upload" />
                         <div>
                             <p>Supported formats:</p>
                             <p>.mp3, .wav, .flac, .aac</p>
@@ -223,10 +221,12 @@
                     </div>
                 </div>
                 <div class="col-right">
-                    <div id="drop-area-audio" class="voice-media">
-                        <img class="filterButton" src="img/voice-icon.png" alt="Audio upload" />
-                        <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
+                    <div id="voice-record-wrapper" class="voice-media">
+                        <img class="micButton" src="img/voice-icon.png" alt="Audio upload" />
+                        <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
                     </div>
+                    <!-- Add preview block HERE -->
+                    <div id="preview-audio" class="blockscroll preview-container"></div>
                 </div>
             </div>
             <!--    
@@ -336,13 +336,27 @@
         </form>
         <form id="newVideoPost" class="upload resettable-form" method="post">
             <h2>Upload File</h2>
-            <div id="drop-area-video" class="drop-preview-area preview-container">
-                <div id="drop-area-video-inner" class="drop-area">
+            <div id="preview-video" class="blockscroll preview-container">
+                <div id="drop-area-videocover" class="drop-area none">
+                    <div class="upload-content">
+                        <div class="plus-icon">+</div>
+                        <span class="upload-label">Upload cover</span>
+                    </div>
+                    <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
+                </div>
+                <div id="drop-area-videolong" class="drop-area">
                     <div class="upload-content">
                         <div class="plus-icon">+</div>
                         <span class="upload-label">Upload media</span>
                     </div>
-                    <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
+                    <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
+                </div>
+                <div id="drop-area-videoshort" class="drop-area none">
+                    <div class="upload-content">
+                        <div class="plus-icon">+</div>
+                        <span class="upload-label">Upload short</span>
+                    </div>
+                    <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                 </div>
             </div>
             <div class="form-row">
@@ -365,7 +379,7 @@
                         <textarea id="descriptionVideo" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength="1200" required></textarea>
                         <span class="char-counter" data-target="descriptionVideo">0/250</span>
-                        <div id="preview-video" class="blockscroll preview-container"></div>
+
                     </div>
 
                     <span class="error-message" id="descriptionError"></span>

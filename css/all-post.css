@@ -95,7 +95,10 @@
   height: 100%;
   object-fit: cover;
 }
-
+.card[content="video"] .post-inhalt .video-player .video-ratio:nth-child(3n),
+.card .custom-video:nth-child(3n) {
+	display: none;
+}
 
 
 .card .post .shadow {
@@ -145,8 +148,9 @@ background-blend-mode: normal, luminosity, normal, normal;
 }
 .card-header-left {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 10px;
+  max-width: 60%;
 }
 .card-header-left .username-slug span {
 	display: block;
@@ -156,7 +160,9 @@ background-blend-mode: normal, luminosity, normal, normal;
   font-weight: 400;
   opacity: 0.7;
 }
-
+.card-header-left .post-userImg{
+  margin-top: 3px;
+}
 .card .post-inhalt .post-content {
 	margin-top: 20px;
 }

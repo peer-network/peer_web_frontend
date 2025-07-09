@@ -6,6 +6,8 @@
   cursor: grab;
   height: 70vmin;
   width: 70vmin;
+  background-color: #000;
+  border-radius: 15px;
 }
 #croppedCanvas {
   display: none;
@@ -95,8 +97,8 @@ implement in all-post.css
 }
 
 .placeholder {
-  width: 100px;
-  height: 100px;
+  width: 3em;
+  height: 100%;
   border: 2px dashed #1976d2;
   background: rgba(25, 118, 210, 0.08);
   border-radius: 12px;
