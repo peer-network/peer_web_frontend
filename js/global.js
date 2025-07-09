@@ -42,7 +42,7 @@ function extractWords(str) {
   return {
     hashtags,
     usernames,
-    normalWords
+    normalWords,
   };
 }
 
@@ -108,8 +108,15 @@ function addDeleteListener(element) {
 function handleDelete(event) {
   event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
   // console.log("Post löschen:", event.target);
+  if (event.target.id === "deletecover") {
+    document.getElementById("drop-area-videocover").classList.remove("none");
+  } else if (event.target.id === "deleteshort") {
+    document.getElementById("drop-area-videoshort").classList.remove("none");
+  } else if (event.target.id === "deletelong") {
+    document.getElementById("drop-area-videolong").classList.remove("none");
+  }
   event.target.parentElement.remove();
-  // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
+  const id = event.target.parentElement.id;
 }
 
 function isFileLargerThanMB(file, mb) {
@@ -346,7 +353,6 @@ async function getDailyFreeStatus() {
           // console.error("Fehler beim Abrufen der Registrierungen:", error);
         });
     }
-
 
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);

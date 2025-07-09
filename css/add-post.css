@@ -5,7 +5,6 @@
 /* ===================== newNotesPost ===================== */
 #newNotesPost {  margin-top: 100px;}
 
-
 /* ===================== UPLOAD CONTROLS ===================== */
 .upload {
   display: none;
@@ -18,7 +17,6 @@
 .upload.active {
   display: block !important;
 }
-
 
 /* ===================== FORM STYLES ===================== */
 .form-row {
@@ -75,7 +73,6 @@
 
 /**/
 
-
 /* ===================== HISTORY HEADER ===================== */
 .history-header {
   max-height: 0;
@@ -94,7 +91,7 @@
 }
 
 .tag-wrapper .helper-spacing {
-  margin: 1rem 0 2rem
+  margin: 1rem 0 2rem;
 }
 
 /* ===================== CLEAR HISTORY ===================== */
@@ -111,7 +108,6 @@
   cursor: pointer;
   font-weight: 500;
 }
-
 
 /* ===================== TAG HISTORY LIST ===================== */
 .tag-history-list {
@@ -185,7 +181,6 @@
   height: 25% !important;
   cursor: pointer;
 }
-
 
 
 /* ===================== DROP AREA ===================== */
@@ -293,7 +288,6 @@
   justify-content: center;
   cursor: pointer;
 }
-
 
 /* ===================== IMAGE PREVIEW ===================== */
 .image-media {
