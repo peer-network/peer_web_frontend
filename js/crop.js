@@ -232,3 +232,70 @@ function drawOverlayOutsideCrop(ctx, crop, canvasWidth, canvasHeight) {
   ctx.fill(); // Überlagerung anwenden
   ctx.restore();
 }
+
+// drag and drop part
+const containerList = document.getElementById("preview-image");
+let draggedEl = null;
+let placeholder = null;
+
+containerList.addEventListener("dragstart", (e) => {
+  const dragDiv = e.target.parentNode;
+  if (dragDiv.classList.contains("dragable")) {
+    draggedEl = dragDiv;
+    dragDiv.classList.add("dragging");
+    // Create a placeholder
+    placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+    // required for firefox
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", "");
+  }
+});
+
+containerList.addEventListener("dragend", (e) => {
+  if (draggedEl) {
+    draggedEl.classList.remove("dragging");
+    placeholder?.remove();
+    draggedEl = null;
+    placeholder = null;
+  }
+});
+
+containerList.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  if (!draggedEl) return;
+
+  // Find the closest sibling to insert before
+  const siblings = [...containerList.querySelectorAll(".dragable:not(.dragging)")];
+  let insertBefore = null;
+
+  for (const sibling of siblings) {
+    const rect = sibling.getBoundingClientRect();
+    if (e.clientX < rect.left + rect.width / 2) {
+      insertBefore = sibling;
+      break;
+    }
+  }
+
+  // Insert placeholder in right place
+  if (insertBefore) {
+    if (containerList.children[Array.prototype.indexOf.call(containerList.children, insertBefore) - 1] !== placeholder) {
+      containerList.insertBefore(placeholder, insertBefore);
+    }
+  } else {
+    if (containerList.lastChild !== placeholder) {
+      containerList.appendChild(placeholder);
+    }
+  }
+});
+
+containerList.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (draggedEl && placeholder) {
+    containerList.insertBefore(draggedEl, placeholder);
+  }
+});
+
+[...containerList.children].forEach((div) => {
+  div.setAttribute("dragable", "true");
+});
