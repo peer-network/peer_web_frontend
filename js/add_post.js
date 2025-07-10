@@ -740,10 +740,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function processFiles(files, id) {
+    // console.log("process file called")
     //  console.log('id --> ', files)
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
-
+    // console.log('uploadtype ', uploadtype)
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
 
@@ -759,7 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
     }
-    files.forEach(async (file) => {
+      for (let file of files) {
       // if (!file.type.startsWith("image/")) {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
@@ -778,6 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
         previewContainer.appendChild(previewItem);
       } else if (uploadtype === "image") {
+        // console.log('uploadtype ', uploadtype)
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
         previewItem.innerHTML = `
@@ -787,6 +789,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
         previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+        // console.log(' previewContainer.children[0] ',  previewContainer.children[0])
         document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
@@ -824,20 +827,32 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const base64 = await convertImageToBase64(file);
       let element = null;
+
+      
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
-        element = previewItem.querySelector("img");
+        element = previewItem.querySelector("img.create-img");
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
         element = previewItem.querySelector("video");
       }
 
+      if (element !== null) {
+
+    
       element.src = base64;
+      // console.log('base64 ', element)
       // imageElement.style.display = "block";
       element.classList.remove("none");
-      element.nextElementSibling.remove();
-      element.nextElementSibling.classList.remove("none");
+      const loader = element.nextElementSibling;
+      const next = loader?.nextElementSibling;
+      if (loader) loader.remove();
+      console.log('element ', element)
+
+      if (next) next.classList.remove("none");
+
+  }
       if (type === "audio") {
         initAudioplayer(file.name, base64);
       } else if (type === "video") {
@@ -845,7 +860,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
-    });
+    }
     document.querySelectorAll(".deletePost").forEach(addDeleteListener);
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
   }

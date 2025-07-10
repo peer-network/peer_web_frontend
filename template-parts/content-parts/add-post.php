@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            
+
 
             <div class="form-row">
                 <div class="col-left">
@@ -63,7 +63,7 @@
                             <div id="tagsContainer" class="tag-list"></div>
                         </div>
 
-                        
+
                     </div>
                     <span class="response_msg error" id="tagError"></span>
                 </div>
@@ -210,8 +210,6 @@
                                 <u>Choose File</u>
                             </p>
                         </div>
-
-                        <img class="fileTriggerButton" src="img/voice-icon.png" alt="Audio upload" />
                         <div>
                             <p>Supported formats:</p>
                             <p>.mp3, .wav, .flac, .aac</p>
@@ -221,38 +219,17 @@
                     </div>
                 </div>
                 <div class="col-right">
-                    <div id="voice-record-wrapper" class="voice-media">
-                        <img class="micButton" src="img/voice-icon.png" alt="Audio upload" />
-                        <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
+                    <div id="voice-record-ui" class="state-idle">
+                        <div id="voice-record-wrapper" class="voice-media idle-ui recording-ui">
+                            <img class="micButton" src="img/voice-icon.png" alt="Audio upload" />
+                            <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
+                            <div id="recordingTimer">0:00</div>
+                        </div>
+                        <!-- Add preview block HERE -->
+                        <div id="preview-audio" class="blockscroll preview-container"></div>
                     </div>
-                    <!-- Add preview block HERE -->
-                    <div id="preview-audio" class="blockscroll preview-container"></div>
                 </div>
             </div>
-            <!--    
-            <h2>Upload cover</h2>
-            <div id="drop-area-cover" class="drop-area">
-                <div>
-                    <p>Drag and Drop file here</p>
-                    <p>
-                        or
-                        <u>Choose File</u>
-                    </p>
-                </div>
-
-                <img class="filterButton" src="svg/filterImage.svg" alt="Cover upload" />
-                <div>
-                    <p>Supported formats:</p>
-                    <p>.png, .jpg, .jpeg, .gif, .webp</p>
-                </div>
-
-                <input type="file" id="file-input-cover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
-            </div>
-            <p>The maximum file size is 4MB</p>
-            <div id="preview-cover" class="blockscroll preview-container"></div>
-            <div id="preview-audio" class="blockscroll preview-container"></div>
-            <button class="btn-blue" id="createPostAudio">Upload</button>-->
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="titleNotes">Title*</label>
@@ -263,7 +240,6 @@
                     <span class="error-message" id="titleError"></span>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="descriptionNotes">Description</label>
@@ -278,9 +254,6 @@
                     <span class="error-message" id="descriptionError"></span>
                 </div>
             </div>
-
-            <p class="form-note">Maximum Text size is 4MB</p>
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="tag-input">Tags</label>
