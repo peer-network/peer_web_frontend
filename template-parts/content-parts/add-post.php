@@ -3,14 +3,12 @@
         <form id="create_new_post" class=" resettable-form" method="post" data-post-type="text">
             <div id="newImagePost" class="upload">
             
-                <div id="preview-image" class="drop-preview-area preview-container">
-                    
+                <div  class="drop-preview-area preview-container">
+                    <div id="preview-image" class="image-preview-container">
+                    </div>
                     <div id="drop-area-image" class="drop-area">
-                        
-                        <div class="upload-content">
                             <div class="plus-icon">+</div>
                             <span class="upload-label">Upload Images</span>
-                        </div>
                         <input type="file" id="file-input-image" hidden multiple />
                     </div>
                 </div>
@@ -23,19 +21,8 @@
                 <div class="form-row">
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
-                            <div>
-                                <p>Drag and Drop file here</p>
-                                <p>
-                                    or
-                                    <u>Choose File</u>
-                                </p>
-                            </div>
-
-                            <img class="fileTriggerButton" src="img/voice-icon.png" alt="Audio upload" />
-                            <div>
-                                <p>Supported formats:</p>
-                                <p>.mp3, .wav, .flac, .aac</p>
-                            </div>
+                            <div class="plus-icon">+</div>
+                            <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
 
                             <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
                         </div>
@@ -53,7 +40,7 @@
             </div>
             <div  id="newVideoPost" class="upload">
                
-                <div id="preview-video" class="blockscroll preview-container">
+                <div id="preview-video" class="blockscroll drop-preview-area  preview-container preview-container-video">
                     <div id="drop-area-videocover" class="drop-area none">
                         <div class="upload-content">
                             <div class="plus-icon">+</div>
