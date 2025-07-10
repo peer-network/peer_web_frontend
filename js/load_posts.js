@@ -1258,6 +1258,8 @@ async function viewed(object) {
         zoomElement.addEventListener("click", () => {
           openSliderModal(imageSrcArray, index);
         });
+        
+
       });
     }
 
