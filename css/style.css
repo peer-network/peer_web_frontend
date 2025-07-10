@@ -276,7 +276,7 @@ input[type="submit"]{
     margin-bottom: 25px;
     padding: 0 35px;
     position: relative;
-    
+    cursor: pointer;
    
     -webkit-transition: all 0.3s linear;
   -moz-transition: all 0.3s linear;
@@ -642,7 +642,7 @@ grid-template-areas:
 "header header header"
 "left main right"
 "footer footer footer";
-grid-template-columns: 350px 1fr 350px;
+grid-template-columns: 350px calc(100% - 700px) 350px;
 grid-template-rows: auto 1fr auto;
 
 
@@ -1212,10 +1212,11 @@ footer {grid-area: footer;}
 		font-size: 28px;
 		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
 	}
-	button{
+	button,.button{
 		line-height: 130px;
 		border-radius: 150px;
 		padding: 0 60px;
+		min-width: 300px;
 		
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
@@ -1239,7 +1240,8 @@ footer {grid-area: footer;}
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 	}
 	.site_layout {
-		grid-template-columns: 650px 1fr 650px;
+		
+		grid-template-columns: 650px calc(100% - 1300px) 650px;
 	}
 	header.site-header {	padding: 80px 100px 50px;}
 

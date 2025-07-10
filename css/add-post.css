@@ -1,9 +1,6 @@
 .create_post .inner-container {
-  padding: 0 4rem;
+	padding-top: 7rem;
 }
-
-/* ===================== newNotesPost ===================== */
-#newNotesPost {  margin-top: 100px;}
 
 /* ===================== UPLOAD CONTROLS ===================== */
 .upload {
@@ -130,27 +127,39 @@
 #addPost .preview-container {
   display: flex;
   flex-wrap: wrap;
-  flex: 2 2 0;
+  
   overflow: hidden;
-  gap: 10px;
+  gap: 20px;
   align-items: flex-start;
  
   justify-content: flex-start;
   margin: 15px 0px 20px 0px;
 }
+#addPost .preview-container .image-preview-container {
+	display: flex;
+	
+	overflow: hidden;
+	gap: 20px;
+	align-items: flex-start;
+	justify-content: flex-start;
+	height: 100%;
+  max-width: 76%;
+  overflow-x: auto;
+ 
+}
+
+
 
 .drop-preview-area {
   display: flex;
-  height: 400px;
+   height: 30vh;
 }
 
 #addPost .preview-item {
   position: relative;
   text-align: center;
   width: auto;
-  /* border: 1px solid #ccc; */
-  /* padding: 3rem 0.2rem 0.2rem 0.2rem; */
-  /* min-width: 8rem; */
+ 
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -168,6 +177,7 @@
 #addPost .preview-item img {
   height: 100%;
   width: auto;
+ 
   border-radius: 2rem;
 }
 
@@ -185,45 +195,24 @@
 
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
-  /* background-color: transparent;
-  text-align: center;
+ 
+  flex: 1 0 0;
+  
   cursor: pointer;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  border: 4px dashed var(--white-secondary, rgba(255, 255, 255, 0.50));
-  height: 100%; */
-
-  /* border: 3px dashed #cccccc00; */
-  /* padding: 1rem; */
-  /* text-align: center; */
-  flex: 2 0 0;
-  margin: 0 auto;
-  cursor: pointer;
-  /* border-radius: 3vmin; */
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* align-items: center; */
   justify-content: center;
   gap: 1.5rem;
-  /* padding: 3%; */
-  /* border: 0.4vmin dashed #929292; */
-  min-width: 20rem;
+  aspect-ratio: 1;
   height: 100%;
-
   border: 0.3vmin dashed #888;
-  /* subtle dashed border */
   border-radius: 1rem;
-  /* smooth rounded corners */
+ 
   background-color: #2b2b2b;
-  /* dark background for contrast */
+  
   padding: 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
+ 
   align-items: center;
   min-height: 18rem;
   color: #ccc;
@@ -231,6 +220,8 @@
   transition: border-color 0.3s ease;
 
   max-width: 100%;
+  min-width: 23%;
+  
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -264,10 +255,7 @@
   font-weight: bold;
 }
 
-#addPost .drop-area .upload-label {
-  color: #ccc;
-  font-size: 1rem;
-}
+
 
 /* ===================== MEDIA PREVIEW ===================== */
 .voice-media {
@@ -341,6 +329,8 @@
 .tag-section.selected-tags .tag {
   	color: var(--white, #ffff);
     background-color: var(--blue, #0069FF);
+    display: flex;
+    align-items: center;
 }
 
 
@@ -396,7 +386,9 @@
 	height: 30px;
 	font-size: 100%;
 	min-width: 30px;
-	margin-left: -40px;
+	margin-left: -30px;
+  border-radius: 100px;
+  text-align: center;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
@@ -405,7 +397,7 @@
 .tag-list .tag:hover .remove-tag{
   opacity: 1;
   visibility: visible;
-  margin-left: 20px;
+  margin-left: 10px;
 
 }
 
@@ -421,15 +413,17 @@
 
 
 
-
-.upload .response_msg {
+.resettable-form .response_msg {
 	padding-top: 10px;
 	padding-left: 60px;
 	display: block;
   margin: 0;
 }
-
-.upload.resettable-form .form-row .col-right .textarea-wrapper {
+#createPostError.response_msg {
+	text-align: right;
+	padding-right: 60px;
+}
+.resettable-form .form-row .col-right .textarea-wrapper {
   position: relative;
   max-height: 250px;
   display: flex;
@@ -437,7 +431,7 @@
 
 
 
-.upload.resettable-form .form-row .col-right .textarea-wrapper .char-counter {
+.resettable-form .form-row .col-right .textarea-wrapper .char-counter {
   position: absolute;
   bottom: 16px;
   right: 42px;
@@ -447,19 +441,19 @@
 }
 
 /*************/
-.upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper {
+.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper {
   position: relative;
   width: 100%;
 }
 
-.upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper input {
+.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper input {
   width: 100%;
   padding-right: 2.5rem;
   border-radius: 0;
   /* space for icon */
 }
 
-.upload.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper .search-icon {
+.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper .search-icon {
   position: absolute;
   right: 3rem;
   top: 50%;

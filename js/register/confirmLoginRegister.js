@@ -16,22 +16,50 @@ function clearValidationMessage(elementId) {
     element.classList.remove("notvalid");
   }
 }
+
+function disableButton(button) {
+  if (button && (button.type === "submit")) {
+    button.disabled = true;
+    button.classList.add("disabled");
+  }
+}
+
+function enableButton(button) {
+  if (button && (button.type === "submit")) {
+    button.disabled = false;
+    button.classList.remove("disabled");
+  }
+}
+
+
 // Eingabefeld abrufen
 const usernameInput = document.getElementById("username");
+const userValidationIcon = document.getElementById("userValidationIcon");
+const userlValidationMessage = document.getElementById("userValidationMessage");
 
 // Event-Listener für die Überprüfung hinzufügen
 usernameInput.addEventListener("input", function () {
   const value = usernameInput.value;
 
   // Regex für Buchstaben und Zahlen
-  const regex = /^[a-zA-Z0-9]+$/;
+  const regex = /^[a-zA-Z][a-zA-Z0-9_]{5,20}$/;
 
+  if (value === "") {
+    userValidationIcon.classList.add("none");
+    userlValidationMessage.innerText = "";
+    return;
+  }
+  
   if (regex.test(value)) {
-    usernameInput.parentElement.classList.add("valid");
-    usernameInput.parentElement.classList.remove("invalid");
+    userlValidationMessage.innerText = "";
+    userValidationIcon.classList.remove("none");
+    // usernameInput.parentElement.classList.add("valid");
+    // usernameInput.parentElement.classList.remove("invalid");
   } else {
-    usernameInput.parentElement.classList.add("invalid");
-    usernameInput.parentElement.classList.remove("valid");
+    userValidationIcon.classList.add("none");
+    return displayValidationMessage(userfriendlymsg("Username too short (min. 5 chars)"), "userValidationMessage");
+    // usernameInput.parentElement.classList.add("invalid");
+    // usernameInput.parentElement.classList.remove("valid");
   }
 });
 
@@ -39,23 +67,31 @@ usernameInput.addEventListener("input", function () {
 // const inputField = document.querySelector(".input-field");
 const emailField = document.getElementById("email");
 const statusIcon = document.querySelector(".tick");
+const emailValidationIcon = document.getElementById("emailValidationIcon");
+const emailValidationMessage = document.getElementById("emailValidationMessage");
 
 // Regulärer Ausdruck für E-Mail-Validierung
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 // Event-Listener für das Verlassen des Eingabefelds (blur)
 emailField.addEventListener("input", function () {
-  // Überprüfen, ob die E-Mail gültig ist
-  if (emailRegex.test(emailField.value)) {
-    // Gültige E-Mail: Klasse 'valid-email' hinzufügen und 'invalid-email' entfernen
-    emailField.parentElement.classList.add("valid");
-    emailField.parentElement.classList.remove("invalid");
+  const value = emailField.value.trim();
+
+  if (value === "") {
+    emailValidationIcon.classList.add("none");
+    emailValidationMessage.innerText = "";
+    return;
+  }
+
+  if (emailRegex.test(value)) {
+    emailValidationIcon.classList.remove("none");
+    emailValidationMessage.innerText = "";
   } else {
-    // Ungültige E-Mail: Klasse 'invalid-email' hinzufügen und 'valid-email' entfernen
-    emailField.parentElement.classList.add("invalid");
-    emailField.parentElement.classList.remove("valid");
+    emailValidationIcon.classList.add("none");
+    return displayValidationMessage(userfriendlymsg("Please enter a valid email."), "emailValidationMessage");
   }
 });
+
 
 // emailField.addEventListener("focus", function () {
 //   inputField.classList.add("focused");
