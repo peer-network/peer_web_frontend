@@ -762,7 +762,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-        previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+               if (previewContainer.children.length > 0) {
+          previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+        } else {
+          previewContainer.appendChild(previewItem);
+        }
         // console.log(' previewContainer.children[0] ',  previewContainer.children[0])
         document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
