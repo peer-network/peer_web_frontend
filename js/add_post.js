@@ -717,7 +717,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //console.log('id --> ', files);
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
-
+    // console.log('uploadtype ', uploadtype)
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
 
@@ -734,7 +734,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
     }
-    for( let file of files) {
+      for (let file of files) {
       // if (!file.type.startsWith("image/")) {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
@@ -753,6 +753,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
         previewContainer.appendChild(previewItem);
       } else if (uploadtype === "image") {
+        // console.log('uploadtype ', uploadtype)
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
         previewItem.innerHTML = `
@@ -761,12 +762,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-       
-        if (previewContainer.children.length > 0) {
-          previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
-        } else {
-          previewContainer.appendChild(previewItem);
-        }
+        previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+        // console.log(' previewContainer.children[0] ',  previewContainer.children[0])
         document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
@@ -804,6 +801,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const base64 = await convertImageToBase64(file);
       let element = null;
+
+      
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
         element = previewItem.querySelector("img.create-img");
@@ -814,6 +813,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       element.src = base64;
+      // console.log('base64 ', element)
       // imageElement.style.display = "block";
       element.classList.remove("none");
       

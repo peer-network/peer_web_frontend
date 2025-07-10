@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            
+
 
             <div class="form-row">
                 <div class="col-left">
@@ -146,7 +146,7 @@
                             <div id="tagsContainer" class="tag-list"></div>
                         </div>
 
-                        
+
                     </div>
                     <span class="response_msg error" id="tagError"></span>
                 </div>
