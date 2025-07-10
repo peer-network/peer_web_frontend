@@ -144,10 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
         hasError = true;
       }
 
-      if (tags.length === 0) {
+      /*if (tags.length === 0) {
         tagErrorEl.textContent = "Please add at least one tag.";
         hasError = true;
-      }
+      }*/
 
       // If any error, stop
       if (hasError) return;
@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Only selected tags get the remove button
     if (source === "selected") {
-      const removeBtn = document.createElement("button");
+      const removeBtn = document.createElement("span");
       removeBtn.textContent = "X";
       removeBtn.classList.add("remove-tag");
       removeBtn.type = "button";
@@ -714,7 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function processFiles(files, id) {
-    //  console.log('id --> ', files)
+    //console.log('id --> ', files);
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
 
@@ -722,6 +722,7 @@ document.addEventListener("DOMContentLoaded", () => {
     shortid = id.substring(lastDashIndex + 1);
 
     const previewContainer = document.getElementById("preview-" + uploadtype);
+    //previewContainer.classList.add("active");
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
@@ -733,12 +734,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
     }
-    files.forEach(async (file) => {
+    for( let file of files) {
       // if (!file.type.startsWith("image/")) {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
       // }
-
+      previewItem="";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
@@ -760,7 +761,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-        previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+       
+        if (previewContainer.children.length > 0) {
+          previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+        } else {
+          previewContainer.appendChild(previewItem);
+        }
         document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
@@ -800,18 +806,19 @@ document.addEventListener("DOMContentLoaded", () => {
       let element = null;
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
-        element = previewItem.querySelector("img");
+        element = previewItem.querySelector("img.create-img");
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
         element = previewItem.querySelector("video");
       }
-
+      
       element.src = base64;
       // imageElement.style.display = "block";
       element.classList.remove("none");
-      element.nextElementSibling.remove();
-      element.nextElementSibling.classList.remove("none");
+      
+      element.nextElementSibling?.remove();
+      element.nextElementSibling?.classList.remove("none");
       if (type === "audio") {
         initAudioplayer(file.name, base64);
       } else if (type === "video") {
@@ -819,7 +826,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
-    });
+    }
     document.querySelectorAll(".deletePost").forEach(addDeleteListener);
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
   }
