@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const historyContainer = document.getElementById("tagHistoryContainer");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
+  const descEl = document.getElementById("descriptionNotes");
 
   updateTagUIVisibility(); // suggestions + selected
 
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Elements
       const post_type = event.target.getAttribute('data-post-type');
       const titleEl = document.getElementById("titleNotes");
-      const descEl = document.getElementById("descriptionNotes");
+     
 
       const tagErrorEl = document.getElementById("tagError");
       const titleErrorEl = document.getElementById("titleError");
@@ -228,6 +229,20 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  descEl.addEventListener("keyup", (e) => {
+    let text = descEl.value;
+    const span = document.querySelector('span.char-counter');
+
+    if (text.length > 250) {
+      Merror("Warning", "Maximum length exceeded!");
+      text = text.substr(0, 250);
+      descEl.value = text;
+    }
+
+    span.textContent = `${text.length}/250`;
+  });
+
 
   if (tagInput) {
     tagInput.value = "";
@@ -762,7 +777,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-               if (previewContainer.children.length > 0) {
+        if (previewContainer.children.length > 0) {
           previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
         } else {
           previewContainer.appendChild(previewItem);

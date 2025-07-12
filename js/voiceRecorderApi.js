@@ -14,26 +14,18 @@ function initAudioEvents() {
   }
 
   micBtn.addEventListener('click', async () => {
-    if (!isRecording) {
-      setVoiceUIState('recording');
-      await startRecording(micBtn);
-    } else {
-    
-      setVoiceUIState('preview');
-      stopRecording(micBtn);
-    }
+    if (!isRecording) await startRecording(micBtn);
+    else stopRecording(micBtn);
   });
-
-  console.log("Mic toggle initialized");
 }
 
 async function startRecording(button) {
+  console.log("start")
   try {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recorder = new MediaRecorder(audioStream);
     chunks = [];
     isRecording = true;
-    console.log('recorder ', recorder)
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: 'audio/webm' });
@@ -58,7 +50,6 @@ async function startRecording(button) {
 }
 
 function stopRecording(button) {
-  console.log('stopRecording')
   if (recorder && isRecording) {
     recorder.stop();
     audioStream.getTracks().forEach((track) => track.stop());
@@ -71,10 +62,10 @@ function stopRecording(button) {
 function updateMicButton(button, recording) {
   if (recording) {
     button.classList.add("recording");
-    button.innerHTML = '⏸'; // show pause icon
+    button.innerHTML = '⏸';
   } else {
     button.classList.remove("recording");
-    button.innerHTML = '▶'; // show play icon
+    button.innerHTML = '▶';
   }
 }
 
@@ -106,9 +97,9 @@ function renderAudioPreview(preview, url) {
     <div class="waveform-bar"></div>
     <div class="record-meta">
       <span class="record-time">0:00</span>
-      <button class="play-pause-btn" aria-label="Play">
+      <span class="play-pause-btn" aria-label="Play">
         <div class="pause-icon">▶</div>
-      </button>
+      </span>
     </div>
     <audio src="${url}"></audio>
   `;
