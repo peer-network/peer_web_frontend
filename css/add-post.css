@@ -469,13 +469,13 @@
   /* border: 2px solid white;
   border-radius: 50%; */
   font-size: 2rem;
-  /* width: 3.5rem;
-  height: 3.5rem; */
+   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   cursor: pointer;
+  padding: 1rem;
   transition: background 0.3s ease;
 }
 
@@ -544,8 +544,8 @@
     transparent 2px,
     transparent 6px
   );
-  opacity: 0.3;
-  animation: pulse 1s linear infinite;
+  /* opacity: 0.3;
+  animation: pulse 1s linear infinite; */
   border-radius: 1rem;
 }
 

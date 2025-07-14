@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let text = descEl.value;
     const span = document.querySelector('span.char-counter');
     if (text.length > 250) {
-      Merror("Warning", "Maximum length exceeded!");
+      // Merror("Warning", "Maximum length exceeded!");
       text = text.substr(0, 250);
       descEl.value = text;
     }
