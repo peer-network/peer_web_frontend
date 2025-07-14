@@ -17,6 +17,12 @@ checkAuth("unauthorized");
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
      <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
@@ -26,7 +32,6 @@ checkAuth("unauthorized");
      <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
     <script src="js/crop.js?<?php echo filemtime('js/crop.js'); ?>" defer></script>
-    <script src="js/crop.js?<?php echo filemtime('js/OHA.js'); ?>" defer></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>

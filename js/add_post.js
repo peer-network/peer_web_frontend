@@ -753,9 +753,11 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("drop-area-videocover").classList.add("none");
         } else {
           previewItem.classList.add("video-item");
+          previewItem.classList.add(id);
+          
           previewItem.innerHTML = `
           <p>${file.name}</p>
-          <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
+          <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
           if (id.includes("short")) {
