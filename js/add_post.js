@@ -4,157 +4,157 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
-  const historyContainer = document.getElementById("tagHistoryContainer");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
+  const descEl = document.getElementById("descriptionNotes");
 
   updateTagUIVisibility(); // suggestions + selected
 
 
-     document.getElementById("create_new_post").addEventListener("submit", async (event) => {
-      event.preventDefault();
+  document.getElementById("create_new_post").addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-      // Elements
-      const post_type = event.target.getAttribute('data-post-type');
-      const titleEl = document.getElementById("titleNotes");
-      const descEl = document.getElementById("descriptionNotes");
+    // Elements
+    const post_type = event.target.getAttribute('data-post-type');
+    const titleEl = document.getElementById("titleNotes");
 
-      const tagErrorEl = document.getElementById("tagError");
-      const titleErrorEl = document.getElementById("titleError");
-      const descErrorEl = document.getElementById("descriptionError");
-      const imgErrorEl = document.getElementById("imageError");
-      const audioErrorEl = document.getElementById("audioError");
-      const videoErrorEl = document.getElementById("videoError");
-      
 
-      const createPostError = document.getElementById("createPostError");
+    const tagErrorEl = document.getElementById("tagError");
+    const titleErrorEl = document.getElementById("titleError");
+    const descErrorEl = document.getElementById("descriptionError");
+    const imgErrorEl = document.getElementById("imageError");
+    const audioErrorEl = document.getElementById("audioError");
+    const videoErrorEl = document.getElementById("videoError");
 
-      const submitButton = document.getElementById("submitPost");
 
-      //console.log(post_type);
-      const title = titleEl.value.trim();
-      const description = descEl.value.trim();
-      const tags = getTagHistory();
+    const createPostError = document.getElementById("createPostError");
 
-      // Clear old errors
-      titleErrorEl.textContent = "";
-      descErrorEl.textContent = "";
-      tagErrorEl.textContent = "";
-      imgErrorEl.textContent = "";
-      audioErrorEl.textContent = "";
-      videoErrorEl.textContent = "";
-      createPostError.innerHTML="";
+    const submitButton = document.getElementById("submitPost");
 
-      // Validation
-      let hasError = false;
+    //console.log(post_type);
+    const title = titleEl.value.trim();
+    const description = descEl.value.trim();
+    const tags = getTagHistory();
 
-      let postMedia;
-      let cover;
-      let postDescription="";
-      if(post_type=="text"){
+    // Clear old errors
+    titleErrorEl.textContent = "";
+    descErrorEl.textContent = "";
+    tagErrorEl.textContent = "";
+    imgErrorEl.textContent = "";
+    audioErrorEl.textContent = "";
+    videoErrorEl.textContent = "";
+    createPostError.innerHTML = "";
 
-        // Convert to base64
-        const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-        const base64WithMime = [`data:text/plain;base64,${base64String}`];
+    // Validation
+    let hasError = false;
 
-        if (base64WithMime.join("").length > 4 * 1024 * 1024) {
-          descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
-          hasError = true;
-        }else{
-          postMedia=base64WithMime;
-        }
-        
-      }
-      if(post_type=="image"){
-          const imageWrappers = document.querySelectorAll(".create-img");
-          const combinedBase64 = Array.from(imageWrappers)
-            .map((img) => img.src)
-            .filter((src) => src.startsWith("data:image/"));
+    let postMedia;
+    let cover;
+    let postDescription = "";
+    if (post_type == "text") {
 
-          if (combinedBase64.length === 0) {
-            imgErrorEl.textContent = "Please select  least one image.";
-            
-            hasError = true;
-          } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-            
-            imgErrorEl.textContent = "The image(s) are too large.";
-            hasError = true;
-          } else {
-            postMedia = combinedBase64;
-            postDescription = description;
-          }
-      }
-      if(post_type=="audio"){
-          const audioWrappers = document.querySelectorAll(".create-audio");
-          const combinedBase64 = Array.from(audioWrappers)
-          .map((audio) => audio.src)
-          .filter((src) => src.startsWith("data:audio/"));
+      // Convert to base64
+      const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+      const base64WithMime = [`data:text/plain;base64,${base64String}`];
 
-          const coverImg = document.querySelector("#preview-cover img");
-          const canvas = document.querySelector("#preview-audio canvas");
-          cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-
-          if (combinedBase64.length === 0) {
-            audioErrorEl.textContent = "Please select audio.";
-            
-            hasError = true;
-          } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-            
-            audioErrorEl.textContent = "The audio is too large.";
-            hasError = true;
-          } else {
-            postMedia = combinedBase64;
-            postDescription = description;
-          }
+      if (base64WithMime.join("").length > 4 * 1024 * 1024) {
+        descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
+        hasError = true;
+      } else {
+        postMedia = base64WithMime;
       }
 
-      if(post_type=="video"){
-          const videoWrappers = document.querySelectorAll(".create-video");
-          const combinedBase64 = Array.from(videoWrappers)
+    }
+    if (post_type == "image") {
+      const imageWrappers = document.querySelectorAll(".create-img");
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src)
+        .filter((src) => src.startsWith("data:image/"));
+
+      if (combinedBase64.length === 0) {
+        imgErrorEl.textContent = "Please select  least one image.";
+
+        hasError = true;
+      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
+        imgErrorEl.textContent = "The image(s) are too large.";
+        hasError = true;
+      } else {
+        postMedia = combinedBase64;
+        postDescription = description;
+      }
+    }
+    if (post_type == "audio") {
+      const audioWrappers = document.querySelectorAll(".create-audio");
+      const combinedBase64 = Array.from(audioWrappers)
+        .map((audio) => audio.src)
+        .filter((src) => src.startsWith("data:audio/"));
+
+      const coverImg = document.querySelector("#preview-cover img");
+      const canvas = document.querySelector("#preview-audio canvas");
+      cover = coverImg ? [coverImg.src] : [canvas ?.toDataURL("image/webp", 0.8)];
+
+      if (combinedBase64.length === 0) {
+        audioErrorEl.textContent = "Please select audio.";
+
+        hasError = true;
+      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
+        audioErrorEl.textContent = "The audio is too large.";
+        hasError = true;
+      } else {
+        postMedia = combinedBase64;
+        postDescription = description;
+      }
+    }
+
+    if (post_type == "video") {
+      const videoWrappers = document.querySelectorAll(".create-video");
+      const combinedBase64 = Array.from(videoWrappers)
         .map((vid) => vid.src)
         .filter((src) => src.startsWith("data:video/"));
 
-          if (combinedBase64.length === 0) {
-            videoErrorEl.textContent = "Please select video.";
-            
-            hasError = true;
-          } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-            
-            videoErrorEl.textContent = "The video is too large.";
-            hasError = true;
-          } else {
-            postMedia = combinedBase64;
-            postDescription = description;
-          }
+      if (combinedBase64.length === 0) {
+        videoErrorEl.textContent = "Please select video.";
+
+        hasError = true;
+      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
+        videoErrorEl.textContent = "The video is too large.";
+        hasError = true;
+      } else {
+        postMedia = combinedBase64;
+        postDescription = description;
       }
+    }
 
-      if (!title) {
-        titleErrorEl.textContent = "Title is required.";
-        hasError = true;
-      } else if (title.length < 5) {
-        titleErrorEl.textContent = "Title must be at least 5 characters.";
-        hasError = true;
-      }
+    if (!title) {
+      titleErrorEl.textContent = "Title is required.";
+      hasError = true;
+    } else if (title.length < 5) {
+      titleErrorEl.textContent = "Title must be at least 5 characters.";
+      hasError = true;
+    }
 
-      if (!description) {
-        descErrorEl.textContent = "Description is required.";
-        hasError = true;
-      } else if (description.length < 10) {
-        descErrorEl.textContent = "Description must be at least 10 characters.";
-        hasError = true;
-      }
+    if (!description) {
+      descErrorEl.textContent = "Description is required.";
+      hasError = true;
+    } else if (description.length < 10) {
+      descErrorEl.textContent = "Description must be at least 10 characters.";
+      hasError = true;
+    }
 
-      /*if (tags.length === 0) {
-        tagErrorEl.textContent = "Please add at least one tag.";
-        hasError = true;
-      }*/
+    /*if (tags.length === 0) {
+      tagErrorEl.textContent = "Please add at least one tag.";
+      hasError = true;
+    }*/
 
-      // If any error, stop
-      if (hasError) return;
+    // If any error, stop
+    if (hasError) return;
 
-      submitButton.disabled = true;
-      try {
-      
+    submitButton.disabled = true;
+    try {
+
       const result = await sendCreatePost({
         title,
         media: postMedia,
@@ -163,34 +163,26 @@ document.addEventListener("DOMContentLoaded", () => {
         contenttype: post_type,
         tags
       });
-      
+
       //console.log(result.createPost);
       if (result.createPost.status === "success") {
-        
-        
         createPostError.classList.add(result.createPost.status);
         createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
         setTimeout(() => {
-         
-         window.location.href = "./profile.php";
-        }, 1000);
 
-      }else{
+          window.location.href = "./profile.php";
+        }, 1000);
+      } else {
         createPostError.classList.add(result.createPost.status);
         createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
-
-        
       }
-      
     } catch (error) {
       console.error("Error during create post request:", error);
-      
     } finally {
       // Re-enable the form and hide loading indicator
       submitButton.disabled = false;
     }
   });
-
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
     form.addEventListener("reset", function (event) {
@@ -199,16 +191,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const tagSuggestions = event.target.querySelector("#tagsContainer");
       const selectedTags = event.target.querySelector("#tagsSelected");
       const tagError = event.target.querySelector("#tagError");
-
       if (tagInput) tagInput.value = "";
       if (tagSuggestions) tagSuggestions.innerHTML = "";
       if (selectedTags) selectedTags.innerHTML = "";
       if (tagError) tagError.textContent = "";
-
       const historySection = event.target.querySelector("#tag-history-section");
       const suggestionsSection = event.target.querySelector("#tag-suggestions-section");
       const selectedTagsSection = event.target.querySelector("#selected-tags-section");
-
       if (tagHistory) {
         tagHistory.innerHTML = "";
         if (tagHistory.children.length === 0 && historySection) {
@@ -216,17 +205,26 @@ document.addEventListener("DOMContentLoaded", () => {
           historySection.classList.remove("visible");
         }
       }
-
       if (suggestionsSection) {
         suggestionsSection.classList.add("hidden");
         suggestionsSection.classList.remove("visible");
       }
-
       if (selectedTagsSection) {
         selectedTagsSection.classList.add("hidden");
         selectedTagsSection.classList.remove("is-visible");
       }
     });
+  });
+
+  descEl.addEventListener("keyup", (e) => {
+    let text = descEl.value;
+    const span = document.querySelector('span.char-counter');
+    if (text.length > 250) {
+      Merror("Warning", "Maximum length exceeded!");
+      text = text.substr(0, 250);
+      descEl.value = text;
+    }
+    span.textContent = `${text.length}/250`;
   });
 
   if (tagInput) {
@@ -324,19 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTagUIVisibility();
   }
 
-  function tag_removeTag(tagText) {
-    const clean = tagText.replace(/^#+/, "");
-    const tagElements = selectedContainer.querySelectorAll(`.tag[data-tag="${clean}"]`);
-
-    tagElements.forEach((tagEl) => {
-      tagEl.classList.add("removing");
-      setTimeout(() => tagEl.remove(), 200);
-    });
-
-    removeFromHistory(clean);
-    updateTagUIVisibility();
-  }
-
   // ===== TAG ELEMENT CREATION =====
   function createTagElement(tagText, source = "suggestion") {
     const cleanText = tagText.replace(/^#+/, "");
@@ -397,20 +382,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== CREATE CUSTOM TAG OPTION =====
   function renderCreateTagOption(input) {
     const clean = input.replace(/^#+/, "").toLowerCase().trim();
-
     const existsInSuggestions = tagContainer.querySelector(`[data-tag="${clean}"]`);
     const existsInSelected = selectedContainer.querySelector(`[data-tag="${clean}"]`);
     const existsInHistory = getTagHistory().some((tag) => tag.toLowerCase().trim() === clean);
-
     if (existsInSuggestions || existsInSelected || existsInHistory) return; // ✅ Prevent duplicate create
-
     tagContainer.innerHTML = "";
-
     const el = document.createElement("span");
     el.classList.add("tag", "create-tag");
     el.textContent = `+ Create tag: #${clean}`;
     el.setAttribute("data-tag", clean);
-
     el.addEventListener("mousedown", (e) => e.preventDefault());
     el.addEventListener("click", () => {
       tag_addTag(clean);
@@ -418,29 +398,26 @@ document.addEventListener("DOMContentLoaded", () => {
       clearTagContainer();
       updateTagUIVisibility();
     });
-
     tagContainer.appendChild(el);
   }
-
   // ===== RENDER HISTORY =====
   function renderTagHistory() {
     const historyContainer = document.getElementById("tagHistoryContainer");
     const historySection = document.getElementById("tag-history-section");
-
     // Get selected tags from DOM
     const selectedTags = new Set(
       Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Get suggested tags from DOM
     const suggestedTags = new Set(
       Array.from(tagContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Load history from localStorage
@@ -550,9 +527,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function getAllUsedTagsSet() {
     return new Set([
       ...Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim()),
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim()),
       ...getTagHistory().map((tag) => tag.toLowerCase().trim()),
     ]);
   }
@@ -575,15 +552,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById(id);
       if (form) form.classList.add('active');
       const postform = document.getElementById('create_new_post');
-      if(postform){
+      if (postform) {
         const post_type = e.target.getAttribute('data-post-type');
-        postform.setAttribute('data-post-type',post_type);
+        postform.setAttribute('data-post-type', post_type);
       }
       // Check if it's the audio form (music) and init
       if (id === 'newAudioPost') initAudioEvents(); // attach mic click handler
     });
   });
-  /********************************************************************/
 
   async function fetchTags(searchStr) {
     for (let failed of failedSearches) {
@@ -628,9 +604,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const failedSearches = new Set();
-
-  const zones = [
-    {
+  const zones = [{
       dropArea: document.getElementById("drop-area-image"),
       fileInput: document.getElementById("file-input-image"),
     },
@@ -686,12 +660,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Iteration über die Zonen
-  zones.forEach(({ dropArea, fileInput }) => {
+  zones.forEach(({
+    dropArea,
+    fileInput
+  }) => {
     // Click-Event für das Öffnen des Dateidialogs
     // if (dropArea) {
     //   dropArea.addEventListener("click", () => handleClick(fileInput));
     // }
-
     // Drag-and-Drop-Events
     if (dropArea) {
       dropArea.addEventListener("click", () => handleClick(fileInput));
@@ -705,24 +681,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function tag_getTagArray() {
-    return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
-  }
+  // function tag_getTagArray() {
+  //   return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
+  // }
 
-  function tag_removeAllTags() {
-    tagContainer.innerHTML = "";
-  }
+  // function tag_removeAllTags() {
+  //   tagContainer.innerHTML = "";
+  // }
 
   async function processFiles(files, id) {
-    //console.log('id --> ', files);
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
-
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
 
     const previewContainer = document.getElementById("preview-" + uploadtype);
-    //previewContainer.classList.add("active");
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
@@ -734,12 +707,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
     }
-    for( let file of files) {
+    for (let file of files) {
       // if (!file.type.startsWith("image/")) {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
       // }
-      previewItem="";
+      previewItem = "";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
@@ -761,7 +734,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-       
         if (previewContainer.children.length > 0) {
           previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
         } else {
@@ -812,13 +784,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (type === "video") {
         element = previewItem.querySelector("video");
       }
-      
       element.src = base64;
-      // imageElement.style.display = "block";
       element.classList.remove("none");
-      
-      element.nextElementSibling?.remove();
-      element.nextElementSibling?.classList.remove("none");
+      element.nextElementSibling ?.remove();
+      element.nextElementSibling ?.classList.remove("none");
       if (type === "audio") {
         initAudioplayer(file.name, base64);
       } else if (type === "video") {
@@ -831,4 +800,3 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
   }
 });
-

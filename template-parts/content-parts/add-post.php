@@ -15,9 +15,7 @@
                 <span class="response_msg error" id="imageError"></span>
                
             </div>
-            <div id="newAudioPost" class="upload">
-                
-               
+            <div id="newAudioPost" class="upload">         
                 <div class="form-row">
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
@@ -110,7 +108,7 @@
                 </div>
             </div>
 
-            
+
 
             <div class="form-row">
                 <div class="col-left">
@@ -146,7 +144,7 @@
                             <div id="tagsContainer" class="tag-list"></div>
                         </div>
 
-                        
+
                     </div>
                     <span class="response_msg error" id="tagError"></span>
                 </div>

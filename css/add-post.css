@@ -263,20 +263,6 @@
   border-radius: 1rem;
 }
 
-.voice-media img.micButton {
-  width: 3.5rem;
-  height: 3.5rem;
-  padding: 0;
-  object-fit: contain;
-  border-radius: 50%;
-  background: transparent;
-  border: 2px solid white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
 /* ===================== IMAGE PREVIEW ===================== */
 .image-media {
   height: 28rem;
@@ -387,7 +373,6 @@
 
 
 .tag-list .tag .remove-tag {
-
 	margin: 0;
 	border: 0;
 	padding: 0;
@@ -481,11 +466,11 @@
 /* === Mic Button (before recording) === */
 .micButton {
   background: transparent;
-  border: 2px solid white;
-  border-radius: 50%;
+  /* border: 2px solid white;
+  border-radius: 50%; */
   font-size: 2rem;
-  width: 3.5rem;
-  height: 3.5rem;
+  /* width: 3.5rem;
+  height: 3.5rem; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -546,6 +531,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 /* === Waveform style (preview version) === */
@@ -572,13 +558,10 @@
 
 /* === Play/Pause Circle Button === */
 .play-pause-btn {
-  width: 3rem;
-  height: 3rem;
   border-radius: 50%;
   border: 2px solid white;
   background: transparent;
   color: white;
-  font-size: 1.25rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -588,9 +571,31 @@
 /* === Time Text (live timer while playing) === */
 .record-time {
   color: white;
-  font-size: 1rem;
 }
 
+/* default: hide all */
+#voice-record-ui .recording-ui,
+#voice-record-ui .preview-ui {
+  display: none;
+}
+
+/* when recording */
+#voice-record-ui.state-recording .recording-ui {
+  display: block;
+}
+
+/* when previewing */
+#voice-record-ui.state-preview .preview-ui {
+  display: block;
+}
+
+/* when idle */
+#voice-record-ui.state-idle .idle-ui {
+  display: block;
+}
+
+
+/*********************/
 .form-actions button {
 	min-width: 300px;
 }
