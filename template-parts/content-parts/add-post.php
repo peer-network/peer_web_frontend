@@ -7,7 +7,7 @@
                     <div id="preview-image" class="image-preview-container">
                     </div>
                     <div id="drop-area-image" class="drop-area">
-                            <div class="plus-icon">+</div>
+                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                             <span class="upload-label">Upload Images</span>
                         <input type="file" id="file-input-image" hidden multiple />
                     </div>
@@ -19,7 +19,7 @@
                 <div class="form-row">
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
-                            <div class="plus-icon">+</div>
+                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                             <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
 
                             <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
@@ -41,28 +41,27 @@
                 <div id="preview-video" class="blockscroll drop-preview-area  preview-container preview-container-video">
                     <div id="drop-area-videocover" class="drop-area none">
                         <div class="upload-content">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload cover</span>
+                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                            <span class="upload-label">Upload video cover</span>
                         </div>
                         <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
                     </div>
                     <div id="drop-area-videolong" class="drop-area">
                         <div class="upload-content">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload media</span>
+                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                            <span class="upload-label">Add short video</span>
                         </div>
                         <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
                     </div>
 
                     <div id="drop-area-videoshort" class="drop-area none">
                         <div class="upload-content">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload short</span>
+                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                            <span class="upload-label">Add long video</span>
                         </div>
                         <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                     </div>
-                    <!-- Add preview block HERE -->
-                    <div id="preview-audio" class="blockscroll preview-container"></div>
+                    
                 </div>
                 <span class="response_msg error" id="videoError"></span>
                 
