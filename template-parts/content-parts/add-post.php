@@ -15,9 +15,7 @@
                 <span class="response_msg error" id="imageError"></span>
                
             </div>
-            <div id="newAudioPost" class="upload">
-                
-               
+            <div id="newAudioPost" class="upload">         
                 <div class="form-row">
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
