@@ -78,6 +78,15 @@ function addMediaListener(mediaElement) {
     });
   });
 }
+function addEditVideoListener(element) {
+  element.removeEventListener("click", handleEditVideo);
+  element.addEventListener("click", handleEditVideo);
+}
+function handleEditVideo(event) {
+  event.preventDefault();
+  document.getElementById("videoTrimContainer").classList.remove("none");
+  videoTrim(event.target.parentElement.childNodes[1].innerText);
+}
 
 function addEditImageListener(element) {
   element.removeEventListener("click", handleEditImage);
