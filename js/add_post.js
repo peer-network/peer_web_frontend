@@ -4,46 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
-  const historyContainer = document.getElementById("tagHistoryContainer");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
+  const descEl = document.getElementById("descriptionNotes");
 
   updateTagUIVisibility(); // suggestions + selected
-
-  document.getElementById("btAddPost").addEventListener("click", () => togglePopup("addPost"));
-  const closeAddPost = document.getElementById("closeAddPost");
-  if (closeAddPost) {
-    closeAddPost.addEventListener("click", () => togglePopup("addPost"));
-  }
-
-  /**************/
-  // const createPostNotes = document.getElementById("createPostNotes");
-  // if (createPostNotes) {
-  //   createPostNotes.addEventListener("click", async (event) => {
-  //     event.preventDefault();
-  //     const title = document.getElementById("titleNotes").value;
-  //     const textareaValue = document.getElementById("descriptionNotes").value;
-  //     const base64String = btoa(new TextEncoder().encode(textareaValue).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-  //     const base64WithMime = [`data:text/plain;base64,${base64String}`];
-  //     const tags = getTagHistory();
-
-  //     if (base64WithMime.join("").length > 4 * 1024 * 1024) {
-  //       Merror("Error", "The text is too large. Please upload a smaller text.");
-  //       return;
-  //     }
-
-  //     if (await sendCreatePost({
-  //         title,
-  //         media: base64WithMime,
-  //         contenttype: "text",
-  //         tags
-  //       })) {
-  //       togglePopup("addPost");
-  //       location.reload();
-  //     }
-  //   });
-  // }
-
 
   /********************* Preview posts functionality ******************************/
 
@@ -359,50 +324,46 @@ document.addEventListener("DOMContentLoaded", () => {
     
   /**********************************************************************/
 
-  const createPostNotes = document.getElementById("createPostNotes");
-  if (createPostNotes) {
-    createPostNotes.addEventListener("click", async (event) => {
-      event.preventDefault();
 
-      // Elements
-      const titleEl = document.getElementById("titleNotes");
-      const descEl = document.getElementById("descriptionNotes");
-      const tagErrorEl = document.getElementById("tagError");
-      const titleErrorEl = document.getElementById("titleError");
-      const descErrorEl = document.getElementById("descriptionError");
+  document.getElementById("create_new_post").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    // Elements
+    const post_type = event.target.getAttribute('data-post-type');
+    const titleEl = document.getElementById("titleNotes");
 
-      const title = titleEl.value.trim();
-      const description = descEl.value.trim();
-      const tags = getTagHistory();
+    const tagErrorEl = document.getElementById("tagError");
+    const titleErrorEl = document.getElementById("titleError");
+    const descErrorEl = document.getElementById("descriptionError");
+    const imgErrorEl = document.getElementById("imageError");
+    const audioErrorEl = document.getElementById("audioError");
+    const videoErrorEl = document.getElementById("videoError");
 
-      // Clear old errors
-      titleErrorEl.textContent = "";
-      descErrorEl.textContent = "";
-      tagErrorEl.textContent = "";
 
-      // Validation
-      let hasError = false;
+    const createPostError = document.getElementById("createPostError");
 
-      if (!title) {
-        titleErrorEl.textContent = "Title is required.";
-        hasError = true;
-      } else if (title.length < 5) {
-        titleErrorEl.textContent = "Title must be at least 5 characters.";
-        hasError = true;
-      }
+    const submitButton = document.getElementById("submitPost");
 
-      if (!description) {
-        descErrorEl.textContent = "Description is required.";
-        hasError = true;
-      } else if (description.length < 10) {
-        descErrorEl.textContent = "Description must be at least 10 characters.";
-        hasError = true;
-      }
+    //console.log(post_type);
+    const title = titleEl.value.trim();
+    const description = descEl.value.trim();
+    const tags = getTagHistory();
 
-      if (tags.length === 0) {
-        tagErrorEl.textContent = "Please add at least one tag.";
-        hasError = true;
-      }
+    // Clear old errors
+    titleErrorEl.textContent = "";
+    descErrorEl.textContent = "";
+    tagErrorEl.textContent = "";
+    imgErrorEl.textContent = "";
+    audioErrorEl.textContent = "";
+    videoErrorEl.textContent = "";
+    createPostError.innerHTML = "";
+
+    // Validation
+    let hasError = false;
+
+    let postMedia;
+    let cover;
+    let postDescription = "";
+    if (post_type == "text") {
 
       // Convert to base64
       const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
@@ -411,25 +372,129 @@ document.addEventListener("DOMContentLoaded", () => {
       if (base64WithMime.join("").length > 4 * 1024 * 1024) {
         descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
         hasError = true;
+      } else {
+        postMedia = base64WithMime;
       }
 
-      // If any error, stop
-      if (hasError) return;
+    }
+    if (post_type == "image") {
+      const imageWrappers = document.querySelectorAll(".create-img");
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src)
+        .filter((src) => src.startsWith("data:image/"));
 
-      // Submit
-      const success = await sendCreatePost({
+      if (combinedBase64.length === 0) {
+        imgErrorEl.textContent = "Please select  least one image.";
+
+        hasError = true;
+      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
+        imgErrorEl.textContent = "The image(s) are too large.";
+        hasError = true;
+      } else {
+        postMedia = combinedBase64;
+        postDescription = description;
+      }
+    }
+    if (post_type == "audio") {
+      const audioWrappers = document.querySelectorAll(".create-audio");
+      const combinedBase64 = Array.from(audioWrappers)
+        .map((audio) => audio.src)
+        .filter((src) => src.startsWith("data:audio/"));
+
+      const coverImg = document.querySelector("#preview-cover img");
+      const canvas = document.querySelector("#preview-audio canvas");
+      cover = coverImg ? [coverImg.src] : [canvas ?.toDataURL("image/webp", 0.8)];
+
+      if (combinedBase64.length === 0) {
+        audioErrorEl.textContent = "Please select audio.";
+
+        hasError = true;
+      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
+        audioErrorEl.textContent = "The audio is too large.";
+        hasError = true;
+      } else {
+        postMedia = combinedBase64;
+        postDescription = description;
+      }
+    }
+
+    if (post_type == "video") {
+      const videoWrappers = document.querySelectorAll(".create-video");
+      const combinedBase64 = Array.from(videoWrappers)
+        .map((vid) => vid.src)
+        .filter((src) => src.startsWith("data:video/"));
+
+      if (combinedBase64.length === 0) {
+        videoErrorEl.textContent = "Please select video.";
+
+        hasError = true;
+      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
+        videoErrorEl.textContent = "The video is too large.";
+        hasError = true;
+      } else {
+        postMedia = combinedBase64;
+        postDescription = description;
+      }
+    }
+
+    if (!title) {
+      titleErrorEl.textContent = "Title is required.";
+      hasError = true;
+    } else if (title.length < 5) {
+      titleErrorEl.textContent = "Title must be at least 5 characters.";
+      hasError = true;
+    }
+
+    if (!description) {
+      descErrorEl.textContent = "Description is required.";
+      hasError = true;
+    } else if (description.length < 10) {
+      descErrorEl.textContent = "Description must be at least 10 characters.";
+      hasError = true;
+    }
+
+    /*if (tags.length === 0) {
+      tagErrorEl.textContent = "Please add at least one tag.";
+      hasError = true;
+    }*/
+
+    // If any error, stop
+    if (hasError) return;
+
+    submitButton.disabled = true;
+    try {
+
+      const result = await sendCreatePost({
         title,
-        media: base64WithMime,
-        contenttype: "text",
-        tags,
+        media: postMedia,
+        cover,
+        mediadescription: postDescription,
+        contenttype: post_type,
+        tags
       });
 
-      if (success) {
-        // togglePopup("addPost");
-        location.reload();
+      //console.log(result.createPost);
+      if (result.createPost.status === "success") {
+        createPostError.classList.add(result.createPost.status);
+        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+        setTimeout(() => {
+
+          window.location.href = "./profile.php";
+        }, 1000);
+      } else {
+        createPostError.classList.add(result.createPost.status);
+        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
       }
-    });
-  }
+    } catch (error) {
+      console.error("Error during create post request:", error);
+    } finally {
+      // Re-enable the form and hide loading indicator
+      submitButton.disabled = false;
+    }
+  });
 
   /**********************************************************************/
   /** TEXT POST PREVIEW **/
@@ -462,16 +527,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const tagSuggestions = event.target.querySelector("#tagsContainer");
       const selectedTags = event.target.querySelector("#tagsSelected");
       const tagError = event.target.querySelector("#tagError");
-
       if (tagInput) tagInput.value = "";
       if (tagSuggestions) tagSuggestions.innerHTML = "";
       if (selectedTags) selectedTags.innerHTML = "";
       if (tagError) tagError.textContent = "";
-
       const historySection = event.target.querySelector("#tag-history-section");
       const suggestionsSection = event.target.querySelector("#tag-suggestions-section");
       const selectedTagsSection = event.target.querySelector("#selected-tags-section");
-
       if (tagHistory) {
         tagHistory.innerHTML = "";
         if (tagHistory.children.length === 0 && historySection) {
@@ -479,12 +541,10 @@ document.addEventListener("DOMContentLoaded", () => {
           historySection.classList.remove("visible");
         }
       }
-
       if (suggestionsSection) {
         suggestionsSection.classList.add("hidden");
         suggestionsSection.classList.remove("visible");
       }
-
       if (selectedTagsSection) {
         selectedTagsSection.classList.add("hidden");
         selectedTagsSection.classList.remove("is-visible");
@@ -492,39 +552,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /**********************************************************************/
-  const createPostImage = document.getElementById("createPostImage");
-  if (createPostImage) {
-    createPostImage.addEventListener("click", async (event) => {
-      event.preventDefault();
-      const title = document.getElementById("titleImage").value;
-      const beschreibung = document.getElementById("descriptionImage").value;
-      const imageWrappers = document.querySelectorAll(".create-img");
-      const tags = tag_getTagArray();
-
-      const combinedBase64 = Array.from(imageWrappers)
-        .map((img) => img.src)
-        .filter((src) => src.startsWith("data:image/"));
-
-      if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-        Merror("Error", "The image(s) are too large.");
-        return;
-      }
-
-      if (
-        await sendCreatePost({
-          title,
-          media: combinedBase64,
-          mediadescription: beschreibung,
-          contenttype: "image",
-          tags,
-        })
-      ) {
-        togglePopup("addPost");
-        location.reload();
-      }
-    });
-  }
 
   /**********************************************************************/
   /** IMAGE POST PREVIEW **/
@@ -555,44 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /**********************************************************************/
-  const createPostAudio = document.getElementById("createPostAudio");
-  if (createPostAudio) {
-    createPostAudio.addEventListener("click", async (event) => {
-      event.preventDefault();
-      const title = document.getElementById("titleAudio").value;
-      const beschreibung = document.getElementById("descriptionAudio").value;
-      const audioWrappers = document.querySelectorAll(".create-audio");
-      const tags = tag_getTagArray();
 
-      const combinedBase64 = Array.from(audioWrappers)
-        .map((audio) => audio.src)
-        .filter((src) => src.startsWith("data:audio/"));
-
-      if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-        Merror("Error", "The audio is too large.");
-        return;
-      }
-
-      const coverImg = document.querySelector("#preview-cover img");
-      const canvas = document.querySelector("#preview-audio canvas");
-      const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-
-      if (
-        await sendCreatePost({
-          title,
-          media: combinedBase64,
-          cover,
-          mediadescription: beschreibung,
-          contenttype: "audio",
-          tags,
-        })
-      ) {
-        togglePopup("addPost");
-        location.reload();
-      }
-    });
-  }
 
   /**********************************************************************/
   /** AUDIO POST PREVIEW **/
@@ -625,42 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-
-
-  /**********************************************************************/
-  const createPostVideo = document.getElementById("createPostVideo");
-  if (createPostVideo) {
-    createPostVideo.addEventListener("click", async (event) => {
-      event.preventDefault();
-      const title = document.getElementById("titleVideo").value;
-      const beschreibung = document.getElementById("descriptionVideo").value;
-      const videoWrappers = document.querySelectorAll(".create-video");
-      const tags = tag_getTagArray();
-
-      const combinedBase64 = Array.from(videoWrappers)
-        .map((vid) => vid.src)
-        .filter((src) => src.startsWith("data:video/"));
-
-      if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-        Merror("Error", "The video is too large.");
-        return;
-      }
-
-      if (
-        await sendCreatePost({
-          title,
-          media: combinedBase64,
-          mediadescription: beschreibung,
-          contenttype: "video",
-          tags,
-        })
-      ) {
-        togglePopup("addPost");
-        location.reload();
-      }
-    });
-  }
-
   /**********************************************************************/
   /** VIDEO POST PREVIEW **/
   const previewVideoPost = document.getElementById("previewVideoPost");
@@ -689,7 +643,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /******************************************************************** */
-  // ===== INITIAL SETUP =====
+  descEl.addEventListener("keyup", (e) => {
+    let text = descEl.value;
+    const span = document.querySelector('span.char-counter');
+    if (text.length > 250) {
+      Merror("Warning", "Maximum length exceeded!");
+      text = text.substr(0, 250);
+      descEl.value = text;
+    }
+    span.textContent = `${text.length}/250`;
+  });
+
   if (tagInput) {
     tagInput.value = "";
 
@@ -785,19 +749,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTagUIVisibility();
   }
 
-  function tag_removeTag(tagText) {
-    const clean = tagText.replace(/^#+/, "");
-    const tagElements = selectedContainer.querySelectorAll(`.tag[data-tag="${clean}"]`);
-
-    tagElements.forEach((tagEl) => {
-      tagEl.classList.add("removing");
-      setTimeout(() => tagEl.remove(), 200);
-    });
-
-    removeFromHistory(clean);
-    updateTagUIVisibility();
-  }
-
   // ===== TAG ELEMENT CREATION =====
   function createTagElement(tagText, source = "suggestion") {
     const cleanText = tagText.replace(/^#+/, "");
@@ -809,7 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Only selected tags get the remove button
     if (source === "selected") {
-      const removeBtn = document.createElement("button");
+      const removeBtn = document.createElement("span");
       removeBtn.textContent = "X";
       removeBtn.classList.add("remove-tag");
       removeBtn.type = "button";
@@ -858,20 +809,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== CREATE CUSTOM TAG OPTION =====
   function renderCreateTagOption(input) {
     const clean = input.replace(/^#+/, "").toLowerCase().trim();
-
     const existsInSuggestions = tagContainer.querySelector(`[data-tag="${clean}"]`);
     const existsInSelected = selectedContainer.querySelector(`[data-tag="${clean}"]`);
     const existsInHistory = getTagHistory().some((tag) => tag.toLowerCase().trim() === clean);
-
     if (existsInSuggestions || existsInSelected || existsInHistory) return; // ✅ Prevent duplicate create
-
     tagContainer.innerHTML = "";
-
     const el = document.createElement("span");
     el.classList.add("tag", "create-tag");
     el.textContent = `+ Create tag: #${clean}`;
     el.setAttribute("data-tag", clean);
-
     el.addEventListener("mousedown", (e) => e.preventDefault());
     el.addEventListener("click", () => {
       tag_addTag(clean);
@@ -879,29 +825,26 @@ document.addEventListener("DOMContentLoaded", () => {
       clearTagContainer();
       updateTagUIVisibility();
     });
-
     tagContainer.appendChild(el);
   }
-
   // ===== RENDER HISTORY =====
   function renderTagHistory() {
     const historyContainer = document.getElementById("tagHistoryContainer");
     const historySection = document.getElementById("tag-history-section");
-
     // Get selected tags from DOM
     const selectedTags = new Set(
       Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Get suggested tags from DOM
     const suggestedTags = new Set(
       Array.from(tagContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Load history from localStorage
@@ -1011,9 +954,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function getAllUsedTagsSet() {
     return new Set([
       ...Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim()),
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim()),
       ...getTagHistory().map((tag) => tag.toLowerCase().trim()),
     ]);
   }
@@ -1035,12 +978,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = this.id.replace("create", "new") + "Post";
       const form = document.getElementById(id);
       if (form) form.classList.add('active');
-
+      const postform = document.getElementById('create_new_post');
+      if (postform) {
+        const post_type = e.target.getAttribute('data-post-type');
+        postform.setAttribute('data-post-type', post_type);
+      }
       // Check if it's the audio form (music) and init
       if (id === 'newAudioPost') initAudioEvents(); // attach mic click handler
     });
   });
-  /********************************************************************/
 
   async function fetchTags(searchStr) {
     for (let failed of failedSearches) {
@@ -1085,9 +1031,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const failedSearches = new Set();
-
-  const zones = [
-    {
+  const zones = [{
       dropArea: document.getElementById("drop-area-image"),
       fileInput: document.getElementById("file-input-image"),
     },
@@ -1104,6 +1048,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput: document.getElementById("file-input-videocover"),
     },
     {
+
       dropArea: document.getElementById("drop-area-videolong"),
       fileInput: document.getElementById("file-input-videolong"),
     },
@@ -1142,12 +1087,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Iteration über die Zonen
-  zones.forEach(({ dropArea, fileInput }) => {
+  zones.forEach(({
+    dropArea,
+    fileInput
+  }) => {
     // Click-Event für das Öffnen des Dateidialogs
     // if (dropArea) {
     //   dropArea.addEventListener("click", () => handleClick(fileInput));
     // }
-
     // Drag-and-Drop-Events
     if (dropArea) {
       dropArea.addEventListener("click", () => handleClick(fileInput));
@@ -1161,23 +1108,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function tag_getTagArray() {
-    return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
-  }
+  // function tag_getTagArray() {
+  //   return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
+  // }
 
-  function tag_removeAllTags() {
-    tagContainer.innerHTML = "";
-  }
+  // function tag_removeAllTags() {
+  //   tagContainer.innerHTML = "";
+  // }
 
   async function processFiles(files, id) {
-    //  console.log('id --> ', files)
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
-
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
 
-    const previewContainer = document.getElementById("preview-" + uploadtype);
+    let previewContainer;
+    if (uploadtype === "image") {
+      previewContainer = document.querySelector("#preview-" + uploadtype + " .preview-track");
+    } else {
+      previewContainer = document.getElementById("preview-" + uploadtype);
+    }
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
@@ -1189,12 +1139,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
     }
-    files.forEach(async (file) => {
+    for (let file of files) {
       // if (!file.type.startsWith("image/")) {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
       // }
-
+      previewItem = "";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
@@ -1202,7 +1152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         previewItem.classList.add("audio-item");
         previewItem.innerHTML = `
         <p>${file.name}</p><canvas id="${file.name}"></canvas>
-        <button id="play-pause">Play</button>
+        <span class="button" id="play-pause">Play</span>
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
@@ -1216,7 +1166,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-        previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+        if (previewContainer.children.length > 0) {
+          previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+        } else {
+          previewContainer.appendChild(previewItem);
+        }
         document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
@@ -1231,9 +1185,11 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("drop-area-videocover").classList.add("none");
         } else {
           previewItem.classList.add("video-item");
+          previewItem.classList.add(id);
+          
           previewItem.innerHTML = `
           <p>${file.name}</p>
-          <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
+          <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
           if (id.includes("short")) {
@@ -1256,18 +1212,16 @@ document.addEventListener("DOMContentLoaded", () => {
       let element = null;
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
-        element = previewItem.querySelector("img");
+        element = previewItem.querySelector("img.create-img");
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
         element = previewItem.querySelector("video");
       }
-
       element.src = base64;
-      // imageElement.style.display = "block";
       element.classList.remove("none");
-      element.nextElementSibling.remove();
-      element.nextElementSibling.classList.remove("none");
+      element.nextElementSibling ?.remove();
+      element.nextElementSibling ?.classList.remove("none");
       if (type === "audio") {
         initAudioplayer(file.name, base64);
       } else if (type === "video") {
@@ -1275,8 +1229,69 @@ document.addEventListener("DOMContentLoaded", () => {
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
-    });
-    document.querySelectorAll(".deletePost").forEach(addDeleteListener);
+    }
+   
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
+
+    if (uploadtype === "image") {
+      document.querySelectorAll(".deletePost").forEach(el => {
+        el.removeEventListener("click", handleDelete);
+        el.addEventListener("click", handleImageDelete);
+      });
+    } else {
+      document.querySelectorAll(".deletePost").forEach(addDeleteListener);
+    }
+
+
+   
+    let currentIndex = 0;
+
+    function scrollToIndex(index) {
+      const previewTrack = document.querySelector("#preview-image .preview-track");
+      const previewItems = previewTrack.querySelectorAll(".preview-item");
+
+      if (index < 0 || index >= previewItems.length) return;
+
+      // Sum widths of all items before the target index
+      let offset = 0;
+      for (let i = 0; i < index; i++) {
+        offset += previewItems[i].offsetWidth + 20; // Add 20px gap
+      }
+
+      previewTrack.style.transform = `translateX(-${offset}px)`;
+      currentIndex = index;
+    }
+
+    document.querySelector(".next-button").addEventListener("click", () => {
+      const previewItems = document.querySelectorAll("#preview-image .preview-track .preview-item");
+      if (currentIndex < previewItems.length - 1) {
+        scrollToIndex(currentIndex + 1);
+      }
+    });
+
+    document.querySelector(".prev-button").addEventListener("click", () => {
+      if (currentIndex > 0) {
+        scrollToIndex(currentIndex - 1);
+      }
+    });
+
+    function handleImageDelete(event) {
+      event.preventDefault();
+
+      const previewTrack = document.querySelector("#preview-image .preview-track");
+      const previewItem = event.target.closest(".preview-item");
+      previewItem.remove();
+
+      const items = previewTrack.querySelectorAll(".preview-item");
+      const totalItems = items.length;
+
+      // Clamp index
+      if (currentIndex >= totalItems) {
+        currentIndex = totalItems - 1;
+      }
+
+      scrollToIndex(currentIndex);
+    }
+
   }
 });

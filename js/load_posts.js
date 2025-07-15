@@ -1258,6 +1258,8 @@ async function postClicked(objekt) {
         zoomElement.addEventListener("click", () => {
           openSliderModal(imageSrcArray, index);
         });
+        
+
       });
     }
 

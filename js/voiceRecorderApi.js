@@ -14,28 +14,28 @@ function initAudioEvents() {
   }
 
   micBtn.addEventListener('click', async () => {
-    if (!isRecording) {
-      await startRecording(micBtn);
-    } else {
-      stopRecording(micBtn);
-    }
+    if (!isRecording) await startRecording(micBtn);
+    else stopRecording(micBtn);
   });
-
-  console.log("Mic toggle initialized");
 }
 
 async function startRecording(button) {
+  console.log("start")
   try {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recorder = new MediaRecorder(audioStream);
     chunks = [];
     isRecording = true;
-
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: 'audio/webm' });
       const url = URL.createObjectURL(blob);
-      renderAudioPreview(url);
+      const preview = document.getElementById('preview-audio');
+      if (!preview) {
+        console.error("preview-audio element not found!");
+        return;
+      }
+      renderAudioPreview(preview, url);
       appendAudioToForm(blob);
     };
 
@@ -62,10 +62,10 @@ function stopRecording(button) {
 function updateMicButton(button, recording) {
   if (recording) {
     button.classList.add("recording");
-    button.innerHTML = '⏸'; // show pause icon
+    button.innerHTML = '⏸';
   } else {
     button.classList.remove("recording");
-    button.innerHTML = '▶'; // show play icon
+    button.innerHTML = '▶';
   }
 }
 
@@ -83,6 +83,7 @@ function startTimer() {
 }
 
 function stopTimer() {
+  console.log("clearing interval")
   clearInterval(timerInterval);
 }
 
@@ -96,11 +97,11 @@ function renderAudioPreview(preview, url) {
     <div class="waveform-bar"></div>
     <div class="record-meta">
       <span class="record-time">0:00</span>
-      <button class="play-pause-btn" aria-label="Play">
-        <div class="pause-icon">❚❚</div>
-      </button>
+      <span class="play-pause-btn" aria-label="Play">
+        <div class="pause-icon">▶</div>
+      </span>
     </div>
-    <audio src="${url}" hidden></audio>
+    <audio src="${url}"></audio>
   `;
 
   preview.appendChild(box);
@@ -112,6 +113,12 @@ function renderAudioPreview(preview, url) {
 
   let updateInterval = null;
 
+  // to ensure audio can play first
+  audio.addEventListener('canplaythrough', () => {
+    console.log(" Audio ready to play");
+    btn.disabled = false;
+  });
+
   btn.addEventListener('click', () => {
     if (audio.paused) {
       audio.play();
@@ -121,7 +128,7 @@ function renderAudioPreview(preview, url) {
         const mins = Math.floor(audio.currentTime / 60);
         const secs = Math.floor(audio.currentTime % 60);
         timeEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-      }, 500);
+      }, 300);
     } else {
       audio.pause();
       icon.textContent = '▶';
@@ -137,8 +144,10 @@ function renderAudioPreview(preview, url) {
 }
 
 function appendAudioToForm(blob) {
+  console.log("i am here")
   const form = document.getElementById("newAudioPost");
   const file = new File([blob], 'voice-recording.webm', { type: 'audio/webm' });
+  console.log(file);
   const input = document.createElement('input');
   input.type = 'file';
   input.name = 'recordedAudio';
@@ -152,4 +161,10 @@ function appendAudioToForm(blob) {
 }
 
 // Call this after DOM loads
-initAudioEvents();
+// initAudioEvents();
+
+function setVoiceUIState(state) {
+  const container = document.getElementById('voice-record-ui');
+  container.classList.remove('state-idle', 'state-recording', 'state-preview');
+  container.classList.add(`state-${state}`);
+}

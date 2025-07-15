@@ -525,7 +525,7 @@ async function sendUpdateUsername(username, password) {
       if (result.errors) {
         throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
       }
-      console.log("Mutation Result:", result.data);
+      //console.log("Mutation Result:", result.data);
 
       return result.data;
 
