@@ -9,10 +9,321 @@ document.addEventListener("DOMContentLoaded", () => {
   const descEl = document.getElementById("descriptionNotes");
 
   updateTagUIVisibility(); // suggestions + selected
+  /********************* Preview posts functionality ******************************/
 
+  function previewPost(objekt) {
+
+    
+    const postContainer = document.getElementById("preview-post-container");
+    const array = objekt.media || [];
+
+    const containerleft = postContainer.querySelector(".viewpost-left");
+    const containerright = postContainer.querySelector(".viewpost-right");
+    const post_gallery = containerleft.querySelector(".post_gallery");
+    post_gallery.innerHTML="";
+    const post_contentletf=containerleft.querySelector(".post_content");
+    if(post_contentletf)   post_contentletf.remove();
+
+    const post_contentright=containerright.querySelector(".post_content");
+    
+    
+    const profile_header_left=postContainer.querySelector(".profile-header-left");
+   
+    profile_header_left.addEventListener("click",
+        function handledisLikeClick(event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }  
+      );
+
+    /*--------END: Card profile Header  -------*/
+    
+    /*--------Card Post Title and Text  -------*/
+    
+
+    const cont_post_text = containerright.querySelector(".post_text");
+    const cont_post_title = containerright.querySelector(".post_title h2");
+    const cont_post_time = containerright.querySelector(".timeagao");
+    const cont_post_tags = containerright.querySelector(".hashtags");
+
+    if (document.querySelector(".post_text")) {
+      cont_post_text.innerHTML = document.querySelector(".post_text").innerHTML;
+    } else if (objekt.description) {
+      cont_post_text.innerHTML = objekt.description;
+    }
+
+    if (document.querySelector(".post_title")) {
+      const title_text = document.querySelector(".post_title").childNodes[0].textContent.trim();
+      cont_post_title.innerHTML = title_text;
+    } else if (objekt.title) {
+      cont_post_title.innerHTML = objekt.title;
+    }
+
+    if (document.querySelector(".timeagao")) {
+      cont_post_time.innerHTML = document.querySelector(".timeagao").innerHTML;
+    } else {
+      cont_post_time.innerHTML = "1 sec ago";
+    }
+
+    if (document.querySelector(".hashtags")) {
+      cont_post_tags.innerHTML = document.querySelector(".hashtags").innerHTML;
+    } else if (objekt.tags?.length > 0) {
+      cont_post_tags.innerHTML = objekt.tags.map(tag => `<span>#${tag}</span>`).join(" ");
+    }
+
+
+    /*--------END : Card Post Title and Text  -------*/
+
+
+    const makeSlider = (type) => {
+      const sliderWrapper = document.createElement("div");
+      const sliderTrack = document.createElement("div");
+      const sliderThumbs = document.createElement("div");
+
+      sliderWrapper.className = "slider-wrapper";
+      sliderTrack.className = "slider-track";
+      sliderThumbs.className = "slider-thumbnails";
+
+      sliderWrapper.appendChild(sliderTrack);
+      sliderWrapper.appendChild(sliderThumbs);
+      post_gallery.appendChild(sliderWrapper);
+
+      const updateSlider = (index) => {
+        if (!sliderTrack.children[index]) return;
+        const offset = sliderTrack.children[index].offsetLeft;
+        sliderTrack.style.transform = `translateX(-${offset}px)`;
+
+        sliderThumbs.querySelectorAll(".timg").forEach((t, i) => {
+          t.classList.toggle("active", i === index);
+        });
+
+        if (type === "video") {
+          sliderTrack.querySelectorAll("video").forEach((v, i) => {
+            if (i === index) v.play();
+            else {
+              v.pause();
+              v.currentTime = 0;
+            }
+          });
+        }
+      };
+
+      return { sliderTrack, sliderThumbs, updateSlider };
+    };
+
+    
+
+    if (objekt.contenttype === "audio") {
+      post_gallery.classList.add("audio");
+      post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("video");
+      for (const item of array) {
+        const audio = document.createElement("audio");
+        audio.id = "audio2";
+        audio.src = media;
+        audio.controls = true;
+        audio.className = "custom-audio";
+
+        // 1. Erzeuge das <div>-Element
+        const audioContainer = document.createElement("div");
+        //audioContainer.id = "audio-container"; // Setze die ID
+         audioContainer.classList.add("audio-item");
+
+        if (objekt.cover) {
+          const cover = JSON.parse(objekt.cover);
+          img = document.createElement("img");
+          img.classList.add("cover");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(cover[0].path);
+          img.alt = "Cover";
+          audioContainer.appendChild(img);
+        }
+        // 2. Erzeuge das <canvas>-Element
+        const canvas = document.createElement("canvas");
+        canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+
+        // 3. Erzeuge das <button>-Element
+        const button = document.createElement("button");
+        button.id = "play-pause"; // Setze die ID für den Button
+        // button.textContent = "Play"; // Setze den Textinhalt des Buttons
+
+        // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+        let cover = null;
+        if (objekt.cover) {
+          cover = JSON.parse(objekt.cover);
+        }
+        const audio_player = document.createElement("div");
+        audio_player.className = "audio_player_con";
+        const timeinfo = document.createElement("div");
+        timeinfo.className = "time-info";
+        timeinfo.innerHTML = `
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        `;
+        audio_player.appendChild(timeinfo);
+        audio_player.appendChild(canvas);
+        audio_player.appendChild(button);
+        
+        audioContainer.appendChild(audio_player);
+        // audioContainer.appendChild(audio);
+        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+        post_gallery.appendChild(audioContainer);
+
+        initAudioplayer("waveform-preview", audio.src);
+      }
+    } else if (objekt.contenttype === "video") {
+      post_gallery.className = "post_gallery video";
+    if (array.length > 1) post_gallery.classList.add("multi");
+
+    const { sliderTrack, sliderThumbs, updateSlider } = makeSlider("video");
+
+    array.forEach((media, index) => {
+      const slide = document.createElement("div");
+      slide.className = "slide_item";
+
+      const video = document.createElement("video");
+      video.src = media;
+      video.controls = true;
+      video.loop = true;
+      video.autoplay = index === 0;
+      video.muted = false;
+      video.className = "custom-video";
+
+      slide.appendChild(video);
+      sliderTrack.appendChild(slide);
+
+      const thumb = document.createElement("div");
+      thumb.className = "timg";
+      thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
+      sliderThumbs.appendChild(thumb);
+
+      thumb.addEventListener("click", () => updateSlider(index));
+    });
+
+    requestAnimationFrame(() => updateSlider(0));
+  } else if (objekt.contenttype === "text") {
+    post_gallery.innerHTML = ""; // Clear gallery if any
+    post_gallery.className = "post_gallery"; // Reset classes
+
+    if (containerleft && containerright) {
+      // Clone content area
+      const textContent = document.createElement("div");
+      textContent.className = "post_content";
+
+      // Create title
+      const titleEl = document.createElement("div");
+      titleEl.className = "post_title";
+      const h2 = document.createElement("h2");
+      h2.textContent = objekt.title || "";
+      titleEl.appendChild(h2);
+
+      // Create description
+      const textEl = document.createElement("div");
+      textEl.className = "post_text";
+      textEl.innerHTML = objekt.description || "";
+
+      // Create hashtags
+      const tagEl = document.createElement("div");
+      tagEl.className = "hashtags";
+      if (objekt.tags && objekt.tags.length) {
+        tagEl.innerHTML = objekt.tags.map(tag => `<span>#${tag}</span>`).join(" ");
+      }
+
+      // Create time (optional)
+      const timeEl = document.createElement("div");
+      timeEl.className = "timeagao";
+      timeEl.textContent = "Just now";
+
+      // Append all to textContent
+      textContent.appendChild(titleEl);
+      textContent.appendChild(textEl);
+      textContent.appendChild(tagEl);
+      textContent.appendChild(timeEl);
+
+      // Insert into container
+      containerleft.prepend(textContent.cloneNode(true));
+    }
+  } else {
+    post_gallery.className = "post_gallery images";
+    if (array.length > 1) post_gallery.classList.add("multi");
+
+    const { sliderTrack, sliderThumbs, updateSlider } = makeSlider("image");
+
+    array.forEach((media, index) => {
+      const slide = document.createElement("div");
+      slide.className = "slide_item";
+
+      const img = document.createElement("img");
+      img.src = media;
+      img.alt = "";
+
+      const zoom = document.createElement("span");
+      zoom.className = "zoom";
+      zoom.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+
+      slide.appendChild(img);
+      slide.appendChild(zoom);
+      sliderTrack.appendChild(slide);
+
+      const thumb = document.createElement("div");
+      thumb.className = "timg";
+      thumb.innerHTML = `<img src="${media}" alt="">`;
+      sliderThumbs.appendChild(thumb);
+
+      thumb.addEventListener("click", () => updateSlider(index));
+    });
+
+    requestAnimationFrame(() => updateSlider(0));
+  }
+
+}
+
+
+  const previewButtons = document.querySelectorAll('#addPostSection .preview-button');
+  const previewSection = document.getElementById('previewSection');
+  const addPostSection = document.getElementById('addPostSection');
+
+  previewButtons.forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+        addPostSection.classList.add('none');
+        previewSection.classList.remove('none');
+    });
+  });
+
+  const backToEditBtn = document.getElementById('backToEdit');
+    if (backToEditBtn) {
+      backToEditBtn.addEventListener('click', function () {
+        addPostSection.classList.remove('none');
+        previewSection.classList.add('none');
+    });
+  }
+
+  const sidebarTabs = document.querySelectorAll('.form-tab-js a');
+    sidebarTabs.forEach(tab => {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Hide preview, show add-post
+            previewSection.classList.add('none');
+            addPostSection.classList.remove('none');
+
+            // Optionally: toggle active class for UI
+            document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
+            this.closest('.form-tab-js').classList.add('active');
+
+            // Call your custom content-switching logic if needed (e.g. loadImageForm(), loadVideoForm())
+            // You may already have something like that in your JS handling post type switch.
+        });
+    });
+
+    
+  /**********************************************************************/
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
-
     // Elements
     const post_type = event.target.getAttribute("data-post-type");
     const titleEl = document.getElementById("titleNotes");
@@ -174,6 +485,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /**********************************************************************/
+  /** TEXT POST PREVIEW **/
+  const previewTextPost = document.getElementById("previewTextPost");
+  if (previewTextPost) {
+    previewTextPost.addEventListener("click", () => {
+      const title = document.getElementById("titleNotes")?.value.trim() || "";
+      const description = document.getElementById("descriptionNotes")?.value.trim() || "";
+      const tags = getTagHistory(); // Should return an array like ['fun', 'update']
+
+      const objekt = {
+        id: "preview-text-post",  
+        contenttype: "text",
+        title,
+        description,
+        tags,
+        media: [],
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+
+
   document.querySelectorAll(".resettable-form").forEach((form) => {
     form.addEventListener("reset", function (event) {
       const tagInput = event.target.querySelector("#tag-input");
@@ -206,6 +541,97 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+
+  /**********************************************************************/
+  /** IMAGE POST PREVIEW **/
+  const previewImagePost = document.getElementById("previewImagePost");
+
+  if (previewImagePost) {
+    previewImagePost.addEventListener("click", () => {
+      const title = document.getElementById("titleImage")?.value.trim() || "";
+      const description = document.getElementById("descriptionImage")?.value.trim() || "";
+      const tags = tag_getTagArray();
+
+      // Get all images inside .create-img wrappers
+      const imageWrappers = document.querySelectorAll(".create-img img");
+      const media = Array.from(imageWrappers)
+        .map((img) => img.src)
+        .filter((src) => src.startsWith("data:image/"));
+
+      const objekt = {
+        contenttype: "image",
+        title,
+        description,
+        tags,
+        media, // array of image data URLs
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+
+
+
+  /**********************************************************************/
+  /** AUDIO POST PREVIEW **/
+  const previewAudioPost = document.getElementById("previewAudioPost");
+  if (previewAudioPost) {
+    previewAudioPost.addEventListener("click", () => {
+      const title = document.getElementById("titleAudio")?.value.trim() || "";
+      const description = document.getElementById("descriptionAudio")?.value.trim() || "";
+      const audioWrappers = document.querySelectorAll(".create-audio");
+      const tags = tag_getTagArray();
+
+      const media = Array.from(audioWrappers)
+        .map((audio) => audio.src)
+        .filter((src) => src.startsWith("data:audio/"));
+
+      const coverImg = document.querySelector("#preview-cover img");
+      const canvas = document.querySelector("#preview-audio canvas");
+      const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+
+      const objekt = {
+        title,
+        description,
+        tags,
+        media,
+        cover,
+        contenttype: "audio",
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+  /**********************************************************************/
+  /** VIDEO POST PREVIEW **/
+  const previewVideoPost = document.getElementById("previewVideoPost");
+  if (previewVideoPost) {
+    previewVideoPost.addEventListener("click", () => {
+      const title = document.getElementById("titleVideo")?.value.trim() || "";
+      const description = document.getElementById("descriptionVideo")?.value.trim() || "";
+      const videoWrappers = document.querySelectorAll(".create-video");
+      const tags = tag_getTagArray();
+
+      const media = Array.from(videoWrappers)
+        .map((vid) => vid.src)
+        .filter((src) => src.startsWith("data:video/"));
+
+      const objekt = {
+        title,
+        description,
+        tags,
+        media,
+        contenttype: "video",
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+
+  /******************************************************************** */
   descEl.addEventListener("keyup", (e) => {
     let text = descEl.value;
     const span = document.querySelector("span.char-counter");

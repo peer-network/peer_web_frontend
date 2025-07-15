@@ -28,8 +28,7 @@
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
                             <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                            <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
-
+                          <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
                             <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
                         </div>
                     </div>
@@ -78,6 +77,7 @@
                 <div class="video-trim-wrapper">
                     <video id="videoTrim"></video>
                     <div id="videoTimeline">
+
 
                     </div>
                     <div id="overlay-left" class="trim-overlay"></div>
@@ -133,9 +133,6 @@
                     <span class="response_msg error" id="descriptionError"></span>
                 </div>
             </div>
-
-
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="tag-input" class="md_font_size">Tags</label>
@@ -146,6 +143,7 @@
                         <div class="tag-section selected-tags" id="selected-tags-section">
                             <div id="tagsSelected" class="tag-list selected-container"></div>
                         </div>
+
                         <!-- Tag Input -->
                         <div class="input-icon-wrapper">
                             <input id="tag-input" type="text" placeholder="Click here to add #hastags" />

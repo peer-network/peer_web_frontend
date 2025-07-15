@@ -25,6 +25,7 @@ checkAuth("unauthorized");
         href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
+    <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
      <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/crop.css?<?php echo filemtime('css/crop.css'); ?>" />
     <!-- <script src="sw_instal.min.js" async></script> -->
@@ -62,8 +63,15 @@ checkAuth("unauthorized");
         </aside>
 
         <main class="site-main site-main-createpost">
-            <?php require_once ('./template-parts/content-parts/add-post.php'); ?>
+            <div id="addPostSection">
+                <?php require_once ('./template-parts/content-parts/add-post.php'); ?>
+            </div>
+
+            <div id="previewSection" class="none">
+                <?php require_once('./template-parts/content-parts/preview.php'); ?>
+            </div>
         </main>
+
         <aside class="right-sidebar right-sidebar-createpost">
             <div class="inner-scroll">
                 <!-- Load sidebar widgets -->
