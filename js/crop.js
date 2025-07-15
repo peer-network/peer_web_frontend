@@ -234,7 +234,7 @@ function drawOverlayOutsideCrop(ctx, crop, canvasWidth, canvasHeight) {
 }
 
 // drag and drop part
-const containerList = document.getElementById("preview-image");
+const containerList = document.querySelector("#preview-image .preview-track");
 let draggedEl = null;
 let placeholder = null;
 

@@ -695,7 +695,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
 
-    const previewContainer = document.getElementById("preview-" + uploadtype);
+    let previewContainer;
+    if (uploadtype === "image") {
+      previewContainer = document.querySelector("#preview-" + uploadtype + " .preview-track");
+    } else {
+      previewContainer = document.getElementById("preview-" + uploadtype);
+    }
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
@@ -798,7 +803,68 @@ document.addEventListener("DOMContentLoaded", () => {
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
     }
-    document.querySelectorAll(".deletePost").forEach(addDeleteListener);
+   
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
+
+    if (uploadtype === "image") {
+      document.querySelectorAll(".deletePost").forEach(el => {
+        el.removeEventListener("click", handleDelete);
+        el.addEventListener("click", handleImageDelete);
+      });
+    } else {
+      document.querySelectorAll(".deletePost").forEach(addDeleteListener);
+    }
+
+
+   
+    let currentIndex = 0;
+
+    function scrollToIndex(index) {
+      const previewTrack = document.querySelector("#preview-image .preview-track");
+      const previewItems = previewTrack.querySelectorAll(".preview-item");
+
+      if (index < 0 || index >= previewItems.length) return;
+
+      // Sum widths of all items before the target index
+      let offset = 0;
+      for (let i = 0; i < index; i++) {
+        offset += previewItems[i].offsetWidth + 20; // Add 20px gap
+      }
+
+      previewTrack.style.transform = `translateX(-${offset}px)`;
+      currentIndex = index;
+    }
+
+    document.querySelector(".next-button").addEventListener("click", () => {
+      const previewItems = document.querySelectorAll("#preview-image .preview-track .preview-item");
+      if (currentIndex < previewItems.length - 1) {
+        scrollToIndex(currentIndex + 1);
+      }
+    });
+
+    document.querySelector(".prev-button").addEventListener("click", () => {
+      if (currentIndex > 0) {
+        scrollToIndex(currentIndex - 1);
+      }
+    });
+
+    function handleImageDelete(event) {
+      event.preventDefault();
+
+      const previewTrack = document.querySelector("#preview-image .preview-track");
+      const previewItem = event.target.closest(".preview-item");
+      previewItem.remove();
+
+      const items = previewTrack.querySelectorAll(".preview-item");
+      const totalItems = items.length;
+
+      // Clamp index
+      if (currentIndex >= totalItems) {
+        currentIndex = totalItems - 1;
+      }
+
+      scrollToIndex(currentIndex);
+    }
+
   }
 });
