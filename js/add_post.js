@@ -864,7 +864,43 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       scrollToIndex(currentIndex);
+       toggleScrollButtons();
     }
+
+    const container = document.querySelector('.preview-track-wrapper');
+    const track = container.querySelector('.preview-track');
+    const nextBtn = document.querySelector('.next-button');
+    const prevBtn = document.querySelector('.prev-button');
+
+    function isElementInViewportX(child, container) {
+      const containerRect = container.getBoundingClientRect();
+      const childRect = child.getBoundingClientRect();
+
+      return (
+        childRect.left >= containerRect.left &&
+        childRect.right <= containerRect.right
+      );
+    }
+    
+    function toggleScrollButtons() {
+      const isVisible = isElementInViewportX(track, container);
+      if (!isVisible) {
+        nextBtn.classList.remove('none');
+        prevBtn.classList.remove('none');
+      } else {
+        nextBtn.classList.add('none');
+        prevBtn.classList.add('none');
+      }
+      //console.log("Is first item visible?", isElementInViewportX(track, container));
+    }
+
+    // Call once on load
+    toggleScrollButtons();
+
+    // Optionally recheck on window resize or DOM change
+    window.addEventListener('resize', toggleScrollButtons);
+    container.addEventListener('scroll', toggleScrollButtons);
+
 
   }
 });
