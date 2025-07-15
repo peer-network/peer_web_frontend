@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const descEl = document.getElementById("descriptionNotes");
 
   updateTagUIVisibility(); // suggestions + selected
-
   /********************* Preview posts functionality ******************************/
 
   function previewPost(objekt) {
@@ -323,12 +322,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     
   /**********************************************************************/
-
-
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
     // Elements
-    const post_type = event.target.getAttribute('data-post-type');
+    const post_type = event.target.getAttribute("data-post-type");
     const titleEl = document.getElementById("titleNotes");
 
     const tagErrorEl = document.getElementById("tagError");
@@ -337,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const imgErrorEl = document.getElementById("imageError");
     const audioErrorEl = document.getElementById("audioError");
     const videoErrorEl = document.getElementById("videoError");
-
 
     const createPostError = document.getElementById("createPostError");
 
@@ -364,7 +360,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let cover;
     let postDescription = "";
     if (post_type == "text") {
-
       // Convert to base64
       const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
       const base64WithMime = [`data:text/plain;base64,${base64String}`];
@@ -375,7 +370,6 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         postMedia = base64WithMime;
       }
-
     }
     if (post_type == "image") {
       const imageWrappers = document.querySelectorAll(".create-img");
@@ -388,7 +382,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-
         imgErrorEl.textContent = "The image(s) are too large.";
         hasError = true;
       } else {
@@ -404,14 +397,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const coverImg = document.querySelector("#preview-cover img");
       const canvas = document.querySelector("#preview-audio canvas");
-      cover = coverImg ? [coverImg.src] : [canvas ?.toDataURL("image/webp", 0.8)];
+      cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
 
       if (combinedBase64.length === 0) {
         audioErrorEl.textContent = "Please select audio.";
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-
         audioErrorEl.textContent = "The audio is too large.";
         hasError = true;
       } else {
@@ -431,7 +423,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-
         videoErrorEl.textContent = "The video is too large.";
         hasError = true;
       } else {
@@ -466,14 +457,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     submitButton.disabled = true;
     try {
-
       const result = await sendCreatePost({
         title,
         media: postMedia,
         cover,
         mediadescription: postDescription,
         contenttype: post_type,
-        tags
+        tags,
       });
 
       //console.log(result.createPost);
@@ -481,7 +471,6 @@ document.addEventListener("DOMContentLoaded", () => {
         createPostError.classList.add(result.createPost.status);
         createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
         setTimeout(() => {
-
           window.location.href = "./profile.php";
         }, 1000);
       } else {
@@ -645,7 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /******************************************************************** */
   descEl.addEventListener("keyup", (e) => {
     let text = descEl.value;
-    const span = document.querySelector('span.char-counter');
+    const span = document.querySelector("span.char-counter");
     if (text.length > 250) {
       Merror("Warning", "Maximum length exceeded!");
       text = text.substr(0, 250);
@@ -834,17 +823,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Get selected tags from DOM
     const selectedTags = new Set(
       Array.from(selectedContainer.children)
-      .map((el) => el.getAttribute("data-tag"))
-      .filter(Boolean)
-      .map((tag) => tag.toLowerCase().trim())
+        .map((el) => el.getAttribute("data-tag"))
+        .filter(Boolean)
+        .map((tag) => tag.toLowerCase().trim())
     );
 
     // Get suggested tags from DOM
     const suggestedTags = new Set(
       Array.from(tagContainer.children)
-      .map((el) => el.getAttribute("data-tag"))
-      .filter(Boolean)
-      .map((tag) => tag.toLowerCase().trim())
+        .map((el) => el.getAttribute("data-tag"))
+        .filter(Boolean)
+        .map((tag) => tag.toLowerCase().trim())
     );
 
     // Load history from localStorage
@@ -954,9 +943,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function getAllUsedTagsSet() {
     return new Set([
       ...Array.from(selectedContainer.children)
-      .map((el) => el.getAttribute("data-tag"))
-      .filter(Boolean)
-      .map((tag) => tag.toLowerCase().trim()),
+        .map((el) => el.getAttribute("data-tag"))
+        .filter(Boolean)
+        .map((tag) => tag.toLowerCase().trim()),
       ...getTagHistory().map((tag) => tag.toLowerCase().trim()),
     ]);
   }
@@ -977,14 +966,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
       const id = this.id.replace("create", "new") + "Post";
       const form = document.getElementById(id);
-      if (form) form.classList.add('active');
-      const postform = document.getElementById('create_new_post');
+      if (form) form.classList.add("active");
+      const postform = document.getElementById("create_new_post");
       if (postform) {
-        const post_type = e.target.getAttribute('data-post-type');
-        postform.setAttribute('data-post-type', post_type);
+        const post_type = e.target.getAttribute("data-post-type");
+        postform.setAttribute("data-post-type", post_type);
       }
       // Check if it's the audio form (music) and init
-      if (id === 'newAudioPost') initAudioEvents(); // attach mic click handler
+      if (id === "newAudioPost") initAudioEvents(); // attach mic click handler
     });
   });
 
@@ -1031,7 +1020,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const failedSearches = new Set();
-  const zones = [{
+  const zones = [
+    {
       dropArea: document.getElementById("drop-area-image"),
       fileInput: document.getElementById("file-input-image"),
     },
@@ -1048,7 +1038,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput: document.getElementById("file-input-videocover"),
     },
     {
-
       dropArea: document.getElementById("drop-area-videolong"),
       fileInput: document.getElementById("file-input-videolong"),
     },
@@ -1087,10 +1076,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Iteration über die Zonen
-  zones.forEach(({
-    dropArea,
-    fileInput
-  }) => {
+  zones.forEach(({ dropArea, fileInput }) => {
     // Click-Event für das Öffnen des Dateidialogs
     // if (dropArea) {
     //   dropArea.addEventListener("click", () => handleClick(fileInput));
@@ -1178,7 +1164,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editImage " alt="delete">
+          <img src="svg/edit.svg" class="editImage " alt="edit">
           <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
           const insertPosition = document.getElementById("drop-area-videocover");
           insertPosition.insertAdjacentElement("afterend", previewItem);
@@ -1186,11 +1172,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
-          
+
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+          <img src="svg/edit.svg" class="editVideo " alt="edit">
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
           if (id.includes("short")) {
             previewContainer.appendChild(previewItem);
@@ -1217,11 +1204,12 @@ document.addEventListener("DOMContentLoaded", () => {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
         element = previewItem.querySelector("video");
+        sessionStorage.setItem(file.name, base64);
       }
       element.src = base64;
       element.classList.remove("none");
-      element.nextElementSibling ?.remove();
-      element.nextElementSibling ?.classList.remove("none");
+      element.nextElementSibling?.remove();
+      element.nextElementSibling?.classList.remove("none");
       if (type === "audio") {
         initAudioplayer(file.name, base64);
       } else if (type === "video") {
@@ -1230,11 +1218,11 @@ document.addEventListener("DOMContentLoaded", () => {
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
     }
-   
-    document.querySelectorAll(".editImage").forEach(addEditImageListener);
 
+    document.querySelectorAll(".editImage").forEach(addEditImageListener);
+    document.querySelectorAll(".editVideo").forEach(addEditVideoListener);
     if (uploadtype === "image") {
-      document.querySelectorAll(".deletePost").forEach(el => {
+      document.querySelectorAll(".deletePost").forEach((el) => {
         el.removeEventListener("click", handleDelete);
         el.addEventListener("click", handleImageDelete);
       });
@@ -1242,8 +1230,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".deletePost").forEach(addDeleteListener);
     }
 
-
-   
     let currentIndex = 0;
 
     function scrollToIndex(index) {
@@ -1292,6 +1278,263 @@ document.addEventListener("DOMContentLoaded", () => {
 
       scrollToIndex(currentIndex);
     }
-
   }
 });
+
+const video = document.getElementById("videoTrim");
+const timeline = document.getElementById("videoTimeline");
+
+const THUMB_COUNT = 10; // beliebig wählbar
+let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
+async function videoTrim(id) {
+  videoElement = document.getElementById(id);
+  if (!videoElement) {
+    console.error(`Video element with ID ${id} not found.`);
+    return;
+  }
+  // Reset the timeline
+  timeline.innerHTML = "";
+  // Set the video source
+  if (sessionStorage.getItem(id)) {
+    video.src = sessionStorage.getItem(id);
+  } else {
+    video.src = videoElement.src;
+  }
+
+  // Show the trim container
+  document.getElementById("videoTrimContainer").classList.remove("none");
+  document.getElementById("videoTrimContainer").classList.add("active");
+}
+const trimWindow = document.getElementById("trim-window");
+const overlayLeft = document.getElementById("overlay-left");
+const overlayRight = document.getElementById("overlay-right");
+const handleLeft = document.getElementById("handle-left");
+const handleRight = document.getElementById("handle-right");
+
+// ----------- THUMBNAILS GENERIEREN (wie vorher) ----------
+
+video.addEventListener("loadedmetadata", async () => {
+  const duration = video.duration;
+  const times = [];
+  for (let i = 0; i < THUMB_COUNT; i++) {
+    times.push((duration * i) / (THUMB_COUNT - 1));
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = 160;
+  canvas.height = 90;
+  const ctx = canvas.getContext("2d");
+  for (let t of times) {
+    video.currentTime = t;
+    await new Promise((res) => video.addEventListener("seeked", res, { once: true }));
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/jpeg");
+    timeline.appendChild(img);
+  }
+  // Nach Thumbnail-Generierung: Trim-Fenster und Overlays initialisieren
+  setupTrim();
+});
+let startPercent = 0; // Anfang 0%
+let endPercent = 1; // Ende 100%
+const MIN_DURATION = 3; // Sekunden
+
+function setupTrim() {
+  // Zeitleisten-Breite und Position
+  const wrapper = document.querySelector(".timeline-wrapper");
+  const timelineRect = timeline.getBoundingClientRect();
+  const wrapperRect = wrapper.getBoundingClientRect();
+
+  // Werte in Prozent (für Responsivität)
+
+  let windowStartPercent = 0;
+  let windowEndPercent = 0;
+  let dragging = null; // 'left' | 'right' | null
+  let dragStartX = 0;
+
+  positionElements();
+
+  function positionElements() {
+    const w = timeline.offsetWidth;
+    // Positionen berechnen
+    const left = Math.round(startPercent * w);
+    const right = Math.round(endPercent * w);
+    // Trim-Fenster
+    trimWindow.style.left = left + "px";
+    trimWindow.style.width = right - left + "px";
+    trimWindow.style.top = timeline.offsetTop + "px";
+    trimWindow.style.height = timeline.offsetHeight + "px";
+    // Overlays
+    overlayLeft.style.left = "0";
+    overlayLeft.style.width = left + "px";
+    overlayLeft.style.top = timeline.offsetTop + "px";
+    overlayLeft.style.height = timeline.offsetHeight + "px";
+    overlayRight.style.left = right + "px";
+    overlayRight.style.width = w - right + "px";
+    overlayRight.style.top = timeline.offsetTop + "px";
+    overlayRight.style.height = timeline.offsetHeight + "px";
+  }
+
+  function percentFromX(x) {
+    // x relativ zum Timeline-Container
+    const rect = timeline.getBoundingClientRect();
+    let p = (x - rect.left) / rect.width;
+    return Math.min(Math.max(p, 0), 1);
+  }
+
+  // Drag-Handler
+  handleLeft.addEventListener("pointerdown", (e) => {
+    dragging = "left";
+    dragStartX = e.clientX;
+    document.body.style.cursor = "ew-resize";
+    e.preventDefault();
+  });
+  handleRight.addEventListener("pointerdown", (e) => {
+    dragging = "right";
+    dragStartX = e.clientX;
+    document.body.style.cursor = "ew-resize";
+    e.preventDefault();
+  });
+  trimWindow.addEventListener("pointerdown", (e) => {
+    if (e.target === handleLeft || e.target === handleRight) return;
+    dragging = "window";
+    dragStartX = e.clientX;
+    windowStartPercent = startPercent;
+    windowEndPercent = endPercent;
+    trimWindow.style.cursor = "grabbing";
+    document.body.style.cursor = "grabbing";
+    e.preventDefault();
+  });
+  // Haupt-Drag-Events
+  window.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    video.pause();
+    const x = e.clientX;
+    const p = percentFromX(x);
+    if (dragging === "left") {
+      let nextStart = Math.min(p, endPercent - MIN_DURATION / video.duration);
+      nextStart = Math.max(0, Math.min(nextStart, 1));
+      startPercent = nextStart;
+      video.currentTime = video.duration * startPercent;
+    } else if (dragging === "right") {
+      let nextEnd = Math.max(p, startPercent + MIN_DURATION / video.duration);
+      nextEnd = Math.max(0, Math.min(nextEnd, 1));
+      endPercent = nextEnd;
+      video.currentTime = video.duration * endPercent;
+    } else if (dragging === "window") {
+      const dx = x - dragStartX;
+      const w = timelineRect.width;
+      const percentShift = dx / w;
+      let newStart = windowStartPercent + percentShift;
+      let newEnd = windowEndPercent + percentShift;
+      // Begrenzung, damit das Fenster im Bereich bleibt
+      const winWidth = windowEndPercent - windowStartPercent;
+      if (newStart < 0) {
+        newStart = 0;
+        newEnd = winWidth;
+      }
+      if (newEnd > 1) {
+        newEnd = 1;
+        newStart = 1 - winWidth;
+      }
+      startPercent = newStart;
+      endPercent = newEnd;
+      video.currentTime = video.duration * startPercent;
+    }
+    startPercent = Math.max(0, Math.min(startPercent, 1));
+    endPercent = Math.max(0, Math.min(endPercent, 1));
+    positionElements();
+  });
+  window.addEventListener("pointerup", (e) => {
+    if (dragging) {
+      dragging = null;
+      document.body.style.cursor = "";
+    }
+  });
+
+  // Bei Fenstergröße ändern → alles nachjustieren
+  window.addEventListener("resize", () => {
+    positionElements();
+  });
+
+  // Initial-Positionierung
+  positionElements();
+}
+const trimBtn = document.getElementById("trimBtn");
+const trimQuitBtn = document.getElementById("trimQuit");
+trimQuitBtn.onclick = () => {
+  document.getElementById("videoTrimContainer").classList.add("none");
+  document.getElementById("videoTrimContainer").classList.remove("active");
+};
+// const downloadLink = document.getElementById("download-link");
+
+// Beachte: Diese Variablen (startPercent, endPercent) sind im Trim-Code definiert!
+// let startPercent = 0.15;
+// let endPercent = 0.85;
+
+// Funktion für den Schnitt
+trimBtn.onclick = async () => {
+  // Stelle sicher, dass Metadaten da sind
+  if (!video.duration) {
+    alert("Video ist noch nicht geladen!");
+    return;
+  }
+
+  // Schnitt-Zeiten berechnen
+  const startTime = video.duration * startPercent;
+  const endTime = video.duration * endPercent;
+
+  // Sicherstellen, dass keine Wiedergabe läuft
+  video.pause();
+
+  // Canvas zum Capturen des Videos
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext("2d");
+  let mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : ""; // leer = Default, aber meist WebM
+
+  // Canvas streamen
+  const stream = canvas.captureStream();
+  const rec = new MediaRecorder(stream, { mimeType });
+  let chunks = [];
+  rec.ondataavailable = (e) => e.data && chunks.push(e.data);
+
+  // Trim Vorgang
+  video.currentTime = startTime;
+  await new Promise((res) => (video.onseeked = res));
+
+  // Start Aufnahme
+  rec.start();
+  video.play();
+
+  // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
+  let animationId;
+  function drawFrame() {
+    if (video.currentTime >= endTime || video.ended) {
+      video.pause();
+      rec.stop();
+      cancelAnimationFrame(animationId);
+      return;
+    }
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    animationId = requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+
+  // Nach Aufnahme: Download anbieten
+  rec.onstop = async () => {
+    const blob = new Blob(chunks, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+    const base64 = await blobToBase64(blob);
+    videoElement.src = base64; // Update video source to trimmed video
+    document.getElementById("videoTrimContainer").classList.add("none");
+  };
+};
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result); // gibt ein Data-URL-String zurück (inkl. "data:video/webm;base64,...")
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}

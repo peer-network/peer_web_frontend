@@ -1,5 +1,5 @@
 .create_post .inner-container {
-	padding: 7rem 0rem;
+  padding: 7rem 0rem;
 }
 
 /* ===================== UPLOAD CONTROLS ===================== */
@@ -25,7 +25,7 @@
 }
 
 .form-row label {
-  color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+  color: var(--white-secondary, rgba(255, 255, 255, 0.5));
   margin-top: 10px;
   display: block;
 }
@@ -33,8 +33,6 @@
 .form-input {
   flex: 1;
 }
-
-
 
 .form-actions {
   display: flex;
@@ -54,8 +52,6 @@
 .right-actions {
   margin-left: auto;
 }
-
-
 
 .form-actions span {
   margin-bottom: 20px;
@@ -102,7 +98,7 @@
 .clear-history {
   background: none;
   border: none;
-  color:var(--red-accent, #FF3B3B);
+  color: var(--red-accent, #ff3b3b);
   cursor: pointer;
   font-weight: 500;
 }
@@ -127,58 +123,53 @@
 /* ===================== PREVIEW CONTAINER ===================== */
 #addPost .preview-container {
   display: flex;
-  
-  
+
   overflow: hidden;
   gap: 20px;
   align-items: flex-start;
- 
+
   justify-content: flex-start;
   margin: 0;
 }
 
 #addPost .preview-container .image-preview-container {
-	display: flex;
-	
-	overflow: hidden;
-	gap: 20px;
-	align-items: flex-start;
-	justify-content: flex-start;
-	height: 100%;
+  display: flex;
+
+  overflow: hidden;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
   max-width: 76%;
   overflow-x: hidden;
   transition: transform 0.3s ease;
- 
 }
 #addPost .preview-container .image-preview-container .preview-track-wrapper {
-	display: flex;
-	overflow: hidden;
-	overflow-x: hidden;
-	
+  display: flex;
+  overflow: hidden;
+  overflow-x: hidden;
 
-	height: 100%;
-	
-
+  height: 100%;
 }
 .preview-track {
   display: flex;
   gap: 20px;
-  	align-items: flex-start;
-	justify-content: flex-start;
+  align-items: flex-start;
+  justify-content: flex-start;
   height: 100%;
   transition: transform 0.3s ease;
 }
 
 .drop-preview-area {
   display: flex;
-   height: 30vh;
+  height: 30vh;
 }
 
 #addPost .preview-item {
   position: relative;
   text-align: center;
   width: auto;
- 
+
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -196,11 +187,11 @@
 #addPost .preview-item img {
   height: 100%;
   width: auto;
- 
+
   border-radius: 2rem;
 }
 #addPost .preview-item img.create-img {
-	cursor: move;
+  cursor: move;
 }
 
 #addPost .preview-item progress {
@@ -208,58 +199,56 @@
   height: 10px;
 }
 
-.editImage {
+.editImage,
+.editVideo {
   position: absolute;
   height: 25% !important;
   cursor: pointer;
 }
 
 #addPost #preview-video.preview-container {
-	flex-wrap: nowrap;
+  flex-wrap: nowrap;
   height: auto;
   align-items: center;
   gap: 5%;
 }
 #drop-area-videolong {
-	min-height: 30vh !important;
+  min-height: 30vh !important;
   max-height: 30vh;
-	
 }
-#addPost #preview-video.preview-container > div img.create-img, 
+#addPost #preview-video.preview-container > div img.create-img,
 #addPost #preview-video.preview-container > div video {
-	width: 100%;
+  width: 100%;
   height: 100%;
   object-fit: cover;
- 
 }
 #addPost #preview-video.preview-container > div video {
   position: absolute;
+  object-fit: contain !important;
 }
 
 #addPost #preview-video .preview-item {
-
-	border-radius: 40px;
-	overflow: hidden;
+  border-radius: 40px;
+  overflow: hidden;
 }
 
-#addPost #preview-video .preview-item{
- width:33%;
+#addPost #preview-video .preview-item {
+  width: 33%;
 }
-#addPost #preview-video .preview-item.video-item{
- width:40%;
- max-height: 35vh;
- border: 1px dashed #888;
- min-height: 35vh;
+#addPost #preview-video .preview-item.video-item {
+  width: 40%;
+  max-height: 35vh;
+  border: 1px dashed #888;
+  min-height: 35vh;
 }
 #addPost #preview-video .preview-item.video-item.file-input-videolong {
-	min-height: 60vh;
-	max-height: 60vh;
+  min-height: 60vh;
+  max-height: 60vh;
 }
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
- 
   flex: 1 0 0;
-  
+
   cursor: pointer;
   justify-content: center;
   gap: 1.5rem;
@@ -267,29 +256,29 @@
   height: 100%;
   border: 0.3vmin dashed #888;
   border-radius: 1rem;
- 
+
   background-color: #2b2b2b;
-  
+
   padding: 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
- 
+
   align-items: center;
-  
+
   color: #ccc;
   position: relative;
   transition: border-color 0.3s ease;
 
   max-width: 100%;
   min-width: 23%;
-  
+
   box-sizing: border-box;
   overflow-x: hidden;
 }
 
 #addPost .drop-area.hover {
-  border-color:var(--blue,#0069FF);
+  border-color: var(--blue, #0069ff);
 }
 
 #addPost .drop-area img {
@@ -306,21 +295,20 @@
 }
 
 #addPost .drop-area .plus-icon {
-	width: 3.5rem;
-	height: 3.5rem;
-	background-color: var(--blue,#0069FF);
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 100%;
-	color: #fff;
-	font-weight: bold;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--blue, #0069ff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100%;
+  color: #fff;
+  font-weight: bold;
 }
-#addPost .drop-area .plus-icon i{
+#addPost .drop-area .plus-icon i {
   line-height: 0;
 }
-
 
 /* ===================== MEDIA PREVIEW ===================== */
 .voice-media {
@@ -334,7 +322,6 @@
 }
 
 #addPost .inner-container .btClose {
- 
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -363,57 +350,50 @@
 }
 /* ===================== Tags ===================== */
 .tag-wrapper {
-	background-color: var(--bg-filter);
-	border-radius: 40px;
-	padding: 0;
+  background-color: var(--bg-filter);
+  border-radius: 40px;
+  padding: 0;
   overflow: hidden;
 }
-.tag-list{
+.tag-list {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  
 }
 .tag-list .tag {
-	padding: 0 30px;
-	font-weight: 400;
-	color: var(--blue, #0069FF);
-	border-radius: 70px;
-	border: none;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	text-decoration: none;
-	background-color: #fff;
-	line-height: 60px;
+  padding: 0 30px;
+  font-weight: 400;
+  color: var(--blue, #0069ff);
+  border-radius: 70px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  background-color: #fff;
+  line-height: 60px;
 }
-
 
 .tag-list .tag:hover,
 .tag-section.selected-tags .tag {
-  	color: var(--white, #ffff);
-    background-color: var(--blue, #0069FF);
-    display: flex;
-    align-items: center;
+  color: var(--white, #ffff);
+  background-color: var(--blue, #0069ff);
+  display: flex;
+  align-items: center;
 }
 
-
-
 .tag-section {
- 
- 
   height: 0;
   overflow: hidden;
   transform: translateY(-100px);
   transition: all 0.3s ease;
   opacity: 0;
   visibility: hidden;
- 
 }
 .tag-section.visible,
 .tag-section.is-visible {
-   border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+  border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.5));
   margin: 0 40px;
   padding: 40px 0;
   display: block;
@@ -430,63 +410,53 @@
   align-items: center;
   margin-bottom: 40px;
 }
-.tag-section.selected-tags
-{
+.tag-section.selected-tags {
   border: 0;
 }
 
-
-
 .tag-list .tag .remove-tag {
-	margin: 0;
-	border: 0;
-	padding: 0;
-	background-color: var(--red-accent, #FF3B3B);
-	font-weight: 400;
-	cursor: pointer;
-	color: #fff;
-	width: 30px;
-	overflow: visible;
-	line-height: 30px;
-	height: 30px;
-	font-size: 100%;
-	min-width: 30px;
-	margin-left: -30px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background-color: var(--red-accent, #ff3b3b);
+  font-weight: 400;
+  cursor: pointer;
+  color: #fff;
+  width: 30px;
+  overflow: visible;
+  line-height: 30px;
+  height: 30px;
+  font-size: 100%;
+  min-width: 30px;
+  margin-left: -30px;
   border-radius: 100px;
   text-align: center;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-
 }
-.tag-list .tag:hover .remove-tag{
+.tag-list .tag:hover .remove-tag {
   opacity: 1;
   visibility: visible;
   margin-left: 10px;
-
 }
 
 .tag-list .tag .remove-tag:hover {
-  color: var(--red-accent, #FF3B3B);
-  background-color: var(--white,#fff);
-  
+  color: var(--red-accent, #ff3b3b);
+  background-color: var(--white, #fff);
 }
 
 /* ====================End Tags ===================== */
 
-
-
-
-
 .resettable-form .response_msg {
-	padding-top: 10px;
-	padding-left: 60px;
-	display: block;
+  padding-top: 10px;
+  padding-left: 60px;
+  display: block;
   margin: 0;
 }
 #createPostError.response_msg {
-	text-align: right;
-	padding-right: 60px;
+  text-align: right;
+  padding-right: 60px;
 }
 .resettable-form .form-row .col-right .textarea-wrapper {
   position: relative;
@@ -494,14 +464,12 @@
   display: flex;
 }
 
-
-
 .resettable-form .form-row .col-right .textarea-wrapper .char-counter {
   position: absolute;
   bottom: 16px;
   right: 42px;
- 
-  color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+
+  color: var(--white-secondary, rgba(255, 255, 255, 0.5));
   pointer-events: none;
 }
 
@@ -523,7 +491,7 @@
   right: 3rem;
   top: 50%;
   transform: translateY(-50%);
-  
+
   opacity: 0.6;
   pointer-events: none;
 }
@@ -560,13 +528,7 @@
 
 /* === Static Waveform Visual Bar (while recording) === */
 .recording-waveform {
-  background: repeating-linear-gradient(
-    to right,
-    white 0px,
-    white 2px,
-    transparent 2px,
-    transparent 6px
-  );
+  background: repeating-linear-gradient(to right, white 0px, white 2px, transparent 2px, transparent 6px);
   height: 16px;
   opacity: 0.6;
   animation: pulse 1s linear infinite;
@@ -583,9 +545,15 @@
 
 /* === Pulse Animation === */
 @keyframes pulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
 }
 
 /* === Custom Audio Preview (after recording ends) === */
@@ -602,13 +570,7 @@
 /* === Waveform style (preview version) === */
 .waveform-bar {
   height: 16px;
-  background: repeating-linear-gradient(
-    to right,
-    white 0,
-    white 2px,
-    transparent 2px,
-    transparent 6px
-  );
+  background: repeating-linear-gradient(to right, white 0, white 2px, transparent 2px, transparent 6px);
   opacity: 0.3;
   animation: pulse 1s linear infinite;
   border-radius: 1rem;
@@ -659,13 +621,12 @@
   display: block;
 }
 
-
 /*********************/
- .form-actions button {
-    min-width: 150px;
-  }
+.form-actions button {
+  min-width: 150px;
+}
 @media screen and (min-width: 2000px) {
-.create_post .inner-container {
+  .create_post .inner-container {
     padding: 7rem 2rem;
   }
   .form-actions button {
@@ -674,7 +635,6 @@
 }
 
 @media screen and (min-width: 3000px) {
-
   #addPost .drop-area .plus-icon {
     width: 7.5rem;
     height: 7.5rem;
@@ -687,7 +647,7 @@
     min-width: 500px;
   }
   .tag-wrapper {
-		border-radius: 70px;
+    border-radius: 70px;
   }
   .tag-list .tag {
     padding: 0 50px;
@@ -695,16 +655,11 @@
   }
 
   .tag-list .tag .remove-tag {
-
-   
     width: 40px;
-    
+
     line-height: 40px;
     height: 40px;
-    
+
     min-width: 40px;
-   
-
   }
-
 }

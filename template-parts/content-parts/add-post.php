@@ -2,8 +2,8 @@
     <div class="inner-container">
         <form id="create_new_post" class=" resettable-form" method="post" data-post-type="text">
             <div id="newImagePost" class="upload">
-            
-                <div  class="drop-preview-area preview-container">
+
+                <div class="drop-preview-area preview-container">
                     <div id="preview-image" class="image-preview-container">
                         <span class="button nav-button prev-button">‹</span>
                         <div class="preview-track-wrapper">
@@ -15,15 +15,15 @@
                         <span class="button nav-button next-button">›</span>
                     </div>
                     <div id="drop-area-image" class="drop-area">
-                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                            <span class="upload-label">Upload Images</span>
+                        <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                        <span class="upload-label">Upload Images</span>
                         <input type="file" id="file-input-image" hidden multiple />
                     </div>
                 </div>
                 <span class="response_msg error" id="imageError"></span>
-               
+
             </div>
-            <div id="newAudioPost" class="upload">         
+            <div id="newAudioPost" class="upload">
                 <div class="form-row">
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
@@ -43,8 +43,8 @@
                 </div>
                 <span class="response_msg error" id="audioError"></span>
             </div>
-            <div  id="newVideoPost" class="upload">
-               
+            <div id="newVideoPost" class="upload">
+
                 <div id="preview-video" class="blockscroll drop-preview-area  preview-container preview-container-video">
                     <div id="drop-area-videocover" class="drop-area none">
                         <div class="upload-content">
@@ -68,24 +68,46 @@
                         </div>
                         <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                     </div>
-                    
+
                 </div>
-              <span class="response_msg error" id="videoError"></span>          
+                <span class="response_msg error" id="videoError"></span>
+
             </div>
-             <div id="crop-container" class="none">
-                    <canvas id="cropcanvas" width="2000" height="2000"></canvas>
-                    <canvas id="croppedCanvas" width="500" height="500"></canvas>
-                    <div id="cropButtons">
-                        <span class="button" id="cropQuit">back</span>
-                        <span class="button btn-blue" id="cropBtn">save</span>
+            <div id="videoTrimContainer" class="none timeline-wrapper">
+                <div class="video-trim-wrapper">
+                    <video id="videoTrim"></video>
+                    <div id="videoTimeline">
+
+
                     </div>
-                    <div id="aspectRatioSelect" class="aspect-ratio-toggle">
-                        <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
-                        <label for="ar-1">1:1 Square</label>
-                        <input type="radio" id="ar-2" name="aspectRatio" value="0.8">
-                        <label for="ar-2">4:5 Vertical</label>
+                    <div id="overlay-left" class="trim-overlay"></div>
+                    <div id="overlay-right" class="trim-overlay"></div>
+                    <!-- Trim window -->
+                    <div id="trim-window" class="trim-window">
+                        <div id="handle-left" class="trim-handle"></div>
+                        <div style="flex:1"></div>
+                        <div id="handle-right" class="trim-handle"></div>
                     </div>
                 </div>
+                <div id="trimButtons">
+                    <span class="button" id="trimQuit">back</span>
+                    <span class="button btn-blue" id="trimBtn">save</span>
+                </div>
+            </div>
+            <div id="crop-container" class="none">
+                <canvas id="cropcanvas" width="2000" height="2000"></canvas>
+                <canvas id="croppedCanvas" width="500" height="500"></canvas>
+                <div id="cropButtons">
+                    <span class="button" id="cropQuit">back</span>
+                    <span class="button btn-blue" id="cropBtn">save</span>
+                </div>
+                <div id="aspectRatioSelect" class="aspect-ratio-toggle">
+                    <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
+                    <label for="ar-1">1:1 Square</label>
+                    <input type="radio" id="ar-2" name="aspectRatio" value="0.8">
+                    <label for="ar-2">4:5 Vertical</label>
+                </div>
+            </div>
 
             <div class="form-row">
                 <div class="col-left">
@@ -104,7 +126,7 @@
                 <div class="col-right">
                     <div class="textarea-wrapper">
                         <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
-                            maxlength="" ></textarea>
+                            maxlength=""></textarea>
                         <span class="char-counter md_font_size" data-target="descriptionNotes">0/250</span>
                     </div>
 
@@ -165,6 +187,6 @@
                 </div>
             </div>
         </form>
-        
+
     </div>
 </div>
