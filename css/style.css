@@ -82,6 +82,15 @@ li > ol {
   margin-left: 1.5em;
 }
 
+#changePasswordBtn {
+  margin: 1rem 0;
+}
+
+.profile-fields input[type="password"] {
+  padding: 0;
+  line-height: 70px;
+}
+
 /*--------------------------------------------------------------
 # Typography
 --------------------------------------------------------------*/
@@ -266,7 +275,7 @@ input[type="submit"]{
 	display: inline-block;
 	text-align:center;
 	background-color: var(--bg-filter);
-	line-height: 60px;
+	line-height: 50px;
 	border-radius: 50px;
 	font-family: inherit;
 	text-decoration: none;

@@ -44,6 +44,401 @@ document.addEventListener("DOMContentLoaded", () => {
   //   });
   // }
 
+
+  /********************* Preview posts functionality ******************************/
+
+  function previewPost(objekt) {
+
+    document.getElementById("cardClicked").setAttribute("postID", objekt.id);
+    document.getElementById("cardClicked").setAttribute("content", objekt.contenttype);
+    
+    const postContainer = document.getElementById("preview-post-container");
+    const array = objekt.media || [];
+
+    const containerleft = postContainer.querySelector(".viewpost-left");
+    const containerright = postContainer.querySelector(".viewpost-right");
+    const post_gallery = containerleft.querySelector(".post_gallery");
+    post_gallery.innerHTML="";
+    const post_contentletf=containerleft.querySelector(".post_content");
+    if(post_contentletf)   post_contentletf.remove();
+
+    const post_contentright=containerright.querySelector(".post_content");
+    
+    
+    const profile_header_left=postContainer.querySelector(".profile-header-left");
+   
+    profile_header_left.addEventListener("click",
+        function handledisLikeClick(event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }  
+      );
+
+    /*--------END: Card profile Header  -------*/
+    
+    /*--------Card Post Title and Text  -------*/
+    
+
+    const cont_post_text = containerright.querySelector(".post_text");
+    const cont_post_title = containerright.querySelector(".post_title h2");
+    const cont_post_time = containerright.querySelector(".timeagao");
+    const cont_post_tags = containerright.querySelector(".hashtags");
+
+    if (document.querySelector(".post_text")) {
+      cont_post_text.innerHTML = document.querySelector(".post_text").innerHTML;
+    } else if (objekt.description) {
+      cont_post_text.innerHTML = objekt.description;
+    }
+
+    if (document.querySelector(".post_title")) {
+      const title_text = document.querySelector(".post_title").childNodes[0].textContent.trim();
+      cont_post_title.innerHTML = title_text;
+    } else if (objekt.title) {
+      cont_post_title.innerHTML = objekt.title;
+    }
+
+    if (document.querySelector(".timeagao")) {
+      cont_post_time.innerHTML = document.querySelector(".timeagao").innerHTML;
+    } else {
+      cont_post_time.innerHTML = "1 sec ago";
+    }
+
+    if (document.querySelector(".hashtags")) {
+      cont_post_tags.innerHTML = document.querySelector(".hashtags").innerHTML;
+    } else if (objekt.tags?.length > 0) {
+      cont_post_tags.innerHTML = objekt.tags.map(tag => `<span>#${tag}</span>`).join(" ");
+    }
+
+
+    /*--------END : Card Post Title and Text  -------*/
+
+    
+    
+    
+
+    if (objekt.contenttype === "audio") {
+      post_gallery.classList.add("audio");
+      post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("video");
+      for (const item of array) {
+        const audio = document.createElement("audio");
+        audio.id = "audio2";
+        audio.src = tempMedia(item.path);
+        audio.controls = true;
+        audio.className = "custom-audio";
+
+        // 1. Erzeuge das <div>-Element
+        const audioContainer = document.createElement("div");
+        //audioContainer.id = "audio-container"; // Setze die ID
+         audioContainer.classList.add("audio-item");
+
+        if (objekt.cover) {
+          const cover = JSON.parse(objekt.cover);
+          img = document.createElement("img");
+          img.classList.add("cover");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(cover[0].path);
+          img.alt = "Cover";
+          audioContainer.appendChild(img);
+        }
+        // 2. Erzeuge das <canvas>-Element
+        const canvas = document.createElement("canvas");
+        canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+
+        // 3. Erzeuge das <button>-Element
+        const button = document.createElement("button");
+        button.id = "play-pause"; // Setze die ID für den Button
+        // button.textContent = "Play"; // Setze den Textinhalt des Buttons
+
+        // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+        let cover = null;
+        if (objekt.cover) {
+          cover = JSON.parse(objekt.cover);
+        }
+        const audio_player = document.createElement("div");
+        audio_player.className = "audio_player_con";
+        const timeinfo = document.createElement("div");
+        timeinfo.className = "time-info";
+        timeinfo.innerHTML = `
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        `;
+        audio_player.appendChild(timeinfo);
+        audio_player.appendChild(canvas);
+        audio_player.appendChild(button);
+        
+        audioContainer.appendChild(audio_player);
+        // audioContainer.appendChild(audio);
+        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+        post_gallery.appendChild(audioContainer);
+
+        initAudioplayer("waveform-preview", audio.src);
+      }
+    } else if (objekt.contenttype === "video") {
+      post_gallery.classList.add("video");
+      if (array.length > 1) post_gallery.classList.add("multi");
+      else post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("audio");
+
+        post_gallery.innerHTML = `
+            <div class="slider-wrapper">
+              <div class="slider-track"></div>
+              <div class="slider-thumbnails"></div>
+              </div>
+          `;
+      const sliderTrack = post_gallery.querySelector(".slider-track");
+      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+      let currentIndex = 0;
+
+      for (const [index, item] of array.entries()) {
+
+        const video = document.createElement("video");
+        video.id = "video2";
+        video.src = tempMedia(extractAfterComma(item.path));
+        video.controls = true;
+        video.className = "custom-video";
+        video.autoplay = (index === 0);  // ✅ Autoplay only for the first video
+        video.muted = false;
+        video.loop = true;
+        
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("slide_item");
+        videoContainer.appendChild(video);
+
+        // Thumbnail
+        const img = document.createElement("img");
+        const src = 'img/audio-bg.png';
+        img.src = src;
+        img.alt = "";
+
+        const timg = document.createElement("div");
+        timg.classList.add("timg");
+
+        const playicon = document.createElement("i");
+        playicon.classList.add("fi", "fi-sr-play");
+
+        timg.appendChild(playicon);
+        timg.appendChild(img);
+        sliderThumb.appendChild(timg);
+        sliderTrack.appendChild(videoContainer);
+      }
+
+      // === Slider Control Logic Outside the Loop === //
+
+      function updateSlider(index) {
+        currentIndex = index;
+
+        const targetItem = sliderTrack.children[index];
+        const offsetLeft = targetItem.offsetLeft;
+
+        sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+        // Manage active class
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+          thumb.classList.toggle("active", i === index);
+        });
+
+        // Play the current video and pause others
+        sliderTrack.querySelectorAll("video").forEach((vid, i) => {
+          //console.log(index +'--'+i);
+          if (i === index) {
+            vid.play();
+          } else {
+            vid.pause();
+            vid.currentTime = 0;
+          }
+        });
+      }
+
+      // Initialize
+      setTimeout(() => updateSlider(0), 50);
+
+      // Add click listeners
+      sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+        thumb.addEventListener("click", () => {
+          updateSlider(index);
+        });
+      });
+
+    } else if (objekt.contenttype === "text") {
+    post_gallery.innerHTML = ""; // Clear gallery if any
+    post_gallery.className = "post_gallery"; // Reset classes
+
+    if (containerleft && containerright) {
+      // Clone content area
+      const textContent = document.createElement("div");
+      textContent.className = "post_content";
+
+      // Create title
+      const titleEl = document.createElement("div");
+      titleEl.className = "post_title";
+      const h2 = document.createElement("h2");
+      h2.textContent = objekt.title || "";
+      titleEl.appendChild(h2);
+
+      // Create description
+      const textEl = document.createElement("div");
+      textEl.className = "post_text";
+      textEl.innerHTML = objekt.description || "";
+
+      // Create hashtags
+      const tagEl = document.createElement("div");
+      tagEl.className = "hashtags";
+      if (objekt.tags && objekt.tags.length) {
+        tagEl.innerHTML = objekt.tags.map(tag => `<span>#${tag}</span>`).join(" ");
+      }
+
+      // Create time (optional)
+      const timeEl = document.createElement("div");
+      timeEl.className = "timeagao";
+      timeEl.textContent = "Just now";
+
+      // Append all to textContent
+      textContent.appendChild(titleEl);
+      textContent.appendChild(textEl);
+      textContent.appendChild(tagEl);
+      textContent.appendChild(timeEl);
+
+      // Insert into container
+      containerleft.prepend(textContent.cloneNode(true));
+    }
+  }
+ else {
+  
+      let img;
+      post_gallery.classList.add("images");
+      post_gallery.classList.remove("video");
+      post_gallery.classList.remove("audio");
+      if (array.length > 1) post_gallery.classList.add("multi");
+      else post_gallery.classList.remove("multi");
+
+      
+        post_gallery.innerHTML = `
+            <div class="slider-wrapper">
+              <div class="slider-track"></div>
+              <div class="slider-thumbnails"></div>
+              </div>
+          `;
+
+      const sliderTrack = post_gallery.querySelector(".slider-track");
+      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+      const imageSrcArray = [];
+      array.forEach((item, index) => {
+        const image_item = document.createElement("div");
+        image_item.classList.add("slide_item");
+
+        const img = document.createElement("img");
+        const timg = document.createElement("img");
+        const src = tempMedia(item.path);
+        img.src = src;
+        timg.src = src;
+        img.alt = "";
+        timg.alt = "";
+
+        
+        
+        image_item.appendChild(timg);
+
+         const timg2 = document.createElement("div");
+         timg2.classList.add("timg");
+          timg2.appendChild(img);
+        sliderThumb.appendChild(timg2);
+
+        const zoomElement = document.createElement("span");
+        zoomElement.className = "zoom";
+        zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+        image_item.appendChild(zoomElement);
+       
+        sliderTrack.appendChild(image_item);
+
+
+        let currentIndex = 0;
+
+        function updateSlider(index) {
+          currentIndex = index;
+
+          const targetItem = sliderTrack.children[index];
+          const offsetLeft = targetItem.offsetLeft;
+
+          sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+          // Manage active class
+          sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+            thumb.classList.toggle("active", i === index);
+          });
+        }
+
+        // Initialize active thumbnail
+        updateSlider(0);
+
+        // Add click listener to each thumbnail
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+          thumb.addEventListener("click", () => {
+            updateSlider(index);
+          });
+        });
+
+
+
+        imageSrcArray.push(src);
+
+        // Open modal on click
+        zoomElement.addEventListener("click", () => {
+          openSliderModal(imageSrcArray, index);
+        });
+      });
+    }
+
+}
+
+
+
+
+  const previewButtons = document.querySelectorAll('#addPostSection .preview-button');
+  const previewSection = document.getElementById('previewSection');
+  const addPostSection = document.getElementById('addPostSection');
+
+  previewButtons.forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+        addPostSection.classList.add('none');
+        previewSection.classList.remove('none');
+    });
+  });
+
+  const backToEditBtn = document.getElementById('backToEdit');
+    if (backToEditBtn) {
+      backToEditBtn.addEventListener('click', function () {
+        addPostSection.classList.remove('none');
+        previewSection.classList.add('none');
+    });
+  }
+
+  const sidebarTabs = document.querySelectorAll('.form-tab-js a');
+    sidebarTabs.forEach(tab => {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Hide preview, show add-post
+            previewSection.classList.add('none');
+            addPostSection.classList.remove('none');
+
+            // Optionally: toggle active class for UI
+            document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
+            this.closest('.form-tab-js').classList.add('active');
+
+            // Call your custom content-switching logic if needed (e.g. loadImageForm(), loadVideoForm())
+            // You may already have something like that in your JS handling post type switch.
+        });
+    });
+
+    
+  /**********************************************************************/
+
   const createPostNotes = document.getElementById("createPostNotes");
   if (createPostNotes) {
     createPostNotes.addEventListener("click", async (event) => {
@@ -115,6 +510,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  /**********************************************************************/
+  /** TEXT POST PREVIEW **/
+  const previewTextPost = document.getElementById("previewTextPost");
+  if (previewTextPost) {
+    previewTextPost.addEventListener("click", () => {
+      const title = document.getElementById("titleNotes")?.value.trim() || "";
+      const description = document.getElementById("descriptionNotes")?.value.trim() || "";
+      const tags = getTagHistory(); // Should return an array like ['fun', 'update']
+
+      const objekt = {
+        id: "preview-text-post",  
+        contenttype: "text",
+        title,
+        description,
+        tags,
+        media: [],
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
     form.addEventListener("reset", function (event) {
@@ -188,6 +607,36 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**********************************************************************/
+  /** IMAGE POST PREVIEW **/
+  const previewImagePost = document.getElementById("previewImagePost");
+
+  if (previewImagePost) {
+    previewImagePost.addEventListener("click", () => {
+      const title = document.getElementById("titleImage")?.value.trim() || "";
+      const description = document.getElementById("descriptionImage")?.value.trim() || "";
+      const tags = tag_getTagArray();
+
+      // Get all images inside .create-img wrappers
+      const imageWrappers = document.querySelectorAll(".create-img img");
+      const media = Array.from(imageWrappers)
+        .map((img) => img.src)
+        .filter((src) => src.startsWith("data:image/"));
+
+      const objekt = {
+        id: "preview-image-post",
+        contenttype: "image",
+        title,
+        description,
+        tags,
+        media, // array of image data URLs
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+
+  /**********************************************************************/
   const createPostAudio = document.getElementById("createPostAudio");
   if (createPostAudio) {
     createPostAudio.addEventListener("click", async (event) => {
@@ -225,6 +674,41 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  /**********************************************************************/
+  /** AUDIO POST PREVIEW **/
+  const previewAudioPost = document.getElementById("previewAudioPost");
+  if (previewAudioPost) {
+    previewAudioPost.addEventListener("click", () => {
+      const title = document.getElementById("titleAudio")?.value.trim() || "";
+      const description = document.getElementById("descriptionAudio")?.value.trim() || "";
+      const audioWrappers = document.querySelectorAll(".create-audio");
+      const tags = tag_getTagArray();
+
+      const media = Array.from(audioWrappers)
+        .map((audio) => audio.src)
+        .filter((src) => src.startsWith("data:audio/"));
+
+      const coverImg = document.querySelector("#preview-cover img");
+      const canvas = document.querySelector("#preview-audio canvas");
+      const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+
+      const objekt = {
+        title,
+        description,
+        tags,
+        media,
+        cover,
+        contenttype: "audio",
+      };
+
+      previewPost(objekt);
+    });
+  }
+
+
+
+  /**********************************************************************/
   const createPostVideo = document.getElementById("createPostVideo");
   if (createPostVideo) {
     createPostVideo.addEventListener("click", async (event) => {
@@ -257,6 +741,33 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  /**********************************************************************/
+  /** VIDEO POST PREVIEW **/
+  const previewVideoPost = document.getElementById("previewVideoPost");
+  if (previewVideoPost) {
+    previewVideoPost.addEventListener("click", () => {
+      const title = document.getElementById("titleVideo")?.value.trim() || "";
+      const description = document.getElementById("descriptionVideo")?.value.trim() || "";
+      const videoWrappers = document.querySelectorAll(".create-video");
+      const tags = tag_getTagArray();
+
+      const media = Array.from(videoWrappers)
+        .map((vid) => vid.src)
+        .filter((src) => src.startsWith("data:video/"));
+
+      const objekt = {
+        title,
+        description,
+        tags,
+        media,
+        contenttype: "video",
+      };
+
+      previewPost(objekt);
+    });
+  }
+
 
   /******************************************************************** */
   // ===== INITIAL SETUP =====

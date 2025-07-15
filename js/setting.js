@@ -271,18 +271,18 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault(); // Prevent form reload
     // Retrieve input values for form
     const username = document.getElementById("newusername").value;
-    const password = document.getElementById("password").value;
+    const userPassword = document.getElementById("userPassword").value;
     // Disable form and show loading indicator (optional UI improvement)
     const submitButton = document.getElementById("changeUserBtn");
     submitButton.disabled = true;
     try {
       // Attempt to change the username after passing validations
-      const result = await sendUpdateUsername(username, password);
+      const result = await sendUpdateUsername(username, userPassword);
       //console.log(result.updateUsername.ResponseCode);
       if (result.updateUsername.status === "success" && result.updateUsername.ResponseCode === "11007") {
         //  Reset the input field
         document.getElementById("newusername").value = "";
-        document.getElementById("password").value = "";
+        document.getElementById("userPassword").value = "";
         document.getElementById("response_msg_change_username").classList.add(result.updateUsername.status);
         document.getElementById("response_msg_change_username").innerHTML = userfriendlymsg(result.updateUsername.ResponseCode);
         setTimeout(() => {
@@ -310,40 +310,38 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     const expassword      = document.getElementById("old_password").value.trim();
-    const newpassword     = document.getElementById("new_password").value.trim();
-    const repeatpassword  = document.getElementById("repeat_password").value.trim();
-    const msgElem         = document.getElementById("response_msg_change_password");
+    const newpassword     = document.getElementById("password").value.trim();
+    const confirmPassword  = document.getElementById("confirm_password").value.trim();
+    const msgElem         = document.getElementById("confirmValidationMessage");
     const submitButton    = document.getElementById("changePasswordBtn");
 
     // clear out any old message classes
     msgElem.classList.remove("error", "success");
     msgElem.innerHTML = "";
 
-    //  Check match:
-    if (newpassword !== repeatpassword) {
-      msgElem.classList.add("error");
-      msgElem.innerHTML = "Passwords do not match";
-      return; // stop here
-    }
-
     // Password validation
-      const passwordMinLength = 8; // Minimum password length
-      const passwordRegex = /^(?=.*[A-Z]).+$/; // Must contain at least one capital letter
+    const passwordMinLength = 8; // Minimum password length
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;
 
-    // Check if the password meets the minimum length
+
+    // Password validation checks
     if (newpassword.length < passwordMinLength) {
-      msgElem.classList.add("error");
-      msgElem.innerHTML = "The password must be at least 8 characters long!";
-      
-      return;
+      return displayValidationMessage(userfriendlymsg("Password too short (min. 8 chars)!!"), "confirmValidationMessage");
     }
-
-    // Check if the password contains a capital letter
+    if (!/[A-Z]/.test(newpassword)) {
+      return displayValidationMessage(userfriendlymsg("Add at least 1 uppercase letter!!"), "confirmValidationMessage");
+    }
+    if (!/\d/.test(newpassword)) {
+      return displayValidationMessage(userfriendlymsg("Add at least 1 number!!"), "confirmValidationMessage");
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newpassword)) {
+      return displayValidationMessage(userfriendlymsg("Include a special character (!@#$...)!!"), "confirmValidationMessage");
+    }
     if (!passwordRegex.test(newpassword)) {
-      msgElem.classList.add("error");
-      msgElem.innerHTML = "The password must contain at least one capital letter!";
-      
-      return;
+      return displayValidationMessage(userfriendlymsg("Password does not meet requirements!!"), "confirmValidationMessage");
+    }
+    if (newpassword !== confirmPassword) {
+      return displayValidationMessage(userfriendlymsg("Passwords do not match!!"), "confirmValidationMessage");
     }
 
     //  disable button while we wait
@@ -355,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (status === "success" && ResponseCode === "11005") {
         // reset fields
-        ["old_password","new_password","repeat_password"].forEach(id => 
+        ["old_password", "password", "confirm_password"].forEach(id => 
           document.getElementById(id).value = ""
         );
         msgElem.classList.add("success");
@@ -371,14 +369,14 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       submitButton.disabled = false;
     }
-  });
+});
 
   document.getElementById("changeemailForm").addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent form reload
     // Retrieve input values for form
     
     const email = document.getElementById("new_email").value;
-    const password = document.getElementById("yourpassword").value;
+    const emailPassword = document.getElementById("yourpassword").value;
     const msgElem   = document.getElementById("response_msg_change_email");
    
     // Disable form and show loading indicator (optional UI improvement)
@@ -402,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     submitButton.disabled = true;
     try {
       // Attempt to change the password after passing validations
-      const result = await sendUpdateEmail(email, password);
+      const result = await sendUpdateEmail(email, emailPassword);
       const { status, ResponseCode } = result.updateEmail;
 
       if (status === "success" && ResponseCode === "11006") {

@@ -934,7 +934,7 @@ async function viewed(object) {
   // console.log(object.id);
 }
 
-  async function postClicked(objekt) {
+async function postClicked(objekt) {
     const UserID = getCookie("userID");
     if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
     togglePopup("cardClicked");
@@ -1399,7 +1399,7 @@ async function viewed(object) {
     });
 
 
-  }
+}
 
 
   function openSliderModal(images, startIndex = 0) {

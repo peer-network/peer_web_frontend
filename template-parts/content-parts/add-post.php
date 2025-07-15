@@ -71,7 +71,7 @@
 
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button" class="btn-gray bold">Preview</button>
+                    <button id="previewTextPost" type="button" class="preview-button btn-gray bold">Preview</button>
                     <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">
@@ -175,8 +175,8 @@
 
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button">Preview</button>
-                    <button type="reset">Clear Fields</button>
+                    <button id="previewImagePost" class="preview-button btn-gray bold" type="button">Preview</button>
+                    <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">
                     <span class="form-note">You will spend 1 free post</span>
@@ -325,8 +325,8 @@
 
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button">Preview</button>
-                    <button type="reset">Clear Fields</button>
+                    <button id="previewAudioPost" class="preview-button btn-gray bold" type="button">Preview</button>
+                    <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">
                     <span class="form-note">You will spend 1 free post</span>
@@ -432,8 +432,8 @@
 
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button">Preview</button>
-                    <button type="reset">Clear Fields</button>
+                    <button id="previewVideoPost" class="preview-button btn-gray bold" type="button">Preview</button>
+                    <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">
                     <span class="form-note">You will spend 1 free post</span>
