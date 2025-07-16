@@ -15,7 +15,8 @@
 #cropcanvas:active {
   cursor: grabbing;
 }
-#crop-container {
+#crop-container,
+#videoTrimContainer {
   position: absolute;
   top: 0;
   left: 0;
@@ -28,20 +29,30 @@
   flex-direction: column;
   z-index: 1;
 }
+
+#videoTrim {
+  width: 100%;
+  height: auto;
+}
 #aspectRatioSelect {
   top: 10px;
   right: 10px;
   z-index: 1000;
 }
-#cropButtons button {
+#cropButtons button,
+#trimButtons button {
   border: 1px solid #fff;
 }
-#cropButtons {
+#cropButtons,
+#trimButtons {
   display: flex;
   justify-content: space-evenly;
   width: 50%;
 }
-
+#trimButtons {
+  margin-top: 8rem;
+  z-index: 1000;
+}
 .aspect-ratio-toggle {
   display: flex;
   align-items: center;
@@ -52,9 +63,9 @@
 }
 
 .aspect-ratio-toggle label {
-  color: var(--white,#fff);
+  color: var(--white, #fff);
   padding: 1.2em;
-  
+
   margin-left: -1px;
   cursor: pointer;
   position: relative;
@@ -79,8 +90,8 @@
   margin-left: -1em !important;
 }
 .aspect-ratio-toggle input[type="radio"]:checked + label {
-  background: var(--white,#fff) !important;
-  color:var(--black,#000);
+  background: var(--white, #fff) !important;
+  color: var(--black, #000);
   z-index: 3;
   font-weight: bold;
 }
@@ -112,4 +123,121 @@ implement in all-post.css
 .draggable.dragging {
   opacity: 0.5;
   z-index: 10;
+}
+
+#videoTrimContainer {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  flex-direction: column;
+  z-index: 99;
+  margin-top: -36rem;
+}
+
+#videoTimeline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+  overflow-x: auto;
+  position: absolute;
+  left: 0;
+  gap: 0 1rem;
+}
+#videoTimeline img {
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 1rem;
+  width: 10%;
+}
+.timeline-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 40px auto;
+  position: relative;
+  -webkit-user-select: none; /* Safari compatibility */
+  user-select: none;
+}
+#timeline-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background: #eee;
+  border-radius: 8px;
+  padding: 12px 0;
+  z-index: 1;
+  position: relative;
+}
+#timeline-container img {
+  flex: 1 1 0;
+  max-width: 120px;
+  min-width: 40px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 0 2px;
+  background: #bbb;
+  pointer-events: none; /* Keine Maus-Interaktion */
+}
+
+/* Overlays */
+.trim-overlay {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: rgba(40, 40, 40, 0.55);
+  z-index: 3;
+  pointer-events: none;
+  transition: background 0.15s;
+}
+
+/* Trim-Bereich */
+.trim-window {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border: 3px solid #2ce;
+  border-radius: 7px;
+  background: rgba(44, 222, 255, 0.06);
+  z-index: 4;
+  box-sizing: border-box;
+  cursor: grab;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+/* Drag Handles */
+.trim-handle {
+  width: 18px;
+  height: 70%;
+  min-height: 30px;
+  background: #fff;
+  border: 2px solid #2ce;
+  border-radius: 6px;
+  cursor: ew-resize;
+  z-index: 6;
+  margin: 0 -10px;
+  box-shadow: 0 2px 8px #0002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.trim-handle::after {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 60%;
+  margin: 0 auto;
+  background: #2ce;
+  border-radius: 3px;
 }

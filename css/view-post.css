@@ -10,6 +10,15 @@
   backdrop-filter: blur(5px);
 }
 
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.previewPost .inner-container {
+  top: 47% !important;
+  height: 80vh !important;
+}
 
 .viewpost .inner-container {
   width: 90vw;
@@ -104,7 +113,7 @@
   
 }
 .viewpost .post_content .hashtags {
-
+  color: #0069FF;
   margin-top: 20px;
   margin-bottom: 30px;
 }
@@ -831,6 +840,49 @@
 }
 .post_comment:hover button{
   background-color: #fff;
+}
+
+.foot-end {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 40%;
+  position: absolute;
+  bottom: 0;
+  margin-left: 120px;
+  margin-bottom: 100px;
+}
+
+.switch-buttons {
+  display: flex;
+  border-radius: 2.5rem;
+  overflow: hidden;
+  background-color: var(--dark-inactive, #323232);;
+  width: 100%;
+  max-width: 400px;
+}
+
+.switch-btn {
+  flex: 1;
+  background: var(--dark-inactive, #323232);
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  transition: background 0.2s, color 0.2s;
+}
+button:not(:disabled):hover.switch-btn {
+  background: none;
+  color: none;
+}
+
+.switch-btn.active {
+  background: #fff;
+  color: #000;
+}
+
+.cancel_Btn {
+  margin: 0;
 }
 
 @media screen and (min-width: 2000px) {
