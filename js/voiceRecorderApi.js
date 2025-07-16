@@ -145,7 +145,7 @@ function renderAudioPreview(preview, url) {
 
 function appendAudioToForm(blob) {
   console.log("i am here")
-  const form = document.getElementById("newAudioPost");
+  const form = document.getElementById("preview-audio");
   const file = new File([blob], 'voice-recording.webm', { type: 'audio/webm' });
   console.log(file);
   const input = document.createElement('input');

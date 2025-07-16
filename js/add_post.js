@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .filter((src) => src.startsWith("data:image/"));
 
       if (combinedBase64.length === 0) {
-        imgErrorEl.textContent = "Please select  least one image.";
+        imgErrorEl.textContent = "Please select at least one image.";
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
@@ -438,13 +438,16 @@ document.addEventListener("DOMContentLoaded", () => {
       titleErrorEl.textContent = "Title must be at least 5 characters.";
       hasError = true;
     }
-
+    const dec_char_count=setupCharCounter(descEl);
     if (!description) {
       descErrorEl.textContent = "Description is required.";
       hasError = true;
     } else if (description.length < 10) {
       descErrorEl.textContent = "Description must be at least 10 characters.";
       hasError = true;
+    }else if(!dec_char_count){
+       hasError = true;
+      
     }
 
     /*if (tags.length === 0) {
@@ -632,16 +635,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /******************************************************************** */
+  
   descEl.addEventListener("keyup", (e) => {
-    let text = descEl.value;
-    const span = document.querySelector("span.char-counter");
-    if (text.length > 250) {
-      Merror("Warning", "Maximum length exceeded!");
-      text = text.substr(0, 250);
-      descEl.value = text;
-    }
-    span.textContent = `${text.length}/250`;
+    setupCharCounter(e.target);
   });
+  function setupCharCounter(descEl){
+    let text = descEl.value;
+    const descriptionError= document.getElementById("descriptionError");
+    descriptionError.textContent="";
+    const char_count = document.querySelector("span.char-counter .char_count");
+    let char_limit = document.querySelector("span.char-counter .char_limit").textContent;
+
+    char_limit =char_limit *1;
+    //console.log(char_limit);
+    char_count.textContent = text.length;
+    if (text.length > char_limit) {
+      descriptionError.textContent="Char Maximum length exceeded!";
+      //text = text.substr(0, char_limit);
+      //descEl.value = text;
+        return false;
+    }else{
+      return true;
+    }
+  }
 
   if (tagInput) {
     tagInput.value = "";
@@ -963,8 +979,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Hide all forms
       document.querySelectorAll(".upload").forEach((form) => form.classList.remove("active"));
 
-      // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
-      const id = this.id.replace("create", "new") + "Post";
+      // Get target form ID from clicked <a> id (e.g., createimage => preview-image)
+      const id = this.id.replace("create", "preview-");
       const form = document.getElementById(id);
       if (form) form.classList.add("active");
       const postform = document.getElementById("create_new_post");
@@ -973,7 +989,18 @@ document.addEventListener("DOMContentLoaded", () => {
         postform.setAttribute("data-post-type", post_type);
       }
       // Check if it's the audio form (music) and init
-      if (id === "newAudioPost") initAudioEvents(); // attach mic click handler
+      if (id === "preview-audio") initAudioEvents(); // attach mic click handler
+
+
+     
+      const char_limit = document.querySelector("span.char-counter .char_limit");
+      if (id === "preview-notes" ){
+        char_limit.textContent="20000";
+      }else{
+        char_limit.textContent="500";
+      }
+      setupCharCounter(descEl);
+
     });
   });
 
@@ -1107,7 +1134,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
-
+    const ErrorCont =document.querySelector("#preview-" + uploadtype + " .response_msg");
+    ErrorCont.innerHTML="";
     let previewContainer;
     if (uploadtype === "image") {
       previewContainer = document.querySelector("#preview-" + uploadtype + " .preview-track");
@@ -1121,7 +1149,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const file = files[i];
       size += file.size;
       if (size > maxSizeMB * 1024 * 1024) {
-        Merror("Error", "The file is too large. Please select a file(s) under 4MB.");
+       // Merror("Error", "The file is too large. Please select a file(s) under 5MB.");
+       ErrorCont.innerHTML="The file is too large. Please select a file(s) under 5MB.";
         return;
       }
     }
@@ -1150,7 +1179,13 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>${file.name}</p>
         <img class="image-wrapper create-img none" alt="Vorschau" />
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-        <img src="svg/edit.svg" class="editImage " alt="delete">
+        <span class="editImage" >
+          <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
+              <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
+              <circle cx="30.4986" cy="29.9986" r="11.0806" stroke="white" stroke-width="3"/>
+          </svg>
+          Click to crop
+        </span>
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
         if (previewContainer.children.length > 0) {
           previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
@@ -1196,6 +1231,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       const base64 = await convertImageToBase64(file);
+            // Create a global map to store images
+      const base64ImagesMap = new Map();
       let element = null;
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
@@ -1204,7 +1241,9 @@ document.addEventListener("DOMContentLoaded", () => {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
         element = previewItem.querySelector("video");
-        sessionStorage.setItem(file.name, base64);
+        //sessionStorage.setItem(file.name, base64);
+        // Store base64
+        base64ImagesMap.set(file.name, base64);
       }
       element.src = base64;
       element.classList.remove("none");
@@ -1304,11 +1343,11 @@ document.addEventListener("DOMContentLoaded", () => {
         nextBtn.classList.add('none');
         prevBtn.classList.add('none');
       }
-      //console.log("Is first item visible?", isElementInViewportX(track, container));
+      console.log("Is first item visible?", isElementInViewportX(track, container));
     }
 
     // Call once on load
-    toggleScrollButtons();
+    setTimeout(toggleScrollButtons, 200);
 
     // Optionally recheck on window resize or DOM change
     window.addEventListener('resize', toggleScrollButtons);

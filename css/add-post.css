@@ -146,7 +146,8 @@
 }
 #addPost .preview-container .image-preview-container span.button {
 	width: 100px;
-	height: 100px;
+  min-width: unset;
+	height: 150px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -154,6 +155,14 @@
 	margin: 0;
 	line-height: inherit;
 	border: 0;
+	background-color: transparent;
+}
+#addPost .preview-container .image-preview-container span.button i {
+	line-height: 0;
+}
+#addPost .preview-container .image-preview-container span.button:hover{
+
+	background-color: var(--bg-filter);
 }
 #addPost .preview-container .image-preview-container .preview-track-wrapper {
   display: flex;
@@ -187,6 +196,9 @@
   align-content: center;
   align-items: center;
   height: 100%;
+  border-radius: 2rem;
+  overflow: hidden;
+  transition: all 0.3s;
 }
 
 #addPost .preview-item p {
@@ -199,10 +211,30 @@
   height: 100%;
   width: auto;
 
-  border-radius: 2rem;
+  
 }
 #addPost .preview-item img.create-img {
   cursor: move;
+}
+#preview-image .preview-item .editImage {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	position: absolute;
+	height: auto !important;
+	transform: translateY(50px);
+	opacity: 0;
+	transition: all 0.3s;
+  z-index: 1;
+}
+
+#preview-image .preview-item:hover img.create-img
+{
+  opacity: 0.5;
+}
+#preview-image .preview-item:hover .editImage  {
+  transform: translateY(0);
+	opacity: 1;
 }
 
 #addPost .preview-item progress {
@@ -217,7 +249,7 @@
   cursor: pointer;
 }
 
-#addPost #preview-video.preview-container {
+#addPost #preview-video .preview-container {
   flex-wrap: nowrap;
   height: auto;
   align-items: center;
@@ -227,13 +259,13 @@
   min-height: 30vh !important;
   max-height: 30vh;
 }
-#addPost #preview-video.preview-container > div img.create-img,
-#addPost #preview-video.preview-container > div video {
+#addPost #preview-video .preview-container > div img.create-img,
+#addPost #preview-video .preview-container > div video {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-#addPost #preview-video.preview-container > div video {
+#addPost #preview-video .preview-container > div video {
   position: absolute;
   object-fit: contain !important;
 }
