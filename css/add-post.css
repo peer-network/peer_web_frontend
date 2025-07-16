@@ -1,5 +1,5 @@
 .create_post .inner-container {
-	padding: 7rem 5rem;
+  padding: 7rem 5rem;
 }
 
 /* ===================== UPLOAD CONTROLS ===================== */
@@ -101,7 +101,7 @@
 .clear-history {
   background: none;
   border: none;
-  color:var(--red-accent, #FF3B3B);
+  color: var(--red-accent, #FF3B3B);
   cursor: pointer;
   font-weight: 500;
 }
@@ -127,39 +127,40 @@
 #addPost .preview-container {
   display: flex;
   flex-wrap: wrap;
-  
+
   overflow: hidden;
   gap: 20px;
   align-items: flex-start;
- 
+
   justify-content: flex-start;
   margin: 15px 0px 20px 0px;
 }
+
 #addPost .preview-container .image-preview-container {
-	display: flex;
-	
-	overflow: hidden;
-	gap: 20px;
-	align-items: flex-start;
-	justify-content: flex-start;
-	height: 100%;
+  display: flex;
+
+  overflow: hidden;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
   max-width: 76%;
   overflow-x: auto;
- 
+
 }
 
 
 
 .drop-preview-area {
   display: flex;
-   height: 30vh;
+  height: 30vh;
 }
 
 #addPost .preview-item {
   position: relative;
   text-align: center;
   width: auto;
- 
+
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -177,7 +178,7 @@
 #addPost .preview-item img {
   height: 100%;
   width: auto;
- 
+
   border-radius: 2rem;
 }
 
@@ -195,9 +196,9 @@
 
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
- 
+
   flex: 1 0 0;
-  
+
   cursor: pointer;
   justify-content: center;
   gap: 1.5rem;
@@ -205,14 +206,14 @@
   height: 100%;
   border: 0.3vmin dashed #888;
   border-radius: 1rem;
- 
+
   background-color: #2b2b2b;
-  
+
   padding: 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
- 
+
   align-items: center;
   min-height: 18rem;
   color: #ccc;
@@ -221,7 +222,7 @@
 
   max-width: 100%;
   min-width: 23%;
-  
+
   box-sizing: border-box;
   overflow-x: hidden;
 }
@@ -261,6 +262,12 @@
 .voice-media {
   background-color: #333;
   border-radius: 1rem;
+  position: relative;
+  padding: 40px;
+}
+
+.voice-media .recording-bar-img {
+  width: 100%;
 }
 
 /* ===================== IMAGE PREVIEW ===================== */
@@ -269,7 +276,7 @@
 }
 
 #addPost .inner-container .btClose {
- 
+
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -296,59 +303,63 @@
   font-weight: 600;
   font-size: 1rem;
 }
+
 /* ===================== Tags ===================== */
 .tag-wrapper {
-	background-color: var(--bg-filter);
-	border-radius: 70px;
-	padding: 0;
+  background-color: var(--bg-filter);
+  border-radius: 70px;
+  padding: 0;
   overflow: hidden;
 }
-.tag-list{
+
+.tag-list {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  
+
 }
+
 .tag-list .tag {
-	padding: 0 30px;
-	font-weight: 400;
-	color: var(--blue, #0069FF);
-	border-radius: 70px;
-	border: none;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	text-decoration: none;
-	background-color: #fff;
-	line-height: 60px;
+  padding: 0 30px;
+  font-weight: 400;
+  color: var(--blue, #0069FF);
+  border-radius: 70px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  background-color: #fff;
+  line-height: 60px;
 }
 
 
 .tag-list .tag:hover,
 .tag-section.selected-tags .tag {
-  	color: var(--white, #ffff);
-    background-color: var(--blue, #0069FF);
-    display: flex;
-    align-items: center;
+  color: var(--white, #ffff);
+  background-color: var(--blue, #0069FF);
+  display: flex;
+  align-items: center;
 }
 
 
 
 .tag-section {
- 
- 
+
+
   height: 0;
   overflow: hidden;
   transform: translateY(-100px);
   transition: all 0.3s ease;
   opacity: 0;
   visibility: hidden;
- 
+
 }
+
 .tag-section.visible,
 .tag-section.is-visible {
-   border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+  border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
   margin: 0 40px;
   padding: 40px 0;
   display: block;
@@ -359,34 +370,35 @@
   overflow: visible;
   transform: translateY(0);
 }
+
 .tag-section .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
 }
-.tag-section.selected-tags
-{
+
+.tag-section.selected-tags {
   border: 0;
 }
 
 
 
 .tag-list .tag .remove-tag {
-	margin: 0;
-	border: 0;
-	padding: 0;
-	background-color: var(--red-accent, #FF3B3B);
-	font-weight: 400;
-	cursor: pointer;
-	color: #fff;
-	width: 30px;
-	overflow: visible;
-	line-height: 30px;
-	height: 30px;
-	font-size: 100%;
-	min-width: 30px;
-	margin-left: -30px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background-color: var(--red-accent, #FF3B3B);
+  font-weight: 400;
+  cursor: pointer;
+  color: #fff;
+  width: 30px;
+  overflow: visible;
+  line-height: 30px;
+  height: 30px;
+  font-size: 100%;
+  min-width: 30px;
+  margin-left: -30px;
   border-radius: 100px;
   text-align: center;
   opacity: 0;
@@ -394,7 +406,8 @@
   transition: all 0.3s ease;
 
 }
-.tag-list .tag:hover .remove-tag{
+
+.tag-list .tag:hover .remove-tag {
   opacity: 1;
   visibility: visible;
   margin-left: 10px;
@@ -403,8 +416,8 @@
 
 .tag-list .tag .remove-tag:hover {
   color: var(--red-accent, #FF3B3B);
-  background-color: var(--white,#fff);
-  
+  background-color: var(--white, #fff);
+
 }
 
 /* ====================End Tags ===================== */
@@ -414,15 +427,17 @@
 
 
 .resettable-form .response_msg {
-	padding-top: 10px;
-	padding-left: 60px;
-	display: block;
+  padding-top: 10px;
+  padding-left: 60px;
+  display: block;
   margin: 0;
 }
+
 #createPostError.response_msg {
-	text-align: right;
-	padding-right: 60px;
+  text-align: right;
+  padding-right: 60px;
 }
+
 .resettable-form .form-row .col-right .textarea-wrapper {
   position: relative;
   max-height: 250px;
@@ -435,7 +450,7 @@
   position: absolute;
   bottom: 16px;
   right: 42px;
- 
+
   color: var(--white-secondary, rgba(255, 255, 255, 0.50));
   pointer-events: none;
 }
@@ -458,29 +473,41 @@
   right: 3rem;
   top: 50%;
   transform: translateY(-50%);
-  
+
   opacity: 0.6;
   pointer-events: none;
 }
 
 /* === Mic Button (before recording) === */
 .micButton {
-  background: transparent;
-  /* border: 2px solid white;
-  border-radius: 50%; */
-  font-size: 2rem;
-   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  padding: 1rem;
-  transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
 }
 
-.micButton.recording {
-  background: rgba(255, 255, 255, 0.1);
+.micButton span.icon-mic {
+    background: var(--blue);
+    display: flex;
+    width: 200px;
+    height: 200px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+}
+
+.voice-media.active .micButton {
+    right: 0;
+    transform: translate(0%, -50%);
+}
+
+.voice-media.active .micButton span.icon-mic {
+    background: var(--bg-filter);
+    border: 3px solid;
 }
 
 /* === Recording Box (appears when recording starts) === */
@@ -495,13 +522,11 @@
 
 /* === Static Waveform Visual Bar (while recording) === */
 .recording-waveform {
-  background: repeating-linear-gradient(
-    to right,
-    white 0px,
-    white 2px,
-    transparent 2px,
-    transparent 6px
-  );
+  background: repeating-linear-gradient(to right,
+      white 0px,
+      white 2px,
+      transparent 2px,
+      transparent 6px);
   height: 16px;
   opacity: 0.6;
   animation: pulse 1s linear infinite;
@@ -518,9 +543,17 @@
 
 /* === Pulse Animation === */
 @keyframes pulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+  0% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
 }
 
 /* === Custom Audio Preview (after recording ends) === */
@@ -537,13 +570,11 @@
 /* === Waveform style (preview version) === */
 .waveform-bar {
   height: 16px;
-  background: repeating-linear-gradient(
-    to right,
-    white 0,
-    white 2px,
-    transparent 2px,
-    transparent 6px
-  );
+  background: repeating-linear-gradient(to right,
+      white 0,
+      white 2px,
+      transparent 2px,
+      transparent 6px);
   /* opacity: 0.3;
   animation: pulse 1s linear infinite; */
   border-radius: 1rem;
@@ -571,6 +602,9 @@
 /* === Time Text (live timer while playing) === */
 .record-time {
   color: white;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
 }
 
 /* default: hide all */
@@ -594,16 +628,36 @@
   display: block;
 }
 
+#preview-audio .record-again {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--blue);
+    width: 100%;
+    padding: 0 65px;
+    line-height: 100px;
+    border-radius: 100px;
+    font-size: 24px;
+}
 
+#preview-audio .record-again span.icon-mic {
+    font-size: 50px;
+    line-height: 0;
+}
+#preview-audio .record-again span.icon-mic svg {
+    width: 38px;
+    height: auto;
+}
 /*********************/
 .form-actions button {
-	min-width: 300px;
+  min-width: 300px;
 }
 
 @media screen and (min-width: 3000px) {
   .form-actions button {
     min-width: 500px;
   }
+
   .tag-list .tag {
     padding: 0 50px;
     line-height: 100px;
@@ -611,15 +665,16 @@
 
   .tag-list .tag .remove-tag {
 
-   
+
     width: 40px;
-    
+
     line-height: 40px;
     height: 40px;
-    
+
     min-width: 40px;
-   
+
 
   }
 
 }
+

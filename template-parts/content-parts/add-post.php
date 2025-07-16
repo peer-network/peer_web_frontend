@@ -2,7 +2,6 @@
     <div class="inner-container">
         <form id="create_new_post" class=" resettable-form" method="post" data-post-type="text">
             <div id="newImagePost" class="upload">
-
                 <div class="drop-preview-area preview-container">
                     <div id="preview-image" class="image-preview-container">
                     </div>
@@ -13,7 +12,6 @@
                     </div>
                 </div>
                 <span class="response_msg error" id="imageError"></span>
-
             </div>
             <div id="newAudioPost" class="upload">
                 <div class="form-row">
@@ -27,11 +25,42 @@
                     </div>
                     <div class="col-right">
                         <div id="voice-record-wrapper" class="voice-media">
-                            <img class="micButton" src="img/voice-icon.png" alt="Audio upload" />
+                            <img class="recording-bar-img" src="svg/recording-bar.svg" alt="Audio upload" />
+                            
+                            <div class="micButton">
+                                       <span class="icon-mic">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="82" height="104" viewBox="0 0 82 104"
+                                        fill="none">
+                                        <rect x="22.3145" y="3.5" width="37.4444" height="59.6765" rx="18.7222"
+                                            stroke="white" stroke-width="7" stroke-linecap="round" />
+                                        <path
+                                            d="M37.5371 99.9999V82.3603C16.7879 80.5857 0.5 63.1843 0.5 41.9755V40.7421C0.5 38.8091 2.067 37.2421 4 37.2421C5.933 37.2421 7.5 38.8091 7.5 40.7421V41.9755C7.5 60.4975 22.5151 75.5126 41.0371 75.5126C59.5592 75.5126 74.5748 60.4977 74.5752 41.9755V40.7421C74.5752 38.8091 76.1422 37.2421 78.0752 37.2421C80.0081 37.2422 81.5752 38.8092 81.5752 40.7421V41.9755C81.5747 63.1844 65.2864 80.5857 44.5371 82.3603V99.9999C44.5371 101.933 42.9701 103.5 41.0371 103.5C39.1041 103.5 37.5371 101.933 37.5371 99.9999Z"
+                                            fill="white" />
+                                    </svg>
+                                </span>
+                            </div>
                             <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
+                            <span id="recordingTimer" class="record-time none">00:00</span>
                         </div>
                         <!-- Add preview block HERE -->
-                        <div id="preview-audio" class="blockscroll preview-container"></div>
+                        <div id="preview-audio" class="blockscroll preview-container">
+                            <div class="record-again none">
+                                <span class="btn-text">
+                                    Record again
+                                </span>
+                                <span class="icon-mic">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="82" height="104" viewBox="0 0 82 104"
+                                        fill="none">
+                                        <rect x="22.3145" y="3.5" width="37.4444" height="59.6765" rx="18.7222"
+                                            stroke="white" stroke-width="7" stroke-linecap="round" />
+                                        <path
+                                            d="M37.5371 99.9999V82.3603C16.7879 80.5857 0.5 63.1843 0.5 41.9755V40.7421C0.5 38.8091 2.067 37.2421 4 37.2421C5.933 37.2421 7.5 38.8091 7.5 40.7421V41.9755C7.5 60.4975 22.5151 75.5126 41.0371 75.5126C59.5592 75.5126 74.5748 60.4977 74.5752 41.9755V40.7421C74.5752 38.8091 76.1422 37.2421 78.0752 37.2421C80.0081 37.2422 81.5752 38.8092 81.5752 40.7421V41.9755C81.5747 63.1844 65.2864 80.5857 44.5371 82.3603V99.9999C44.5371 101.933 42.9701 103.5 41.0371 103.5C39.1041 103.5 37.5371 101.933 37.5371 99.9999Z"
+                                            fill="white" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <!--<img class="micButton none" src="svg/recorded-voice.svg" alt="recorded voice media">-->
+                        </div>
                     </div>
                 </div>
                 <span class="response_msg error" id="audioError"></span>
@@ -62,11 +91,19 @@
                         <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                     </div>
                     <!-- Add preview block HERE -->
-                    <div id="preview-audio" class="blockscroll preview-container"></div>
+                    <!-- <div class="blockscroll preview-container">
+                        <div class="waveform-bar"></div>
+                        <div class="record-meta">
+                            <span class="record-time">0:00</span>
+                            <span class="play-pause-btn" aria-label="Play">
+                                <div class="pause-icon">▶</div>
+                            </span>
+                        </div>
+                        <audio src=""></audio>
+                    </div>-->
                 </div>
                 <span class="response_msg error" id="videoError"></span>
             </div>
-
             <div id="crop-container" class="none">
                 <canvas id="cropcanvas" width="2000" height="2000"></canvas>
                 <canvas id="croppedCanvas" width="500" height="500"></canvas>
@@ -81,7 +118,6 @@
                     <label for="ar-2">4:5 Vertical</label>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="titleNotes" class="md_font_size">Title*</label>
@@ -92,7 +128,6 @@
                     <span class="response_msg error" id="titleError"></span>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="descriptionNotes" class="md_font_size">Description</label>
@@ -107,9 +142,6 @@
                     <span class="response_msg error" id="descriptionError"></span>
                 </div>
             </div>
-
-
-
             <div class="form-row">
                 <div class="col-left">
                     <label for="tag-input" class="md_font_size">Tags</label>
@@ -135,7 +167,6 @@
                             </div>
                             <div id="tagHistoryContainer" class="tag-list"></div>
                         </div>
-
                         <!-- Suggestions from Search -->
                         <div class="tag-section" id="tag-suggestions-section">
                             <div class="section-header">
@@ -147,9 +178,7 @@
                     <span class="response_msg error" id="tagError"></span>
                 </div>
             </div>
-
             <div class="response_msg" id="createPostError"></div>
-
             <div class="form-actions">
                 <div class="left-actions">
                     <button type="button" class="btn-gray bold">Preview</button>
@@ -161,6 +190,5 @@
                 </div>
             </div>
         </form>
-
     </div>
 </div>
