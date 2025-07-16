@@ -5,14 +5,14 @@
 
                 <div class="drop-preview-area preview-container">
                     <div id="preview-image" class="image-preview-container">
-                        <span class="button nav-button prev-button">‹</span>
+                        <span class="button nav-button prev-button none"><i class="fi fi-rr-angle-left"></i></span>
                         <div class="preview-track-wrapper">
                             <div class="preview-track">
                                 <!-- JS will insert .preview-item divs here -->
                             </div>
                         </div>
 
-                        <span class="button nav-button next-button">›</span>
+                        <span class="button nav-button next-button none"><i class="fi fi-rr-angle-right"></i></span>
                     </div>
                     <div id="drop-area-image" class="drop-area">
                         <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
