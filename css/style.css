@@ -82,6 +82,15 @@ li > ol {
   margin-left: 1.5em;
 }
 
+#changePasswordBtn {
+  margin: 1rem 0;
+}
+
+.profile-fields input[type="password"] {
+  padding: 0;
+  line-height: 70px;
+}
+
 /*--------------------------------------------------------------
 # Typography
 --------------------------------------------------------------*/
@@ -266,7 +275,7 @@ input[type="submit"]{
 	display: inline-block;
 	text-align:center;
 	background-color: var(--bg-filter);
-	line-height: 60px;
+	line-height: 50px;
 	border-radius: 50px;
 	font-family: inherit;
 	text-decoration: none;
@@ -472,7 +481,7 @@ textarea {
   padding: 1.5rem 2.5rem;
   width: 100%;
   background: var(--bg-filter);
-  border-radius: 70px;
+  border-radius: 40px;
   margin: 0;
 }
 input[type="text"]:focus,
@@ -869,7 +878,7 @@ footer {grid-area: footer;}
 .widget ul.menu li a .notification-badge {
 	position: absolute;
 	right: 1rem;
-	background-color: #0069FF;
+	background-color: var(--blue,#0069FF);
 	color: var(--text-color);
 	border-radius: 100%;
 	padding: 0.3rem 0.8rem;
@@ -1290,6 +1299,7 @@ footer {grid-area: footer;}
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 		padding: 2.5rem;
+		border-radius: 70px;
 		
 	}
 	.post-search-filters .notify {

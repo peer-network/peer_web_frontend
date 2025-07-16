@@ -14,6 +14,6 @@
   height: 30vh !important;
 }
 .inner-container {
-  max-width: 64vw;
+  /* max-width: 64vw; */
   padding: 0;
 }

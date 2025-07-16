@@ -1,24 +1,33 @@
 <div class="create_post">
     <div class="inner-container">
         <form id="create_new_post" class=" resettable-form" method="post" data-post-type="text">
-            <div id="newImagePost" class="upload">
+            <div id="preview-image" class="upload">
                 <div class="drop-preview-area preview-container">
-                    <div id="preview-image" class="image-preview-container"></div>
+                    <div  class="image-preview-container">
+                        <span class="button nav-button prev-button none"><i class="fi fi-rr-angle-left"></i></span>
+                        <div class="preview-track-wrapper">
+                            <div class="preview-track">
+                                <!-- JS will insert .preview-item divs here -->
+                            </div>
+                        </div>
+
+                        <span class="button nav-button next-button none"><i class="fi fi-rr-angle-right"></i></span>
+                    </div>
                     <div id="drop-area-image" class="drop-area">
-                        <div class="plus-icon">+</div>
+                        <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                         <span class="upload-label">Upload Images</span>
-                        <input type="file" id="file-input-image" hidden multiple />
+                        <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden  multiple />
                     </div>
                 </div>
                 <span class="response_msg error" id="imageError"></span>
+
             </div>
-            <div id="newAudioPost" class="upload">
+            <div id="preview-audio" class="upload">
                 <div class="form-row">
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
-
+                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                          <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
                             <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
                         </div>
                     </div>
@@ -82,48 +91,62 @@
                             </div>
                             <!--<img class="micButton none" src="svg/recorded-voice.svg" alt="recorded voice media">-->
                         </div>
+                        <div  class="blockscroll preview-container"></div>
                     </div>
                 </div>
                 <span class="response_msg error" id="audioError"></span>
             </div>
-            <div id="newVideoPost" class="upload">
-                <div id="preview-video"
-                    class="blockscroll drop-preview-area  preview-container preview-container-video">
-                    <div id="drop-area-videocover" class="drop-area none">
-                        <div class="upload-content">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload cover</span>
+            <div id="preview-video" class="upload">
+                <div >
+                    <div class="blockscroll drop-preview-area  preview-container preview-container-video">
+                        <div id="drop-area-videocover" class="drop-area none">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Upload video cover</span>
+                            </div>
+                            <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
                         </div>
-                        <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
-                    </div>
-                    <div id="drop-area-videolong" class="drop-area">
-                        <div class="upload-content">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload media</span>
+                        <div id="drop-area-videolong" class="drop-area">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Add short video</span>
+                            </div>
+                            <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
                         </div>
-                        <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
-                    </div>
 
-                    <div id="drop-area-videoshort" class="drop-area none">
-                        <div class="upload-content">
-                            <div class="plus-icon">+</div>
-                            <span class="upload-label">Upload short</span>
+                        <div id="drop-area-videoshort" class="drop-area none">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Add long video</span>
+                            </div>
+                            <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
                         </div>
-                        <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
+
                     </div>
-                    <!-- Add preview block HERE -->
-                    <!-- <div class="blockscroll preview-container">
-                        <div class="waveform-bar"></div>
-                        <div class="record-meta">
-                            <span class="record-time">0:00</span>
-                            <span class="play-pause-btn" aria-label="Play">
-                                <div class="pause-icon">▶</div>
-                            </span>
-                        </div>
-                        <audio src=""></audio>
-                    </div>-->
+                    <span class="response_msg error" id="videoError"></span>
                 </div>
-                <span class="response_msg error" id="videoError"></span>
+
+            </div>
+            <div id="videoTrimContainer" class="none timeline-wrapper">
+                <div class="video-trim-wrapper">
+                    <video id="videoTrim"></video>
+                    <div id="videoTimeline">
+
+
+                    </div>
+                    <div id="overlay-left" class="trim-overlay"></div>
+                    <div id="overlay-right" class="trim-overlay"></div>
+                    <!-- Trim window -->
+                    <div id="trim-window" class="trim-window">
+                        <div id="handle-left" class="trim-handle"></div>
+                        <div style="flex:1"></div>
+                        <div id="handle-right" class="trim-handle"></div>
+                    </div>
+                </div>
+                <div id="trimButtons">
+                    <span class="button" id="trimQuit">back</span>
+                    <span class="button btn-blue" id="trimBtn">save</span>
+                </div>
             </div>
             <div id="crop-container" class="none">
                 <canvas id="cropcanvas" width="2000" height="2000"></canvas>
@@ -144,8 +167,7 @@
                     <label for="titleNotes" class="md_font_size">Title*</label>
                 </div>
                 <div class="col-right">
-                    <input type="text" id="titleNotes" placeholder="min. 25 symbols" name="text-input"
-                        maxlength="150" />
+                    <input type="text" id="titleNotes" placeholder="Title" name="text-input" maxlength="150" />
                     <span class="response_msg error" id="titleError"></span>
                 </div>
             </div>
@@ -157,9 +179,8 @@
                     <div class="textarea-wrapper">
                         <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength=""></textarea>
-                        <span class="char-counter md_font_size" data-target="descriptionNotes">0/250</span>
+                        <span class="char-counter md_font_size" data-target="descriptionNotes"><span class="char_count">0</span>/<span class="char_limit">20000</span></span>
                     </div>
-
                     <span class="response_msg error" id="descriptionError"></span>
                 </div>
             </div>
@@ -173,6 +194,7 @@
                         <div class="tag-section selected-tags" id="selected-tags-section">
                             <div id="tagsSelected" class="tag-list selected-container"></div>
                         </div>
+
                         <!-- Tag Input -->
                         <div class="input-icon-wrapper">
                             <input id="tag-input" type="text" placeholder="Click here to add #hastags" />
@@ -202,7 +224,7 @@
             <div class="response_msg" id="createPostError"></div>
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button" class="btn-gray bold">Preview</button>
+                    <button id="previewButton" type="button" class="btn-gray bold">Preview</button>
                     <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">

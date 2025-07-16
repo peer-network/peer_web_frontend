@@ -1,5 +1,5 @@
 .create_post .inner-container {
-  padding: 7rem 5rem;
+  padding: 7rem 0rem;
 }
 
 /* ===================== UPLOAD CONTROLS ===================== */
@@ -9,6 +9,7 @@
   /* overflow-y: scroll; */
   height: 100%;
   position: relative;
+  margin-bottom: 4vh;
 }
 
 .upload.active {
@@ -24,7 +25,7 @@
 }
 
 .form-row label {
-  color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+  color: var(--white-secondary, rgba(255, 255, 255, 0.5));
   margin-top: 10px;
   display: block;
 }
@@ -32,8 +33,6 @@
 .form-input {
   flex: 1;
 }
-
-
 
 .form-actions {
   display: flex;
@@ -54,8 +53,6 @@
   margin-left: auto;
 }
 
-
-
 .form-actions span {
   margin-bottom: 20px;
 }
@@ -67,8 +64,6 @@
 .col-right {
   flex: 2 1 0;
 }
-
-/**/
 
 /* ===================== HISTORY HEADER ===================== */
 .history-header {
@@ -101,7 +96,7 @@
 .clear-history {
   background: none;
   border: none;
-  color: var(--red-accent, #FF3B3B);
+  color: var(--red-accent, #ff3b3b);
   cursor: pointer;
   font-weight: 500;
 }
@@ -126,30 +121,60 @@
 /* ===================== PREVIEW CONTAINER ===================== */
 #addPost .preview-container {
   display: flex;
-  flex-wrap: wrap;
-
   overflow: hidden;
   gap: 20px;
   align-items: flex-start;
 
   justify-content: flex-start;
-  margin: 15px 0px 20px 0px;
+  margin: 0;
 }
 
 #addPost .preview-container .image-preview-container {
-  display: flex;
+	display: flex;
+	overflow: hidden;
+	gap: 20px;
+	align-items: center;
+	justify-content: flex-start;
+	height: 100%;
+  max-width: 76%;
+  overflow-x: hidden;
+  transition: transform 0.3s ease;
+}
+#addPost .preview-container .image-preview-container span.button {
+	width: 100px;
+  min-width: unset;
+	height: 150px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 0;
+	margin: 0;
+	line-height: inherit;
+	border: 0;
+	background-color: transparent;
+}
+#addPost .preview-container .image-preview-container span.button i {
+	line-height: 0;
+}
+#addPost .preview-container .image-preview-container span.button:hover{
 
+	background-color: var(--bg-filter);
+}
+#addPost .preview-container .image-preview-container .preview-track-wrapper {
+  display: flex;
   overflow: hidden;
+  overflow-x: hidden;
+
+  height: 100%;
+}
+.preview-track {
+  display: flex;
   gap: 20px;
   align-items: flex-start;
   justify-content: flex-start;
   height: 100%;
-  max-width: 76%;
-  overflow-x: auto;
-
+  transition: transform 0.3s ease;
 }
-
-
 
 .drop-preview-area {
   display: flex;
@@ -167,6 +192,9 @@
   align-content: center;
   align-items: center;
   height: 100%;
+  border-radius: 2rem;
+  overflow: hidden;
+  transition: all 0.3s;
 }
 
 #addPost .preview-item p {
@@ -178,8 +206,29 @@
 #addPost .preview-item img {
   height: 100%;
   width: auto;
+}
+#addPost .preview-item img.create-img {
+  cursor: move;
+}
+#preview-image .preview-item .editImage {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	position: absolute;
+	height: auto !important;
+	transform: translateY(50px);
+	opacity: 0;
+	transition: all 0.3s;
+  z-index: 1;
+}
 
-  border-radius: 2rem;
+#preview-image .preview-item:hover img.create-img
+{
+  opacity: 0.5;
+}
+#preview-image .preview-item:hover .editImage  {
+  transform: translateY(0);
+	opacity: 1;
 }
 
 #addPost .preview-item progress {
@@ -187,16 +236,54 @@
   height: 10px;
 }
 
-.editImage {
+.editImage,
+.editVideo {
   position: absolute;
   height: 25% !important;
   cursor: pointer;
 }
 
+#addPost #preview-video .preview-container {
+  flex-wrap: nowrap;
+  height: auto;
+  align-items: center;
+  gap: 5%;
+}
+#drop-area-videolong {
+  min-height: 30vh !important;
+  max-height: 30vh;
+}
+#addPost #preview-video .preview-container > div img.create-img,
+#addPost #preview-video .preview-container > div video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#addPost #preview-video .preview-container > div video {
+  position: absolute;
+  object-fit: contain !important;
+}
 
+#addPost #preview-video .preview-item {
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+#addPost #preview-video .preview-item {
+  width: 33%;
+}
+#addPost #preview-video .preview-item.video-item {
+  width: 40%;
+  max-height: 35vh;
+  border: 1px dashed #888;
+  min-height: 35vh;
+}
+#addPost #preview-video .preview-item.video-item.file-input-videolong {
+  min-height: 60vh;
+  max-height: 60vh;
+}
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
-
   flex: 1 0 0;
 
   cursor: pointer;
@@ -215,7 +302,7 @@
   flex-direction: column;
 
   align-items: center;
-  min-height: 18rem;
+
   color: #ccc;
   position: relative;
   transition: border-color 0.3s ease;
@@ -228,7 +315,7 @@
 }
 
 #addPost .drop-area.hover {
-  border-color: #2b63f9;
+  border-color: var(--blue, #0069ff);
 }
 
 #addPost .drop-area img {
@@ -240,23 +327,25 @@
 #addPost .drop-area .upload-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.5rem;
+  flex-direction: column;
 }
 
 #addPost .drop-area .plus-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: #2b63f9;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--blue, #0069ff);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 100%;
   color: #fff;
   font-weight: bold;
 }
-
-
+#addPost .drop-area .plus-icon i {
+  line-height: 0;
+}
 
 /* ===================== MEDIA PREVIEW ===================== */
 .voice-media {
@@ -276,7 +365,6 @@
 }
 
 #addPost .inner-container .btClose {
-
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -307,24 +395,21 @@
 /* ===================== Tags ===================== */
 .tag-wrapper {
   background-color: var(--bg-filter);
-  border-radius: 70px;
+  border-radius: 40px;
   padding: 0;
   overflow: hidden;
 }
-
 .tag-list {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 0.5rem;
   transition: all 0.3s ease;
-
 }
-
 .tag-list .tag {
   padding: 0 30px;
   font-weight: 400;
-  color: var(--blue, #0069FF);
+  color: var(--blue, #0069ff);
   border-radius: 70px;
   border: none;
   cursor: pointer;
@@ -334,32 +419,27 @@
   line-height: 60px;
 }
 
-
 .tag-list .tag:hover,
 .tag-section.selected-tags .tag {
   color: var(--white, #ffff);
-  background-color: var(--blue, #0069FF);
+  background-color: var(--blue, #0069ff);
   display: flex;
   align-items: center;
 }
 
-
-
 .tag-section {
-
-
   height: 0;
   overflow: hidden;
   transform: translateY(-100px);
   transition: all 0.3s ease;
   opacity: 0;
   visibility: hidden;
-
 }
 
 .tag-section.visible,
 .tag-section.is-visible {
   border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+
   margin: 0 40px;
   padding: 40px 0;
   display: block;
@@ -382,13 +462,13 @@
   border: 0;
 }
 
-
-
 .tag-list .tag .remove-tag {
   margin: 0;
   border: 0;
   padding: 0;
-  background-color: var(--red-accent, #FF3B3B);
+
+  background-color: var(--red-accent, #ff3b3b);
+
   font-weight: 400;
   cursor: pointer;
   color: #fff;
@@ -404,27 +484,21 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-
 }
 
 .tag-list .tag:hover .remove-tag {
   opacity: 1;
   visibility: visible;
   margin-left: 10px;
-
 }
 
 .tag-list .tag .remove-tag:hover {
-  color: var(--red-accent, #FF3B3B);
-  background-color: var(--white, #fff);
 
+  color: var(--red-accent, #ff3b3b);
+  background-color: var(--white, #fff);
 }
 
 /* ====================End Tags ===================== */
-
-
-
-
 
 .resettable-form .response_msg {
   padding-top: 10px;
@@ -444,14 +518,12 @@
   display: flex;
 }
 
-
-
 .resettable-form .form-row .col-right .textarea-wrapper .char-counter {
   position: absolute;
   bottom: 16px;
   right: 42px;
 
-  color: var(--white-secondary, rgba(255, 255, 255, 0.50));
+  color: var(--white-secondary, rgba(255, 255, 255, 0.5));
   pointer-events: none;
 }
 
@@ -523,11 +595,7 @@
 
 /* === Static Waveform Visual Bar (while recording) === */
 .recording-waveform {
-  background: repeating-linear-gradient(to right,
-      white 0px,
-      white 2px,
-      transparent 2px,
-      transparent 6px);
+  background: repeating-linear-gradient(to right, white 0px, white 2px, transparent 2px, transparent 6px);
   height: 16px;
   opacity: 0.6;
   animation: pulse 1s linear infinite;
@@ -551,7 +619,6 @@
   50% {
     opacity: 1;
   }
-
   100% {
     opacity: 0.3;
   }
@@ -571,13 +638,10 @@
 /* === Waveform style (preview version) === */
 .waveform-bar {
   height: 16px;
-  background: repeating-linear-gradient(to right,
-      white 0,
-      white 2px,
-      transparent 2px,
-      transparent 6px);
-  /* opacity: 0.3;
-  animation: pulse 1s linear infinite; */
+  background: repeating-linear-gradient(to right, white 0, white 2px, transparent 2px, transparent 6px);
+  opacity: 0.3;
+  animation: pulse 1s linear infinite;
+
   border-radius: 1rem;
 }
 
@@ -652,11 +716,35 @@
 /*********************/
 .form-actions button {
   min-width: 300px;
+=======
+/*********************/
+.form-actions button {
+  min-width: 150px;
+}
+@media screen and (min-width: 2000px) {
+  .create_post .inner-container {
+    padding: 7rem 2rem;
+  }
+  .form-actions button {
+    min-width: 300px;
+  }
 }
 
 @media screen and (min-width: 3000px) {
+  #addPost .drop-area .plus-icon {
+    width: 7.5rem;
+    height: 7.5rem;
+    font-size: 150%;
+  }
+  .create_post .inner-container {
+    padding: 7rem 5rem;
+  }
   .form-actions button {
     min-width: 500px;
+  }
+
+  .tag-wrapper {
+    border-radius: 70px;
   }
 
   .tag-list .tag {
@@ -666,16 +754,11 @@
 
   .tag-list .tag .remove-tag {
 
-
     width: 40px;
 
     line-height: 40px;
     height: 40px;
 
     min-width: 40px;
-
-
   }
-
 }
-
