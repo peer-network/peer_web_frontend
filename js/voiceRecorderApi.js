@@ -188,7 +188,7 @@ function stopTimer() {
 }
 
 function appendAudioToForm(blob) {
-  const form = document.getElementById("newAudioPost");
+  const form = document.getElementById("preview-audio");
   if (!form) return;
 
   const file = new File([blob], 'voice-recording.webm', {
