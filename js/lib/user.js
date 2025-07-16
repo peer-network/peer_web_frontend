@@ -104,8 +104,8 @@ async function getUser() {
     profil_container.classList.add("none");
     profil_login.classList.remove("none");
   } else {
-    document.getElementById("username").innerText = profil.data.getProfile.affectedRows.username;
-    document.getElementById("slug").innerText = "#" + profil.data.getProfile.affectedRows.slug;
+    document.querySelectorAll(".username").forEach(el => {el.innerText = profil.data.getProfile.affectedRows.username;});
+    document.querySelectorAll(".slug").forEach(el => {el.innerText = "#" + profil.data.getProfile.affectedRows.slug;});
     document.getElementById("userPosts").innerText = profil.data.getProfile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.getProfile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.getProfile.affectedRows.amountfollowed;
@@ -113,11 +113,13 @@ async function getUser() {
       document.getElementById("Peers").innerText = profil.data.getProfile.affectedRows.amountfriends;
     }
 
-    const img = document.getElementById("profilbild");
-    img.onerror = function () {
-      this.src = "svg/noname.svg";
-    };
-    img.src = profil.data.getProfile.affectedRows.img ? tempMedia(profil.data.getProfile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
+    const img = document.querySelectorAll(".profilbild").forEach(img => {
+      img.onerror = function () {
+        this.src = "svg/noname.svg";
+      };
+    
+      img.src = profil.data.getProfile.affectedRows.img ? tempMedia(profil.data.getProfile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
+    });
   }
   return profil;
 }

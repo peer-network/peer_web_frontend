@@ -6,14 +6,14 @@
                 <div class="profile-header">
                     <div id="cropContainer" class="cropContainer">
                     <span class="online_status"></span>
-                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
+                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profilbild profile-picture" />
                         <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
                             <img id="cropButton" src="svg/ok.svg" alt="edit"> -->
                     </div>
                     <!-- <div id="badge" class="badge"></div> -->
                     <div class="pro-name">
-                        <div id="username" class="user-profile-name">&nbsp;</div>
-                        <p id="slug" class="username">&nbsp;</p>
+                        <div id="username" class="username user-profile-name">&nbsp;</div>
+                        <p id="slug" class="slug username">&nbsp;</p>
                     </div>
                 </div>
 

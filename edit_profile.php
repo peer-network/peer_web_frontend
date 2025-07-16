@@ -14,7 +14,8 @@ checkAuth("unauthorized");
   	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  	<link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
+  	<link rel="stylesheet" href="css/password.css?<?php echo filemtime('css/password.css'); ?>">
+    <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
     
@@ -23,6 +24,8 @@ checkAuth("unauthorized");
     
 	
     <!-- <script src="sw_instal.min.js" async></script> -->
+    <script src="js/password.js?<?php echo filemtime('js/password.js'); ?>" defer></script>
+    <script src="js/confirmPassword.js?<?php echo filemtime('js/confirmPassword.js'); ?>" defer></script>
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
@@ -153,7 +156,7 @@ checkAuth("unauthorized");
                                     <input type="text" id="newusername" name="username" class="input-text" placeholder="Enter new username" required="" >
                                     </div>
                                     <div class="input-field">
-                                        <input type="password" id="password" name="password" placeholder="Enter password" required="" class="input-text">
+                                        <input type="password" id="userPassword" name="password" placeholder="Enter password" required="" class="input-text">
                                         
                                     </div>
                                 </div>
@@ -174,14 +177,11 @@ checkAuth("unauthorized");
                                     <div class="input-field">
                                     <input type="password" id="old_password" name="old_password" class="input-text" placeholder="Enter old password" required="" >
                                     </div>
-                                    <div class="input-field">
-                                        <input type="password" id="new_password" name="new_password" placeholder="Enter new password" required="" class="input-text">
-                                    </div>
-                                    <div class="input-field">
-                                        <input type="password" id="repeat_password" name="repeat_password" placeholder="Repeat password" required="" class="input-text">
-                                    </div>
+                                    <!-- Password Component -->
+                                    <div class="password-component" data-show-strength="true" data-show-message="false" data-name="password"></div>
+                                    <!-- Confirm Password Component -->
+                                    <div class="confirm-password-component"  data-name="confirm_password"></div>
                                 </div>
-                                <div id="response_msg_change_password" class="response_msg"></div>
                                 <button id="changePasswordBtn" class="save-btn full-width-btn ">Submit</button>
                             </form>
                         </div>
