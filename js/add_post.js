@@ -486,26 +486,75 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /**********************************************************************/
-  /** TEXT POST PREVIEW **/
-  const previewTextPost = document.getElementById("previewTextPost");
-  if (previewTextPost) {
-    previewTextPost.addEventListener("click", () => {
+  /** POST PREVIEW **/
+  const previewButton = document.getElementById("previewButton");
+
+  if (previewButton) {
+    previewButton.addEventListener("click", () => {
+      const form = document.getElementById("create_new_post");
+      const post_type = form.getAttribute("data-post-type");
+
       const title = document.getElementById("titleNotes")?.value.trim() || "";
       const description = document.getElementById("descriptionNotes")?.value.trim() || "";
-      const tags = getTagHistory(); // Should return an array like ['fun', 'update']
+      const tags = getTagHistory(); 
+
+      let media = [];
+      let cover;
+
+      switch (post_type) {
+        case "text": {
+          const base64 = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+          media = [`data:text/plain;base64,${base64}`];
+          break;
+        }
+
+        case "image": {
+          const imageWrappers = document.querySelectorAll(".create-img img");
+          media = Array.from(imageWrappers)
+            .map((img) => img.src)
+            .filter((src) => src.startsWith("data:image/"));
+          break;
+        }
+
+        case "audio": {
+          const audioWrappers = document.querySelectorAll(".create-audio");
+          media = Array.from(audioWrappers)
+            .map((audio) => audio.src)
+            .filter((src) => src.startsWith("data:audio/"));
+
+          const coverImg = document.querySelector("#preview-cover img");
+          const canvas = document.querySelector("#preview-audio canvas");
+          cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+          break;
+        }
+
+        case "video": {
+          const videoWrappers = document.querySelectorAll(".create-video");
+          media = Array.from(videoWrappers)
+            .map((vid) => vid.src)
+            .filter((src) => src.startsWith("data:video/"));
+          break;
+        }
+
+        default:
+          console.warn("Unknown post type for preview:", post_type);
+          return;
+      }
 
       const objekt = {
-        id: "preview-text-post",  
-        contenttype: "text",
+        id: "preview-generic-post",
+        contenttype: post_type,
         title,
         description,
         tags,
-        media: [],
+        media,
+        cover, 
       };
 
       previewPost(objekt);
     });
   }
+
 
 
 
@@ -540,95 +589,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
-
-  /**********************************************************************/
-  /** IMAGE POST PREVIEW **/
-  const previewImagePost = document.getElementById("previewImagePost");
-
-  if (previewImagePost) {
-    previewImagePost.addEventListener("click", () => {
-      const title = document.getElementById("titleImage")?.value.trim() || "";
-      const description = document.getElementById("descriptionImage")?.value.trim() || "";
-      const tags = tag_getTagArray();
-
-      // Get all images inside .create-img wrappers
-      const imageWrappers = document.querySelectorAll(".create-img img");
-      const media = Array.from(imageWrappers)
-        .map((img) => img.src)
-        .filter((src) => src.startsWith("data:image/"));
-
-      const objekt = {
-        contenttype: "image",
-        title,
-        description,
-        tags,
-        media, // array of image data URLs
-      };
-
-      previewPost(objekt);
-    });
-  }
-
-
-
-
-  /**********************************************************************/
-  /** AUDIO POST PREVIEW **/
-  const previewAudioPost = document.getElementById("previewAudioPost");
-  if (previewAudioPost) {
-    previewAudioPost.addEventListener("click", () => {
-      const title = document.getElementById("titleAudio")?.value.trim() || "";
-      const description = document.getElementById("descriptionAudio")?.value.trim() || "";
-      const audioWrappers = document.querySelectorAll(".create-audio");
-      const tags = tag_getTagArray();
-
-      const media = Array.from(audioWrappers)
-        .map((audio) => audio.src)
-        .filter((src) => src.startsWith("data:audio/"));
-
-      const coverImg = document.querySelector("#preview-cover img");
-      const canvas = document.querySelector("#preview-audio canvas");
-      const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-
-      const objekt = {
-        title,
-        description,
-        tags,
-        media,
-        cover,
-        contenttype: "audio",
-      };
-
-      previewPost(objekt);
-    });
-  }
-
-  /**********************************************************************/
-  /** VIDEO POST PREVIEW **/
-  const previewVideoPost = document.getElementById("previewVideoPost");
-  if (previewVideoPost) {
-    previewVideoPost.addEventListener("click", () => {
-      const title = document.getElementById("titleVideo")?.value.trim() || "";
-      const description = document.getElementById("descriptionVideo")?.value.trim() || "";
-      const videoWrappers = document.querySelectorAll(".create-video");
-      const tags = tag_getTagArray();
-
-      const media = Array.from(videoWrappers)
-        .map((vid) => vid.src)
-        .filter((src) => src.startsWith("data:video/"));
-
-      const objekt = {
-        title,
-        description,
-        tags,
-        media,
-        contenttype: "video",
-      };
-
-      previewPost(objekt);
-    });
-  }
 
 
   /******************************************************************** */
