@@ -10,7 +10,6 @@ let recordedAudioURL = null;
 let playbackInterval = null;
 
 function initAudioEvents() {
-  console.log('initAudioEvents called!')
   const micBtn = document.querySelector(MIC_SELECTOR);
   const recordedAudio = document.getElementById("recorded-audio");
 
@@ -140,7 +139,6 @@ function stopRecording() {
 }
 
 function updateMicButton(recording = "steady") {
-  console.log(recording)
   const voiceRecordWrapper = document.getElementById('voice-record-wrapper')
   const voiceMediaOff = document.getElementById('voice-media-off');
   const voiceMediaSteady = document.getElementById('voice-media-steady');
@@ -189,8 +187,8 @@ function stopTimer() {
 
 function appendAudioToForm(blob) {
   const form = document.getElementById("preview-audio");
+  if (!form) return;
   const file = new File([blob], 'voice-recording.webm', { type: 'audio/webm' });
-  console.log(file);
   const input = document.createElement('input');
   input.type = 'file';
   input.name = 'recordedAudio';
