@@ -205,8 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     requestAnimationFrame(() => updateSlider(0));
   } else if (objekt.contenttype === "text") {
-    post_gallery.innerHTML = ""; // Clear gallery if any
-    post_gallery.className = "post_gallery"; // Reset classes
+    post_gallery.innerHTML = ""; 
+    post_gallery.className = "post_gallery"; 
 
     if (containerleft && containerright) {
       // Clone content area
@@ -257,6 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
       slide.className = "slide_item";
 
       const img = document.createElement("img");
+      const timg = document.createElement("img");
       img.src = media;
       img.alt = "";
 
@@ -282,21 +283,27 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
 
-  const previewButtons = document.querySelectorAll('#addPostSection .preview-button');
+  const previewButton = document.getElementById('previewButton');
   const previewSection = document.getElementById('previewSection');
   const addPostSection = document.getElementById('addPostSection');
 
-  previewButtons.forEach(button => {
-    button.addEventListener('click', function (e) {
+    previewButton.addEventListener('click', function (e) {
       e.preventDefault();
         addPostSection.classList.add('none');
         previewSection.classList.remove('none');
     });
-  });
 
   const backToEditBtn = document.getElementById('backToEdit');
     if (backToEditBtn) {
       backToEditBtn.addEventListener('click', function () {
+        addPostSection.classList.remove('none');
+        previewSection.classList.add('none');
+    });
+  }
+
+  const cancelEditBtn = document.getElementById('cancel_Btn');
+    if (cancelEditBtn) {
+      cancelEditBtn.addEventListener('click', function () {
         addPostSection.classList.remove('none');
         previewSection.classList.add('none');
     });
@@ -488,27 +495,117 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /**********************************************************************/
-  /** TEXT POST PREVIEW **/
-  const previewTextPost = document.getElementById("previewTextPost");
-  if (previewTextPost) {
-    previewTextPost.addEventListener("click", () => {
-      const title = document.getElementById("titleNotes")?.value.trim() || "";
-      const description = document.getElementById("descriptionNotes")?.value.trim() || "";
-      const tags = getTagHistory(); // Should return an array like ['fun', 'update']
 
-      const objekt = {
-        id: "preview-text-post",  
-        contenttype: "text",
-        title,
-        description,
-        tags,
-        media: [],
-      };
 
-      previewPost(objekt);
-    });
-  }
+
+  
+
+  document.getElementById("previewButton").addEventListener("click", function () {
+
+    const form = document.getElementById("create_new_post");
+    const post_type = form.getAttribute("data-post-type");
+    /**********************************************************************/
+    /** TEXT POST PREVIEW **/
+    if (post_type === "text") {
+        const title = document.getElementById("titleNotes")?.value.trim() || "";
+        const description = document.getElementById("descriptionNotes")?.value.trim() || "";
+        const tags = getTagHistory(); 
+
+        const objekt = {
+          id: "preview-text-post",  
+          contenttype: "text",
+          title,
+          description,
+          tags,
+          media: [],
+        };
+
+        previewPost(objekt);
+    }
+
+
+    /**********************************************************************/
+    /** IMAGE POST PREVIEW **/
+
+    if (post_type === "image") {
+        const title = document.getElementById("titleImage")?.value.trim() || "";
+        const description = document.getElementById("descriptionImage")?.value.trim() || "";
+        const tags = getTagHistory();
+
+        // Get all images inside .create-img wrappers
+        const imageWrappers = document.querySelectorAll(".create-img img");
+        const media = Array.from(imageWrappers)
+          .map((img) => img.src)
+          .filter((src) => src.startsWith("data:image/"));
+
+        const objekt = {
+          contenttype: "image",
+          title,
+          description,
+          tags,
+          media, 
+        };
+
+                console.log("Previewing text post:", objekt);
+
+        previewPost(objekt);
+     }
+
+
+
+
+    if (post_type === "audio") {
+        const title = document.getElementById("titleAudio")?.value.trim() || "";
+        const description = document.getElementById("descriptionAudio")?.value.trim() || "";
+        const audioWrappers = document.querySelectorAll(".create-audio");
+        const tags = getTagHistory();
+
+        const media = Array.from(audioWrappers)
+          .map((audio) => audio.src)
+          .filter((src) => src.startsWith("data:audio/"));
+
+        const coverImg = document.querySelector("#preview-cover img");
+        const canvas = document.querySelector("#preview-audio canvas");
+        const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+
+        const objekt = {
+          title,
+          description,
+          tags,
+          media,
+          cover,
+          contenttype: "audio",
+        };
+
+        previewPost(objekt);
+     }
+
+    /**********************************************************************/
+    /** VIDEO POST PREVIEW **/
+    if (post_type === "video") {
+        const title = document.getElementById("titleVideo")?.value.trim() || "";
+        const description = document.getElementById("descriptionVideo")?.value.trim() || "";
+        const videoWrappers = document.querySelectorAll(".create-video");
+        const tags = getTagHistory();
+
+        const media = Array.from(videoWrappers)
+          .map((vid) => vid.src)
+          .filter((src) => src.startsWith("data:video/"));
+
+        const objekt = {
+          title,
+          description,
+          tags,
+          media,
+          contenttype: "video",
+        };
+
+        previewPost(objekt);
+    }
+
+  });
+
+
 
 
 
@@ -543,95 +640,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
-
-  /**********************************************************************/
-  /** IMAGE POST PREVIEW **/
-  const previewImagePost = document.getElementById("previewImagePost");
-
-  if (previewImagePost) {
-    previewImagePost.addEventListener("click", () => {
-      const title = document.getElementById("titleImage")?.value.trim() || "";
-      const description = document.getElementById("descriptionImage")?.value.trim() || "";
-      const tags = tag_getTagArray();
-
-      // Get all images inside .create-img wrappers
-      const imageWrappers = document.querySelectorAll(".create-img img");
-      const media = Array.from(imageWrappers)
-        .map((img) => img.src)
-        .filter((src) => src.startsWith("data:image/"));
-
-      const objekt = {
-        contenttype: "image",
-        title,
-        description,
-        tags,
-        media, // array of image data URLs
-      };
-
-      previewPost(objekt);
-    });
-  }
-
-
-
-
-  /**********************************************************************/
-  /** AUDIO POST PREVIEW **/
-  const previewAudioPost = document.getElementById("previewAudioPost");
-  if (previewAudioPost) {
-    previewAudioPost.addEventListener("click", () => {
-      const title = document.getElementById("titleAudio")?.value.trim() || "";
-      const description = document.getElementById("descriptionAudio")?.value.trim() || "";
-      const audioWrappers = document.querySelectorAll(".create-audio");
-      const tags = tag_getTagArray();
-
-      const media = Array.from(audioWrappers)
-        .map((audio) => audio.src)
-        .filter((src) => src.startsWith("data:audio/"));
-
-      const coverImg = document.querySelector("#preview-cover img");
-      const canvas = document.querySelector("#preview-audio canvas");
-      const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-
-      const objekt = {
-        title,
-        description,
-        tags,
-        media,
-        cover,
-        contenttype: "audio",
-      };
-
-      previewPost(objekt);
-    });
-  }
-
-  /**********************************************************************/
-  /** VIDEO POST PREVIEW **/
-  const previewVideoPost = document.getElementById("previewVideoPost");
-  if (previewVideoPost) {
-    previewVideoPost.addEventListener("click", () => {
-      const title = document.getElementById("titleVideo")?.value.trim() || "";
-      const description = document.getElementById("descriptionVideo")?.value.trim() || "";
-      const videoWrappers = document.querySelectorAll(".create-video");
-      const tags = tag_getTagArray();
-
-      const media = Array.from(videoWrappers)
-        .map((vid) => vid.src)
-        .filter((src) => src.startsWith("data:video/"));
-
-      const objekt = {
-        title,
-        description,
-        tags,
-        media,
-        contenttype: "video",
-      };
-
-      previewPost(objekt);
-    });
-  }
 
 
   /******************************************************************** */
@@ -1316,7 +1324,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       scrollToIndex(currentIndex);
-       toggleScrollButtons();
     }
 
     const container = document.querySelector('.preview-track-wrapper');
@@ -1351,9 +1358,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Optionally recheck on window resize or DOM change
     window.addEventListener('resize', toggleScrollButtons);
-    container.addEventListener('scroll', toggleScrollButtons);
-
-
+    container.addEventListener('scroll', toggleScrollButtons)
   }
 });
 
