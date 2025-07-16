@@ -649,6 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   function setupCharCounter(descEl){
     let text = descEl.value;
+
     const descriptionError= document.getElementById("descriptionError");
     descriptionError.textContent="";
     const char_count = document.querySelector("span.char-counter .char_count");

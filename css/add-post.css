@@ -65,8 +65,6 @@
   flex: 2 1 0;
 }
 
-/**/
-
 /* ===================== HISTORY HEADER ===================== */
 .history-header {
   max-height: 0;
@@ -123,7 +121,6 @@
 /* ===================== PREVIEW CONTAINER ===================== */
 #addPost .preview-container {
   display: flex;
-
   overflow: hidden;
   gap: 20px;
   align-items: flex-start;
@@ -134,7 +131,6 @@
 
 #addPost .preview-container .image-preview-container {
 	display: flex;
-	
 	overflow: hidden;
 	gap: 20px;
 	align-items: center;
@@ -210,8 +206,6 @@
 #addPost .preview-item img {
   height: 100%;
   width: auto;
-
-  
 }
 #addPost .preview-item img.create-img {
   cursor: move;
@@ -357,6 +351,12 @@
 .voice-media {
   background-color: #333;
   border-radius: 1rem;
+  position: relative;
+  padding: 40px;
+}
+
+.voice-media .recording-bar-img {
+  width: 100%;
 }
 
 /* ===================== IMAGE PREVIEW ===================== */
@@ -391,6 +391,7 @@
   font-weight: 600;
   font-size: 1rem;
 }
+
 /* ===================== Tags ===================== */
 .tag-wrapper {
   background-color: var(--bg-filter);
@@ -434,9 +435,11 @@
   opacity: 0;
   visibility: hidden;
 }
+
 .tag-section.visible,
 .tag-section.is-visible {
-  border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.5));
+  border-top: 1px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+
   margin: 0 40px;
   padding: 40px 0;
   display: block;
@@ -447,12 +450,14 @@
   overflow: visible;
   transform: translateY(0);
 }
+
 .tag-section .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
 }
+
 .tag-section.selected-tags {
   border: 0;
 }
@@ -461,7 +466,9 @@
   margin: 0;
   border: 0;
   padding: 0;
+
   background-color: var(--red-accent, #ff3b3b);
+
   font-weight: 400;
   cursor: pointer;
   color: #fff;
@@ -478,6 +485,7 @@
   visibility: hidden;
   transition: all 0.3s ease;
 }
+
 .tag-list .tag:hover .remove-tag {
   opacity: 1;
   visibility: visible;
@@ -485,6 +493,7 @@
 }
 
 .tag-list .tag .remove-tag:hover {
+
   color: var(--red-accent, #ff3b3b);
   background-color: var(--white, #fff);
 }
@@ -497,10 +506,12 @@
   display: block;
   margin: 0;
 }
+
 #createPostError.response_msg {
   text-align: right;
   padding-right: 60px;
 }
+
 .resettable-form .form-row .col-right .textarea-wrapper {
   position: relative;
   max-height: 250px;
@@ -541,22 +552,35 @@
 
 /* === Mic Button (before recording) === */
 .micButton {
-  background: transparent;
-  /* border: 2px solid white;
-  border-radius: 50%; */
-  font-size: 2rem;
-  /* width: 3.5rem;
-  height: 3.5rem; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
 }
 
-.micButton.recording {
-  background: rgba(255, 255, 255, 0.1);
+.micButton span.icon-mic {
+    background: var(--blue);
+    display: flex;
+    width: 200px;
+    height: 200px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+}
+
+.voice-media.active .micButton {
+    right: 0;
+    transform: translate(0%, -50%);
+}
+
+.voice-media.active .micButton span.icon-mic {
+    background: var(--bg-filter);
+    border: 3px solid;
+    cursor: pointer;
 }
 
 /* === Recording Box (appears when recording starts) === */
@@ -591,6 +615,7 @@
   0% {
     opacity: 0.3;
   }
+
   50% {
     opacity: 1;
   }
@@ -616,6 +641,7 @@
   background: repeating-linear-gradient(to right, white 0, white 2px, transparent 2px, transparent 6px);
   opacity: 0.3;
   animation: pulse 1s linear infinite;
+
   border-radius: 1rem;
 }
 
@@ -641,6 +667,9 @@
 /* === Time Text (live timer while playing) === */
 .record-time {
   color: white;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
 }
 
 /* default: hide all */
@@ -664,6 +693,30 @@
   display: block;
 }
 
+#preview-audio .record-again {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--blue);
+    width: 100%;
+    padding: 0 65px;
+    line-height: 100px;
+    border-radius: 100px;
+    font-size: 24px;
+}
+
+#preview-audio .record-again span.icon-mic {
+    font-size: 50px;
+    line-height: 0;
+}
+#preview-audio .record-again span.icon-mic svg {
+    width: 38px;
+    height: auto;
+}
+/*********************/
+.form-actions button {
+  min-width: 300px;
+=======
 /*********************/
 .form-actions button {
   min-width: 150px;
@@ -689,15 +742,18 @@
   .form-actions button {
     min-width: 500px;
   }
+
   .tag-wrapper {
     border-radius: 70px;
   }
+
   .tag-list .tag {
     padding: 0 50px;
     line-height: 100px;
   }
 
   .tag-list .tag .remove-tag {
+
     width: 40px;
 
     line-height: 40px;
