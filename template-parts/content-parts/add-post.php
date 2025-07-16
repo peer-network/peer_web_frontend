@@ -178,7 +178,7 @@
 
             <div class="form-actions">
                 <div class="left-actions">
-                    <button type="button" class="btn-gray bold">Preview</button>
+                    <button id="previewButton" type="button" class="btn-gray bold">Preview</button>
                     <button class="btn-red-transparent" type="reset">Clear Fields</button>
                 </div>
                 <div class="right-actions">
