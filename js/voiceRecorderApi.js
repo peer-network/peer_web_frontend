@@ -1,124 +1,176 @@
 const MIC_SELECTOR = '.micButton';
-let isRecording = true;
+let isRecording = false;
+let hasRecording = false;
 let recorder = null;
 let audioStream = null;
 let chunks = [];
 let secondsElapsed = 0;
 let timerInterval = null;
+let recordedAudioURL = null;
+let playbackInterval = null;
 
 function initAudioEvents() {
+  console.log('initAudioEvents called!')
   const micBtn = document.querySelector(MIC_SELECTOR);
-  if (!micBtn) {
-    console.error("Mic button not found.");
+  const recordedAudio = document.getElementById("recorded-audio");
+
+  if (!micBtn || !recordedAudio) {
+    console.error("Mic button or recorded audio element not found.");
     return;
   }
 
+  // Click handler
   micBtn.addEventListener('click', async () => {
-    if (isRecording) await startRecording(micBtn);
-    else stopRecording(micBtn);
+    if (hasRecording && !isRecording) {
+      try {
+        if (recordedAudio.paused) {
+          await recordedAudio.play();
+          setUIState("playing");
+          updateMicButton("on");
+
+          const timer = document.getElementById("recordingTimer");
+          if (timer) {
+            playbackInterval = setInterval(() => {
+              const min = Math.floor(recordedAudio.currentTime / 60);
+              const sec = Math.floor(recordedAudio.currentTime % 60);
+              timer.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+            }, 1000);
+          }
+
+        } else {
+          recordedAudio.pause();
+          setUIState("paused");
+          updateMicButton("off");
+          clearInterval(playbackInterval);
+        }
+      } catch (err) {
+        console.error("Playback failed:", err);
+      }
+      return;
+    }
+
+    // Start or stop recording
+    if (!isRecording) {
+      updateMicButton("steady");
+      setUIState("recording");
+      const result = await startRecording();
+    } else {
+      stopRecording(micBtn);
+      updateMicButton("off");
+      setUIState("preview");
+    }
+  });
+
+  // Audio ends
+  recordedAudio.addEventListener("ended", () => {
+    setUIState("preview");
+    updateMicButton("off");
+
+    const timer = document.getElementById("recordingTimer");
+    if (timer) {
+      timer.classList.remove("none");
+      timer.textContent = "0:00";
+    }
+
+    clearInterval(playbackInterval);
+  });
+
+  // Record again reset
+  document.querySelector(".record-again") ?.addEventListener("click", () => {
+    recordedAudio.pause();
+    recordedAudio.currentTime = 0;
+    hasRecording = false;
+    isRecording = false;
+    recordedAudio.src = "";
+    setUIState("initial");
+    clearInterval(playbackInterval);
   });
 }
 
-// async function startRecording(micBtn) {
-//   try {
-//     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//     recorder = new MediaRecorder(audioStream);
-//     chunks = [];
-//     isRecording = false;
-//     recorder.ondataavailable = (e) => chunks.push(e.data);
-//     recorder.onstop = () => {
-//       const blob = new Blob(chunks, { type: 'audio/webm' });
-//       const url = URL.createObjectURL(blob);
-//       // const preview = document.getElementById('preview-audio');
-//       // if (!voiceRecordWrapper) {
-//       //   console.error("preview-audio element not found!");
-//       //   return;
-//       // }
-//       // renderAudioPreview(voiceRecordWrapper, url);
-//       appendAudioToForm(blob);
-//     };
-//      micBtn.src = "svg/record-on.svg";
-//     recorder.start();
-//     // updateMicButton(micBtn, true);
-//     startTimer();
-//   } catch (err) {
-//     console.error("Recording failed:", err);
-//     alert("Mic access is required.");
-//   }
-// }
-async function startRecording(micBtn) {
+async function startRecording() {
   try {
-    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioStream = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    });
     recorder = new MediaRecorder(audioStream);
     chunks = [];
-    isRecording = false;
+    isRecording = true;
 
     recorder.ondataavailable = (e) => chunks.push(e.data);
+
     recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'audio/webm' });
-      const url = URL.createObjectURL(blob);
-      // renderAudioPreview(document.getElementById('preview-audio'), url);
+      const blob = new Blob(chunks, {
+        type: 'audio/webm'
+      });
+      if (blob.size === 0) {
+        console.warn("Recording was empty.");
+        return;
+      }
+
+      recordedAudioURL = URL.createObjectURL(blob);
+      hasRecording = true;
+
+      const recordedAudio = document.getElementById("recorded-audio");
+      if (recordedAudio) {
+        recordedAudio.src = recordedAudioURL;
+        recordedAudio.load();
+      }
+
       appendAudioToForm(blob);
+
+      const previewBtn = document.querySelector(".record-again");
+      if (previewBtn) previewBtn.classList.remove("none");
     };
 
-    // Swap mic icon to recording
-    micBtn.src = "svg/record-on.svg";
-    startTimer();
     recorder.start();
+    startTimer();
   } catch (err) {
-    console.error("Recording failed:", err);
+    console.error("Mic access denied:", err);
     alert("Mic access is required.");
   }
 }
-// function stopRecording(button) {
-//   if (recorder && !isRecording) {
-//     recorder.stop();
-//     audioStream.getTracks().forEach((track) => track.stop());
-//     isRecording = true;
-//     stopTimer();
-//     updateMicButton(button, false);
-//   }
-// }
-function stopRecording(micBtn) {
-  if (recorder && !isRecording) {
+
+function stopRecording() {
+  if (recorder && isRecording) {
     recorder.stop();
-    audioStream.getTracks().forEach((track) => track.stop());
-    isRecording = true;
+    audioStream.getTracks().forEach(track => track.stop());
+    isRecording = false;
     stopTimer();
-
-    // Update button to idle
-    // micBtn.src = "img/voice-icon.png";
-
-    // Show preview icon (inside preview-audio container)
-    const previewSpan = document.querySelector('#preview-audio .record-again');
-    if (previewSpan) {
-      previewSpan.classList.remove("none");
-    }
   }
 }
 
+function updateMicButton(recording = "steady") {
+  console.log(recording)
+  const voiceRecordWrapper = document.getElementById('voice-record-wrapper')
+  const voiceMediaOff = document.getElementById('voice-media-off');
+  const voiceMediaSteady = document.getElementById('voice-media-steady');
+  const voiceMediaOn = document.getElementById('voice-media-on');
 
-function updateMicButton(button, recording) {
-  // if (recording) {
-  //   button.classList.add("recording");
-  //   button.innerHTML = '⏸';
-  // } else {
-  //   button.classList.remove("recording");
-  //   button.innerHTML = '▶';
-  // }
+  [voiceMediaOff, voiceMediaSteady, voiceMediaOn].forEach(el => el.classList.add("none"));
 
-  button.src = "svg/record-stop.svg"
-  const preview = document.getElementById('preview-audio');
-  const img = preview.querySelector("img");
-  img.classList.remove("none");
+  voiceRecordWrapper.classList.add("active")
+
+  switch (recording) {
+    case "off":
+      voiceMediaOff.classList.remove("none");
+      break;
+    case "steady":
+      voiceMediaSteady.classList.remove("none");
+      break;
+    case "on":
+      voiceMediaOn.classList.remove("none");
+      break;
+  }
 }
 
 function startTimer() {
   const timer = document.getElementById("recordingTimer");
-  timer.classList.remove("none");
-  secondsElapsed = 0;
   if (!timer) return;
 
+  timer.classList.remove("none");
+  secondsElapsed = 0;
+
+  timer.textContent = "0:00";
   timerInterval = setInterval(() => {
     secondsElapsed++;
     const min = Math.floor(secondsElapsed / 60);
@@ -128,13 +180,20 @@ function startTimer() {
 }
 
 function stopTimer() {
-  console.log("clearing interval")
   clearInterval(timerInterval);
+  // const timer = document.getElementById("recordingTimer");
+  // if (timer) {
+  //   timer.classList.add("none");
+  // }
 }
 
 function appendAudioToForm(blob) {
   const form = document.getElementById("newAudioPost");
-  const file = new File([blob], 'voice-recording.webm', { type: 'audio/webm' });
+  if (!form) return;
+
+  const file = new File([blob], 'voice-recording.webm', {
+    type: 'audio/webm'
+  });
   const input = document.createElement('input');
   input.type = 'file';
   input.name = 'recordedAudio';
@@ -147,54 +206,34 @@ function appendAudioToForm(blob) {
   form.appendChild(input);
 }
 
-function renderAudioPreview(preview, url) {
-  preview.innerHTML = '';
-  const box = document.createElement('div');
-  box.className = 'audio-preview-box';
-  box.innerHTML = `
-    <div class="waveform-bar"></div>
-    <div class="record-meta">
-      <span class="record-time">0:00</span>
-      <span class="play-pause-btn" aria-label="Play">
-        <div class="pause-icon">▶</div>
-      </span>
-    </div>
-    <audio src="${url}"></audio>
-  `;
-  preview.appendChild(box);
-  const audio = box.querySelector('audio');
-  const timeEl = box.querySelector('.record-time');
-  const btn = box.querySelector('.play-pause-btn');
-  const icon = box.querySelector('.pause-icon');
-  icon.innerHTML = `<img src="svg/music-playing.svg" alt="Play">`;
-  let updateInterval = null;
+function setUIState(state) {
+  const label = document.querySelector("#recordingStatusText");
+  const micWrapper = document.getElementById("voice-record-wrapper");
+  const previewButton = document.querySelector(".record-again");
 
-  // to ensure audio can play first
-  audio.addEventListener('canplaythrough', () => {
-    console.log(" Audio ready to play");
-    btn.disabled = false;
-  });
+  if (!label || !micWrapper) return;
 
-  btn.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play();
-      icon.innerHTML = `<img src="svg/music.svg" alt="Pause">`;
+  micWrapper.classList.remove("recording", "preview", "playing");
 
-      updateInterval = setInterval(() => {
-        const mins = Math.floor(audio.currentTime / 60);
-        const secs = Math.floor(audio.currentTime % 60);
-        timeEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-      }, 300);
-    } else {
-      audio.pause();
-      icon.textContent = '▶';
-      clearInterval(updateInterval);
-    }
-  });
-
-  audio.addEventListener('ended', () => {
-    icon.textContent = '▶';
-    clearInterval(updateInterval);
-    timeEl.textContent = '0:00';
-  });
+  switch (state) {
+    case "initial":
+      label.textContent = "Start recording";
+      previewButton ?.classList.add("none");
+      break;
+    case "recording":
+      label.textContent = "Recording...";
+      micWrapper.classList.add("recording");
+      break;
+    case "preview":
+      label.textContent = "Preview";
+      micWrapper.classList.add("preview");
+      break;
+    case "playing":
+      label.textContent = "Playing...";
+      micWrapper.classList.add("playing");
+      break;
+    case "paused":
+      label.textContent = "Paused";
+      break;
+  }
 }

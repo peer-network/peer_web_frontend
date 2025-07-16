@@ -508,6 +508,7 @@
 .voice-media.active .micButton span.icon-mic {
     background: var(--bg-filter);
     border: 3px solid;
+    cursor: pointer;
 }
 
 /* === Recording Box (appears when recording starts) === */
