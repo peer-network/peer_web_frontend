@@ -205,8 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     requestAnimationFrame(() => updateSlider(0));
   } else if (objekt.contenttype === "text") {
-    post_gallery.innerHTML = ""; // Clear gallery if any
-    post_gallery.className = "post_gallery"; // Reset classes
+    post_gallery.innerHTML = ""; 
+    post_gallery.className = "post_gallery"; 
 
     if (containerleft && containerright) {
       // Clone content area
@@ -257,6 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
       slide.className = "slide_item";
 
       const img = document.createElement("img");
+      const timg = document.createElement("img");
       img.src = media;
       img.alt = "";
 
@@ -282,21 +283,27 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
 
-  const previewButtons = document.querySelectorAll('#addPostSection .preview-button');
+  const previewButton = document.getElementById('previewButton');
   const previewSection = document.getElementById('previewSection');
   const addPostSection = document.getElementById('addPostSection');
 
-  previewButtons.forEach(button => {
-    button.addEventListener('click', function (e) {
+    previewButton.addEventListener('click', function (e) {
       e.preventDefault();
         addPostSection.classList.add('none');
         previewSection.classList.remove('none');
     });
-  });
 
   const backToEditBtn = document.getElementById('backToEdit');
     if (backToEditBtn) {
       backToEditBtn.addEventListener('click', function () {
+        addPostSection.classList.remove('none');
+        previewSection.classList.add('none');
+    });
+  }
+
+  const cancelEditBtn = document.getElementById('cancel_Btn');
+    if (cancelEditBtn) {
+      cancelEditBtn.addEventListener('click', function () {
         addPostSection.classList.remove('none');
         previewSection.classList.add('none');
     });
@@ -485,75 +492,116 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /**********************************************************************/
-  /** POST PREVIEW **/
-  const previewButton = document.getElementById("previewButton");
 
-  if (previewButton) {
-    previewButton.addEventListener("click", () => {
-      const form = document.getElementById("create_new_post");
-      const post_type = form.getAttribute("data-post-type");
 
-      const title = document.getElementById("titleNotes")?.value.trim() || "";
-      const description = document.getElementById("descriptionNotes")?.value.trim() || "";
-      const tags = getTagHistory(); 
 
-      let media = [];
-      let cover;
+  
 
-      switch (post_type) {
-        case "text": {
-          const base64 = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-          media = [`data:text/plain;base64,${base64}`];
-          break;
-        }
+  document.getElementById("previewButton").addEventListener("click", function () {
 
-        case "image": {
-          const imageWrappers = document.querySelectorAll(".create-img img");
-          media = Array.from(imageWrappers)
-            .map((img) => img.src)
-            .filter((src) => src.startsWith("data:image/"));
-          break;
-        }
+    const form = document.getElementById("create_new_post");
+    const post_type = form.getAttribute("data-post-type");
+    /**********************************************************************/
+    /** TEXT POST PREVIEW **/
+    if (post_type === "text") {
+        const title = document.getElementById("titleNotes")?.value.trim() || "";
+        const description = document.getElementById("descriptionNotes")?.value.trim() || "";
+        const tags = getTagHistory(); 
 
-        case "audio": {
-          const audioWrappers = document.querySelectorAll(".create-audio");
-          media = Array.from(audioWrappers)
-            .map((audio) => audio.src)
-            .filter((src) => src.startsWith("data:audio/"));
+        const objekt = {
+          id: "preview-text-post",  
+          contenttype: "text",
+          title,
+          description,
+          tags,
+          media: [],
+        };
 
-          const coverImg = document.querySelector("#preview-cover img");
-          const canvas = document.querySelector("#preview-audio canvas");
-          cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-          break;
-        }
+        previewPost(objekt);
+    }
 
-        case "video": {
-          const videoWrappers = document.querySelectorAll(".create-video");
-          media = Array.from(videoWrappers)
-            .map((vid) => vid.src)
-            .filter((src) => src.startsWith("data:video/"));
-          break;
-        }
 
-        default:
-          console.warn("Unknown post type for preview:", post_type);
-          return;
-      }
+    /**********************************************************************/
+    /** IMAGE POST PREVIEW **/
 
-      const objekt = {
-        id: "preview-generic-post",
-        contenttype: post_type,
-        title,
-        description,
-        tags,
-        media,
-        cover, 
-      };
+    if (post_type === "image") {
+        const title = document.getElementById("titleImage")?.value.trim() || "";
+        const description = document.getElementById("descriptionImage")?.value.trim() || "";
+        const tags = getTagHistory();
 
-      previewPost(objekt);
-    });
-  }
+        // Get all images inside .create-img wrappers
+        const imageWrappers = document.querySelectorAll(".create-img img");
+        const media = Array.from(imageWrappers)
+          .map((img) => img.src)
+          .filter((src) => src.startsWith("data:image/"));
+
+        const objekt = {
+          contenttype: "image",
+          title,
+          description,
+          tags,
+          media, 
+        };
+
+                console.log("Previewing text post:", objekt);
+
+        previewPost(objekt);
+     }
+
+
+
+
+    if (post_type === "audio") {
+        const title = document.getElementById("titleAudio")?.value.trim() || "";
+        const description = document.getElementById("descriptionAudio")?.value.trim() || "";
+        const audioWrappers = document.querySelectorAll(".create-audio");
+        const tags = getTagHistory();
+
+        const media = Array.from(audioWrappers)
+          .map((audio) => audio.src)
+          .filter((src) => src.startsWith("data:audio/"));
+
+        const coverImg = document.querySelector("#preview-cover img");
+        const canvas = document.querySelector("#preview-audio canvas");
+        const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+
+        const objekt = {
+          title,
+          description,
+          tags,
+          media,
+          cover,
+          contenttype: "audio",
+        };
+
+        previewPost(objekt);
+     }
+
+    /**********************************************************************/
+    /** VIDEO POST PREVIEW **/
+    if (post_type === "video") {
+        const title = document.getElementById("titleVideo")?.value.trim() || "";
+        const description = document.getElementById("descriptionVideo")?.value.trim() || "";
+        const videoWrappers = document.querySelectorAll(".create-video");
+        const tags = getTagHistory();
+
+        const media = Array.from(videoWrappers)
+          .map((vid) => vid.src)
+          .filter((src) => src.startsWith("data:video/"));
+
+        const objekt = {
+          title,
+          description,
+          tags,
+          media,
+          contenttype: "video",
+        };
+
+        previewPost(objekt);
+    }
+
+  });
+
 
 
 
@@ -1237,44 +1285,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       scrollToIndex(currentIndex);
-       toggleScrollButtons();
     }
-
-    const container = document.querySelector('.preview-track-wrapper');
-    const track = container.querySelector('.preview-track');
-    const nextBtn = document.querySelector('.next-button');
-    const prevBtn = document.querySelector('.prev-button');
-
-    function isElementInViewportX(child, container) {
-      const containerRect = container.getBoundingClientRect();
-      const childRect = child.getBoundingClientRect();
-
-      return (
-        childRect.left >= containerRect.left &&
-        childRect.right <= containerRect.right
-      );
-    }
-    
-    function toggleScrollButtons() {
-      const isVisible = isElementInViewportX(track, container);
-      if (!isVisible) {
-        nextBtn.classList.remove('none');
-        prevBtn.classList.remove('none');
-      } else {
-        nextBtn.classList.add('none');
-        prevBtn.classList.add('none');
-      }
-      //console.log("Is first item visible?", isElementInViewportX(track, container));
-    }
-
-    // Call once on load
-    toggleScrollButtons();
-
-    // Optionally recheck on window resize or DOM change
-    window.addEventListener('resize', toggleScrollButtons);
-    container.addEventListener('scroll', toggleScrollButtons);
-
-
   }
 });
 
