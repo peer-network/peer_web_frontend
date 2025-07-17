@@ -8,6 +8,7 @@ let secondsElapsed = 0;
 let timerInterval = null;
 let recordedAudioURL = null;
 let playbackInterval = null;
+let audioContext, analyser, source, dataArray, animationId;
 
 function initAudioEvents() {
   const micBtn = document.querySelector(MIC_SELECTOR);
@@ -24,11 +25,10 @@ function initAudioEvents() {
           await recordedAudio.play();
           setUIState("playing");
           updateMicButton("on");
+          startAudioVisualizer();
           const timer = document.getElementById("recordingTimer");
           if (timer) {
-            // 🛑 Stop old interval if any
             cancelAnimationFrame(playbackInterval);
-
             const updatePlaybackTimer = () => {
               const t = recordedAudio.currentTime;
               const min = Math.floor(t / 60);
@@ -36,8 +36,7 @@ function initAudioEvents() {
               timer.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
               playbackInterval = requestAnimationFrame(updatePlaybackTimer);
             };
-
-            updatePlaybackTimer(); // ✅ Start immediately
+            updatePlaybackTimer();
           }
         } else {
           recordedAudio.pause();
@@ -71,6 +70,7 @@ function initAudioEvents() {
       timer.textContent = "0:00";
     }
     cancelAnimationFrame(playbackInterval);
+    cancelAnimationFrame(animationId);
   });
   // Record again reset
   document.querySelector(".record-again") ?.addEventListener("click", () => {
@@ -84,7 +84,6 @@ function initAudioEvents() {
   });
 }
 
-
 async function startRecording() {
   try {
     audioStream = await navigator.mediaDevices.getUserMedia({
@@ -94,20 +93,15 @@ async function startRecording() {
     chunks = [];
     isRecording = true;
     recorder.ondataavailable = (e) => chunks.push(e.data);
-
-    // STEP 1: Show timer and wait for DOM to update
     const timer = document.getElementById("recordingTimer");
     if (timer) {
       timer.classList.remove("none");
       timer.textContent = "0:00";
     }
-
-    await new Promise(requestAnimationFrame); // FORCE DOM TO PAINT FIRST
-
-    // STEP 2: Start timer THEN start audio
-    startTimer(); // <- sets secondsElapsed = 0
-    recorder.start(); // <- won't get ahead of the timer now
-
+    await new Promise(requestAnimationFrame);
+    startTimer();
+    recorder.start();
+    startAudioVisualizer();
     recorder.onstop = () => {
       const blob = new Blob(chunks, {
         type: 'audio/webm'
@@ -133,10 +127,20 @@ async function startRecording() {
   }
 }
 
+
 function stopRecording() {
   if (recorder && isRecording) {
     recorder.stop();
-    audioStream.getTracks().forEach(track => track.stop());
+    if (audioStream) {
+      audioStream.getTracks().forEach(track => track.stop());
+      audioStream = null;
+    }
+    if (audioContext) {
+      audioContext.close();
+      audioContext = null;
+    }
+    cancelAnimationFrame(animationId);
+    animationId = null;
     isRecording = false;
     stopTimer();
   }
@@ -184,15 +188,9 @@ function startTimer() {
   tick();
 }
 
-
-
 function stopTimer() {
   clearInterval(timerInterval);
-
-  // const timer = document.getElementById("recordingTimer");
-  // if (timer) {
-  //   timer.classList.add("none");
-  // }
+  cancelAnimationFrame(animationId);
 }
 
 function appendAudioToForm(blob) {
@@ -238,4 +236,30 @@ function setUIState(state) {
       label.textContent = "Paused";
       break;
   }
+}
+
+async function startAudioVisualizer() {
+const paths = document.querySelectorAll('#mic-visualizer path');
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  source = audioContext.createMediaStreamSource(stream);
+  analyser = audioContext.createAnalyser();
+  analyser.fftSize = 64;
+
+  source.connect(analyser);
+  dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+  function animate() {
+    analyser.getByteFrequencyData(dataArray);
+
+    paths.forEach((path, i) => {
+       const intensity = dataArray[i % dataArray.length] / 255;
+    const scale = 0.5 + intensity * 5;
+    path.setAttribute('transform', `scale(0.5, ${scale})`);
+    });
+
+    animationId = requestAnimationFrame(animate);
+  }
+
+  animate();
 }

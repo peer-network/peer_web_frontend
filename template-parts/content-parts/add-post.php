@@ -35,7 +35,10 @@
                         
                         <div id="voice-record-wrapper" class="voice-media">
                             <span id="recordingStatusText">Start recording</span>
-                            <img class="recording-bar-img" src="svg/recording-bar.svg" alt="Audio upload" />
+                            <!-- Voice Bar -->
+                            <div class="visualizer-wrapper">
+                              <?php require_once('./template-parts/content-parts/voice-bar-svg.php'); ?>
+                            </div>
                             <!-- mic icon svg -->
                             <div class="micButton">
                                 <span class="icon-mic none" id="voice-media-off">
