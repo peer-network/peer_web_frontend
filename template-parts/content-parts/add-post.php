@@ -18,6 +18,20 @@
                         <span class="upload-label">Upload Images</span>
                         <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden  multiple />
                     </div>
+                    
+
+                </div>
+                <div class="images_action_buttons">
+                    <div id="aspectRatioSelectMulti" class="aspect-ratio-toggle">
+                        <input type="radio" id="ar-12" name="aspectRatioMul" value="1" checked>
+                        <label for="ar-1">1:1 Square</label>
+                        <input type="radio" id="ar-22" name="aspectRatioMul" value="0.8">
+                        <label for="ar-2">4:5 Vertical</label>
+                    </div>
+                    <div id="more-images_upload" >
+                        <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                        <span class="upload-label">Upload more images</span>
+                    </div>
                 </div>
                 <span class="response_msg error" id="imageError"></span>
 
@@ -166,8 +180,9 @@
                 <div class="col-left">
                     <label for="titleNotes" class="md_font_size">Title*</label>
                 </div>
-                <div class="col-right">
-                    <input type="text" id="titleNotes" placeholder="Title" name="text-input" maxlength="150" />
+                <div class="col-right input-wrapper">
+                    <input type="text" id="titleNotes" placeholder="Title" name="text-input"  />
+                     <span id="title_limit_box" class="char-counter md_font_size" data-target="titleNotes"><span class="char_count">0</span>/<span class="char_limit">50</span></span>
                     <span class="response_msg error" id="titleError"></span>
                 </div>
             </div>
@@ -175,11 +190,11 @@
                 <div class="col-left">
                     <label for="descriptionNotes" class="md_font_size">Description</label>
                 </div>
-                <div class="col-right">
+                <div class="col-right input-wrapper">
                     <div class="textarea-wrapper">
                         <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength=""></textarea>
-                        <span class="char-counter md_font_size" data-target="descriptionNotes"><span class="char_count">0</span>/<span class="char_limit">20000</span></span>
+                        <span id="desc_limit_box" class="char-counter md_font_size" data-target="descriptionNotes"><span class="char_count">0</span>/<span class="char_limit">20000</span></span>
                     </div>
                     <span class="response_msg error" id="descriptionError"></span>
                 </div>

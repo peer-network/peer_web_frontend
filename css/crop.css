@@ -27,12 +27,19 @@
   /* justify-content: center; */
   align-items: center;
   flex-direction: column;
-  z-index: 1;
+  z-index: 3;
+  backdrop-filter: blur(5px);
 }
 
 #videoTrim {
-  width: 100%;
-  height: auto;
+	width: auto;
+	height: 95%;
+	object-fit: cover;
+	margin-bottom: 5%;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+  border-radius: 2rem;
 }
 #aspectRatioSelect {
   top: 10px;
@@ -50,12 +57,16 @@
   width: 50%;
 }
 #trimButtons {
-  margin-top: 8rem;
+ padding-top: 25px;
   z-index: 1000;
+  justify-content: space-between;
 }
 .aspect-ratio-toggle {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
+	background: var(--dark-inactive, #323232);
+	border-radius: 100px;
+	overflow: hidden;
 }
 
 .aspect-ratio-toggle input[type="radio"] {
@@ -63,21 +74,26 @@
 }
 
 .aspect-ratio-toggle label {
-  color: var(--white, #fff);
-  padding: 1.2em;
-
-  margin-left: -1px;
-  cursor: pointer;
-  position: relative;
-  background: var(--dark-inactive, #323232);
-  z-index: 1;
-  transition: background 0.2s;
-  min-width: 12em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 2em !important;
-  left: 0 !important;
+	color: var(--white, #fff);
+	padding: 1.2em;
+	margin-left: -1px;
+	cursor: pointer;
+	position: relative;
+	background: var(--dark-inactive, #323232);
+	z-index: 1;
+	transition: background 0.2s;
+	min-width: 12em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	left: 0 !important;
+}
+.aspect-ratio-toggle label::before {
+	content: "";
+	height: 20px;
+	width: 20px;
+	border: 2px solid;
+	margin-right: 10px;
 }
 
 .aspect-ratio-toggle label:first-of-type {
@@ -89,11 +105,15 @@
 .aspect-ratio-toggle label:nth-of-type(2) {
   margin-left: -1em !important;
 }
+.aspect-ratio-toggle label:nth-of-type(2)::before {
+  height: 30px;
+}
 .aspect-ratio-toggle input[type="radio"]:checked + label {
-  background: var(--white, #fff) !important;
-  color: var(--black, #000);
-  z-index: 3;
-  font-weight: bold;
+	background: var(--white, #fff) !important;
+	color: var(--black, #000);
+	z-index: 3;
+	font-weight: bold;
+	border-radius: 100px;
 }
 
 /* 
@@ -126,10 +146,11 @@ implement in all-post.css
 }
 
 #videoTrimContainer {
-  position: relative;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  max-width:100% !important;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
@@ -137,9 +158,16 @@ implement in all-post.css
   align-items: center;
   flex-direction: column;
   z-index: 99;
-  margin-top: -36rem;
+  margin: 0;
+ 
 }
-
+.video-trim-wrapper {
+	padding: 50px;
+	max-height: 80vh;
+  width: 70%;
+	position: relative;
+  padding-bottom: 130px;
+}
 #videoTimeline {
   display: flex;
   justify-content: center;
@@ -156,6 +184,7 @@ implement in all-post.css
   cursor: pointer;
   border-radius: 1rem;
   width: 10%;
+  height: 100%;
 }
 .timeline-wrapper {
   width: 100%;
