@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     h2.textContent = objekt.title || "";
 
     const time = document.createElement("span");
-    time.className = "timeagao";
+    time.className = "timeagao txt-color-gray";
     time.textContent = "1 sec ago";
 
     titleEl.appendChild(h2);
@@ -314,9 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Optionally: toggle active class for UI
             document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
             this.closest('.form-tab-js').classList.add('active');
-
-            // Call your custom content-switching logic if needed (e.g. loadImageForm(), loadVideoForm())
-            // You may already have something like that in your JS handling post type switch.
         });
     });
 
@@ -995,6 +992,36 @@ document.addEventListener("DOMContentLoaded", () => {
         const post_type = e.target.getAttribute("data-post-type");
         postform.setAttribute("data-post-type", post_type);
       }
+      // Update the <h1 id="h1"> with the selected post type
+      const post_type = e.target.getAttribute("data-post-type");
+      const header = document.getElementById("h1");
+      if (header && post_type) {
+        const labels = {
+          text: "Text Post",
+          image: "Image Post",
+          video: "Video Post",
+          audio: "Music Post"
+        };
+        header.textContent = labels[post_type] ;
+      }
+
+
+      // Clear text inputs when switching tabs
+      const titleInput = document.getElementById("titleNotes");
+      const descInput = document.getElementById("descriptionNotes");
+      const tagInput = document.getElementById("tag-input");
+      const tagSelected = document.getElementById("tagsSelected");
+      const charCount = document.querySelector(".char-counter .char_count");
+      const titleError = document.getElementById("titleError");
+
+      if (titleInput) titleInput.value = "";
+      if (descInput) descInput.value = "";
+      if (tagInput) tagInput.value = "";
+      if (tagSelected) tagSelected.innerHTML = "";
+      if (charCount) charCount.textContent = "0";
+      if (titleError) titleError.textContent = "";
+
+
       // Check if it's the audio form (music) and init
       if (id === "preview-audio") initAudioEvents(); // attach mic click handler
 
