@@ -16,7 +16,6 @@
 }
 
 .previewPost .inner-container {
-  top: 47% !important;
   height: 80vh !important;
 }
 
@@ -110,6 +109,7 @@
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
+  overflow-y: auto;
   
 }
 .viewpost .post_content .hashtags {
@@ -845,13 +845,13 @@
 .foot-end {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  width: 40%;
-  position: absolute;
-  bottom: 0;
-  margin-left: 120px;
-  margin-bottom: 100px;
+  width: 50vw;
+  position: fixed;
+  bottom: 50px;
+  left: 30%;
+  transform: translateX(-50%);
 }
 
 .switch-buttons {
@@ -859,9 +859,7 @@
   border-radius: 2.5rem;
   overflow: hidden;
   background-color: var(--dark-inactive, #323232);;
-  width: 100%;
-  max-width: 400px;
-}
+  padding: 0.3rem;}
 
 .switch-btn {
   flex: 1;
