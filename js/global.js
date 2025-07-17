@@ -97,7 +97,7 @@ let cropOrg = null;
 function handleEditImage(event) {
   event.preventDefault();
   document.getElementById("crop-container").classList.remove("none");
-  cropOrg = event.target.parentElement.childNodes[3];
+  cropOrg = event.target.closest(".preview-item").childNodes[3];
   if (sessionStorage.getItem(event.target.parentElement.childNodes[1].innerText)) {
     cropImg.src = sessionStorage.getItem(event.target.parentElement.childNodes[1].innerText);
   } else {

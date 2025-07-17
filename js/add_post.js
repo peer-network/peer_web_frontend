@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
   const descEl = document.getElementById("descriptionNotes");
+  const titleEl = document.getElementById("titleNotes");
 
   updateTagUIVisibility(); // suggestions + selected
   /********************* Preview posts functionality ******************************/
@@ -323,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     // Elements
     const post_type = event.target.getAttribute("data-post-type");
-    const titleEl = document.getElementById("titleNotes");
+    
 
     const tagErrorEl = document.getElementById("tagError");
     const titleErrorEl = document.getElementById("titleError");
@@ -427,13 +428,16 @@ document.addEventListener("DOMContentLoaded", () => {
         postDescription = description;
       }
     }
-
+    const title_char_count=setupCharCounter(titleEl);
     if (!title) {
       titleErrorEl.textContent = "Title is required.";
       hasError = true;
     } else if (title.length < 5) {
       titleErrorEl.textContent = "Title must be at least 5 characters.";
       hasError = true;
+    }else if(!title_char_count){
+       hasError = true;
+      
     }
     const dec_char_count=setupCharCounter(descEl);
     if (!description) {
@@ -642,19 +646,22 @@ document.addEventListener("DOMContentLoaded", () => {
   descEl.addEventListener("keyup", (e) => {
     setupCharCounter(e.target);
   });
-  function setupCharCounter(descEl){
-    let text = descEl.value;
-
-    const descriptionError= document.getElementById("descriptionError");
-    descriptionError.textContent="";
-    const char_count = document.querySelector("span.char-counter .char_count");
-    let char_limit = document.querySelector("span.char-counter .char_limit").textContent;
+  titleEl.addEventListener("keyup", (e) => {
+    setupCharCounter(e.target);
+  });
+  function setupCharCounter(El){
+    let text = El.value;
+    
+    const Error= El.closest(".input-wrapper").querySelector(".response_msg");
+    Error.textContent="";
+    const char_count = El.closest(".input-wrapper").querySelector("span.char-counter .char_count");
+    let char_limit = El.closest(".input-wrapper").querySelector("span.char-counter .char_limit").textContent;
 
     char_limit =char_limit *1;
     //console.log(char_limit);
     char_count.textContent = text.length;
     if (text.length > char_limit) {
-      descriptionError.textContent="Char Maximum length exceeded!";
+      Error.textContent="Char Maximum length exceeded!";
       //text = text.substr(0, char_limit);
       //descEl.value = text;
         return false;
@@ -1027,7 +1034,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
      
-      const char_limit = document.querySelector("span.char-counter .char_limit");
+      const char_limit = document.querySelector("#desc_limit_box .char_limit");
       if (id === "preview-notes" ){
         char_limit.textContent="20000";
       }else{
@@ -1155,6 +1162,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.getElementById("more-images_upload").addEventListener("click", function () {
+    const fileInput = document.querySelector("#drop-area-image input[type='file']");
+    if (fileInput) fileInput.click();
+  });
+
   // function tag_getTagArray() {
   //   return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
   // }
@@ -1179,13 +1191,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
+    
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       size += file.size;
       if (size > maxSizeMB * 1024 * 1024) {
        // Merror("Error", "The file is too large. Please select a file(s) under 5MB.");
-       ErrorCont.innerHTML="The file is too large. Please select a file(s) under 5MB.";
-        return;
+       //ErrorCont.innerHTML="The file is too large. Please select a file(s) under 5MB.";
+        //return;
       }
     }
     for (let file of files) {
@@ -1292,6 +1305,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    
+
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
     document.querySelectorAll(".editVideo").forEach(addEditVideoListener);
     if (uploadtype === "image") {
@@ -1319,6 +1334,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       previewTrack.style.transform = `translateX(-${offset}px)`;
       currentIndex = index;
+      
+       
     }
 
     document.querySelector(".next-button").addEventListener("click", () => {
@@ -1348,7 +1365,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (currentIndex >= totalItems) {
         currentIndex = totalItems - 1;
       }
-
+      setTimeout(toggleScrollButtons, 200);
+      imageItemCount();
       scrollToIndex(currentIndex);
     }
 
@@ -1372,11 +1390,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!isVisible) {
         nextBtn.classList.remove('none');
         prevBtn.classList.remove('none');
+        document.getElementById("preview-image").classList.add("enbale_more_upload_btn");
       } else {
         nextBtn.classList.add('none');
         prevBtn.classList.add('none');
+        document.getElementById("preview-image").classList.remove("enbale_more_upload_btn")
       }
       console.log("Is first item visible?", isElementInViewportX(track, container));
+      imageItemCount();
+      
     }
 
     // Call once on load
@@ -1384,7 +1406,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Optionally recheck on window resize or DOM change
     window.addEventListener('resize', toggleScrollButtons);
-    container.addEventListener('scroll', toggleScrollButtons)
+    container.addEventListener('scroll', toggleScrollButtons);
+    
+    function imageItemCount(){
+      const imageItemCount = previewContainer.querySelectorAll(".preview-item").length;
+        console.log("Total preview items:", imageItemCount);
+        if(imageItemCount > 0){
+          document.getElementById("preview-image").classList.add("image_added");
+        }else{
+          document.getElementById("preview-image").classList.remove("image_added");
+        }
+    }
+
   }
 });
 
