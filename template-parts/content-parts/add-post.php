@@ -69,7 +69,7 @@
                                 </span>
                             </div>
                             <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
-                            <span id="recordingTimer" class="record-time none">00:00</span>
+                            <span id="recordingTimer" class="record-time">0:00</span>
                         </div>
                         <!-- Add preview block HERE -->
                         <div id="preview-audio" class="blockscroll preview-container">

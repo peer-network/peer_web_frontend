@@ -130,36 +130,40 @@
 }
 
 #addPost .preview-container .image-preview-container {
-	display: flex;
-	overflow: hidden;
-	gap: 20px;
-	align-items: center;
-	justify-content: flex-start;
-	height: 100%;
+  display: flex;
+  overflow: hidden;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
   max-width: 76%;
   overflow-x: hidden;
   transition: transform 0.3s ease;
 }
-#addPost .preview-container .image-preview-container span.button {
-	width: 100px;
-  min-width: unset;
-	height: 150px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	padding: 0;
-	margin: 0;
-	line-height: inherit;
-	border: 0;
-	background-color: transparent;
-}
-#addPost .preview-container .image-preview-container span.button i {
-	line-height: 0;
-}
-#addPost .preview-container .image-preview-container span.button:hover{
 
-	background-color: var(--bg-filter);
+#addPost .preview-container .image-preview-container span.button {
+  width: 100px;
+  min-width: unset;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
+  border: 0;
+  background-color: transparent;
 }
+
+#addPost .preview-container .image-preview-container span.button i {
+  line-height: 0;
+}
+
+#addPost .preview-container .image-preview-container span.button:hover {
+
+  background-color: var(--bg-filter);
+}
+
 #addPost .preview-container .image-preview-container .preview-track-wrapper {
   display: flex;
   overflow: hidden;
@@ -167,6 +171,7 @@
 
   height: 100%;
 }
+
 .preview-track {
   display: flex;
   gap: 20px;
@@ -207,28 +212,30 @@
   height: 100%;
   width: auto;
 }
+
 #addPost .preview-item img.create-img {
   cursor: move;
 }
+
 #preview-image .preview-item .editImage {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-	position: absolute;
-	height: auto !important;
-	transform: translateY(50px);
-	opacity: 0;
-	transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: absolute;
+  height: auto !important;
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 0.3s;
   z-index: 1;
 }
 
-#preview-image .preview-item:hover img.create-img
-{
+#preview-image .preview-item:hover img.create-img {
   opacity: 0.5;
 }
-#preview-image .preview-item:hover .editImage  {
+
+#preview-image .preview-item:hover .editImage {
   transform: translateY(0);
-	opacity: 1;
+  opacity: 1;
 }
 
 #addPost .preview-item progress {
@@ -249,17 +256,20 @@
   align-items: center;
   gap: 5%;
 }
+
 #drop-area-videolong {
   min-height: 30vh !important;
   max-height: 30vh;
 }
-#addPost #preview-video .preview-container > div img.create-img,
-#addPost #preview-video .preview-container > div video {
+
+#addPost #preview-video .preview-container>div img.create-img,
+#addPost #preview-video .preview-container>div video {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-#addPost #preview-video .preview-container > div video {
+
+#addPost #preview-video .preview-container>div video {
   position: absolute;
   object-fit: contain !important;
 }
@@ -272,16 +282,19 @@
 #addPost #preview-video .preview-item {
   width: 33%;
 }
+
 #addPost #preview-video .preview-item.video-item {
   width: 40%;
   max-height: 35vh;
   border: 1px dashed #888;
   min-height: 35vh;
 }
+
 #addPost #preview-video .preview-item.video-item.file-input-videolong {
   min-height: 60vh;
   max-height: 60vh;
 }
+
 /* ===================== DROP AREA ===================== */
 #addPost .drop-area {
   flex: 1 0 0;
@@ -343,6 +356,7 @@
   color: #fff;
   font-weight: bold;
 }
+
 #addPost .drop-area .plus-icon i {
   line-height: 0;
 }
@@ -399,6 +413,7 @@
   padding: 0;
   overflow: hidden;
 }
+
 .tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -406,6 +421,7 @@
   gap: 0.5rem;
   transition: all 0.3s ease;
 }
+
 .tag-list .tag {
   padding: 0 30px;
   font-weight: 400;
@@ -552,35 +568,35 @@
 
 /* === Mic Button (before recording) === */
 .micButton {
-    transition: all 0.3s ease;
-    position: absolute;
-    top: 50%;
-    right: 50%;
-    transform: translate(50%, -50%);
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
 }
 
 .micButton span.icon-mic {
-    background: var(--blue);
-    display: flex;
-    width: 200px;
-    height: 200px;
-    padding: 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    aspect-ratio: 1/1;
-    border-radius: 100%;
+  background: var(--blue);
+  display: flex;
+  width: 200px;
+  height: 200px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  aspect-ratio: 1/1;
+  border-radius: 100%;
 }
 
 .voice-media.active .micButton {
-    right: 0;
-    transform: translate(0%, -50%);
+  right: 0;
+  transform: translate(0%, -50%);
 }
 
 .voice-media.active .micButton span.icon-mic {
-    background: var(--bg-filter);
-    border: 3px solid;
-    cursor: pointer;
+  background: var(--bg-filter);
+  border: 3px solid;
+  cursor: pointer;
 }
 
 /* === Recording Box (appears when recording starts) === */
@@ -619,6 +635,7 @@
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0.3;
   }
@@ -694,37 +711,37 @@
 }
 
 #preview-audio .record-again {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--blue);
-    width: 100%;
-    padding: 0 65px;
-    line-height: 100px;
-    border-radius: 100px;
-    font-size: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--blue);
+  width: 100%;
+  padding: 0 65px;
+  line-height: 100px;
+  border-radius: 100px;
+  font-size: 24px;
 }
 
 #preview-audio .record-again span.icon-mic {
-    font-size: 50px;
-    line-height: 0;
+  font-size: 50px;
+  line-height: 0;
 }
+
 #preview-audio .record-again span.icon-mic svg {
-    width: 38px;
-    height: auto;
+  width: 38px;
+  height: auto;
 }
-/*********************/
-.form-actions button {
-  min-width: 300px;
-=======
+
 /*********************/
 .form-actions button {
   min-width: 150px;
 }
+
 @media screen and (min-width: 2000px) {
   .create_post .inner-container {
     padding: 7rem 2rem;
   }
+
   .form-actions button {
     min-width: 300px;
   }
@@ -736,9 +753,11 @@
     height: 7.5rem;
     font-size: 150%;
   }
+
   .create_post .inner-container {
     padding: 7rem 5rem;
   }
+
   .form-actions button {
     min-width: 500px;
   }
@@ -753,7 +772,6 @@
   }
 
   .tag-list .tag .remove-tag {
-
     width: 40px;
 
     line-height: 40px;
@@ -761,4 +779,20 @@
 
     min-width: 40px;
   }
+}
+
+.tag-wrapper {
+  border-radius: 70px;
+}
+
+.tag-list .tag {
+  padding: 0 50px;
+  line-height: 100px;
+}
+
+.tag-list .tag .remove-tag {
+  width: 40px;
+  line-height: 40px;
+  height: 40px;
+  min-width: 40px;
 }
