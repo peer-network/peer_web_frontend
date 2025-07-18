@@ -75,7 +75,7 @@
                             <span id="recordingTimer" class="record-time">0:00</span>
                         </div>
                         <!-- Add preview block HERE -->
-                        <div id="preview-audio" class="blockscroll preview-container">
+                        <div class="blockscroll preview-container">
                             <div class="record-again none">
                                 <span class="btn-text">
                                     Record again

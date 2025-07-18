@@ -658,10 +658,9 @@ h1 {
   filter: brightness(1);
   background-color: transparent !important;
 }
-#createNotes:checked ~ #newNotesPost,
-#createImage:checked ~ #newImagePost,
-#createVideo:checked ~ #newVideoPost,
-#createAudio:checked ~ #newAudioPost {
+#createImage:checked ~ #preview-image,
+#createVideo:checked ~ #preview-video,
+#createAudio:checked ~ #preview-audio {
   display: block !important;
 }
 

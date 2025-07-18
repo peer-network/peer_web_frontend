@@ -9,331 +9,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const descEl = document.getElementById("descriptionNotes");
 
   updateTagUIVisibility(); // suggestions + selected
-  /********************* Preview posts functionality ******************************/
-
-  function previewPost(objekt) {
-
-    
-    const postContainer = document.getElementById("preview-post-container");
-    const array = objekt.media || [];
-
-    const containerleft = postContainer.querySelector(".viewpost-left");
-    const containerright = postContainer.querySelector(".viewpost-right");
-    const post_gallery = containerleft.querySelector(".post_gallery");
-    post_gallery.innerHTML="";
-    const post_contentletf=containerleft.querySelector(".post_content");
-    if(post_contentletf)   post_contentletf.remove();
-
-    const post_contentright=containerright.querySelector(".post_content");
-    
-    
-    const profile_header_left=postContainer.querySelector(".profile-header-left");
-   
-    profile_header_left.addEventListener("click",
-        function handledisLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-        }  
-      );
-
-    /*--------END: Card profile Header  -------*/
-    
-    /*--------Card Post Title and Text  -------*/
-    
-
-    const cont_post_text = containerright.querySelector(".post_text");
-    const cont_post_title = containerright.querySelector(".post_title h2");
-    const cont_post_time = containerright.querySelector(".timeagao");
-    const cont_post_tags = containerright.querySelector(".hashtags");
-
-    if (document.querySelector(".post_text")) {
-      cont_post_text.innerHTML = document.querySelector(".post_text").innerHTML;
-    } else if (objekt.description) {
-      cont_post_text.innerHTML = objekt.description;
-    }
-
-    if (document.querySelector(".post_title")) {
-      const title_text = document.querySelector(".post_title").childNodes[0].textContent.trim();
-      cont_post_title.innerHTML = title_text;
-    } else if (objekt.title) {
-      cont_post_title.innerHTML = objekt.title;
-    }
-
-    if (document.querySelector(".timeagao")) {
-      cont_post_time.innerHTML = document.querySelector(".timeagao").innerHTML;
-    } else {
-      cont_post_time.innerHTML = "1 sec ago";
-    }
-
-    if (document.querySelector(".hashtags")) {
-      cont_post_tags.innerHTML = document.querySelector(".hashtags").innerHTML;
-    } else if (objekt.tags?.length > 0) {
-      cont_post_tags.innerHTML = objekt.tags.map(tag => `<span>#${tag}</span>`).join(" ");
-    }
 
 
-    /*--------END : Card Post Title and Text  -------*/
-
-
-    const makeSlider = (type) => {
-      const sliderWrapper = document.createElement("div");
-      const sliderTrack = document.createElement("div");
-      const sliderThumbs = document.createElement("div");
-
-      sliderWrapper.className = "slider-wrapper";
-      sliderTrack.className = "slider-track";
-      sliderThumbs.className = "slider-thumbnails";
-
-      sliderWrapper.appendChild(sliderTrack);
-      sliderWrapper.appendChild(sliderThumbs);
-      post_gallery.appendChild(sliderWrapper);
-
-      const updateSlider = (index) => {
-        if (!sliderTrack.children[index]) return;
-        const offset = sliderTrack.children[index].offsetLeft;
-        sliderTrack.style.transform = `translateX(-${offset}px)`;
-
-        sliderThumbs.querySelectorAll(".timg").forEach((t, i) => {
-          t.classList.toggle("active", i === index);
-        });
-
-        if (type === "video") {
-          sliderTrack.querySelectorAll("video").forEach((v, i) => {
-            if (i === index) v.play();
-            else {
-              v.pause();
-              v.currentTime = 0;
-            }
-          });
-        }
-      };
-
-      return { sliderTrack, sliderThumbs, updateSlider };
-    };
-
-    
-
-    if (objekt.contenttype === "audio") {
-      post_gallery.classList.add("audio");
-      post_gallery.classList.remove("multi");
-      post_gallery.classList.remove("images");
-      post_gallery.classList.remove("video");
-      for (const item of array) {
-        const audio = document.createElement("audio");
-        audio.id = "audio2";
-        audio.src = media;
-        audio.controls = true;
-        audio.className = "custom-audio";
-
-        // 1. Erzeuge das <div>-Element
-        const audioContainer = document.createElement("div");
-        //audioContainer.id = "audio-container"; // Setze die ID
-         audioContainer.classList.add("audio-item");
-
-        if (objekt.cover) {
-          const cover = JSON.parse(objekt.cover);
-          img = document.createElement("img");
-          img.classList.add("cover");
-          img.onload = () => {
-            img.setAttribute("height", img.naturalHeight);
-            img.setAttribute("width", img.naturalWidth);
-          };
-          img.src = tempMedia(cover[0].path);
-          img.alt = "Cover";
-          audioContainer.appendChild(img);
-        }
-        // 2. Erzeuge das <canvas>-Element
-        const canvas = document.createElement("canvas");
-        canvas.id = "waveform-preview"; // Setze die ID für das Canvas
-
-        // 3. Erzeuge das <button>-Element
-        const button = document.createElement("button");
-        button.id = "play-pause"; // Setze die ID für den Button
-        // button.textContent = "Play"; // Setze den Textinhalt des Buttons
-
-        // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
-        let cover = null;
-        if (objekt.cover) {
-          cover = JSON.parse(objekt.cover);
-        }
-        const audio_player = document.createElement("div");
-        audio_player.className = "audio_player_con";
-        const timeinfo = document.createElement("div");
-        timeinfo.className = "time-info";
-        timeinfo.innerHTML = `
-          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
-        `;
-        audio_player.appendChild(timeinfo);
-        audio_player.appendChild(canvas);
-        audio_player.appendChild(button);
-        
-        audioContainer.appendChild(audio_player);
-        // audioContainer.appendChild(audio);
-        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-        post_gallery.appendChild(audioContainer);
-
-        initAudioplayer("waveform-preview", audio.src);
-      }
-    } else if (objekt.contenttype === "video") {
-      post_gallery.className = "post_gallery video";
-    if (array.length > 1) post_gallery.classList.add("multi");
-
-    const { sliderTrack, sliderThumbs, updateSlider } = makeSlider("video");
-
-    array.forEach((media, index) => {
-      const slide = document.createElement("div");
-      slide.className = "slide_item";
-
-      const video = document.createElement("video");
-      video.src = media;
-      video.controls = true;
-      video.loop = true;
-      video.autoplay = index === 0;
-      video.muted = false;
-      video.className = "custom-video";
-
-      slide.appendChild(video);
-      sliderTrack.appendChild(slide);
-
-      const thumb = document.createElement("div");
-      thumb.className = "timg";
-      thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
-      sliderThumbs.appendChild(thumb);
-
-      thumb.addEventListener("click", () => updateSlider(index));
-    });
-
-    requestAnimationFrame(() => updateSlider(0));
-  } else if (objekt.contenttype === "text") {
-    post_gallery.innerHTML = ""; 
-    post_gallery.className = "post_gallery"; 
-
-    if (containerleft && containerright) {
-      // Clone content area
-      const textContent = document.createElement("div");
-      textContent.className = "post_content";
-
-      // Create title
-      const titleEl = document.createElement("div");
-      titleEl.className = "post_title";
-      const h2 = document.createElement("h2");
-      h2.textContent = objekt.title || "";
-      titleEl.appendChild(h2);
-
-      // Create description
-      const textEl = document.createElement("div");
-      textEl.className = "post_text";
-      textEl.innerHTML = objekt.description || "";
-
-      // Create hashtags
-      const tagEl = document.createElement("div");
-      tagEl.className = "hashtags";
-      if (objekt.tags && objekt.tags.length) {
-        tagEl.innerHTML = objekt.tags.map(tag => `<span>#${tag}</span>`).join(" ");
-      }
-
-      // Create time (optional)
-      const timeEl = document.createElement("div");
-      timeEl.className = "timeagao";
-      timeEl.textContent = "Just now";
-
-      // Append all to textContent
-      textContent.appendChild(titleEl);
-      textContent.appendChild(textEl);
-      textContent.appendChild(tagEl);
-      textContent.appendChild(timeEl);
-
-      // Insert into container
-      containerleft.prepend(textContent.cloneNode(true));
-    }
-  } else {
-    post_gallery.className = "post_gallery images";
-    if (array.length > 1) post_gallery.classList.add("multi");
-
-    const { sliderTrack, sliderThumbs, updateSlider } = makeSlider("image");
-
-    array.forEach((media, index) => {
-      const slide = document.createElement("div");
-      slide.className = "slide_item";
-
-      const img = document.createElement("img");
-      const timg = document.createElement("img");
-      img.src = media;
-      img.alt = "";
-
-      const zoom = document.createElement("span");
-      zoom.className = "zoom";
-      zoom.innerHTML = `<i class="fi fi-sr-expand"></i>`;
-
-      slide.appendChild(img);
-      slide.appendChild(zoom);
-      sliderTrack.appendChild(slide);
-
-      const thumb = document.createElement("div");
-      thumb.className = "timg";
-      thumb.innerHTML = `<img src="${media}" alt="">`;
-      sliderThumbs.appendChild(thumb);
-
-      thumb.addEventListener("click", () => updateSlider(index));
-    });
-
-    requestAnimationFrame(() => updateSlider(0));
-  }
-
-}
-
-
-  const previewButton = document.getElementById('previewButton');
-  const previewSection = document.getElementById('previewSection');
-  const addPostSection = document.getElementById('addPostSection');
-
-    previewButton.addEventListener('click', function (e) {
-      e.preventDefault();
-        addPostSection.classList.add('none');
-        previewSection.classList.remove('none');
-    });
-
-  const backToEditBtn = document.getElementById('backToEdit');
-    if (backToEditBtn) {
-      backToEditBtn.addEventListener('click', function () {
-        addPostSection.classList.remove('none');
-        previewSection.classList.add('none');
-    });
-  }
-
-  const cancelEditBtn = document.getElementById('cancel_Btn');
-    if (cancelEditBtn) {
-      cancelEditBtn.addEventListener('click', function () {
-        addPostSection.classList.remove('none');
-        previewSection.classList.add('none');
-    });
-  }
-
-  const sidebarTabs = document.querySelectorAll('.form-tab-js a');
-    sidebarTabs.forEach(tab => {
-        tab.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            // Hide preview, show add-post
-            previewSection.classList.add('none');
-            addPostSection.classList.remove('none');
-
-            // Optionally: toggle active class for UI
-            document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
-            this.closest('.form-tab-js').classList.add('active');
-
-            // Call your custom content-switching logic if needed (e.g. loadImageForm(), loadVideoForm())
-            // You may already have something like that in your JS handling post type switch.
-        });
-    });
-
-    
-  /**********************************************************************/
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
+
     // Elements
-    const post_type = event.target.getAttribute("data-post-type");
+    const post_type = event.target.getAttribute('data-post-type');
     const titleEl = document.getElementById("titleNotes");
+
 
     const tagErrorEl = document.getElementById("tagError");
     const titleErrorEl = document.getElementById("titleError");
@@ -341,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imgErrorEl = document.getElementById("imageError");
     const audioErrorEl = document.getElementById("audioError");
     const videoErrorEl = document.getElementById("videoError");
+
 
     const createPostError = document.getElementById("createPostError");
 
@@ -367,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let cover;
     let postDescription = "";
     if (post_type == "text") {
+
       // Convert to base64
       const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
       const base64WithMime = [`data:text/plain;base64,${base64String}`];
@@ -377,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         postMedia = base64WithMime;
       }
+
     }
     if (post_type == "image") {
       const imageWrappers = document.querySelectorAll(".create-img");
@@ -385,10 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
         .filter((src) => src.startsWith("data:image/"));
 
       if (combinedBase64.length === 0) {
-        imgErrorEl.textContent = "Please select at least one image.";
+        imgErrorEl.textContent = "Please select  least one image.";
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
         imgErrorEl.textContent = "The image(s) are too large.";
         hasError = true;
       } else {
@@ -404,13 +92,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const coverImg = document.querySelector("#preview-cover img");
       const canvas = document.querySelector("#preview-audio canvas");
-      cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+      cover = coverImg ? [coverImg.src] : [canvas ?.toDataURL("image/webp", 0.8)];
 
       if (combinedBase64.length === 0) {
         audioErrorEl.textContent = "Please select audio.";
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
         audioErrorEl.textContent = "The audio is too large.";
         hasError = true;
       } else {
@@ -430,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
+
         videoErrorEl.textContent = "The video is too large.";
         hasError = true;
       } else {
@@ -445,16 +135,13 @@ document.addEventListener("DOMContentLoaded", () => {
       titleErrorEl.textContent = "Title must be at least 5 characters.";
       hasError = true;
     }
-    const dec_char_count=setupCharCounter(descEl);
+
     if (!description) {
       descErrorEl.textContent = "Description is required.";
       hasError = true;
     } else if (description.length < 10) {
       descErrorEl.textContent = "Description must be at least 10 characters.";
       hasError = true;
-    }else if(!dec_char_count){
-       hasError = true;
-      
     }
 
     /*if (tags.length === 0) {
@@ -467,13 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     submitButton.disabled = true;
     try {
+
       const result = await sendCreatePost({
         title,
         media: postMedia,
         cover,
         mediadescription: postDescription,
         contenttype: post_type,
-        tags,
+        tags
       });
 
       //console.log(result.createPost);
@@ -481,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         createPostError.classList.add(result.createPost.status);
         createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
         setTimeout(() => {
+
           window.location.href = "./profile.php";
         }, 1000);
       } else {
@@ -494,120 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.disabled = false;
     }
   });
-
-
-
-
-  
-
-  document.getElementById("previewButton").addEventListener("click", function () {
-
-    const form = document.getElementById("create_new_post");
-    const post_type = form.getAttribute("data-post-type");
-    /**********************************************************************/
-    /** TEXT POST PREVIEW **/
-    if (post_type === "text") {
-        const title = document.getElementById("titleNotes")?.value.trim() || "";
-        const description = document.getElementById("descriptionNotes")?.value.trim() || "";
-        const tags = getTagHistory(); 
-
-        const objekt = {
-          id: "preview-text-post",  
-          contenttype: "text",
-          title,
-          description,
-          tags,
-          media: [],
-        };
-
-        previewPost(objekt);
-    }
-
-
-    /**********************************************************************/
-    /** IMAGE POST PREVIEW **/
-
-    if (post_type === "image") {
-        const title = document.getElementById("titleImage")?.value.trim() || "";
-        const description = document.getElementById("descriptionImage")?.value.trim() || "";
-        const tags = getTagHistory();
-
-        // Get all images inside .create-img wrappers
-        const imageWrappers = document.querySelectorAll(".create-img img");
-        const media = Array.from(imageWrappers)
-          .map((img) => img.src)
-          .filter((src) => src.startsWith("data:image/"));
-
-        const objekt = {
-          contenttype: "image",
-          title,
-          description,
-          tags,
-          media, 
-        };
-
-                console.log("Previewing text post:", objekt);
-
-        previewPost(objekt);
-     }
-
-
-
-
-    if (post_type === "audio") {
-        const title = document.getElementById("titleAudio")?.value.trim() || "";
-        const description = document.getElementById("descriptionAudio")?.value.trim() || "";
-        const audioWrappers = document.querySelectorAll(".create-audio");
-        const tags = getTagHistory();
-
-        const media = Array.from(audioWrappers)
-          .map((audio) => audio.src)
-          .filter((src) => src.startsWith("data:audio/"));
-
-        const coverImg = document.querySelector("#preview-cover img");
-        const canvas = document.querySelector("#preview-audio canvas");
-        const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-
-        const objekt = {
-          title,
-          description,
-          tags,
-          media,
-          cover,
-          contenttype: "audio",
-        };
-
-        previewPost(objekt);
-     }
-
-    /**********************************************************************/
-    /** VIDEO POST PREVIEW **/
-    if (post_type === "video") {
-        const title = document.getElementById("titleVideo")?.value.trim() || "";
-        const description = document.getElementById("descriptionVideo")?.value.trim() || "";
-        const videoWrappers = document.querySelectorAll(".create-video");
-        const tags = getTagHistory();
-
-        const media = Array.from(videoWrappers)
-          .map((vid) => vid.src)
-          .filter((src) => src.startsWith("data:video/"));
-
-        const objekt = {
-          title,
-          description,
-          tags,
-          media,
-          contenttype: "video",
-        };
-
-        previewPost(objekt);
-    }
-
-  });
-
-
-
-
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
     form.addEventListener("reset", function (event) {
@@ -641,32 +216,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-
-  /******************************************************************** */
-  
   descEl.addEventListener("keyup", (e) => {
-    setupCharCounter(e.target);
-  });
-  function setupCharCounter(descEl){
     let text = descEl.value;
-
-    const descriptionError= document.getElementById("descriptionError");
-    descriptionError.textContent="";
-    const char_count = document.querySelector("span.char-counter .char_count");
-    let char_limit = document.querySelector("span.char-counter .char_limit").textContent;
-
-    char_limit =char_limit *1;
-    //console.log(char_limit);
-    char_count.textContent = text.length;
-    if (text.length > char_limit) {
-      descriptionError.textContent="Char Maximum length exceeded!";
-      //text = text.substr(0, char_limit);
-      //descEl.value = text;
-        return false;
-    }else{
-      return true;
+    const span = document.querySelector('span.char-counter');
+    if (text.length > 250) {
+      // Merror("Warning", "Maximum length exceeded!");
+      text = text.substr(0, 250);
+      descEl.value = text;
     }
-  }
+    span.textContent = `${text.length}/250`;
+  });
 
   if (tagInput) {
     tagInput.value = "";
@@ -848,17 +407,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Get selected tags from DOM
     const selectedTags = new Set(
       Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Get suggested tags from DOM
     const suggestedTags = new Set(
       Array.from(tagContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Load history from localStorage
@@ -968,15 +527,17 @@ document.addEventListener("DOMContentLoaded", () => {
   function getAllUsedTagsSet() {
     return new Set([
       ...Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim()),
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim()),
       ...getTagHistory().map((tag) => tag.toLowerCase().trim()),
     ]);
   }
 
   document.querySelectorAll(".form-tab-js a").forEach((tab) => {
+   
     tab.addEventListener("click", function (e) {
+       console.log("i am called")
       e.preventDefault();
 
       // Remove 'active' from all menu items
@@ -988,28 +549,19 @@ document.addEventListener("DOMContentLoaded", () => {
       // Hide all forms
       document.querySelectorAll(".upload").forEach((form) => form.classList.remove("active"));
 
-      // Get target form ID from clicked <a> id (e.g., createimage => preview-image)
+      // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
       const id = this.id.replace("create", "preview-");
+      console.log('this.id ', this.id)
+      console.log('id ', id)
       const form = document.getElementById(id);
-      if (form) form.classList.add("active");
-      const postform = document.getElementById("create_new_post");
+      if (form) form.classList.add('active');
+      const postform = document.getElementById('create_new_post');
       if (postform) {
-        const post_type = e.target.getAttribute("data-post-type");
-        postform.setAttribute("data-post-type", post_type);
+        const post_type = e.target.getAttribute('data-post-type');
+        postform.setAttribute('data-post-type', post_type);
       }
       // Check if it's the audio form (music) and init
-      if (id === "preview-audio") initAudioEvents(); // attach mic click handler
-
-
-     
-      const char_limit = document.querySelector("span.char-counter .char_limit");
-      if (id === "preview-notes" ){
-        char_limit.textContent="20000";
-      }else{
-        char_limit.textContent="500";
-      }
-      setupCharCounter(descEl);
-
+      if (id === 'preview-audio') initAudioEvents(); // attach mic click handler
     });
   });
 
@@ -1056,8 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const failedSearches = new Set();
-  const zones = [
-    {
+  const zones = [{
       dropArea: document.getElementById("drop-area-image"),
       fileInput: document.getElementById("file-input-image"),
     },
@@ -1074,6 +625,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput: document.getElementById("file-input-videocover"),
     },
     {
+
       dropArea: document.getElementById("drop-area-videolong"),
       fileInput: document.getElementById("file-input-videolong"),
     },
@@ -1112,7 +664,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Iteration über die Zonen
-  zones.forEach(({ dropArea, fileInput }) => {
+  zones.forEach(({
+    dropArea,
+    fileInput
+  }) => {
     // Click-Event für das Öffnen des Dateidialogs
     // if (dropArea) {
     //   dropArea.addEventListener("click", () => handleClick(fileInput));
@@ -1143,14 +698,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
-    const ErrorCont =document.querySelector("#preview-" + uploadtype + " .response_msg");
-    ErrorCont.innerHTML="";
-    let previewContainer;
-    if (uploadtype === "image") {
-      previewContainer = document.querySelector("#preview-" + uploadtype + " .preview-track");
-    } else {
-      previewContainer = document.getElementById("preview-" + uploadtype);
-    }
+
+    const previewContainer = document.getElementById("preview-" + uploadtype);
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
@@ -1158,8 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const file = files[i];
       size += file.size;
       if (size > maxSizeMB * 1024 * 1024) {
-       // Merror("Error", "The file is too large. Please select a file(s) under 5MB.");
-       ErrorCont.innerHTML="The file is too large. Please select a file(s) under 5MB.";
+        Merror("Error", "The file is too large. Please select a file(s) under 4MB.");
         return;
       }
     }
@@ -1188,13 +736,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>${file.name}</p>
         <img class="image-wrapper create-img none" alt="Vorschau" />
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-        <span class="editImage" >
-          <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
-              <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
-              <circle cx="30.4986" cy="29.9986" r="11.0806" stroke="white" stroke-width="3"/>
-          </svg>
-          Click to crop
-        </span>
+        <img src="svg/edit.svg" class="editImage " alt="delete">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
         if (previewContainer.children.length > 0) {
           previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
@@ -1208,20 +750,17 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editImage " alt="edit">
+          <img src="svg/edit.svg" class="editImage " alt="delete">
           <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
           const insertPosition = document.getElementById("drop-area-videocover");
           insertPosition.insertAdjacentElement("afterend", previewItem);
           document.getElementById("drop-area-videocover").classList.add("none");
         } else {
           previewItem.classList.add("video-item");
-          previewItem.classList.add(id);
-
           previewItem.innerHTML = `
           <p>${file.name}</p>
-          <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
+          <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editVideo " alt="edit">
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
           if (id.includes("short")) {
             previewContainer.appendChild(previewItem);
@@ -1240,8 +779,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       const base64 = await convertImageToBase64(file);
-            // Create a global map to store images
-      const base64ImagesMap = new Map();
       let element = null;
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
@@ -1250,14 +787,11 @@ document.addEventListener("DOMContentLoaded", () => {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
         element = previewItem.querySelector("video");
-        //sessionStorage.setItem(file.name, base64);
-        // Store base64
-        base64ImagesMap.set(file.name, base64);
       }
       element.src = base64;
       element.classList.remove("none");
-      element.nextElementSibling?.remove();
-      element.nextElementSibling?.classList.remove("none");
+      element.nextElementSibling ?.remove();
+      element.nextElementSibling ?.classList.remove("none");
       if (type === "audio") {
         initAudioplayer(file.name, base64);
       } else if (type === "video") {
@@ -1266,357 +800,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
     }
-
+    document.querySelectorAll(".deletePost").forEach(addDeleteListener);
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
-    document.querySelectorAll(".editVideo").forEach(addEditVideoListener);
-    if (uploadtype === "image") {
-      document.querySelectorAll(".deletePost").forEach((el) => {
-        el.removeEventListener("click", handleDelete);
-        el.addEventListener("click", handleImageDelete);
-      });
-    } else {
-      document.querySelectorAll(".deletePost").forEach(addDeleteListener);
-    }
-
-    let currentIndex = 0;
-
-    function scrollToIndex(index) {
-      const previewTrack = document.querySelector("#preview-image .preview-track");
-      const previewItems = previewTrack.querySelectorAll(".preview-item");
-
-      if (index < 0 || index >= previewItems.length) return;
-
-      // Sum widths of all items before the target index
-      let offset = 0;
-      for (let i = 0; i < index; i++) {
-        offset += previewItems[i].offsetWidth + 20; // Add 20px gap
-      }
-
-      previewTrack.style.transform = `translateX(-${offset}px)`;
-      currentIndex = index;
-    }
-
-    document.querySelector(".next-button").addEventListener("click", () => {
-      const previewItems = document.querySelectorAll("#preview-image .preview-track .preview-item");
-      if (currentIndex < previewItems.length - 1) {
-        scrollToIndex(currentIndex + 1);
-      }
-    });
-
-    document.querySelector(".prev-button").addEventListener("click", () => {
-      if (currentIndex > 0) {
-        scrollToIndex(currentIndex - 1);
-      }
-    });
-
-    function handleImageDelete(event) {
-      event.preventDefault();
-
-      const previewTrack = document.querySelector("#preview-image .preview-track");
-      const previewItem = event.target.closest(".preview-item");
-      previewItem.remove();
-
-      const items = previewTrack.querySelectorAll(".preview-item");
-      const totalItems = items.length;
-
-      // Clamp index
-      if (currentIndex >= totalItems) {
-        currentIndex = totalItems - 1;
-      }
-
-      scrollToIndex(currentIndex);
-    }
-
-    const container = document.querySelector('.preview-track-wrapper');
-    const track = container.querySelector('.preview-track');
-    const nextBtn = document.querySelector('.next-button');
-    const prevBtn = document.querySelector('.prev-button');
-
-    function isElementInViewportX(child, container) {
-      const containerRect = container.getBoundingClientRect();
-      const childRect = child.getBoundingClientRect();
-
-      return (
-        childRect.left >= containerRect.left &&
-        childRect.right <= containerRect.right
-      );
-    }
-    
-    function toggleScrollButtons() {
-      const isVisible = isElementInViewportX(track, container);
-      if (!isVisible) {
-        nextBtn.classList.remove('none');
-        prevBtn.classList.remove('none');
-      } else {
-        nextBtn.classList.add('none');
-        prevBtn.classList.add('none');
-      }
-      console.log("Is first item visible?", isElementInViewportX(track, container));
-    }
-
-    // Call once on load
-    setTimeout(toggleScrollButtons, 200);
-
-    // Optionally recheck on window resize or DOM change
-    window.addEventListener('resize', toggleScrollButtons);
-    container.addEventListener('scroll', toggleScrollButtons)
   }
 });
-
-const video = document.getElementById("videoTrim");
-const timeline = document.getElementById("videoTimeline");
-
-const THUMB_COUNT = 10; // beliebig wählbar
-let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
-async function videoTrim(id) {
-  videoElement = document.getElementById(id);
-  if (!videoElement) {
-    console.error(`Video element with ID ${id} not found.`);
-    return;
-  }
-  // Reset the timeline
-  timeline.innerHTML = "";
-  // Set the video source
-  if (sessionStorage.getItem(id)) {
-    video.src = sessionStorage.getItem(id);
-  } else {
-    video.src = videoElement.src;
-  }
-
-  // Show the trim container
-  document.getElementById("videoTrimContainer").classList.remove("none");
-  document.getElementById("videoTrimContainer").classList.add("active");
-}
-const trimWindow = document.getElementById("trim-window");
-const overlayLeft = document.getElementById("overlay-left");
-const overlayRight = document.getElementById("overlay-right");
-const handleLeft = document.getElementById("handle-left");
-const handleRight = document.getElementById("handle-right");
-
-// ----------- THUMBNAILS GENERIEREN (wie vorher) ----------
-
-video.addEventListener("loadedmetadata", async () => {
-  const duration = video.duration;
-  const times = [];
-  for (let i = 0; i < THUMB_COUNT; i++) {
-    times.push((duration * i) / (THUMB_COUNT - 1));
-  }
-  const canvas = document.createElement("canvas");
-  canvas.width = 160;
-  canvas.height = 90;
-  const ctx = canvas.getContext("2d");
-  for (let t of times) {
-    video.currentTime = t;
-    await new Promise((res) => video.addEventListener("seeked", res, { once: true }));
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const img = document.createElement("img");
-    img.src = canvas.toDataURL("image/jpeg");
-    timeline.appendChild(img);
-  }
-  // Nach Thumbnail-Generierung: Trim-Fenster und Overlays initialisieren
-  setupTrim();
-});
-let startPercent = 0; // Anfang 0%
-let endPercent = 1; // Ende 100%
-const MIN_DURATION = 3; // Sekunden
-
-function setupTrim() {
-  // Zeitleisten-Breite und Position
-  const wrapper = document.querySelector(".timeline-wrapper");
-  const timelineRect = timeline.getBoundingClientRect();
-  const wrapperRect = wrapper.getBoundingClientRect();
-
-  // Werte in Prozent (für Responsivität)
-
-  let windowStartPercent = 0;
-  let windowEndPercent = 0;
-  let dragging = null; // 'left' | 'right' | null
-  let dragStartX = 0;
-
-  positionElements();
-
-  function positionElements() {
-    const w = timeline.offsetWidth;
-    // Positionen berechnen
-    const left = Math.round(startPercent * w);
-    const right = Math.round(endPercent * w);
-    // Trim-Fenster
-    trimWindow.style.left = left + "px";
-    trimWindow.style.width = right - left + "px";
-    trimWindow.style.top = timeline.offsetTop + "px";
-    trimWindow.style.height = timeline.offsetHeight + "px";
-    // Overlays
-    overlayLeft.style.left = "0";
-    overlayLeft.style.width = left + "px";
-    overlayLeft.style.top = timeline.offsetTop + "px";
-    overlayLeft.style.height = timeline.offsetHeight + "px";
-    overlayRight.style.left = right + "px";
-    overlayRight.style.width = w - right + "px";
-    overlayRight.style.top = timeline.offsetTop + "px";
-    overlayRight.style.height = timeline.offsetHeight + "px";
-  }
-
-  function percentFromX(x) {
-    // x relativ zum Timeline-Container
-    const rect = timeline.getBoundingClientRect();
-    let p = (x - rect.left) / rect.width;
-    return Math.min(Math.max(p, 0), 1);
-  }
-
-  // Drag-Handler
-  handleLeft.addEventListener("pointerdown", (e) => {
-    dragging = "left";
-    dragStartX = e.clientX;
-    document.body.style.cursor = "ew-resize";
-    e.preventDefault();
-  });
-  handleRight.addEventListener("pointerdown", (e) => {
-    dragging = "right";
-    dragStartX = e.clientX;
-    document.body.style.cursor = "ew-resize";
-    e.preventDefault();
-  });
-  trimWindow.addEventListener("pointerdown", (e) => {
-    if (e.target === handleLeft || e.target === handleRight) return;
-    dragging = "window";
-    dragStartX = e.clientX;
-    windowStartPercent = startPercent;
-    windowEndPercent = endPercent;
-    trimWindow.style.cursor = "grabbing";
-    document.body.style.cursor = "grabbing";
-    e.preventDefault();
-  });
-  // Haupt-Drag-Events
-  window.addEventListener("pointermove", (e) => {
-    if (!dragging) return;
-    video.pause();
-    const x = e.clientX;
-    const p = percentFromX(x);
-    if (dragging === "left") {
-      let nextStart = Math.min(p, endPercent - MIN_DURATION / video.duration);
-      nextStart = Math.max(0, Math.min(nextStart, 1));
-      startPercent = nextStart;
-      video.currentTime = video.duration * startPercent;
-    } else if (dragging === "right") {
-      let nextEnd = Math.max(p, startPercent + MIN_DURATION / video.duration);
-      nextEnd = Math.max(0, Math.min(nextEnd, 1));
-      endPercent = nextEnd;
-      video.currentTime = video.duration * endPercent;
-    } else if (dragging === "window") {
-      const dx = x - dragStartX;
-      const w = timelineRect.width;
-      const percentShift = dx / w;
-      let newStart = windowStartPercent + percentShift;
-      let newEnd = windowEndPercent + percentShift;
-      // Begrenzung, damit das Fenster im Bereich bleibt
-      const winWidth = windowEndPercent - windowStartPercent;
-      if (newStart < 0) {
-        newStart = 0;
-        newEnd = winWidth;
-      }
-      if (newEnd > 1) {
-        newEnd = 1;
-        newStart = 1 - winWidth;
-      }
-      startPercent = newStart;
-      endPercent = newEnd;
-      video.currentTime = video.duration * startPercent;
-    }
-    startPercent = Math.max(0, Math.min(startPercent, 1));
-    endPercent = Math.max(0, Math.min(endPercent, 1));
-    positionElements();
-  });
-  window.addEventListener("pointerup", (e) => {
-    if (dragging) {
-      dragging = null;
-      document.body.style.cursor = "";
-    }
-  });
-
-  // Bei Fenstergröße ändern → alles nachjustieren
-  window.addEventListener("resize", () => {
-    positionElements();
-  });
-
-  // Initial-Positionierung
-  positionElements();
-}
-const trimBtn = document.getElementById("trimBtn");
-const trimQuitBtn = document.getElementById("trimQuit");
-trimQuitBtn.onclick = () => {
-  document.getElementById("videoTrimContainer").classList.add("none");
-  document.getElementById("videoTrimContainer").classList.remove("active");
-};
-// const downloadLink = document.getElementById("download-link");
-
-// Beachte: Diese Variablen (startPercent, endPercent) sind im Trim-Code definiert!
-// let startPercent = 0.15;
-// let endPercent = 0.85;
-
-// Funktion für den Schnitt
-trimBtn.onclick = async () => {
-  // Stelle sicher, dass Metadaten da sind
-  if (!video.duration) {
-    alert("Video ist noch nicht geladen!");
-    return;
-  }
-
-  // Schnitt-Zeiten berechnen
-  const startTime = video.duration * startPercent;
-  const endTime = video.duration * endPercent;
-
-  // Sicherstellen, dass keine Wiedergabe läuft
-  video.pause();
-
-  // Canvas zum Capturen des Videos
-  const canvas = document.createElement("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d");
-  let mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : ""; // leer = Default, aber meist WebM
-
-  // Canvas streamen
-  const stream = canvas.captureStream();
-  const rec = new MediaRecorder(stream, { mimeType });
-  let chunks = [];
-  rec.ondataavailable = (e) => e.data && chunks.push(e.data);
-
-  // Trim Vorgang
-  video.currentTime = startTime;
-  await new Promise((res) => (video.onseeked = res));
-
-  // Start Aufnahme
-  rec.start();
-  video.play();
-
-  // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
-  let animationId;
-  function drawFrame() {
-    if (video.currentTime >= endTime || video.ended) {
-      video.pause();
-      rec.stop();
-      cancelAnimationFrame(animationId);
-      return;
-    }
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    animationId = requestAnimationFrame(drawFrame);
-  }
-  drawFrame();
-
-  // Nach Aufnahme: Download anbieten
-  rec.onstop = async () => {
-    const blob = new Blob(chunks, { type: "video/webm" });
-    const url = URL.createObjectURL(blob);
-    const base64 = await blobToBase64(blob);
-    videoElement.src = base64; // Update video source to trimmed video
-    document.getElementById("videoTrimContainer").classList.add("none");
-  };
-};
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result); // gibt ein Data-URL-String zurück (inkl. "data:video/webm;base64,...")
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}

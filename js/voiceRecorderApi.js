@@ -31,6 +31,7 @@ let recordedAudioSource = null;
 
 // ===== Init =====
 function initAudioEvents() {
+  console.log("i am here initAudioEvents")
   const micBtn = document.querySelector(MIC_SELECTOR);
   const recordedAudio = getRecordedAudio();
 
@@ -46,6 +47,8 @@ function initAudioEvents() {
 
 // ===== Event Handlers =====
 async function handleMicClick(micBtn, recordedAudio) {
+  hideAttachmentArea();
+
   if (hasRecording && !isRecording) {
     await handlePlayback(recordedAudio);
     return;
@@ -92,17 +95,50 @@ function handlePlaybackEnded() {
   cancelAnimationFrame(animationId);
 }
 
+// Reseting the full state
 function handleRecordAgain() {
   const recordedAudio = getRecordedAudio();
+  const previewBtn = document.querySelector(".record-again");
+  const playButton = document.querySelector(".voice-play-button");
+
+  // Stop audio playback and clear source
   recordedAudio.pause();
   recordedAudio.currentTime = 0;
   recordedAudio.src = "";
 
+  // Reset state
   hasRecording = false;
   isRecording = false;
+  recorder = null;
+  chunks = [];
+  recordedAudioURL = null;
 
+  // Reset visual/audio UI
   setUIState(UI_STATE.INITIAL);
-  clearInterval(playbackInterval);
+  updateMicButton(MIC_STATE.STEADY);
+  resetRecordingTimer();
+  showAttachmentArea();
+
+  // Hide preview/play button
+  if (previewBtn) previewBtn.classList.add("none");
+  if (playButton) playButton.classList.add("hidden");
+
+  // Reset visualizer
+  cancelAnimationFrame(animationId);
+  const paths = document.querySelectorAll('#mic-visualizer path');
+  paths.forEach((path) => {
+    path.setAttribute('transform', 'scale(0.5, 0.5)');
+  });
+
+  // Clear any recording form input
+  const form = document.getElementById("preview-audio");
+  if (form) {
+    const input = form.querySelector('input[name="recordedAudio"]');
+    if (input) input.remove();
+  }
+
+  // Reset attachment area (if hidden earlier)
+  showAttachmentArea();
 }
 
 // ===== Recording =====
@@ -333,6 +369,16 @@ function getRecordedAudio() {
 
 function getTimerElement() {
   return document.getElementById("recordingTimer");
+}
+
+function hideAttachmentArea() {
+  const attachment = document.getElementById("drop-area-audio");
+  if (attachment) attachment.classList.add("none");
+}
+
+function showAttachmentArea() {
+  const attachment = document.getElementById("drop-area-audio");
+  if (attachment) attachment.classList.remove("none");
 }
 
 async function getMicSource() {
