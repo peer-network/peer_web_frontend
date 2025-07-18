@@ -1,6 +1,7 @@
 // ===== Constants =====
 const MIC_SELECTOR = '.micButton';
 const RECORDING_FILENAME = 'voice-recording.webm';
+const voiceRecordWrapper = document.getElementById('voice-record-wrapper');
 
 const UI_STATE = {
   INITIAL: "initial",
@@ -31,7 +32,6 @@ let recordedAudioSource = null;
 
 // ===== Init =====
 function initAudioEvents() {
-  console.log("i am here initAudioEvents")
   const micBtn = document.querySelector(MIC_SELECTOR);
   const recordedAudio = getRecordedAudio();
 
@@ -139,6 +139,7 @@ function handleRecordAgain() {
 
   // Reset attachment area (if hidden earlier)
   showAttachmentArea();
+  voiceRecordWrapper.className = "voice-media";
 }
 
 // ===== Recording =====
@@ -243,7 +244,6 @@ function setUIState(state) {
 }
 
 function updateMicButton(state = MIC_STATE.STEADY) {
-  const voiceRecordWrapper = document.getElementById('voice-record-wrapper');
   const voiceMediaOff = document.getElementById('voice-media-off');
   const voiceMediaSteady = document.getElementById('voice-media-steady');
   const voiceMediaOn = document.getElementById('voice-media-on');

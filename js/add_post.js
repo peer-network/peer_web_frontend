@@ -551,8 +551,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Get target form ID from clicked <a> id (e.g., createNotes => newNotesPost)
       const id = this.id.replace("create", "preview-");
-      console.log('this.id ', this.id)
-      console.log('id ', id)
       const form = document.getElementById(id);
       if (form) form.classList.add('active');
       const postform = document.getElementById('create_new_post');
