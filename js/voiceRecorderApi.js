@@ -101,45 +101,61 @@ function handleRecordAgain() {
   const previewBtn = document.querySelector(".record-again");
   const playButton = document.querySelector(".voice-play-button");
 
-  // Stop audio playback and clear source
-  recordedAudio.pause();
-  recordedAudio.currentTime = 0;
-  recordedAudio.src = "";
+  // 🧨 FULL RESET for audio element
+  if (recordedAudio) {
+    recordedAudio.pause();
+    recordedAudio.currentTime = 0;
 
-  // Reset state
+    // 👇 This is what you're missing
+    recordedAudio.removeAttribute("src");
+    recordedAudio.load(); // force reload to clear connection
+  }
+
+  // 🔥 Disconnect and clean source node
+  if (recordedAudioSource) {
+    try {
+      recordedAudioSource.disconnect();
+    } catch (e) {
+      console.warn("Couldn't disconnect audio node:", e);
+    }
+    recordedAudioSource = null;
+  }
+
+  // 🔥 Close context
+  if (audioContext && typeof audioContext.close === "function") {
+    try {
+      audioContext.close();
+    } catch (e) {
+      console.warn("Couldn't close audio context:", e);
+    }
+    audioContext = null;
+  }
+
+  // ⏹️ Reset state
   hasRecording = false;
   isRecording = false;
   recorder = null;
   chunks = [];
   recordedAudioURL = null;
 
-  // Reset visual/audio UI
+  // 🔁 Reset UI
   setUIState(UI_STATE.INITIAL);
   updateMicButton(MIC_STATE.STEADY);
   resetRecordingTimer();
   showAttachmentArea();
 
-  // Hide preview/play button
   if (previewBtn) previewBtn.classList.add("none");
   if (playButton) playButton.classList.add("hidden");
 
-  // Reset visualizer
   cancelAnimationFrame(animationId);
   const paths = document.querySelectorAll('#mic-visualizer path');
   paths.forEach((path) => {
     path.setAttribute('transform', 'scale(0.5, 0.5)');
   });
 
-  // Clear any recording form input
-  const form = document.getElementById("preview-audio");
-  if (form) {
-    const input = form.querySelector('input[name="recordedAudio"]');
-    if (input) input.remove();
+  if (voiceRecordWrapper) {
+    voiceRecordWrapper.className = "voice-media";
   }
-
-  // Reset attachment area (if hidden earlier)
-  showAttachmentArea();
-  voiceRecordWrapper.className = "voice-media";
 }
 
 // ===== Recording =====
@@ -179,7 +195,7 @@ async function startRecording() {
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        recordedAudioSource = audioContext.createMediaElementSource(recordedAudio);
+        // recordedAudioSource = audioContext.createMediaElementSource(recordedAudio);
       }
 
       appendAudioToForm(blob);
@@ -398,11 +414,16 @@ async function getPlaybackSource() {
   const recordedAudio = getRecordedAudio();
   if (!recordedAudio) return null;
 
+  // Close previous context if it was reset by "Record Again"
+  if (!audioContext || audioContext.state === 'closed') {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    recordedAudioSource = null;
+  }
+
+  // Create new MediaElementSource only once
   if (!recordedAudioSource) {
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
     recordedAudioSource = audioContext.createMediaElementSource(recordedAudio);
+    recordedAudioSource.connect(audioContext.destination);
   }
 
   return recordedAudioSource;
