@@ -896,29 +896,6 @@
 
 
 
-/* ===================== MEDIA PREVIEW ===================== */
-
-.voice-media {
-
-  background-color: #333;
-
-  border-radius: 1rem;
-
-  position: relative;
-
-  padding: 40px;
-
-}
-
-
-
-.voice-media .recording-bar-img {
-
-  width: 100%;
-
-}
-
-
 
 /* ===================== IMAGE PREVIEW ===================== */
 
@@ -1336,8 +1313,38 @@
 
 }
 
+/* === Audio Post CSS === */
+.voice-media {
 
+  background-color: #333;
 
+  border-radius: 70px;
+
+  position: relative;
+
+  padding: 40px;
+
+}
+
+.voice-media #recordingStatusText {
+	margin-bottom: 40px;
+	display: block ;
+}
+.voice-media .recodring-block {
+	position: relative;
+	min-height: 210px;
+	display: flex;
+	align-items: center;
+}
+.voice-media .recording-bar-img {
+
+  width: 100%;
+
+}
+#addPost #preview-audio .drop-area {
+	aspect-ratio: auto;
+	border-radius: 70px;
+}
 /* === Mic Button (before recording) === */
 
 .micButton {
@@ -1444,17 +1451,7 @@
 
 /* === Timer Display During Recording === */
 
-#recordingTimer {
 
-  color: white;
-
-  font-size: 1rem;
-
-  font-weight: bold;
-
-  margin-top: 0.25rem;
-
-}
 
 
 
@@ -1570,13 +1567,13 @@
 
 .record-time {
 
-  color: white;
+  
 
   position: absolute;
 
-  bottom: 1rem;
+  bottom: 0;
 
-  left: 1rem;
+  left: 0;
 
 }
 
@@ -1638,11 +1635,12 @@
 
     padding: 0 65px;
 
-    line-height: 100px;
+    line-height: 150px;
 
     border-radius: 100px;
 
-    font-size: 24px;
+    
+    margin-top: 40px;
 
 }
 
@@ -1658,7 +1656,7 @@
 
 #preview-audio .record-again span.icon-mic svg {
 
-    width: 38px;
+    width: 60px;
 
     height: auto;
 
