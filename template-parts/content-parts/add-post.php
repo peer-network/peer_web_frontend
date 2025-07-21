@@ -48,13 +48,17 @@
                     <div class="col-right">
                         
                         <div id="voice-record-wrapper" class="voice-media">
-                            <div id="drop-area-audioocover" class="drop-area none">
-                            <div class="upload-content">
-                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                                <span class="upload-label">Choose background image</span>
+                            <div class="audiobackground_uploader">
+                                <div id="drop-area-audiobackground" class="drop-area drop-area-audiobackground">
+                                    <div class="upload-content">
+                                        <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                        <span class="upload-label">Choose background image</span>
+                                    </div>
+                                    <input type="file" id="file-input-audiobackground" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
+                                </div>
+                                <div id="audio-cover-image-preview"></div>
                             </div>
-                            <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
-                        </div>
+
                             <span id="recordingStatusText" class="md_font_size txt-color-gray">Start recording</span>
                             <div class="recodring-block">
                                  <!-- Voice Bar -->
