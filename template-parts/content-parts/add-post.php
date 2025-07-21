@@ -48,47 +48,60 @@
                     <div class="col-right">
                         
                         <div id="voice-record-wrapper" class="voice-media">
-                            <span id="recordingStatusText">Start recording</span>
-                            <img class="recording-bar-img" src="svg/recording-bar.svg" alt="Audio upload" />
-                            <!-- mic icon svg -->
-                            <div class="micButton">
-                                <span class="icon-mic none" id="voice-media-off">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 65 65"
-                                        fill="none">
-                                        <path
-                                            d="M59.4721 38.8339C64.6339 36.2592 64.641 28.8966 59.4842 26.312L11.1378 2.0804C6.48316 -0.252548 1.00137 3.13165 1.00126 8.33821L1.00024 56.6856C1.00013 61.8864 6.47075 65.2712 11.1247 62.9498L59.4721 38.8339Z"
-                                            fill="white" stroke="white" stroke-width="2" stroke-linejoin="round" />
-                                    </svg>
-                                </span>
+                            <div id="drop-area-audioocover" class="drop-area none">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Choose background image</span>
+                            </div>
+                            <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
+                        </div>
+                            <span id="recordingStatusText" class="md_font_size txt-color-gray">Start recording</span>
+                            <div class="recodring-block">
+                                 <!-- Voice Bar -->
+                                    <div class="visualizer-wrapper">
+                                    <?php require_once('./template-parts/content-parts/voice-bar-svg.php'); ?>
+                                    </div>
+                                <!-- mic icon svg -->
+                                <div class="micButton">
+                                    <span class="icon-mic none" id="voice-media-off">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 65 65"
+                                            fill="none">
+                                            <path
+                                                d="M59.4721 38.8339C64.6339 36.2592 64.641 28.8966 59.4842 26.312L11.1378 2.0804C6.48316 -0.252548 1.00137 3.13165 1.00126 8.33821L1.00024 56.6856C1.00013 61.8864 6.47075 65.2712 11.1247 62.9498L59.4721 38.8339Z"
+                                                fill="white" stroke="white" stroke-width="2" stroke-linejoin="round" />
+                                        </svg>
+                                    </span>
 
-                                <span class="icon-mic" id="voice-media-steady">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="82" height="104" viewBox="0 0 82 104"
-                                        fill="none">
-                                        <rect x="22.3145" y="3.5" width="37.4444" height="59.6765" rx="18.7222"
-                                            stroke="white" stroke-width="7" stroke-linecap="round" />
-                                        <path
-                                            d="M37.5371 99.9999V82.3603C16.7879 80.5857 0.5 63.1843 0.5 41.9755V40.7421C0.5 38.8091 2.067 37.2421 4 37.2421C5.933 37.2421 7.5 38.8091 7.5 40.7421V41.9755C7.5 60.4975 22.5151 75.5126 41.0371 75.5126C59.5592 75.5126 74.5748 60.4977 74.5752 41.9755V40.7421C74.5752 38.8091 76.1422 37.2421 78.0752 37.2421C80.0081 37.2422 81.5752 38.8092 81.5752 40.7421V41.9755C81.5747 63.1844 65.2864 80.5857 44.5371 82.3603V99.9999C44.5371 101.933 42.9701 103.5 41.0371 103.5C39.1041 103.5 37.5371 101.933 37.5371 99.9999Z"
-                                            fill="white" />
-                                    </svg>
-                                </span>
+                                    <span class="icon-mic" id="voice-media-steady">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="82" height="104" viewBox="0 0 82 104"
+                                            fill="none">
+                                            <rect x="22.3145" y="3.5" width="37.4444" height="59.6765" rx="18.7222"
+                                                stroke="white" stroke-width="7" stroke-linecap="round" />
+                                            <path
+                                                d="M37.5371 99.9999V82.3603C16.7879 80.5857 0.5 63.1843 0.5 41.9755V40.7421C0.5 38.8091 2.067 37.2421 4 37.2421C5.933 37.2421 7.5 38.8091 7.5 40.7421V41.9755C7.5 60.4975 22.5151 75.5126 41.0371 75.5126C59.5592 75.5126 74.5748 60.4977 74.5752 41.9755V40.7421C74.5752 38.8091 76.1422 37.2421 78.0752 37.2421C80.0081 37.2422 81.5752 38.8092 81.5752 40.7421V41.9755C81.5747 63.1844 65.2864 80.5857 44.5371 82.3603V99.9999C44.5371 101.933 42.9701 103.5 41.0371 103.5C39.1041 103.5 37.5371 101.933 37.5371 99.9999Z"
+                                                fill="white" />
+                                        </svg>
+                                    </span>
 
-                                <span class="icon-mic none" id="voice-media-on">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="52" height="71" viewBox="0 0 52 71"
-                                        fill="none">
-                                        <path d="M5.53286 5.5L5.53125 65.5" stroke="white" stroke-width="10"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M46.2477 5.5L46.2461 65.5" stroke="white" stroke-width="10"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                </span>
+                                    <span class="icon-mic none" id="voice-media-on">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="71" viewBox="0 0 52 71"
+                                            fill="none">
+                                            <path d="M5.53286 5.5L5.53125 65.5" stroke="white" stroke-width="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M46.2477 5.5L46.2461 65.5" stroke="white" stroke-width="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <span id="recordingTimer" class="record-time md_font_size  none">00:00</span>
                             </div>
                             <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
-                            <span id="recordingTimer" class="record-time none">00:00</span>
+                            
                         </div>
                         <!-- Add preview block HERE -->
                         <div id="preview-audio" class="blockscroll preview-container">
                             <div class="record-again none">
-                                <span class="btn-text">
+                                <span class="btn-text md_font_size">
                                     Record again
                                 </span>
                                 <span class="icon-mic">
