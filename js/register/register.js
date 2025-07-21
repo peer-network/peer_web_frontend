@@ -25,13 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const referralCode = referralCodeFromRef || referralCodeFromUuid;
 
   if (referralCode) {
-    if (referralCodeFromUuid) {
-      localStorage.setItem("referralUuid", referralCodeFromUuid);
-    }
+    (async () => {
+      if (referralCodeFromUuid) {
+        localStorage.setItem("referralUuid", referralCodeFromUuid);
+      }
 
-    referralInputs.forEach(input => input.value = referralCode);
-    validateReferralCode(referralCode);
+      referralInputs.forEach(input => input.value = referralCode);
+      await validateReferralCode(referralCode);
+    })();
   }
+
 
   showStep(1);
 
@@ -41,13 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
     showStep(2);
   });
 
-  multiStepForm.addEventListener("submit", (e) => {
+  multiStepForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (!step1Section.classList.contains("none")) {
       const referralValue = referralInputs[0]?.value.trim();
-      const isValid = validateReferralCode(referralValue);
+      const isValid = await validateReferralCode(referralValue);
       if (!isValid) return;
+
 
       const inputField = multiStepForm.querySelector(".input-field");
       const loader = inputField.querySelector(".loader");
@@ -96,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.getElementById("submitStep2").addEventListener("click", function (e) {
+  document.getElementById("submitStep2").addEventListener("click", async function (e) {
     e.preventDefault();
 
     const inputField = step2Section.querySelector(".input-field");
@@ -105,34 +109,91 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loader.style.display === "block") return;
     loader.style.display = "block";
 
-    setTimeout(() => {
+    setTimeout(async () => {
       loader.style.display = "none";
       showStep(1);
 
       if (autoFillCode) {
         referralInputs.forEach(input => input.value = autoFillCode);
-        validateReferralCode(autoFillCode);
+        await validateReferralCode(autoFillCode);
+
       }
     }, 3000);
   });
 
-  function validateReferralCode(code) {
+  async function validateReferralCode(referralString) {
+    const accessToken = getCookie("authToken");
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-    if (!code || !uuidRegex.test(code)) {
+    if (!referralString || !uuidRegex.test(referralString)) {
       if (validationMsg) {
-        validationMsg.innerText = "Invalid or missing referral code.";
+        validationMsg.innerText = "Invalid or missing referral code format.";
         validationMsg.classList.add("notvalid");
       }
       return false;
-    } else {
-      if (validationMsg) {
-        validationMsg.innerText = "";
-        validationMsg.classList.remove("notvalid");
+    }
+    const headers = new Headers({
+    "Content-Type": "application/json",
+    });
+
+    // Define the GraphQL mutation with variables
+    const graphql = JSON.stringify({
+      query: `mutation VerifyReferralString ($referralString: String!) {
+          verifyReferralString(referralString: $referralString) {
+            ResponseCode
+            affectedRows {
+              uid
+              username
+              slug
+              img
+            }
+            status
+          }
+        }`,
+      variables: {
+      referralString,
+      },
+    });
+
+    // Define request options
+    const requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: graphql,
+      redirect: "follow",
+    };
+
+    
+
+    try {
+      const response = await fetch(GraphGL, requestOptions);
+      const result = await response.json();
+      const data = result?.data?.verifyReferralString;
+
+      if (data && data.status === "success") {
+        if (validationMsg) {
+          validationMsg.innerText = ""; 
+          validationMsg.classList.remove("notvalid");
+        }
+        return true;
+      } else {
+        if (validationMsg) {
+          validationMsg.innerText = userfriendlymsg(data.ResponseCode);
+          validationMsg.classList.add("notvalid");
+        }
+        return false;
       }
-      return true;
+
+    } catch (error) {
+      console.error("Error verifying referral code:", error);
+      if (validationMsg) {
+        validationMsg.innerText = "Error verifying referral code.";
+        validationMsg.classList.add("notvalid");
+      }
+      return false;
     }
   }
+
 
   // const isOnRegister = localStorage.getItem("isOnRegister") === "true";
   // if (isOnRegister) {
