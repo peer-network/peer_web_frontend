@@ -257,9 +257,9 @@
         </div>
         <div class="foot-end">
             <button id="cancel_Btn" class="btn-transparent cancel_Btn">Cancel</button>
-            <div class="aspect-ratio-toggle">
-                <label for="ar-1">Full post</label>
-                <label for="ar-2">Collapsed</label>
+            <div id="content-switch" class="aspect-ratio-toggle">
+                <label id="full-post" for="ar-1">Full post</label>
+                <label id="collapsed" for="ar-2">Collapsed</label>
             </div>
         </div>
     </div>
