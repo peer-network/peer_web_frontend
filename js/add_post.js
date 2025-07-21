@@ -1110,8 +1110,8 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput: document.getElementById("file-input-videolong"),
     },
     {
-      dropArea: document.getElementById("drop-area-cover"),
-      fileInput: document.getElementById("file-input-cover"),
+      dropArea: document.getElementById("drop-area-audiobackground"),
+      fileInput: document.getElementById("file-input-audiobackground"),
     },
   ];
 
@@ -1211,7 +1211,21 @@ document.addEventListener("DOMContentLoaded", () => {
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
       if (uploadtype === "audio") {
-        previewItem.classList.add("audio-item");
+        if (id.includes("audiobackground")) {
+          
+          previewItem.innerHTML = `
+          <p>${file.name}</p>
+          <img class="image-wrapper create-img none" alt="Vorschau" />
+          <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+          <img src="svg/edit.svg" class="editImage " alt="edit">
+          <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
+          const insertPosition = document.getElementById("audio-cover-image-preview");
+          
+          insertPosition.innerHTML = ""; // Removes any existing children
+          insertPosition.appendChild(previewItem); // Adds the new one
+          
+        }else{
+          previewItem.classList.add("audio-item");
         previewItem.innerHTML = `
         <p>${file.name}</p><canvas id="${file.name}"></canvas>
         <span class="button" id="play-pause">Play</span>
@@ -1219,6 +1233,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
         previewContainer.appendChild(previewItem);
+        }
+        
       } else if (uploadtype === "image") {
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
@@ -1284,6 +1300,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
         element = previewItem.querySelector("img.create-img");
+        
+
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
@@ -1292,6 +1310,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Store base64
         base64ImagesMap.set(file.name, base64);
       }
+
+
+
       element.src = base64;
       element.classList.remove("none");
       element.nextElementSibling?.remove();
@@ -1304,7 +1325,19 @@ document.addEventListener("DOMContentLoaded", () => {
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
     }
-
+     if (uploadtype === "audio") {
+      const voiceRecordWrapper = document.getElementById("voice-record-wrapper");
+      const preview_del_btn = voiceRecordWrapper.querySelector(".preview-item .deletePost");
+      const img = voiceRecordWrapper.querySelector(".preview-item img.create-img");
+      img.onload = function (e) {
+        //console.log(e.target.src);
+       voiceRecordWrapper.setAttribute('style', `background-image:url(${e.target.src})`);
+      };
+      preview_del_btn.addEventListener("click", () => {
+        voiceRecordWrapper.removeAttribute('style');
+      
+     });
+    }
     
 
     document.querySelectorAll(".editImage").forEach(addEditImageListener);

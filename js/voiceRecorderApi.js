@@ -97,21 +97,27 @@ function handlePlaybackEnded() {
 
 // Reseting the full state
 function handleRecordAgain() {
-  const recordedAudio = getRecordedAudio();
+  const oldAudio = getRecordedAudio();
   const previewBtn = document.querySelector(".record-again");
   const playButton = document.querySelector(".voice-play-button");
 
-  // 🧨 FULL RESET for audio element
-  if (recordedAudio) {
-    recordedAudio.pause();
-    recordedAudio.currentTime = 0;
+  // Stop and clean up audio element
+  if (oldAudio) {
+    oldAudio.pause();
+    oldAudio.currentTime = 0;
 
-    // 👇 This is what you're missing
-    recordedAudio.removeAttribute("src");
-    recordedAudio.load(); // force reload to clear connection
+    // Replace the <audio> element entirely
+    const newAudio = oldAudio.cloneNode(true);
+    newAudio.removeAttribute("src");
+    newAudio.load(); // force reflow
+
+    oldAudio.parentNode.replaceChild(newAudio, oldAudio);
+
+    // Reattach event listeners
+    newAudio.addEventListener("ended", handlePlaybackEnded);
   }
 
-  // 🔥 Disconnect and clean source node
+  // Disconnect and clear source node
   if (recordedAudioSource) {
     try {
       recordedAudioSource.disconnect();
@@ -121,7 +127,7 @@ function handleRecordAgain() {
     recordedAudioSource = null;
   }
 
-  // 🔥 Close context
+  // Close AudioContext
   if (audioContext && typeof audioContext.close === "function") {
     try {
       audioContext.close();
@@ -131,14 +137,14 @@ function handleRecordAgain() {
     audioContext = null;
   }
 
-  // ⏹️ Reset state
+  // Reset all state
   hasRecording = false;
   isRecording = false;
   recorder = null;
   chunks = [];
   recordedAudioURL = null;
 
-  // 🔁 Reset UI
+  // Reset UI
   setUIState(UI_STATE.INITIAL);
   updateMicButton(MIC_STATE.STEADY);
   resetRecordingTimer();
@@ -147,14 +153,31 @@ function handleRecordAgain() {
   if (previewBtn) previewBtn.classList.add("none");
   if (playButton) playButton.classList.add("hidden");
 
+  // Reset visualizer
   cancelAnimationFrame(animationId);
   const paths = document.querySelectorAll('#mic-visualizer path');
   paths.forEach((path) => {
-    path.setAttribute('transform', 'scale(0.5, 0.5)');
+    //path.setAttribute('transform', 'scale(0.5, 0.5)');
+    path.removeAttribute('style');
   });
 
   if (voiceRecordWrapper) {
     voiceRecordWrapper.className = "voice-media";
+  }
+
+  // Rebind mic click with new recordedAudio element
+  const micBtn = document.querySelector(MIC_SELECTOR);
+  const newRecordedAudio = getRecordedAudio();
+
+  if (micBtn && newRecordedAudio) {
+    micBtn.replaceWith(micBtn.cloneNode(true)); // remove old listener
+    const newMicBtn = document.querySelector(MIC_SELECTOR);
+    newMicBtn.addEventListener("click", () => handleMicClick(newMicBtn, newRecordedAudio));
+  }
+
+  // Reattach audio ended event
+  if (newRecordedAudio) {
+    newRecordedAudio.addEventListener("ended", handlePlaybackEnded);
   }
 }
 
@@ -169,6 +192,12 @@ async function startRecording() {
     recorder.ondataavailable = (e) => chunks.push(e.data);
     resetRecordingTimer();
 
+    if (timerInterval) {
+      clearTimeout(timerInterval);
+      timerInterval = null;
+    }
+
+    resetRecordingTimer();
     await new Promise(requestAnimationFrame);
     startTimer();
     recorder.start();
@@ -204,7 +233,7 @@ async function startRecording() {
   } catch (err) {
     console.error("Mic access denied:", err);
     alert("Mic access is required.");
-  }
+  }
 }
 
 function stopRecording() {
@@ -356,8 +385,8 @@ function runVisualizer(sourceNode, connectToOutput = false) {
     analyser.getByteFrequencyData(dataArray);
     paths.forEach((path, i) => {
       const intensity = dataArray[i % dataArray.length] / 255;
-      const scale = 0.5 + intensity * 5;
-      path.setAttribute('transform', `scale(0.5, ${scale})`);
+      const scale = 1 + intensity * 10;
+      path.setAttribute('style', `transform:scale(1, -${scale})`);
     });
     animationId = requestAnimationFrame(animate);
   }
@@ -367,8 +396,12 @@ function runVisualizer(sourceNode, connectToOutput = false) {
   const resetBars = () => {
     cancelAnimationFrame(animationId);
     paths.forEach((path) => {
-      path.setAttribute('transform', 'scale(0.5, 0.5)');
+      //path.setAttribute('transform', 'scale(0.5, 0.5)');
+      path.removeAttribute('style');
+      
+
     });
+    //console.log('ddd');
   };
 
   const recordedAudio = getRecordedAudio();
