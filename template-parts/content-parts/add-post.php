@@ -128,7 +128,7 @@
                 <span class="response_msg error" id="audioError"></span>
             </div>
             <div id="preview-video" class="upload">
-                <div >
+               
                     <div class="blockscroll drop-preview-area  preview-container preview-container-video">
                         <div id="drop-area-videocover" class="drop-area none">
                             <div class="upload-content">
@@ -155,7 +155,7 @@
 
                     </div>
                     <span class="response_msg error" id="videoError"></span>
-                </div>
+                
 
             </div>
             <div id="videoTrimContainer" class="none timeline-wrapper">

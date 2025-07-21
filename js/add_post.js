@@ -1277,8 +1277,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
           <img src="svg/edit.svg" class="editVideo " alt="edit">
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
+          
           if (id.includes("short")) {
-            previewContainer.appendChild(previewItem);
+             const insertPosition = document.getElementById("drop-area-videoshort");
+            insertPosition.insertAdjacentElement("afterend", previewItem);
+           
             document.getElementById("drop-area-videoshort").classList.add("none");
           } else {
             const insertPosition = document.getElementById("drop-area-videolong");
