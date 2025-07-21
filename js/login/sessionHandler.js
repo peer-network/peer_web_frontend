@@ -1,15 +1,59 @@
 "use strict";
 
+// function scheduleSilentRefresh(accessToken, refreshToken) {
+//   try {
+//     const payload = JSON.parse(atob(accessToken.split('.')[1]));
+//     console.log(payload)
+//     const exp = payload.exp * 1000;
+//     const buffer = (3 * 60) * 1000; // refresh 3 min before expiry
+//     const refreshIn = exp - Date.now() - buffer;
+
+//     console.log('exp ', exp)
+//     console.log('refreshIn ', refreshIn)
+
+//     if (refreshIn <= 0) return;
+
+//     setTimeout(async () => {
+//       const newAccessToken = await refreshAccessToken(refreshToken);
+//       if (newAccessToken) {
+//         const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+//         scheduleSilentRefresh(newAccessToken, newRefreshToken);
+//       }
+//     }, refreshIn);
+//   } catch (err) {
+//     console.error("Error in scheduling token refresh:", err);
+//   }
+// }
+
 function scheduleSilentRefresh(accessToken, refreshToken) {
   try {
     const payload = JSON.parse(atob(accessToken.split('.')[1]));
-    const exp = payload.exp * 1000;
-    const buffer = (3* 60) * 1000; // refresh 1 min before expiry
+    console.log("Decoded JWT payload:", payload);
+
+    // Original expiry time (from backend)
+    let exp = payload.exp * 1000;
+
+    const buffer = 3 * 60 * 1000; // refresh 3 minutes before expiry
+    // Override for testing (refresh in 2 minutes instead of 45)
+    const isTesting = true;
+    if (isTesting) {
+      exp = Date.now() + (2 * 60 * 1000)  + buffer; // 2 minutes from now
+      console.warn(" TEST MODE: Overriding token expiry to 2 minutes from now");
+    }
+
+   
     const refreshIn = exp - Date.now() - buffer;
 
-    if (refreshIn <= 0) return;
+    console.log("exp (ms):", exp);
+    console.log("refreshIn (ms):", refreshIn);
+
+    if (refreshIn <= 0) {
+      console.warn(" refreshIn is <= 0 — skipping setTimeout");
+      return;
+    }
 
     setTimeout(async () => {
+      console.log("Refreshing token now...");
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
         const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
