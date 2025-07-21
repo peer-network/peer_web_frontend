@@ -120,8 +120,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         sessionStorage.setItem('refreshToken', result.refreshToken);
         localStorage.removeItem('userEmail');
       }
-
-      window.location.href = "dashboard.php";
+      scheduleSilentRefresh(result.accessToken, result.refreshToken);
+      // window.location.href = "dashboard.php";
     } else {
       displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");
     }
