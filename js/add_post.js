@@ -1378,7 +1378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function isElementInViewportX(child, container) {
       const containerRect = container.getBoundingClientRect();
       const childRect = child.getBoundingClientRect();
-
+      
       return (
         childRect.left >= containerRect.left &&
         childRect.right <= containerRect.right
