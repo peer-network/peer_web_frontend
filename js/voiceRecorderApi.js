@@ -62,6 +62,7 @@ async function handleMicClick(micBtn, recordedAudio) {
     stopRecording(micBtn);
     updateMicButton(MIC_STATE.OFF);
     setUIState(UI_STATE.PREVIEW);
+    document.querySelector(".audiobackground_uploader")?.classList.remove("none");
   }
 }
 
@@ -93,6 +94,7 @@ function handlePlaybackEnded() {
   resetRecordingTimer();
   cancelAnimationFrame(playbackInterval);
   cancelAnimationFrame(animationId);
+  
 }
 
 // Reseting the full state

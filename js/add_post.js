@@ -388,17 +388,36 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     if (post_type == "audio") {
-      const audioWrappers = document.querySelectorAll(".create-audio");
-      const combinedBase64 = Array.from(audioWrappers)
-        .map((audio) => audio.src)
-        .filter((src) => src.startsWith("data:audio/"));
 
-      const coverImg = document.querySelector("#preview-cover img");
-      const canvas = document.querySelector("#preview-audio canvas");
-      cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
+       let combinedBase64 = [];
+      
+      
+      const recordedAudio = document.getElementById("recorded-audio");
+      //  Priority: Use recorded audio if it exists and is blob
+      if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
+        const base64 = await convertBlobUrlToBase64(recordedAudio.src);
+        if (base64) combinedBase64.push(base64);
+      } else {
+        //  Fallback: Use uploaded audio if no recorded audio found
+        const audioWrappers = document.querySelectorAll(".create-audio");
+        combinedBase64 = Array.from(audioWrappers)
+          .map((audio) => audio.src)
+          .filter((src) => src.startsWith("data:audio/"));
+      }
+
+      //console.log(combinedBase64);
+      //return;
+
+      const coverWrapper = document.getElementById("audio-cover-image-preview");
+      const coverImg = coverWrapper.querySelector("img.create-img");
+      
+      const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
+      cover = coverImg ? [coverImg.src] : [emptyBase64img];
+      
 
       if (combinedBase64.length === 0) {
-        audioErrorEl.textContent = "Please select audio.";
+        audioErrorEl.textContent = "Please upload audio or record audio.";
 
         hasError = true;
       } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
@@ -640,7 +659,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  async function convertBlobUrlToBase64(blobUrl) {
+    try {
+      const response = await fetch(blobUrl);
+      const blob = await response.blob();
 
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (err) {
+      console.error("Error converting blob to base64:", err);
+      return null;
+    }
+  }
   /******************************************************************** */
   
   descEl.addEventListener("keyup", (e) => {
@@ -1227,12 +1261,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }else{
           previewItem.classList.add("audio-item");
         previewItem.innerHTML = `
-        <p>${file.name}</p><canvas id="${file.name}"></canvas>
-        <span class="button" id="play-pause">Play</span>
+        <p>${file.name}</p>        
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-        <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-        previewContainer.appendChild(previewItem);
+        <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">
+
+
+          <div class="audio_player_con" ><div class="time-info" >
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
+
+        const insertAudioPosition = document.getElementById("audio_upload_block");
+        insertAudioPosition.innerHTML = ""; // Removes any existing children
+        insertAudioPosition.appendChild(previewItem);
         }
         
       } else if (uploadtype === "image") {
@@ -1321,7 +1362,19 @@ document.addEventListener("DOMContentLoaded", () => {
       element.nextElementSibling?.remove();
       element.nextElementSibling?.classList.remove("none");
       if (type === "audio") {
-        initAudioplayer(file.name, base64);
+        //initAudioplayer(file.name, base64);
+        initAudioplayer("waveform-preview", base64);
+        document.querySelector(".audiobackground_uploader")?.classList.remove("none");
+        document.querySelector(".recodring-block")?.classList.add("none");
+         const audio_upload_block = document.getElementById("audio_upload_block");
+        const audio_del_btn = audio_upload_block.querySelector(".preview-item .deletePost");
+        if (audio_del_btn) {
+          audio_del_btn.addEventListener("click", () => {
+            document.querySelector(".audiobackground_uploader")?.classList.add("none");
+            document.querySelector(".recodring-block")?.classList.remove("none");
+          });
+        }
+
       } else if (type === "video") {
         element.autoplay = true;
         element.loop = true;
@@ -1332,14 +1385,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const voiceRecordWrapper = document.getElementById("voice-record-wrapper");
       const preview_del_btn = voiceRecordWrapper.querySelector(".preview-item .deletePost");
       const img = voiceRecordWrapper.querySelector(".preview-item img.create-img");
-      img.onload = function (e) {
-        //console.log(e.target.src);
-       voiceRecordWrapper.setAttribute('style', `background-image:url(${e.target.src})`);
-      };
-      preview_del_btn.addEventListener("click", () => {
-        voiceRecordWrapper.removeAttribute('style');
-      
-     });
+      if (img) {
+        img.onload = function (e) {
+          //console.log(e.target.src);
+        voiceRecordWrapper.setAttribute('style', `background-image:url(${e.target.src})`);
+        };
+      }
+      if (preview_del_btn) {
+        preview_del_btn.addEventListener("click", () => {
+          voiceRecordWrapper.removeAttribute('style');
+        });
+      }
     }
     
 
