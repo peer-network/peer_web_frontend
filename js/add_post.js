@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /********************* Preview posts functionality ******************************/
 
   function previewPost(objekt) {
-    
+	  currentPostData = objekt;    
     const postContainer = document.getElementById("preview-post-container");
     const array = objekt.media || [];
 
@@ -282,41 +282,158 @@ document.addEventListener("DOMContentLoaded", () => {
 
 }
 
+function previewPostCollapsed(objekt) {
+    const collapsedCard = document.querySelector('section .card');
+    const postBox = collapsedCard.querySelector(".post");
+    const title = collapsedCard.querySelector(".post-title");
+    const description = collapsedCard.querySelector(".post-text");
+    const hashtags = collapsedCard.querySelector(".hashtags");
 
-  const previewSection = document.getElementById('previewSection');
-  const addPostSection = document.getElementById('addPostSection');
+    // Reset content
+    postBox.innerHTML = "";
+    title.innerHTML = objekt.title || "";
+    description.textContent = objekt.description || "";
+    hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
 
+    const mediaArray = objekt.media || [];
+    const contentType = objekt.contenttype;
+    const hasMultiple = mediaArray.length > 1;
+    let currentIndex = 0;
 
-    function resetPreview() {
-      previewSection.classList.add("none"); 
-      addPostSection.classList.remove("none"); 
+    if (!mediaArray.length || contentType === "text") {
+      postBox.style.backgroundImage = "";
+      return;
     }
 
+    // Create slider container
+    const slider = document.createElement("div");
+    slider.className = "collapsed-slider";
 
-  const backToEditBtn = document.getElementById('backToEdit');
-    if (backToEditBtn) {
-      backToEditBtn.addEventListener('click', resetPreview);
-    }
+    // Create slides
+    mediaArray.forEach((mediaURL, index) => {
+      const slide = document.createElement("div");
+      slide.className = "collapsed-slide";
+      if (index === 0) slide.classList.add("active");
 
-  const cancelEditBtn = document.getElementById('cancel_Btn');
-    if (cancelEditBtn) {
-      cancelEditBtn.addEventListener('click', resetPreview);
-    }
+      if (contentType === "image" || contentType === "video") {
+        slide.style.backgroundImage = `url('${mediaURL}')`;
+        slide.style.backgroundSize = "cover";
+        slide.style.backgroundPosition = "center";
+      }
 
-  const sidebarTabs = document.querySelectorAll('.form-tab-js a');
-    sidebarTabs.forEach(tab => {
-        tab.addEventListener('click', function (e) {
-            e.preventDefault();
+      if (contentType === "video") {
+        const video = document.createElement("video");
+        video.src = mediaURL;
+        video.setAttribute("controls", "true");
+        video.className = "video-preview";
+        slide.appendChild(video);
+      }
 
-            // Hide preview, show add-post
-            previewSection.classList.add('none');
-            addPostSection.classList.remove('none');
+      if (contentType === "audio") {
+        const audio = document.createElement("audio");
+        audio.src = mediaURL;
+        audio.setAttribute("controls", "true");
+        slide.appendChild(audio);
 
-            // Optionally: toggle active class for UI
-            document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
-            this.closest('.form-tab-js').classList.add('active');
-        });
+        if (objekt.cover?.[index]) {
+          slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
+          slide.style.backgroundSize = "cover";
+          slide.style.backgroundPosition = "center";
+        }
+      }
+
+      slider.appendChild(slide);
     });
+
+    // Add slider and dots
+    postBox.appendChild(slider);
+
+    // Dots
+    if (hasMultiple) {
+      const dotsContainer = document.createElement("div");
+      dotsContainer.className = "collapsed-dots";
+
+      mediaArray.forEach((_, i) => {
+        const dot = document.createElement("span");
+        dot.className = "collapsed_dot";
+        if (i === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => switchSlide(i));
+        dotsContainer.appendChild(dot);
+      });
+
+      postBox.appendChild(dotsContainer);
+    }
+
+    // Arrows
+    if (hasMultiple) {
+      const leftArrow = document.createElement("button");
+      leftArrow.className = "slider-arrow left-arrow";
+      leftArrow.innerHTML = "&#10094;";
+      leftArrow.addEventListener("click", () => switchSlide(currentIndex - 1));
+
+      const rightArrow = document.createElement("button");
+      rightArrow.className = "slider-arrow right-arrow";
+      rightArrow.innerHTML = "&#10095;";
+      rightArrow.addEventListener("click", () => switchSlide(currentIndex + 1));
+
+      postBox.appendChild(leftArrow);
+      postBox.appendChild(rightArrow);
+    }
+
+    function switchSlide(targetIndex) {
+      const slides = postBox.querySelectorAll(".collapsed-slide");
+      const dots = postBox.querySelectorAll(".collapsed_dot");
+
+      if (targetIndex < 0) targetIndex = slides.length - 1;
+      if (targetIndex >= slides.length) targetIndex = 0;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === targetIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === targetIndex);
+      });
+
+      currentIndex = targetIndex;
+    }
+}
+
+
+const previewSection = document.getElementById('previewSection');
+const addPostSection = document.getElementById('addPostSection');
+
+
+function resetPreview() {
+  previewSection.classList.add("none"); 
+  addPostSection.classList.remove("none"); 
+}
+
+
+const backToEditBtn = document.getElementById('backToEdit');
+  if (backToEditBtn) {
+    backToEditBtn.addEventListener('click', resetPreview);
+  }
+
+const cancelEditBtn = document.getElementById('cancel_Btn');
+  if (cancelEditBtn) {
+    cancelEditBtn.addEventListener('click', resetPreview);
+  }
+
+const sidebarTabs = document.querySelectorAll('.form-tab-js a');
+  sidebarTabs.forEach(tab => {
+      tab.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // Hide preview, show add-post
+          previewSection.classList.add('none');
+          addPostSection.classList.remove('none');
+
+          // Optionally: toggle active class for UI
+          document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
+          this.closest('.form-tab-js').classList.add('active');
+      });
+  });
 
     
   /**********************************************************************/
@@ -324,10 +441,6 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     // Elements
     const post_type = event.target.getAttribute("data-post-type");
-    
-
-    
-
     const createPostError = document.getElementById("createPostError");
 
     const submitButton = document.getElementById("submitPost");
@@ -390,6 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
 
           cover = coverImg ? [coverImg.src] : [emptyBase64img];
+          
           
           postMedia = combinedBase64;
           postDescription = description;
@@ -673,13 +787,55 @@ document.addEventListener("DOMContentLoaded", () => {
     hasError=pre_post_form_validation(post_type,media); // check form validation
     // If any error, stop
     if (hasError) return;
+	
+	 window.currentPreviewObjekt = objekt;
 
-    previewPost(objekt);
     addPostSection.classList.add('none');
     previewSection.classList.remove('none');
+
+    const fullView = document.getElementById("preview-post-container");
+    const collapsedView = document.querySelector("section");
+
+    fullView.style.display = "";
+    collapsedView.style.display = "none";
+
+    previewPost(objekt);
+	
+	
+  });
+
+  document.querySelectorAll(".switch-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".switch-btn").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      const view = button.getAttribute("data-view");
+
+      const fullView = document.getElementById("preview-post-container");
+      const collapsedView = document.querySelector("section");
+
+      if (view === "full") {
+        fullView.style.display = "";
+        collapsedView.style.display = "none";
+      } else {
+        fullView.style.display = "none";
+        collapsedView.style.display = "";
+
+        if (window.currentPreviewObjekt) {
+          previewPostCollapsed(window.currentPreviewObjekt);
+        }
+      }
+    });
   });
 
 
+  window.addEventListener("DOMContentLoaded", () => {
+    const fullView = document.getElementById("preview-post-container");
+    const collapsedView = document.querySelector("section");
+
+    fullView.style.display = "none";
+    collapsedView.style.display = "none";
+  });
 
 
 
@@ -1092,6 +1248,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update the <h1 id="h1"> with the selected post type
       const post_type = e.target.getAttribute("data-post-type");
       const header = document.getElementById("h1");
+
       if (header && post_type) {
         const labels = {
           text: "Text Post",

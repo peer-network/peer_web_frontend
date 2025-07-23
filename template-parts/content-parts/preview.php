@@ -67,7 +67,7 @@
                         <span class="comment_total md_font_size"><i class="fi fi-sr-comment-dots"></i> <span class="comment_count">42</span></span>
                         <span class="cmt-scroll none">Comment Scroll</span>
                     </div>
-                    <div  class="comment_list">
+                    <!-- <div  class="comment_list">
                         <div id="comments" class="inner"> 
                             <!-- <div class="comment_item"> 
                                 <div class="commenter-pic ">
@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like"><span>7</span></div>
-                            </div> -->
+                            </div> 
                             
 
                             <div class="comment_item" id="60350bac-0bab-43e7-af88-aa7be2a3175f">
@@ -242,7 +242,7 @@
                             </div>
 
                         </div>
-                    </div>
+                    </div> -->
                     
                 </div>
                 <div id="post_comment" class="post_comment">
@@ -257,12 +257,184 @@
         </div>
         <div class="foot-end">
             <button id="cancel_Btn" class="btn-transparent cancel_Btn">Cancel</button>
-            <div id="content-switch" class="aspect-ratio-toggle">
-                <label id="full-post" for="ar-1">Full post</label>
-                <label id="collapsed" for="ar-2">Collapsed</label>
+            <div class="switch-buttons">
+                <button class="switch-btn active" data-view="full">Full post</button>
+                <button class="switch-btn" data-view="collapsed">Collapsed</button>
             </div>
         </div>
+        <section class="collapsed-preview">
+            <div id="" class="card" tabindex="0" idno="0" content="">
+                <div class="post">
+                    <div class="shadow"></div>
+                    <img src="" alt="" height="1280" width="720">
+                </div>
+                <div class="post-inhalt">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                        <img class="profilbild post-userImg profile-picture" src="svg/noname.svg">
+                        <span class="username-slug">
+                            <span class="username post-userName"></span>
+                            <span class="slug post-userName profile_id"></span>
+                        </span>
+                        </div>
+                        <div class="card-header-right">
+                            <button class="follow-button">Follow +</button>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title md_font_size bold">asdasdas <span class="timeAgo">NaN y</span></h3>
+                        <div class="post-text">dasdasdasasdasdasd</div>
+                        <div class="hashtags"></div>
+                    </div>
+                    <div class="social md_font_size">
+                        <div class="post-view">
+                            <i class="fi fi-rr-eye"></i>
+                            <span>1</span>
+                        </div>
+                        <div class="post-like">
+                            <i class="fi fi-rr-heart"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-dislike">
+                            <i class="fi fi-rr-heart-crack"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-comments">
+                            <i class="fi fi-rr-comment-dots"></i>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="" class="blur card" tabindex="0" idno="0" content="">
+                <div class="post">
+                    <div class="shadow"></div>
+                    <img src="" alt="" height="1280" width="720">
+                </div>
+                <div class="post-inhalt">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                        <img class="profilbild post-userImg profile-picture" src="svg/noname.svg">
+                        <span class="username-slug">
+                            <span class="username post-userName"></span>
+                            <span class="slug post-userName profile_id"></span>
+                        </span>
+                        </div>
+                        <div class="card-header-right">
+                            <button class="follow-button">Follow +</button>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title md_font_size bold">asdasdas <span class="timeAgo">1 sec ago</span></h3>
+                        <div class="post-text">dasdasdasasdasdasd</div>
+                        <div class="hashtags"></div>
+                    </div>
+                    <div class="social md_font_size">
+                        <div class="post-view">
+                            <i class="fi fi-rr-eye"></i>
+                            <span>1</span>
+                        </div>
+                        <div class="post-like">
+                            <i class="fi fi-rr-heart"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-dislike">
+                            <i class="fi fi-rr-heart-crack"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-comments">
+                            <i class="fi fi-rr-comment-dots"></i>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="" class="blur card" tabindex="0" idno="0" content="">
+                <div class="post">
+                    <div class="shadow"></div>
+                    <img src="" alt="" height="1280" width="720">
+                </div>
+                <div class="post-inhalt">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                        <img class="profilbild post-userImg profile-picture" src="svg/noname.svg">
+                        <span class="username-slug">
+                            <span class="username post-userName"></span>
+                            <span class="slug post-userName profile_id"></span>
+                        </span>
+                        </div>
+                        <div class="card-header-right">
+                            <button class="follow-button">Follow +</button>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title md_font_size bold">asdasdas <span class="timeAgo">1 sec ago</span></h3>
+                        <div class="post-text">dasdasdasasdasdasd</div>
+                        <div class="hashtags"></div>
+                    </div>
+                    <div class="social md_font_size">
+                        <div class="post-view">
+                            <i class="fi fi-rr-eye"></i>
+                            <span>1</span>
+                        </div>
+                        <div class="post-like">
+                            <i class="fi fi-rr-heart"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-dislike">
+                            <i class="fi fi-rr-heart-crack"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-comments">
+                            <i class="fi fi-rr-comment-dots"></i>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="" class="blur card" tabindex="0" idno="0" content="">
+                <div class="post">
+                    <div class="shadow"></div>
+                    <img src="" alt="" height="1280" width="720">
+                </div>
+                <div class="post-inhalt">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                        <img class="profilbild post-userImg profile-picture" src="svg/noname.svg">
+                        <span class="username-slug">
+                            <span class="username post-userName"></span>
+                            <span class="slug post-userName profile_id"></span>
+                        </span>
+                        </div>
+                        <div class="card-header-right">
+                            <button class="follow-button">Follow +</button>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title md_font_size bold">asdasdas <span class="timeAgo">1 sec ago</span></h3>
+                        <div class="post-text">dasdasdasasdasdasd</div>
+                        <div class="hashtags"></div>
+                    </div>
+                    <div class="social md_font_size">
+                        <div class="post-view">
+                            <i class="fi fi-rr-eye"></i>
+                            <span>1</span>
+                        </div>
+                        <div class="post-like">
+                            <i class="fi fi-rr-heart"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-dislike">
+                            <i class="fi fi-rr-heart-crack"></i>
+                            <span>0</span>
+                        </div>
+                        <div class="post-comments">
+                            <i class="fi fi-rr-comment-dots"></i>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
-
-

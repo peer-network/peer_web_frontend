@@ -46,9 +46,6 @@
                         </div>
                     </div>
                     <div class="col-right">
-                       
-                        
-
                         <div id="voice-record-wrapper" class="voice-media">
                             <div class="audiobackground_uploader none">
                                 <div id="drop-area-audiobackground"  class="drop-area drop-area-audiobackground">
