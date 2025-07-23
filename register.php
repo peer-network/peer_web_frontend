@@ -98,7 +98,7 @@ include 'host.php';
                     </div>
                     <div class="input-field">
                         <img class="email-icon" src="svg/referral.svg"  alt="email icon">
-                        <span id="referral_code" class="referral-code">8e2b5672-84bd-4a5c-a5d0-f4bfc212ec2a</span>
+                        <span id="referral_code" class="referral-code">85d5f836-b1f5-4c4e-9381-1b058e13df93</span>
                         
                         <div class="loader">
                             <svg width="60" height="30" viewBox="0 0 100 50">
