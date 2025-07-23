@@ -1328,6 +1328,42 @@
   background-position: center center;
 
 }
+#audio_upload_block .preview-item {
+	width: auto;
+}
+#audio_upload_block .preview-item img.loading {
+	max-width: 200px;
+}
+#audio_upload_block .audio_player_con {
+	
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+	width: 100%;
+	padding: 30px;
+	box-sizing: border-box;
+	
+}
+#audio_upload_block .preview-item audio.create-audio {
+	display: none;
+}
+#audio_upload_block  #play-pause {
+	height: 200px;
+	aspect-ratio: 1 / 1 !important;
+	background: url("../svg/play.svg") no-repeat center;
+	background-size: 94%;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	min-width: unset;
+  font-size: 0;
+  cursor: pointer;
+}
+#audio_upload_block #play-pause.paused {
+	background-image: url("../svg/pause.svg");
+}
+
 .voice-media .audiobackground_uploader {
 	position: relative;
 }
@@ -1364,9 +1400,14 @@
 }
 .voice-media .recodring-block {
 	position: relative;
+	
+	
+}
+.voice-media .recodring-block .visualizer-wrapper {
 	min-height: 210px;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	justify-content: center;
 }
 .voice-media .recording-bar-img {
 
@@ -1416,7 +1457,7 @@
 }
 #addPost #preview-audio .drop-area {
 	aspect-ratio: auto;
-	border-radius: 70px;
+	border-radius: 40px;
   margin-bottom: 40px;
   background-color: #3636368c;
 }
@@ -1424,6 +1465,10 @@
 #addPost .drop-area-audiobackground .upload-content{
   flex-direction: row;
 }
+
+
+
+
 /* === Mic Button (before recording) === */
 
 .micButton {
@@ -1437,7 +1482,7 @@
     right: 50%;
 
     transform: translate(50%, -50%);
-
+  margin-top: 42px;
 }
 
 
@@ -1463,6 +1508,7 @@
     aspect-ratio: 1/1;
 
     border-radius: 100%;
+    cursor: pointer;
 
 }
 
@@ -1720,6 +1766,7 @@
 
     
     margin-top: 40px;
+    cursor: pointer;
 
 }
 

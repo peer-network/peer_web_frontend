@@ -46,21 +46,24 @@
                         </div>
                     </div>
                     <div class="col-right">
+                       
                         
+
                         <div id="voice-record-wrapper" class="voice-media">
-                            <div class="audiobackground_uploader">
-                                <div id="drop-area-audiobackground" class="drop-area drop-area-audiobackground">
+                            <div class="audiobackground_uploader none">
+                                <div id="drop-area-audiobackground"  class="drop-area drop-area-audiobackground">
                                     <div class="upload-content">
                                         <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                                         <span class="upload-label">Choose background image</span>
                                     </div>
                                     <input type="file" id="file-input-audiobackground" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
                                 </div>
-                                <div id="audio-cover-image-preview"></div>
+                                <div id="audio-cover-image-preview" ></div>
                             </div>
 
-                            <span id="recordingStatusText" class="md_font_size txt-color-gray">Start recording</span>
+                            
                             <div class="recodring-block">
+                                <span id="recordingStatusText" class="md_font_size txt-color-gray">Start recording</span>
                                  <!-- Voice Bar -->
                                     <div class="visualizer-wrapper">
                                     <?php require_once('./template-parts/content-parts/voice-bar-svg.php'); ?>
@@ -98,8 +101,11 @@
                                     </span>
                                 </div>
                                 <span id="recordingTimer" class="record-time md_font_size  none">00:00</span>
+                                
                             </div>
-                            <input type="file" id="file-input-music" accept=".mp3, .wav, .flac, .aac" hidden />
+                            <div id="audio_upload_block">
+
+                            </div>
                             
                         </div>
                         <!-- Add preview block HERE -->
