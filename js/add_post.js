@@ -801,7 +801,6 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
 
     previewPost(objekt);
 	
-	
   });
 
   document.querySelectorAll(".switch-btn").forEach(button => {
