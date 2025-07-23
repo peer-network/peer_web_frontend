@@ -306,7 +306,7 @@
                     </div>
                 </div>
             </div>
-            <div id="" class="blur card" tabindex="0" idno="0" content="">
+            <div id="" class="blur card text_post" tabindex="0" idno="0" content="">
                 <div class="post">
                     <div class="shadow"></div>
                     <img src="" alt="" height="1280" width="720">
@@ -349,7 +349,7 @@
                     </div>
                 </div>
             </div>
-            <div id="" class="blur card" tabindex="0" idno="0" content="">
+            <div id="" class="blur card text_post" tabindex="0" idno="0" content="">
                 <div class="post">
                     <div class="shadow"></div>
                     <img src="" alt="" height="1280" width="720">
@@ -392,7 +392,7 @@
                     </div>
                 </div>
             </div>
-            <div id="" class="blur card" tabindex="0" idno="0" content="">
+            <div id="" class="blur card text_post" tabindex="0" idno="0" content="">
                 <div class="post">
                     <div class="shadow"></div>
                     <img src="" alt="" height="1280" width="720">
