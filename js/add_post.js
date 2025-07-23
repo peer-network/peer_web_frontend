@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function previewPost(objekt) {
 	  currentPostData = objekt;    
     const postContainer = document.getElementById("preview-post-container");
+
     const array = objekt.media || [];
 
     const containerleft = postContainer.querySelector(".viewpost-left");
@@ -239,15 +240,12 @@ document.addEventListener("DOMContentLoaded", () => {
       tagEl.innerHTML = objekt.tags.map(tag => `#${tag}`).join(" ");
     }
 
-    // Append all to textContent
     textContent.appendChild(titleEl);
     textContent.appendChild(textEl);
     textContent.appendChild(tagEl);
 
-    // Insert into left column
     containerleft.prepend(textContent);
-  }
- else {
+  }else {
     post_gallery.className = "post_gallery images";
     if (array.length > 1) post_gallery.classList.add("multi");
 
@@ -304,7 +302,6 @@ function previewPostCollapsed(objekt) {
       postBox.style.backgroundImage = "";
       return;
     }
-
     // Create slider container
     const slider = document.createElement("div");
     slider.className = "collapsed-slider";
@@ -439,16 +436,15 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
   /**********************************************************************/
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
-    // Elements
     const post_type = event.target.getAttribute("data-post-type");
     const createPostError = document.getElementById("createPostError");
 
     const submitButton = document.getElementById("submitPost");
 
-    //console.log(post_type);
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
     const tags = getTagHistory();
+
 
     
     createPostError.innerHTML = "";
@@ -561,10 +557,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     }
   });
 
-
-
   function pre_post_form_validation(post_type,postMedia){
-
     const tagErrorEl = document.getElementById("tagError");
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
@@ -836,7 +829,6 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     fullView.style.display = "none";
     collapsedView.style.display = "none";
   });
-
 
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
@@ -1277,7 +1269,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
 
 
       // Check if it's the audio form (music) and init
-      if (id === "preview-audio") initAudioEvents(); // attach mic click handler
+      if (id === "preview-audio") initAudioEvents(); 
 
 
      
