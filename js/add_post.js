@@ -13,8 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   /********************* Preview posts functionality ******************************/
 
   function previewPost(objekt) {
-    
+    currentPostData = objekt;
     const postContainer = document.getElementById("preview-post-container");
+
     const array = objekt.media || [];
 
     const containerleft = postContainer.querySelector(".viewpost-left");
@@ -239,15 +240,12 @@ document.addEventListener("DOMContentLoaded", () => {
       tagEl.innerHTML = objekt.tags.map(tag => `#${tag}`).join(" ");
     }
 
-    // Append all to textContent
     textContent.appendChild(titleEl);
     textContent.appendChild(textEl);
     textContent.appendChild(tagEl);
 
-    // Insert into left column
     containerleft.prepend(textContent);
-  }
- else {
+  }else {
     post_gallery.className = "post_gallery images";
     if (array.length > 1) post_gallery.classList.add("multi");
 
@@ -281,6 +279,138 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 }
+
+
+  function previewPostCollapsed(objekt) {
+    const collapsedCard = document.querySelector('section .card');
+    const postBox = collapsedCard.querySelector(".post");
+    const title = collapsedCard.querySelector(".post-title");
+    const description = collapsedCard.querySelector(".post-text");
+    const hashtags = collapsedCard.querySelector(".hashtags");
+
+    // Reset content
+    postBox.innerHTML = "";
+    title.innerHTML = objekt.title || "";
+    description.textContent = objekt.description || "";
+    hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
+
+    const mediaArray = objekt.media || [];
+    const contentType = objekt.contenttype;
+    const hasMultiple = mediaArray.length > 1;
+    let currentIndex = 0;
+
+    if (!mediaArray.length || contentType === "text") {
+      postBox.style.backgroundImage = "";
+      return;
+    }
+
+    // Create slider container
+    const slider = document.createElement("div");
+    slider.className = "collapsed-slider";
+
+    // Create slides
+    mediaArray.forEach((mediaURL, index) => {
+      const slide = document.createElement("div");
+      slide.className = "collapsed-slide";
+      if (index === 0) slide.classList.add("active");
+
+      if (contentType === "image" || contentType === "video") {
+        slide.style.backgroundImage = `url('${mediaURL}')`;
+        slide.style.backgroundSize = "cover";
+        slide.style.backgroundPosition = "center";
+      }
+
+      if (contentType === "video") {
+        const video = document.createElement("video");
+        video.src = mediaURL;
+        video.setAttribute("controls", "true");
+        video.className = "video-preview";
+        slide.appendChild(video);
+      }
+
+      if (contentType === "audio") {
+        const audio = document.createElement("audio");
+        audio.src = mediaURL;
+        audio.setAttribute("controls", "true");
+        slide.appendChild(audio);
+
+        if (objekt.cover?.[index]) {
+          slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
+          slide.style.backgroundSize = "cover";
+          slide.style.backgroundPosition = "center";
+        }
+      }
+
+      slider.appendChild(slide);
+    });
+
+    // Add slider and dots
+    postBox.appendChild(slider);
+
+    // Dots
+    if (hasMultiple) {
+      const dotsContainer = document.createElement("div");
+      dotsContainer.className = "dots";
+
+      mediaArray.forEach((_, i) => {
+        const dot = document.createElement("span");
+        dot.className = "dot";
+        if (i === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => switchSlide(i));
+        dotsContainer.appendChild(dot);
+      });
+
+      postBox.appendChild(dotsContainer);
+    }
+
+    // Arrows
+    if (hasMultiple) {
+      const leftArrow = document.createElement("button");
+      leftArrow.className = "slider-arrow left-arrow";
+      leftArrow.innerHTML = "&#10094;";
+      leftArrow.addEventListener("click", () => switchSlide(currentIndex - 1));
+
+      const rightArrow = document.createElement("button");
+      rightArrow.className = "slider-arrow right-arrow";
+      rightArrow.innerHTML = "&#10095;";
+      rightArrow.addEventListener("click", () => switchSlide(currentIndex + 1));
+
+      postBox.appendChild(leftArrow);
+      postBox.appendChild(rightArrow);
+    }
+
+    function switchSlide(targetIndex) {
+      const slides = postBox.querySelectorAll(".collapsed-slide");
+      const dots = postBox.querySelectorAll(".dot");
+
+      if (targetIndex < 0) targetIndex = slides.length - 1;
+      if (targetIndex >= slides.length) targetIndex = 0;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === targetIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === targetIndex);
+      });
+
+      currentIndex = targetIndex;
+    }
+  }
+
+
+
+
+
+function createSocialItem(icon, count) {
+  const div = document.createElement("div");
+  div.className = `post-${icon}`;
+  div.innerHTML = `<i class="fi fi-rr-${icon}"></i><span>${count}</span>`;
+  return div;
+}
+
+
+
 
 
   const previewSection = document.getElementById('previewSection');
@@ -322,7 +452,6 @@ document.addEventListener("DOMContentLoaded", () => {
   /**********************************************************************/
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
-    // Elements
     const post_type = event.target.getAttribute("data-post-type");
     
 
@@ -332,10 +461,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const submitButton = document.getElementById("submitPost");
 
-    //console.log(post_type);
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
     const tags = getTagHistory();
+
 
     
     createPostError.innerHTML = "";
@@ -447,10 +576,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
-
   function pre_post_form_validation(post_type,postMedia){
-
     const tagErrorEl = document.getElementById("tagError");
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
@@ -678,7 +804,6 @@ document.addEventListener("DOMContentLoaded", () => {
     addPostSection.classList.add('none');
     previewSection.classList.remove('none');
   });
-
 
 
 
@@ -1120,7 +1245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       // Check if it's the audio form (music) and init
-      if (id === "preview-audio") initAudioEvents(); // attach mic click handler
+      if (id === "preview-audio") initAudioEvents(); 
 
 
      
