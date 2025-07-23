@@ -302,7 +302,6 @@ function previewPostCollapsed(objekt) {
       postBox.style.backgroundImage = "";
       return;
     }
-
     // Create slider container
     const slider = document.createElement("div");
     slider.className = "collapsed-slider";
