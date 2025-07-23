@@ -350,11 +350,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Dots
     if (hasMultiple) {
       const dotsContainer = document.createElement("div");
-      dotsContainer.className = "dots";
+      dotsContainer.className = "collapsed-dots";
 
       mediaArray.forEach((_, i) => {
         const dot = document.createElement("span");
-        dot.className = "dot";
+        dot.className = "collapsed_dot";
         if (i === 0) dot.classList.add("active");
         dot.addEventListener("click", () => switchSlide(i));
         dotsContainer.appendChild(dot);
@@ -381,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function switchSlide(targetIndex) {
       const slides = postBox.querySelectorAll(".collapsed-slide");
-      const dots = postBox.querySelectorAll(".dot");
+      const dots = postBox.querySelectorAll(".collapsed_dot");
 
       if (targetIndex < 0) targetIndex = slides.length - 1;
       if (targetIndex >= slides.length) targetIndex = 0;

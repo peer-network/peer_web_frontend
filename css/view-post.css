@@ -51,7 +51,7 @@
   object-fit: cover;
 }
 
-.dots {
+.collapsed-dots {
   position: absolute;
   bottom: 50px;
   left: 50%;
@@ -61,7 +61,7 @@
   z-index: 1;
 }
 
-.dot {
+.collapsed_dot {
   width: 8px;
   height: 8px;
   background: white;
@@ -71,7 +71,7 @@
   transition: opacity 0.3s ease;
 }
 
-.dot.active {
+.collapsed_dot.active {
   opacity: 1;
 }
 
