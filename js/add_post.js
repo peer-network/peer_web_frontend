@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
       post_gallery.classList.remove("multi");
       post_gallery.classList.remove("images");
       post_gallery.classList.remove("video");
-      for (const item of array) {
+      for (media of array) {
         const audio = document.createElement("audio");
         audio.id = "audio2";
         audio.src = media;
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //audioContainer.id = "audio-container"; // Setze die ID
          audioContainer.classList.add("audio-item");
 
-        if (objekt.cover) {
+        if (objekt.cover) {/*
           const cover = JSON.parse(objekt.cover);
           img = document.createElement("img");
           img.classList.add("cover");
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
           img.src = tempMedia(cover[0].path);
           img.alt = "Cover";
           audioContainer.appendChild(img);
-        }
+       */ }
         // 2. Erzeuge das <canvas>-Element
         const canvas = document.createElement("canvas");
         canvas.id = "waveform-preview"; // Setze die ID für das Canvas
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
         let cover = null;
         if (objekt.cover) {
-          cover = JSON.parse(objekt.cover);
+         // cover = JSON.parse(objekt.cover);
         }
         const audio_player = document.createElement("div");
         audio_player.className = "audio_player_con";
@@ -326,12 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const post_type = event.target.getAttribute("data-post-type");
     
 
-    const tagErrorEl = document.getElementById("tagError");
-    const titleErrorEl = document.getElementById("titleError");
-    const descErrorEl = document.getElementById("descriptionError");
-    const imgErrorEl = document.getElementById("imageError");
-    const audioErrorEl = document.getElementById("audioError");
-    const videoErrorEl = document.getElementById("videoError");
+    
 
     const createPostError = document.getElementById("createPostError");
 
@@ -342,13 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const description = descEl.value.trim();
     const tags = getTagHistory();
 
-    // Clear old errors
-    titleErrorEl.textContent = "";
-    descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
-    imgErrorEl.textContent = "";
-    audioErrorEl.textContent = "";
-    videoErrorEl.textContent = "";
+    
     createPostError.innerHTML = "";
 
     // Validation
@@ -357,124 +346,74 @@ document.addEventListener("DOMContentLoaded", () => {
     let postMedia;
     let cover;
     let postDescription = "";
-    if (post_type == "text") {
-      // Convert to base64
-      const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-      const base64WithMime = [`data:text/plain;base64,${base64String}`];
 
-      if (base64WithMime.join("").length > 4 * 1024 * 1024) {
-        descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
-        hasError = true;
-      } else {
-        postMedia = base64WithMime;
-      }
+    switch (post_type) {
+      case "text":
+        {
+          // Convert to base64
+          const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+          const base64WithMime = [`data:text/plain;base64,${base64String}`];
+
+          postMedia = base64WithMime;
+        }
+        break;
+      case "image":
+        {
+          const imageWrappers = document.querySelectorAll(".create-img");
+          const combinedBase64 = Array.from(imageWrappers)
+            .map((img) => img.src)
+            .filter((src) => src.startsWith("data:image/"));
+
+          postMedia = combinedBase64;
+          postDescription = description;
+        }
+        break;
+      case "audio":
+        {
+          let combinedBase64 = [];
+          const recordedAudio = document.getElementById("recorded-audio");
+          //  Priority: Use recorded audio if it exists and is blob
+          if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
+            const base64 = await convertBlobUrlToBase64(recordedAudio.src);
+            if (base64) combinedBase64.push(base64);
+          } else {
+            //  Fallback: Use uploaded audio if no recorded audio found
+            const audioWrappers = document.querySelectorAll(".create-audio");
+            combinedBase64 = Array.from(audioWrappers)
+              .map((audio) => audio.src)
+              .filter((src) => src.startsWith("data:audio/"));
+          }
+
+          const coverWrapper = document.getElementById("audio-cover-image-preview");
+          const coverImg = coverWrapper.querySelector("img.create-img");
+          
+          const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
+          cover = coverImg ? [coverImg.src] : [emptyBase64img];
+          
+          postMedia = combinedBase64;
+          postDescription = description;
+
+        }
+        break;
+      case "video":
+        {
+          const videoWrappers = document.querySelectorAll(".create-video");
+          const combinedBase64 = Array.from(videoWrappers)
+            .map((vid) => vid.src)
+            .filter((src) => src.startsWith("data:video/"));
+
+          postMedia = combinedBase64;
+          postDescription = description;
+        }
+        break;
+      default:
+        console.warn("Unsupported post type:", post_type);
+      break;
     }
-    if (post_type == "image") {
-      const imageWrappers = document.querySelectorAll(".create-img");
-      const combinedBase64 = Array.from(imageWrappers)
-        .map((img) => img.src)
-        .filter((src) => src.startsWith("data:image/"));
+ 
 
-      if (combinedBase64.length === 0) {
-        imgErrorEl.textContent = "Please select at least one image.";
-
-        hasError = true;
-      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-        imgErrorEl.textContent = "The image(s) are too large.";
-        hasError = true;
-      } else {
-        postMedia = combinedBase64;
-        postDescription = description;
-      }
-    }
-    if (post_type == "audio") {
-
-       let combinedBase64 = [];
-      
-      
-      const recordedAudio = document.getElementById("recorded-audio");
-      //  Priority: Use recorded audio if it exists and is blob
-      if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
-        const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-        if (base64) combinedBase64.push(base64);
-      } else {
-        //  Fallback: Use uploaded audio if no recorded audio found
-        const audioWrappers = document.querySelectorAll(".create-audio");
-        combinedBase64 = Array.from(audioWrappers)
-          .map((audio) => audio.src)
-          .filter((src) => src.startsWith("data:audio/"));
-      }
-
-      //console.log(combinedBase64);
-      //return;
-
-      const coverWrapper = document.getElementById("audio-cover-image-preview");
-      const coverImg = coverWrapper.querySelector("img.create-img");
-      
-      const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
-      cover = coverImg ? [coverImg.src] : [emptyBase64img];
-      
-
-      if (combinedBase64.length === 0) {
-        audioErrorEl.textContent = "Please upload audio or record audio.";
-
-        hasError = true;
-      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-        audioErrorEl.textContent = "The audio is too large.";
-        hasError = true;
-      } else {
-        postMedia = combinedBase64;
-        postDescription = description;
-      }
-    }
-
-    if (post_type == "video") {
-      const videoWrappers = document.querySelectorAll(".create-video");
-      const combinedBase64 = Array.from(videoWrappers)
-        .map((vid) => vid.src)
-        .filter((src) => src.startsWith("data:video/"));
-
-      if (combinedBase64.length === 0) {
-        videoErrorEl.textContent = "Please select video.";
-
-        hasError = true;
-      } else if (combinedBase64.join("").length > 4 * 1024 * 1024) {
-        videoErrorEl.textContent = "The video is too large.";
-        hasError = true;
-      } else {
-        postMedia = combinedBase64;
-        postDescription = description;
-      }
-    }
-    const title_char_count=setupCharCounter(titleEl);
-    if (!title) {
-      titleErrorEl.textContent = "Title is required.";
-      hasError = true;
-    } else if (title.length < 5) {
-      titleErrorEl.textContent = "Title must be at least 5 characters.";
-      hasError = true;
-    }else if(!title_char_count){
-       hasError = true;
-      
-    }
-    const dec_char_count=setupCharCounter(descEl);
-    if (!description) {
-      descErrorEl.textContent = "Description is required.";
-      hasError = true;
-    } else if (description.length < 10) {
-      descErrorEl.textContent = "Description must be at least 10 characters.";
-      hasError = true;
-    }else if(!dec_char_count){
-       hasError = true;
-      
-    }
-
-    /*if (tags.length === 0) {
-      tagErrorEl.textContent = "Please add at least one tag.";
-      hasError = true;
-    }*/
-
+    hasError=pre_post_form_validation(post_type,postMedia); // check form validation
     // If any error, stop
     if (hasError) return;
 
@@ -510,115 +449,232 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+  function pre_post_form_validation(post_type,postMedia){
+
+    const tagErrorEl = document.getElementById("tagError");
+    const titleErrorEl = document.getElementById("titleError");
+    const descErrorEl = document.getElementById("descriptionError");
+    const imgErrorEl = document.getElementById("imageError");
+    const audioErrorEl = document.getElementById("audioError");
+    const videoErrorEl = document.getElementById("videoError");
+
+    // Clear old errors
+    titleErrorEl.textContent = "";
+    descErrorEl.textContent = "";
+    tagErrorEl.textContent = "";
+    imgErrorEl.textContent = "";
+    audioErrorEl.textContent = "";
+    videoErrorEl.textContent = "";
+
+    const title = titleEl.value.trim();
+    const description = descEl.value.trim();
+
+    // Validation
+    let hasError = false;
+
+     const title_char_count=setupCharCounter(titleEl);
+    if (!title) {
+      titleErrorEl.textContent = "Title is required.";
+      hasError = true;
+    } else if (title.length < 5) {
+      titleErrorEl.textContent = "Title must be at least 5 characters.";
+      hasError = true;
+    }else if(!title_char_count){
+       hasError = true;
+      
+    }
+    const dec_char_count=setupCharCounter(descEl);
+    if (!description) {
+      descErrorEl.textContent = "Description is required.";
+      hasError = true;
+    } else if (description.length < 10) {
+      descErrorEl.textContent = "Description must be at least 10 characters.";
+      hasError = true;
+    }else if(!dec_char_count){
+       hasError = true;
+      
+    }
+
+    /*if (tags.length === 0) {
+      tagErrorEl.textContent = "Please add at least one tag.";
+      hasError = true;
+    }*/
+
+    switch (post_type) {
+      case "text":
+        {
+          if (postMedia.join("").length > 4 * 1024 * 1024) {
+            descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
+            hasError = true;
+          }
+        }
+        break;
+      case "image":
+        {
+          if (postMedia.length === 0) {
+            imgErrorEl.textContent = "Please select at least one image.";
+
+            hasError = true;
+          } else if (postMedia.join("").length > 4 * 1024 * 1024) {
+            imgErrorEl.textContent = "The image(s) are too large.";
+            hasError = true;
+          } 
+        }
+        break;
+      case "audio":
+        {
+          if (postMedia.length === 0) {
+            audioErrorEl.textContent = "Please upload audio or record audio.";
+
+            hasError = true;
+          } else if (postMedia.join("").length > 4 * 1024 * 1024) {
+            audioErrorEl.textContent = "The audio is too large.";
+            hasError = true;
+          } 
+        }
+        break;
+      case "video":
+        {
+          if (postMedia.length === 0) {
+            videoErrorEl.textContent = "Please select video.";
+
+            hasError = true;
+          } else if (postMedia.join("").length > 4 * 1024 * 1024) {
+            videoErrorEl.textContent = "The video is too large.";
+            hasError = true;
+          }
+        }
+        break;
+      default:
+        console.warn("Unsupported post type:", post_type);
+      break;
+    }
+    
+    
+    return hasError;
+
+  }
 
   
 
-  document.getElementById("previewButton").addEventListener("click", function () {
+  document.getElementById("previewButton").addEventListener("click", async function () {
     const previewSection = document.getElementById('previewSection');
     const addPostSection = document.getElementById('addPostSection');
-    const title = document.getElementById("titleNotes")?.value.trim() || "";
-    const description = document.getElementById("descriptionNotes")?.value.trim() || "";
+    const title = titleEl.value.trim();
+    const description = descEl.value.trim();
+
     const tags = getTagHistory();
     const form = document.getElementById("create_new_post");
     const post_type = form.getAttribute("data-post-type");
 
-    if (!title) return;
+    
+    let hasError = false;
+    let objekt;
 
-    if (!description) return;
-    /**********************************************************************/
-    /** TEXT POST PREVIEW **/
-    if (post_type === "text") {
-        const objekt = {
-          id: "preview-text-post",  
-          contenttype: "text",
-          title,
-          description,
-          tags,
-          media: [],
-        };
+    switch (post_type) {
+      case "text":
+        {
+          // Convert to base64
+          const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+          const base64WithMime = [`data:text/plain;base64,${base64String}`];
 
-        previewPost(objekt);
+          media = base64WithMime;
+
+          objekt = {
+            id: "preview-text-post",  
+            contenttype: "text",
+            title,
+            description,
+            tags,
+            media: [],
+          };
+
+        }
+        break;
+      case "image":
+        {
+          const imageWrappers = document.querySelectorAll(".create-img");
+          const combinedBase64 = Array.from(imageWrappers)
+            .map((img) => img.src)
+            .filter((src) => src.startsWith("data:image/"));
+
+          media = combinedBase64;
+          
+          objekt = {
+            contenttype: "image",
+            title,
+            description,
+            tags,
+            media, 
+          };
+          
+        }
+        break;
+      case "audio":
+        {
+          let combinedBase64 = [];
+          const recordedAudio = document.getElementById("recorded-audio");
+          //  Priority: Use recorded audio if it exists and is blob
+          if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
+            const base64 = await convertBlobUrlToBase64(recordedAudio.src);
+            if (base64) combinedBase64.push(base64);
+          } else {
+            //  Fallback: Use uploaded audio if no recorded audio found
+            const audioWrappers = document.querySelectorAll(".create-audio");
+            combinedBase64 = Array.from(audioWrappers)
+              .map((audio) => audio.src)
+              .filter((src) => src.startsWith("data:audio/"));
+          }
+          const coverWrapper = document.getElementById("audio-cover-image-preview");
+          const coverImg = coverWrapper.querySelector("img.create-img");
+          
+          const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
+          cover = coverImg ? [coverImg.src] : [emptyBase64img];
+
+
+          media = combinedBase64;
+
+          objekt = {
+            title,
+            description,
+            tags,
+            media,
+            cover,
+            contenttype: "audio",
+          };
+          
+
+        }
+        break;
+      case "video":
+        {
+          const videoWrappers = document.querySelectorAll(".create-video");
+          const combinedBase64 = Array.from(videoWrappers)
+            .map((vid) => vid.src)
+            .filter((src) => src.startsWith("data:video/"));
+
+          media = combinedBase64;
+
+          objekt = {
+            title,
+            description,
+            tags,
+            media,
+            contenttype: "video",
+          };
+        }
+        break;
+      default:
+        console.warn("Unsupported post type:", post_type);
+      break;
     }
 
+    hasError=pre_post_form_validation(post_type,media); // check form validation
+    // If any error, stop
+    if (hasError) return;
 
-    /**********************************************************************/
-    /** IMAGE POST PREVIEW **/
-
-    if (post_type === "image") {
-
-        // Get all images inside .create-img wrappers
-        const imageWrappers = document.querySelectorAll(".create-img");
-        const media = Array.from(imageWrappers)
-          .map((img) => img.src)
-          .filter((src) => src.startsWith("data:image/"));
-
-        if (media.length === 0) return;
-
-
-        const objekt = {
-          contenttype: "image",
-          title,
-          description,
-          tags,
-          media, 
-        };
-
-        previewPost(objekt);
-     }
-
-
-
-
-    if (post_type === "audio") {
-        const audioWrappers = document.querySelectorAll(".create-audio");
-
-        const media = Array.from(audioWrappers)
-          .map((audio) => audio.src)
-          .filter((src) => src.startsWith("data:audio/"));
-
-        const coverImg = document.querySelector("#preview-cover img");
-        const canvas = document.querySelector("#preview-audio canvas");
-        const cover = coverImg ? [coverImg.src] : [canvas?.toDataURL("image/webp", 0.8)];
-   
-        if (media.length === 0) return;
-
-
-        const objekt = {
-          title,
-          description,
-          tags,
-          media,
-          cover,
-          contenttype: "audio",
-        };
-
-        previewPost(objekt);
-     }
-
-    /**********************************************************************/
-    /** VIDEO POST PREVIEW **/
-    if (post_type === "video") {
-        const videoWrappers = document.querySelectorAll(".create-video");
-
-        const media = Array.from(videoWrappers)
-          .map((vid) => vid.src)
-          .filter((src) => src.startsWith("data:video/"));
-
-         if (media.length === 0) return;
-
-
-        const objekt = {
-          title,
-          description,
-          tags,
-          media,
-          contenttype: "video",
-        };
-
-        previewPost(objekt);
-    }
-
-
+    previewPost(objekt);
     addPostSection.classList.add('none');
     previewSection.classList.remove('none');
   });
