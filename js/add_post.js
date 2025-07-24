@@ -298,6 +298,13 @@ function previewPostCollapsed(objekt) {
     const hasMultiple = mediaArray.length > 1;
     let currentIndex = 0;
 
+    // Update card content attribute based on content type
+    if (contentType !== "text") {
+      collapsedCard.setAttribute("content", contentType);
+    } else {
+      collapsedCard.removeAttribute("content");
+    }
+
     if (!mediaArray.length || contentType === "text") {
       postBox.style.backgroundImage = "";
       return;
@@ -342,7 +349,6 @@ function previewPostCollapsed(objekt) {
       slider.appendChild(slide);
     });
 
-    // Add slider and dots
     postBox.appendChild(slider);
 
     // Dots
@@ -360,51 +366,19 @@ function previewPostCollapsed(objekt) {
 
       postBox.appendChild(dotsContainer);
     }
+  }
 
-    // Arrows
-    if (hasMultiple) {
-      const leftArrow = document.createElement("button");
-      leftArrow.className = "slider-arrow left-arrow";
-      leftArrow.innerHTML = "&#10094;";
-      leftArrow.addEventListener("click", () => switchSlide(currentIndex - 1));
 
-      const rightArrow = document.createElement("button");
-      rightArrow.className = "slider-arrow right-arrow";
-      rightArrow.innerHTML = "&#10095;";
-      rightArrow.addEventListener("click", () => switchSlide(currentIndex + 1));
 
-      postBox.appendChild(leftArrow);
-      postBox.appendChild(rightArrow);
+  const previewSection = document.getElementById('previewSection');
+  const addPostSection = document.getElementById('addPostSection');
+
+
+    function resetPreview() {
+      previewSection.classList.add("none"); 
+      addPostSection.classList.remove("none"); 
     }
 
-    function switchSlide(targetIndex) {
-      const slides = postBox.querySelectorAll(".collapsed-slide");
-      const dots = postBox.querySelectorAll(".collapsed_dot");
-
-      if (targetIndex < 0) targetIndex = slides.length - 1;
-      if (targetIndex >= slides.length) targetIndex = 0;
-
-      slides.forEach((slide, i) => {
-        slide.classList.toggle("active", i === targetIndex);
-      });
-
-      dots.forEach((dot, i) => {
-        dot.classList.toggle("active", i === targetIndex);
-      });
-
-      currentIndex = targetIndex;
-    }
-}
-
-
-const previewSection = document.getElementById('previewSection');
-const addPostSection = document.getElementById('addPostSection');
-
-
-function resetPreview() {
-  previewSection.classList.add("none"); 
-  addPostSection.classList.remove("none"); 
-}
 
 
 const backToEditBtn = document.getElementById('backToEdit');
