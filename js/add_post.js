@@ -130,8 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
         //audioContainer.id = "audio-container"; // Setze die ID
          audioContainer.classList.add("audio-item");
 
-        if (objekt.cover) {/*
-          const cover = JSON.parse(objekt.cover);
+        if (objekt.cover) {
+          const cover = objekt.cover;
           img = document.createElement("img");
           img.classList.add("cover");
           img.onload = () => {
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
           img.src = tempMedia(cover[0].path);
           img.alt = "Cover";
           audioContainer.appendChild(img);
-       */ }
+        }
         // 2. Erzeuge das <canvas>-Element
         const canvas = document.createElement("canvas");
         canvas.id = "waveform-preview"; // Setze die ID für das Canvas
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
         let cover = null;
         if (objekt.cover) {
-         // cover = JSON.parse(objekt.cover);
+          cover = objekt.cover;
         }
         const audio_player = document.createElement("div");
         audio_player.className = "audio_player_con";
@@ -486,6 +486,10 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           const combinedBase64 = Array.from(videoWrappers)
             .map((vid) => vid.src)
             .filter((src) => src.startsWith("data:video/"));
+
+          const coverWrapper = document.getElementById("preview-video");
+          const coverImg = coverWrapper.querySelector("img.create-img");
+          cover = coverImg ? [coverImg.src] : "";
 
           postMedia = combinedBase64;
           postDescription = description;
