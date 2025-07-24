@@ -559,9 +559,29 @@ function commentToDom(c, append = true) {
         cover = JSON.parse(objekt.cover);
       }
       if (objekt.contenttype === "image") {
-        if (array.length > 1) postDiv.classList.add("multi");
-        for (const item of array) {
+       if (array.length > 1) {
+          postDiv.classList.add("multi");
+          const divmulti_img_indicator = document.createElement("div");
+          divmulti_img_indicator.classList.add("image_counter");
+
+          for (let a = 0; a < array.length; a++) {
+            const img_indicator = document.createElement("span");
+            if((a+1)==1){
+              img_indicator.classList.add("active");
+            }
+            img_indicator.textContent=a+1;
+            
+            divmulti_img_indicator.appendChild(img_indicator);
+             
+          }
+         
+          inhaltDiv.insertBefore(divmulti_img_indicator, postContent);
+          
+        }
+        let i=0;
+        for (const item of array) { i++;
           img = document.createElement("img");
+          img.classList.add("image"+i);
           img.onload = () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);
@@ -593,40 +613,43 @@ function commentToDom(c, append = true) {
           postDiv.appendChild(audio);
           const durationspan = document.createElement("span");
           durationspan.textContent = item.options.duration;
-
-          
           postaudioplayerDiv.appendChild(durationspan);
-          
-          
-
-          
-          
         }
       } else if (objekt.contenttype === "video") {
         //console.log(objekt);
+        if (array.length > 1) {
+          card.classList.add("multi-video");
+        }
+        if (cover) {
+          img = document.createElement("img");
+          img.classList.add("video-cover");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(cover[0].path);
+          img.alt = "Video Cover";
+          postDiv.appendChild(img);
+        }
+        let i = 0;
         for (const item of array) {
-          if (item.cover) {
-            img = document.createElement("img");
-            img.onload = () => {
-              img.setAttribute("height", img.naturalHeight);
-              img.setAttribute("width", img.naturalWidth);
-            };
-            img.src = tempMedia(item.cover);
-            img.alt = "Cover";
-            postDiv.appendChild(img);
-          }
+           i++;
+          
           video = document.createElement("video");
+          video.classList.add("video_"+i);
           video.muted = true;
           video.id = extractAfterComma(item.path);
           video.src = tempMedia(item.path);
           video.preload = "metadata";
           video.controls = false;
-          video.className = "custom-video";
+          video.classList.add("custom-video");
           addMediaListener(video);
           postDiv.appendChild(video);
           /* On mouse move over the card, scrub through the video based on cursor position
           / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
+          const videoCover = this.querySelector(".video-cover");
+          if(videoCover)  videoCover.classList.add("none");
           const video = this.getElementsByTagName("video")[0];
 
           if (video.readyState >= 2) {
@@ -646,7 +669,9 @@ function commentToDom(c, append = true) {
           });
 
           card.addEventListener("mouseleave", function (e) {
-            const allMediaElements = document.querySelectorAll("video");
+            const videoCover = this.querySelector(".video-cover");
+            if(videoCover)  videoCover.classList.remove("none");
+            const allMediaElements = this.querySelectorAll("video");
             allMediaElements.forEach((otherMedia) => {
               if (!otherMedia.paused) otherMedia.pause();
             });
@@ -656,6 +681,7 @@ function commentToDom(c, append = true) {
 
           const ratio = document.createElement("span");
           ratio.classList.add("video-ratio");
+          ratio.classList.add("video-ratio-"+i);
           if(item.options.ratio=='16:9'){
             ratio.textContent = 'Long';
             card.classList.add("double-card");
@@ -673,8 +699,6 @@ function commentToDom(c, append = true) {
         
         }
       }
-
-
       // <div class="social"> erstellen mit Social-Icons und leeren <span>
       const socialDiv = document.createElement("div");
       socialDiv.classList.add("social","md_font_size");
