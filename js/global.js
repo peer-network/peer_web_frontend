@@ -133,6 +133,7 @@ function isFileLargerThanMB(file, mb) {
   return file.size > maxBytes;
 }
 async function convertImageToBase64(file) {
+  
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     const type = file.type.substring(0, 5);
