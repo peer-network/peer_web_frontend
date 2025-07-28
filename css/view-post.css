@@ -1,3 +1,4 @@
+
 .viewpost {
   position: fixed;
   top: 0;
@@ -13,13 +14,22 @@
 	display: flex;
 	margin: auto;
 	gap: 1.5rem;
-	margin-top: 400px;
 }
+
+.active.card {
+  order: 2;
+}
+
+.non_1.blur.card.text_post {
+  order: 3;
+}
+
+.non_2.blur.card.text_post {
+  order: 4;
+}
+
 .blur {
 	opacity: 0.5;
-}
-.comment-txt {
-	margin: auto;
 }
 .collapsed-slider {
 	position: relative;
@@ -96,7 +106,6 @@
   display: flex;
   margin: auto;
   gap: 1.5rem;
-  margin-top: 400px;
 }
 
 .blur {
@@ -120,10 +129,6 @@
   background-position: center;
   opacity: 0;
   transition: opacity 0.4s ease;
-}
-.disabled {
-	cursor: not-allowed;
-	pointer-events: none;
 }
 
 .collapsed-slide.active {
@@ -169,6 +174,7 @@
 .page-wrapper {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .previewPost .inner-container {
@@ -200,6 +206,13 @@
 }
 .previewPost .inner-container {
 	margin-top: -90px;
+}
+.disabled {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+.comment-txt {
+	margin: auto;
 }
 .viewpost .inner-container .btClose {
 	z-index: 2;
@@ -558,7 +571,7 @@
 .viewpost .post_gallery.multi .slider-wrapper .slide_item {
 	
 	flex-shrink: 0;
-	width: 100%;
+	width: auto;
 	max-width: 100%;
 	height: 100%;
 	display: flex;
@@ -1047,10 +1060,6 @@ button:not(:disabled):hover.switch-btn {
 }
 
 @media screen and (max-width: 1500px) {
-  .collapsed-preview {
-	margin-top: 200px;
-  }
-
   .previewPost .inner-container {
   	margin-top: -50px;
    }

@@ -195,11 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
         audio_player.appendChild(button);
         
         audioContainer.appendChild(audio_player);
-        // audioContainer.appendChild(audio);
+        audioContainer.appendChild(audio);
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
         post_gallery.appendChild(audioContainer);
 
-        initAudioplayer("waveform-preview", audio.src);
+        initAudioplayer("waveform-preview", audio);
       }
     } else if (objekt.contenttype === "video") {
       post_gallery.className = "post_gallery video";
