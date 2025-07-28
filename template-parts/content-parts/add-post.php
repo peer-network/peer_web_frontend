@@ -24,10 +24,11 @@
                 <div class="images_action_buttons">
                     <div id="aspectRatioSelectMulti" class="aspect-ratio-toggle">
                         <input type="radio" id="ar-12" name="aspectRatioMul" value="1" checked>
-                        <label for="ar-1">1:1 Square</label>
+                        <label for="ar-12">1:1 Square</label>
                         <input type="radio" id="ar-22" name="aspectRatioMul" value="0.8">
-                        <label for="ar-2">4:5 Vertical</label>
+                        <label for="ar-22">4:5 Vertical</label>
                     </div>
+                    
                     <div id="more-images_upload" >
                         <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                         <span class="upload-label">Upload more images</span>
@@ -183,7 +184,7 @@
                 </div>
             </div>
             <div id="crop-container" class="none">
-                <canvas id="cropcanvas" width="2000" height="2000"></canvas>
+                <canvas id="cropcanvas" width="1500" height="1500"></canvas>
                 <canvas id="croppedCanvas" width="500" height="500"></canvas>
                 <div id="cropButtons">
                     <span class="button" id="cropQuit">back</span>
