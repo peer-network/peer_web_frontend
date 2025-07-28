@@ -61,10 +61,10 @@ checkAuth("unauthorized");
   
     <div class="profile_header" id="profil-container">
       <div class="profile_picture">
-        <div class="cropContainer"><span class="online_status"></span><img id="profilbild" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
+        <div class="cropContainer"><span class="online_status"></span><img id="profilbild" class="profilbild profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
       </div>
       <div class="profile_info">
-        <h2 class="profile_title"><span  id="username">&nbsp;</span><span id="slug" class="profile_no">&nbsp;</span></h2>
+        <h2 class="profile_title"><span class="username"  id="username">&nbsp;</span><span class="slug" id="slug" class="profile_no">&nbsp;</span></h2>
         <div class="profile_description" id="biography"> </div>
         <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span id="following_count" class="following_count"><em id="following">&nbsp;</em> Following</span> <span id="peer_count" class="peer_count"><em id="Peers">0</em> Peers</span> </div>
         <div id="modal_Overlay" class="modalOverlay none"></div>

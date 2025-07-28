@@ -26,6 +26,33 @@ document.addEventListener("DOMContentLoaded", () => {
     if(post_contentletf)   post_contentletf.remove();
 
     const post_contentright=containerright.querySelector(".post_content");
+
+    if (post_contentright) {
+      const title = post_contentright.querySelector(".post_title h2");
+      const text = post_contentright.querySelector(".post_text");
+      const tags = post_contentright.querySelector(".hashtags");
+      const time = post_contentright.querySelector(".timeagao");
+
+      if (title) title.innerHTML = "";
+      if (text) text.innerHTML = "";
+      if (tags) tags.innerHTML = "";
+      if (time) time.innerHTML = "";
+    }
+
+    const fullView = document.getElementById("preview-post-container");
+    const collapsedView = document.querySelector("section");
+
+    if (fullView && collapsedView) {
+      fullView.style.display = "";
+      collapsedView.style.display = "none";
+    }
+
+    document.querySelectorAll(".switch-btn").forEach(btn => {
+      btn.classList.remove("active");
+      if (btn.getAttribute("data-view") === "full") {
+        btn.classList.add("active");
+      }
+    });
     
     
     const profile_header_left=postContainer.querySelector(".profile-header-left");
@@ -138,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);
           };
-          img.src = tempMedia(cover[0].path);
+          img.src = (cover[0]);
           img.alt = "Cover";
           audioContainer.appendChild(img);
         }
@@ -281,92 +308,173 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
 function previewPostCollapsed(objekt) {
-    const collapsedCard = document.querySelector('section .card');
-    const postBox = collapsedCard.querySelector(".post");
-    const title = collapsedCard.querySelector(".post-title");
-    const description = collapsedCard.querySelector(".post-text");
-    const hashtags = collapsedCard.querySelector(".hashtags");
+  const collapsedCard = document.querySelector('section .card');
+  const postBox = collapsedCard.querySelector(".post");
+  const title = collapsedCard.querySelector(".post-title");
+  const description = collapsedCard.querySelector(".post-text");
+  const hashtags = collapsedCard.querySelector(".hashtags");
+  const inhaltDiv = collapsedCard.querySelector(".post-inhalt");
 
-    // Reset content
-    postBox.innerHTML = "";
-    title.innerHTML = objekt.title || "";
-    description.textContent = objekt.description || "";
-    hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
+  postBox.innerHTML = "";
+  title.innerHTML = objekt.title || "";
+  description.textContent = objekt.description || "";
+  hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
+  collapsedCard.classList.remove("multi-video", "double-card");
+  collapsedCard.removeAttribute("content");
 
-    const mediaArray = objekt.media || [];
-    const contentType = objekt.contenttype;
-    const hasMultiple = mediaArray.length > 1;
-    let currentIndex = 0;
+  const oldVideoPlayer = inhaltDiv.querySelector(".video-player");
+  if (oldVideoPlayer) oldVideoPlayer.remove();
 
-    // Update card content attribute based on content type
-    if (contentType !== "text") {
-      collapsedCard.setAttribute("content", contentType);
-    } else {
-      collapsedCard.removeAttribute("content");
+  const oldImageCounter = inhaltDiv.querySelector(".image_counter");
+  if (oldImageCounter) oldImageCounter.remove();
+
+  const contentType = objekt.contenttype;
+  const mediaArray = objekt.media || [];
+  const hasMultiple = mediaArray.length > 1;
+
+  if (!mediaArray.length || contentType === "text") {
+    postBox.style.backgroundImage = "";
+    return;
+  }
+
+  collapsedCard.setAttribute("content", contentType);
+
+  const slider = document.createElement("div");
+  slider.className = "collapsed-slider";
+
+  mediaArray.forEach((mediaURL, index) => {
+    const slide = document.createElement("div");
+    slide.className = "collapsed-slide";
+    if (index === 0) slide.classList.add("active");
+
+    if (contentType === "image") {
+      slide.style.backgroundImage = `url('${mediaURL}')`;
+      slide.style.backgroundSize = "cover";
+      slide.style.backgroundPosition = "center";
     }
 
-    if (!mediaArray.length || contentType === "text") {
-      postBox.style.backgroundImage = "";
-      return;
+    if (contentType === "video") {
+      if (hasMultiple) collapsedCard.classList.add("multi-video");
+
+      const videoCover = document.createElement("div");
+      videoCover.classList.add("video-cover");
+
+      const video = document.createElement("video");
+      video.src = mediaURL;
+      video.className = "video-preview";
+
+      slide.appendChild(videoCover);
+      slide.appendChild(video);
+
+      // Cover overlay
+      if (objekt.cover?.[index]) {
+        const img = document.createElement("img");
+        img.classList.add("cover");
+        img.src = objekt.cover[index];
+        img.alt = "Cover";
+
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+
+        videoCover.appendChild(img);
+      }
+
+      slide.addEventListener("mouseleave", function () {
+        const videoCover = this.querySelector(".video-cover");
+        if (videoCover) videoCover.classList.remove("none");
+
+        const videos = this.querySelectorAll("video");
+        videos.forEach(vid => { if (!vid.paused) vid.pause(); });
+      });
+
+      let postvideoplayerDiv = inhaltDiv.querySelector(".video-player");
+      if (!postvideoplayerDiv) {
+        postvideoplayerDiv = document.createElement("div");
+        postvideoplayerDiv.classList.add("video-player");
+
+        const imga = document.createElement("img");
+        imga.src = 'svgnew/play-btn.svg';
+        imga.alt = "Play";
+        postvideoplayerDiv.appendChild(imga);
+
+        const cardHeader = inhaltDiv.querySelector(".card-header");
+        if (cardHeader) {
+          inhaltDiv.insertBefore(postvideoplayerDiv, cardHeader.nextSibling);
+        } else {
+          inhaltDiv.appendChild(postvideoplayerDiv);
+        }
+      } else {
+        postvideoplayerDiv.querySelectorAll(".video-ratio").forEach(el => el.remove());
+      }
+
+      const ratio = document.createElement("span");
+      ratio.classList.add("video-ratio", `video-ratio-${index}`);
+      if (objekt.options?.ratio === '16:9') {
+        ratio.textContent = 'Long';
+        collapsedCard.classList.add("double-card");
+      } else {
+        ratio.textContent = 'Short';
+      }
+      postvideoplayerDiv.appendChild(ratio);
     }
-    // Create slider container
-    const slider = document.createElement("div");
-    slider.className = "collapsed-slider";
 
-    // Create slides
-    mediaArray.forEach((mediaURL, index) => {
-      const slide = document.createElement("div");
-      slide.className = "collapsed-slide";
-      if (index === 0) slide.classList.add("active");
+    if (contentType === "audio") {
+      const audio = document.createElement("audio");
+      audio.src = mediaURL;
+      slide.appendChild(audio);
 
-      if (contentType === "image" || contentType === "video") {
-        slide.style.backgroundImage = `url('${mediaURL}')`;
+      if (objekt.cover?.[index]) {
+        slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
         slide.style.backgroundSize = "cover";
         slide.style.backgroundPosition = "center";
       }
 
-      if (contentType === "video") {
-        const video = document.createElement("video");
-        video.src = mediaURL;
-        video.setAttribute("controls", "true");
-        video.className = "video-preview";
-        slide.appendChild(video);
-      }
+      let postaudioplayerDiv = inhaltDiv.querySelector(".audio-player");
+      if (!postaudioplayerDiv) {
+        postaudioplayerDiv = document.createElement("div");
+        postaudioplayerDiv.classList.add("audio-player");
 
-      if (contentType === "audio") {
-        const audio = document.createElement("audio");
-        audio.src = mediaURL;
-        audio.setAttribute("controls", "true");
-        slide.appendChild(audio);
+        const imga = document.createElement("img");
+        imga.src = 'img/mucis-player.png';
+        imga.alt = "audio player";
+        postaudioplayerDiv.appendChild(imga);
 
-        if (objekt.cover?.[index]) {
-          slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
-          slide.style.backgroundSize = "cover";
-          slide.style.backgroundPosition = "center";
+        const cardHeader = inhaltDiv.querySelector(".card-header");
+        if (cardHeader) {
+          inhaltDiv.insertBefore(postaudioplayerDiv, cardHeader.nextSibling);
+        } else {
+          inhaltDiv.appendChild(postaudioplayerDiv);
         }
-      }
+      } 
+    }
 
-      slider.appendChild(slide);
-    });
+    slider.appendChild(slide);
+  });
 
-    postBox.appendChild(slider);
+  postBox.appendChild(slider);
 
-    // Dots
-    if (hasMultiple) {
-      const dotsContainer = document.createElement("div");
-      dotsContainer.className = "collapsed-dots";
+  // Dots for image slides
+  if (contentType === "image" && hasMultiple) {
+    const postContent = inhaltDiv?.querySelector(".post-content");
+    if (postContent) {
+      const imageCounter = document.createElement("div");
+      imageCounter.classList.add("image_counter");
 
       mediaArray.forEach((_, i) => {
-        const dot = document.createElement("span");
-        dot.className = "collapsed_dot";
-        if (i === 0) dot.classList.add("active");
-        dot.addEventListener("click", () => switchSlide(i));
-        dotsContainer.appendChild(dot);
+        const span = document.createElement("span");
+        span.textContent = i + 1;
+        if (i === 0) span.classList.add("active");
+        span.addEventListener("click", () => switchSlide(i));
+        imageCounter.appendChild(span);
       });
 
-      postBox.appendChild(dotsContainer);
+      inhaltDiv.insertBefore(imageCounter, postContent);
     }
   }
+}
+
 
 
 
