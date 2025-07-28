@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const referralInputs = document.querySelectorAll("#referral_code");
   const validationMsg = document.getElementById("refValidationMessage");
-  const staticUUID = "8e2b5672-84bd-4a5c-a5d0-f4bfc212ec2a";
+  const staticUUID = "85d5f836-b1f5-4c4e-9381-1b058e13df93";
   let autoFillCode = null;
 
   const formSteps = document.querySelectorAll(".form-step");

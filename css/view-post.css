@@ -18,6 +18,9 @@
 .blur {
 	opacity: 0.5;
 }
+.comment-txt {
+	margin: auto;
+}
 .collapsed-slider {
 	position: relative;
 	width: 100%;
@@ -118,6 +121,10 @@
   opacity: 0;
   transition: opacity 0.4s ease;
 }
+.disabled {
+	cursor: not-allowed;
+	pointer-events: none;
+}
 
 .collapsed-slide.active {
   opacity: 1;
@@ -190,7 +197,9 @@
   justify-content: space-between;
   align-items: flex-start;
   gap:50px;
-  margin-top: -90px;
+}
+.previewPost .inner-container {
+	margin-top: -90px;
 }
 .viewpost .inner-container .btClose {
 	z-index: 2;
@@ -1042,7 +1051,7 @@ button:not(:disabled):hover.switch-btn {
 	margin-top: 200px;
   }
 
-  .viewpost .inner-container {
+  .previewPost .inner-container {
   	margin-top: -50px;
    }
 }
