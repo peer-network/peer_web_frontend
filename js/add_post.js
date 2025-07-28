@@ -26,6 +26,34 @@ document.addEventListener("DOMContentLoaded", () => {
     if(post_contentletf)   post_contentletf.remove();
 
     const post_contentright=containerright.querySelector(".post_content");
+
+    if (post_contentright) {
+      const title = post_contentright.querySelector(".post_title h2");
+      const text = post_contentright.querySelector(".post_text");
+      const tags = post_contentright.querySelector(".hashtags");
+      const time = post_contentright.querySelector(".timeagao");
+
+      if (title) title.innerHTML = "";
+      if (text) text.innerHTML = "";
+      if (tags) tags.innerHTML = "";
+      if (time) time.innerHTML = "";
+    }
+
+    const fullView = document.getElementById("preview-post-container");
+    const collapsedView = document.querySelector("section");
+
+    if (fullView && collapsedView) {
+      fullView.style.display = "";
+      collapsedView.style.display = "none";
+    }
+
+    // Reset switch buttons
+    document.querySelectorAll(".switch-btn").forEach(btn => {
+      btn.classList.remove("active");
+      if (btn.getAttribute("data-view") === "full") {
+        btn.classList.add("active");
+      }
+    });
     
     
     const profile_header_left=postContainer.querySelector(".profile-header-left");
@@ -130,18 +158,18 @@ document.addEventListener("DOMContentLoaded", () => {
         //audioContainer.id = "audio-container"; // Setze die ID
          audioContainer.classList.add("audio-item");
 
-        if (objekt.cover) {/*
-          const cover = JSON.parse(objekt.cover);
+        if (objekt.cover) {
+          const cover = objekt.cover;
           img = document.createElement("img");
           img.classList.add("cover");
           img.onload = () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);
           };
-          img.src = tempMedia(cover[0].path);
+          img.src = cover[0];
           img.alt = "Cover";
           audioContainer.appendChild(img);
-       */ }
+        }
         // 2. Erzeuge das <canvas>-Element
         const canvas = document.createElement("canvas");
         canvas.id = "waveform-preview"; // Setze die ID für das Canvas
@@ -154,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
         let cover = null;
         if (objekt.cover) {
-         // cover = JSON.parse(objekt.cover);
+         cover = objekt.cover;
         }
         const audio_player = document.createElement("div");
         audio_player.className = "audio_player_con";
@@ -296,7 +324,7 @@ function previewPostCollapsed(objekt) {
     const mediaArray = objekt.media || [];
     const contentType = objekt.contenttype;
     const hasMultiple = mediaArray.length > 1;
-    let currentIndex = 0;
+    let currentIndex = 1;
 
     // Update card content attribute based on content type
     if (contentType !== "text") {
@@ -317,7 +345,7 @@ function previewPostCollapsed(objekt) {
     mediaArray.forEach((mediaURL, index) => {
       const slide = document.createElement("div");
       slide.className = "collapsed-slide";
-      if (index === 0) slide.classList.add("active");
+      if (index === 1) slide.classList.add("active");
 
       if (contentType === "image" || contentType === "video") {
         slide.style.backgroundImage = `url('${mediaURL}')`;
@@ -334,15 +362,27 @@ function previewPostCollapsed(objekt) {
       }
 
       if (contentType === "audio") {
-        const audio = document.createElement("audio");
-        audio.src = mediaURL;
-        audio.setAttribute("controls", "true");
-        slide.appendChild(audio);
-
+        slide.classList.add("collapsed-slide");
         if (objekt.cover?.[index]) {
           slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
           slide.style.backgroundSize = "cover";
           slide.style.backgroundPosition = "center";
+        }
+
+        const inhaltDiv = collapsedCard.querySelector(".post-inhalt");
+        const cardHeader = inhaltDiv?.querySelector(".card-header");
+        const postContent = inhaltDiv?.querySelector(".post-content");
+
+        if (inhaltDiv && cardHeader && postContent && !inhaltDiv.querySelector(".audio-player")) {
+          const postaudioplayerDiv = document.createElement("div");
+          postaudioplayerDiv.classList.add("audio-player");
+
+          const imga = document.createElement("img");
+          imga.src = 'img/mucis-player.png';
+          imga.alt = "audio player";
+
+          postaudioplayerDiv.appendChild(imga);
+          inhaltDiv.insertBefore(postaudioplayerDiv, postContent);
         }
       }
 
@@ -724,7 +764,6 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
             cover,
             contenttype: "audio",
           };
-          
 
         }
         break;
