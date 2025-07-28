@@ -202,7 +202,7 @@
                 </div>
                 <div class="col-right input-wrapper">
                     <input type="text" id="titleNotes" placeholder="Title" name="text-input"  />
-                     <span id="title_limit_box" class="char-counter md_font_size" data-target="titleNotes"><span class="char_count">0</span>/<span class="char_limit">50</span></span>
+                     <span id="title_limit_box" class="char-counter md_font_size" data-target="titleNotes"><span class="char_count">0</span>/<span class="char_limit">63</span></span>
                     <span class="response_msg error" id="titleError"></span>
                 </div>
             </div>

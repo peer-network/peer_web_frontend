@@ -370,14 +370,14 @@ function previewPostCollapsed(objekt) {
 
 
 
-  const previewSection = document.getElementById('previewSection');
-  const addPostSection = document.getElementById('addPostSection');
+const previewSection = document.getElementById('previewSection');
+const addPostSection = document.getElementById('addPostSection');
 
 
-    function resetPreview() {
-      previewSection.classList.add("none"); 
-      addPostSection.classList.remove("none"); 
-    }
+function resetPreview() {
+  previewSection.classList.add("none"); 
+  addPostSection.classList.remove("none"); 
+}
 
 
 
@@ -417,8 +417,9 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
 
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
-    const tags = getTagHistory();
-
+    //const tags = getTagHistory();
+    const tags = Array.from(selectedContainer.querySelectorAll(".tag"))
+    .map(tag => tag.getAttribute("data-tag"));
 
     
     createPostError.innerHTML = "";
@@ -561,8 +562,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     if (!title) {
       titleErrorEl.textContent = "Title is required.";
       hasError = true;
-    } else if (title.length < 5) {
-      titleErrorEl.textContent = "Title must be at least 5 characters.";
+    } else if (title.length < 2) {
+      titleErrorEl.textContent = "Title must be at least 2 character.";
       hasError = true;
     }else if(!title_char_count){
        hasError = true;
@@ -572,9 +573,9 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     if (!description) {
       descErrorEl.textContent = "Description is required.";
       hasError = true;
-    } else if (description.length < 10) {
-      descErrorEl.textContent = "Description must be at least 10 characters.";
-      hasError = true;
+    //} else if (description.length < 10) {
+      //descErrorEl.textContent = "Description must be at least 10 characters.";
+      //hasError = true;
     }else if(!dec_char_count){
        hasError = true;
       
@@ -1441,7 +1442,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           insertPosition.appendChild(previewItem); // Adds the new one
           
         }else{
-          previewItem.classList.add("audio-item");
+        previewItem.classList.add("audio-item");
         previewItem.innerHTML = `
         <p>${file.name}</p>        
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
@@ -1456,6 +1457,9 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         const insertAudioPosition = document.getElementById("audio_upload_block");
         insertAudioPosition.innerHTML = ""; // Removes any existing children
         insertAudioPosition.appendChild(previewItem);
+
+        const dropareaaudio = document.getElementById("drop-area-audio");
+        dropareaaudio.classList.add("none");
         }
         
       } else if (uploadtype === "image") {
@@ -1554,6 +1558,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           audio_del_btn.addEventListener("click", () => {
             document.querySelector(".audiobackground_uploader")?.classList.add("none");
             document.querySelector(".recodring-block")?.classList.remove("none");
+            const dropareaaudio = document.getElementById("drop-area-audio");
+            dropareaaudio.classList.remove("none");
           });
         }
 

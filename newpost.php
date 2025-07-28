@@ -52,7 +52,7 @@ checkAuth("unauthorized");
     </div>
     <div id="addPost" class="site_layout">
         <header class="site-header header-profile">
-            <img class="logo" src="svg/plus2.svg" alt="Peer Network">
+            <img class="logo" src="svg/newpost-fill.svg" alt="Peer Network">
             <h1 id="h1">Text Post</h1>
         </header>
 
