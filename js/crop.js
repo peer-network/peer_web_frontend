@@ -7,7 +7,9 @@ const croppedCtx = croppedCanvas.getContext("2d");
 const aspectRatioSelect = document.getElementById("aspectRatioSelect");
 const aspectRatioInputs = document.querySelectorAll('input[name="aspectRatio"]');
 
+
 let cropImg = new Image();
+
 let isDragging = false;
 let dragStart = { x: 0, y: 0 };
 let position = { x: 0, y: 0 };
@@ -15,17 +17,56 @@ let offset = { x: 0, y: 0 };
 let scale = 1;
 let aspect_Ratio = 1;
 
-const MIN_SCALE = 0.5;
+const MIN_SCALE = 0.3;
 const MAX_SCALE = 8;
+let cropping = false;
 
 cropImg.onload = () => {
-  scale = 1;
-  position = {
-    x: (cropcanvas.width - cropImg.width) / 2,
-    y: (cropcanvas.height - cropImg.height) / 2,
-  };
+  if (cropping) {
+    // Bild- und Canvas-Abmessungen
+    const imgW = cropImg.clientWidth || cropImg.width;
+    const imgH = cropImg.clientHeight || cropImg.height;
+    cropcanvas.width = imgW;
+    cropcanvas.height = imgH;
+    const canvasW = cropcanvas.width;
+    const canvasH = cropcanvas.height;
+
+    // Errechne den maximalen Scale, sodass das Bild reinpasst (cover = false, contain = true)
+    scale = Math.min(canvasW / imgW, canvasH / imgH);
+
+    // Neue Bildabmessungen nach Skalierung
+    const displayW = imgW * scale;
+    const displayH = imgH * scale;
+
+    // Zentrieren
+    position = {
+      x: (canvasW - displayW) / 2,
+      y: (canvasH - displayH) / 2,
+    };
+  }else{
+
+    scale = 1;
+    cropcanvas.width = 1500;
+    cropcanvas.height = 1500;
+     croppedCanvas.width = 500;
+  croppedCanvas.height = 500;
+    position = {
+      x: (cropcanvas.width - cropImg.width) / 2,
+      y: (cropcanvas.height - cropImg.height) / 2,
+    };
+    
+  }
+
+  // Zeichne das Bild skaliert und zentriert
   draw();
+  if (cropping) {
+    cropIt();
+  }
 };
+
+
+
+
 
 aspectRatioInputs.forEach((input) => {
   input.addEventListener("change", () => {
@@ -88,8 +129,8 @@ cropcanvas.addEventListener("wheel", (e) => {
 
 function getCropRect() {
   // Dynamisch berechnetes Zuschneidefeld mit gewähltem Seitenverhältnis
-  const maxW = cropcanvas.width * 0.8;
-  const maxH = cropcanvas.height * 0.8;
+  const maxW = cropcanvas.width * (cropping ? 1 : 0.8);
+  const maxH = cropcanvas.height * (cropping ? 1 : 0.8);
 
   let w = maxW;
   let h = w / aspect_Ratio;
@@ -122,6 +163,11 @@ function draw() {
 }
 
 cropBtn.addEventListener("click", () => {
+  cropIt();
+  document.getElementById("crop-container").classList.add("none");
+});
+
+function cropIt() {
   const crop = getCropRect();
   const sx = (crop.x - position.x) / scale;
   const sy = (crop.y - position.y) / scale;
@@ -133,8 +179,10 @@ cropBtn.addEventListener("click", () => {
   croppedCtx.clearRect(0, 0, crop.w, crop.h);
   croppedCtx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, crop.w, crop.h);
   cropOrg.src = croppedCanvas.toDataURL("image/webp");
-  document.getElementById("crop-container").classList.add("none");
-});
+  // document.getElementById("crop-container").classList.add("none");
+  cropping=false;
+}
+
 cropQuit.addEventListener("click", () => {
   document.getElementById("crop-container").classList.add("none");
 });
@@ -299,3 +347,56 @@ containerList.addEventListener("drop", (e) => {
 [...containerList.children].forEach((div) => {
   div.setAttribute("dragable", "true");
 });
+
+ function cropImage(imgContainer) {
+  cropOrg = imgContainer.querySelector("img");
+  if (!cropOrg) return;
+  // cropcanvas.width = cropOrg.clientWidth;
+  // cropcanvas.height = cropOrg.clientHeight;
+  p_element = cropOrg.parentElement.querySelector("p");
+  if (sessionStorage.getItem(p_element.innerText)) {
+      cropImg.src = sessionStorage.getItem(p_element.innerText);
+    } else {
+      cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
+    }
+    // document.getElementById("crop-container").classList.remove("none");
+    // draw();
+}
+async function cropAllImages() {
+  const images = document.querySelectorAll("#preview-image .preview-track .dragable");
+  for (const imgContainer of images) {
+    cropping=true;
+    
+    cropImage(imgContainer);
+    while(cropping) {
+      await sleep(50);
+    }
+  }
+  document.getElementById("crop-container").classList.add("none");
+}
+
+document.querySelectorAll('input[name="aspectRatioMul"]').forEach(function(radio) {
+ 
+    radio.addEventListener('change', function(event) {
+       
+        if (event.target.checked) {
+            aspect_Ratio = eval(event.target.value);
+            cropAllImages();
+        }
+        if(aspect_Ratio==1){
+          document.getElementById("preview-image").classList.remove('vertical');
+        }else{
+          document.getElementById("preview-image").classList.add('vertical');
+        }
+
+        
+    });
+});
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitAndDo() {
+  await sleep(111);
+}
