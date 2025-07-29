@@ -684,8 +684,8 @@
   top: 50%;
 }
 
-.post_gallery.audio #waveform-preview {
-	width: auto;
+.post_gallery.audio canvas {
+	width: 100%;
 	flex: 1;
 }
 .post_gallery.audio #play-pause {
