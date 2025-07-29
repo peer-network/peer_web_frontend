@@ -790,7 +790,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         break;
       case "image":
         {
-          const imageWrappers = document.querySelectorAll(".create-img");
+          const imageContainer = document.getElementById("preview-image");
+          const imageWrappers = imageContainer.querySelectorAll(".create-img");
           const combinedBase64 = Array.from(imageWrappers)
             .map((img) => img.src)
             .filter((src) => src.startsWith("data:image/"));

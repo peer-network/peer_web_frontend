@@ -1295,6 +1295,7 @@
   padding-right: 2.5rem;
 
   border-radius: 0;
+  padding-left: 5rem;
 
   /* space for icon */
 
@@ -1303,21 +1304,15 @@
 
 
 .resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper .search-icon {
-
-  position: absolute;
-
-  right: 3rem;
-
-  top: 50%;
-
-  transform: translateY(-50%);
-
-
-
-  opacity: 0.6;
-
-  pointer-events: none;
-
+	position: absolute;
+	left: 3rem;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0.9;
+	pointer-events: none;
+	/* display: none; */
+	width: 20px;
+	height: auto;
 }
 
 /* === Audio Post CSS === */
@@ -1906,6 +1901,22 @@
     min-width: 40px;
 
   }
+  .resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper input {
+
+ 
+  padding-left: 6rem;
+
+  
+
+}
+
+
+
+.resettable-form .form-row .col-right .tag-wrapper .input-icon-wrapper .search-icon {
+	
+	width: 30px;
+	
+}
   .micButton span.icon-mic {
     width: 200px;
     height: 200px;
@@ -1925,7 +1936,7 @@
 }
 
 /*-------------------------------------------------*/
-@media screen and (max-width: 2570px) {
+@media screen and (max-width: 2300px) {
   .col-right {	flex: 6 1 0;}
   
   #audio_upload_block #play-pause {
@@ -1948,6 +1959,9 @@
   .micButton span.icon-mic svg {
     width: 30px;
     
+  }
+  #audio_upload_block #play-pause {
+    height: 100px;
   }
   #preview-audio .record-again {
 	

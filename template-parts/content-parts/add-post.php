@@ -179,16 +179,16 @@
                     </div>
                 </div>
                 <div id="trimButtons">
-                    <span class="button" id="trimQuit">back</span>
-                    <span class="button btn-blue" id="trimBtn">save</span>
+                    <span class="button btn-transparent" id="trimQuit">Back</span>
+                    <span class="button btn-blue" id="trimBtn">Save</span>
                 </div>
             </div>
             <div id="crop-container" class="none">
                 <canvas id="cropcanvas" width="1500" height="1500"></canvas>
                 <canvas id="croppedCanvas" width="500" height="500"></canvas>
                 <div id="cropButtons">
-                    <span class="button" id="cropQuit">back</span>
-                    <span class="button btn-blue" id="cropBtn">save</span>
+                    <span class="button btn-transparent" id="cropQuit">Back</span>
+                    <span class="button btn-blue" id="cropBtn">Save</span>
                 </div>
                 <div id="aspectRatioSelect" class="aspect-ratio-toggle">
                     <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
