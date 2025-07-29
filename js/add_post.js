@@ -481,7 +481,6 @@ function previewPostCollapsed(objekt) {
 const previewSection = document.getElementById('previewSection');
 const addPostSection = document.getElementById('addPostSection');
 
-
 function resetPreview() {
   previewSection.classList.add("none"); 
   addPostSection.classList.remove("none"); 
@@ -1499,8 +1498,10 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
   // function tag_removeAllTags() {
   //   tagContainer.innerHTML = "";
   // }
-
+  let previewTimeline = [][10];
   async function processFiles(files, id) {
+    const modal = document.getElementById('videoloading');
+    modal.showModal();
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
@@ -1603,6 +1604,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           insertPosition.insertAdjacentElement("afterend", previewItem);
           document.getElementById("drop-area-videocover").classList.add("none");
         } else {
+          
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
 
@@ -1633,7 +1635,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
       }
       const base64 = await convertImageToBase64(file);
             // Create a global map to store images
-      const base64ImagesMap = new Map();
+      
       let element = null;
       if (type === "image") {
         sessionStorage.setItem(file.name, base64);
@@ -1647,10 +1649,13 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         base64ImagesMap.set(file.name, base64);
+        
       }
+      element.addEventListener("loadedmetadata", async () => {
 
+        generateThumbnails(file.name);
 
-
+      }, { once: true });
       element.src = base64;
       element.classList.remove("none");
       element.nextElementSibling?.remove();
@@ -1693,7 +1698,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         });
       }
     }
-    
+    modal.close();
 
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
     document.querySelectorAll(".editVideo").forEach(addEditVideoListener);
@@ -1814,6 +1819,7 @@ const timeline = document.getElementById("videoTimeline");
 
 const THUMB_COUNT = 10; // beliebig wählbar
 let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
+const base64ImagesMap = new Map();
 async function videoTrim(id) {
   videoElement = document.getElementById(id);
   if (!videoElement) {
@@ -1821,10 +1827,12 @@ async function videoTrim(id) {
     return;
   }
   // Reset the timeline
+  video.setAttribute("data-id", id);
   timeline.innerHTML = "";
   // Set the video source
-  if (sessionStorage.getItem(id)) {
-    video.src = sessionStorage.getItem(id);
+  if (base64ImagesMap.has(id)) {
+    // video.src = sessionStorage.getItem(id);
+    video.src = base64ImagesMap.get(id);
   } else {
     video.src = videoElement.src;
   }
@@ -1840,8 +1848,11 @@ const handleLeft = document.getElementById("handle-left");
 const handleRight = document.getElementById("handle-right");
 
 // ----------- THUMBNAILS GENERIEREN (wie vorher) ----------
-
-video.addEventListener("loadedmetadata", async () => {
+videothumbs = []; // Globales Objekt für Thumbnails
+async function generateThumbnails(id) {
+  const video = document.getElementById(id);
+  const dataId = video.getAttribute("data-id");
+  const timeline = document.getElementById("videoTimeline");
   const duration = video.duration;
   const times = [];
   for (let i = 0; i < THUMB_COUNT; i++) {
@@ -1851,22 +1862,40 @@ video.addEventListener("loadedmetadata", async () => {
   canvas.width = 160;
   canvas.height = 90;
   const ctx = canvas.getContext("2d");
+  const videoId = dataId ? dataId : id;
+  
+  if (!videothumbs[videoId])
+      videothumbs[videoId] = [];
   for (let t of times) {
-    video.currentTime = t;
-    await new Promise((res) => video.addEventListener("seeked", res, { once: true }));
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const img = document.createElement("img");
-    img.src = canvas.toDataURL("image/jpeg");
-    timeline.appendChild(img);
+    if(!videothumbs[videoId][t]){
+      video.currentTime = t;
+      await new Promise((res) => video.addEventListener("seeked", res, { once: true }));
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      img.src = canvas.toDataURL("image/jpeg");
+      videothumbs[videoId][t] = img.src;
+    } else {
+      img.src = videothumbs[videoId][t];
+    }
+    if(dataId)
+      timeline.appendChild(img);
   }
-  // Nach Thumbnail-Generierung: Trim-Fenster und Overlays initialisieren
+}
+
+video.addEventListener("loadedmetadata", async () => {
+  setupTrim(true);
+  await generateThumbnails("videoTrim");
   setupTrim();
 });
-let startPercent = 0; // Anfang 0%
-let endPercent = 1; // Ende 100%
+let startPercent = 0.0000; // Anfang 0%
+let endPercent = 1.0000; // Ende 100%
 const MIN_DURATION = 3; // Sekunden
 
-function setupTrim() {
+function setupTrim(reset = false) {
+  if(reset){
+    startPercent = 0.0000;
+    endPercent = 1.0000;
+  }
   // Zeitleisten-Breite und Position
   const wrapper = document.querySelector(".timeline-wrapper");
   const timelineRect = timeline.getBoundingClientRect();
@@ -2001,12 +2030,15 @@ trimQuitBtn.onclick = () => {
 
 // Funktion für den Schnitt
 trimBtn.onclick = async () => {
+  
   // Stelle sicher, dass Metadaten da sind
   if (!video.duration) {
     alert("Video ist noch nicht geladen!");
     return;
   }
-
+  const modal = document.getElementById('videocodierung');
+  modal.showModal();
+  document.getElementById("nocursor").focus();
   // Schnitt-Zeiten berechnen
   const startTime = video.duration * startPercent;
   const endTime = video.duration * endPercent;
@@ -2056,6 +2088,13 @@ trimBtn.onclick = async () => {
     const base64 = await blobToBase64(blob);
     videoElement.src = base64; // Update video source to trimmed video
     document.getElementById("videoTrimContainer").classList.add("none");
+    modal.close();
+    const container = document.getElementById('preview-video');
+    const videos = container.querySelectorAll('video');
+    // Jedes Video pausieren
+    videos.forEach(video => {
+      video.play();
+    });
   };
 };
 function blobToBase64(blob) {
