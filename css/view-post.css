@@ -683,9 +683,11 @@
   position: absolute;
   top: 50%;
 }
+
 .post_gallery.audio .audio-item .audio_player_con .time-info {
   min-width: 90px;
 }
+
 .post_gallery.audio canvas {
 	width: 100%;
 	flex: 1;

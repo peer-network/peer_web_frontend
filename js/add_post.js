@@ -22,6 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const containerright = postContainer.querySelector(".viewpost-right");
     const post_gallery = containerleft.querySelector(".post_gallery");
     post_gallery.innerHTML="";
+    post_gallery.className = "post_gallery";
+
+    post_gallery.querySelectorAll(".custom-audio, .audio-item, .audio_player_con, canvas, button").forEach(el => el.remove());
+    const oldCover = post_gallery.querySelector(".cover");
+    if (oldCover) oldCover.remove();
+
+    const oldSlider = post_gallery.querySelector(".slide_item");
+    if (oldSlider) oldSlider.remove();
+
     const post_contentletf=containerleft.querySelector(".post_content");
     if(post_contentletf)   post_contentletf.remove();
 
@@ -197,11 +206,10 @@ document.addEventListener("DOMContentLoaded", () => {
         audio_player.appendChild(button);
         
         audioContainer.appendChild(audio_player);
-        audioContainer.appendChild(audio);
+        // audioContainer.appendChild(audio);
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
         post_gallery.appendChild(audioContainer);
         //console.log(audio.src);
-
         initAudioplayer("preview-audio-block", audio.src);
       }
     } else if (objekt.contenttype === "video") {
@@ -319,17 +327,32 @@ function previewPostCollapsed(objekt) {
   const inhaltDiv = collapsedCard.querySelector(".post-inhalt");
 
   postBox.innerHTML = "";
+  postBox.style.backgroundImage = "";
+  const oldSlider = collapsedCard.querySelector(".collapsed-slider");
+  if (oldSlider) oldSlider.remove();
+
+  const oldAudioPlayer = inhaltDiv.querySelector(".audio-player");
+  if (oldAudioPlayer) oldAudioPlayer.remove();
+
+  const oldVideoPlayer = inhaltDiv.querySelector(".video-player");
+  if (oldVideoPlayer) oldVideoPlayer.remove();
+
+  collapsedCard.querySelectorAll(".cover").forEach(c => c.remove());
+
+  const oldImageCounter = inhaltDiv.querySelector(".image_counter");
+  if (oldImageCounter) oldImageCounter.remove();
+
+  inhaltDiv.querySelectorAll(".collapsed-slide").forEach(slide => {
+    slide.style.backgroundImage = "";
+    slide.style.backgroundSize = "";
+    slide.style.backgroundPosition = "";
+  });
+
   title.innerHTML = objekt.title || "";
   description.textContent = objekt.description || "";
   hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
   collapsedCard.classList.remove("multi-video", "double-card");
   collapsedCard.removeAttribute("content");
-
-  const oldVideoPlayer = inhaltDiv.querySelector(".video-player");
-  if (oldVideoPlayer) oldVideoPlayer.remove();
-
-  const oldImageCounter = inhaltDiv.querySelector(".image_counter");
-  if (oldImageCounter) oldImageCounter.remove();
 
   const contentType = objekt.contenttype;
   const mediaArray = objekt.media || [];
@@ -797,6 +820,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
             .filter((src) => src.startsWith("data:image/"));
 
           media = combinedBase64;
+
+          cover = null;
           
           objekt = {
             contenttype: "image",
@@ -815,6 +840,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           //  Priority: Use recorded audio if it exists and is blob
           if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
             const base64 = await convertBlobUrlToBase64(recordedAudio.src);
+            console.log (base64)
             if (base64) combinedBase64.push(base64);
           } else {
             //  Fallback: Use uploaded audio if no recorded audio found
