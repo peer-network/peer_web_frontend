@@ -64,9 +64,10 @@
                 <div class="comments-container">
                     <div class="comments-header">
                         <h3 class="cmt_head xxl_font_size">Comments</h3>
-                        <span class="comment_total md_font_size"><i class="fi fi-sr-comment-dots"></i> <span class="comment_count">42</span></span>
+                        <span class="comment_total md_font_size"><i class="fi fi-sr-comment-dots"></i> <span class="comment_count">0</span></span>
                         <span class="cmt-scroll none">Comment Scroll</span>
                     </div>
+                    <span class="comment-txt blur"> No comments yet. Be the first to comment! </span>
                     <!-- <div  class="comment_list">
                         <div id="comments" class="inner"> 
                             <!-- <div class="comment_item"> 
@@ -245,7 +246,7 @@
                     </div> -->
                     
                 </div>
-                <div id="post_comment" class="post_comment">
+                <div id="post_comment" class="disabled post_comment">
                         <textarea placeholder="Share your thoughts ..." autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
                         <button><i class="fi fi-ts-arrow-small-right"></i></button>
                 </div>
