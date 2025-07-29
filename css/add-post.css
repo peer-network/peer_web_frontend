@@ -629,7 +629,7 @@
 
 }
 
-#preview-image .preview-item .editImage {
+#addPost .preview-item .editImage {
 
 	display: flex;
 
@@ -653,7 +653,7 @@
 
 
 
-#preview-image .preview-item:hover img.create-img
+#addPost .preview-item:hover img.create-img
 
 {
 
@@ -661,7 +661,7 @@
 
 }
 
-#preview-image .preview-item:hover .editImage  {
+#addPost .preview-item:hover .editImage  {
 
   transform: translateY(0);
 
@@ -1398,6 +1398,8 @@
 #audio-cover-image-preview .preview-item .editImage {
 	position: relative;
 	height: auto !important;
+  transform: none !important;
+  opacity: 1;
 }
 
 

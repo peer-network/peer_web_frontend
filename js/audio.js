@@ -1,17 +1,18 @@
 let audioplayer;
-function initAudioplayer(canvasID, url) {
-  const canvas = document.getElementById(canvasID);
+function initAudioplayer(audioContainerID, url) {
+  const audioContainer = document.getElementById(audioContainerID);
+  const canvas = audioContainer.querySelector("canvas");
   const canvasContext = canvas.getContext("2d");
   canvas.width = 700;
   canvas.height = 130;
-  const currentTimeDisplay = document.getElementById("current-time");
-  const durationDisplay = document.getElementById("duration");
-
+  const currentTimeDisplay = audioContainer.querySelector("#current-time");
+  const durationDisplay = audioContainer.querySelector("#duration");
+  const playPauseButton = audioContainer.querySelector("#play-pause");
   if (audioplayer) {
     audioplayer.pause();
   }
   audioplayer = new Audio(url);
-  const playPauseButton = document.getElementById("play-pause");
+  
 
   let audioContext; // AudioContext für Chrome-Kompatibilität
   let waveformData = []; // Gespeicherte Wellenformdaten

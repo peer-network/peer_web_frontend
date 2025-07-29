@@ -42,8 +42,8 @@
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
                             <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                          <span class="upload-label">Upload .mp3, .wav, .flac, .aac</span>
-                            <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
+                          <span class="upload-label">Upload .mp3, .wav, .flac, .aac, m4a</span>
+                            <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac, .m4a" hidden />
                         </div>
                     </div>
                     <div class="col-right">

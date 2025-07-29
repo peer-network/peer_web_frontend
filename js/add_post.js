@@ -138,13 +138,13 @@ document.addEventListener("DOMContentLoaded", () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);
           };
-          img.src = tempMedia(cover[0].path);
+          img.src = cover[0];
           img.alt = "Cover";
           audioContainer.appendChild(img);
         }
         // 2. Erzeuge das <canvas>-Element
         const canvas = document.createElement("canvas");
-        canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+        canvas.id = "waveform-preview2"; // Setze die ID für das Canvas
 
         // 3. Erzeuge das <button>-Element
         const button = document.createElement("button");
@@ -158,6 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const audio_player = document.createElement("div");
         audio_player.className = "audio_player_con";
+        audio_player.id = "preview-audio-block"; // Setze die ID für das Canvas
+
         const timeinfo = document.createElement("div");
         timeinfo.className = "time-info";
         timeinfo.innerHTML = `
@@ -171,8 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // audioContainer.appendChild(audio);
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
         post_gallery.appendChild(audioContainer);
+        //console.log(audio.src);
 
-        initAudioplayer("waveform-preview", audio.src);
+        initAudioplayer("preview-audio-block", audio.src);
       }
     } else if (objekt.contenttype === "video") {
       post_gallery.className = "post_gallery video";
@@ -1489,7 +1492,13 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editImage " alt="edit">
+          <span class="editImage" >
+          <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
+              <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
+              <circle cx="30.4986" cy="29.9986" r="11.0806" stroke="white" stroke-width="3"/>
+          </svg>
+          Click to crop
+        </span>
           <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
           const insertPosition = document.getElementById("drop-area-videocover");
           insertPosition.insertAdjacentElement("afterend", previewItem);
@@ -1549,7 +1558,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
       element.nextElementSibling?.classList.remove("none");
       if (type === "audio") {
         //initAudioplayer(file.name, base64);
-        initAudioplayer("waveform-preview", base64);
+        initAudioplayer("audio_upload_block", base64);
         document.querySelector(".audiobackground_uploader")?.classList.remove("none");
         document.querySelector(".recodring-block")?.classList.add("none");
          const audio_upload_block = document.getElementById("audio_upload_block");
