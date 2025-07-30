@@ -349,13 +349,18 @@ containerList.addEventListener("drop", (e) => {
 });
 
  function cropImage(imgContainer) {
+  
   cropOrg = imgContainer.querySelector("img");
   if (!cropOrg) return;
   // cropcanvas.width = cropOrg.clientWidth;
   // cropcanvas.height = cropOrg.clientHeight;
   p_element = cropOrg.parentElement.querySelector("p");
-  if (sessionStorage.getItem(p_element.innerText)) {
-      cropImg.src = sessionStorage.getItem(p_element.innerText);
+  //console.log(p_element.innerText);
+  //console.log(base64ImagesMap);
+  const imageDatasrc = window.base64ImagesMap.get(p_element.innerText);
+
+  if (imageDatasrc) {
+      cropImg.src = imageDatasrc;
     } else {
       cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
     }
