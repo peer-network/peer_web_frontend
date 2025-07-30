@@ -71,8 +71,10 @@ checkAuth("unauthorized");
        		 <div id="edit-pofile" class="setting-layout">
                 <div class="setting-menu">
                     <ul>
-                        <li class="active"><a href="#">Profile Setting</a></li>
+                        <li class="active"><a href="#">Profile Settings</a></li>
+                        <li><a href="#">Notification Settings</a></li>
                         <li><a href="#">Prefrences</a></li>
+                        <li><a href="#">Content Settings</a></li>
                     </ul>
                 </div>
                 
