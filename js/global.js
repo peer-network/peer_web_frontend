@@ -84,6 +84,12 @@ function addEditVideoListener(element) {
 }
 function handleEditVideo(event) {
   event.preventDefault();
+  const container = document.getElementById('preview-video');
+  const videos = container.querySelectorAll('video');
+  // Jedes Video pausieren
+  videos.forEach(video => {
+    video.pause();
+  });
   document.getElementById("videoTrimContainer").classList.remove("none");
   videoTrim(event.target.parentElement.childNodes[1].innerText);
 }
