@@ -28,9 +28,9 @@
   align-items: center;
   flex-direction: column;
   z-index: 3;
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
-
 #videoTrim {
 	width: auto;
 	height: 95%;
@@ -53,14 +53,36 @@
 #cropButtons,
 #trimButtons {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   width: 50%;
+  gap: 30px;
+  margin-top: 30px;
 }
 #trimButtons {
  padding-top: 25px;
   z-index: 1000;
   justify-content: space-between;
 }
+#cropButtons .button {
+	min-width: 200px;
+	line-height: 70px;
+}
+
+#cropQuit::before {
+	content: "";
+	display: inline-block;
+	background-image: url(../svg/back-arrow.svg);
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 18px;
+	height: 18px;
+	vertical-align: middle;
+	margin-right: 15px;
+}
+#cropQuit:hover::before {
+	filter: brightness(0) invert(0);
+}
+
 .aspect-ratio-toggle {
 	display: flex;
 	align-items: center;
@@ -270,3 +292,44 @@ implement in all-post.css
   background: #2ce;
   border-radius: 3px;
 }
+
+#videocodierung, #videoloading {
+  border-radius: 8px;
+  border: 1px solid #888;
+  padding: 1em 2em;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+     max-width: 90vw;
+      max-height: 80vh;
+      margin: auto;
+}
+#videocodierung::backdrop, #videoloading::backdrop {
+  background: rgba(0,0,0,0.5);
+}
+#videocodierung img, #videoloading img {
+  width: 120px;
+  height: 120px;
+  /* Animation anwenden */
+  animation: rotate 2s linear infinite;
+  display: block;
+  margin: 2rem auto;
+  -webkit-user-select: none; /* verhindert Text-/Bildauswahl für Safari */
+  user-select: none;      /* verhindert Text-/Bildauswahl */
+  -webkit-user-drag: none; /* verhindert Drag in Safari/Chrome */
+  pointer-events: none;    /* optional: macht das Bild komplett "durchklickbar" */
+  cursor: none;
+}
+@keyframes rotate {
+  from { transform: rotate(0deg);}
+  to { transform: rotate(360deg);}
+}
+
+/* #videocodierung:focus, #videocodierung *:focus {
+  outline: none;
+  box-shadow: none;
+} */
+
+@media screen and (min-width: 3000px) {
+  #cropButtons .button {	min-width: 30%; line-height: 130px;}
+  #cropQuit::before {    width: 30px;    height: 30px;  }
+}
+
