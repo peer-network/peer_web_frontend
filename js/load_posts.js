@@ -1089,6 +1089,7 @@ async function postClicked(objekt) {
         }
         const audio_player = document.createElement("div");
         audio_player.className = "audio_player_con";
+        audio_player.id = "audio_player_custom";
         const timeinfo = document.createElement("div");
         timeinfo.className = "time-info";
         timeinfo.innerHTML = `
@@ -1103,7 +1104,7 @@ async function postClicked(objekt) {
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
         post_gallery.appendChild(audioContainer);
 
-        initAudioplayer("waveform-preview", audio.src);
+        initAudioplayer("audio_player_custom", audio.src);
       }
     } else if (objekt.contenttype === "video") {
       post_gallery.classList.add("video");

@@ -1322,11 +1322,15 @@ footer {grid-area: footer;}
 	.widget ul.menu li a .notification-badge {
 		height: calc(100% - 3rem);
 	}
-	.widget ul.menu li a .icon {
+	.widget ul.menu li a .icon,
+	.widget ul.menu li a svg {
 		width:auto;
 		height: auto;
 		margin-right:1rem;
 		aspect-ratio: 1 / 1;
+	}
+	.widget ul.menu li a svg{
+		width: 30px;
 	}
 	
 }

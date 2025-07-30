@@ -1,5 +1,7 @@
-.vscode/settings.json
+.vscode/*
 public/
-test/*
-tests/*
+test/
+tests/
 *.html
+*.tmp
+error.txt
