@@ -184,17 +184,19 @@
                 </div>
             </div>
             <div id="crop-container" class="none">
-                <canvas id="cropcanvas" width="1500" height="1500"></canvas>
-                <canvas id="croppedCanvas" width="500" height="500"></canvas>
-                <div id="cropButtons">
-                    <span class="button btn-transparent" id="cropQuit">Back</span>
-                    <span class="button btn-blue" id="cropBtn">Save</span>
-                </div>
-                <div id="aspectRatioSelect" class="aspect-ratio-toggle">
-                    <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
-                    <label for="ar-1">1:1 Square</label>
-                    <input type="radio" id="ar-2" name="aspectRatio" value="0.8">
-                    <label for="ar-2">4:5 Vertical</label>
+                <div class="crop-container-inner">
+                    <canvas id="cropcanvas" width="1500" height="1500"></canvas>
+                    <canvas id="croppedCanvas" width="500" height="500"></canvas>
+                    <div id="cropButtons">
+                        <span class="button btn-transparent" id="cropQuit">Back</span>
+                        <span class="button btn-blue" id="cropBtn">Save</span>
+                    </div>
+                    <div id="aspectRatioSelect" class="aspect-ratio-toggle">
+                        <input type="radio" id="ar-1" name="aspectRatio" value="1" checked>
+                        <label for="ar-1">1:1 Square</label>
+                        <input type="radio" id="ar-2" name="aspectRatio" value="0.8">
+                        <label for="ar-2">4:5 Vertical</label>
+                    </div>
                 </div>
             </div>
             <div class="form-row">

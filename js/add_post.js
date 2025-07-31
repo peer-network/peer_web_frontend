@@ -1628,7 +1628,14 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editVideo " alt="edit">
+         
+          <span class="editVideo" >
+            <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
+                <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
+                <circle cx="30.4986" cy="29.9986" r="11.0806" stroke="white" stroke-width="3"/>
+            </svg>
+            Click to Trim
+          </span>
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
           
           if (id.includes("short")) {
@@ -1868,12 +1875,25 @@ function handleEditVideo(event) {
   event.preventDefault();
   const container = document.getElementById('preview-video');
   const videos = container.querySelectorAll('video');
+  const video_id= event.target.parentElement.childNodes[1].innerText;
   // Jedes Video pausieren
   videos.forEach(video => {
     video.pause();
   });
-  document.getElementById("videoTrimContainer").classList.remove("none");
-  videoTrim(event.target.parentElement.childNodes[1].innerText);
+
+  const previewItem = event.target.closest(".preview-item");
+  previewItem.classList.add('click_edit');
+  // Show the Trim container after a short delay
+  setTimeout(() => {
+    document.getElementById("videoTrimContainer").classList.remove("none");
+    console.log(video_id);
+    videoTrim(video_id);
+    previewItem.classList.remove('click_edit');
+  }, 800);
+
+  
+  
+  
 }
 
 function addEditImageListener(element) {
@@ -1883,16 +1903,40 @@ function addEditImageListener(element) {
 
 function handleEditImage(event) {
   event.preventDefault();
-  document.getElementById("crop-container").classList.remove("none");
+  
+ 
   cropOrg = event.target.closest(".preview-item").childNodes[3];
   const imageDatasrc = window.base64ImagesMap.get(event.target.parentElement.childNodes[1].innerText);
   //console.log(event.target.parentElement.childNodes[1].innerText);
   //console.log(base64ImagesMap);
+   
+    const previewItem = event.target.closest(".preview-item");
+    if (previewItem.hasAttribute("data-aspectratio")) {
+      aspect_Ratio = previewItem.getAttribute("data-aspectratio");
+    }else{
+      aspect_Ratio=1;
+    }
+   
+    // Now select the matching radio input and mark it as checked
+    const radioToCheck = document.querySelector(`#aspectRatioSelect input[name="aspectRatio"][value="${aspect_Ratio}"]`);
+    if (radioToCheck) {
+      radioToCheck.checked = true;
+    }
+
   if (imageDatasrc) {
     cropImg.src = imageDatasrc;
   } else {
     cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
   }
+
+    previewItem.classList.add('click_edit');
+    // Show the crop container after a short delay
+    setTimeout(() => {
+      document.getElementById("crop-container").classList.remove("none");
+       previewItem.classList.remove('click_edit');
+    }, 500);
+   
+
 }
   
 function addDeleteListener(element) {
