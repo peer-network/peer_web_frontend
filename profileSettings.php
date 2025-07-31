@@ -47,7 +47,7 @@ checkAuth("unauthorized");
         <aside class="left-sidebar left-sidebar-profile">
             <div class="inner-scroll">
                 <div id="profile-back-btn" class="profile-back-button hide">
-                    <a href="edit_profile.php" class="button btn-transparent">Back</a>
+                    <a href="profileSettings.php" class="button btn-transparent">Back</a>
                 </div>
                 <div id="main-profile-back-btn" class="profile-back-button">
                     <a href="profile.php" class="button btn-transparent">Back to Profile</a>
