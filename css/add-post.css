@@ -587,7 +587,45 @@
 
 }
 
-#preview-image.vertical .preview-item{
+#preview-image.cropping .preview-track .preview-item::before,
+.preview-item.click_edit::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	position: absolute;
+	background-color: rgba(0,0,0,0.4);
+	z-index: 2;
+}
+#preview-image.cropping .preview-track  .preview-item::after,
+.preview-item.click_edit::after {
+	content: "";
+	position: absolute;
+	z-index: 2;
+	background-image: url("../svg/logo_farbe.svg");
+	width: 80px;
+	height: 80px;
+	animation: loading 4s ease 0s infinite;
+}
+#preview-image.cropping .preview-track  .preview-item .editImage,
+.preview-item.click_edit .editImage,
+.preview-item.click_edit .editVideo,
+#preview-image.cropping .preview-track  .preview-item .btClose,
+.preview-item.click_edit .btClose {
+  display: none !important;
+}
+#preview-image.image_added.cropping .images_action_buttons::after {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	background-color: rgba(0,0,0,0);
+	top: 0;
+	z-index: 3;
+}
+
+#preview-image .preview-item.vertical{
   width: 25vh;
 }
 
@@ -629,7 +667,8 @@
 
 }
 
-#addPost .preview-item .editImage {
+#addPost .preview-item .editImage,
+#addPost .preview-item .editVideo {
 
 	display: flex;
 
@@ -639,8 +678,8 @@
 
 	position: absolute;
 
-	height: auto !important;
-
+	height: auto ;
+  cursor: pointer;
 	transform: translateY(50px);
 
 	opacity: 0;
@@ -653,7 +692,8 @@
 
 
 
-#addPost .preview-item:hover img.create-img
+#addPost .preview-item:hover img.create-img,
+#addPost .preview-item:hover video.create-video
 
 {
 
@@ -661,7 +701,8 @@
 
 }
 
-#addPost .preview-item:hover .editImage  {
+#addPost .preview-item:hover .editImage,
+#addPost .preview-item:hover .editVideo  {
 
   transform: translateY(0);
 
@@ -681,17 +722,6 @@
 
 
 
-.editImage,
-
-.editVideo {
-
-  position: absolute;
-
-  height: 10cqmin !important;
-
-  cursor: pointer;
-
-}
 
 
 
@@ -1390,6 +1420,12 @@
 	position: absolute;
 	top: 0;
 	right: 30px;
+}
+#audio-cover-image-preview  .preview-item.click_edit {
+	width: 100px !important;
+}
+#audio-cover-image-preview .preview-item.click_edit::before {
+	display: none;
 }
 #audio-cover-image-preview .preview-item .image-wrapper.create-img {
 	display: none;

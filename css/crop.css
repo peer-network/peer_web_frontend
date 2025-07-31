@@ -30,6 +30,20 @@
   z-index: 3;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
+  
+}
+
+#crop-container .crop-container-inner{
+    display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  flex-direction: column;
+  transition: all 0.3s linear;
+  transform: scale(1);
+
+}
+#crop-container.none .crop-container-inner{
+  transform: scale(0.8);
 }
 #videoTrim {
 	width: auto;
