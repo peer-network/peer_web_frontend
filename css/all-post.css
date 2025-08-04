@@ -65,13 +65,13 @@
   width: 100%;
   top: 0;
   left: 0;
-  left: 0;
   object-fit: cover;
 }
 
 .card .custom-text {
   width: 100%;
-
+ left: 50%;
+  transform: translateX(-50%);
   border: none;
   word-wrap: break-word;
   overflow-wrap: break-word;

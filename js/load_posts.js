@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         // console.log(`${event.target.name} wurde deaktiviert.`);
       }
-      location.reload();
+      //location.reload();
     });
   });
 
@@ -1354,6 +1354,7 @@ async function postClicked(objekt) {
         timg.src = src;
         img.alt = "";
         timg.alt = "";
+        image_item.style.backgroundImage = `url("${src}")`;
 
         
         
@@ -1518,8 +1519,12 @@ async function postClicked(objekt) {
       const content = newTextarea.value.trim();
       const postID = objekt.id;
 
-      if (!content || !postID) {
+      if ( !postID) {
         Merror("Error","Content or Post ID is missing.");
+        return;
+      }
+      if (!content) {
+       
         return;
       }
 

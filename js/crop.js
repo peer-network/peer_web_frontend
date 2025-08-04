@@ -48,8 +48,9 @@ cropImg.onload = () => {
     scale = 1;
     cropcanvas.width = 1500;
     cropcanvas.height = 1500;
-     croppedCanvas.width = 500;
-  croppedCanvas.height = 500;
+    croppedCanvas.width = 500;
+    croppedCanvas.height = 500;
+   
     position = {
       x: (cropcanvas.width - cropImg.width) / 2,
       y: (cropcanvas.height - cropImg.height) / 2,
@@ -142,7 +143,7 @@ function getCropRect() {
 
   const x = (cropcanvas.width - w) / 2;
   const y = (cropcanvas.height - h) / 2;
-
+ 
   return { x, y, w, h };
 }
 
@@ -150,7 +151,7 @@ function draw() {
   ctx.clearRect(0, 0, cropcanvas.width, cropcanvas.height);
 
   ctx.drawImage(cropImg, position.x, position.y, cropImg.width * scale, cropImg.height * scale);
-
+  
   const crop = getCropRect();
   // 3. Dunkle Maske über das Bild mit „Loch“ im Crop-Bereich
   drawMaskedCropOverlay(ctx, crop, cropcanvas.width, cropcanvas.height);
@@ -160,6 +161,7 @@ function draw() {
 
   // 5. Dotted 3×3 Raster innerhalb des Crop-Bereichs
   drawCropGrid(ctx, crop);
+  
 }
 
 cropBtn.addEventListener("click", () => {
@@ -179,7 +181,14 @@ function cropIt() {
   croppedCtx.clearRect(0, 0, crop.w, crop.h);
   croppedCtx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, crop.w, crop.h);
   cropOrg.src = croppedCanvas.toDataURL("image/webp");
-  // document.getElementById("crop-container").classList.add("none");
+  const previewItem = cropOrg.closest('.preview-item');
+  if(aspect_Ratio==1){
+    previewItem.classList.remove('vertical');
+  }else{
+    previewItem.classList.add('vertical');
+  }
+  previewItem.setAttribute("data-aspectratio", aspect_Ratio);
+  
   cropping=false;
 }
 
@@ -349,29 +358,44 @@ containerList.addEventListener("drop", (e) => {
 });
 
  function cropImage(imgContainer) {
+  
   cropOrg = imgContainer.querySelector("img");
   if (!cropOrg) return;
   // cropcanvas.width = cropOrg.clientWidth;
   // cropcanvas.height = cropOrg.clientHeight;
   p_element = cropOrg.parentElement.querySelector("p");
-  if (sessionStorage.getItem(p_element.innerText)) {
-      cropImg.src = sessionStorage.getItem(p_element.innerText);
+  //console.log(p_element.innerText);
+  //console.log(base64ImagesMap);
+  const imageDatasrc = window.base64ImagesMap.get(p_element.innerText);
+
+  if (imageDatasrc) {
+      cropImg.src = imageDatasrc;
     } else {
       cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
     }
     // document.getElementById("crop-container").classList.remove("none");
     // draw();
+    
 }
 async function cropAllImages() {
-  const images = document.querySelectorAll("#preview-image .preview-track .dragable");
+  const imagesCon = document.getElementById("preview-image");
+  const images = imagesCon.querySelectorAll(".preview-track .dragable");
   for (const imgContainer of images) {
     cropping=true;
-    
+    //console.log(aspect_Ratio);
+    if(aspect_Ratio==1){
+      imgContainer.classList.remove('vertical');
+    }else{
+      imgContainer.classList.add('vertical');
+    }
+    imgContainer.setAttribute("data-aspectratio", aspect_Ratio);
     cropImage(imgContainer);
     while(cropping) {
       await sleep(50);
     }
   }
+  // All images done cropping
+  imagesCon.classList.remove('cropping');
   document.getElementById("crop-container").classList.add("none");
 }
 
@@ -380,6 +404,8 @@ document.querySelectorAll('input[name="aspectRatioMul"]').forEach(function(radio
     radio.addEventListener('change', function(event) {
        
         if (event.target.checked) {
+          const imagesCon= document.getElementById("preview-image");
+          imagesCon.classList.add('cropping');
             aspect_Ratio = eval(event.target.value);
             cropAllImages();
         }
