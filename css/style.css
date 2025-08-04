@@ -1155,6 +1155,26 @@ footer {grid-area: footer;}
 	border-radius: 50%;
 }
 /*-----------End : Post Search Filter-------------*/
+/*----------Start Feedback Popup ------------------*/
+
+
+.feeback_popup_container {
+	background-color: var(--background-color);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.5rem;
+	padding: 1rem;
+	border-radius: 1.5rem;
+	width: 35rem;
+	height: 20rem;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.feeback_popup_container img {
+	width: 4rem;
+}
+/*-----------End : Feedback Popup-------------*/
 
 /*--------------------------------------------------------------
 # Media Queries  Block CSS

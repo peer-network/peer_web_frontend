@@ -307,3 +307,25 @@ function calctimeAgo(datetime) {
   if (months < 12) return `${months}m`;
   return `${years} y`;
 }
+
+
+function showFeedbackPopup() {
+  document.getElementById('feebackPopup').classList.remove('none');
+   localStorage.setItem('lastfeebackPopupShown', Date.now());
+}
+
+function closeFeedbackPopup() {
+   document.getElementById('feebackPopup').classList.add('none');
+  
+}
+
+window.addEventListener('load', () => {
+  const lastShown = localStorage.getItem('lastfeebackPopupShown');
+  const now = Date.now();
+  //const hours24 =  60 * 1000; // ⏱️ 60 seconds for testing
+  const hours24 = 24 * 60 * 60 * 1000; // 24 hours
+
+  if (!lastShown || now - lastShown > hours24) {
+    //showFeedbackPopup(); // First time or after 24h
+  }
+});
