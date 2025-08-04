@@ -6,10 +6,9 @@ function createModal({
   textarea = false,
   dontShowOption = false, // Neu: Standardmäßig keine Checkbox anzeigen
   typeKey = null, // e.g., 'like', 'dislike', 'post', 'comment'
+  svg = null
 }) {
- 
   const savedSettings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
- 
   if (typeKey && dontShowOption && savedSettings[typeKey] === true) {
     return Promise.resolve({ button: 1, dontShow: true });
   }
@@ -29,6 +28,7 @@ function createModal({
     modal.innerHTML = `
       <div class="modal-content ${type}">
         <span class="modal-close">&times;</span>
+        <span class="modal-icon">${svg}</span>
         <h2 class="modal-title">${title}</h2>
         <p class="modal-message">${message}</p>
         ${checkboxHTML}
@@ -75,7 +75,8 @@ function createModal({
         } else if (dontShowOption) {
           resolve({ button: index, dontShow: isChecked });
         } else {
-          resolve(index);
+          // resolve(index);
+          resolve({ button: index });
         }
         closeModal(modal);
       });
@@ -93,7 +94,8 @@ function createModal({
       if (dontShowOption) {
         resolve({ button: null, dontShow: isChecked });
       } else {
-        resolve(null);
+        // resolve(null);
+        resolve({ button: null });
       }
       closeModal(modal);
     });
@@ -173,7 +175,7 @@ function warnig(title, text = "", dontShowOption = false) {
     dontShowOption: dontShowOption,
   });
 }
-function confirm(title, text = "", dontShowOption = false,typeKey = null) {
+function confirm(title, text = "", dontShowOption = false, typeKey = null, svg = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
@@ -181,5 +183,6 @@ function confirm(title, text = "", dontShowOption = false,typeKey = null) {
     type: "warning",
     dontShowOption: dontShowOption,
     typeKey: typeKey, // Pass down to createModal
+    svg: svg
   });
 }

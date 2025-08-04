@@ -21,6 +21,7 @@ checkAuth("unauthorized");
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/settings.css?<?php echo filemtime('css/settings.css'); ?>" />
+    <link rel="stylesheet" href="css/edit-profile.css?<?php echo filemtime('css/edit-profile.css'); ?>" />
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/password.js?<?php echo filemtime('js/password.js'); ?>" defer></script>
     <script src="js/confirmPassword.js?<?php echo filemtime('js/confirmPassword.js'); ?>" defer></script>

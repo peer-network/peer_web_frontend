@@ -567,28 +567,30 @@ async function sendUpdateBio(biography) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const logOutBtn = document.getElementById("logOut");
-  const modalOverlay = document.getElementById("modalOverlay");
-  const cancelLogoutBtn = document.getElementById("cancelLogoutBtn");
-  const confirmLogoutBtn = document.getElementById("confirmLogoutBtn");
-  logOutBtn.addEventListener("click", function (event) {
-    event.preventDefault();
-    modalOverlay.classList.remove("none");
-  });
-  cancelLogoutBtn.addEventListener("click", function () {
-    modalOverlay.classList.add("none");
-  });
-  confirmLogoutBtn.addEventListener("click", function () {
-    // Clear localStorage and sessionStorage
-    localStorage.clear();
-    sessionStorage.clear();
-    // Delete all cookies
-    document.cookie.split(";").forEach(function (cookie) {
-      const name = cookie.split("=")[0].trim();
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    });
-    // Redirect to login
-    window.location.href = "login.php";
-  });
+const logOutBtn = document.getElementById("logOut");
+const modalOverlay = document.getElementById("modalOverlay");
+const cancelLogoutBtn = document.getElementById("cancelLogoutBtn");
+const confirmLogoutBtn = document.getElementById("confirmLogoutBtn");
+logOutBtn.addEventListener("click", function (event) {
+  event.preventDefault();
+  modalOverlay.classList.remove("none");
 });
+cancelLogoutBtn.addEventListener("click", function () {
+  modalOverlay.classList.add("none");
+});
+confirmLogoutBtn.addEventListener("click", function () {
+  clearCacheAndSession();
+});
+
+function clearCacheAndSession() {
+  // Clear localStorage and sessionStorage
+  localStorage.clear();
+  sessionStorage.clear();
+  // Delete all cookies
+  document.cookie.split(";").forEach(function (cookie) {
+    const name = cookie.split("=")[0].trim();
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+  // Redirect to login
+  window.location.href = "login.php";
+}
