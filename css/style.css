@@ -22,6 +22,8 @@
   --white-secondary:rgba(255, 255, 255, 0.50);
   --blue:#0069FF;
   --shadow-add: hsl(0, 0%, 51%);
+  --white-opacity-50: hsla(0, 0%, 100%, 0.5);
+  --black-opacity-50: hsla(0, 0%, 0%, 0.5);
 
   --dark-inactive:#323232;
   --black-dark: #252525;
@@ -693,7 +695,12 @@ footer {grid-area: footer;}
 /*--------------------------------------------------------------
 # Site SideBars
 --------------------------------------------------------------*/
-.widget{ margin-bottom:30px;}
+.widget{ 
+	margin-bottom:30px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
 
 
 /*----Filter Widgets----*/
@@ -703,19 +710,97 @@ footer {grid-area: footer;}
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	grid-template-rows: repeat(2, 1fr);
-	gap: 2rem;
+	gap: 1rem;
 	transition: filter 0.3s ease;
 	place-items: center;
 	margin: 0;
+	padding: 40px;
+}
+
+.widget .filterGroup-feed {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	gap: 1rem;
+	transition: filter 0.3s ease;
+	margin: 0;
+	padding: 20px;
 }
 .widget .widget-type-box {
 	background-color: var(--bg-filter);
 	border-radius: 2rem;
 	padding: 1rem;
+	margin-bottom: 20px;
+}
+
+.widget .filter-section {
+	border-radius: 40px;
+	background-color: var(--bg-filter);
+}
+
+.widget .filter-section-header {
+	padding: 20px;
+	margin: 0;
+	line-height: 0;
+	width: 100%;
+	justify-content: space-between;
+	display: inline-flex;
+	align-items: center;
+	color: var(--white-opacity-50);
+	transition: all 0.3s linear;
+	z-index: 1;
+}
+
+.section-selected-label {
+  color: #fff;
+}
+
+.filter-section-header:hover {
+  background-color: var(--bg-filter) !important;
+  border-color: transparent !important;
+  box-shadow: none;
+}
+
+.widget .filter-options {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 1s ease, padding 0.3s ease;
+  padding-top: 0;
+}
+
+.widget .filter-options.open {
+  max-height: 500px; 
+  opacity: 1;
+}
+
+.section-arrow {
+  transition: transform 0.3s ease;
+}
+
+.section-arrow.rotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.widget .filter-section-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.widget .section-icon {
+	width: 30px;
+}
+
+.widget .section-arrow {
+	width: 20px;
 }
 
 .widget .filterGroup input[type="checkbox"], 
-.widget .filterGroup input[type="radio"] {
+.widget .filterGroup input[type="radio"],
+.widget .filterGroup-feed input[type="radio"] {
 	display: none;
 }
 .widget .filterGroup span {
@@ -730,7 +815,7 @@ footer {grid-area: footer;}
 	align-items: center;
 	padding: 0;
 	gap: 0.5rem;
-	border-radius: 15px;
+	border-radius: 25px;
 	height: 100%;
 	width: 100%;
 	justify-content: center;
@@ -750,7 +835,7 @@ footer {grid-area: footer;}
 
 .widget .filterGroup input[type="checkbox"]:checked + label span, 
 .widget .filterGroup input[type="radio"]:checked + label span {
-  color: #77AFFF;
+  color: var(--black);
 }
 
 
@@ -758,8 +843,13 @@ footer {grid-area: footer;}
 .widget .filterGroup input[type="checkbox"]:checked + label img, 
 .widget .filterGroup input[type="radio"]:checked + label img
  {
-	filter: brightness(1);
+	filter: invert(1);
 	background-color: transparent !important;
+}
+
+.widget .filterGroup input[type="checkbox"]:checked + label, 
+.widget .filterGroup input[type="radio"]:checked + label {
+	background-color: var(--button-color);
 }
 
 @keyframes borderButton {

@@ -63,12 +63,131 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  
+
+  document.querySelectorAll('.filter-section-header').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const targetId = btn.getAttribute('aria-controls');
+      const section = document.getElementById(targetId);
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+      if (isOpen) {
+        section.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+
+        const arrow = btn.querySelector('.section-arrow');
+        if (arrow) arrow.classList.remove('rotated');
+        
+      } else {
+        section.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+
+        const arrow = btn.querySelector('.section-arrow');
+        if (arrow) arrow.classList.add('rotated');
+      }
+    });
+  });
+
+  function setupFilterLabelSwapping(filterType) {
+    const headerBtn = document.querySelector(`.${filterType}.filter-section-header`);
+    const optionsContainer = document.querySelector(`#${filterType}-options`);
+    const radioInputs = optionsContainer.querySelectorAll(`input[name="${filterType}"]`);
+
+    let labelSpan = headerBtn.querySelector('.section-selected-label');
+    if (!labelSpan) {
+      labelSpan = document.createElement("span");
+      labelSpan.className = "section-selected-label";
+      headerBtn.querySelector('.filter-section-container').appendChild(labelSpan);
+    }
+
+    // Restore from localStorage or default to "all"
+    const stored = localStorage.getItem(`selected-${filterType}`) || "all";
+    setSelectedLabel(stored);
+
+    radioInputs.forEach(input => {
+      input.addEventListener("change", () => {
+        if (input.checked) {
+          const value = input.value;
+          localStorage.setItem(`selected-${filterType}`, value);
+          setSelectedLabel(value);
+        }
+      });
+    });
+
+    function setSelectedLabel(value) {
+      radioInputs.forEach(input => {
+        const label = input.closest("label");
+        const labelText = label.querySelector("span").textContent;
+
+        if (input.value === value) {
+          labelSpan.textContent = " " + labelText;
+          label.style.display = "none";
+        } else {
+          label.style.display = "";
+        }
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  }
+  setupFilterLabelSwapping("feed");
+  setupFilterLabelSwapping("time");
+
+
+
+  function updateContentHeaderIcons(preset = null) {
+    const iconMap = {
+      IMAGE: "svg/photo.svg",
+      VIDEO: "svg/videos.svg",
+      TEXT: "svg/text.svg",
+      AUDIO: "svg/music.svg"
+    };
+
+    let selected = [];
+
+    if (Array.isArray(preset)) {
+      selected = preset.filter(type => iconMap[type]);
+    } else {
+      const checkboxes = document.querySelectorAll('.filterGroup input[type="checkbox"]');
+      checkboxes.forEach((checkbox) => {
+        if (checkbox.checked && iconMap[checkbox.name]) {
+          selected.push(checkbox.name);
+        }
+      });
+    }
+
+    const header = document.querySelector('button[aria-controls="content-options"]');
+    const container = header.querySelector('.filter-section-container');
+    const arrow = header.querySelector('.section-arrow');
+
+    container.querySelectorAll('.filter-icon-preview').forEach(el => el.remove());
+
+    selected.slice(0, 4).forEach(type => {
+      const img = document.createElement("img");
+      img.src = iconMap[type];
+      img.classList.add("filter-icon-preview");
+      img.style.width = "20px";
+      img.style.height = "20px";
+      img.style.objectFit = "contain";
+      container.appendChild(img);
+    });
+
+    arrow.style.display = selected.length > 2 ? "none" : "";
+  }
+
+
 
   const checkboxes = document.querySelectorAll(".filterContainer .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
+
+      const selectedTypes = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.name);
+      localStorage.setItem("selectedContentTypes", JSON.stringify(selectedTypes));
+
       const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
       if (event.target.checked) {
         elements.forEach((element) => {
@@ -105,6 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
  
 
+  const storedTypes = JSON.parse(localStorage.getItem("selectedContentTypes"));
+  if (storedTypes) {
+    updateContentHeaderIcons(storedTypes);
+  }
 });
 
 
@@ -1535,12 +1658,18 @@ async function postClicked(objekt) {
 
   function saveFilterSettings() {
     let filterSettings = {};
+    let selectedContentTypes = [];
     let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
 
     checkboxes.forEach((checkbox) => {
       filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
+
+      if (checkbox.closest('.content-options') && checkbox.checked) {
+        selectedContentTypes.push(checkbox.name); // use name, not id
+      }
     });
     localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
+    localStorage.setItem("selectedContentTypes", JSON.stringify(selectedContentTypes));
 	if(document.getElementById("searchGroup")){
     	localStorage.setItem("tags", document.getElementById("searchGroup").value);
 	}
