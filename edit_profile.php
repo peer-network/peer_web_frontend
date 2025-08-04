@@ -17,7 +17,7 @@ checkAuth("unauthorized");
   	<link rel="stylesheet" href="css/password.css?<?php echo filemtime('css/password.css'); ?>">
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
-    <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
+
     
     <link rel="stylesheet" href="css/settings.css?<?php echo filemtime('css/settings.css'); ?>" />  
    
@@ -27,14 +27,8 @@ checkAuth("unauthorized");
     <script src="js/password.js?<?php echo filemtime('js/password.js'); ?>" defer></script>
     <script src="js/confirmPassword.js?<?php echo filemtime('js/confirmPassword.js'); ?>" defer></script>
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-    <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
-    <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
-    <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
-    
-    
-     
-	 <script src="js/setting.js?<?php echo filemtime('js/setting.js'); ?>" defer></script>
+    <script src="js/setting.js?<?php echo filemtime('js/setting.js'); ?>" defer></script>
 
 	
 	<?php

@@ -1849,6 +1849,7 @@ document.addEventListener("DOMContentLoaded", () => {
 let cropOrg = null;
 window.base64ImagesMap = new Map();
 
+
 const video = document.getElementById("videoTrim");
 const timeline = document.getElementById("videoTimeline");
 const THUMB_COUNT = 10; // beliebig wählbar
@@ -1871,11 +1872,11 @@ function addEditVideoListener(element) {
   element.removeEventListener("click", handleEditVideo);
   element.addEventListener("click", handleEditVideo);
 }
-function handleEditVideo(event) {
+ function handleEditVideo(event) {
   event.preventDefault();
   const container = document.getElementById('preview-video');
   const videos = container.querySelectorAll('video');
-  const video_id= event.target.parentElement.childNodes[1].innerText;
+  
   // Jedes Video pausieren
   videos.forEach(video => {
     video.pause();
@@ -1884,15 +1885,13 @@ function handleEditVideo(event) {
   const previewItem = event.target.closest(".preview-item");
   previewItem.classList.add('click_edit');
   // Show the Trim container after a short delay
-  setTimeout(() => {
+  setTimeout(async () => {
+    const video_id= previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
     console.log(video_id);
-    videoTrim(video_id);
+    await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
-  }, 800);
-
-  
-  
+  }, 800); 
   
 }
 
@@ -2004,7 +2003,7 @@ async function videoTrim(id) {
   }
   // Reset the timeline
   video.setAttribute("data-id", id);
-  timeline.innerHTML = "";
+
   // Set the video source
   if (base64ImagesMap.has(id)) {
     // video.src = sessionStorage.getItem(id);
@@ -2024,6 +2023,7 @@ async function generateThumbnails(id) {
   const video = document.getElementById(id);
   const dataId = video.getAttribute("data-id");
   const timeline = document.getElementById("videoTimeline");
+  timeline.innerHTML = "";
   const duration = video.duration;
   const times = [];
   for (let i = 0; i < THUMB_COUNT; i++) {
