@@ -1246,24 +1246,87 @@ footer {grid-area: footer;}
 }
 /*-----------End : Post Search Filter-------------*/
 /*----------Start Feedback Popup ------------------*/
-
-
+#feebackPopup {
+	backdrop-filter: blur(8px);
+}
 .feeback_popup_container {
 	background-color: var(--background-color);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 1.5rem;
-	padding: 1rem;
+	gap: 2rem;
+	padding: 5rem;
 	border-radius: 1.5rem;
-	width: 35rem;
-	height: 20rem;
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	position: relative;
+	transition: all 0.3s ease-in-out;
+	opacity: 0;
+	transform: scale(0.6);
+}
+.feeback_popup_container.open{
+	opacity: 1;
+	transform: scale(1);
+	transition: all 0.3s ease-in-out;
+}
+.feeback_popup_container .close {
+	position: absolute;
+	right: 3rem;
+	top: 3rem;
+	cursor: pointer;
 }
 .feeback_popup_container img {
-	width: 4rem;
+	width: 20rem;
 }
+.feeback_popup_container .xxl_font_size{
+	margin-bottom: 0;
+}
+.feeback_popup_container .dont_show_row .form-control{
+	display: grid;
+  grid-template-columns: auto 1em;
+  gap: 0.5em;
+}
+
+.feeback_popup_container .dont_show_row .form-control input[type="checkbox"] {
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: transparent;
+	margin: 0;
+	font: inherit;
+	color: currentColor;
+	width: 1.15em;
+	height: 1.15em;
+	border: 4px solid currentColor;
+	border-radius: 0.1em;
+	display: grid;
+  place-content: center;
+  cursor: pointer;
+  
+}
+
+
+.feeback_popup_container .dont_show_row .form-control input[type="checkbox"]::before {
+	content: "";
+	width: 0.65em;
+	height: 0.65em;
+	transform: scale(0);
+	transition: 120ms transform ease-in-out;
+	box-shadow: inset 1em 1em var(--white, rgba(255, 255, 255, 1));
+}
+.feeback_popup_container .dont_show_row .form-control input[type="checkbox"]:checked::before {
+	transform: scale(1) !important;
+}
+.feeback_popup_container .button:hover svg {
+	filter: brightness(0) invert(0);
+}
+.feeback_popup_container .button svg {
+	width: 25px;
+	height: auto;
+	top: 3px;
+	position: relative;
+	left: 7px;
+}
+
 /*-----------End : Feedback Popup-------------*/
 
 /*--------------------------------------------------------------
@@ -1441,6 +1504,10 @@ footer {grid-area: footer;}
 	}
 	.widget ul.menu li a svg{
 		width: 30px;
+	}
+
+	.feeback_popup_container .button svg {
+		width: 45px;
 	}
 	
 }
