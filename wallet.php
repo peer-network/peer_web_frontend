@@ -20,7 +20,7 @@ checkAuth("unauthorized");
   <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
 
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
-  <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
+
 
   <link rel="stylesheet" href="css/wallet.css?<?php echo filemtime('css/wallet.css'); ?>" />
 
@@ -31,7 +31,7 @@ checkAuth("unauthorized");
   <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
   <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
-  <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
+ 
 
 
 

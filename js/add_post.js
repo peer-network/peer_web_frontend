@@ -12,6 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
   updateTagUIVisibility(); // suggestions + selected
   /********************* Preview posts functionality ******************************/
 
+  const fullView = document.getElementById("preview-post-container");
+  const collapsedView = document.querySelector("section");
+
+  fullView.style.display = "none";
+  collapsedView.style.display = "none";
+
   function previewPost(objekt) {
 	  currentPostData = objekt;    
     const postContainer = document.getElementById("preview-post-container");
@@ -316,215 +322,215 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(() => updateSlider(0));
   }
 
-}
-
-function previewPostCollapsed(objekt) {
-  const collapsedCard = document.querySelector('section .card');
-  const postBox = collapsedCard.querySelector(".post");
-  const title = collapsedCard.querySelector(".post-title");
-  const description = collapsedCard.querySelector(".post-text");
-  const hashtags = collapsedCard.querySelector(".hashtags");
-  const inhaltDiv = collapsedCard.querySelector(".post-inhalt");
-
-  postBox.innerHTML = "";
-  postBox.style.backgroundImage = "";
-  const oldSlider = collapsedCard.querySelector(".collapsed-slider");
-  if (oldSlider) oldSlider.remove();
-
-  const oldAudioPlayer = inhaltDiv.querySelector(".audio-player");
-  if (oldAudioPlayer) oldAudioPlayer.remove();
-
-  const oldVideoPlayer = inhaltDiv.querySelector(".video-player");
-  if (oldVideoPlayer) oldVideoPlayer.remove();
-
-  collapsedCard.querySelectorAll(".cover").forEach(c => c.remove());
-
-  const oldImageCounter = inhaltDiv.querySelector(".image_counter");
-  if (oldImageCounter) oldImageCounter.remove();
-
-  inhaltDiv.querySelectorAll(".collapsed-slide").forEach(slide => {
-    slide.style.backgroundImage = "";
-    slide.style.backgroundSize = "";
-    slide.style.backgroundPosition = "";
-  });
-
-  title.innerHTML = objekt.title || "";
-  description.textContent = objekt.description || "";
-  hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
-  collapsedCard.classList.remove("multi-video", "double-card");
-  collapsedCard.removeAttribute("content");
-
-  const contentType = objekt.contenttype;
-  const mediaArray = objekt.media || [];
-  const hasMultiple = mediaArray.length > 1;
-
-  if (!mediaArray.length || contentType === "text") {
-    postBox.style.backgroundImage = "";
-    return;
   }
 
-  collapsedCard.setAttribute("content", contentType);
+  function previewPostCollapsed(objekt) {
+    const collapsedCard = document.querySelector('section .card');
+    const postBox = collapsedCard.querySelector(".post");
+    const title = collapsedCard.querySelector(".post-title");
+    const description = collapsedCard.querySelector(".post-text");
+    const hashtags = collapsedCard.querySelector(".hashtags");
+    const inhaltDiv = collapsedCard.querySelector(".post-inhalt");
 
-  const slider = document.createElement("div");
-  slider.className = "collapsed-slider";
+    postBox.innerHTML = "";
+    postBox.style.backgroundImage = "";
+    const oldSlider = collapsedCard.querySelector(".collapsed-slider");
+    if (oldSlider) oldSlider.remove();
 
-  mediaArray.forEach((mediaURL, index) => {
-    const slide = document.createElement("div");
-    slide.className = "collapsed-slide";
-    if (index === 0) slide.classList.add("active");
+    const oldAudioPlayer = inhaltDiv.querySelector(".audio-player");
+    if (oldAudioPlayer) oldAudioPlayer.remove();
 
-    if (contentType === "image") {
-      slide.style.backgroundImage = `url('${mediaURL}')`;
-      slide.style.backgroundSize = "cover";
-      slide.style.backgroundPosition = "center";
+    const oldVideoPlayer = inhaltDiv.querySelector(".video-player");
+    if (oldVideoPlayer) oldVideoPlayer.remove();
+
+    collapsedCard.querySelectorAll(".cover").forEach(c => c.remove());
+
+    const oldImageCounter = inhaltDiv.querySelector(".image_counter");
+    if (oldImageCounter) oldImageCounter.remove();
+
+    inhaltDiv.querySelectorAll(".collapsed-slide").forEach(slide => {
+      slide.style.backgroundImage = "";
+      slide.style.backgroundSize = "";
+      slide.style.backgroundPosition = "";
+    });
+
+    title.innerHTML = objekt.title || "";
+    description.textContent = objekt.description || "";
+    hashtags.innerHTML = (objekt.tags || []).map(tag => `#${tag}`).join(" ");
+    collapsedCard.classList.remove("multi-video", "double-card");
+    collapsedCard.removeAttribute("content");
+
+    const contentType = objekt.contenttype;
+    const mediaArray = objekt.media || [];
+    const hasMultiple = mediaArray.length > 1;
+
+    if (!mediaArray.length || contentType === "text") {
+      postBox.style.backgroundImage = "";
+      return;
     }
 
-    if (contentType === "video") {
-      if (hasMultiple) collapsedCard.classList.add("multi-video");
+    collapsedCard.setAttribute("content", contentType);
 
-      const videoCover = document.createElement("div");
-      videoCover.classList.add("video-cover");
+    const slider = document.createElement("div");
+    slider.className = "collapsed-slider";
 
-      const video = document.createElement("video");
-      video.src = mediaURL;
-      video.className = "video-preview";
+    mediaArray.forEach((mediaURL, index) => {
+      const slide = document.createElement("div");
+      slide.className = "collapsed-slide";
+      if (index === 0) slide.classList.add("active");
 
-      slide.appendChild(videoCover);
-      slide.appendChild(video);
-
-      // Cover overlay
-      if (objekt.cover?.[index]) {
-        const img = document.createElement("img");
-        img.classList.add("cover");
-        img.src = objekt.cover[index];
-        img.alt = "Cover";
-
-        img.onload = () => {
-          img.setAttribute("height", img.naturalHeight);
-          img.setAttribute("width", img.naturalWidth);
-        };
-
-        videoCover.appendChild(img);
-      }
-
-      slide.addEventListener("mouseleave", function () {
-        const videoCover = this.querySelector(".video-cover");
-        if (videoCover) videoCover.classList.remove("none");
-
-        const videos = this.querySelectorAll("video");
-        videos.forEach(vid => { if (!vid.paused) vid.pause(); });
-      });
-
-      let postvideoplayerDiv = inhaltDiv.querySelector(".video-player");
-      if (!postvideoplayerDiv) {
-        postvideoplayerDiv = document.createElement("div");
-        postvideoplayerDiv.classList.add("video-player");
-
-        const imga = document.createElement("img");
-        imga.src = 'svgnew/play-btn.svg';
-        imga.alt = "Play";
-        postvideoplayerDiv.appendChild(imga);
-
-        const cardHeader = inhaltDiv.querySelector(".card-header");
-        if (cardHeader) {
-          inhaltDiv.insertBefore(postvideoplayerDiv, cardHeader.nextSibling);
-        } else {
-          inhaltDiv.appendChild(postvideoplayerDiv);
-        }
-      } else {
-        postvideoplayerDiv.querySelectorAll(".video-ratio").forEach(el => el.remove());
-      }
-
-      const ratio = document.createElement("span");
-      ratio.classList.add("video-ratio", `video-ratio-${index}`);
-      if (objekt.options?.ratio === '16:9') {
-        ratio.textContent = 'Long';
-        collapsedCard.classList.add("double-card");
-      } else {
-        ratio.textContent = 'Short';
-      }
-      postvideoplayerDiv.appendChild(ratio);
-    }
-
-    if (contentType === "audio") {
-      const audio = document.createElement("audio");
-      audio.src = mediaURL;
-      slide.appendChild(audio);
-
-      if (objekt.cover?.[index]) {
-        slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
+      if (contentType === "image") {
+        slide.style.backgroundImage = `url('${mediaURL}')`;
         slide.style.backgroundSize = "cover";
         slide.style.backgroundPosition = "center";
       }
 
-      let postaudioplayerDiv = inhaltDiv.querySelector(".audio-player");
-      if (!postaudioplayerDiv) {
-        postaudioplayerDiv = document.createElement("div");
-        postaudioplayerDiv.classList.add("audio-player");
+      if (contentType === "video") {
+        if (hasMultiple) collapsedCard.classList.add("multi-video");
 
-        const imga = document.createElement("img");
-        imga.src = 'img/mucis-player.png';
-        imga.alt = "audio player";
-        postaudioplayerDiv.appendChild(imga);
+        const videoCover = document.createElement("div");
+        videoCover.classList.add("video-cover");
 
-        const cardHeader = inhaltDiv.querySelector(".card-header");
-        if (cardHeader) {
-          inhaltDiv.insertBefore(postaudioplayerDiv, cardHeader.nextSibling);
-        } else {
-          inhaltDiv.appendChild(postaudioplayerDiv);
+        const video = document.createElement("video");
+        video.src = mediaURL;
+        video.className = "video-preview";
+
+        slide.appendChild(videoCover);
+        slide.appendChild(video);
+
+        // Cover overlay
+        if (objekt.cover?.[index]) {
+          const img = document.createElement("img");
+          img.classList.add("cover");
+          img.src = objekt.cover[index];
+          img.alt = "Cover";
+
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+
+          videoCover.appendChild(img);
         }
-      } 
-    }
 
-    slider.appendChild(slide);
-  });
+        slide.addEventListener("mouseleave", function () {
+          const videoCover = this.querySelector(".video-cover");
+          if (videoCover) videoCover.classList.remove("none");
 
-  postBox.appendChild(slider);
+          const videos = this.querySelectorAll("video");
+          videos.forEach(vid => { if (!vid.paused) vid.pause(); });
+        });
 
-  // Dots for image slides
-  if (contentType === "image" && hasMultiple) {
-    const postContent = inhaltDiv?.querySelector(".post-content");
-    if (postContent) {
-      const imageCounter = document.createElement("div");
-      imageCounter.classList.add("image_counter");
+        let postvideoplayerDiv = inhaltDiv.querySelector(".video-player");
+        if (!postvideoplayerDiv) {
+          postvideoplayerDiv = document.createElement("div");
+          postvideoplayerDiv.classList.add("video-player");
 
-      mediaArray.forEach((_, i) => {
-        const span = document.createElement("span");
-        span.textContent = i + 1;
-        if (i === 0) span.classList.add("active");
-        span.addEventListener("click", () => switchSlide(i));
-        imageCounter.appendChild(span);
-      });
+          const imga = document.createElement("img");
+          imga.src = 'svgnew/play-btn.svg';
+          imga.alt = "Play";
+          postvideoplayerDiv.appendChild(imga);
 
-      inhaltDiv.insertBefore(imageCounter, postContent);
-    }
+          const cardHeader = inhaltDiv.querySelector(".card-header");
+          if (cardHeader) {
+            inhaltDiv.insertBefore(postvideoplayerDiv, cardHeader.nextSibling);
+          } else {
+            inhaltDiv.appendChild(postvideoplayerDiv);
+          }
+        } else {
+          postvideoplayerDiv.querySelectorAll(".video-ratio").forEach(el => el.remove());
+        }
+
+        const ratio = document.createElement("span");
+        ratio.classList.add("video-ratio", `video-ratio-${index}`);
+        if (objekt.options?.ratio === '16:9') {
+          ratio.textContent = 'Long';
+          collapsedCard.classList.add("double-card");
+        } else {
+          ratio.textContent = 'Short';
+        }
+        postvideoplayerDiv.appendChild(ratio);
+      }
+
+      if (contentType === "audio") {
+        const audio = document.createElement("audio");
+        audio.src = mediaURL;
+        slide.appendChild(audio);
+
+        if (objekt.cover?.[index]) {
+          slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
+          slide.style.backgroundSize = "cover";
+          slide.style.backgroundPosition = "center";
+        }
+
+        let postaudioplayerDiv = inhaltDiv.querySelector(".audio-player");
+        if (!postaudioplayerDiv) {
+          postaudioplayerDiv = document.createElement("div");
+          postaudioplayerDiv.classList.add("audio-player");
+
+          const imga = document.createElement("img");
+          imga.src = 'img/mucis-player.png';
+          imga.alt = "audio player";
+          postaudioplayerDiv.appendChild(imga);
+
+          const cardHeader = inhaltDiv.querySelector(".card-header");
+          if (cardHeader) {
+            inhaltDiv.insertBefore(postaudioplayerDiv, cardHeader.nextSibling);
+          } else {
+            inhaltDiv.appendChild(postaudioplayerDiv);
+          }
+        } 
+      }
+
+      slider.appendChild(slide);
+    });
+
+    postBox.appendChild(slider);
+
+      // Dots for image slides
+      if (contentType === "image" && hasMultiple) {
+        const postContent = inhaltDiv?.querySelector(".post-content");
+        if (postContent) {
+          const imageCounter = document.createElement("div");
+          imageCounter.classList.add("image_counter");
+
+          mediaArray.forEach((_, i) => {
+            const span = document.createElement("span");
+            span.textContent = i + 1;
+            if (i === 0) span.classList.add("active");
+            span.addEventListener("click", () => switchSlide(i));
+            imageCounter.appendChild(span);
+          });
+
+          inhaltDiv.insertBefore(imageCounter, postContent);
+        }
+      }
   }
-}
 
 
 
 
-const previewSection = document.getElementById('previewSection');
-const addPostSection = document.getElementById('addPostSection');
+  const previewSection = document.getElementById('previewSection');
+  const addPostSection = document.getElementById('addPostSection');
 
-function resetPreview() {
-  previewSection.classList.add("none"); 
-  addPostSection.classList.remove("none"); 
-}
+  function resetPreview() {
+    previewSection.classList.add("none"); 
+    addPostSection.classList.remove("none"); 
+  }
 
 
 
-const backToEditBtn = document.getElementById('backToEdit');
+  const backToEditBtn = document.getElementById('backToEdit');
   if (backToEditBtn) {
     backToEditBtn.addEventListener('click', resetPreview);
   }
 
-const cancelEditBtn = document.getElementById('cancel_Btn');
+  const cancelEditBtn = document.getElementById('cancel_Btn');
   if (cancelEditBtn) {
     cancelEditBtn.addEventListener('click', resetPreview);
   }
 
-const sidebarTabs = document.querySelectorAll('.form-tab-js a');
+  const sidebarTabs = document.querySelectorAll('.form-tab-js a');
   sidebarTabs.forEach(tab => {
       tab.addEventListener('click', function (e) {
           e.preventDefault();
@@ -703,7 +709,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
       
     }
     const dec_char_count=setupCharCounter(descEl);
-    if (!description) {
+    if (!description && post_type =='text') {
       descErrorEl.textContent = "Description is required.";
       hasError = true;
     //} else if (description.length < 10) {
@@ -722,8 +728,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     switch (post_type) {
       case "text":
         {
-          if (postMedia.join("").length > 4 * 1024 * 1024) {
-            descErrorEl.textContent = "The text is too large. Please upload a smaller text.";
+          if (postMedia.join("").length > 5 * 1024 * 1024) {
+            descErrorEl.textContent = "The text size exceeds the 5MB limit. Please upload a smaller text.";
             hasError = true;
           }
         }
@@ -734,10 +740,16 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
             imgErrorEl.textContent = "Please select at least one image.";
 
             hasError = true;
-          } else if (postMedia.join("").length > 4 * 1024 * 1024) {
-            imgErrorEl.textContent = "The image(s) are too large.";
+          
+          } else if (postMedia.join("").length > 5 * 1024 * 1024) {
+            
+            imgErrorEl.textContent = "The image(s) size exceeds the 5MB limit. Please reduce the number or size of the images and try again.";
             hasError = true;
-          } 
+          } else if (postMedia.length > 20) {
+            imgErrorEl.textContent = "You can upload up to 20 images per post. Please remove some images and try again.";
+
+            hasError = true;
+          }
         }
         break;
       case "audio":
@@ -746,8 +758,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
             audioErrorEl.textContent = "Please upload audio or record audio.";
 
             hasError = true;
-          } else if (postMedia.join("").length > 4 * 1024 * 1024) {
-            audioErrorEl.textContent = "The audio is too large.";
+          } else if (postMedia.join("").length > 5 * 1024 * 1024) {
+            audioErrorEl.textContent = "The audio size exceeds the 5MB limit. Please reduce the  size of the audio and try again.";
             hasError = true;
           } 
         }
@@ -758,8 +770,8 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
             videoErrorEl.textContent = "Please select video.";
 
             hasError = true;
-          } else if (postMedia.join("").length > 4 * 1024 * 1024) {
-            videoErrorEl.textContent = "The video is too large.";
+          } else if (postMedia.join("").length > 5 * 1024 * 1024) {
+            videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
             hasError = true;
           }
         }
@@ -937,13 +949,9 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
   });
 
 
-  window.addEventListener("DOMContentLoaded", () => {
-    const fullView = document.getElementById("preview-post-container");
-    const collapsedView = document.querySelector("section");
-
-    fullView.style.display = "none";
-    collapsedView.style.display = "none";
-  });
+ 
+    
+  
 
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
@@ -1175,27 +1183,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     return tag;
   }
 
-  // ===== CREATE CUSTOM TAG OPTION =====
-  function renderCreateTagOption(input) {
-    const clean = input.replace(/^#+/, "").toLowerCase().trim();
-    const existsInSuggestions = tagContainer.querySelector(`[data-tag="${clean}"]`);
-    const existsInSelected = selectedContainer.querySelector(`[data-tag="${clean}"]`);
-    const existsInHistory = getTagHistory().some((tag) => tag.toLowerCase().trim() === clean);
-    if (existsInSuggestions || existsInSelected || existsInHistory) return; // ✅ Prevent duplicate create
-    tagContainer.innerHTML = "";
-    const el = document.createElement("span");
-    el.classList.add("tag", "create-tag");
-    el.textContent = `+ Create tag: #${clean}`;
-    el.setAttribute("data-tag", clean);
-    el.addEventListener("mousedown", (e) => e.preventDefault());
-    el.addEventListener("click", () => {
-      tag_addTag(clean);
-      tagInput.value = "";
-      clearTagContainer();
-      updateTagUIVisibility();
-    });
-    tagContainer.appendChild(el);
-  }
+  
   // ===== RENDER HISTORY =====
   function renderTagHistory() {
     const historyContainer = document.getElementById("tagHistoryContainer");
@@ -1521,14 +1509,6 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     if (fileInput) fileInput.click();
   });
 
-  // function tag_getTagArray() {
-  //   return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
-  // }
-
-  // function tag_removeAllTags() {
-  //   tagContainer.innerHTML = "";
-  // }
-  let previewTimeline = [][10];
   async function processFiles(files, id) {
     const modal = document.getElementById('videoloading');
     modal.showModal();
@@ -1621,7 +1601,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         } else {
           previewContainer.appendChild(previewItem);
         }
-        document.getElementById("drop-area-videocover").classList.add("none");
+        //document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
           previewItem.innerHTML = `
@@ -1648,7 +1628,14 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editVideo " alt="edit">
+         
+          <span class="editVideo" >
+            <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
+                <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
+                <circle cx="30.4986" cy="29.9986" r="11.0806" stroke="white" stroke-width="3"/>
+            </svg>
+            Click to Trim
+          </span>
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
           
           if (id.includes("short")) {
@@ -1670,12 +1657,13 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         }
       }
       const base64 = await convertImageToBase64(file);
-            // Create a global map to store images
+           
       
       let element = null;
       if (type === "image") {
-        sessionStorage.setItem(file.name, base64);
+        //sessionStorage.setItem(file.name, base64);
         element = previewItem.querySelector("img.create-img");
+        base64ImagesMap.set(file.name, base64);
         
 
       } else if (type === "audio") {
@@ -1685,13 +1673,13 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         base64ImagesMap.set(file.name, base64);
+        element.addEventListener("loadedmetadata", async () => {
+          generateThumbnails(file.name);
+
+        }, { once: true });
         
       }
-      element.addEventListener("loadedmetadata", async () => {
-
-        generateThumbnails(file.name);
-
-      }, { once: true });
+      
       element.src = base64;
       element.classList.remove("none");
       element.nextElementSibling?.remove();
@@ -1718,7 +1706,7 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
     }
-     if (uploadtype === "audio") {
+    if (uploadtype === "audio") {
       const voiceRecordWrapper = document.getElementById("voice-record-wrapper");
       const preview_del_btn = voiceRecordWrapper.querySelector(".preview-item .deletePost");
       const img = voiceRecordWrapper.querySelector(".preview-item img.create-img");
@@ -1838,24 +1826,175 @@ const sidebarTabs = document.querySelectorAll('.form-tab-js a');
     container.addEventListener('scroll', toggleScrollButtons);
     
     function imageItemCount(){
-      const imageItemCount = previewContainer.querySelectorAll(".preview-item").length;
+      const image_container=document.getElementById("preview-image");
+      
+      const imageItemCount = image_container.querySelectorAll(".preview-item").length;
         console.log("Total preview items:", imageItemCount);
         if(imageItemCount > 0){
-          document.getElementById("preview-image").classList.add("image_added");
+          image_container.classList.add("image_added");
         }else{
-          document.getElementById("preview-image").classList.remove("image_added");
+          image_container.classList.remove("image_added");
         }
     }
 
   }
+
+
+
+  
+
+
 });
+
+let cropOrg = null;
+window.base64ImagesMap = new Map();
+
 
 const video = document.getElementById("videoTrim");
 const timeline = document.getElementById("videoTimeline");
-
 const THUMB_COUNT = 10; // beliebig wählbar
 let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
-const base64ImagesMap = new Map();
+
+const trimWindow = document.getElementById("trim-window");
+const overlayLeft = document.getElementById("overlay-left");
+const overlayRight = document.getElementById("overlay-right");
+const handleLeft = document.getElementById("handle-left");
+const handleRight = document.getElementById("handle-right");
+
+let startPercent = 0.0000; // Anfang 0%
+let endPercent = 1.0000; // Ende 100%
+const MIN_DURATION = 3; // Sekunden
+
+const trimBtn = document.getElementById("trimBtn");
+const trimQuitBtn = document.getElementById("trimQuit");
+
+function addEditVideoListener(element) {
+  element.removeEventListener("click", handleEditVideo);
+  element.addEventListener("click", handleEditVideo);
+}
+ function handleEditVideo(event) {
+  event.preventDefault();
+  const container = document.getElementById('preview-video');
+  const videos = container.querySelectorAll('video');
+  
+  // Jedes Video pausieren
+  videos.forEach(video => {
+    video.pause();
+  });
+
+  const previewItem = event.target.closest(".preview-item");
+  previewItem.classList.add('click_edit');
+  // Show the Trim container after a short delay
+  setTimeout(async () => {
+    const video_id= previewItem.querySelector("p").innerText;
+    document.getElementById("videoTrimContainer").classList.remove("none");
+    console.log(video_id);
+    await videoTrim(video_id);
+    previewItem.classList.remove('click_edit');
+  }, 800); 
+  
+}
+
+function addEditImageListener(element) {
+  element.removeEventListener("click", handleEditImage);
+  element.addEventListener("click", handleEditImage);
+}
+
+function handleEditImage(event) {
+  event.preventDefault();
+  
+ 
+  cropOrg = event.target.closest(".preview-item").childNodes[3];
+  const imageDatasrc = window.base64ImagesMap.get(event.target.parentElement.childNodes[1].innerText);
+  //console.log(event.target.parentElement.childNodes[1].innerText);
+  //console.log(base64ImagesMap);
+   
+    const previewItem = event.target.closest(".preview-item");
+    if (previewItem.hasAttribute("data-aspectratio")) {
+      aspect_Ratio = previewItem.getAttribute("data-aspectratio");
+    }else{
+      aspect_Ratio=1;
+    }
+   
+    // Now select the matching radio input and mark it as checked
+    const radioToCheck = document.querySelector(`#aspectRatioSelect input[name="aspectRatio"][value="${aspect_Ratio}"]`);
+    if (radioToCheck) {
+      radioToCheck.checked = true;
+    }
+
+  if (imageDatasrc) {
+    cropImg.src = imageDatasrc;
+  } else {
+    cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
+  }
+
+    previewItem.classList.add('click_edit');
+    // Show the crop container after a short delay
+    setTimeout(() => {
+      document.getElementById("crop-container").classList.remove("none");
+       previewItem.classList.remove('click_edit');
+    }, 500);
+   
+
+}
+  
+function addDeleteListener(element) {
+  element.removeEventListener("click", handleDelete);
+  element.addEventListener("click", handleDelete);
+}
+
+function handleDelete(event) {
+  event.preventDefault(); 
+  
+  if (event.target.id === "deletecover") {
+    document.getElementById("drop-area-videocover").classList.remove("none");
+  } else if (event.target.id === "deleteshort") {
+    document.getElementById("drop-area-videoshort").classList.remove("none");
+  } else if (event.target.id === "deletelong") {
+    document.getElementById("drop-area-videolong").classList.remove("none");
+  }
+  event.target.parentElement.remove();
+  
+}
+
+
+async function convertImageToBase64(file) {
+  
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    const type = file.type.substring(0, 5);
+    if (type === "audio") {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+    } else if (type === "video") {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+    } else if (type === "image") {
+      const img = new Image();
+      reader.onload = () => {
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        // Konvertiere zu WebP und hole die Base64-Daten
+        const webpDataUrl = canvas.toDataURL("image/webp");
+        resolve(webpDataUrl);
+        // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
+      };
+    }
+
+    reader.readAsDataURL(file);
+  });
+}
+
 async function videoTrim(id) {
   videoElement = document.getElementById(id);
   if (!videoElement) {
@@ -1864,7 +2003,7 @@ async function videoTrim(id) {
   }
   // Reset the timeline
   video.setAttribute("data-id", id);
-  timeline.innerHTML = "";
+
   // Set the video source
   if (base64ImagesMap.has(id)) {
     // video.src = sessionStorage.getItem(id);
@@ -1877,18 +2016,14 @@ async function videoTrim(id) {
   document.getElementById("videoTrimContainer").classList.remove("none");
   document.getElementById("videoTrimContainer").classList.add("active");
 }
-const trimWindow = document.getElementById("trim-window");
-const overlayLeft = document.getElementById("overlay-left");
-const overlayRight = document.getElementById("overlay-right");
-const handleLeft = document.getElementById("handle-left");
-const handleRight = document.getElementById("handle-right");
-
 // ----------- THUMBNAILS GENERIEREN (wie vorher) ----------
 videothumbs = []; // Globales Objekt für Thumbnails
 async function generateThumbnails(id) {
+  
   const video = document.getElementById(id);
   const dataId = video.getAttribute("data-id");
   const timeline = document.getElementById("videoTimeline");
+  timeline.innerHTML = "";
   const duration = video.duration;
   const times = [];
   for (let i = 0; i < THUMB_COUNT; i++) {
@@ -1923,9 +2058,7 @@ video.addEventListener("loadedmetadata", async () => {
   await generateThumbnails("videoTrim");
   setupTrim();
 });
-let startPercent = 0.0000; // Anfang 0%
-let endPercent = 1.0000; // Ende 100%
-const MIN_DURATION = 3; // Sekunden
+
 
 function setupTrim(reset = false) {
   if(reset){
@@ -2052,8 +2185,7 @@ function setupTrim(reset = false) {
   // Initial-Positionierung
   positionElements();
 }
-const trimBtn = document.getElementById("trimBtn");
-const trimQuitBtn = document.getElementById("trimQuit");
+
 trimQuitBtn.onclick = () => {
   document.getElementById("videoTrimContainer").classList.add("none");
   document.getElementById("videoTrimContainer").classList.remove("active");

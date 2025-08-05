@@ -78,102 +78,7 @@ function addMediaListener(mediaElement) {
     });
   });
 }
-function addEditVideoListener(element) {
-  element.removeEventListener("click", handleEditVideo);
-  element.addEventListener("click", handleEditVideo);
-}
-function handleEditVideo(event) {
-  event.preventDefault();
-  const container = document.getElementById('preview-video');
-  const videos = container.querySelectorAll('video');
-  // Jedes Video pausieren
-  videos.forEach(video => {
-    video.pause();
-  });
-  document.getElementById("videoTrimContainer").classList.remove("none");
-  videoTrim(event.target.parentElement.childNodes[1].innerText);
-}
 
-function addEditImageListener(element) {
-  element.removeEventListener("click", handleEditImage);
-  element.addEventListener("click", handleEditImage);
-}
-let cropOrg = null;
-
-function handleEditImage(event) {
-  event.preventDefault();
-  document.getElementById("crop-container").classList.remove("none");
-  cropOrg = event.target.closest(".preview-item").childNodes[3];
-  if (sessionStorage.getItem(event.target.parentElement.childNodes[1].innerText)) {
-    cropImg.src = sessionStorage.getItem(event.target.parentElement.childNodes[1].innerText);
-  } else {
-    cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
-  }
-}
-// Funktion, die dem Element den Event-Listener hinzufügt
-function addDeleteListener(element) {
-  // Entfernt eventuelle alte Event-Listener, indem eine benannte Funktion verwendet wird
-  element.removeEventListener("click", handleDelete);
-
-  // Fügt den neuen Event-Listener hinzu
-  element.addEventListener("click", handleDelete);
-}
-
-// Die Funktion, die beim Event aufgerufen wird
-function handleDelete(event) {
-  event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
-  // console.log("Post löschen:", event.target);
-  if (event.target.id === "deletecover") {
-    document.getElementById("drop-area-videocover").classList.remove("none");
-  } else if (event.target.id === "deleteshort") {
-    document.getElementById("drop-area-videoshort").classList.remove("none");
-  } else if (event.target.id === "deletelong") {
-    document.getElementById("drop-area-videolong").classList.remove("none");
-  }
-  event.target.parentElement.remove();
-  const id = event.target.parentElement.id;
-}
-
-function isFileLargerThanMB(file, mb) {
-  const maxBytes = mb * 1024 * 1024; // Umrechnung von MB in Bytes
-  return file.size > maxBytes;
-}
-async function convertImageToBase64(file) {
-  
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    const type = file.type.substring(0, 5);
-    if (type === "audio") {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
-    } else if (type === "video") {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
-    } else if (type === "image") {
-      const img = new Image();
-      reader.onload = () => {
-        img.src = reader.result;
-      };
-      reader.onerror = reject;
-
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-
-        // Konvertiere zu WebP und hole die Base64-Daten
-        const webpDataUrl = canvas.toDataURL("image/webp");
-        resolve(webpDataUrl);
-        // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
-      };
-    }
-
-    reader.readAsDataURL(file);
-  });
-}
 
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -402,3 +307,25 @@ function calctimeAgo(datetime) {
   if (months < 12) return `${months}m`;
   return `${years} y`;
 }
+
+
+function showFeedbackPopup() {
+  document.getElementById('feebackPopup').classList.remove('none');
+   localStorage.setItem('lastfeebackPopupShown', Date.now());
+}
+
+function closeFeedbackPopup() {
+   document.getElementById('feebackPopup').classList.add('none');
+  
+}
+
+window.addEventListener('load', () => {
+  const lastShown = localStorage.getItem('lastfeebackPopupShown');
+  const now = Date.now();
+  //const hours24 =  60 * 1000; // ⏱️ 60 seconds for testing
+  const hours24 = 24 * 60 * 60 * 1000; // 24 hours
+
+  if (!lastShown || now - lastShown > hours24) {
+    //showFeedbackPopup(); // First time or after 24h
+  }
+});

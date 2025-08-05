@@ -47,7 +47,9 @@ async function loginRequest(email, password) {
     } = result.data.login;
 
     // Log status and error message for debugging; avoid logging sensitive tokens
-    if (ResponseCode !== "10801") console.warn("Error Message:", ResponseCode);
+    if (ResponseCode !== "10801") {
+       displayValidationMessage(userfriendlymsg(ResponseCode), "validationMessage");
+    }
 
     // Securely store tokens if login was successful
     if (status === "success") {
