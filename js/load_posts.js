@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         // console.log(`${event.target.name} wurde deaktiviert.`);
       }
-      //location.reload();
+      location.reload();
     });
   });
 
@@ -1256,15 +1256,23 @@ async function postClicked(objekt) {
         video.autoplay = (index === 0);  // ✅ Autoplay only for the first video
         video.muted = false;
         video.loop = true;
+
+        let coversrc = 'img/audio-bg.png';
+        if (objekt.cover) {
+          const cover = JSON.parse(objekt.cover);
+          coversrc = tempMedia(cover[0].path);
+         
+        }
         
         const videoContainer = document.createElement("div");
         videoContainer.classList.add("slide_item");
+        videoContainer.style.backgroundImage = `url("${coversrc}")`;
         videoContainer.appendChild(video);
 
         // Thumbnail
         const img = document.createElement("img");
-        const src = 'img/audio-bg.png';
-        img.src = src;
+        
+        img.src = coversrc;
         img.alt = "";
 
         const timg = document.createElement("div");

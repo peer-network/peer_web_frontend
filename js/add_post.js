@@ -1994,7 +1994,7 @@ async function convertImageToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
-
+ 
 async function videoTrim(id) {
   videoElement = document.getElementById(id);
   if (!videoElement) {

@@ -309,23 +309,95 @@ function calctimeAgo(datetime) {
 }
 
 
-function showFeedbackPopup() {
-  document.getElementById('feebackPopup').classList.remove('none');
-   localStorage.setItem('lastfeebackPopupShown', Date.now());
+/*----------- Start : FeedbackPopup Logic --------------*/
+
+const POPUP_KEY = 'feedbackPopupData';
+
+function getPopupData() {
+  const stored = localStorage.getItem(POPUP_KEY);
+  return stored ? JSON.parse(stored) : {
+    count: 0,
+    lastClosed: 0,
+    disabled: false
+  };
 }
 
-function closeFeedbackPopup() {
-   document.getElementById('feebackPopup').classList.add('none');
+function setPopupData(data) {
+  localStorage.setItem(POPUP_KEY, JSON.stringify(data));
+}
+
+function showFeedbackPopup() {
+  const popup = document.getElementById('feebackPopup');
+  popup.classList.remove('none');
+  setTimeout(() => {
+    popup.querySelector('.feeback_popup_container').classList.add('open');
+  }, 100);
+
+  // Increment display count
+  const data = getPopupData();
+  data.count++;
+  setPopupData(data);
+}
+
+function closeFeedbackPopup(increment = false) {
+  const popup = document.getElementById('feebackPopup');
+  popup.querySelector(".feeback_popup_container").classList.remove('open');
+
+  setTimeout(() => {
+    popup.classList.add('none');
+  }, 200);
+
+  const data = getPopupData();
+  if (increment) data.count++;
+
+  data.lastClosed = Date.now();
+
+  const dontShowCheckbox = popup.querySelector('input[name="dont_show_feedbackPopup"]');
+  if (dontShowCheckbox?.checked) {
+    data.disabled = true;
+  }
+
+  setPopupData(data);
+}
+
+function shouldShowPopup() {
+  const data = getPopupData();
+  const now = Date.now();
+  //const fiveDays = 5 * 24 * 60 * 60 * 1000;
+
+  const fiveDays =  60 * 1000; // 1 mint for testing
+
+  const sessionShown = sessionStorage.getItem('popupShown') === 'true';
+  const closedRecently = (now - data.lastClosed) < fiveDays;
+
   
+
+  if (data.disabled || data.count >= 3 || sessionShown || closedRecently) {
+   
+    return false;
+  }
+  return true;
 }
 
 window.addEventListener('load', () => {
-  const lastShown = localStorage.getItem('lastfeebackPopupShown');
-  const now = Date.now();
-  //const hours24 =  60 * 1000; // ⏱️ 60 seconds for testing
-  const hours24 = 24 * 60 * 60 * 1000; // 24 hours
-
-  if (!lastShown || now - lastShown > hours24) {
-    //showFeedbackPopup(); // First time or after 24h
+  
+  if (shouldShowPopup()) {
+    setTimeout(() => {
+      showFeedbackPopup();
+      sessionStorage.setItem('popupShown', 'false');
+    }, 30 * 1000); // 30 seconds
   }
+
+  // Close button
+  const closeBtn = document.querySelector('#feebackPopup .close');
+  closeBtn?.addEventListener('click', () => {
+    closeFeedbackPopup(); // Do not increment count here, already incremented on show
+  });
+
+  // "Share Feedback" button
+  const shareBtn = document.querySelector('#feebackPopup a[href*="docs.google.com"]');
+  shareBtn?.addEventListener('click', () => {
+    closeFeedbackPopup(false); // Do not increment count here, already incremented on show
+  });
 });
+/*----------- End : FeedbackPopup Logic --------------*/
