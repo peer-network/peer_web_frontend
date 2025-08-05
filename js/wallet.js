@@ -60,6 +60,7 @@ async function getUserInfo() {
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);    
     isInvited = result.data.getUserInfo.affectedRows.invited;
+    console.log(result.data)
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
