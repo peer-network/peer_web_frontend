@@ -30,7 +30,7 @@
   --black-secondary: rgba(50, 50, 50, 0.50);
   --Field-Hover-Black: #393939;
 	--red-accent: #FF3B3B;
-
+	--green: #AAFF67;
   --translate-x: 0px;
   /* X-Verschiebung */
   --translate-y: 0px;
@@ -1542,4 +1542,8 @@ footer {grid-area: footer;}
 		width: 45px;
 	}
 	
+}
+
+.green-text {
+	color: var(--green)
 }

@@ -293,10 +293,13 @@ line-height: 40px;
 
 /*-------- Image ----------*/
 .card[content="image"] .post img{
-  display: none;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+
 }
-.card[content="image"] .post img.image1{
-  display: block;
+.card[content="image"] .post img.active{
+ 
+  opacity: 1;
 }
 .card[content="image"]  .post-inhalt {
 	

@@ -702,6 +702,63 @@ function commentToDom(c, append = true) {
             divmulti_img_indicator.appendChild(img_indicator);
              
           }
+          let current = 0; // Shared index for both click and auto-swap
+          let autoSwapInterval = null;
+          divmulti_img_indicator.querySelectorAll("span").forEach((span, index) => {
+            span.addEventListener("click", (event) => {
+               event.stopPropagation();
+                event.preventDefault();
+                 current = index; // ✅ Update current index to clicked
+              const images = postDiv.querySelectorAll("img");
+              const indicators = divmulti_img_indicator.querySelectorAll("span");
+
+              images.forEach((img, i) => {
+                // Show only matching image index (match with class image1, image2, etc.)
+                if (i === index) {
+                  
+                  img.classList.add("active");
+                } else {
+                  
+                  img.classList.remove("active");
+                }
+              });
+
+              // Update active indicator
+              indicators.forEach(s => s.classList.remove("active"));
+              span.classList.add("active");
+            });
+          });
+
+          
+
+          // Wrap this in a function if you're doing multiple posts
+          card.addEventListener("mouseenter", () => {
+            const images = postDiv.querySelectorAll("img");
+            const indicators = divmulti_img_indicator.querySelectorAll("span");
+            
+            if (images.length <= 1) return; // no need to auto swap
+
+             
+            autoSwapInterval = setInterval(() => {
+              current = (current + 1) % images.length;
+
+              images.forEach((img, i) => {
+                img.classList.toggle("active", i === current);
+              });
+
+              indicators.forEach((span, i) => {
+                span.classList.toggle("active", i === current);
+              });
+            }, 1500); // change image every 1.5 seconds
+          });
+
+          card.addEventListener("mouseleave", () => {
+            clearInterval(autoSwapInterval);
+            autoSwapInterval = null;
+          });
+
+          
+
          
           inhaltDiv.insertBefore(divmulti_img_indicator, postContent);
           
@@ -710,6 +767,9 @@ function commentToDom(c, append = true) {
         for (const item of array) { i++;
           img = document.createElement("img");
           img.classList.add("image"+i);
+          if (i === 1) {
+            img.classList.add("active");
+          }
           img.onload = () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);

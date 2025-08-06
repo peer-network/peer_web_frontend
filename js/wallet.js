@@ -2,7 +2,6 @@ let balance = null;
 let userOffset = 1;
 let isFetchingUsers = false;
 let hasMoreUsers = true;
-let isInvited = "";
 
 // getLiquiuditygetUser();
 dailyfree();
@@ -13,7 +12,9 @@ dailywin();
 dailypays();
 getUserInfo();
 
+
 async function getUserInfo() {
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -180,6 +181,7 @@ async function getUserInfo() {
 //     return result;
 //   }
 // }
+
 
 function nextmint() {
   const now = new Date();
@@ -783,12 +785,10 @@ function renderCheckoutScreen(user, amount) {
   transferBtn.innerHTML = `Transfer &rarr;`;
 
   transferBtn.onclick = async () => {
-    const totalAmount = calculateTotalWithFee(parseFloat(amount));
-
+    // const totalAmount = calculateTotalWithFee(parseFloat(amount));
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
       if (!confirmContinue) return;
-
       balance = await getLiquiudity();
       if (balance < totalAmount) {
         info("Still insufficient balance.");
@@ -800,8 +800,7 @@ function renderCheckoutScreen(user, amount) {
       // Show loader first
       renderLoaderScreen();
       const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
-      const res = await resolveTransfer(userId, totalAmount);
-
+      const res = await resolveTransfer(userId, amount);
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
       } else {
@@ -816,7 +815,6 @@ function renderCheckoutScreen(user, amount) {
   };
 
   actions.append(backBtn, transferBtn);
-
   // Final render
   wrapper.append(
     header,

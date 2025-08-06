@@ -46,7 +46,7 @@ async function fetchHelloData(userid = null) {
   try {
     const response = await fetch(GraphGL, requestOptions);
     const result_1 = await response.json();
-    console.log(result_1);
+    // console.log(result_1);
     return result_1;
   } catch (error) {
     console.log("error", error);
