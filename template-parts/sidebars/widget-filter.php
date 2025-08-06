@@ -1,13 +1,13 @@
 <div class="widget">
     <div class="widget-head">
-        <img src="" alt="">
+        <img src="svg/filter-icon.svg" alt="">
         <h3 class="widget-title">Filters</h3>
     </div>
     <form class="filterContainer">
 
         <!-- Content Filter -->
         <section class="filter-section">
-            <button type="button" class="filter-section-header" aria-expanded="false" aria-controls="content-options">
+            <button type="button" class="filter-toggle filter-section-header" aria-expanded="false" aria-controls="content-options">
                 <div class="filter-section-container">
                     <img src="svg/content-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Content</span>
@@ -44,7 +44,7 @@
         
         <!-- Feed Filter -->
         <section class="filter-section">
-            <button type="button" class="feed filter-section-header" aria-expanded="false" aria-controls="feed-options">
+            <button type="button" class="feed filter-toggle filter-section-header" aria-expanded="false" aria-controls="feed-options">
                 <div class="filter-section-container">
                     <img src="svg/feed-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Feed</span>
@@ -78,7 +78,7 @@
 
         <!-- Time Filter -->
         <section class="filter-section">
-            <button type="button" class="time filter-section-header" aria-expanded="false" aria-controls="time-options">
+            <button type="button" class="time filter-toggle filter-section-header" aria-expanded="false" aria-controls="time-options">
                 <div class="filter-section-container">
                     <img src="svg/time-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Time</span>
