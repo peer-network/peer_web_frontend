@@ -570,7 +570,7 @@
 	will-change: transform;
 	height: calc(100% - 110px);
 }
-.viewpost .post_gallery.images .slider-wrapper  .slider-track{
+.viewpost .post_gallery.images:not(.multi) .slider-wrapper .slider-track {
 	height: 100%;
 }
 .viewpost .post_gallery.multi .slider-wrapper .slide_item,
