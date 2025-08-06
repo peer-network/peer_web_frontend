@@ -187,23 +187,7 @@ function handleRecordAgain() {
 async function startRecording() {
   try {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-    let mimeType = "";
-
-    if (MediaRecorder.isTypeSupported("audio/ogg; codecs=opus")) {
-        alert("type ogg supprted.");
-      mimeType = "audio/ogg; codecs=opus";
-    } else if (MediaRecorder.isTypeSupported("audio/webm; codecs=opus")) {
-      alert("type webm supprted.");
-      mimeType = "audio/webm; codecs=opus";
-    } else {
-      alert("No supported audio format found.");
-      return;
-    }
-
-    recorder = new MediaRecorder(audioStream, { mimeType });
-
-    // recorder = new MediaRecorder(audioStream);
+    recorder = new MediaRecorder(audioStream);
     chunks = [];
     isRecording = true;
 
@@ -224,9 +208,7 @@ async function startRecording() {
     if (node) runVisualizer(node);
 
     recorder.onstop = () => {
-      // const blob = new Blob(chunks, { type: 'audio/webm' });
-      const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-      
+      const blob = new Blob(chunks, { type: 'audio/webm' });
       if (blob.size === 0) {
         console.warn("Recording was empty.");
         return;

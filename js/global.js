@@ -6,7 +6,8 @@ let likeCost = 0.3,
 
 // below variable used in wallet module
 // need to declare in global scope
-let isInvited = "";
+
+let storedUserInfo = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   hello();
@@ -408,16 +409,6 @@ window.addEventListener('load', () => {
 // getUserInfo() used in wallet module
 // need to declare in global scope
 async function getUserInfo() {
-  const storedUserInfo = JSON.parse(localStorage.getItem("userData"));
-  if (storedUserInfo) {
-    console.log('in if')
-    isInvited = storedUserInfo ?.invited;
-    return storedUserInfo;
-  }
-  else {
-    console.log('in else')
-  }
-
   const accessToken = getCookie("authToken");
   // Create headers
   const headers = new Headers({
@@ -468,6 +459,7 @@ async function getUserInfo() {
     const userData = result.data.getUserInfo.affectedRows;
     isInvited = userData ?.invited;
     localStorage.setItem("userData", JSON.stringify(userData));
+    return userData;
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
