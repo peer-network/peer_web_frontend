@@ -64,28 +64,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  document.querySelectorAll('.filter-section-header').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const targetId = btn.getAttribute('aria-controls');
-      const section = document.getElementById(targetId);
-      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+  function initFilterToggles(className = 'filter-toggle') {
+    document.querySelectorAll(`.${className}`).forEach(btn => {
+      btn.addEventListener('click', function () {
+        const targetId = btn.getAttribute('aria-controls');
+        const section = document.getElementById(targetId);
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
 
-      if (isOpen) {
-        section.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-
-        const arrow = btn.querySelector('.section-arrow');
-        if (arrow) arrow.classList.remove('rotated');
-        
-      } else {
-        section.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
+        if (isOpen) {
+          section.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          section.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
 
         const arrow = btn.querySelector('.section-arrow');
-        if (arrow) arrow.classList.add('rotated');
-      }
+        if (arrow) arrow.classList.toggle('rotated');
+      });
     });
-  });
+  }
+  initFilterToggles();
+
 
   function setupFilterLabelSwapping(filterType) {
     const headerBtn = document.querySelector(`.${filterType}.filter-section-header`);
@@ -136,36 +136,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  function updateContentHeaderIcons(preset = null) {
+  function updateFilterHeaderIcons(sectionId = 'content-options', preset = null) {
     const iconMap = {
       IMAGE: "svg/photo.svg",
       VIDEO: "svg/videos.svg",
       TEXT: "svg/text.svg",
-      AUDIO: "svg/music.svg"
+      AUDIO: "svg/music.svg",
+      LIKES: "svg/post-like.svg",
+      COMMENTS: "svg/post-comment.svg",
+      VIEWS: "svg/most-views.svg",
+      DISLIKES: "svg/most-dislikes.svg"
     };
+
+    const section = document.getElementById(sectionId);
+    const header = document.querySelector(`button[aria-controls="${sectionId}"]`);
+    if (!section || !header) return;
+
+    const container = header.querySelector('.filter-section-container');
+    const arrow = header.querySelector('.section-arrow');
 
     let selected = [];
 
     if (Array.isArray(preset)) {
-      selected = preset.filter(type => iconMap[type]);
+      selected = preset.filter(key => iconMap[key]);
     } else {
-      const checkboxes = document.querySelectorAll('.filterGroup input[type="checkbox"]');
-      checkboxes.forEach((checkbox) => {
-        if (checkbox.checked && iconMap[checkbox.name]) {
-          selected.push(checkbox.name);
+      const inputs = section.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+      inputs.forEach(input => {
+        const key = input.getAttribute('sortby') || input.name;
+        if (input.checked && iconMap[key]) {
+          selected.push(key);
         }
       });
     }
 
-    const header = document.querySelector('button[aria-controls="content-options"]');
-    const container = header.querySelector('.filter-section-container');
-    const arrow = header.querySelector('.section-arrow');
-
     container.querySelectorAll('.filter-icon-preview').forEach(el => el.remove());
 
-    selected.slice(0, 4).forEach(type => {
+    selected.slice(0, 4).forEach(key => {
       const img = document.createElement("img");
-      img.src = iconMap[type];
+      img.src = iconMap[key];
       img.classList.add("filter-icon-preview");
       img.style.width = "20px";
       img.style.height = "20px";
@@ -175,6 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     arrow.style.display = selected.length > 2 ? "none" : "";
   }
+  updateFilterHeaderIcons("content-options");
+  updateFilterHeaderIcons("sort-options");
 
 
 
@@ -226,8 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const storedTypes = JSON.parse(localStorage.getItem("selectedContentTypes"));
   if (storedTypes) {
-    updateContentHeaderIcons(storedTypes);
+    updateFilterHeaderIcons(storedTypes);
   }
+
 });
 
 

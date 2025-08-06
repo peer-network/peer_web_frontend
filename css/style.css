@@ -197,7 +197,7 @@ h3 {
   
   line-height: 1.2;
   font-weight: 400;
-  margin:0 0 22px 0;
+  /* margin:0 0 22px 0; */
 }
 h4 {
   font-size:22px;
@@ -696,12 +696,25 @@ footer {grid-area: footer;}
 # Site SideBars
 --------------------------------------------------------------*/
 .widget{ 
-	margin-bottom:30px;
+	margin-bottom:50px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
 }
 
+.widget .widget-head {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.widget .widget-head img {
+  width: 30px;
+}
+
+.widget .most-icon {
+  opacity: 0.5;
+}
 
 /*----Filter Widgets----*/
 
