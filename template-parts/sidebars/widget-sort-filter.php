@@ -25,12 +25,12 @@
                                 <img src="svg/most-dislikes.svg" alt="MostControversial filter"/>
                                 <span>Dislikes</span>
                             </label>
-                            <input id="filterMostViewed" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
+                            <input id="filterMostViewed" data-icon="svg/most-views.svg" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
                             <label for="filterMostViewed" class="filterButton most" title="Sort by most viewed">
                                 <img src="svg/most-views.svg" alt="MostViewed filter"/>
                                 <span>Viewed</span>
                             </label>
-                            <input id="filterMostPopular" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
+                            <input id="filterMostPopular" data-icon="svg/controversial.svg" sortby="VIEWS" class="chkMost" type="radio" name="sortby" />
                             <label for="filterMostPopular" class="filterButton most" title="Sort by most popular"/>
                                 <img src="svg/controversial.svg" alt="MostPopular filter">
                                 <span>Trends</span>

@@ -200,6 +200,7 @@ async function likePost(postid) {
       if (result.data.resolvePostAction.status == "error") {
         throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
+        dailyfree();
         return true;
       }
     })

@@ -1,6 +1,6 @@
-<div class="widget">
+<div class="widget widget-margin-bottom">
     	
-    	<div class="widget-inner widget-type-box widget-profile">
+    	<a href="profile.php" class="widget-inner widget-type-box profile_link widget-profile">
         
         	<!-- Profil-Bild und Name -->
                 <div class="profile-header">
@@ -32,14 +32,8 @@
                         <p>Following</p>
                     </div>
                 </div>
-        		
-                <ul class="menu">
-                    <li class="menu-item">
-                    <a href="profile.php">
-                        <img class="icon"  src="svg/profile.svg" alt="View Profile">
-                        <p>View Profile</p>
-                    </a>
-                    </li>
-                </ul>
-    	</div>
-    </div>
+
+                <!-- Daily free actions -->
+        		<?php require_once('./template-parts/sidebars/widget-daily-action.php'); ?>
+        </a>
+</div>

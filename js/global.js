@@ -148,7 +148,7 @@ async function dailyfree() {
     result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
       const used = document.getElementById(entry.name + "used");
       const available = document.getElementById(entry.name + "available");
-      const stat = document.getElementById(entry.name + "Stat");
+      const iconContainer = document.querySelector(`.progress-icons[data-type="${entry.name}"]`);
       if (used) {
         used.innerText = entry.used;
       }
@@ -156,11 +156,17 @@ async function dailyfree() {
         available.innerText = entry.available;
       }
 
-      const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
-
-      if (stat) {
-        stat.style.setProperty("--progress", percentage + "%");
+      if (iconContainer) {
+        const icons = iconContainer.querySelectorAll(".icon");
+        icons.forEach((icon, index) => {
+          if (index < entry.used) {
+            icon.classList.add("filled");
+          } else {
+            icon.classList.remove("filled");
+          }
+        });
       }
+      // console.log("Entry name:", entry.name, iconContainer);
 
       // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
