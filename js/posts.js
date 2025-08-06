@@ -259,7 +259,7 @@ async function dislikePost(postid) {
 }
 
 async function LiquiudityCheck(postCosts, title, action) {
-  console.log("Liquidity Check for postCosts:", postCosts);
+  // console.log("Liquidity Check for postCosts:", postCosts);
   const limitIDs = [
     ["Likesused", "Likesavailable", "LikesStat"],
     ["Commentsused", "Commentsavailable", "CommentsStat"],
@@ -476,7 +476,7 @@ async function sendCreatePost(variables) {
     if (result.errors) {
       throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
     }
-    console.log("Mutation Result:", result.data);
+    // console.log("Mutation Result:", result.data);
     return result.data;
     
   } catch (error) {
@@ -493,7 +493,7 @@ async function getBitcoinPriceEUR() {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP-Error: ${response.status}`);
     const data = await response.json();
-    console.log(`1 BTC = ${data.bitcoin.eur} EUR`);
+    // console.log(`1 BTC = ${data.bitcoin.eur} EUR`);
     return data.bitcoin.eur;
   } catch (err) {
     console.error("Fehler beim Abrufen des Bitcoin-Kurses:", err);

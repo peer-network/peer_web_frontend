@@ -4,6 +4,11 @@ let likeCost = 0.3,
   commentCost = 0.05,
   postCost = 2;
 
+// below variable used in wallet module
+// need to declare in global scope
+
+let storedUserInfo = null;
+
 document.addEventListener("DOMContentLoaded", () => {
   hello();
   getUser();
@@ -400,4 +405,63 @@ window.addEventListener('load', () => {
     closeFeedbackPopup(false); // Do not increment count here, already incremented on show
   });
 });
-/*----------- End : FeedbackPopup Logic --------------*/
+
+// getUserInfo() used in wallet module
+// need to declare in global scope
+async function getUserInfo() {
+  const accessToken = getCookie("authToken");
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+    query: `query GetUserInfo {
+    getUserInfo {
+        status
+        ResponseCode
+        affectedRows {
+            userid
+            liquidity
+            amountposts
+            amountblocked
+            amountfollower
+            amountfollowed
+            amountfriends
+            updatedat
+            invited
+            userPreferences {
+                contentFilteringSeverityLevel
+            }
+        }
+      }
+    }`,
+  });
+
+  // Define request options
+  const requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql
+  };
+
+  try {
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const result = await response.json();
+    // Check for errors in GraphQL response
+    if (result.errors) throw new Error(result.errors[0].message);
+    const userData = result.data.getUserInfo.affectedRows;
+    isInvited = userData ?.invited;
+    localStorage.setItem("userData", JSON.stringify(userData));
+    return userData;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}
