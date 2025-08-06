@@ -63,7 +63,6 @@ checkAuth("unauthorized");
                 <!-- Load sidebar widgets -->
                 <?php require_once('./template-parts/sidebars/widget-filter.php'); ?>
                 <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
-                <?php require_once('./template-parts/sidebars/widget-daily-action.php'); ?>
 
             </div>
         </aside>

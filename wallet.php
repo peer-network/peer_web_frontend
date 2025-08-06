@@ -58,8 +58,6 @@ checkAuth("unauthorized");
         <!-- Load sidebar widgets -->
         <?php require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
         <?php require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
-        <?php require_once ('./template-parts/sidebars/widget-daily-action.php'); ?>
-
 
       </div>
     </aside>
