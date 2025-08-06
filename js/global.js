@@ -4,6 +4,10 @@ let likeCost = 0.3,
   commentCost = 0.05,
   postCost = 2;
 
+// below variable used in wallet module
+// need to declare in global scope
+let isInvited = "";
+
 document.addEventListener("DOMContentLoaded", () => {
   hello();
   getUser();
@@ -311,21 +315,90 @@ function calctimeAgo(datetime) {
 
 function showFeedbackPopup() {
   document.getElementById('feebackPopup').classList.remove('none');
-   localStorage.setItem('lastfeebackPopupShown', Date.now());
+  localStorage.setItem('lastfeebackPopupShown', Date.now());
 }
 
 function closeFeedbackPopup() {
-   document.getElementById('feebackPopup').classList.add('none');
-  
+  document.getElementById('feebackPopup').classList.add('none');
+
 }
 
 window.addEventListener('load', () => {
   const lastShown = localStorage.getItem('lastfeebackPopupShown');
   const now = Date.now();
-  //const hours24 =  60 * 1000; // ⏱️ 60 seconds for testing
+  //const hours24 =  60 * 1000; // 60 seconds for testing
   const hours24 = 24 * 60 * 60 * 1000; // 24 hours
 
   if (!lastShown || now - lastShown > hours24) {
     //showFeedbackPopup(); // First time or after 24h
   }
 });
+
+// getUserInfo() used in wallet module
+// need to declare in global scope
+async function getUserInfo() {
+  const storedUserInfo = JSON.parse(localStorage.getItem("userData"));
+  if (storedUserInfo) {
+    console.log('in if')
+    isInvited = storedUserInfo ?.invited;
+    return storedUserInfo;
+  }
+  else {
+    console.log('in else')
+  }
+
+  const accessToken = getCookie("authToken");
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  // Define the GraphQL mutation with variables
+  const graphql = JSON.stringify({
+    query: `query GetUserInfo {
+    getUserInfo {
+        status
+        ResponseCode
+        affectedRows {
+            userid
+            liquidity
+            amountposts
+            amountblocked
+            amountfollower
+            amountfollowed
+            amountfriends
+            updatedat
+            invited
+            userPreferences {
+                contentFilteringSeverityLevel
+            }
+        }
+      }
+    }`,
+  });
+
+  // Define request options
+  const requestOptions = {
+    method: "POST",
+    headers: headers,
+    body: graphql
+  };
+
+  try {
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const result = await response.json();
+    // Check for errors in GraphQL response
+    if (result.errors) throw new Error(result.errors[0].message);
+    const userData = result.data.getUserInfo.affectedRows;
+    isInvited = userData ?.invited;
+    localStorage.setItem("userData", JSON.stringify(userData));
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
+}

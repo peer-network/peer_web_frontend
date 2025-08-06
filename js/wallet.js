@@ -2,7 +2,6 @@ let balance = null;
 let userOffset = 1;
 let isFetchingUsers = false;
 let hasMoreUsers = true;
-let isInvited = "";
 
 // getLiquiuditygetUser();
 dailyfree();
@@ -12,60 +11,6 @@ nextmint();
 dailywin();
 dailypays();
 getUserInfo();
-
-async function getUserInfo() {
-  const accessToken = getCookie("authToken");
-
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query GetUserInfo {
-    getUserInfo {
-        status
-        ResponseCode
-        affectedRows {
-            userid
-            liquidity
-            amountposts
-            amountblocked
-            amountfollower
-            amountfollowed
-            amountfriends
-            updatedat
-            invited
-        }
-      }
-    }`,
-  });
-
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql
-  };
-
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
-    // Check for errors in GraphQL response
-    if (result.errors) throw new Error(result.errors[0].message);    
-    isInvited = result.data.getUserInfo.affectedRows.invited;
-    console.log(result.data)
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
-}
 
 async function getLiquiudity() {
   const accessToken = getCookie("authToken");
@@ -784,12 +729,10 @@ function renderCheckoutScreen(user, amount) {
   transferBtn.innerHTML = `Transfer &rarr;`;
 
   transferBtn.onclick = async () => {
-    const totalAmount = calculateTotalWithFee(parseFloat(amount));
-
+    // const totalAmount = calculateTotalWithFee(parseFloat(amount));
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
       if (!confirmContinue) return;
-
       balance = await getLiquiudity();
       if (balance < totalAmount) {
         info("Still insufficient balance.");
@@ -801,8 +744,7 @@ function renderCheckoutScreen(user, amount) {
       // Show loader first
       renderLoaderScreen();
       const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
-      const res = await resolveTransfer(userId, totalAmount);
-
+      const res = await resolveTransfer(userId, amount);
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
       } else {
@@ -817,7 +759,6 @@ function renderCheckoutScreen(user, amount) {
   };
 
   actions.append(backBtn, transferBtn);
-
   // Final render
   wrapper.append(
     header,
