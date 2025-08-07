@@ -42,7 +42,7 @@ function initAudioEvents() {
 
   micBtn.addEventListener('click', () => handleMicClick(micBtn, recordedAudio));
   recordedAudio.addEventListener("ended", handlePlaybackEnded);
-  document.querySelector(".record-again")?.addEventListener("click", handleRecordAgain);
+  document.querySelector(".record-again") ?.addEventListener("click", handleRecordAgain);
 }
 
 // ===== Event Handlers =====
@@ -62,7 +62,7 @@ async function handleMicClick(micBtn, recordedAudio) {
     stopRecording(micBtn);
     updateMicButton(MIC_STATE.OFF);
     setUIState(UI_STATE.PREVIEW);
-    document.querySelector(".audiobackground_uploader")?.classList.remove("none");
+    document.querySelector(".audiobackground_uploader") ?.classList.remove("none");
   }
 }
 
@@ -94,7 +94,7 @@ function handlePlaybackEnded() {
   resetRecordingTimer();
   cancelAnimationFrame(playbackInterval);
   cancelAnimationFrame(animationId);
-  
+
 }
 
 // Reseting the full state
@@ -184,6 +184,80 @@ function handleRecordAgain() {
 }
 
 // ===== Recording =====
+// async function startRecording() {
+//   try {
+//     audioStream = await navigator.mediaDevices.getUserMedia({
+//       audio: true
+//     });
+//     recorder = new MediaRecorder(audioStream);
+//     chunks = [];
+//     isRecording = true;
+
+//     recorder.ondataavailable = (e) => chunks.push(e.data);
+//     resetRecordingTimer();
+
+//     if (timerInterval) {
+//       clearTimeout(timerInterval);
+//       timerInterval = null;
+//     }
+
+//     resetRecordingTimer();
+//     await new Promise(requestAnimationFrame);
+//     startTimer();
+//     recorder.start();
+
+//     const node = await getMicSource();
+//     if (node) runVisualizer(node);
+
+//     recorder.onstop = async () => {
+//       // let blob = new Blob(chunks, { type: 'audio/webm' });
+//       let blob = new Blob(chunks, {
+//         type: recorder.mimeType
+//       });
+
+//       if (blob.size === 0) {
+//         console.warn("Recording was empty.");
+//         return;
+//       }
+
+//       const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+//       const needsWav = isChrome;
+//       if (needsWav) {
+//         try {
+//           const arrayBuffer = await blob.arrayBuffer();
+//           const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+//           const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+//           // Convert audioBuffer to WAV Blob
+//           blob = encodeWAV(audioBuffer);
+//         } catch (err) {
+//           console.error("Failed to process audio:", err);
+//         }
+//       }
+//     };
+
+//   } catch (err) {
+//     console.error("Mic access denied:", err);
+//     alert("Mic access is required.");
+//   }
+
+//   // For playback and preview
+//   recordedAudioURL = URL.createObjectURL(wavBlob);
+//   hasRecording = true;
+
+//   const recordedAudio = getRecordedAudio();
+//   if (recordedAudio) {
+//     recordedAudio.src = recordedAudioURL;
+//     recordedAudio.load();
+
+//     if (!audioContext) {
+//       audioContext = new(window.AudioContext || window.webkitAudioContext)();
+//     }
+//   }
+
+//   appendAudioToForm(blob);
+//   document.querySelector(".record-again") ?.classList.remove("none");
+// }
+
 async function startRecording() {
   try {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -208,46 +282,66 @@ async function startRecording() {
     if (node) runVisualizer(node);
 
     recorder.onstop = async () => {
-      const webmBlob = new Blob(chunks, { type: 'audio/webm' });
-      if (webmBlob.size === 0) {
+      let blob = new Blob(chunks, { type: 'audio/wav' });
+
+      if (blob.size === 0) {
         console.warn("Recording was empty.");
         return;
       }
 
-      try {
-        const arrayBuffer = await webmBlob.arrayBuffer();
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      const needsWav = getBrowser();
+      console.log(needsWav)
+      if (needsWav == "Chrome" || needsWav == "Safari" || needsWav == "Edge") {
+        try {
+          const arrayBuffer = await blob.arrayBuffer();
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-        // Convert audioBuffer to WAV Blob
-        const wavBlob = encodeWAV(audioBuffer);
-
-        // For playback and preview
-        recordedAudioURL = URL.createObjectURL(wavBlob);
-        hasRecording = true;
-
-        const recordedAudio = getRecordedAudio();
-        if (recordedAudio) {
-          recordedAudio.src = recordedAudioURL;
-          recordedAudio.load();
-
-          if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          }
+          // Convert to WAV
+          blob = encodeWAV(audioBuffer);
+        } catch (err) {
+          console.error("Failed to process audio:", err);
+          alert("Audio processing failed.");
+          return;
         }
-
-        appendAudioToForm(wavBlob);
-        document.querySelector(".record-again")?.classList.remove("none");
-        
-      } catch (err) {
-        console.error("Failed to process audio:", err);
       }
+
+      // Playback and preview
+      recordedAudioURL = URL.createObjectURL(blob);
+      hasRecording = true;
+
+      const recordedAudio = getRecordedAudio();
+      if (recordedAudio) {
+        recordedAudio.src = recordedAudioURL;
+        recordedAudio.load();
+
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+
+      // Upload or attach
+      appendAudioToForm(blob);
+      document.querySelector(".record-again")?.classList.remove("none");
     };
 
   } catch (err) {
     console.error("Mic access denied:", err);
     alert("Mic access is required.");
-  }
+  }
+}
+
+function getBrowser() {
+  const ua = navigator.userAgent;
+
+  if (ua.includes("Firefox")) return "Firefox";
+  if (ua.includes("Edg")) return "Edge";
+  if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
+  if (ua.includes("Brave")) return "Brave";
+  if (/^((?!chrome|android).)*safari/i.test(ua)) return "Safari";
+  if (window.chrome !== undefined) return "Chrome";
+
+  return "Unknown";
 }
 
 function stopRecording() {
@@ -282,7 +376,7 @@ function setUIState(state) {
   switch (state) {
     case UI_STATE.INITIAL:
       label.textContent = "Start recording";
-      previewButton?.classList.add("none");
+      previewButton ?.classList.add("none");
       break;
     case UI_STATE.RECORDING:
       label.textContent = "Recording...";
@@ -381,7 +475,7 @@ function runVisualizer(sourceNode, connectToOutput = false) {
   const paths = document.querySelectorAll('#mic-visualizer path');
 
   if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext = new(window.AudioContext || window.webkitAudioContext)();
   }
 
   analyser = audioContext.createAnalyser();
@@ -412,7 +506,7 @@ function runVisualizer(sourceNode, connectToOutput = false) {
     paths.forEach((path) => {
       //path.setAttribute('transform', 'scale(0.5, 0.5)');
       path.removeAttribute('style');
-      
+
 
     });
     //console.log('ddd');
@@ -420,8 +514,12 @@ function runVisualizer(sourceNode, connectToOutput = false) {
 
   const recordedAudio = getRecordedAudio();
   if (recordedAudio) {
-    recordedAudio.addEventListener('pause', resetBars, { once: true });
-    recordedAudio.addEventListener('ended', resetBars, { once: true });
+    recordedAudio.addEventListener('pause', resetBars, {
+      once: true
+    });
+    recordedAudio.addEventListener('ended', resetBars, {
+      once: true
+    });
   }
 }
 
@@ -451,7 +549,7 @@ async function getMicSource() {
   }
 
   if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext = new(window.AudioContext || window.webkitAudioContext)();
   }
 
   return audioContext.createMediaStreamSource(audioStream);
@@ -463,7 +561,7 @@ async function getPlaybackSource() {
 
   // Close previous context if it was reset by "Record Again"
   if (!audioContext || audioContext.state === 'closed') {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext = new(window.AudioContext || window.webkitAudioContext)();
     recordedAudioSource = null;
   }
 
@@ -480,7 +578,9 @@ function appendAudioToForm(blob) {
   const form = document.getElementById("preview-audio");
   if (!form) return;
 
-  const file = new File([blob], RECORDING_FILENAME, { type: 'audio/webm' });
+  const file = new File([blob], RECORDING_FILENAME, {
+    type: 'audio/webm'
+  });
   const input = document.createElement('input');
   input.type = 'file';
   input.name = 'recordedAudio';
@@ -530,5 +630,7 @@ function encodeWAV(audioBuffer) {
 
   floatTo16BitPCM(view, 44, samples);
 
-  return new Blob([view], { type: 'audio/wav' });
+  return new Blob([view], {
+    type: 'audio/wav'
+  });
 }
