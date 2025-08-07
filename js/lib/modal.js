@@ -29,8 +29,8 @@ function createModal({
       <div class="modal-content ${type}">
         <span class="modal-close">&times;</span>
         <span class="modal-icon">${svg}</span>
-        <h2 class="modal-title">${title}</h2>
-        <p class="modal-message">${message}</p>
+        <h2 class="modal-title xxl_font_size">${title}</h2>
+        <p class="modal-message xl_font_size">${message}</p>
         ${checkboxHTML}
         ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
         <div class="modal-buttons">
@@ -179,7 +179,7 @@ function confirm(title, text = "", dontShowOption = false, typeKey = null, svg =
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
+    buttons: [{ text: "No", className: "btn-white" }, { text: "Yes", className: "btn-blue" }],
     type: "warning",
     dontShowOption: dontShowOption,
     typeKey: typeKey, // Pass down to createModal

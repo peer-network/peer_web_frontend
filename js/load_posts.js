@@ -748,9 +748,6 @@ function commentToDom(c, append = true) {
             autoSwapInterval = null;
           });
 
-          
-
-         
           inhaltDiv.insertBefore(divmulti_img_indicator, postContent);
           
         }

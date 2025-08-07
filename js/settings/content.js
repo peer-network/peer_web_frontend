@@ -27,10 +27,10 @@ async function init() {
 // updating modal text-content
 function updateCheckBoxStatus(flag = null) {
   if (flag !== null && flag === true) {
-    contentRestored.querySelector("h3").textContent = "Content Restored";
+    contentRestored.querySelector("h3").textContent = "Content restored";
     contentRestored.querySelector("p").textContent = "Reported posts are now visible in your feed";
   } else {
-    contentRestored.querySelector("h3").textContent = "Hidden Successfully";
+    contentRestored.querySelector("h3").textContent = "Hidden successfully";
     contentRestored.querySelector("p").textContent = "Reported posts have been removed from your feed";
   }
 }
