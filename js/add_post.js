@@ -645,6 +645,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // If any error, stop
     if (hasError) return;
 
+    //console.log(postMedia);
+
     submitButton.disabled = true;
     try {
       const result = await sendCreatePost({
