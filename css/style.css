@@ -1371,6 +1371,18 @@ footer {grid-area: footer;}
 		font-size: 18px;
 		
 	}
+
+
+	button,.button{
+		line-height: 80px;
+		
+		padding: 0 30px;
+		
+		
+		font-size: 28px;
+		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
+	}
+
 	header.site-header .logo {
 	 	width: 2.2rem !important; 
 		height: auto;
@@ -1418,6 +1430,9 @@ footer {grid-area: footer;}
 		height: auto;
 		aspect-ratio: 1 / 1;
 	}
+
+
+
 }
 @media screen and (min-width: 3000px) {
 	
@@ -1446,7 +1461,6 @@ footer {grid-area: footer;}
 	}
 	.xl_font_size {
 		font-size: 45px;
-		
 		font-size: clamp(1.875rem, 0.9375rem + 0.75vw, 2.8125rem);
 	
 	}

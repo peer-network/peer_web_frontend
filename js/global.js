@@ -322,10 +322,22 @@ function calctimeAgo(datetime) {
 
 /*----------- Start : FeedbackPopup Logic --------------*/
 
+function setCookie(name, value, days = 365) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+  return document.cookie.split('; ').reduce((r, v) => {
+    const parts = v.split('=');
+    return parts[0] === name ? decodeURIComponent(parts[1]) : r
+  }, '');
+}
+
 const POPUP_KEY = 'feedbackPopupData';
 
 function getPopupData() {
-  const stored = localStorage.getItem(POPUP_KEY);
+  const stored = getCookie(POPUP_KEY);
   return stored ? JSON.parse(stored) : {
     count: 0,
     lastClosed: 0,
@@ -334,7 +346,7 @@ function getPopupData() {
 }
 
 function setPopupData(data) {
-  localStorage.setItem(POPUP_KEY, JSON.stringify(data));
+  setCookie(POPUP_KEY, JSON.stringify(data));
 }
 
 function showFeedbackPopup() {
@@ -374,9 +386,9 @@ function closeFeedbackPopup(increment = false) {
 function shouldShowPopup() {
   const data = getPopupData();
   const now = Date.now();
-  //const fiveDays = 5 * 24 * 60 * 60 * 1000;
+  const fiveDays = 5 * 24 * 60 * 60 * 1000;
 
-  const fiveDays =  60 * 1000; // 1 mint for testing
+  //const fiveDays =  60 * 1000; // 1 mint for testing
 
   const sessionShown = sessionStorage.getItem('popupShown') === 'true';
   const closedRecently = (now - data.lastClosed) < fiveDays;
@@ -395,7 +407,7 @@ window.addEventListener('load', () => {
   if (shouldShowPopup()) {
     setTimeout(() => {
       showFeedbackPopup();
-      sessionStorage.setItem('popupShown', 'false');
+      sessionStorage.setItem('popupShown', 'true');
     }, 30 * 1000); // 30 seconds
   }
 
@@ -411,7 +423,7 @@ window.addEventListener('load', () => {
     closeFeedbackPopup(false); // Do not increment count here, already incremented on show
   });
 });
-
+/*----------- End  : FeedbackPopup Logic --------------*/
 // getUserInfo() used in wallet module
 // need to declare in global scope
 async function getUserInfo() {

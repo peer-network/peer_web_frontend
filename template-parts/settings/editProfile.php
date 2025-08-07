@@ -17,7 +17,7 @@
              name="profile-description" placeholder="Write a description to your profile..."></textarea>
          </div>
          <div id="response_msg_bio" class="response_msg"></div>
-         <div class="input-field transparent">
+         <div class="input-field username-row transparent">
            <label>Username</label>
            <span>@<span id="pusername">&nbsp;</span></span>
            <a href="#" id="changeusernamebtn">Change</a>
@@ -38,7 +38,7 @@
          <div id="modalOverlay" class="modal-overlay none">
            <div class="logOut-pop" id="logOutPop">
              <img src="svg/error.svg" alt="logout">
-             <p>Are you sure you want to log out?</p>
+             <p class="xl_font_size">Are you sure you want to log out?</p>
              <div class="button-row">
                <button id="cancelLogoutBtn" class="btn-transparent">Cancel</button>
                <button id="confirmLogoutBtn" class="btn-blue">Yes</button>
