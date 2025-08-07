@@ -78,11 +78,11 @@ toggleCheckBox.addEventListener('click', async function () {
     } finally {
       if (loader) loader.classList.add("none");
     }
-  } else {
-    updateCheckBoxStatus(prevStatus);
-  }
-
-
+    return
+  } 
+   
+  this.checked = prevStatus;
+  
 });
 
 returnToLogin.addEventListener("click", () => clearCacheAndSession());
