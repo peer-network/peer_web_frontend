@@ -1,189 +1,18 @@
-let balance = null;
+// State variables
 let userOffset = 1;
 let isFetchingUsers = false;
 let hasMoreUsers = true;
 
-// getLiquiuditygetUser();
-dailyfree();
-//balance();
-currentliquidity();
-nextmint();
-dailywin();
-dailypays();
-getUserInfo();
-
-
-async function getUserInfo() {
-
-  const accessToken = getCookie("authToken");
-
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
-
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query GetUserInfo {
-    getUserInfo {
-        status
-        ResponseCode
-        affectedRows {
-            userid
-            liquidity
-            amountposts
-            amountblocked
-            amountfollower
-            amountfollowed
-            amountfriends
-            updatedat
-            invited
-        }
-      }
-    }`,
-  });
-
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql
-  };
-
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
-    // Check for errors in GraphQL response
-    if (result.errors) throw new Error(result.errors[0].message);    
-    isInvited = result.data.getUserInfo.affectedRows.invited;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
+// Initialization
+ function initAppData() {
+   nextMint();
+   dailyWin();
+   dailyPays();
 }
 
-// async function getLiquiudity() {
-//   const accessToken = getCookie("authToken");
+window.addEventListener('DOMContentLoaded', initAppData);
 
-//   // Create headers
-//   const headers = new Headers({
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${accessToken}`,
-//   });
-
-//   // Define the GraphQL mutation with variables
-//   const graphql = JSON.stringify({
-//     query: `query Balance {
-//     balance {
-//         status
-//         ResponseCode
-//         currentliquidity
-//     }
-// }`,
-//   });
-
-//   // Define request options
-//   const requestOptions = {
-//     method: "POST",
-//     headers: headers,
-//     body: graphql,
-//     redirect: "follow",
-//   };
-
-//   try {
-//     // Send the request and handle the response
-//     const response = await fetch(GraphGL, requestOptions);
-
-//     // Check for errors in response
-//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-//     const result = await response.json();
-//     // Check for errors in GraphQL response
-//     if (result.errors) throw new Error(result.errors[0].message);
-//     return result.data.balance.currentliquidity;
-//   } catch (error) {
-//     console.error("Error:", error.message);
-//     throw error;
-//   }
-// }
-
-// async function currentliquidity() {
-//   if (balance === null) balance = await getLiquiudity()
-
-//   document.getElementById("token").innerText = balance;
-//   const formatted = (balance * 0.1).toFixed(2).replace(".", ",") + " €";
-//   document.getElementById("money").innerText = formatted;
-
-//   return balance
-// }
-
-// async function getDailyFreeStatus() {
-//   const accessToken = getCookie("authToken");
-
-//   // Create headers
-//   const headers = new Headers({
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${accessToken}`,
-//   });
-
-//   // Define the GraphQL mutation with variables
-//   const graphql = JSON.stringify({
-//     query: `query Dailyfreestatus {
-//     getDailyFreeStatus {
-//       status
-//       ResponseCode
-//       affectedRows {
-//         name
-//         used
-//         available
-//       }
-//     }
-//   }`,
-//   });
-
-//   // Define request options
-//   const requestOptions = {
-//     method: "POST",
-//     headers: headers,
-//     body: graphql,
-//     redirect: "follow",
-//   };
-
-//   try {
-//     // Send the request and handle the response
-//     const response = await fetch(GraphGL, requestOptions);
-//     const result = await response.json();
-
-//     // Check for errors in response
-//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-//     if (result.errors) throw new Error(result.errors[0].message);
-//     return result.data.getDailyFreeStatus.affectedRows;
-//   } catch (error) {
-//     console.error("Error:", error.message);
-//     throw error;
-//   }
-// }
-// async function dailyfree() {
-//   const result = await getDailyFreeStatus();
-
-//   if (result !== null) {
-//     result.forEach((entry) => {
-//       document.getElementById(entry.name + "used").innerText = entry.used;
-//       document.getElementById(entry.name + "available").innerText = entry.available;
-//       const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
-//       document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
-//       // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
-//     });
-//     return result;
-//   }
-// }
-
-
-function nextmint() {
+function nextMint() {
   const now = new Date();
   const nextMintDate = getNext0930(); // Funktion aufrufen, um das nächste 09:30 zu erhalten
   const dif = nextMintDate - now; // Differenz in Millisekunden
@@ -196,14 +25,15 @@ function nextmint() {
   document.getElementById("nextminttime").innerText = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
   document.getElementById("nextmintRadial").style.setProperty("--progress", percentageOfDayFromDates(now, nextMintDate));
 }
+
 function percentageOfDayFromDates(startDate, endDate) {
   const diffMs = endDate - startDate;
   const oneDayMs = 24 * 60 * 60 * 1000;
   return (diffMs / oneDayMs) * 100;
 }
+
 function getNext0930() {
   const now = new Date();
-
   const next0930 = new Date(now);
   next0930.setHours(9, 30, 0, 0); // heute um 09:30
 
@@ -211,11 +41,10 @@ function getNext0930() {
     // Wenn 09:30 heute schon vorbei ist → morgen
     next0930.setDate(next0930.getDate() + 1);
   }
-
   return next0930;
 }
 
-async function dailywin() {
+async function dailyWin() {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -292,7 +121,6 @@ async function dailywin() {
       historyItem.appendChild(centerDiv);
 
       // Füge das Element z. B. zu einem Container im DOM hinzu
-
       document.getElementById("history-container").appendChild(historyItem);
     });
 
@@ -302,7 +130,8 @@ async function dailywin() {
     throw error;
   }
 }
-async function dailypays() {
+
+async function dailyPays() {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -378,7 +207,6 @@ async function dailypays() {
       historyItem.appendChild(centerDiv);
 
       // Füge das Element z. B. zu einem Container im DOM hinzu
-
       document.getElementById("history-container").appendChild(historyItem);
     });
 
@@ -557,7 +385,7 @@ async function loadFrinds() {
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
-    }
+  }
 }
 
 async function searchUser(username = null) {
@@ -640,9 +468,6 @@ function renderTransferFormView(user) {
   const meta = document.createElement("div");
   const name = document.createElement("strong");
   name.textContent = user.username;
-  //const slug = document.createElement("span");
-  //slug.textContent = "#" + user.slug;
-  // meta.append(name, slug);
   meta.append(name);
   
   infoWrap.append(img, meta);
@@ -783,9 +608,8 @@ function renderCheckoutScreen(user, amount) {
   const transferBtn = document.createElement("button");
   transferBtn.className = "btn-next";
   transferBtn.innerHTML = `Transfer &rarr;`;
-
+  
   transferBtn.onclick = async () => {
-    // const totalAmount = calculateTotalWithFee(parseFloat(amount));
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
       if (!confirmContinue) return;
@@ -797,7 +621,6 @@ function renderCheckoutScreen(user, amount) {
     }
 
     try {
-      // Show loader first
       renderLoaderScreen();
       const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
       const res = await resolveTransfer(userId, amount);

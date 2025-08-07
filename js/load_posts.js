@@ -490,12 +490,9 @@ function commentToDom(c, append = true) {
     if (postsLaden.offset === undefined) {
       postsLaden.offset = 0; // Initialwert
     }
-    //console.log("✅ postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
+    //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
     //manualLoad = false;
-
-
     const form = document.querySelector(".filterContainer");
-
     const checkboxes = form.querySelectorAll(".filteritem:checked");
 
     // Die Werte der angehakten Checkboxen sammeln
@@ -570,26 +567,20 @@ function commentToDom(c, append = true) {
       const userprofileID = document.createElement("span");
       userprofileID.classList.add("post-userName", "profile_id");
       userprofileID.textContent = `#${objekt.user.slug}`;
-
-      
-
       const userImg = document.createElement("img");
       userImg.classList.add("post-userImg","profile-picture");
       userImg.onerror = function () {
         this.src = "svg/noname.svg";
       };
-      
-     
 
       userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
       const title = document.createElement("h3");
       title.textContent = objekt.title;
       title.classList.add("post-title","md_font_size","bold");
       
-
       const time_ago = document.createElement("span");
       time_ago.classList.add("timeAgo");
-
+      console.log('objekt.createdat ', objekt.createdat)
       time_ago.textContent = calctimeAgo(objekt.createdat);
       title.appendChild(time_ago);
 
