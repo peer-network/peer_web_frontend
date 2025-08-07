@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       AUDIO: "svg/music.svg",
       LIKES: "svg/post-like.svg",
       COMMENTS: "svg/post-comment.svg",
-      VIEWS: "svg/most-views.svg",
+      VIEWS: "svg/most-views.svg", 
       DISLIKES: "svg/most-dislikes.svg"
     };
 
@@ -155,33 +155,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = header.querySelector('.filter-section-container');
     const arrow = header.querySelector('.section-arrow');
 
-    let selected = [];
-
-    if (Array.isArray(preset)) {
-      selected = preset.filter(key => iconMap[key]);
-    } else {
-      const inputs = section.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-      inputs.forEach(input => {
-        const key = input.getAttribute('sortby') || input.name;
-        if (input.checked && iconMap[key]) {
-          selected.push(key);
-        }
-      });
-    }
-
     container.querySelectorAll('.filter-icon-preview').forEach(el => el.remove());
 
-    selected.slice(0, 4).forEach(key => {
-      const img = document.createElement("img");
-      img.src = iconMap[key];
-      img.classList.add("filter-icon-preview");
-      img.style.width = "20px";
-      img.style.height = "20px";
-      img.style.objectFit = "contain";
-      container.appendChild(img);
+    const selectedInputs = section.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
+    selectedInputs.forEach(input => {
+
+      const customIcon = input.getAttribute('data-icon');
+      const key = input.getAttribute('sortby') || input.name;
+      const iconSrc = customIcon || iconMap[key];
+
+      if (iconSrc) {
+        const img = document.createElement("img");
+        img.src = iconSrc;
+        img.classList.add("filter-icon-preview");
+        img.style.width = "20px";
+        img.style.height = "20px";
+        img.style.objectFit = "contain";
+        container.appendChild(img);
+      }
     });
 
-    arrow.style.display = selected.length > 2 ? "none" : "";
+    arrow.style.display = selectedInputs.length > 2 ? "none" : "";
   }
   updateFilterHeaderIcons("content-options");
   updateFilterHeaderIcons("sort-options");
@@ -1606,6 +1600,7 @@ async function postClicked(objekt) {
 
       createComment(postID, content).then((result) => {
         if (result && result.data?.createComment?.status === "success") {
+          dailyfree();
           commentToDom(result.data.createComment.affectedRows[0], false);
           newTextarea.value = ""; // Clear textarea
         } else {

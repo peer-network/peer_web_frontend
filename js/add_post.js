@@ -507,9 +507,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   }
 
-
-
-
   const previewSection = document.getElementById('previewSection');
   const addPostSection = document.getElementById('addPostSection');
 
@@ -517,8 +514,6 @@ document.addEventListener("DOMContentLoaded", () => {
     previewSection.classList.add("none"); 
     addPostSection.classList.remove("none"); 
   }
-
-
 
   const backToEditBtn = document.getElementById('backToEdit');
   if (backToEditBtn) {
@@ -2199,74 +2194,74 @@ trimQuitBtn.onclick = () => {
 // let endPercent = 0.85;
 
 // Funktion für den Schnitt
-trimBtn.onclick = async () => {
+// trimBtn.onclick = async () => {
   
-  // Stelle sicher, dass Metadaten da sind
-  if (!video.duration) {
-    alert("Video ist noch nicht geladen!");
-    return;
-  }
-  const modal = document.getElementById('videocodierung');
-  modal.showModal();
-  document.getElementById("nocursor").focus();
-  // Schnitt-Zeiten berechnen
-  const startTime = video.duration * startPercent;
-  const endTime = video.duration * endPercent;
+//   // Stelle sicher, dass Metadaten da sind
+//   if (!video.duration) {
+//     alert("Video ist noch nicht geladen!");
+//     return;
+//   }
+//   const modal = document.getElementById('videocodierung');
+//   modal.showModal();
+//   document.getElementById("nocursor").focus();
+//   // Schnitt-Zeiten berechnen
+//   const startTime = video.duration * startPercent;
+//   const endTime = video.duration * endPercent;
 
-  // Sicherstellen, dass keine Wiedergabe läuft
-  video.pause();
+//   // Sicherstellen, dass keine Wiedergabe läuft
+//   video.pause();
 
-  // Canvas zum Capturen des Videos
-  const canvas = document.createElement("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d");
-  let mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : ""; // leer = Default, aber meist WebM
+//   // Canvas zum Capturen des Videos
+//   const canvas = document.createElement("canvas");
+//   canvas.width = video.videoWidth;
+//   canvas.height = video.videoHeight;
+//   const ctx = canvas.getContext("2d");
+//   let mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : ""; // leer = Default, aber meist WebM
 
-  // Canvas streamen
-  const stream = canvas.captureStream();
-  const rec = new MediaRecorder(stream, { mimeType });
-  let chunks = [];
-  rec.ondataavailable = (e) => e.data && chunks.push(e.data);
+//   // Canvas streamen
+//   const stream = canvas.captureStream();
+//   const rec = new MediaRecorder(stream, { mimeType });
+//   let chunks = [];
+//   rec.ondataavailable = (e) => e.data && chunks.push(e.data);
 
-  // Trim Vorgang
-  video.currentTime = startTime;
-  await new Promise((res) => (video.onseeked = res));
+//   // Trim Vorgang
+//   video.currentTime = startTime;
+//   await new Promise((res) => (video.onseeked = res));
 
-  // Start Aufnahme
-  rec.start();
-  video.play();
+//   // Start Aufnahme
+//   rec.start();
+//   video.play();
 
-  // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
-  let animationId;
-  function drawFrame() {
-    if (video.currentTime >= endTime || video.ended) {
-      video.pause();
-      rec.stop();
-      cancelAnimationFrame(animationId);
-      return;
-    }
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    animationId = requestAnimationFrame(drawFrame);
-  }
-  drawFrame();
+//   // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
+//   let animationId;
+//   function drawFrame() {
+//     if (video.currentTime >= endTime || video.ended) {
+//       video.pause();
+//       rec.stop();
+//       cancelAnimationFrame(animationId);
+//       return;
+//     }
+//     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+//     animationId = requestAnimationFrame(drawFrame);
+//   }
+//   drawFrame();
 
-  // Nach Aufnahme: Download anbieten
-  rec.onstop = async () => {
-    const blob = new Blob(chunks, { type: "video/webm" });
-    const url = URL.createObjectURL(blob);
-    const base64 = await blobToBase64(blob);
-    videoElement.src = base64; // Update video source to trimmed video
-    document.getElementById("videoTrimContainer").classList.add("none");
-    modal.close();
-    const container = document.getElementById('preview-video');
-    const videos = container.querySelectorAll('video');
-    // Jedes Video pausieren
-    videos.forEach(video => {
-      video.play();
-    });
-  };
-};
+//   // Nach Aufnahme: Download anbieten
+//   rec.onstop = async () => {
+//     const blob = new Blob(chunks, { type: "video/webm" });
+//     const url = URL.createObjectURL(blob);
+//     const base64 = await blobToBase64(blob);
+//     videoElement.src = base64; // Update video source to trimmed video
+//     document.getElementById("videoTrimContainer").classList.add("none");
+//     modal.close();
+//     const container = document.getElementById('preview-video');
+//     const videos = container.querySelectorAll('video');
+//     // Jedes Video pausieren
+//     videos.forEach(video => {
+//       video.play();
+//     });
+//   };
+// };
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

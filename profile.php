@@ -69,7 +69,7 @@ checkAuth("unauthorized");
         <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span id="following_count" class="following_count"><em id="following">&nbsp;</em> Following</span> <span id="peer_count" class="peer_count"><em id="Peers">0</em> Peers</span> </div>
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
-      <div class="profile_edit_box"><a class="button btn-white edit-profile" href="edit_profile.php">Edit profile</a></div>
+      <div class="profile_edit_box"><a class="button btn-white edit-profile" href="profileSettings.php">Edit profile</a></div>
     </div>
     <!-- Load Posts Container -->
     <div id="allpost" class="list_all_post"> </div>

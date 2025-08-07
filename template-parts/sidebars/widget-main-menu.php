@@ -1,4 +1,4 @@
-<div class="widget">
+<div class="widget widget-margin-bottom">
     <div class="widget-inner widget-type-box widget-main-menu">
         <?php $currentPage = basename($_SERVER['PHP_SELF']); // e.g. "dashboard.php" or "profile.php"?>
         <ul class="menu">
@@ -22,8 +22,8 @@
                 </a>
             </li>
             <li
-                class="menu-item <?= ($currentPage === 'setting.php' ||  $currentPage === 'edit_profile.php') ? 'active' : '' ?>">
-                <a href="edit_profile.php">
+                class="menu-item <?= ($currentPage === 'setting.php' ||  $currentPage === 'profileSettings.php') ? 'active' : '' ?>">
+                <a href="profileSettings.php">
                     <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
                     Settings
                 </a>

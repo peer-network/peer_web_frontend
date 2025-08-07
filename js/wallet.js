@@ -2,7 +2,6 @@ let balance = null;
 let userOffset = 1;
 let isFetchingUsers = false;
 let hasMoreUsers = true;
-let isInvited = "";
 
 // getLiquiuditygetUser();
 dailyfree();
@@ -13,7 +12,9 @@ dailywin();
 dailypays();
 getUserInfo();
 
+
 async function getUserInfo() {
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -66,120 +67,121 @@ async function getUserInfo() {
   }
 }
 
-async function getLiquiudity() {
-  const accessToken = getCookie("authToken");
+// async function getLiquiudity() {
+//   const accessToken = getCookie("authToken");
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
+//   // Create headers
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
 
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query Balance {
-    balance {
-        status
-        ResponseCode
-        currentliquidity
-    }
-}`,
-  });
+//   // Define the GraphQL mutation with variables
+//   const graphql = JSON.stringify({
+//     query: `query Balance {
+//     balance {
+//         status
+//         ResponseCode
+//         currentliquidity
+//     }
+// }`,
+//   });
 
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
+//   // Define request options
+//   const requestOptions = {
+//     method: "POST",
+//     headers: headers,
+//     body: graphql,
+//     redirect: "follow",
+//   };
 
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
+//   try {
+//     // Send the request and handle the response
+//     const response = await fetch(GraphGL, requestOptions);
 
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
-    // Check for errors in GraphQL response
-    if (result.errors) throw new Error(result.errors[0].message);
-    return result.data.balance.currentliquidity;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
-}
+//     // Check for errors in response
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//     const result = await response.json();
+//     // Check for errors in GraphQL response
+//     if (result.errors) throw new Error(result.errors[0].message);
+//     return result.data.balance.currentliquidity;
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//     throw error;
+//   }
+// }
 
-async function currentliquidity() {
-  if (balance === null) balance = await getLiquiudity()
+// async function currentliquidity() {
+//   if (balance === null) balance = await getLiquiudity()
 
-  document.getElementById("token").innerText = balance;
-  const formatted = (balance * 0.1).toFixed(2).replace(".", ",") + " €";
-  document.getElementById("money").innerText = formatted;
+//   document.getElementById("token").innerText = balance;
+//   const formatted = (balance * 0.1).toFixed(2).replace(".", ",") + " €";
+//   document.getElementById("money").innerText = formatted;
 
-  return balance
-}
+//   return balance
+// }
 
-async function getDailyFreeStatus() {
-  const accessToken = getCookie("authToken");
+// async function getDailyFreeStatus() {
+//   const accessToken = getCookie("authToken");
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
+//   // Create headers
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
 
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query Dailyfreestatus {
-    getDailyFreeStatus {
-      status
-      ResponseCode
-      affectedRows {
-        name
-        used
-        available
-      }
-    }
-  }`,
-  });
+//   // Define the GraphQL mutation with variables
+//   const graphql = JSON.stringify({
+//     query: `query Dailyfreestatus {
+//     getDailyFreeStatus {
+//       status
+//       ResponseCode
+//       affectedRows {
+//         name
+//         used
+//         available
+//       }
+//     }
+//   }`,
+//   });
 
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
+//   // Define request options
+//   const requestOptions = {
+//     method: "POST",
+//     headers: headers,
+//     body: graphql,
+//     redirect: "follow",
+//   };
 
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
+//   try {
+//     // Send the request and handle the response
+//     const response = await fetch(GraphGL, requestOptions);
+//     const result = await response.json();
 
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    return result.data.getDailyFreeStatus.affectedRows;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
-}
-async function dailyfree() {
-  const result = await getDailyFreeStatus();
+//     // Check for errors in response
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//     if (result.errors) throw new Error(result.errors[0].message);
+//     return result.data.getDailyFreeStatus.affectedRows;
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//     throw error;
+//   }
+// }
+// async function dailyfree() {
+//   const result = await getDailyFreeStatus();
 
-  if (result !== null) {
-    result.forEach((entry) => {
-      document.getElementById(entry.name + "used").innerText = entry.used;
-      document.getElementById(entry.name + "available").innerText = entry.available;
-      const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
-      document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
-      // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
-    });
-    return result;
-  }
-}
+//   if (result !== null) {
+//     result.forEach((entry) => {
+//       document.getElementById(entry.name + "used").innerText = entry.used;
+//       document.getElementById(entry.name + "available").innerText = entry.available;
+//       const percentage = entry.available === 0 ? 0 : 100 - (entry.used / (entry.available + entry.used)) * 100;
+//       document.getElementById(entry.name + "Stat").style.setProperty("--progress", percentage + "%");
+//       // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
+//     });
+//     return result;
+//   }
+// }
+
 
 function nextmint() {
   const now = new Date();
@@ -783,12 +785,10 @@ function renderCheckoutScreen(user, amount) {
   transferBtn.innerHTML = `Transfer &rarr;`;
 
   transferBtn.onclick = async () => {
-    const totalAmount = calculateTotalWithFee(parseFloat(amount));
-
+    // const totalAmount = calculateTotalWithFee(parseFloat(amount));
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
       if (!confirmContinue) return;
-
       balance = await getLiquiudity();
       if (balance < totalAmount) {
         info("Still insufficient balance.");
@@ -800,8 +800,7 @@ function renderCheckoutScreen(user, amount) {
       // Show loader first
       renderLoaderScreen();
       const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
-      const res = await resolveTransfer(userId, totalAmount);
-
+      const res = await resolveTransfer(userId, amount);
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
       } else {
@@ -816,7 +815,6 @@ function renderCheckoutScreen(user, amount) {
   };
 
   actions.append(backBtn, transferBtn);
-
   // Final render
   wrapper.append(
     header,
