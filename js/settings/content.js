@@ -39,6 +39,8 @@ window.addEventListener('DOMContentLoaded', init);
 // checkbox event
 toggleCheckBox.addEventListener('click', async function () {
   let status, response = null;
+  const prevStatus = this.checked ? false : true;
+
   if (this.checked === true) {
     status = "MYGRANDMALIKES"
     response = await confirm(
@@ -48,7 +50,8 @@ toggleCheckBox.addEventListener('click', async function () {
       "reportedContentToggle",
       svg1
     );
-updateCheckBoxStatus(true);
+
+    updateCheckBoxStatus(true);
   } else {
     status = "MYGRANDMAHATES";
     response = await confirm(
@@ -59,7 +62,7 @@ updateCheckBoxStatus(true);
       svg1
     );
 
-updateCheckBoxStatus(false);
+    updateCheckBoxStatus(false);
   };
 
   if (response ?.button) {
@@ -75,9 +78,11 @@ updateCheckBoxStatus(false);
     } finally {
       if (loader) loader.classList.add("none");
     }
-  }
-
-
+    return
+  } 
+   
+  this.checked = prevStatus;
+  
 });
 
 returnToLogin.addEventListener("click", () => clearCacheAndSession());
@@ -131,19 +136,12 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
     } = result.data.updateUserPreferences;
 
     if (ResponseCode !== "11014") console.warn("Error Message:", userfriendlymsg(ResponseCode));
-
-    // return {
-    //   status,
-    //   ResponseCode,
-    //   affectedRows,
-    // };
-    return status
+    return status;
   } catch (error) {
     console.error("Error updating preferences:", error.message);
     throw error;
   }
 }
-
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
