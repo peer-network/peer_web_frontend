@@ -88,7 +88,7 @@ checkAuth("unauthorized");
                                     <textarea cols="40" rows="5" maxlength="5000" class="input-textarea"  id="biography"  name="profile-description" placeholder="Write a description to your profile..." ></textarea>
                                 </div>
                                 <div id="response_msg_bio" class="response_msg"></div>
-                                <div class="input-field transparent">
+                                <div class="input-field username-row transparent">
                                     <label>Username</label>
                                     <span>@<span  id="pusername">&nbsp;</span></span>
                                     <a href="#" id="changeusernamebtn">Change</a>

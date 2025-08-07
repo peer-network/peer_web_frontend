@@ -175,13 +175,22 @@
 }
 
 .modal-content {
-  background: rgb(37, 37, 37);
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  width: 500px;
-  position: relative;
-  box-shadow: none;
+	padding: 50px;
+	border-radius: 60px;
+	text-align: center;
+	width: auto;
+	position: relative;
+	box-shadow: none;
+}
+
+.modal-content svg {
+	margin-bottom: 30px;
+	width: 80px;
+	height: auto;
+}
+.modal-title {
+  font-weight: 700;
+  letter-spacing: 1.28px;
 }
 
 .modal-content .button-row {
@@ -241,97 +250,197 @@
 
 /******/
 /* Container */
+
 .setting-content .reported-content-btn {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #2c2c2c;
-  padding: 16px 24px;
-  border-radius: 999px;
-  max-width: 750px;
-  color: white;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color:var(--dark-inactive, #323232);
+	padding: 25px 30px;
+	border-radius: 100px;
+
 }
 
 /* Toggle wrapper */
 .switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 30px;
+	position: relative;
+	display: block;
+	width: 70px;
+	height: 35px;
 }
 
 /* Hide the checkbox */
 .switch input {
-  opacity: 0;
+ 
   width: 0;
   height: 0;
+  display: none;
 }
 
 /* Background */
 .switch > span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 10px;
+  background-color: var(--white, #fff);
   border-radius: 999px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   overflow: hidden;
 }
+.switch input:checked + span {
+	background-color: var(--blue, #0069FF);
+}
 
 /* Knob */
 .switch > span::before {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 20px;
-  height: 20px;
-  background-color: #3b82f6;
-  border-radius: 50%;
-  transition: transform 0.3s ease;
-  z-index: 1;
+	content: "";
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	background-color: var(--blue, #0069FF);
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+	z-index: 1;
 }
-
+.switch input:checked + span::before {
+	background-color: var(--white, #fff);
+}
 /* Labels */
 .switch .label-on,
 .switch .label-off {
-  position: absolute;
-  top: 7px;
-  font-size: 12px;
+  
   font-weight: 500;
-  color: black;
+  color:var(--black, #000);
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 0;
   pointer-events: none;
+  padding: 0 ;
+}
+.switch input:checked + span .label-on{
+  color: var(--white, #fff);
 }
 
 /* Default state: show "off" */
 .switch .label-off {
-  right: 8px;
+ 
   opacity: 1;
-  transform: translateX(0);
+  
 }
 
 .switch .label-on {
-  left: 8px;
+ 
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateX(0);
+  padding-right: 0;
 }
 
 /* Checked: move knob + show "on" */
 .switch input:checked + span::before {
-  transform: translateX(30px);
+  transform: translateX(calc(100% + 10px));
 }
 
 .switch input:checked + span .label-off {
-  opacity: 0;
-  transform: translateX(10px);
+	opacity: 0;
 }
 
 .switch input:checked + span .label-on {
   opacity: 1;
-  transform: translateX(0);
+ 
+}
+@media screen and (min-width: 2000px) {
+  .setting-layout .setting-menu ul li a{
+    line-height: 100px;
+  }
+  .setting-content .reported-content-btn {
+    padding: 25px 40px;
+    
+  }
+  .modal-content svg {
+      
+    width: 100px;
+    height: auto;
+  }
+  .switch {
+    
+    width: 120px;
+    height: 56px;
+  }
+  .switch > span::before {
+   
+    width: 40px;
+    height: 40px;
+    
+  }
+  .switch .label-on, .switch .label-off {
+    padding: 0 10px;
+  }
+  .switch input:checked + span::before {
+    transform: translateX(calc(100% + 20px));
+  }
+
+}
+
+@media screen and (min-width: 3000px) {
+  .setting-content .edit-profile .profile_picture img.profile-picture {
+    width: 300px;
+  }
+  .setting-content .edit-profile .profile_picture .cropContainer .online_status {
+   
+    right: 30px;
+    top: 20px;
+    width: 30px;
+    height: 30px;
+  }
+  .setting-content .input-field.transparent {
+    padding: 3rem 5rem;
+    border-radius: 80px;
+  }
+
+  .setting-content .input-field.username-row {
+    padding: 1rem 5rem;
+    border-radius: 100px;
+    line-height: 100px;
+  }
+  .setting-content .reported-content-btn {
+	
+    padding: 50px 80px;
+    
+  }
+  .modal-content {
+    padding: 80px;
+    border-radius: 100px;
+  }
+  .modal-title {
+    font-size: 64px;
+		font-size: clamp(2.5rem, 1rem + 1.2vw, 4rem);
+  }
+  .modal-message {
+    font-size: 45px;
+		font-size: clamp(1.875rem, 0.9375rem + 0.75vw, 2.8125rem);
+  }
+  .modal-content svg {
+   
+    width: 186px;
+  }
+  .switch {
+	  width: 200px;
+	  height: 90px;
+  }
+  .switch > span::before {
+   
+    width: 70px;
+    height: 70px;
+    
+  }
+  .switch .label-on, .switch .label-off {
+    padding: 0 30px;
+  }
+  .switch input:checked + span::before {
+    transform: translateX(calc(100% + 35px));
+  }
+  
+
 }
