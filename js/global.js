@@ -6,13 +6,15 @@ let likeCost = 0.3,
 
 // below variable used in wallet module
 // need to declare in global scope
+let storedUserInfo, balance = null;
 
-let storedUserInfo = null;
-
+///////////////////////////////
 document.addEventListener("DOMContentLoaded", () => {
   hello();
   getUser();
   dailyfree();
+  currentliquidity();
+  getUserInfo();
 
   window.addEventListener("online", updateOnlineStatus);
   window.addEventListener("offline", updateOnlineStatus);
@@ -215,21 +217,25 @@ async function getLiquiudity() {
     const result = await response.json();
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
-    return result.data.balance.currentliquidity;
+    balance = result.data.balance.currentliquidity; 
+    return balance;
   } catch (error) {
     console.error("Error:", error.message);
     throw error;
   }
 }
+
 async function currentliquidity() {
   const token = await getLiquiudity();
+  const tokenEl = document.getElementById("token");
 
-  if (token !== null) {
-    document.getElementById("token").innerText = token;
+  if (token !== null && tokenEl) {
+    tokenEl.innerText = token;
     const formatted = (token * 0.1).toFixed(2).replace(".", ",") + " €";
     document.getElementById("money").innerText = formatted;
   }
 }
+
 async function getDailyFreeStatus() {
   const accessToken = getCookie("authToken");
 
@@ -296,19 +302,43 @@ async function getDailyFreeStatus() {
   }
 }
 
-function calctimeAgo(datetime) {
-  const now = Date.now(); // Aktuelle Zeit in Millisekunden
-  const timestamp = new Date(adjustForDSTAndFormat(datetime)); // ISO-konforme Umwandlung
+// function calctimeAgo(datetime) {
+//   const now = Date.now(); // Aktuelle Zeit in Millisekunden
+//   const timestamp = new Date(adjustForDSTAndFormat(datetime)); // ISO-konforme Umwandlung
 
-  const elapsed = now - timestamp - 3600000; // Verstrichene Zeit in Millisekunden
+//   const elapsed = now - timestamp - 3600000; // Verstrichene Zeit in Millisekunden
+
+//   const seconds = Math.floor(elapsed / 1000);
+//   const minutes = Math.floor(seconds / 60);
+//   const hours = Math.floor(minutes / 60);
+//   const days = Math.floor(hours / 24);
+//   const weeks = Math.floor(days / 7);
+//   const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
+//   const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
+
+//   if (seconds < 60) return `${seconds} sec`;
+//   if (minutes < 60) return `${minutes} min`;
+//   if (hours < 24) return `${hours}h`;
+//   if (days < 7) return `${days}d`;
+//   if (weeks < 4) return `${weeks}w`;
+//   if (months < 12) return `${months}m`;
+//   return `${years} y`;
+// }
+function calctimeAgo(datetime) {
+  // Clean microseconds and treat as UTC
+  const cleaned = datetime.replace(/\.\d+$/, '') + 'Z';
+  const timestamp = new Date(cleaned);
+  const now = Date.now();
+
+  const elapsed = now - timestamp; // in ms
 
   const seconds = Math.floor(elapsed / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
   const weeks = Math.floor(days / 7);
-  const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
-  const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
 
   if (seconds < 60) return `${seconds} sec`;
   if (minutes < 60) return `${minutes} min`;
@@ -318,7 +348,6 @@ function calctimeAgo(datetime) {
   if (months < 12) return `${months}m`;
   return `${years} y`;
 }
-
 
 /*----------- Start : FeedbackPopup Logic --------------*/
 
