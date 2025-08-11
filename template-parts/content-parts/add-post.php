@@ -146,7 +146,7 @@
                                 <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                                 <span class="upload-label">Add short video</span>
                             </div>
-                            <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov, .webm" hidden />
+                            <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov" hidden />
                         </div>
 
                         <div id="drop-area-videoshort" class="drop-area none">
@@ -154,7 +154,7 @@
                                 <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                                 <span class="upload-label">Add long video</span>
                             </div>
-                            <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov, .webm" hidden />
+                            <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov" hidden />
                         </div>
 
                     </div>

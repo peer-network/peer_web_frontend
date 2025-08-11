@@ -50,11 +50,28 @@ cropImg.onload = () => {
     cropcanvas.height = 1500;
     croppedCanvas.width = 500;
     croppedCanvas.height = 500;
+
+
+    if (cropImg.width < cropcanvas.width && cropImg.height < cropcanvas.height) {
+        const scaleX = cropcanvas.width / cropImg.width;
+        const scaleY = cropcanvas.height / cropImg.height;
+        scale = Math.min(scaleX, scaleY);
+
+          // Center position after scaling
+        position = {
+          x: (cropcanvas.width - cropImg.width * scale) / 2,
+          y: (cropcanvas.height - cropImg.height * scale) / 2,
+        };
+      }else{
+        position = {
+          x: (cropcanvas.width - cropImg.width) / 2,
+          y: (cropcanvas.height - cropImg.height) / 2,
+        };
+
+      }
    
-    position = {
-      x: (cropcanvas.width - cropImg.width) / 2,
-      y: (cropcanvas.height - cropImg.height) / 2,
-    };
+    
+    
     
   }
 
@@ -148,8 +165,11 @@ function getCropRect() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, cropcanvas.width, cropcanvas.height);
+ 
+//console.log(scale);
 
+
+   ctx.clearRect(0, 0, cropcanvas.width, cropcanvas.height);
   ctx.drawImage(cropImg, position.x, position.y, cropImg.width * scale, cropImg.height * scale);
   
   const crop = getCropRect();
