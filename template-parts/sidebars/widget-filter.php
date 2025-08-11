@@ -50,7 +50,6 @@
                     <span class="section-title">Feed</span>
                     <span class="section-selected-label">All</span>
                 </div>
-                <hr class="section-divider">
             </button>
             <div class="filter-options feed-options" id="feed-options">
                 <div class="filterGroup-feed">

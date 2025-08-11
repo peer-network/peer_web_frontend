@@ -197,7 +197,10 @@ h3 {
   
   line-height: 1.2;
   font-weight: 400;
-  /* margin:0 0 22px 0; */
+  margin:0 0 22px 0;
+}
+.widget-head .widget-title {
+	margin: 0 !important;
 }
 h4 {
   font-size:22px;
@@ -655,7 +658,7 @@ grid-template-areas:
 "footer footer footer";
 grid-template-columns: 350px calc(100% - 700px) 350px;
 grid-template-rows: auto 1fr auto;
-
+transition: grid-template-columns 0.3s ease-in-out;
 
 }
 	
@@ -687,7 +690,7 @@ header.site-header h1{ margin:0;}
   overscroll-behavior: contain; height: 100vh;}
 .left-sidebar .inner-scroll,
 .right-sidebar .inner-scroll{overflow-y: scroll; scrollbar-width: none;  padding: 50px 30px;}
-
+.left-sidebar .inner-scroll.for-filters {display: flex; flex-direction: column; height: 100%; justify-content: space-between;}
 main.site-main {  grid-area: main; padding-top:50px;}
 footer {grid-area: footer;}
 
@@ -752,6 +755,44 @@ footer {grid-area: footer;}
 	background-color: var(--bg-filter);
 }
 
+.widget .collapse-filters {
+	padding: 20px;
+	margin: 0;
+	line-height: 0;
+	width: 100%;
+	justify-content: space-between;
+	display: inline-flex;
+	align-items: center;
+}
+
+.widget button[aria-controls].collapsed {
+  display: block;
+}
+
+.widget button[aria-controls].collapsed .section-title {
+  display: none;
+}
+
+.widget button[aria-controls].collapsed .filter-icon-preview {
+  display: none;
+}
+
+.widget button[aria-controls].collapsed .section-selected-label {
+  display: none;
+}
+
+.widget button[aria-controls].collapsed .sort.section-arrow {
+  display: none;
+}
+
+.widget button[aria-controls].collapsed .content-options.open {
+  display: none;
+}
+
+.widget .collapse-filters:hover img {
+	filter: brightness(0) saturate(100%) invert(0);
+}
+
 .widget .filter-section-header {
 	padding: 20px;
 	margin: 0;
@@ -773,6 +814,20 @@ footer {grid-area: footer;}
   background-color: var(--bg-filter) !important;
   border-color: transparent !important;
   box-shadow: none;
+}
+
+.section-title,
+.filter-icon-preview,
+.section-selected-label,
+.sort.section-arrow,
+.widget-title,
+.dashboard_h1,
+.collapse_btn {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.widget-title {
+  white-space: nowrap;
 }
 
 .widget .filter-options {
