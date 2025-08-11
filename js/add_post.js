@@ -1464,6 +1464,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
+    console.log(uploadtype)
     shortid = id.substring(lastDashIndex + 1);
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
     ErrorCont.innerHTML = "";
@@ -1492,22 +1493,23 @@ document.addEventListener("DOMContentLoaded", () => {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
       // }
-
       // Restrict both video/webm and audio/webm
-      if (file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm")) {
-        ErrorCont.textContent = "WEBM files are not supported. Please upload a different format.";
-        Merror("Error", "WEBM files are not supported. Please upload a different format.");
-        return
-      }
-
+ 
       previewItem = "";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
-
+      
       if (uploadtype === "audio") {
-        if (id.includes("audiobackground")) {
+        //type check of file in case of video
+        if(file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm") || file.type.toLowerCase().indexOf("video") !== -1) {
+           ErrorCont.textContent = "WEBM files are not supported. Please upload a different format.";
+          Merror("Error", "WEBM files are not supported. Please upload a different format.");
+          modal.close();
+          return
+        }
 
+        if (id.includes("audiobackground")) {
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1524,21 +1526,17 @@ document.addEventListener("DOMContentLoaded", () => {
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">
-
-
           <div class="audio_player_con" ><div class="time-info" >
           <span id="current-time">0:00</span> / <span id="duration">0:00</span>
         </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
-
           const insertAudioPosition = document.getElementById("audio_upload_block");
           insertAudioPosition.innerHTML = ""; // Removes any existing children
           insertAudioPosition.appendChild(previewItem);
-
           const dropareaaudio = document.getElementById("drop-area-audio");
           dropareaaudio.classList.add("none");
         }
-
-      } else if (uploadtype === "image") {
+      } 
+      else if (uploadtype === "image") {
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
         previewItem.innerHTML = `
@@ -1576,16 +1574,14 @@ document.addEventListener("DOMContentLoaded", () => {
           const insertPosition = document.getElementById("drop-area-videocover");
           insertPosition.insertAdjacentElement("afterend", previewItem);
           document.getElementById("drop-area-videocover").classList.add("none");
-        } else {
-
+        } 
+        else {
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
-
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-         
           <span class="editVideo" >
             <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
                 <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
@@ -1598,7 +1594,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (id.includes("short")) {
             const insertPosition = document.getElementById("drop-area-videoshort");
             insertPosition.insertAdjacentElement("afterend", previewItem);
-
             document.getElementById("drop-area-videoshort").classList.add("none");
           } else {
             const insertPosition = document.getElementById("drop-area-videolong");
@@ -1620,7 +1615,6 @@ document.addEventListener("DOMContentLoaded", () => {
         element = previewItem.querySelector("img.create-img");
         base64ImagesMap.set(file.name, base64);
 
-
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
@@ -1628,19 +1622,18 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         base64ImagesMap.set(file.name, base64);
-        element.addEventListener("loadedmetadata", async () => {
+        element?.addEventListener("loadedmetadata", async () => {
           generateThumbnails(file.name);
-
-        }, {
+        }, 
+        {
           once: true
         });
-
       }
 
       element.src = base64;
-      element.classList.remove("none");
-      element.nextElementSibling ?.remove();
-      element.nextElementSibling ?.classList.remove("none");
+      element?.classList.remove("none");
+      element?.nextElementSibling ?.remove();
+      element?.nextElementSibling ?.classList.remove("none");
       if (type === "audio") {
         //initAudioplayer(file.name, base64);
         initAudioplayer("audio_upload_block", base64);
@@ -1656,13 +1649,15 @@ document.addEventListener("DOMContentLoaded", () => {
             dropareaaudio.classList.remove("none");
           });
         }
-
-      } else if (type === "video") {
+      } 
+      else if (type === "video") {
         element.autoplay = true;
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
-    }
+    } // end of for loop
+
+
     if (uploadtype === "audio") {
       const voiceRecordWrapper = document.getElementById("voice-record-wrapper");
       const preview_del_btn = voiceRecordWrapper.querySelector(".preview-item .deletePost");
