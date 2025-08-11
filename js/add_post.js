@@ -811,7 +811,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //  Priority: Use recorded audio if it exists and is blob
       if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
         const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-        console.log(base64)
+        // console.log(base64)
         if (base64) combinedBase64.push(base64);
       } else {
         //  Fallback: Use uploaded audio if no recorded audio found
@@ -1464,7 +1464,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
-    console.log(uploadtype)
+    // console.log(uploadtype)
     shortid = id.substring(lastDashIndex + 1);
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
     ErrorCont.innerHTML = "";
@@ -1499,7 +1499,6 @@ document.addEventListener("DOMContentLoaded", () => {
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
-      
       if (uploadtype === "audio") {
         //type check of file in case of video
         if(file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm") || file.type.toLowerCase().indexOf("video") !== -1) {
@@ -1822,7 +1821,7 @@ function handleEditVideo(event) {
   setTimeout(async () => {
     const video_id = previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
-    console.log(video_id);
+    // console.log(video_id);
     await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
   }, 800);
