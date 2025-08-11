@@ -46,6 +46,7 @@
         <section class="filter-section">
             <button type="button" class="feed filter-toggle filter-section-header" aria-expanded="false" aria-controls="feed-options">
                 <div class="filter-section-container">
+                    
                     <img src="svg/feed-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Feed</span>
                     <span class="section-selected-label">All</span>

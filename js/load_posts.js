@@ -71,40 +71,42 @@ document.addEventListener("DOMContentLoaded", () => {
       'button[aria-controls="time-options"], ' +
       'button[aria-controls="sort-options"]'
     );
-    const siteLayout = document.querySelector('.site_layout');
-    let isCollapsed = false;
+    if(collapseBtn){
+      const siteLayout = document.querySelector('.site_layout');
+      let isCollapsed = false;
 
-    function setCollapsedState(collapsed) {
-      isCollapsed = collapsed;
+      function setCollapsedState(collapsed) {
+        isCollapsed = collapsed;
 
-      if (collapsed) {
-        siteLayout.classList.add('collapsed');
-        collapsibleBtns.forEach(btn => btn.classList.add('collapsed'));
-        document.querySelectorAll('.filter-options.open').forEach(sec => sec.classList.remove('open'));
-      } else {
-        siteLayout.classList.remove('collapsed');
-        collapsibleBtns.forEach(btn => btn.classList.remove('collapsed'));
+        if (collapsed) {
+          siteLayout.classList.add('collapsed');
+          collapsibleBtns.forEach(btn => btn.classList.add('collapsed'));
+          document.querySelectorAll('.filter-options.open').forEach(sec => sec.classList.remove('open'));
+        } else {
+          siteLayout.classList.remove('collapsed');
+          collapsibleBtns.forEach(btn => btn.classList.remove('collapsed'));
+        }
+
+        localStorage.setItem('isFiltersCollapsed', JSON.stringify(isCollapsed));
       }
 
-      localStorage.setItem('isFiltersCollapsed', JSON.stringify(isCollapsed));
-    }
+      const savedState = localStorage.getItem('isFiltersCollapsed');
+      if (savedState !== null) {
+        setCollapsedState(JSON.parse(savedState));
+      }
 
-    const savedState = localStorage.getItem('isFiltersCollapsed');
-    if (savedState !== null) {
-      setCollapsedState(JSON.parse(savedState));
-    }
-
-    collapseBtn.addEventListener('click', () => {
-      setCollapsedState(!isCollapsed);
-    });
-
-    collapsibleBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (isCollapsed) {
-          setCollapsedState(false);
-        }
+      collapseBtn.addEventListener('click', () => {
+        setCollapsedState(!isCollapsed);
       });
-    });
+
+      collapsibleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (isCollapsed) {
+            setCollapsedState(false);
+          }
+        });
+      });
+    }
   }
 
   initCollapseViewToggle();
@@ -215,9 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const img = document.createElement("img");
         img.src = iconSrc;
         img.classList.add("filter-icon-preview");
-        img.style.width = "20px";
-        img.style.height = "20px";
-        img.style.objectFit = "contain";
+        
         container.appendChild(img);
       }
     });
