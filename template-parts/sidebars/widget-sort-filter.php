@@ -11,7 +11,7 @@
                             <img src="svg/most-icon.svg" alt="" class="most-icon section-icon">
                             <span class="section-title">Most...</span>
                         </div>
-                        <img src="svg/content-arrow.svg" alt="" class="section-arrow">
+                        <img src="svg/content-arrow.svg" alt="" class="sort section-arrow">
                     </button>
                     <div class="filter-options content-options" id="sort-options">
                         <div class="filterGroup">

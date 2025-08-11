@@ -4,13 +4,13 @@
         <ul class="menu">
             <li class="menu-item <?= ($currentPage === 'dashboard.php') ? 'active' : '' ?>">
                 <a href="dashboard.php">
-                    <img class="icon" src="svg/icon-dashboard.svg" alt="dashboard" />
+                    <img class="icon" src="svg/Home.svg" alt="dashboard" />
                     Dashboard
                 </a>
             </li>
             <li class="menu-item <?= ($currentPage === 'chat.php') ? 'active' : '' ?>">
                 <a href="chat.php">
-                    <img class="icon" src="svg/icon-messages.svg" alt="Chat" />
+                    <img class="icon" src="svg/chat-icon-update.svg" alt="Chat" />
                     Chats
                     <span class="notification-badge">8</span>
                 </a>
@@ -32,6 +32,12 @@
                 <a href="#">
                     <img class="icon" src="svg/qmark.svg" alt="network" />
                     How Peer Works
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <img class="icon" src="svg/invite-friend-icon.svg" alt="network" />
+                    Invite a friend
                 </a>
             </li>
         </ul>

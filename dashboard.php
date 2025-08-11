@@ -55,15 +55,17 @@ checkAuth("unauthorized");
     <div id="dashboard" class="site_layout">
         <header class="site-header header-dashboard">
             <img class="logo" src="svg/Home.svg" alt="Peer Network">
-            <h1 id="h1">Dashboard</h1>
+            <h1 class="dashboard_h1" id="h1">Dashboard</h1>
         </header>
 
         <aside class="left-sidebar left-sidebar-dashboard">
-            <div class="inner-scroll">
+            <div class="inner-scroll for-filters">
                 <!-- Load sidebar widgets -->
-                <?php require_once('./template-parts/sidebars/widget-filter.php'); ?>
-                <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
-
+                 <div class="inner-scroll-filters">
+                    <?php require_once('./template-parts/sidebars/widget-filter.php'); ?>
+                    <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
+                </div>
+                <?php require_once('./template-parts/sidebars/widget-collapse-filters.php'); ?>
             </div>
         </aside>
         <main class="site-main site-main-dashboard">
