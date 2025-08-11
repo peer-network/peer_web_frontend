@@ -2021,3 +2021,23 @@
     padding-left: 39px;
   }
 }
+#videoPos{
+  position: absolute;
+  left: 0;
+  width: 2px;
+  height: 100px;
+  background-color: blue;
+  animation: blinking .7s infinite;
+}
+
+@keyframes blinking {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
