@@ -1499,19 +1499,17 @@ document.addEventListener("DOMContentLoaded", () => {
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
-
+      
       if (uploadtype === "audio") {
-         console.log('file type ', file.type)
         //type check of file in case of video
-        if(file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm") || file.name.toLowerCase().lastIndexOf("video")) {
+        if(file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm") || file.type.toLowerCase().indexOf("video") !== -1) {
            ErrorCont.textContent = "WEBM files are not supported. Please upload a different format.";
           Merror("Error", "WEBM files are not supported. Please upload a different format.");
-          modal.close ();
+          modal.close();
           return
         }
 
         if (id.includes("audiobackground")) {
-
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1531,11 +1529,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="audio_player_con" ><div class="time-info" >
           <span id="current-time">0:00</span> / <span id="duration">0:00</span>
         </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
-
           const insertAudioPosition = document.getElementById("audio_upload_block");
           insertAudioPosition.innerHTML = ""; // Removes any existing children
           insertAudioPosition.appendChild(previewItem);
-
           const dropareaaudio = document.getElementById("drop-area-audio");
           dropareaaudio.classList.add("none");
         }
