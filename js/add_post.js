@@ -1511,8 +1511,6 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.showModal();
     const types = ["video", "audio", "image", "file-input-audio"];
     const uploadtype = types.find((wort) => id.includes(wort));
-      console.log("uploadtype ", uploadtype)
-  return false
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
     const ErrorCont =document.querySelector("#preview-" + uploadtype + " .response_msg");
