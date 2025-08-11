@@ -661,6 +661,10 @@ grid-template-rows: auto 1fr auto;
 transition: grid-template-columns 0.3s ease-in-out;
 
 }
+
+.site_layout.collapsed {
+  grid-template-columns: 190px calc(100% - 540px) 350px;
+}
 	
 header.site-header {
 	grid-area: header;
@@ -674,7 +678,6 @@ header.site-header {
 	align-items: center;
 	
 	gap: 1rem;
-	background-color: var(--background-color);
   	z-index: 1;
 
 }

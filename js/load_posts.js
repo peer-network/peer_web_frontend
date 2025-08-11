@@ -66,84 +66,25 @@ document.addEventListener("DOMContentLoaded", () => {
   function initCollapseViewToggle() {
     const collapseBtn = document.querySelector('.collapse-filters');
     const collapsibleBtns = document.querySelectorAll(
-        'button[aria-controls="content-options"], ' +
-        'button[aria-controls="feed-options"], ' +
-        'button[aria-controls="time-options"], ' +
-        'button[aria-controls="sort-options"]'
-    );    
-
-    const section = document.querySelectorAll(".filter-options");
+      'button[aria-controls="content-options"], ' +
+      'button[aria-controls="feed-options"], ' +
+      'button[aria-controls="time-options"], ' +
+      'button[aria-controls="sort-options"]'
+    );
+    const siteLayout = document.querySelector('.site_layout');
     let isCollapsed = false;
 
-    const hideElements = (elements) => {
-      elements.forEach(el => {
-        if (el) {
-          el.style.opacity = '0';
-          el.style.pointerEvents = 'none';
-        }
-      });
-    };
-
-    const showElements = (elements) => {
-      elements.forEach(el => {
-        if (el) {
-          el.style.opacity = '1';
-          el.style.pointerEvents = 'auto';
-        }
-      });
-    };
-
-    function addNodeList(arr, nodeList) {
-      if (nodeList && nodeList.length) nodeList.forEach(item => arr.push(item));
-    }
-
     function setCollapsedState(collapsed) {
-      const titlesToToggle = [];
-      collapsibleBtns.forEach(btn => {
-        
-        const title = btn.querySelector('.section-title');
-        const filter_preview = btn.querySelector('.filter-icon-preview');
-        const selected_label = btn.querySelector('.section-selected-label');
-        const filter_arrows = btn.querySelector('.sort.section-arrow');
-        const siteLayout = document.querySelector('.site_layout');
-        const widgetTitle = document.querySelectorAll('.widget-title');
-        const collapsedBtn = document.querySelector('.collapse_btn');
-        const h1 = document.querySelector('.dashboard_h1');
-        titlesToToggle.push(title, collapsedBtn, h1,  filter_preview, selected_label, filter_arrows);
-        addNodeList(titlesToToggle, widgetTitle);
-
-        if (collapsed) {
-          btn.classList.add('collapsed');
-          section.forEach(sec => sec.classList.remove('open'));
-          hideElements(titlesToToggle);
-          if (title) title.style.display = 'none';
-          if (filter_preview) filter_preview.style.display = 'none';
-          if (selected_label) selected_label.style.display = 'none';
-          if (filter_arrows) filter_arrows.style.display = 'none';
-          if (widgetTitle) widgetTitle.forEach(title => title.style.display = 'none');
-          if (collapsedBtn) collapsedBtn.style.display = 'none';
-          if (h1) h1.style.display = 'none';
-          if (siteLayout) {
-            siteLayout.style.gridTemplateColumns = '130px calc(100% - 480px) 350px';
-          }
-        } else {
-          btn.classList.remove('collapsed');
-          if (title) title.style.display = '';
-          if (filter_preview) filter_preview.style.display = '';
-          if (selected_label) selected_label.style.display = '';
-          if (filter_arrows) filter_arrows.style.display = '';
-          if (widgetTitle) widgetTitle.forEach(title => title.style.display = '');
-          if (collapsedBtn) collapsedBtn.style.display = '';
-          if (h1) h1.style.display = '';
-          if (siteLayout) {
-            siteLayout.style.gridTemplateColumns = '350px calc(100% - 700px) 350px';
-            setTimeout(() => { showElements(titlesToToggle); }, 300);
-          }
-        }
-
-      });
-
       isCollapsed = collapsed;
+
+      if (collapsed) {
+        siteLayout.classList.add('collapsed');
+        collapsibleBtns.forEach(btn => btn.classList.add('collapsed'));
+        document.querySelectorAll('.filter-options.open').forEach(sec => sec.classList.remove('open'));
+      } else {
+        siteLayout.classList.remove('collapsed');
+        collapsibleBtns.forEach(btn => btn.classList.remove('collapsed'));
+      }
 
       localStorage.setItem('isFiltersCollapsed', JSON.stringify(isCollapsed));
     }
@@ -153,12 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
       setCollapsedState(JSON.parse(savedState));
     }
 
-    // Collapse button toggle
     collapseBtn.addEventListener('click', () => {
       setCollapsedState(!isCollapsed);
     });
 
-    // Restore on click of any of the filter buttons
     collapsibleBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         if (isCollapsed) {
@@ -167,7 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
   initCollapseViewToggle();
+
 
 
   function initFilterToggles(className = 'filter-toggle') {
