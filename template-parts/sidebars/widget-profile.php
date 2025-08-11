@@ -19,13 +19,17 @@
 
                 <!-- Statistiken -->
                 <div class="stats">
-                    <div class="stat">
+                    <div class="none stat">
                         <span id="userPosts">&nbsp;</span>
                         <p>Posts</p>
                     </div>
                     <div class="stat">
                         <span id="followers">&nbsp;</span>
                         <p>Followers</p>
+                    </div>
+                    <div class="stat">
+                        <span id="Peers">&nbsp;</span>
+                        <p>Peers</p>
                     </div>
                     <div class="stat">
                         <span id="following">&nbsp;</span>
