@@ -28,7 +28,7 @@ function createModal({
     modal.innerHTML = `
       <div class="modal-content ${type}">
         <span class="modal-close">&times;</span>
-        <span class="modal-icon">${svg}</span>
+        <span class="modal-icon">${(svg === null ? ""  : svg)}</span>
         <h2 class="modal-title xxl_font_size">${title}</h2>
         <p class="modal-message xl_font_size">${message}</p>
         ${checkboxHTML}
