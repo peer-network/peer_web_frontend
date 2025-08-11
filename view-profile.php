@@ -51,7 +51,7 @@ checkAuth("unauthorized");
           <?php require_once ('./template-parts/sidebars/widget-filter.php'); ?>
           <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
         </div>
-        <?php require_once('./template-parts/sidebars/widget-collapse-filters.php'); ?>
+        <?php require_once('./template-parts/sidebars/widget-collapse-button.php'); ?>
     </div>
   </aside>
   <main class="site-main site-main-profile">
