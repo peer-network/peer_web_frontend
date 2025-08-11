@@ -166,9 +166,9 @@
                 <div class="video-trim-wrapper">
                     <video id="videoTrim"></video>
                     <div id="videoTimeline">
-
-
+                        
                     </div>
+                    <span id="videoPos"></span>
                     <div id="overlay-left" class="trim-overlay"></div>
                     <div id="overlay-right" class="trim-overlay"></div>
                     <!-- Trim window -->
@@ -176,12 +176,16 @@
                         <div id="handle-left" class="trim-handle"></div>
                         <div style="flex:1"></div>
                         <div id="handle-right" class="trim-handle"></div>
+                        
                     </div>
                 </div>
                 <div id="trimButtons">
                     <span class="button btn-transparent" id="trimQuit">Back</span>
+                    <span id="video_druration"></span>
+                    <span id="video_MB"></span>
                     <span class="button btn-blue" id="trimBtn">Save</span>
                 </div>
+                
             </div>
             <div id="crop-container" class="none">
                 <div class="crop-container-inner">
