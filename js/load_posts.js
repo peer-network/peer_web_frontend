@@ -1,11 +1,6 @@
 // :TODO VIEWS
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
-
-
   const everything = document.getElementById("everything");
   if (everything) {
     everything.addEventListener("click", () => {
@@ -20,10 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelTimeout();
      
     });
-  }
-
-
-  
+  }  
 
   const addComment = document.getElementById("addComment");
   if (addComment) {
@@ -627,7 +619,6 @@ function commentToDom(c, append = true) {
       
       const time_ago = document.createElement("span");
       time_ago.classList.add("timeAgo");
-      console.log('objekt.createdat ', objekt.createdat)
       time_ago.textContent = calctimeAgo(objekt.createdat);
       title.appendChild(time_ago);
 
