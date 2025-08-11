@@ -42,15 +42,17 @@ checkAuth("unauthorized");
 <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
 <div id="profile" class="site_layout">
   <header class="site-header header-profile"> <img class="logo" src="svg/Home.svg" alt="Peer Network">
-    <h1 id="h1">Profile</h1>
+    <h1 class="dashboard_h1" id="h1">Profile</h1>
   </header>
   <aside class="left-sidebar left-sidebar-profile"> 
-  <div class="inner-scroll">
-        <!-- Load sidebar widgets -->
-        
-        <?php require_once ('./template-parts/sidebars/widget-filter.php'); ?>
-        <?php require_once ('./template-parts/sidebars/widget-latest-interactions.php'); ?>
-  </div>
+    <div class="inner-scroll for-filters">
+        <div class="inner-scroll-filters">
+          <!-- Load sidebar widgets -->
+          <?php require_once ('./template-parts/sidebars/widget-filter.php'); ?>
+          <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
+        </div>
+        <?php require_once('./template-parts/sidebars/widget-collapse-filters.php'); ?>
+    </div>
   </aside>
   <main class="site-main site-main-profile">
    
