@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   collapsedView.style.display = "none";
 
   function previewPost(objekt) {
-	  currentPostData = objekt;    
+    currentPostData = objekt;
     const postContainer = document.getElementById("preview-post-container");
 
     const array = objekt.media || [];
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const containerleft = postContainer.querySelector(".viewpost-left");
     const containerright = postContainer.querySelector(".viewpost-right");
     const post_gallery = containerleft.querySelector(".post_gallery");
-    post_gallery.innerHTML="";
+    post_gallery.innerHTML = "";
     post_gallery.className = "post_gallery";
 
     post_gallery.querySelectorAll(".custom-audio, .audio-item, .audio_player_con, canvas, button").forEach(el => el.remove());
@@ -37,10 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const oldSlider = post_gallery.querySelector(".slide_item");
     if (oldSlider) oldSlider.remove();
 
-    const post_contentletf=containerleft.querySelector(".post_content");
-    if(post_contentletf)   post_contentletf.remove();
+    const post_contentletf = containerleft.querySelector(".post_content");
+    if (post_contentletf) post_contentletf.remove();
 
-    const post_contentright=containerright.querySelector(".post_content");
+    const post_contentright = containerright.querySelector(".post_content");
 
     if (post_contentright) {
       const title = post_contentright.querySelector(".post_title h2");
@@ -68,22 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.classList.add("active");
       }
     });
-    
-    
-    const profile_header_left=postContainer.querySelector(".profile-header-left");
-   
+
+
+    const profile_header_left = postContainer.querySelector(".profile-header-left");
+
     profile_header_left.addEventListener("click",
-        function handledisLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-        }  
-      );
-
+      function handledisLikeClick(event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    );
     /*--------END: Card profile Header  -------*/
-    
-    /*--------Card Post Title and Text  -------*/
-    
 
+    /*--------Card Post Title and Text  -------*/
     if (objekt.contenttype !== "text") {
       const cont_post_text = post_contentright.querySelector(".post_text");
       const cont_post_title = post_contentright.querySelector(".post_title h2");
@@ -101,21 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         cont_post_title.innerHTML = "";
       }
-      
+
       cont_post_time.innerHTML = "1 sec ago";
 
-      if (objekt.tags?.length > 0) {
+      if (objekt.tags ?.length > 0) {
         cont_post_tags.innerHTML = objekt.tags.map(tag => `#${tag}`).join(" ");
       } else {
         cont_post_tags.innerHTML = "";
       }
     }
-
-
-
-
     /*--------END : Card Post Title and Text  -------*/
-
 
     const makeSlider = (type) => {
       const sliderWrapper = document.createElement("div");
@@ -150,10 +142,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       };
 
-      return { sliderTrack, sliderThumbs, updateSlider };
+      return {
+        sliderTrack,
+        sliderThumbs,
+        updateSlider
+      };
     };
-
-    
 
     if (objekt.contenttype === "audio") {
       post_gallery.classList.add("audio");
@@ -170,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 1. Erzeuge das <div>-Element
         const audioContainer = document.createElement("div");
         //audioContainer.id = "audio-container"; // Setze die ID
-         audioContainer.classList.add("audio-item");
+        audioContainer.classList.add("audio-item");
 
         if (objekt.cover) {
           const cover = objekt.cover;
@@ -210,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         audio_player.appendChild(timeinfo);
         audio_player.appendChild(canvas);
         audio_player.appendChild(button);
-        
+
         audioContainer.appendChild(audio_player);
         // audioContainer.appendChild(audio);
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
@@ -220,107 +214,115 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else if (objekt.contenttype === "video") {
       post_gallery.className = "post_gallery video";
-    if (array.length > 1) post_gallery.classList.add("multi");
+      if (array.length > 1) post_gallery.classList.add("multi");
 
-    const { sliderTrack, sliderThumbs, updateSlider } = makeSlider("video");
+      const {
+        sliderTrack,
+        sliderThumbs,
+        updateSlider
+      } = makeSlider("video");
 
-    array.forEach((media, index) => {
-      const slide = document.createElement("div");
-      slide.className = "slide_item";
+      array.forEach((media, index) => {
+        const slide = document.createElement("div");
+        slide.className = "slide_item";
 
-      const video = document.createElement("video");
-      video.src = media;
-      video.controls = true;
-      video.loop = true;
-      video.autoplay = index === 0;
-      video.muted = false;
-      video.className = "custom-video";
+        const video = document.createElement("video");
+        video.src = media;
+        video.controls = true;
+        video.loop = true;
+        video.autoplay = index === 0;
+        video.muted = false;
+        video.className = "custom-video";
 
-      slide.appendChild(video);
-      sliderTrack.appendChild(slide);
+        slide.appendChild(video);
+        sliderTrack.appendChild(slide);
 
-      const thumb = document.createElement("div");
-      thumb.className = "timg";
-      thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
-      sliderThumbs.appendChild(thumb);
+        const thumb = document.createElement("div");
+        thumb.className = "timg";
+        thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
+        sliderThumbs.appendChild(thumb);
 
-      thumb.addEventListener("click", () => updateSlider(index));
-    });
+        thumb.addEventListener("click", () => updateSlider(index));
+      });
 
-    requestAnimationFrame(() => updateSlider(0));
+      requestAnimationFrame(() => updateSlider(0));
     } else if (objekt.contenttype === "text") {
-    // Clear the gallery area
-    post_gallery.innerHTML = "";
-    post_gallery.className = "post_gallery";
+      // Clear the gallery area
+      post_gallery.innerHTML = "";
+      post_gallery.className = "post_gallery";
 
-    // Create a fresh post_content container
-    const textContent = document.createElement("div");
-    textContent.className = "post_content";
+      // Create a fresh post_content container
+      const textContent = document.createElement("div");
+      textContent.className = "post_content";
 
-    // Create title
-    const titleEl = document.createElement("div");
-    titleEl.className = "post_title";
+      // Create title
+      const titleEl = document.createElement("div");
+      titleEl.className = "post_title";
 
-    const h2 = document.createElement("h2");
-    h2.className = "xxl_font_size";
-    h2.textContent = objekt.title || "";
+      const h2 = document.createElement("h2");
+      h2.className = "xxl_font_size";
+      h2.textContent = objekt.title || "";
 
-    const time = document.createElement("span");
-    time.className = "timeagao txt-color-gray";
-    time.textContent = "1 sec ago";
+      const time = document.createElement("span");
+      time.className = "timeagao txt-color-gray";
+      time.textContent = "1 sec ago";
 
-    titleEl.appendChild(h2);
-    titleEl.appendChild(time);
+      titleEl.appendChild(h2);
+      titleEl.appendChild(time);
 
-    // Create description
-    const textEl = document.createElement("div");
-    textEl.className = "post_text";
-    textEl.innerHTML = objekt.description || "";
+      // Create description
+      const textEl = document.createElement("div");
+      textEl.className = "post_text";
+      textEl.innerHTML = objekt.description || "";
 
-    // Create hashtags
-    const tagEl = document.createElement("div");
-    tagEl.className = "hashtags";
-    if (objekt.tags && objekt.tags.length) {
-      tagEl.innerHTML = objekt.tags.map(tag => `#${tag}`).join(" ");
+      // Create hashtags
+      const tagEl = document.createElement("div");
+      tagEl.className = "hashtags";
+      if (objekt.tags && objekt.tags.length) {
+        tagEl.innerHTML = objekt.tags.map(tag => `#${tag}`).join(" ");
+      }
+
+      textContent.appendChild(titleEl);
+      textContent.appendChild(textEl);
+      textContent.appendChild(tagEl);
+
+      containerleft.prepend(textContent);
+    } else {
+      post_gallery.className = "post_gallery images";
+      if (array.length > 1) post_gallery.classList.add("multi");
+
+      const {
+        sliderTrack,
+        sliderThumbs,
+        updateSlider
+      } = makeSlider("image");
+
+      array.forEach((media, index) => {
+        const slide = document.createElement("div");
+        slide.classList.add("slide_item");
+
+        const img = document.createElement("img");
+        img.src = media;
+        img.alt = "";
+
+        const zoom = document.createElement("span");
+        zoom.className = "zoom";
+        zoom.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+
+        slide.appendChild(img);
+        slide.appendChild(zoom);
+        sliderTrack.appendChild(slide);
+
+        const thumb = document.createElement("div");
+        thumb.className = "timg";
+        thumb.innerHTML = `<img src="${media}" alt="">`;
+        sliderThumbs.appendChild(thumb);
+
+        thumb.addEventListener("click", () => updateSlider(index));
+      });
+
+      requestAnimationFrame(() => updateSlider(0));
     }
-
-    textContent.appendChild(titleEl);
-    textContent.appendChild(textEl);
-    textContent.appendChild(tagEl);
-
-    containerleft.prepend(textContent);
-  }else {
-    post_gallery.className = "post_gallery images";
-    if (array.length > 1) post_gallery.classList.add("multi");
-
-    const { sliderTrack, sliderThumbs, updateSlider } = makeSlider("image");
-
-    array.forEach((media, index) => {
-      const slide = document.createElement("div");
-      slide.classList.add("slide_item");
-
-      const img = document.createElement("img");
-      img.src = media;
-      img.alt = "";
-
-      const zoom = document.createElement("span");
-      zoom.className = "zoom";
-      zoom.innerHTML = `<i class="fi fi-sr-expand"></i>`;
-
-      slide.appendChild(img);
-      slide.appendChild(zoom);
-      sliderTrack.appendChild(slide);
-
-      const thumb = document.createElement("div");
-      thumb.className = "timg";
-      thumb.innerHTML = `<img src="${media}" alt="">`;
-      sliderThumbs.appendChild(thumb);
-
-      thumb.addEventListener("click", () => updateSlider(index));
-    });
-
-    requestAnimationFrame(() => updateSlider(0));
-  }
 
   }
 
@@ -399,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
         slide.appendChild(video);
 
         // Cover overlay
-        if (objekt.cover?.[index]) {
+        if (objekt.cover ?. [index]) {
           const img = document.createElement("img");
           img.classList.add("cover");
           img.src = objekt.cover[index];
@@ -418,7 +420,9 @@ document.addEventListener("DOMContentLoaded", () => {
           if (videoCover) videoCover.classList.remove("none");
 
           const videos = this.querySelectorAll("video");
-          videos.forEach(vid => { if (!vid.paused) vid.pause(); });
+          videos.forEach(vid => {
+            if (!vid.paused) vid.pause();
+          });
         });
 
         let postvideoplayerDiv = inhaltDiv.querySelector(".video-player");
@@ -443,7 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const ratio = document.createElement("span");
         ratio.classList.add("video-ratio", `video-ratio-${index}`);
-        if (objekt.options?.ratio === '16:9') {
+        if (objekt.options ?.ratio === '16:9') {
           ratio.textContent = 'Long';
           collapsedCard.classList.add("double-card");
         } else {
@@ -457,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
         audio.src = mediaURL;
         slide.appendChild(audio);
 
-        if (objekt.cover?.[index]) {
+        if (objekt.cover ?. [index]) {
           slide.style.backgroundImage = `url('${objekt.cover[index]}')`;
           slide.style.backgroundSize = "cover";
           slide.style.backgroundPosition = "center";
@@ -479,7 +483,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             inhaltDiv.appendChild(postaudioplayerDiv);
           }
-        } 
+        }
       }
 
       slider.appendChild(slide);
@@ -487,32 +491,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     postBox.appendChild(slider);
 
-      // Dots for image slides
-      if (contentType === "image" && hasMultiple) {
-        const postContent = inhaltDiv?.querySelector(".post-content");
-        if (postContent) {
-          const imageCounter = document.createElement("div");
-          imageCounter.classList.add("image_counter");
+    // Dots for image slides
+    if (contentType === "image" && hasMultiple) {
+      const postContent = inhaltDiv ?.querySelector(".post-content");
+      if (postContent) {
+        const imageCounter = document.createElement("div");
+        imageCounter.classList.add("image_counter");
 
-          mediaArray.forEach((_, i) => {
-            const span = document.createElement("span");
-            span.textContent = i + 1;
-            if (i === 0) span.classList.add("active");
-            span.addEventListener("click", () => switchSlide(i));
-            imageCounter.appendChild(span);
-          });
+        mediaArray.forEach((_, i) => {
+          const span = document.createElement("span");
+          span.textContent = i + 1;
+          if (i === 0) span.classList.add("active");
+          span.addEventListener("click", () => switchSlide(i));
+          imageCounter.appendChild(span);
+        });
 
-          inhaltDiv.insertBefore(imageCounter, postContent);
-        }
+        inhaltDiv.insertBefore(imageCounter, postContent);
       }
+    }
   }
 
   const previewSection = document.getElementById('previewSection');
   const addPostSection = document.getElementById('addPostSection');
 
   function resetPreview() {
-    previewSection.classList.add("none"); 
-    addPostSection.classList.remove("none"); 
+    previewSection.classList.add("none");
+    addPostSection.classList.remove("none");
   }
 
   const backToEditBtn = document.getElementById('backToEdit');
@@ -527,121 +531,103 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const sidebarTabs = document.querySelectorAll('.form-tab-js a');
   sidebarTabs.forEach(tab => {
-      tab.addEventListener('click', function (e) {
-          e.preventDefault();
+    tab.addEventListener('click', function (e) {
+      e.preventDefault();
 
-          // Hide preview, show add-post
-          previewSection.classList.add('none');
-          addPostSection.classList.remove('none');
+      // Hide preview, show add-post
+      previewSection.classList.add('none');
+      addPostSection.classList.remove('none');
 
-          // Optionally: toggle active class for UI
-          document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
-          this.closest('.form-tab-js').classList.add('active');
-      });
+      // Optionally: toggle active class for UI
+      document.querySelectorAll('.form-tab-js').forEach(item => item.classList.remove('active'));
+      this.closest('.form-tab-js').classList.add('active');
+    });
   });
 
-    
   /**********************************************************************/
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
     const post_type = event.target.getAttribute("data-post-type");
     const createPostError = document.getElementById("createPostError");
-
     const submitButton = document.getElementById("submitPost");
-
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
     //const tags = getTagHistory();
     const tags = Array.from(selectedContainer.querySelectorAll(".tag"))
-    .map(tag => tag.getAttribute("data-tag"));
+      .map(tag => tag.getAttribute("data-tag"));
 
-    
     createPostError.innerHTML = "";
-
     // Validation
     let hasError = false;
-
     let postMedia;
     let cover;
     let postDescription = "";
 
     switch (post_type) {
-      case "text":
-        {
-          // Convert to base64
-          const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-          const base64WithMime = [`data:text/plain;base64,${base64String}`];
+      case "text": {
+        // Convert to base64
+        const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+        const base64WithMime = [`data:text/plain;base64,${base64String}`];
 
-          postMedia = base64WithMime;
-        }
-        break;
-      case "image":
-        {
-          const imageWrappers = document.querySelectorAll(".create-img");
-          const combinedBase64 = Array.from(imageWrappers)
-            .map((img) => img.src)
-            .filter((src) => src.startsWith("data:image/"));
+        postMedia = base64WithMime;
+      }
+      break;
+    case "image": {
+      const imageWrappers = document.querySelectorAll(".create-img");
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src)
+        .filter((src) => src.startsWith("data:image/"));
 
-          postMedia = combinedBase64;
-          postDescription = description;
-        }
-        break;
-      case "audio":
-        {
-          let combinedBase64 = [];
-          const recordedAudio = document.getElementById("recorded-audio");
-          //  Priority: Use recorded audio if it exists and is blob
-          if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
-            const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-            if (base64) combinedBase64.push(base64);
-          } else {
-            //  Fallback: Use uploaded audio if no recorded audio found
-            const audioWrappers = document.querySelectorAll(".create-audio");
-            combinedBase64 = Array.from(audioWrappers)
-              .map((audio) => audio.src)
-              .filter((src) => src.startsWith("data:audio/"));
-          }
+      postMedia = combinedBase64;
+      postDescription = description;
+    }
+    break;
+    case "audio": {
+      let combinedBase64 = [];
+      const recordedAudio = document.getElementById("recorded-audio");
+      //  Priority: Use recorded audio if it exists and is blob
+      if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
+        const base64 = await convertBlobUrlToBase64(recordedAudio.src);
+        if (base64) combinedBase64.push(base64);
+      } else {
+        //  Fallback: Use uploaded audio if no recorded audio found
+        const audioWrappers = document.querySelectorAll(".create-audio");
+        combinedBase64 = Array.from(audioWrappers)
+          .map((audio) => audio.src)
+          .filter((src) => src.startsWith("data:audio/"));
+      }
 
-          const coverWrapper = document.getElementById("audio-cover-image-preview");
-          const coverImg = coverWrapper.querySelector("img.create-img");
-          
-          const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+      const coverWrapper = document.getElementById("audio-cover-image-preview");
+      const coverImg = coverWrapper.querySelector("img.create-img");
+      const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+      cover = coverImg ? [coverImg.src] : [emptyBase64img];
+      postMedia = combinedBase64;
+      postDescription = description;
+    }
+    break;
+    case "video": {
+      const videoWrappers = document.querySelectorAll(".create-video");
+      const combinedBase64 = Array.from(videoWrappers)
+        .map((vid) => vid.src)
+        .filter((src) => src.startsWith("data:video/"));
 
-          cover = coverImg ? [coverImg.src] : [emptyBase64img];
-          
-          
-          postMedia = combinedBase64;
-          postDescription = description;
+      const coverWrapper = document.getElementById("preview-video");
+      const coverImg = coverWrapper.querySelector("img.create-img");
+      cover = coverImg ? [coverImg.src] : "";
 
-        }
-        break;
-      case "video":
-        {
-          const videoWrappers = document.querySelectorAll(".create-video");
-          const combinedBase64 = Array.from(videoWrappers)
-            .map((vid) => vid.src)
-            .filter((src) => src.startsWith("data:video/"));
-
-          const coverWrapper = document.getElementById("preview-video");
-          const coverImg = coverWrapper.querySelector("img.create-img");
-          cover = coverImg ? [coverImg.src] : "";
-
-          postMedia = combinedBase64;
-          postDescription = description;
-        }
-        break;
-      default:
-        console.warn("Unsupported post type:", post_type);
+      postMedia = combinedBase64;
+      postDescription = description;
+    }
+    break;
+    default:
+      console.warn("Unsupported post type:", post_type);
       break;
     }
- 
 
-    hasError=pre_post_form_validation(post_type,postMedia); // check form validation
+    hasError = pre_post_form_validation(post_type, postMedia); // check form validation
     // If any error, stop
     if (hasError) return;
-
     //console.log(postMedia);
-
     submitButton.disabled = true;
     try {
       const result = await sendCreatePost({
@@ -672,7 +658,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function pre_post_form_validation(post_type,postMedia){
+  function pre_post_form_validation(post_type, postMedia) {
     const tagErrorEl = document.getElementById("tagError");
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
@@ -687,34 +673,30 @@ document.addEventListener("DOMContentLoaded", () => {
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
-
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
-
     // Validation
     let hasError = false;
-
-     const title_char_count=setupCharCounter(titleEl);
+    const title_char_count = setupCharCounter(titleEl);
     if (!title) {
       titleErrorEl.textContent = "Title is required.";
       hasError = true;
     } else if (title.length < 2) {
       titleErrorEl.textContent = "Title must be at least 2 character.";
       hasError = true;
-    }else if(!title_char_count){
-       hasError = true;
-      
+    } else if (!title_char_count) {
+      hasError = true;
+
     }
-    const dec_char_count=setupCharCounter(descEl);
-    if (!description && post_type =='text') {
+    const dec_char_count = setupCharCounter(descEl);
+    if (!description && post_type == 'text') {
       descErrorEl.textContent = "Description is required.";
       hasError = true;
-    //} else if (description.length < 10) {
+      //} else if (description.length < 10) {
       //descErrorEl.textContent = "Description must be at least 10 characters.";
       //hasError = true;
-    }else if(!dec_char_count){
-       hasError = true;
-      
+    } else if (!dec_char_count) {
+      hasError = true;
     }
 
     /*if (tags.length === 0) {
@@ -723,190 +705,172 @@ document.addEventListener("DOMContentLoaded", () => {
     }*/
 
     switch (post_type) {
-      case "text":
-        {
-          if (postMedia.join("").length > 5 * 1024 * 1024) {
-            descErrorEl.textContent = "The text size exceeds the 5MB limit. Please upload a smaller text.";
-            hasError = true;
-          }
+      case "text": {
+        if (postMedia.join("").length > 5 * 1024 * 1024) {
+          descErrorEl.textContent = "The text size exceeds the 5MB limit. Please upload a smaller text.";
+          hasError = true;
         }
-        break;
-      case "image":
-        {
-          if (postMedia.length === 0) {
-            imgErrorEl.textContent = "Please select at least one image.";
+      }
+      break;
+    case "image": {
+      if (postMedia.length === 0) {
+        imgErrorEl.textContent = "Please select at least one image.";
+        hasError = true;
+      } else if (postMedia.join("").length > 5 * 1024 * 1024) {
+        imgErrorEl.textContent = "The image(s) size exceeds the 5MB limit. Please reduce the number or size of the images and try again.";
+        hasError = true;
+      } else if (postMedia.length > 20) {
+        imgErrorEl.textContent = "You can upload up to 20 images per post. Please remove some images and try again.";
+        hasError = true;
+      }
+    }
+    break;
 
-            hasError = true;
-          
-          } else if (postMedia.join("").length > 5 * 1024 * 1024) {
-            
-            imgErrorEl.textContent = "The image(s) size exceeds the 5MB limit. Please reduce the number or size of the images and try again.";
-            hasError = true;
-          } else if (postMedia.length > 20) {
-            imgErrorEl.textContent = "You can upload up to 20 images per post. Please remove some images and try again.";
+    case "audio": {
+      if (postMedia.length === 0) {
+        audioErrorEl.textContent = "Please upload audio or record audio.";
+        hasError = true;
+      } else if (postMedia.join("").length > 5 * 1024 * 1024) {
+        audioErrorEl.textContent = "The audio size exceeds the 5MB limit. Please reduce the  size of the audio and try again.";
+        hasError = true;
+      }
+    }
+    break;
 
-            hasError = true;
-          }
-        }
-        break;
-      case "audio":
-        {
-          if (postMedia.length === 0) {
-            audioErrorEl.textContent = "Please upload audio or record audio.";
+    case "video": {
+      if (postMedia.length === 0) {
+        videoErrorEl.textContent = "Please select video.";
+        hasError = true;
+      } else if (postMedia.join("").length > 5 * 1024 * 1024) {
+        videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
+        hasError = true;
+      }
+    }
+    break;
 
-            hasError = true;
-          } else if (postMedia.join("").length > 5 * 1024 * 1024) {
-            audioErrorEl.textContent = "The audio size exceeds the 5MB limit. Please reduce the  size of the audio and try again.";
-            hasError = true;
-          } 
-        }
-        break;
-      case "video":
-        {
-          if (postMedia.length === 0) {
-            videoErrorEl.textContent = "Please select video.";
-
-            hasError = true;
-          } else if (postMedia.join("").length > 5 * 1024 * 1024) {
-            videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
-            hasError = true;
-          }
-        }
-        break;
-      default:
-        console.warn("Unsupported post type:", post_type);
+    default:
+      console.warn("Unsupported post type:", post_type);
       break;
     }
-    
-    
+
     return hasError;
-
   }
-
-  
 
   document.getElementById("previewButton").addEventListener("click", async function () {
     const previewSection = document.getElementById('previewSection');
     const addPostSection = document.getElementById('addPostSection');
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
-
     const tags = getTagHistory();
     const form = document.getElementById("create_new_post");
     const post_type = form.getAttribute("data-post-type");
-
-    
     let hasError = false;
     let objekt;
 
     switch (post_type) {
-      case "text":
-        {
-          // Convert to base64
-          const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-          const base64WithMime = [`data:text/plain;base64,${base64String}`];
+      case "text": {
+        // Convert to base64
+        const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
+        const base64WithMime = [`data:text/plain;base64,${base64String}`];
 
-          media = base64WithMime;
+        media = base64WithMime;
 
-          objekt = {
-            id: "preview-text-post",  
-            contenttype: "text",
-            title,
-            description,
-            tags,
-            media: [],
-          };
+        objekt = {
+          id: "preview-text-post",
+          contenttype: "text",
+          title,
+          description,
+          tags,
+          media: [],
+        };
 
-        }
-        break;
-      case "image":
-        {
-          const imageContainer = document.getElementById("preview-image");
-          const imageWrappers = imageContainer.querySelectorAll(".create-img");
-          const combinedBase64 = Array.from(imageWrappers)
-            .map((img) => img.src)
-            .filter((src) => src.startsWith("data:image/"));
+      }
+      break;
+    case "image": {
+      const imageContainer = document.getElementById("preview-image");
+      const imageWrappers = imageContainer.querySelectorAll(".create-img");
+      const combinedBase64 = Array.from(imageWrappers)
+        .map((img) => img.src)
+        .filter((src) => src.startsWith("data:image/"));
 
-          media = combinedBase64;
+      media = combinedBase64;
 
-          cover = null;
-          
-          objekt = {
-            contenttype: "image",
-            title,
-            description,
-            tags,
-            media, 
-          };
-          
-        }
-        break;
-      case "audio":
-        {
-          let combinedBase64 = [];
-          const recordedAudio = document.getElementById("recorded-audio");
-          //  Priority: Use recorded audio if it exists and is blob
-          if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
-            const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-            console.log (base64)
-            if (base64) combinedBase64.push(base64);
-          } else {
-            //  Fallback: Use uploaded audio if no recorded audio found
-            const audioWrappers = document.querySelectorAll(".create-audio");
-            combinedBase64 = Array.from(audioWrappers)
-              .map((audio) => audio.src)
-              .filter((src) => src.startsWith("data:audio/"));
-          }
-          const coverWrapper = document.getElementById("audio-cover-image-preview");
-          const coverImg = coverWrapper.querySelector("img.create-img");
-          
-          const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+      cover = null;
 
-          cover = coverImg ? [coverImg.src] : [emptyBase64img];
+      objekt = {
+        contenttype: "image",
+        title,
+        description,
+        tags,
+        media,
+      };
+
+    }
+    break;
+    case "audio": {
+      let combinedBase64 = [];
+      const recordedAudio = document.getElementById("recorded-audio");
+      //  Priority: Use recorded audio if it exists and is blob
+      if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
+        const base64 = await convertBlobUrlToBase64(recordedAudio.src);
+        console.log(base64)
+        if (base64) combinedBase64.push(base64);
+      } else {
+        //  Fallback: Use uploaded audio if no recorded audio found
+        const audioWrappers = document.querySelectorAll(".create-audio");
+        combinedBase64 = Array.from(audioWrappers)
+          .map((audio) => audio.src)
+          .filter((src) => src.startsWith("data:audio/"));
+      }
+      const coverWrapper = document.getElementById("audio-cover-image-preview");
+      const coverImg = coverWrapper.querySelector("img.create-img");
+
+      const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
+      cover = coverImg ? [coverImg.src] : [emptyBase64img];
 
 
-          media = combinedBase64;
+      media = combinedBase64;
 
-          objekt = {
-            title,
-            description,
-            tags,
-            media,
-            cover,
-            contenttype: "audio",
-          };
-          
+      objekt = {
+        title,
+        description,
+        tags,
+        media,
+        cover,
+        contenttype: "audio",
+      };
 
-        }
-        break;
-      case "video":
-        {
-          const videoWrappers = document.querySelectorAll(".create-video");
-          const combinedBase64 = Array.from(videoWrappers)
-            .map((vid) => vid.src)
-            .filter((src) => src.startsWith("data:video/"));
 
-          media = combinedBase64;
+    }
+    break;
+    case "video": {
+      const videoWrappers = document.querySelectorAll(".create-video");
+      const combinedBase64 = Array.from(videoWrappers)
+        .map((vid) => vid.src)
+        .filter((src) => src.startsWith("data:video/"));
 
-          objekt = {
-            title,
-            description,
-            tags,
-            media,
-            contenttype: "video",
-          };
-        }
-        break;
-      default:
-        console.warn("Unsupported post type:", post_type);
+      media = combinedBase64;
+
+      objekt = {
+        title,
+        description,
+        tags,
+        media,
+        contenttype: "video",
+      };
+    }
+    break;
+    default:
+      console.warn("Unsupported post type:", post_type);
       break;
     }
 
-    hasError=pre_post_form_validation(post_type,media); // check form validation
+    hasError = pre_post_form_validation(post_type, media); // check form validation
     // If any error, stop
     if (hasError) return;
-	
-	 window.currentPreviewObjekt = objekt;
+
+    window.currentPreviewObjekt = objekt;
 
     addPostSection.classList.add('none');
     previewSection.classList.remove('none');
@@ -918,7 +882,7 @@ document.addEventListener("DOMContentLoaded", () => {
     collapsedView.style.display = "none";
 
     previewPost(objekt);
-	
+
   });
 
   document.querySelectorAll(".switch-btn").forEach(button => {
@@ -944,12 +908,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
-
- 
-    
-  
-
 
   document.querySelectorAll(".resettable-form").forEach((form) => {
     form.addEventListener("reset", function (event) {
@@ -1000,30 +958,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   /******************************************************************** */
-  
+
   descEl.addEventListener("keyup", (e) => {
     setupCharCounter(e.target);
   });
   titleEl.addEventListener("keyup", (e) => {
     setupCharCounter(e.target);
   });
-  function setupCharCounter(El){
+
+  function setupCharCounter(El) {
     let text = El.value;
-    
-    const Error= El.closest(".input-wrapper").querySelector(".response_msg");
-    Error.textContent="";
+
+    const Error = El.closest(".input-wrapper").querySelector(".response_msg");
+    Error.textContent = "";
     const char_count = El.closest(".input-wrapper").querySelector("span.char-counter .char_count");
     let char_limit = El.closest(".input-wrapper").querySelector("span.char-counter .char_limit").textContent;
 
-    char_limit =char_limit *1;
+    char_limit = char_limit * 1;
     //console.log(char_limit);
     char_count.textContent = text.length;
     if (text.length > char_limit) {
-      Error.textContent="Char Maximum length exceeded!";
+      Error.textContent = "Char Maximum length exceeded!";
       //text = text.substr(0, char_limit);
       //descEl.value = text;
-        return false;
-    }else{
+      return false;
+    } else {
       return true;
     }
   }
@@ -1180,7 +1139,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return tag;
   }
 
-  
   // ===== RENDER HISTORY =====
   function renderTagHistory() {
     const historyContainer = document.getElementById("tagHistoryContainer");
@@ -1188,17 +1146,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Get selected tags from DOM
     const selectedTags = new Set(
       Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Get suggested tags from DOM
     const suggestedTags = new Set(
       Array.from(tagContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim())
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim())
     );
 
     // Load history from localStorage
@@ -1308,9 +1266,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function getAllUsedTagsSet() {
     return new Set([
       ...Array.from(selectedContainer.children)
-        .map((el) => el.getAttribute("data-tag"))
-        .filter(Boolean)
-        .map((tag) => tag.toLowerCase().trim()),
+      .map((el) => el.getAttribute("data-tag"))
+      .filter(Boolean)
+      .map((tag) => tag.toLowerCase().trim()),
       ...getTagHistory().map((tag) => tag.toLowerCase().trim()),
     ]);
   }
@@ -1348,9 +1306,8 @@ document.addEventListener("DOMContentLoaded", () => {
           video: "Video Post",
           audio: "Music Post"
         };
-        header.textContent = labels[post_type] ;
+        header.textContent = labels[post_type];
       }
-
 
       // Clear text inputs when switching tabs
       const titleInput = document.getElementById("titleNotes");
@@ -1366,18 +1323,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tagSelected) tagSelected.innerHTML = "";
       if (charCount) charCount.textContent = "0";
       if (titleError) titleError.textContent = "";
-
-
       // Check if it's the audio form (music) and init
-      if (id === "preview-audio") initAudioEvents(); 
-
-
-     
+      if (id === "preview-audio") initAudioEvents();
       const char_limit = document.querySelector("#desc_limit_box .char_limit");
-      if (id === "preview-notes" ){
-        char_limit.textContent="20000";
-      }else{
-        char_limit.textContent="500";
+      if (id === "preview-notes") {
+        char_limit.textContent = "20000";
+      } else {
+        char_limit.textContent = "500";
       }
       setupCharCounter(descEl);
 
@@ -1427,8 +1379,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const failedSearches = new Set();
-  const zones = [
-    {
+  const zones = [{
       dropArea: document.getElementById("drop-area-image"),
       fileInput: document.getElementById("file-input-image"),
     },
@@ -1483,7 +1434,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Iteration über die Zonen
-  zones.forEach(({ dropArea, fileInput }) => {
+  zones.forEach(({
+    dropArea,
+    fileInput
+  }) => {
     // Click-Event für das Öffnen des Dateidialogs
     // if (dropArea) {
     //   dropArea.addEventListener("click", () => handleClick(fileInput));
@@ -1509,12 +1463,12 @@ document.addEventListener("DOMContentLoaded", () => {
   async function processFiles(files, id) {
     const modal = document.getElementById('videoloading');
     modal.showModal();
-    const types = ["video", "audio", "image", "file-input-audio"];
+    const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
     shortid = id.substring(lastDashIndex + 1);
-    const ErrorCont =document.querySelector("#preview-" + uploadtype + " .response_msg");
-    ErrorCont.innerHTML="";
+    const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
+    ErrorCont.innerHTML = "";
     let previewContainer;
     if (uploadtype === "image") {
       previewContainer = document.querySelector("#preview-" + uploadtype + " .preview-track");
@@ -1524,28 +1478,38 @@ document.addEventListener("DOMContentLoaded", () => {
     let previewItem;
     const maxSizeMB = 4 / 1.3; // Maximale Größe in MB mit umwandlung in base64 (/1.3)
     let size = 0;
-    
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       size += file.size;
       if (size > maxSizeMB * 1024 * 1024) {
-       // Merror("Error", "The file is too large. Please select a file(s) under 5MB.");
-       //ErrorCont.innerHTML="The file is too large. Please select a file(s) under 5MB.";
+        // Merror("Error", "The file is too large. Please select a file(s) under 5MB.");
+        //ErrorCont.innerHTML="The file is too large. Please select a file(s) under 5MB.";
         //return;
       }
     }
+
     for (let file of files) {
       // if (!file.type.startsWith("image/")) {
       //   info("Information", `${file.name} ist keine Bilddatei.`);
       //   return;
       // }
+
+      // Restrict both video/webm and audio/webm
+      if (file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm")) {
+        ErrorCont.textContent = "WEBM files are not supported. Please upload a different format.";
+        Merror("Error", "WEBM files are not supported. Please upload a different format.");
+        return
+      }
+
       previewItem = "";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
+
       if (uploadtype === "audio") {
         if (id.includes("audiobackground")) {
-          
+
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1553,13 +1517,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <img src="svg/edit.svg" class="editImage " alt="edit">
           <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
           const insertPosition = document.getElementById("audio-cover-image-preview");
-          
           insertPosition.innerHTML = ""; // Removes any existing children
           insertPosition.appendChild(previewItem); // Adds the new one
-          
-        }else{
-        previewItem.classList.add("audio-item");
-        previewItem.innerHTML = `
+        } else {
+          previewItem.classList.add("audio-item");
+          previewItem.innerHTML = `
         <p>${file.name}</p>        
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
@@ -1570,14 +1532,14 @@ document.addEventListener("DOMContentLoaded", () => {
           <span id="current-time">0:00</span> / <span id="duration">0:00</span>
         </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
 
-        const insertAudioPosition = document.getElementById("audio_upload_block");
-        insertAudioPosition.innerHTML = ""; // Removes any existing children
-        insertAudioPosition.appendChild(previewItem);
+          const insertAudioPosition = document.getElementById("audio_upload_block");
+          insertAudioPosition.innerHTML = ""; // Removes any existing children
+          insertAudioPosition.appendChild(previewItem);
 
-        const dropareaaudio = document.getElementById("drop-area-audio");
-        dropareaaudio.classList.add("none");
+          const dropareaaudio = document.getElementById("drop-area-audio");
+          dropareaaudio.classList.add("none");
         }
-        
+
       } else if (uploadtype === "image") {
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
@@ -1617,7 +1579,7 @@ document.addEventListener("DOMContentLoaded", () => {
           insertPosition.insertAdjacentElement("afterend", previewItem);
           document.getElementById("drop-area-videocover").classList.add("none");
         } else {
-          
+
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
 
@@ -1634,11 +1596,11 @@ document.addEventListener("DOMContentLoaded", () => {
             Click to Trim
           </span>
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
-          
+
           if (id.includes("short")) {
-             const insertPosition = document.getElementById("drop-area-videoshort");
+            const insertPosition = document.getElementById("drop-area-videoshort");
             insertPosition.insertAdjacentElement("afterend", previewItem);
-           
+
             document.getElementById("drop-area-videoshort").classList.add("none");
           } else {
             const insertPosition = document.getElementById("drop-area-videolong");
@@ -1654,14 +1616,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       const base64 = await convertImageToBase64(file);
-           
-      
       let element = null;
       if (type === "image") {
         //sessionStorage.setItem(file.name, base64);
         element = previewItem.querySelector("img.create-img");
         base64ImagesMap.set(file.name, base64);
-        
+
 
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
@@ -1673,25 +1633,27 @@ document.addEventListener("DOMContentLoaded", () => {
         element.addEventListener("loadedmetadata", async () => {
           generateThumbnails(file.name);
 
-        }, { once: true });
-        
+        }, {
+          once: true
+        });
+
       }
-      
+
       element.src = base64;
       element.classList.remove("none");
-      element.nextElementSibling?.remove();
-      element.nextElementSibling?.classList.remove("none");
+      element.nextElementSibling ?.remove();
+      element.nextElementSibling ?.classList.remove("none");
       if (type === "audio") {
         //initAudioplayer(file.name, base64);
         initAudioplayer("audio_upload_block", base64);
-        document.querySelector(".audiobackground_uploader")?.classList.remove("none");
-        document.querySelector(".recodring-block")?.classList.add("none");
-         const audio_upload_block = document.getElementById("audio_upload_block");
+        document.querySelector(".audiobackground_uploader") ?.classList.remove("none");
+        document.querySelector(".recodring-block") ?.classList.add("none");
+        const audio_upload_block = document.getElementById("audio_upload_block");
         const audio_del_btn = audio_upload_block.querySelector(".preview-item .deletePost");
         if (audio_del_btn) {
           audio_del_btn.addEventListener("click", () => {
-            document.querySelector(".audiobackground_uploader")?.classList.add("none");
-            document.querySelector(".recodring-block")?.classList.remove("none");
+            document.querySelector(".audiobackground_uploader") ?.classList.add("none");
+            document.querySelector(".recodring-block") ?.classList.remove("none");
             const dropareaaudio = document.getElementById("drop-area-audio");
             dropareaaudio.classList.remove("none");
           });
@@ -1710,7 +1672,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (img) {
         img.onload = function (e) {
           //console.log(e.target.src);
-        voiceRecordWrapper.setAttribute('style', `background-image:url(${e.target.src})`);
+          voiceRecordWrapper.setAttribute('style', `background-image:url(${e.target.src})`);
         };
       }
       if (preview_del_btn) {
@@ -1737,19 +1699,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function scrollToIndex(index) {
       const previewTrack = document.querySelector("#preview-image .preview-track");
       const previewItems = previewTrack.querySelectorAll(".preview-item");
-
       if (index < 0 || index >= previewItems.length) return;
-
       // Sum widths of all items before the target index
       let offset = 0;
       for (let i = 0; i < index; i++) {
         offset += previewItems[i].offsetWidth + 20; // Add 20px gap
       }
-
       previewTrack.style.transform = `translateX(-${offset}px)`;
       currentIndex = index;
-      
-       
     }
 
     document.querySelector(".next-button").addEventListener("click", () => {
@@ -1767,7 +1724,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleImageDelete(event) {
       event.preventDefault();
-
       const previewTrack = document.querySelector("#preview-image .preview-track");
       const previewItem = event.target.closest(".preview-item");
       previewItem.remove();
@@ -1792,13 +1748,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function isElementInViewportX(child, container) {
       const containerRect = container.getBoundingClientRect();
       const childRect = child.getBoundingClientRect();
-      
+
       return (
         childRect.left >= containerRect.left &&
         childRect.right <= containerRect.right
       );
     }
-    
+
     function toggleScrollButtons() {
       const isVisible = isElementInViewportX(track, container);
       if (!isVisible) {
@@ -1810,9 +1766,8 @@ document.addEventListener("DOMContentLoaded", () => {
         prevBtn.classList.add('none');
         document.getElementById("preview-image").classList.remove("enbale_more_upload_btn")
       }
-      console.log("Is first item visible?", isElementInViewportX(track, container));
+      // console.log("Is first item visible?", isElementInViewportX(track, container));
       imageItemCount();
-      
     }
 
     // Call once on load
@@ -1821,47 +1776,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // Optionally recheck on window resize or DOM change
     window.addEventListener('resize', toggleScrollButtons);
     container.addEventListener('scroll', toggleScrollButtons);
-    
-    function imageItemCount(){
-      const image_container=document.getElementById("preview-image");
-      
+
+    function imageItemCount() {
+      const image_container = document.getElementById("preview-image");
       const imageItemCount = image_container.querySelectorAll(".preview-item").length;
-        console.log("Total preview items:", imageItemCount);
-        if(imageItemCount > 0){
-          image_container.classList.add("image_added");
-        }else{
-          image_container.classList.remove("image_added");
-        }
+      // console.log("Total preview items:", imageItemCount);
+      if (imageItemCount > 0) {
+        image_container.classList.add("image_added");
+      } else {
+        image_container.classList.remove("image_added");
+      }
     }
 
   }
-
-
-
-  
-
-
 });
 
 let cropOrg = null;
 window.base64ImagesMap = new Map();
-
-
 const video = document.getElementById("videoTrim");
 const timeline = document.getElementById("videoTimeline");
 const THUMB_COUNT = 10; // beliebig wählbar
 let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
-
 const trimWindow = document.getElementById("trim-window");
 const overlayLeft = document.getElementById("overlay-left");
 const overlayRight = document.getElementById("overlay-right");
 const handleLeft = document.getElementById("handle-left");
 const handleRight = document.getElementById("handle-right");
-
 let startPercent = 0.0000; // Anfang 0%
 let endPercent = 1.0000; // Ende 100%
 const MIN_DURATION = 3; // Sekunden
-
 const trimBtn = document.getElementById("trimBtn");
 const trimQuitBtn = document.getElementById("trimQuit");
 
@@ -1869,11 +1812,12 @@ function addEditVideoListener(element) {
   element.removeEventListener("click", handleEditVideo);
   element.addEventListener("click", handleEditVideo);
 }
- function handleEditVideo(event) {
+
+function handleEditVideo(event) {
   event.preventDefault();
   const container = document.getElementById('preview-video');
   const videos = container.querySelectorAll('video');
-  
+
   // Jedes Video pausieren
   videos.forEach(video => {
     video.pause();
@@ -1883,13 +1827,13 @@ function addEditVideoListener(element) {
   previewItem.classList.add('click_edit');
   // Show the Trim container after a short delay
   setTimeout(async () => {
-    const video_id= previewItem.querySelector("p").innerText;
+    const video_id = previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
     console.log(video_id);
     await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
-  }, 800); 
-  
+  }, 800);
+
 }
 
 function addEditImageListener(element) {
@@ -1899,25 +1843,20 @@ function addEditImageListener(element) {
 
 function handleEditImage(event) {
   event.preventDefault();
-  
- 
   cropOrg = event.target.closest(".preview-item").childNodes[3];
   const imageDatasrc = window.base64ImagesMap.get(event.target.parentElement.childNodes[1].innerText);
-  //console.log(event.target.parentElement.childNodes[1].innerText);
-  //console.log(base64ImagesMap);
-   
-    const previewItem = event.target.closest(".preview-item");
-    if (previewItem.hasAttribute("data-aspectratio")) {
-      aspect_Ratio = previewItem.getAttribute("data-aspectratio");
-    }else{
-      aspect_Ratio=1;
-    }
-   
-    // Now select the matching radio input and mark it as checked
-    const radioToCheck = document.querySelector(`#aspectRatioSelect input[name="aspectRatio"][value="${aspect_Ratio}"]`);
-    if (radioToCheck) {
-      radioToCheck.checked = true;
-    }
+  const previewItem = event.target.closest(".preview-item");
+  if (previewItem.hasAttribute("data-aspectratio")) {
+    aspect_Ratio = previewItem.getAttribute("data-aspectratio");
+  } else {
+    aspect_Ratio = 1;
+  }
+
+  // Now select the matching radio input and mark it as checked
+  const radioToCheck = document.querySelector(`#aspectRatioSelect input[name="aspectRatio"][value="${aspect_Ratio}"]`);
+  if (radioToCheck) {
+    radioToCheck.checked = true;
+  }
 
   if (imageDatasrc) {
     cropImg.src = imageDatasrc;
@@ -1925,24 +1864,21 @@ function handleEditImage(event) {
     cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
   }
 
-    previewItem.classList.add('click_edit');
-    // Show the crop container after a short delay
-    setTimeout(() => {
-      document.getElementById("crop-container").classList.remove("none");
-       previewItem.classList.remove('click_edit');
-    }, 500);
-   
-
+  previewItem.classList.add('click_edit');
+  // Show the crop container after a short delay
+  setTimeout(() => {
+    document.getElementById("crop-container").classList.remove("none");
+    previewItem.classList.remove('click_edit');
+  }, 500);
 }
-  
+
 function addDeleteListener(element) {
   element.removeEventListener("click", handleDelete);
   element.addEventListener("click", handleDelete);
 }
 
 function handleDelete(event) {
-  event.preventDefault(); 
-  
+  event.preventDefault();
   if (event.target.id === "deletecover") {
     document.getElementById("drop-area-videocover").classList.remove("none");
   } else if (event.target.id === "deleteshort") {
@@ -1951,12 +1887,9 @@ function handleDelete(event) {
     document.getElementById("drop-area-videolong").classList.remove("none");
   }
   event.target.parentElement.remove();
-  
 }
 
-
 async function convertImageToBase64(file) {
-  
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     const type = file.type.substring(0, 5);
@@ -1991,7 +1924,7 @@ async function convertImageToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
- 
+
 async function videoTrim(id) {
   videoElement = document.getElementById(id);
   if (!videoElement) {
@@ -2016,7 +1949,7 @@ async function videoTrim(id) {
 // ----------- THUMBNAILS GENERIEREN (wie vorher) ----------
 videothumbs = []; // Globales Objekt für Thumbnails
 async function generateThumbnails(id) {
-  
+
   const video = document.getElementById(id);
   const dataId = video.getAttribute("data-id");
   const timeline = document.getElementById("videoTimeline");
@@ -2031,21 +1964,23 @@ async function generateThumbnails(id) {
   canvas.height = 90;
   const ctx = canvas.getContext("2d");
   const videoId = dataId ? dataId : id;
-  
+
   if (!videothumbs[videoId])
-      videothumbs[videoId] = [];
+    videothumbs[videoId] = [];
   for (let t of times) {
     const img = document.createElement("img");
-    if(!videothumbs[videoId][t]){
+    if (!videothumbs[videoId][t]) {
       video.currentTime = t;
-      await new Promise((res) => video.addEventListener("seeked", res, { once: true }));
+      await new Promise((res) => video.addEventListener("seeked", res, {
+        once: true
+      }));
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       img.src = canvas.toDataURL("image/jpeg");
       videothumbs[videoId][t] = img.src;
     } else {
       img.src = videothumbs[videoId][t];
     }
-    if(dataId)
+    if (dataId)
       timeline.appendChild(img);
   }
 }
@@ -2056,9 +1991,8 @@ video.addEventListener("loadedmetadata", async () => {
   setupTrim();
 });
 
-
 function setupTrim(reset = false) {
-  if(reset){
+  if (reset) {
     startPercent = 0.0000;
     endPercent = 1.0000;
   }
@@ -2066,9 +2000,7 @@ function setupTrim(reset = false) {
   const wrapper = document.querySelector(".timeline-wrapper");
   const timelineRect = timeline.getBoundingClientRect();
   const wrapperRect = wrapper.getBoundingClientRect();
-
   // Werte in Prozent (für Responsivität)
-
   let windowStartPercent = 0;
   let windowEndPercent = 0;
   let dragging = null; // 'left' | 'right' | null
@@ -2195,7 +2127,7 @@ trimQuitBtn.onclick = () => {
 
 // Funktion für den Schnitt
 // trimBtn.onclick = async () => {
-  
+
 //   // Stelle sicher, dass Metadaten da sind
 //   if (!video.duration) {
 //     alert("Video ist noch nicht geladen!");
