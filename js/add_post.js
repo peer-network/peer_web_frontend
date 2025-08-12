@@ -713,7 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const coverWrapper = document.getElementById("preview-video");
       const coverImg = coverWrapper.querySelector("img.create-img");
-      cover = coverImg ? [coverImg.src] : "";
+      cover = coverImg ? [coverImg.src] : null;
 
       postMedia = combinedBase64;
       postDescription = description;
@@ -843,7 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hasError = true;
       } else if (postMedia.join("").length > 5 * 1024 * 1024) {
         videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
-        hasError = true;
+        hasError = false;
       }
     }
     break;
