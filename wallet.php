@@ -20,7 +20,7 @@ checkAuth("unauthorized");
   <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
 
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
-  <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
+
 
   <link rel="stylesheet" href="css/wallet.css?<?php echo filemtime('css/wallet.css'); ?>" />
 
@@ -31,12 +31,7 @@ checkAuth("unauthorized");
   <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
   <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
-  <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
-
-
-
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
-
 
   <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -58,8 +53,6 @@ checkAuth("unauthorized");
         <!-- Load sidebar widgets -->
         <?php require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
         <?php require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
-        <?php require_once ('./template-parts/sidebars/widget-daily-action.php'); ?>
-
 
       </div>
     </aside>

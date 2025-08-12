@@ -137,6 +137,15 @@ body {
   overflow-y: auto;
 }
 
+.inner-cont{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+  padding: 1rem;
+}
+
 .container{
   background: url('../svg/blueglow.svg') no-repeat top right;
   background-size: contain;
@@ -146,11 +155,9 @@ body {
 
 .form-container {
   grid-area: form;
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 1rem 2rem;
   height: 100%;
 }
 .form-container.hide{
@@ -316,6 +323,10 @@ body {
   cursor: pointer;
 }
 
+.tick {
+  opacity: 0.5;
+}
+
 .input-field span {
   line-height: 50px;
 }
@@ -329,6 +340,11 @@ body {
   background-color: transparent !important;
   caret-color: #000;
   line-height: 50px;
+}
+
+input.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .button {
@@ -352,6 +368,15 @@ a.button {
 a.disable {
 	cursor: not-allowed;
 	pointer-events: none;
+  text-align: center;
+  text-decoration: none;
+  color: var(--white-opacity-50);
+}
+#send_again {
+  color: var(--text-color);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
 }
 .button:disabled {
 	cursor: not-allowed;
@@ -489,6 +514,12 @@ body::-webkit-scrollbar {
   color: #FF3B3B;
 }
 
+.back-btn {
+  width: 100%;
+  display: flex;
+  margin-top: 120px;
+}
+
 .backBtn {
   display: flex;
   align-items: center;
@@ -501,14 +532,12 @@ body::-webkit-scrollbar {
   border-radius: 2.5rem;
   line-height: 50px;
   padding: 0 1rem;
-  position: absolute;
-  top: 5.5rem;    
-  left: 2rem;
 }
 
 .backBtn img {
   width: 1.2rem;
   opacity: 0.5;
+  margin-left: -4px;
 }
 
 .referral-code {
@@ -554,6 +583,42 @@ body::-webkit-scrollbar {
     font-size: clamp(0.5rem, 1vw, 16px);
   }
 
+  .back-btn {
+    margin-top: 80px;
+  }
+
+  .backBtn {
+    font-size: clamp(0.5rem, 1vw, 0.6rem);
+    padding: 0 0.8rem;
+    line-height: 40px;
+  }
+
+  .backBtn img {
+    width: clamp(0.8rem, 1vw, 1.2rem);
+    opacity: 0.5;
+  }
+
+  .reg img {
+    width: clamp(0.6rem, 1vw, 0.9rem);
+  }
+
+  .ageConfirm {
+    font-size: clamp(0.5rem, 1vw, 0.8rem);
+  }
+
+  .ageConfirm img {
+    width: clamp(7rem, 9vw, 12rem);
+  }
+
+  .ageConfirm p {
+    text-align: center;
+  }
+
+  .ageConfirm button,
+  .ageConfirm a {
+    font-size: clamp(0.4rem, 1vw, 0.8rem);
+    line-height: 40px;
+  }
   
 }
 
@@ -711,6 +776,13 @@ body::-webkit-scrollbar {
   text-align: center;
 }
 
+button.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
 .validText {
   color: green !important;
 }
@@ -763,6 +835,10 @@ input:focus + label {
 
   position: relative;
 }
+.forgotFooter {
+  height: 200px;
+}
+
 .form-container .input-field .loader,
 .form-container .regLoader {
   display: none;

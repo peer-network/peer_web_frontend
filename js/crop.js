@@ -7,7 +7,9 @@ const croppedCtx = croppedCanvas.getContext("2d");
 const aspectRatioSelect = document.getElementById("aspectRatioSelect");
 const aspectRatioInputs = document.querySelectorAll('input[name="aspectRatio"]');
 
+
 let cropImg = new Image();
+
 let isDragging = false;
 let dragStart = { x: 0, y: 0 };
 let position = { x: 0, y: 0 };
@@ -15,17 +17,74 @@ let offset = { x: 0, y: 0 };
 let scale = 1;
 let aspect_Ratio = 1;
 
-const MIN_SCALE = 0.5;
+const MIN_SCALE = 0.3;
 const MAX_SCALE = 8;
+let cropping = false;
 
 cropImg.onload = () => {
-  scale = 1;
-  position = {
-    x: (cropcanvas.width - cropImg.width) / 2,
-    y: (cropcanvas.height - cropImg.height) / 2,
-  };
+  if (cropping) {
+    // Bild- und Canvas-Abmessungen
+    const imgW = cropImg.clientWidth || cropImg.width;
+    const imgH = cropImg.clientHeight || cropImg.height;
+    cropcanvas.width = imgW;
+    cropcanvas.height = imgH;
+    const canvasW = cropcanvas.width;
+    const canvasH = cropcanvas.height;
+
+    // Errechne den maximalen Scale, sodass das Bild reinpasst (cover = false, contain = true)
+    scale = Math.min(canvasW / imgW, canvasH / imgH);
+
+    // Neue Bildabmessungen nach Skalierung
+    const displayW = imgW * scale;
+    const displayH = imgH * scale;
+
+    // Zentrieren
+    position = {
+      x: (canvasW - displayW) / 2,
+      y: (canvasH - displayH) / 2,
+    };
+  }else{
+
+    scale = 1;
+    cropcanvas.width = 1500;
+    cropcanvas.height = 1500;
+    croppedCanvas.width = 500;
+    croppedCanvas.height = 500;
+
+
+    if (cropImg.width < cropcanvas.width && cropImg.height < cropcanvas.height) {
+        const scaleX = cropcanvas.width / cropImg.width;
+        const scaleY = cropcanvas.height / cropImg.height;
+        scale = Math.min(scaleX, scaleY);
+
+          // Center position after scaling
+        position = {
+          x: (cropcanvas.width - cropImg.width * scale) / 2,
+          y: (cropcanvas.height - cropImg.height * scale) / 2,
+        };
+      }else{
+        position = {
+          x: (cropcanvas.width - cropImg.width) / 2,
+          y: (cropcanvas.height - cropImg.height) / 2,
+        };
+
+      }
+   
+    
+    
+    
+  }
+
+  // Zeichne das Bild skaliert und zentriert
   draw();
+  if (cropping) {
+    cropIt();
+  }
 };
+
+
+
+
 
 aspectRatioInputs.forEach((input) => {
   input.addEventListener("change", () => {
@@ -88,8 +147,8 @@ cropcanvas.addEventListener("wheel", (e) => {
 
 function getCropRect() {
   // Dynamisch berechnetes Zuschneidefeld mit gewähltem Seitenverhältnis
-  const maxW = cropcanvas.width * 0.8;
-  const maxH = cropcanvas.height * 0.8;
+  const maxW = cropcanvas.width * (cropping ? 1 : 0.8);
+  const maxH = cropcanvas.height * (cropping ? 1 : 0.8);
 
   let w = maxW;
   let h = w / aspect_Ratio;
@@ -101,15 +160,18 @@ function getCropRect() {
 
   const x = (cropcanvas.width - w) / 2;
   const y = (cropcanvas.height - h) / 2;
-
+ 
   return { x, y, w, h };
 }
 
 function draw() {
-  ctx.clearRect(0, 0, cropcanvas.width, cropcanvas.height);
+ 
+//console.log(scale);
 
+
+   ctx.clearRect(0, 0, cropcanvas.width, cropcanvas.height);
   ctx.drawImage(cropImg, position.x, position.y, cropImg.width * scale, cropImg.height * scale);
-
+  
   const crop = getCropRect();
   // 3. Dunkle Maske über das Bild mit „Loch“ im Crop-Bereich
   drawMaskedCropOverlay(ctx, crop, cropcanvas.width, cropcanvas.height);
@@ -119,9 +181,15 @@ function draw() {
 
   // 5. Dotted 3×3 Raster innerhalb des Crop-Bereichs
   drawCropGrid(ctx, crop);
+  
 }
 
 cropBtn.addEventListener("click", () => {
+  cropIt();
+  document.getElementById("crop-container").classList.add("none");
+});
+
+function cropIt() {
   const crop = getCropRect();
   const sx = (crop.x - position.x) / scale;
   const sy = (crop.y - position.y) / scale;
@@ -133,8 +201,17 @@ cropBtn.addEventListener("click", () => {
   croppedCtx.clearRect(0, 0, crop.w, crop.h);
   croppedCtx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, crop.w, crop.h);
   cropOrg.src = croppedCanvas.toDataURL("image/webp");
-  document.getElementById("crop-container").classList.add("none");
-});
+  const previewItem = cropOrg.closest('.preview-item');
+  if(aspect_Ratio==1){
+    previewItem.classList.remove('vertical');
+  }else{
+    previewItem.classList.add('vertical');
+  }
+  previewItem.setAttribute("data-aspectratio", aspect_Ratio);
+  
+  cropping=false;
+}
+
 cropQuit.addEventListener("click", () => {
   document.getElementById("crop-container").classList.add("none");
 });
@@ -231,4 +308,141 @@ function drawOverlayOutsideCrop(ctx, crop, canvasWidth, canvasHeight) {
 
   ctx.fill(); // Überlagerung anwenden
   ctx.restore();
+}
+
+// drag and drop part
+const containerList = document.querySelector("#preview-image .preview-track");
+let draggedEl = null;
+let placeholder = null;
+
+containerList.addEventListener("dragstart", (e) => {
+  const dragDiv = e.target.parentNode;
+  if (dragDiv.classList.contains("dragable")) {
+    draggedEl = dragDiv;
+    dragDiv.classList.add("dragging");
+    // Create a placeholder
+    placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+    // required for firefox
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", "");
+  }
+});
+
+containerList.addEventListener("dragend", (e) => {
+  if (draggedEl) {
+    draggedEl.classList.remove("dragging");
+    placeholder?.remove();
+    draggedEl = null;
+    placeholder = null;
+  }
+});
+
+containerList.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  if (!draggedEl) return;
+
+  // Find the closest sibling to insert before
+  const siblings = [...containerList.querySelectorAll(".dragable:not(.dragging)")];
+  let insertBefore = null;
+
+  for (const sibling of siblings) {
+    const rect = sibling.getBoundingClientRect();
+    if (e.clientX < rect.left + rect.width / 2) {
+      insertBefore = sibling;
+      break;
+    }
+  }
+
+  // Insert placeholder in right place
+  if (insertBefore) {
+    if (containerList.children[Array.prototype.indexOf.call(containerList.children, insertBefore) - 1] !== placeholder) {
+      containerList.insertBefore(placeholder, insertBefore);
+    }
+  } else {
+    if (containerList.lastChild !== placeholder) {
+      containerList.appendChild(placeholder);
+    }
+  }
+});
+
+containerList.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (draggedEl && placeholder) {
+    containerList.insertBefore(draggedEl, placeholder);
+  }
+});
+
+[...containerList.children].forEach((div) => {
+  div.setAttribute("dragable", "true");
+});
+
+ function cropImage(imgContainer) {
+  
+  cropOrg = imgContainer.querySelector("img");
+  if (!cropOrg) return;
+  // cropcanvas.width = cropOrg.clientWidth;
+  // cropcanvas.height = cropOrg.clientHeight;
+  p_element = cropOrg.parentElement.querySelector("p");
+  //console.log(p_element.innerText);
+  //console.log(base64ImagesMap);
+  const imageDatasrc = window.base64ImagesMap.get(p_element.innerText);
+
+  if (imageDatasrc) {
+      cropImg.src = imageDatasrc;
+    } else {
+      cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
+    }
+    // document.getElementById("crop-container").classList.remove("none");
+    // draw();
+    
+}
+async function cropAllImages() {
+  const imagesCon = document.getElementById("preview-image");
+  const images = imagesCon.querySelectorAll(".preview-track .dragable");
+  for (const imgContainer of images) {
+    cropping=true;
+    //console.log(aspect_Ratio);
+    if(aspect_Ratio==1){
+      imgContainer.classList.remove('vertical');
+    }else{
+      imgContainer.classList.add('vertical');
+    }
+    imgContainer.setAttribute("data-aspectratio", aspect_Ratio);
+    cropImage(imgContainer);
+    while(cropping) {
+      await sleep(50);
+    }
+  }
+  // All images done cropping
+  imagesCon.classList.remove('cropping');
+  document.getElementById("crop-container").classList.add("none");
+}
+
+document.querySelectorAll('input[name="aspectRatioMul"]').forEach(function(radio) {
+ 
+    radio.addEventListener('change', function(event) {
+       
+        if (event.target.checked) {
+          const imagesCon= document.getElementById("preview-image");
+          imagesCon.classList.add('cropping');
+            aspect_Ratio = eval(event.target.value);
+            cropAllImages();
+        }
+        if(aspect_Ratio==1){
+          document.getElementById("preview-image").classList.remove('vertical');
+        }else{
+          document.getElementById("preview-image").classList.add('vertical');
+        }
+
+        
+    });
+});
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitAndDo() {
+  await sleep(111);
 }

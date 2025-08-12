@@ -12,20 +12,29 @@ document.addEventListener("DOMContentLoaded", () => {
       const toggleConfirm = document.getElementById("toggleConfirmPassword");
       const validationMessage = document.getElementById("confirmValidationMessage");
       const passwordField = document.getElementById("password"); 
+      
 
       const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
       confirmPassword.addEventListener("input", () => {
         validationMessage.innerText = "";
+        const val = confirmPassword.value.trim();
+        
+        if (val.length > 0) {
+          toggleConfirm.classList.remove("none");
+        } else {
+          toggleConfirm.classList.add("none");
+        }
+
         if (
           passwordRegex.test(confirmPassword.value) &&
           confirmPassword.value === passwordField?.value
         ) {
-          confirmPassword.parentElement.classList.add("valid");
-          confirmPassword.parentElement.classList.remove("invalid");
+          // confirmPassword.parentElement.classList.add("valid");
+          // confirmPassword.parentElement.classList.remove("invalid");
         } else {
-          confirmPassword.parentElement.classList.add("invalid");
-          confirmPassword.parentElement.classList.remove("valid");
+          // confirmPassword.parentElement.classList.add("invalid");
+          // confirmPassword.parentElement.classList.remove("valid");
         }
       });
 

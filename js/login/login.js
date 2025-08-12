@@ -47,8 +47,9 @@ async function loginRequest(email, password) {
     } = result.data.login;
 
     // Log status and error message for debugging; avoid logging sensitive tokens
-    // console.log("Status:", status);
-    if (ResponseCode !== "10801") console.warn("Error Message:", ResponseCode);
+    if (ResponseCode !== "10801") {
+       displayValidationMessage(userfriendlymsg(ResponseCode), "validationMessage");
+    }
 
     // Securely store tokens if login was successful
     if (status === "success") {
@@ -56,9 +57,6 @@ async function loginRequest(email, password) {
       document.cookie = `refreshToken=${refreshToken}; path=/; secure; SameSite=Strict`;
     }
 
-    // console.log("ResponseCode:", ResponseCode);
-    // console.log("Access Token:", accessToken);
-    // console.log("Refresh Token:", refreshToken);
     return {
       status,
       ResponseCode,
@@ -120,7 +118,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         sessionStorage.setItem('refreshToken', result.refreshToken);
         localStorage.removeItem('userEmail');
       }
-
+      scheduleSilentRefresh(result.accessToken, result.refreshToken);
       window.location.href = "dashboard.php";
     } else {
       displayValidationMessage(userfriendlymsg(result.ResponseCode) || "Fehler beim Login.");

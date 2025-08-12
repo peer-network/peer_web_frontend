@@ -31,6 +31,7 @@ if (isset($_GET['message'])) {
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/login/sessionHandler.js?<?php echo filemtime('js/login/sessionHandler.js'); ?>" defer></script>
     <!-- <script src="sw_instal.min.js" async></script> -->
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -55,41 +56,44 @@ if (isset($_GET['message'])) {
     </aside>
 
     <div class="cont"> 
-        <form id="registerForm" class="form-container">
-            <?php if ($message): ?>
-            <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
-            <?php endif; ?>
-            <div class="peerLogo">
-                <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
-            </div>
-            <div class="head">
-                <h1 class="heading">Hey there,<br> Welcome back!</h1>
-                <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
-            </div>
-            <div class="input-field">
-                <img class="email-icon" src="svg/email-icon.svg"  alt="email icon">
-                <input type="email" id="email" name="e_mail" placeholder="E-mail" required class="input-text" autocomplete="on"></input>
-                <img class="tick" src="svg/tick-icon.png" alt="tick">
-            </div>
-            <!-- Password Component -->
-            <div class="password-component" data-show-strength="false" data-show-message="true" data-name="password"></div>
+        <div class="inner-cont">
+            <form id="registerForm" class="form-container">
+                <?php if ($message): ?>
+                <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
+                <?php endif; ?>
+                <div class="peerLogo">
+                    <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
+                </div>
+                <div class="head">
+                    <h1 class="heading">Hey there,<br> Welcome back!</h1>
+                    <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
+                </div>
+                <div class="input-field">
+                    <img class="email-icon" src="svg/email-icon.svg"  alt="email icon">
+                    <input type="email" id="email" name="e_mail" placeholder="E-mail" required class="input-text" autocomplete="on"></input>
+                    <img id="emailValidationIcon" class="tick none" src="svg/tick-icon.svg" alt="tick">
+                </div>
+                <div class="validationMessage" id="emailValidationMessage" for="register"></div>
+                <!-- Password Component -->
+                <div class="password-component" data-show-strength="false" data-show-message="true" data-name="password"></div>
 
-            <div class="rem-for">
-                <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
-                <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
+                <div class="rem-for">
+                    <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
+                    <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
+                </div>
+                <input id="submit" class="button" type="submit" name="Login" value="Login">
+                <div class="line-with-text"><span>OR</span></div>
+                <a href="register.php?" class="button reg">
+                    <span>Register&nbsp;now</span>
+                    <img src="svg/arrow1.svg" alt="">
+                </a>
+                <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
+                
+            </form>
+            <div class="footer">
+                <a href="" class="privacy">Privacy Policy</a>
+                <p class="version">Version 1.0.0</p>
             </div>
-            <input id="submit" class="button" type="submit" name="Login" value="Login">
-            <div class="line-with-text"><span>OR</span></div>
-            <a href="register.php" class="button reg">
-                <span>Register&nbsp;now</span>
-                <img src="svg/arrow1.svg" alt="">
-            </a>
-            <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
-             
-        </form>
-        <div class="footer">
-            <a href="" class="privacy">Privacy Policy</a>
-            <p class="version">Version 1.0.0</p>
         </div>
     </div>
 </body>

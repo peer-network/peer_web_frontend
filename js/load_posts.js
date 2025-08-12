@@ -1,11 +1,6 @@
 // :TODO VIEWS
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
-
-
   const everything = document.getElementById("everything");
   if (everything) {
     everything.addEventListener("click", () => {
@@ -20,10 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelTimeout();
      
     });
-  }
-
-
-  
+  }  
 
   const addComment = document.getElementById("addComment");
   if (addComment) {
@@ -63,12 +55,182 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  
+  function initCollapseViewToggle() {
+    const collapseBtn = document.querySelector('.collapse-filters');
+    const collapsibleBtns = document.querySelectorAll(
+      'button[aria-controls="content-options"], ' +
+      'button[aria-controls="feed-options"], ' +
+      'button[aria-controls="time-options"], ' +
+      'button[aria-controls="sort-options"]'
+    );
+    if(collapseBtn){
+      const siteLayout = document.querySelector('.site_layout');
+      let isCollapsed = false;
+
+      function setCollapsedState(collapsed) {
+        isCollapsed = collapsed;
+
+        if (collapsed) {
+          siteLayout.classList.add('collapsed');
+          collapsibleBtns.forEach(btn => btn.classList.add('collapsed'));
+          document.querySelectorAll('.filter-options.open').forEach(sec => sec.classList.remove('open'));
+        } else {
+          siteLayout.classList.remove('collapsed');
+          collapsibleBtns.forEach(btn => btn.classList.remove('collapsed'));
+        }
+
+        localStorage.setItem('isFiltersCollapsed', JSON.stringify(isCollapsed));
+      }
+
+      const savedState = localStorage.getItem('isFiltersCollapsed');
+      if (savedState !== null) {
+        setCollapsedState(JSON.parse(savedState));
+      }
+
+      collapseBtn.addEventListener('click', () => {
+        setCollapsedState(!isCollapsed);
+      });
+
+      collapsibleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (isCollapsed) {
+            setCollapsedState(false);
+          }
+        });
+      });
+    }
+  }
+
+  initCollapseViewToggle();
+
+
+
+  function initFilterToggles(className = 'filter-toggle') {
+    document.querySelectorAll(`.${className}`).forEach(btn => {
+      btn.addEventListener('click', function () {
+        const targetId = btn.getAttribute('aria-controls');
+        const section = document.getElementById(targetId);
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+        if (isOpen) {
+          section.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          section.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+
+        const arrow = btn.querySelector('.section-arrow');
+        if (arrow) arrow.classList.toggle('rotated');
+      });
+    });
+  }
+  initFilterToggles();
+
+
+  function setupFilterLabelSwapping(filterType) {
+    const headerBtn = document.querySelector(`.${filterType}.filter-section-header`);
+    const optionsContainer = document.querySelector(`#${filterType}-options`);
+    const radioInputs = optionsContainer.querySelectorAll(`input[name="${filterType}"]`);
+
+    let labelSpan = headerBtn.querySelector('.section-selected-label');
+    if (!labelSpan) {
+      labelSpan = document.createElement("span");
+      labelSpan.className = "section-selected-label";
+      headerBtn.querySelector('.filter-section-container').appendChild(labelSpan);
+    }
+
+    // Restore from localStorage or default to "all"
+    const stored = localStorage.getItem(`selected-${filterType}`) || "all";
+    setSelectedLabel(stored);
+
+    radioInputs.forEach(input => {
+      input.addEventListener("change", () => {
+        if (input.checked) {
+          const value = input.value;
+          localStorage.setItem(`selected-${filterType}`, value);
+          setSelectedLabel(value);
+        }
+      });
+    });
+
+    function setSelectedLabel(value) {
+      radioInputs.forEach(input => {
+        const label = input.closest("label");
+        const labelText = label.querySelector("span").textContent;
+
+        if (input.value === value) {
+          labelSpan.textContent = " " + labelText;
+          label.style.display = "none";
+        } else {
+          label.style.display = "";
+        }
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  }
+  setupFilterLabelSwapping("feed");
+  setupFilterLabelSwapping("time");
+
+
+
+  function updateFilterHeaderIcons(sectionId = 'content-options', preset = null) {
+    const iconMap = {
+      IMAGE: "svg/photo.svg",
+      VIDEO: "svg/videos.svg",
+      TEXT: "svg/text.svg",
+      AUDIO: "svg/music.svg",
+      LIKES: "svg/post-like.svg",
+      COMMENTS: "svg/post-comment.svg",
+      VIEWS: "svg/most-views.svg", 
+      DISLIKES: "svg/most-dislikes.svg"
+    };
+
+    const section = document.getElementById(sectionId);
+    const header = document.querySelector(`button[aria-controls="${sectionId}"]`);
+    if (!section || !header) return;
+
+    const container = header.querySelector('.filter-section-container');
+    const arrow = header.querySelector('.section-arrow');
+
+    container.querySelectorAll('.filter-icon-preview').forEach(el => el.remove());
+
+    const selectedInputs = section.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
+    selectedInputs.forEach(input => {
+
+      const customIcon = input.getAttribute('data-icon');
+      const key = input.getAttribute('sortby') || input.name;
+      const iconSrc = customIcon || iconMap[key];
+
+      if (iconSrc) {
+        const img = document.createElement("img");
+        img.src = iconSrc;
+        img.classList.add("filter-icon-preview");
+        
+        container.appendChild(img);
+      }
+    });
+
+    arrow.style.display = selectedInputs.length > 2 ? "none" : "";
+  }
+  updateFilterHeaderIcons("content-options");
+  updateFilterHeaderIcons("sort-options");
+
+
 
   const checkboxes = document.querySelectorAll(".filterContainer .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
+
+      const selectedTypes = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.name);
+      localStorage.setItem("selectedContentTypes", JSON.stringify(selectedTypes));
+
       const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
       if (event.target.checked) {
         elements.forEach((element) => {
@@ -104,6 +266,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
  
+
+  const storedTypes = JSON.parse(localStorage.getItem("selectedContentTypes"));
+  if (storedTypes) {
+    updateFilterHeaderIcons(storedTypes);
+  }
 
 });
 
@@ -362,12 +529,9 @@ function commentToDom(c, append = true) {
     if (postsLaden.offset === undefined) {
       postsLaden.offset = 0; // Initialwert
     }
-    //console.log("✅ postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
+    //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
     //manualLoad = false;
-
-
     const form = document.querySelector(".filterContainer");
-
     const checkboxes = form.querySelectorAll(".filteritem:checked");
 
     // Die Werte der angehakten Checkboxen sammeln
@@ -400,28 +564,30 @@ function commentToDom(c, append = true) {
       tagInput = normalWords.join(" ");
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
-	let  posts;
-	if(postbyUserID!=null){
-		  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
-	}else{
-	  posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
-	}
+    let  posts;
+    if(postbyUserID!=null){
+        posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
+    }else{
+      posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+    }
 	
-    //console.log(posts);
+    //console.log(postoffset);
     const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-    posts.data.listPosts.affectedRows.forEach((objekt) => {
+    posts.data.listPosts.affectedRows.forEach((objekt,i) => {
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
       card.classList.add("card");
       card.setAttribute("tabindex", "0");
+      card.setAttribute("idno", i);
       card.setAttribute("content", objekt.contenttype);
       // card.setAttribute("tags", objekt.tags.join(","));
       // <div class="post"> erstellen und Bild hinzufügen
+      //console.log(objekt.id);
 
       let postDiv;
       let img;
@@ -440,26 +606,19 @@ function commentToDom(c, append = true) {
       const userprofileID = document.createElement("span");
       userprofileID.classList.add("post-userName", "profile_id");
       userprofileID.textContent = `#${objekt.user.slug}`;
-
-      
-
       const userImg = document.createElement("img");
       userImg.classList.add("post-userImg","profile-picture");
       userImg.onerror = function () {
         this.src = "svg/noname.svg";
       };
-      
-     
 
       userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
       const title = document.createElement("h3");
       title.textContent = objekt.title;
       title.classList.add("post-title","md_font_size","bold");
       
-
       const time_ago = document.createElement("span");
       time_ago.classList.add("timeAgo");
-
       time_ago.textContent = calctimeAgo(objekt.createdat);
       title.appendChild(time_ago);
 
@@ -557,9 +716,86 @@ function commentToDom(c, append = true) {
         cover = JSON.parse(objekt.cover);
       }
       if (objekt.contenttype === "image") {
-        if (array.length > 1) postDiv.classList.add("multi");
-        for (const item of array) {
+       if (array.length > 1) {
+          postDiv.classList.add("multi");
+          const divmulti_img_indicator = document.createElement("div");
+          divmulti_img_indicator.classList.add("image_counter");
+
+          for (let a = 0; a < array.length; a++) {
+            const img_indicator = document.createElement("span");
+            if((a+1)==1){
+              img_indicator.classList.add("active");
+            }
+            img_indicator.textContent=a+1;
+            
+            divmulti_img_indicator.appendChild(img_indicator);
+             
+          }
+          let current = 0; // Shared index for both click and auto-swap
+          let autoSwapInterval = null;
+          divmulti_img_indicator.querySelectorAll("span").forEach((span, index) => {
+            span.addEventListener("click", (event) => {
+               event.stopPropagation();
+                event.preventDefault();
+                 current = index; // ✅ Update current index to clicked
+              const images = postDiv.querySelectorAll("img");
+              const indicators = divmulti_img_indicator.querySelectorAll("span");
+
+              images.forEach((img, i) => {
+                // Show only matching image index (match with class image1, image2, etc.)
+                if (i === index) {
+                  
+                  img.classList.add("active");
+                } else {
+                  
+                  img.classList.remove("active");
+                }
+              });
+
+              // Update active indicator
+              indicators.forEach(s => s.classList.remove("active"));
+              span.classList.add("active");
+            });
+          });
+
+          
+
+          // Wrap this in a function if you're doing multiple posts
+          card.addEventListener("mouseenter", () => {
+            const images = postDiv.querySelectorAll("img");
+            const indicators = divmulti_img_indicator.querySelectorAll("span");
+            
+            if (images.length <= 1) return; // no need to auto swap
+
+             
+            autoSwapInterval = setInterval(() => {
+              current = (current + 1) % images.length;
+
+              images.forEach((img, i) => {
+                img.classList.toggle("active", i === current);
+              });
+
+              indicators.forEach((span, i) => {
+                span.classList.toggle("active", i === current);
+              });
+            }, 1500); // change image every 1.5 seconds
+          });
+
+          card.addEventListener("mouseleave", () => {
+            clearInterval(autoSwapInterval);
+            autoSwapInterval = null;
+          });
+
+          inhaltDiv.insertBefore(divmulti_img_indicator, postContent);
+          
+        }
+        let i=0;
+        for (const item of array) { i++;
           img = document.createElement("img");
+          img.classList.add("image"+i);
+          if (i === 1) {
+            img.classList.add("active");
+          }
           img.onload = () => {
             img.setAttribute("height", img.naturalHeight);
             img.setAttribute("width", img.naturalWidth);
@@ -591,49 +827,48 @@ function commentToDom(c, append = true) {
           postDiv.appendChild(audio);
           const durationspan = document.createElement("span");
           durationspan.textContent = item.options.duration;
-
-          
           postaudioplayerDiv.appendChild(durationspan);
-          
-          
-
-          
-          
         }
       } else if (objekt.contenttype === "video") {
         //console.log(objekt);
+        if (array.length > 1) {
+          card.classList.add("multi-video");
+        }
+        if (cover) {
+          img = document.createElement("img");
+          img.classList.add("video-cover");
+          img.onload = () => {
+            img.setAttribute("height", img.naturalHeight);
+            img.setAttribute("width", img.naturalWidth);
+          };
+          img.src = tempMedia(cover[0].path);
+          img.alt = "Video Cover";
+          postDiv.appendChild(img);
+        }
+        let i = 0;
         for (const item of array) {
-          if (item.cover) {
-            img = document.createElement("img");
-            img.onload = () => {
-              img.setAttribute("height", img.naturalHeight);
-              img.setAttribute("width", img.naturalWidth);
-            };
-            img.src = tempMedia(item.cover);
-            img.alt = "Cover";
-            postDiv.appendChild(img);
-          }
+           i++;
           video = document.createElement("video");
+          video.classList.add("video_"+i);
           video.muted = true;
           video.id = extractAfterComma(item.path);
           video.src = tempMedia(item.path);
           video.preload = "metadata";
           video.controls = false;
-          video.className = "custom-video";
+          video.classList.add("custom-video");
           addMediaListener(video);
           postDiv.appendChild(video);
           /* On mouse move over the card, scrub through the video based on cursor position
           / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
-          const video = this.getElementsByTagName("video")[0];
 
-          if (video.readyState >= 2) {
+          const videoCover = this.querySelector(".video-cover");
+          if(videoCover)  videoCover.classList.add("none");
+          const video = this.getElementsByTagName("video")[0];
+          if (video.readyState >= 2 && (isFinite(video.duration) || video.duration <= 0)) {
             const rect = video.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;
             const relativePosition = mouseX / rect.width;
-
-            if (!video.duration) return;
-
             video.currentTime = relativePosition * video.duration;
             /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
             requestAnimationFrame(() => {
@@ -644,7 +879,9 @@ function commentToDom(c, append = true) {
           });
 
           card.addEventListener("mouseleave", function (e) {
-            const allMediaElements = document.querySelectorAll("video");
+            const videoCover = this.querySelector(".video-cover");
+            if(videoCover)  videoCover.classList.remove("none");
+            const allMediaElements = this.querySelectorAll("video");
             allMediaElements.forEach((otherMedia) => {
               if (!otherMedia.paused) otherMedia.pause();
             });
@@ -654,6 +891,7 @@ function commentToDom(c, append = true) {
 
           const ratio = document.createElement("span");
           ratio.classList.add("video-ratio");
+          ratio.classList.add("video-ratio-"+i);
           if(item.options.ratio=='16:9'){
             ratio.textContent = 'Long';
             card.classList.add("double-card");
@@ -671,8 +909,6 @@ function commentToDom(c, append = true) {
         
         }
       }
-
-
       // <div class="social"> erstellen mit Social-Icons und leeren <span>
       const socialDiv = document.createElement("div");
       socialDiv.classList.add("social","md_font_size");
@@ -779,6 +1015,7 @@ function commentToDom(c, append = true) {
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
     });
+    //console.log(posts.data.listPosts.affectedRows.length);
     postoffset += posts.data.listPosts.affectedRows.length;
 
      const post_loader = document.getElementById("post_loader");
@@ -931,7 +1168,7 @@ async function viewed(object) {
   // console.log(object.id);
 }
 
-  async function postClicked(objekt) {
+async function postClicked(objekt) {
     const UserID = getCookie("userID");
     if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
     togglePopup("cardClicked");
@@ -952,6 +1189,7 @@ async function viewed(object) {
     const post_contentright=containerright.querySelector(".post_content");
     
     const array = JSON.parse(objekt.media);
+    //const arraycover = JSON.parse(objekt.cover);
     let card = document.getElementById(objekt.id);
     /*--------Card profile Header  -------*/
     const card_header =card.querySelector(".card-header");
@@ -1018,6 +1256,9 @@ async function viewed(object) {
 
     if (objekt.contenttype === "audio") {
       post_gallery.classList.add("audio");
+      post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("video");
       for (const item of array) {
         const audio = document.createElement("audio");
         audio.id = "audio2";
@@ -1058,6 +1299,7 @@ async function viewed(object) {
         }
         const audio_player = document.createElement("div");
         audio_player.className = "audio_player_con";
+        audio_player.id = "audio_player_custom";
         const timeinfo = document.createElement("div");
         timeinfo.className = "time-info";
         timeinfo.innerHTML = `
@@ -1072,29 +1314,103 @@ async function viewed(object) {
         // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
         post_gallery.appendChild(audioContainer);
 
-        initAudioplayer("waveform-preview", audio.src);
+        initAudioplayer("audio_player_custom", audio.src);
       }
     } else if (objekt.contenttype === "video") {
       post_gallery.classList.add("video");
-      for (const item of array) {
+      if (array.length > 1) post_gallery.classList.add("multi");
+      else post_gallery.classList.remove("multi");
+      post_gallery.classList.remove("images");
+      post_gallery.classList.remove("audio");
+
+        post_gallery.innerHTML = `
+            <div class="slider-wrapper">
+              <div class="slider-track"></div>
+              <div class="slider-thumbnails"></div>
+              </div>
+          `;
+      const sliderTrack = post_gallery.querySelector(".slider-track");
+      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+      let currentIndex = 0;
+
+      for (const [index, item] of array.entries()) {
+
         const video = document.createElement("video");
         video.id = "video2";
         video.src = tempMedia(extractAfterComma(item.path));
         video.controls = true;
         video.className = "custom-video";
-        video.autoplay = true; // Autoplay aktivieren
-        video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
-        video.loop = true; // Video in Endlosschleife abspielen
+        video.autoplay = (index === 0);  // ✅ Autoplay only for the first video
+        video.muted = false;
+        video.loop = true;
 
-        // 1. Erzeuge das <div>-Element
-        const videoContainer = document.createElement("div");
-        videoContainer.appendChild(video);
-        videoContainer.classList.add("video-item");
+        let coversrc = 'img/audio-bg.png';
+        if (objekt.cover) {
+          const cover = JSON.parse(objekt.cover);
+          coversrc = tempMedia(cover[0].path);
+         
+        }
         
-        // videoContainer.appendChild(video);
-        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-        post_gallery.appendChild(videoContainer);
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("slide_item");
+        videoContainer.style.backgroundImage = `url("${coversrc}")`;
+        videoContainer.appendChild(video);
+
+        // Thumbnail
+        const img = document.createElement("img");
+        
+        img.src = coversrc;
+        img.alt = "";
+
+        const timg = document.createElement("div");
+        timg.classList.add("timg");
+
+        const playicon = document.createElement("i");
+        playicon.classList.add("fi", "fi-sr-play");
+
+        timg.appendChild(playicon);
+        timg.appendChild(img);
+        sliderThumb.appendChild(timg);
+        sliderTrack.appendChild(videoContainer);
       }
+
+      // === Slider Control Logic Outside the Loop === //
+
+      function updateSlider(index) {
+        currentIndex = index;
+
+        const targetItem = sliderTrack.children[index];
+        const offsetLeft = targetItem.offsetLeft;
+
+        sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+        // Manage active class
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+          thumb.classList.toggle("active", i === index);
+        });
+
+        // Play the current video and pause others
+        sliderTrack.querySelectorAll("video").forEach((vid, i) => {
+          //console.log(index +'--'+i);
+          if (i === index) {
+            vid.play();
+          } else {
+            vid.pause();
+            vid.currentTime = 0;
+          }
+        });
+      }
+
+      // Initialize
+      setTimeout(() => updateSlider(0), 50);
+
+      // Add click listeners
+      sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+        thumb.addEventListener("click", () => {
+          updateSlider(index);
+        });
+      });
+
     } else if (objekt.contenttype === "text") {
       
       if (containerleft && post_contentright) {
@@ -1106,6 +1422,8 @@ async function viewed(object) {
     } else {
       let img;
       post_gallery.classList.add("images");
+      post_gallery.classList.remove("video");
+      post_gallery.classList.remove("audio");
       if (array.length > 1) post_gallery.classList.add("multi");
       else post_gallery.classList.remove("multi");
 
@@ -1122,7 +1440,7 @@ async function viewed(object) {
       const imageSrcArray = [];
       array.forEach((item, index) => {
         const image_item = document.createElement("div");
-        image_item.classList.add("image_item");
+        image_item.classList.add("slide_item");
 
         const img = document.createElement("img");
         const timg = document.createElement("img");
@@ -1131,11 +1449,16 @@ async function viewed(object) {
         timg.src = src;
         img.alt = "";
         timg.alt = "";
+        image_item.style.backgroundImage = `url("${src}")`;
 
         
         
         image_item.appendChild(timg);
-        sliderThumb.appendChild(img);
+
+         const timg2 = document.createElement("div");
+         timg2.classList.add("timg");
+          timg2.appendChild(img);
+        sliderThumb.appendChild(timg2);
 
         const zoomElement = document.createElement("span");
         zoomElement.className = "zoom";
@@ -1145,31 +1468,31 @@ async function viewed(object) {
         sliderTrack.appendChild(image_item);
 
 
-let currentIndex = 0;
+        let currentIndex = 0;
 
-function updateSlider(index) {
-  currentIndex = index;
+        function updateSlider(index) {
+          currentIndex = index;
 
-  const targetItem = sliderTrack.children[index];
-  const offsetLeft = targetItem.offsetLeft;
+          const targetItem = sliderTrack.children[index];
+          const offsetLeft = targetItem.offsetLeft;
 
-  sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+          sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
 
-  // Manage active class
-  sliderThumb.querySelectorAll("img").forEach((thumb, i) => {
-    thumb.classList.toggle("active", i === index);
-  });
-}
+          // Manage active class
+          sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+            thumb.classList.toggle("active", i === index);
+          });
+        }
 
-// Initialize active thumbnail
-updateSlider(0);
+        // Initialize active thumbnail
+        updateSlider(0);
 
-// Add click listener to each thumbnail
-sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
-  thumb.addEventListener("click", () => {
-    updateSlider(index);
-  });
-});
+        // Add click listener to each thumbnail
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+          thumb.addEventListener("click", () => {
+            updateSlider(index);
+          });
+        });
 
 
 
@@ -1179,6 +1502,8 @@ sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
         zoomElement.addEventListener("click", () => {
           openSliderModal(imageSrcArray, index);
         });
+        
+
       });
     }
 
@@ -1289,13 +1614,18 @@ sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
       const content = newTextarea.value.trim();
       const postID = objekt.id;
 
-      if (!content || !postID) {
+      if ( !postID) {
         Merror("Error","Content or Post ID is missing.");
+        return;
+      }
+      if (!content) {
+       
         return;
       }
 
       createComment(postID, content).then((result) => {
         if (result && result.data?.createComment?.status === "success") {
+          dailyfree();
           commentToDom(result.data.createComment.affectedRows[0], false);
           newTextarea.value = ""; // Clear textarea
         } else {
@@ -1320,7 +1650,7 @@ sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
     });
 
 
-  }
+}
 
 
   function openSliderModal(images, startIndex = 0) {
@@ -1429,12 +1759,18 @@ sliderThumb.querySelectorAll("img").forEach((thumb, index) => {
 
   function saveFilterSettings() {
     let filterSettings = {};
+    let selectedContentTypes = [];
     let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
 
     checkboxes.forEach((checkbox) => {
       filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
+
+      if (checkbox.closest('.content-options') && checkbox.checked) {
+        selectedContentTypes.push(checkbox.name); // use name, not id
+      }
     });
     localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
+    localStorage.setItem("selectedContentTypes", JSON.stringify(selectedContentTypes));
 	if(document.getElementById("searchGroup")){
     	localStorage.setItem("tags", document.getElementById("searchGroup").value);
 	}

@@ -200,6 +200,7 @@ async function likePost(postid) {
       if (result.data.resolvePostAction.status == "error") {
         throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
       } else {
+        dailyfree();
         return true;
       }
     })
@@ -259,7 +260,7 @@ async function dislikePost(postid) {
 }
 
 async function LiquiudityCheck(postCosts, title, action) {
-  console.log("Liquidity Check for postCosts:", postCosts);
+  // console.log("Liquidity Check for postCosts:", postCosts);
   const limitIDs = [
     ["Likesused", "Likesavailable", "LikesStat"],
     ["Commentsused", "Commentsavailable", "CommentsStat"],
@@ -287,6 +288,27 @@ async function LiquiudityCheck(postCosts, title, action) {
     if (answer === null || answer.button  === cancel) {
       return false;
     }
+    // const freeused = parseInt(document.getElementById(limitIDs[action][0]).innerText) + 1;
+    // const freeavailable = parseInt(document.getElementById(limitIDs[action][1]).innerText) - 1;
+    // document.getElementById(limitIDs[action][0]).innerText = freeused;
+    // document.getElementById(limitIDs[action][1]).innerText = freeavailable;
+    // document.getElementById(limitIDs[action][2]).style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+
+    // prevent DOM elements if doesn't exists.
+    // let freeused, freeavailable;
+    // const usedElem = document.getElementById(limitIDs[action][0]);
+    // const availElem = document.getElementById(limitIDs[action][1]);
+    // const statElem = document.getElementById(limitIDs[action][2]);
+    // if (usedElem && availElem && statElem) {
+    //   freeused = parseInt(usedElem.innerText) + 1;
+    //   freeavailable = parseInt(availElem.innerText) - 1;
+
+    //   usedElem.innerText = freeused;
+    //   availElem.innerText = freeavailable;
+    //   statElem.style.setProperty("--progress", (100 * freeavailable) / (freeused + freeavailable) + "%");
+    // } 
+    ////////////////////////////////////
+
     let freeused = 0;
     let freeavailable = 0;
     const usedObjID=document.getElementById(limitIDs[action][0]);
@@ -429,7 +451,7 @@ async function sendCreatePost(variables) {
       }
     }
   `;
-
+//console.log(variables);
   // const variables = {
   //   title,
   //   media,
@@ -455,11 +477,9 @@ async function sendCreatePost(variables) {
     if (result.errors) {
       throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
     }
-    console.log("Mutation Result:", result.data);
-
-    if (result.data.createPost.status == "error") {
-      throw new Error(userfriendlymsg(result.data.createPost.ResponseCode));
-    } else return result.data;
+    // console.log("Mutation Result:", result.data);
+    return result.data;
+    
   } catch (error) {
     Merror("Create Post failed", error);
     // console.error("Error create Post:", error);
@@ -474,7 +494,7 @@ async function getBitcoinPriceEUR() {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP-Error: ${response.status}`);
     const data = await response.json();
-    console.log(`1 BTC = ${data.bitcoin.eur} EUR`);
+    // console.log(`1 BTC = ${data.bitcoin.eur} EUR`);
     return data.bitcoin.eur;
   } catch (err) {
     console.error("Fehler beim Abrufen des Bitcoin-Kurses:", err);

@@ -1,159 +1,98 @@
+<?php
+header('Access-Control-Allow-Origin: *');
+include 'phpheader.php';
+include 'host.php';
+require_once 'auth.php';
+checkAuth("unauthorized");
+?>
 <!DOCTYPE html>
 <html lang="de">
 
 <head>
-    <style>
-        #drop-area {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            width: 300px;
-            margin: auto;
-            cursor: pointer;
-        }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Post</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+    <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
+    <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
+      <link rel="stylesheet" href="css/all-post.css?<?php echo filemtime('css/all-post.css'); ?>" />
+    <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
+     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
+    <link rel="stylesheet" href="css/crop.css?<?php echo filemtime('css/crop.css'); ?>" />
+    <!-- <script src="sw_instal.min.js" async></script> -->
+    <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
+    <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
+    <script src="js/crop.js?<?php echo filemtime('js/crop.js'); ?>" defer></script>
+    <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
+    <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
+    <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
+    <script src="js/voiceRecorderApi.js?<?php echo filemtime('js/voiceRecorderApi.js'); ?>" defer></script>
 
-        #drop-area.hover {
-            border-color: #000;
-        }
 
-        #preview-container {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .preview-item {
-            text-align: center;
-            width: 150px;
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-
-        .preview-item img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .preview-item progress {
-            width: 100%;
-            height: 10px;
-        }
-    </style>
-    <title>Dashboard</title>
+    <?php
+    $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
+    include 'meta.min.php';
+    ?>
 </head>
 
 <body>
-    <header></header>
-    <div id="drop-area">
-        <p>Ziehe deine Bilder hierher oder klicke, um sie hochzuladen</p>
-        <input type="file" id="file-input" accept="image/*" hidden multiple />
+    <div id="config" class="none"
+        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>">
     </div>
-    <div id="preview-container"></div>
+    <div id="addPost" class="site_layout">
+        <header class="site-header header-profile">
+            <img class="logo" src="svg/newpost-fill.svg" alt="Peer Network">
+            <h1 id="h1">Text Post</h1>
+        </header>
 
+        <aside class="left-sidebar left-sidebar-createpost">
+            <div class="inner-scroll">
+                <!-- Load sidebar widgets -->
+                <?php require_once('./template-parts/sidebars/widget-create-post-filter.php'); ?>
+            </div>
+        </aside>
 
-    <script>
-        const dropArea = document.getElementById("drop-area");
-        const fileInput = document.getElementById("file-input");
-        const previewContainer = document.getElementById("preview-container");
+        <main class="site-main site-main-createpost">
+            <div id="addPostSection">
+                <?php require_once ('./template-parts/content-parts/add-post.php'); ?>
+            </div>
 
-        dropArea.addEventListener("click", () => fileInput.click());
+            <div id="previewSection" class="none">
+                <?php require_once('./template-parts/content-parts/preview.php'); ?>
+            </div>
+        </main>
 
-        dropArea.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropArea.classList.add("hover");
-        });
-
-        dropArea.addEventListener("dragleave", () => {
-            dropArea.classList.remove("hover");
-        });
-
-        dropArea.addEventListener("drop", async (e) => {
-            e.preventDefault();
-            dropArea.classList.remove("hover");
-
-            const files = Array.from(e.dataTransfer.files);
-            if (files.length > 0) {
-                processFiles(files);
-            }
-        });
-
-        fileInput.addEventListener("change", async (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                processFiles(files);
-            }
-        });
-
-        async function processFiles(files) {
-            files.forEach(async (file) => {
-                if (!file.type.startsWith("image/")) {
-                    alert(`${file.name} ist keine Bilddatei.`);
-                    return;
-                }
-
-                const previewItem = createPreviewItem(file.name);
-                previewContainer.appendChild(previewItem);
-
-                const progressBar = previewItem.querySelector("progress");
-                const imageElement = previewItem.querySelector("img");
-
-                updateProgress(progressBar, 10); // Fortschritt: Datei wird hochgeladen
-
-                const base64 = await convertImageToBase64(file, progressBar);
-
-                imageElement.src = `data:image/webp;base64,${base64}`;
-                imageElement.style.display = "block";
-
-                updateProgress(progressBar, 100); // Fortschritt: Fertig
-            });
-        }
-
-        function createPreviewItem(fileName) {
-            const previewItem = document.createElement("div");
-            previewItem.className = "preview-item";
-
-            previewItem.innerHTML = `
-    <p>${fileName}</p>
-    <img style="display: none;" alt="Vorschau" />
-    <progress value="0" max="100"></progress>
-  `;
-
-            return previewItem;
-        }
-
-        async function convertImageToBase64(file, progressBar) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                const reader = new FileReader();
-
-                reader.onload = () => {
-                    img.src = reader.result;
-                };
-                reader.onerror = reject;
-
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0);
-
-                    // Fortschritt auf 50 % setzen
-                    updateProgress(progressBar, 50);
-
-                    // Konvertiere zu WebP und hole die Base64-Daten
-                    const webpDataUrl = canvas.toDataURL("image/webp");
-                    resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
-                };
-
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function updateProgress(progressBar, value) {
-            progressBar.value = value;
-        }
-    </script>
+        <aside class="right-sidebar right-sidebar-createpost">
+            <div class="inner-scroll">
+                <!-- Load sidebar widgets -->
+                <?php require_once('./template-parts/sidebars/widget-profile.php'); ?>
+                <?php require_once('./template-parts/sidebars/widget-main-menu.php'); ?>
+                <?php require_once('./template-parts/sidebars/widget-add-new-post.php'); ?>
+                <?php require_once('./template-parts/sidebars/widget-web-version.php'); ?>
+            </div>
+        </aside>
+        <?php require_once('./template-parts/footer.php'); ?>
+    </div>
+    <dialog id="videocodierung">
+        <img src="svg/logo_farbe.svg" alt="codierung">
+        The video is being re-encoded.
+        <span id="nocursor" tabindex="-1"></span>
+    </dialog>
+    <dialog id="videoloading">
+        <img src="svg/logo_farbe.svg" alt="codierung">
+        The file is loading.
+    </dialog>
 </body>
+
+</html>

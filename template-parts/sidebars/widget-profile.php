@@ -1,25 +1,25 @@
-<div class="widget">
+<div class="widget widget-margin-bottom">
     	
-    	<div class="widget-inner widget-type-box widget-profile">
+    	<a href="profile.php" class="widget-inner widget-type-box profile_link widget-profile">
         
         	<!-- Profil-Bild und Name -->
                 <div class="profile-header">
                     <div id="cropContainer" class="cropContainer">
                     <span class="online_status"></span>
-                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture" />
+                        <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profilbild profile-picture" />
                         <!-- <img id="editProfileImage" src="svg/edit.svg" alt="edit">
                             <img id="cropButton" src="svg/ok.svg" alt="edit"> -->
                     </div>
                     <!-- <div id="badge" class="badge"></div> -->
                     <div class="pro-name">
-                        <div id="username" class="user-profile-name">&nbsp;</div>
-                        <p id="slug" class="username">&nbsp;</p>
+                        <div id="username" class="username user-profile-name">&nbsp;</div>
+                        <p id="slug" class="slug username">&nbsp;</p>
                     </div>
                 </div>
 
                 <!-- Statistiken -->
                 <div class="stats">
-                    <div class="stat">
+                    <div class="none stat">
                         <span id="userPosts">&nbsp;</span>
                         <p>Posts</p>
                     </div>
@@ -28,18 +28,16 @@
                         <p>Followers</p>
                     </div>
                     <div class="stat">
+                        <span id="Peers">&nbsp;</span>
+                        <p>Peers</p>
+                    </div>
+                    <div class="stat">
                         <span id="following">&nbsp;</span>
                         <p>Following</p>
                     </div>
                 </div>
-        		
-                <ul class="menu">
-                    <li class="menu-item">
-                    <a href="profile.php">
-                        <img class="icon"  src="svg/profile.svg" alt="View Profile">
-                        <p>View Profile</p>
-                    </a>
-                    </li>
-                </ul>
-    	</div>
-    </div>
+
+                <!-- Daily free actions -->
+        		<?php require_once('./template-parts/sidebars/widget-daily-action.php'); ?>
+        </a>
+</div>

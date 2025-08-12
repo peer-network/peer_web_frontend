@@ -27,8 +27,8 @@ $fullUrl = $protocol . '://' . $hostname;
 <meta name="theme-color" content="#00beff">
 <link rel="manifest" href="json/webmanifest.json">
 <script type="application/ld+json">
-    <?php include('json/Organization.min.json'); ?>
+    <?php include('./json/Organization.json'); ?>
 </script>
 <script type="application/ld+json">
-    <?php include('json/WebPage.min.json'); ?>
+    <?php include('./json/WebPage.json'); ?>
 </script>
