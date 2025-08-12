@@ -1488,18 +1488,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (let file of files) {
-      // if (!file.type.startsWith("image/")) {
-      //   info("Information", `${file.name} ist keine Bilddatei.`);
-      //   return;
-      // }
-
-      // Restrict both video/webm and audio/webm
-      if (file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm")) {
-        ErrorCont.textContent = "WEBM files are not supported. Please upload a different format.";
-        Merror("Error", "WEBM files are not supported. Please upload a different format.");
-        return
-      }
-
       previewItem = "";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
@@ -1507,6 +1495,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (uploadtype === "audio") {
         if (id.includes("audiobackground")) {
+          if (!validateFileType(file, "image", modal, ErrorCont)) return;
 
           previewItem.innerHTML = `
           <p>${file.name}</p>
@@ -1518,8 +1507,11 @@ document.addEventListener("DOMContentLoaded", () => {
           insertPosition.innerHTML = ""; // Removes any existing children
           insertPosition.appendChild(previewItem); // Adds the new one
         } else {
-          previewItem.classList.add("audio-item");
-          previewItem.innerHTML = `
+
+        if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+
+        previewItem.classList.add("audio-item");
+        previewItem.innerHTML = `
         <p>${file.name}</p>        
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
@@ -1539,6 +1531,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
       } else if (uploadtype === "image") {
+        if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
         previewItem.innerHTML = `
@@ -1561,6 +1554,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
+          if (!validateFileType(file, 'image', modal, ErrorCont)) return;
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1577,7 +1571,7 @@ document.addEventListener("DOMContentLoaded", () => {
           insertPosition.insertAdjacentElement("afterend", previewItem);
           document.getElementById("drop-area-videocover").classList.add("none");
         } else {
-
+          if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
 
@@ -1787,6 +1781,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   }
+
+  function validateFileType(file, uploadType, modal, errorContainer) {
+    const allowedTypesMap = {
+      audio: {
+        types: ["audio/mp3","audio/m4a","audio/aac", "audio/wav", "audio/mpeg"],
+        message: ".mpeg, .m4a, .aac and .wav files are supported. Please upload a different format for audio."
+      },
+      image: {
+        types: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/tiff"],
+        message: "Unsupported format file. Please upload a different format for image."
+      },
+      video: {
+        types: ["video/mp4", "video/mov","video/m4v","video/mkv","video/3gp", "video/ogg", "video/avi"],
+        message: ".mp4, .m4v, .avi, .ogg, .mov, .mkv and .3gp video files are supported."
+      }
+    };
+
+    const config = allowedTypesMap[uploadType];
+    if (!config) {
+      console.error(`Unknown uploadType: ${uploadType}`);
+      return false;
+    }
+
+    if (!config.types.includes(file.type)) {
+      modal.close();
+      errorContainer.textContent = config.message;
+      return false;
+    }
+
+    errorContainer.textContent = "";
+    return true;
+  }
+
 });
 
 let cropOrg = null;
