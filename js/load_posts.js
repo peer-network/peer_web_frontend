@@ -861,6 +861,7 @@ function commentToDom(c, append = true) {
           /* On mouse move over the card, scrub through the video based on cursor position
           / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
+
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.getElementsByTagName("video")[0];
