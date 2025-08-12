@@ -226,6 +226,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const slide = document.createElement("div");
         slide.className = "slide_item";
 
+        let coverSrc;
+        if (objekt.cover && objekt.cover.length > 0) {
+          coverSrc = objekt.cover[0];
+        } else {
+          coverSrc = 'img/audio-bg.png'; 
+        }
+
         const video = document.createElement("video");
         video.src = media;
         video.controls = true;
@@ -233,9 +240,23 @@ document.addEventListener("DOMContentLoaded", () => {
         video.autoplay = index === 0;
         video.muted = false;
         video.className = "custom-video";
+        slide.style.backgroundImage = `url("${coverSrc}")`;
 
         slide.appendChild(video);
         sliderTrack.appendChild(slide);
+
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("video-item");
+
+        const img = document.createElement("img");
+        img.classList.add("cover");
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.src = coverSrc;
+        img.alt = "Cover";
+        videoContainer.appendChild(img);
 
         const thumb = document.createElement("div");
         thumb.className = "timg";
@@ -301,6 +322,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const slide = document.createElement("div");
         slide.classList.add("slide_item");
 
+        slide.style.backgroundImage = `url("${media}")`;
+
         const img = document.createElement("img");
         img.src = media;
         img.alt = "";
@@ -362,6 +385,10 @@ document.addEventListener("DOMContentLoaded", () => {
     collapsedCard.classList.remove("multi-video", "double-card");
     collapsedCard.removeAttribute("content");
 
+    const shadowDiv = document.createElement("div");
+    shadowDiv.classList.add("shadow");
+    postBox.appendChild(shadowDiv);
+
     const contentType = objekt.contenttype;
     const mediaArray = objekt.media || [];
     const hasMultiple = mediaArray.length > 1;
@@ -382,6 +409,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (index === 0) slide.classList.add("active");
 
       if (contentType === "image") {
+        postBox.classList.add("multi");
+
         slide.style.backgroundImage = `url('${mediaURL}')`;
         slide.style.backgroundSize = "cover";
         slide.style.backgroundPosition = "center";
@@ -415,7 +444,28 @@ document.addEventListener("DOMContentLoaded", () => {
           videoCover.appendChild(img);
         }
 
-        slide.addEventListener("mouseleave", function () {
+        collapsedCard.addEventListener("mousemove", function (event) {
+          const videoCover = this.querySelector(".video-cover");
+          if(videoCover)  videoCover.classList.add("none");
+          const video = this.getElementsByTagName("video")[0];
+
+          if (video.readyState >= 2) {
+            const rect = video.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const relativePosition = mouseX / rect.width;
+
+            if (!video.duration) return;
+
+            video.currentTime = relativePosition * video.duration;
+            /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
+            requestAnimationFrame(() => {
+            if (video.paused || video.currentTime === 0) 
+              video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
+            });
+          }
+        });
+
+        collapsedCard.addEventListener("mouseleave", function () {
           const videoCover = this.querySelector(".video-cover");
           if (videoCover) videoCover.classList.remove("none");
 
@@ -497,12 +547,64 @@ document.addEventListener("DOMContentLoaded", () => {
         imageCounter.classList.add("image_counter");
 
         mediaArray.forEach((_, i) => {
-          const span = document.createElement("span");
-          span.textContent = i + 1;
-          if (i === 0) span.classList.add("active");
-          span.addEventListener("click", () => switchSlide(i));
-          imageCounter.appendChild(span);
+          const img_indicator = document.createElement("span");
+          img_indicator.textContent = i + 1;
+          if (i === 0) img_indicator.classList.add("active");
+          imageCounter.appendChild(img_indicator);
         });
+
+        let current = 0; // Shared index for both click and auto-swap
+        let autoSwapInterval = null;
+        imageCounter.querySelectorAll("span").forEach((span, index) => {
+          span.addEventListener("click", (event) => {
+              event.stopPropagation();
+              event.preventDefault();
+                current = index; // ✅ Update current index to clicked
+            const images = postBox.querySelectorAll(".collapsed-slide");
+            const indicators = imageCounter.querySelectorAll("span");
+
+            images.forEach((img, i) => {
+              // Show only matching image index (match with class image1, image2, etc.)
+              if (i === index) {
+                
+                img.classList.add("active");
+              } else {
+                
+                img.classList.remove("active");
+              }
+            });
+
+            // Update active indicator
+            indicators.forEach(s => s.classList.remove("active"));
+            span.classList.add("active");
+          });
+        });
+
+        collapsedCard.addEventListener("mouseenter", () => {
+          const images = postBox.querySelectorAll(".collapsed-slide");
+          const indicators = imageCounter.querySelectorAll("span");
+          
+          if (images.length <= 1) return; // no need to auto swap
+
+            
+          autoSwapInterval = setInterval(() => {
+            current = (current + 1) % images.length;
+
+            images.forEach((img, i) => {
+              img.classList.toggle("active", i === current);
+            });
+
+            indicators.forEach((span, i) => {
+              span.classList.toggle("active", i === current);
+            });
+          }, 1500); // change image every 1.5 seconds
+        });
+
+        collapsedCard.addEventListener("mouseleave", () => {
+          clearInterval(autoSwapInterval);
+          autoSwapInterval = null;
+        });
+
 
         inhaltDiv.insertBefore(imageCounter, postContent);
       }
@@ -850,11 +952,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       media = combinedBase64;
 
+      const coverWrapper = document.getElementById("preview-video");
+      const coverImg = coverWrapper.querySelector("img.create-img");
+      cover = coverImg ? [coverImg.src] : "";
+
       objekt = {
         title,
         description,
         tags,
         media,
+        cover,
         contenttype: "video",
       };
     }

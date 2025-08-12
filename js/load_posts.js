@@ -871,22 +871,22 @@ function commentToDom(c, append = true) {
           /* On mouse move over the card, scrub through the video based on cursor position
           / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
-          const videoCover = this.querySelector(".video-cover");
-          if(videoCover)  videoCover.classList.add("none");
-          const video = this.getElementsByTagName("video")[0];
+            const videoCover = this.querySelector(".video-cover");
+            if(videoCover)  videoCover.classList.add("none");
+            const video = this.getElementsByTagName("video")[0];
 
-          if (video.readyState >= 2) {
-            const rect = video.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const relativePosition = mouseX / rect.width;
+            if (video.readyState >= 2) {
+              const rect = video.getBoundingClientRect();
+              const mouseX = event.clientX - rect.left;
+              const relativePosition = mouseX / rect.width;
 
-            if (!video.duration) return;
+              if (!video.duration) return;
 
-            video.currentTime = relativePosition * video.duration;
-            /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
-            requestAnimationFrame(() => {
-            if (video.paused || video.currentTime === 0) 
-              video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
+              video.currentTime = relativePosition * video.duration;
+              /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
+              requestAnimationFrame(() => {
+              if (video.paused || video.currentTime === 0) 
+                video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
               });
             }
           });
