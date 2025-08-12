@@ -741,7 +741,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hasError = true;
       } else if (postMedia.join("").length > 5 * 1024 * 1024) {
         videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
-        hasError = false;
+        hasError = true;
       }
     }
     break;
