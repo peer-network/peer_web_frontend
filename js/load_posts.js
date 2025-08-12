@@ -848,7 +848,6 @@ function commentToDom(c, append = true) {
         let i = 0;
         for (const item of array) {
            i++;
-          
           video = document.createElement("video");
           video.classList.add("video_"+i);
           video.muted = true;
@@ -865,14 +864,10 @@ function commentToDom(c, append = true) {
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.getElementsByTagName("video")[0];
-
-          if (video.readyState >= 2) {
+          if (video.readyState >= 2 && (isFinite(video.duration) || video.duration <= 0)) {
             const rect = video.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;
             const relativePosition = mouseX / rect.width;
-
-            if (!video.duration) return;
-
             video.currentTime = relativePosition * video.duration;
             /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
             requestAnimationFrame(() => {
