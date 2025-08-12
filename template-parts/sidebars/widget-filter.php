@@ -8,11 +8,11 @@
         <!-- Content Filter -->
         <section class="filter-section">
             <button type="button" class="filter-toggle filter-section-header" aria-expanded="false" aria-controls="content-options">
+                <img src="svg/content-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">
-                    <img src="svg/content-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Content</span>
+                    <img src="svg/content-arrow.svg" alt="" class="section-arrow">
                 </div>
-                <img src="svg/content-arrow.svg" alt="" class="section-arrow">
             </button>
                 <div class="filter-options content-options" id="content-options">
                     <div class="filterGroup">
@@ -45,9 +45,8 @@
         <!-- Feed Filter -->
         <section class="filter-section">
             <button type="button" class="feed filter-toggle filter-section-header" aria-expanded="false" aria-controls="feed-options">
+                <img src="svg/feed-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">
-                    
-                    <img src="svg/feed-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Feed</span>
                     <span class="section-selected-label">All</span>
                 </div>
@@ -79,8 +78,8 @@
         <!-- Time Filter -->
         <section class="filter-section">
             <button type="button" class="time filter-toggle filter-section-header" aria-expanded="false" aria-controls="time-options">
+                <img src="svg/time-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">
-                    <img src="svg/time-icon.svg" alt="" class="section-icon">
                     <span class="section-title">Time</span>
                     <span class="section-selected-label">All</span>
                 </div>

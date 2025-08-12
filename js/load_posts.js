@@ -1,11 +1,6 @@
 // :TODO VIEWS
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
-
-
   const everything = document.getElementById("everything");
   if (everything) {
     everything.addEventListener("click", () => {
@@ -20,10 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelTimeout();
      
     });
-  }
-
-
-  
+  }  
 
   const addComment = document.getElementById("addComment");
   if (addComment) {
@@ -627,7 +619,6 @@ function commentToDom(c, append = true) {
       
       const time_ago = document.createElement("span");
       time_ago.classList.add("timeAgo");
-      console.log('objekt.createdat ', objekt.createdat)
       time_ago.textContent = calctimeAgo(objekt.createdat);
       title.appendChild(time_ago);
 
@@ -857,7 +848,6 @@ function commentToDom(c, append = true) {
         let i = 0;
         for (const item of array) {
            i++;
-          
           video = document.createElement("video");
           video.classList.add("video_"+i);
           video.muted = true;
@@ -871,22 +861,19 @@ function commentToDom(c, append = true) {
           /* On mouse move over the card, scrub through the video based on cursor position
           / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
-            const videoCover = this.querySelector(".video-cover");
-            if(videoCover)  videoCover.classList.add("none");
-            const video = this.getElementsByTagName("video")[0];
 
-            if (video.readyState >= 2) {
-              const rect = video.getBoundingClientRect();
-              const mouseX = event.clientX - rect.left;
-              const relativePosition = mouseX / rect.width;
-
-              if (!video.duration) return;
-
-              video.currentTime = relativePosition * video.duration;
-              /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
-              requestAnimationFrame(() => {
-              if (video.paused || video.currentTime === 0) 
-                video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
+          const videoCover = this.querySelector(".video-cover");
+          if(videoCover)  videoCover.classList.add("none");
+          const video = this.getElementsByTagName("video")[0];
+          if (video.readyState >= 2 && (isFinite(video.duration) || video.duration <= 0)) {
+            const rect = video.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const relativePosition = mouseX / rect.width;
+            video.currentTime = relativePosition * video.duration;
+            /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
+            requestAnimationFrame(() => {
+            if (video.paused || video.currentTime === 0) 
+              video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
               });
             }
           });
