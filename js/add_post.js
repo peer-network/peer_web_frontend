@@ -611,7 +611,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const coverWrapper = document.getElementById("preview-video");
       const coverImg = coverWrapper.querySelector("img.create-img");
-      cover = coverImg ? [coverImg.src] : "";
+      cover = coverImg ? [coverImg.src] : null;
 
       postMedia = combinedBase64;
       postDescription = description;
