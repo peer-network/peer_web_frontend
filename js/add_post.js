@@ -1496,8 +1496,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (uploadtype === "audio") {
         if (id.includes("audiobackground")) {
           if (!validateFileType(file, "image", modal, ErrorCont)) return;
-
-        if (id.includes("audiobackground")) {
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
