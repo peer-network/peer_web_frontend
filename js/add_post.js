@@ -260,8 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const thumb = document.createElement("div");
         thumb.className = "timg";
-        thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
+        thumb.innerHTML = `<i class="fi fi-sr-play">`;
         sliderThumbs.appendChild(thumb);
+        thumb.appendChild(img);
 
         thumb.addEventListener("click", () => updateSlider(index));
       });
