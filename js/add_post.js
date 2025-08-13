@@ -2335,7 +2335,7 @@ async function trimVideo(background = false) {
 
     // Canvas streamen
     const stream = canvas.captureStream();
-    const rec = new MediaRecorder(stream, { mimeType });
+    const rec = new MediaRecorder(stream);
     let chunks = [];
     rec.ondataavailable = (e) => e.data && chunks.push(e.data);
 
