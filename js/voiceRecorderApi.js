@@ -290,7 +290,7 @@ async function startRecording() {
       }
 
       const needsWav = getBrowser();
-      console.log(needsWav)
+      //console.log(needsWav)
       if (needsWav == "Chrome" || needsWav == "Safari" || needsWav == "Edge") {
         try {
           const arrayBuffer = await blob.arrayBuffer();

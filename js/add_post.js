@@ -2328,11 +2328,18 @@ async function trimVideo(background = false) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d");
-    let mimeType = "video/mp4"; 
+    //let mimeType = "video/mp4"; 
 
     // Canvas streamen
     const stream = canvas.captureStream();
-    const rec = new MediaRecorder(stream);
+    const get_browser = getBrowser();
+      //console.log(needsWav)
+      let rec;
+      if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
+          rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
+      } else {
+          rec = new MediaRecorder(stream); // fallback, let browser decide
+      }
     let chunks = [];
     rec.ondataavailable = (e) => e.data && chunks.push(e.data);
 
@@ -2342,6 +2349,7 @@ async function trimVideo(background = false) {
 
     // Start Aufnahme
     rec.start();
+    
     video.play();
 
     // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
@@ -2360,7 +2368,7 @@ async function trimVideo(background = false) {
 
     // Nach Aufnahme: Download anbieten
     rec.onstop = async () => {
-      alert('');
+      
       const blob = new Blob(chunks, { type: "video/mp4" });
       // const url = URL.createObjectURL(blob);
       const base64 = await blobToBase64(blob);
