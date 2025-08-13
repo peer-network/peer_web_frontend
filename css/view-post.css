@@ -16,6 +16,16 @@
 	gap: 1.5rem;
 }
 
+.collapsed-preview .card.order1 {
+  order: 1;
+}
+.collapsed-preview .card.order2 {
+  order: 2;
+}
+.collapsed-preview .card.order3 {
+  order: 3;
+}
+
 .active.card {
   order: 2;
 }

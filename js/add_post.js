@@ -260,8 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const thumb = document.createElement("div");
         thumb.className = "timg";
-        thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
+        thumb.innerHTML = `<i class="fi fi-sr-play">`;
         sliderThumbs.appendChild(thumb);
+        thumb.appendChild(img);
 
         thumb.addEventListener("click", () => updateSlider(index));
       });
@@ -2330,7 +2331,7 @@ async function trimVideo(background = false) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d");
-    let mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : ""; // leer = Default, aber meist WebM
+    let mimeType = "video/mp4"; 
 
     // Canvas streamen
     const stream = canvas.captureStream();
@@ -2362,7 +2363,7 @@ async function trimVideo(background = false) {
 
     // Nach Aufnahme: Download anbieten
     rec.onstop = async () => {
-      const blob = new Blob(chunks, { type: "video/webm" });
+      const blob = new Blob(chunks, { type: "video/mp4" });
       // const url = URL.createObjectURL(blob);
       const base64 = await blobToBase64(blob);
       cuttedVideo = base64; // Geschnittenes Video in Base64 speichern
