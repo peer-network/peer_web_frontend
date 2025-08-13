@@ -560,7 +560,7 @@ document.addEventListener("DOMContentLoaded", () => {
           span.addEventListener("click", (event) => {
               event.stopPropagation();
               event.preventDefault();
-                current = index; // ✅ Update current index to clicked
+                current = index; // Update current index to clicked
             const images = postBox.querySelectorAll(".collapsed-slide");
             const indicators = imageCounter.querySelectorAll("span");
 
@@ -584,10 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
         collapsedCard.addEventListener("mouseenter", () => {
           const images = postBox.querySelectorAll(".collapsed-slide");
           const indicators = imageCounter.querySelectorAll("span");
-          
-          if (images.length <= 1) return; // no need to auto swap
-
-            
+          if (images.length <= 1) return; // no need to auto swap 
           autoSwapInterval = setInterval(() => {
             current = (current + 1) % images.length;
 
@@ -2363,6 +2360,7 @@ async function trimVideo(background = false) {
 
     // Nach Aufnahme: Download anbieten
     rec.onstop = async () => {
+      alert('');
       const blob = new Blob(chunks, { type: "video/mp4" });
       // const url = URL.createObjectURL(blob);
       const base64 = await blobToBase64(blob);
@@ -2382,7 +2380,6 @@ async function trimVideo(background = false) {
       // modal.close();
     }
     // Jedes Video pausieren
-    
 }
 trimBtn.onclick = async () => {
   trimVideo(false);
