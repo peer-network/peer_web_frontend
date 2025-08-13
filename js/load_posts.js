@@ -865,6 +865,7 @@ function commentToDom(c, append = true) {
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.getElementsByTagName("video")[0];
+          console.log(video.duration)
           if (video.readyState >= 2 && (isFinite(video.duration) || video.duration <= 0)) {
             const rect = video.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;

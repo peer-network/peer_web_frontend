@@ -386,6 +386,7 @@ function isVariableNameInArray(variableObj, nameArray) {
 }
 
 async function sendCreatePost(variables) {
+  
   // postCost is a global variable and updated in global.js -> getActionPrices();
   if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
     return false;
