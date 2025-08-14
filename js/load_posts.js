@@ -442,14 +442,14 @@ function commentToDom(c, append = true) {
     );
     let stopscroll = false;
     function handleScroll(event, inputType, el) {
-      console.log("handleScroll called ");
+      // console.log("handleScroll called ");
       //   const scrollableContainer = event.target.closest(".blockscroll");
       //   if (!scrollableContainer) return; // Nur in bestimmten Containern scrollen
-      console.log("handleScroll");
+      // console.log("handleScroll");
       if (event.currentTarget.className === "scrollable") stopscroll = true;
       event.stopPropagation();
       if (event.currentTarget.id === "main" && stopscroll) {
-        console.log("stopscroll");
+        // console.log("stopscroll");
         event.preventDefault();
       }
       if (event.currentTarget.className === "scrollable") return;
@@ -858,19 +858,19 @@ function commentToDom(c, append = true) {
           video.classList.add("custom-video");
           addMediaListener(video);
           postDiv.appendChild(video);
+          
           /* On mouse move over the card, scrub through the video based on cursor position
           / Only trigger if the video is ready, and play it safely if needed*/
           card.addEventListener("mousemove", function (event) {
 
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
-          const video = this.getElementsByTagName("video")[0];
-          console.log(video.duration)
-          if (video.readyState >= 2 && (isFinite(video.duration) || video.duration <= 0)) {
-            const rect = video.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const relativePosition = mouseX / rect.width;
-            video.currentTime = relativePosition * video.duration;
+          const video = this.querySelector(".video_1");
+          if (video.readyState >= 2 ) {
+            // const rect = video.getBoundingClientRect();
+            // const mouseX = event.clientX - rect.left;
+            // const relativePosition = mouseX / rect.width;
+            video.currentTime = 0;
             /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
             requestAnimationFrame(() => {
             if (video.paused || video.currentTime === 0) 
