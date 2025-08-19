@@ -768,7 +768,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear old errors
     titleErrorEl.textContent = "";
     descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
+    // tagErrorEl.textContent = "";
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
