@@ -161,7 +161,7 @@ async function likePost(postid) {
   if (!(await LiquiudityCheck(likeCost, "Like Post", like))) {
     return false;
   }
- 
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -284,6 +284,7 @@ async function LiquiudityCheck(postCosts, title, action) {
   const token = await getLiquiudity();
   //console.log(dailyPostAvailable+"---"+dailyfree);
   if (dailyPostAvailable) {
+   
     let answer = await confirm(title, `🎉 This ${msg[action]} is free! You have ${freeActions[action]} free ${msg[action]}${freeActions[action] > 1 ? "s" : ""} available every 24 hours.`, (dontShowOption = true),msg[action] );
     if (answer === null || answer.button  === cancel) {
       return false;
@@ -377,8 +378,10 @@ async function LiquiudityCheck(postCosts, title, action) {
     await Merror(title, `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`); //updated
     return false;
   }
-
-  return true;
+    
+    return true;
+  
+  
 }
 
 function isVariableNameInArray(variableObj, nameArray) {
@@ -459,6 +462,7 @@ async function sendCreatePost(variables) {
   //   mediadescription,
   //   contenttype,
   // };
+  
 
   try {
     const response = await fetch(GraphGL, {

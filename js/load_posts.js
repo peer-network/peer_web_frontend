@@ -1131,7 +1131,20 @@ function like_dislike_post(objekt, action, el) {
   const span = el.querySelector("span");
   const keyIsClicked = isLike ? "isliked" : "isdisliked";
   const keyAmount = isLike ? "amountlikes" : "amountdislikes";
-  el.classList.add('clicked');
+
+    // Check nearest parent with .card OR .viewpost
+    const parentel = el.closest(".card, .viewpost");
+    
+    if (parentel) {
+      parentel.classList.add("disbale_click");
+
+      // 3 second baad remove kar do
+      setTimeout(() => {
+        parentel.classList.remove("disbale_click");
+      }, 3000);
+    }
+  
+  
 
   apiCall(objekt.id).then((success) => {
     if (success) {
@@ -1542,6 +1555,7 @@ async function postClicked(objekt) {
         function handleLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
+         
           like_dislike_post(objekt, "like", this);
         },
         { capture: true}

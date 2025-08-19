@@ -738,16 +738,18 @@ document.addEventListener("DOMContentLoaded", () => {
         tags,
       });
 
-      //console.log(result.createPost);
-      if (result.createPost.status === "success") {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
-        setTimeout(() => {
-          window.location.href = "./profile.php";
-        }, 1000);
-      } else {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+      //console.log(result);
+      if(result){
+        if (result.createPost.status === "success") {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+          setTimeout(() => {
+            window.location.href = "./profile.php";
+          }, 1000);
+        } else {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+        }
       }
     } catch (error) {
       console.error("Error during create post request:", error);

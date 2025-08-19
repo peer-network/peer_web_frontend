@@ -1105,6 +1105,7 @@ footer {grid-area: footer;}
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	display: none;
 }
 
 .widget ul.menu li a:hover {
