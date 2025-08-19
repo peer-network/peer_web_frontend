@@ -1959,7 +1959,6 @@ function handleEditVideo(event) {
   setTimeout(async () => {
     const video_id = previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
-    console.log(video_id);
     await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
   }, 800);
@@ -2316,9 +2315,16 @@ async function trimVideo(background = false) {
       modal.showModal();
       document.getElementById("nocursor").focus();
     }
+    
+    // console.log('video.duration ', video.duration)
+    // console.log('startPercent ', startPercent)
+    // console.log('endPercent ', endPercent)
+    // console.log('formula ', (startPercent * endPercent))
+
     // Schnitt-Zeiten berechnen
     const startTime = video.duration * startPercent;
     const endTime = video.duration * endPercent;
+
 
     // Sicherstellen, dass keine Wiedergabe läuft
     video.pause();
@@ -2391,6 +2397,7 @@ async function trimVideo(background = false) {
 trimBtn.onclick = async () => {
   trimVideo(false);
 };
+
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

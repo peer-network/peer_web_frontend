@@ -442,14 +442,14 @@ function commentToDom(c, append = true) {
     );
     let stopscroll = false;
     function handleScroll(event, inputType, el) {
-      console.log("handleScroll called ");
+      // console.log("handleScroll called ");
       //   const scrollableContainer = event.target.closest(".blockscroll");
       //   if (!scrollableContainer) return; // Nur in bestimmten Containern scrollen
-      console.log("handleScroll");
+      // console.log("handleScroll");
       if (event.currentTarget.className === "scrollable") stopscroll = true;
       event.stopPropagation();
       if (event.currentTarget.id === "main" && stopscroll) {
-        console.log("stopscroll");
+        // console.log("stopscroll");
         event.preventDefault();
       }
       if (event.currentTarget.className === "scrollable") return;
@@ -866,11 +866,10 @@ function commentToDom(c, append = true) {
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.querySelector(".video_1");
-          console.log(video.duration);
           if (video.readyState >= 2 ) {
-            const rect = video.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const relativePosition = mouseX / rect.width;
+            // const rect = video.getBoundingClientRect();
+            // const mouseX = event.clientX - rect.left;
+            // const relativePosition = mouseX / rect.width;
             video.currentTime = 0;
             /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
             requestAnimationFrame(() => {

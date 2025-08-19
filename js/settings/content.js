@@ -120,7 +120,6 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
     body: graphqlbody,
   };
 
-  
   try {
     const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
