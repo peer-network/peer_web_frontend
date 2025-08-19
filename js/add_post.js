@@ -1101,7 +1101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tagInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "," || e.key === " ") {
         e.preventDefault();
 
         const val = tagInput.value.trim();
@@ -1118,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-
+    
     tagInput.addEventListener("keyup", async (e) => {
       const searchStr = tagInput.value.trim();
 
