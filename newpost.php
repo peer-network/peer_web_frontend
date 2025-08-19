@@ -30,6 +30,8 @@ checkAuth("unauthorized");
      <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/crop.css?<?php echo filemtime('css/crop.css'); ?>" />
     <!-- <script src="sw_instal.min.js" async></script> -->
+  
+
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
      <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
@@ -38,6 +40,9 @@ checkAuth("unauthorized");
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
     <script src="js/voiceRecorderApi.js?<?php echo filemtime('js/voiceRecorderApi.js'); ?>" defer></script>
+  
+
+
 
 
     <?php

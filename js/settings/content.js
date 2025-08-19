@@ -96,7 +96,7 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const graphql = JSON.stringify({
+  const graphqlbody = JSON.stringify({
     query: `
       mutation UpdateUserPreferences {
         updateUserPreferences(
@@ -117,12 +117,12 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
   const requestOptions = {
     method: "POST",
     headers: headers,
-    body: graphql,
+    body: graphqlbody,
   };
 
-  const GraphQL = "https://getpeer.eu/graphql";
+  
   try {
-    const response = await fetch(GraphQL, requestOptions);
+    const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
