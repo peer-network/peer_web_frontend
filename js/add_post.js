@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
+  const tagErrorEl = document.getElementById("tagError");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
   const descEl = document.getElementById("descriptionNotes");
@@ -757,7 +758,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function pre_post_form_validation(post_type, postMedia) {
-    const tagErrorEl = document.getElementById("tagError");
+    
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
     const imgErrorEl = document.getElementById("imageError");
@@ -1129,9 +1130,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-        alert("Only letters and numbers allowed.");
+        tagErrorEl.textContent = "Only letters and numbers allowed.";
         return;
       }
+
+      //need to clear the error div container
+      tagErrorEl.textContent = "";
 
       if (searchStr.length < 3) return;
 
