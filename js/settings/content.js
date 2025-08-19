@@ -120,7 +120,7 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
     body: graphql,
   };
 
-  const GraphQL = "https://getpeer.eu/graphql";
+  // const GraphQL = "https://getpeer.eu/graphql";
   try {
     const response = await fetch(GraphQL, requestOptions);
     const result = await response.json();
