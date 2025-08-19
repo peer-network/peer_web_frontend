@@ -540,6 +540,7 @@ async function sendUpdateBio(biography) {
         }
       }`;
   try {
+    
     const response = await fetch(GraphGL, {
       method: "POST",
       headers: headers,

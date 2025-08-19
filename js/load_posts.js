@@ -1132,6 +1132,7 @@ function like_dislike_post(objekt, action, el) {
   const span = el.querySelector("span");
   const keyIsClicked = isLike ? "isliked" : "isdisliked";
   const keyAmount = isLike ? "amountlikes" : "amountdislikes";
+  el.classList.add('clicked');
 
   apiCall(objekt.id).then((success) => {
     if (success) {

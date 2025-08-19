@@ -2333,7 +2333,7 @@ async function trimVideo(background = false) {
     // Canvas streamen
     const stream = canvas.captureStream();
     const get_browser = getBrowser();
-      //console.log(needsWav)
+      
       let rec;
       if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
           rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
