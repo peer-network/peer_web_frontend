@@ -8,7 +8,7 @@
                     Dashboard
                 </a>
             </li>
-            <li class="menu-item <?= ($currentPage === 'chat.php') ? 'active' : '' ?>">
+            <li class="menu-item none <?= ($currentPage === 'chat.php') ? 'active' : '' ?>">
                 <a href="chat.php">
                     <img class="icon" src="svg/chat-icon-update.svg" alt="Chat" />
                     Chats
