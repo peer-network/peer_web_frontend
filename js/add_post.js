@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
+  const tagErrorEl = document.getElementById("tagError");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
   const descEl = document.getElementById("descriptionNotes");
@@ -759,7 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function pre_post_form_validation(post_type, postMedia) {
-    const tagErrorEl = document.getElementById("tagError");
+    
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
     const imgErrorEl = document.getElementById("imageError");
@@ -769,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear old errors
     titleErrorEl.textContent = "";
     descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
+    // tagErrorEl.textContent = "";
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
@@ -1102,7 +1103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tagInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "," || e.key === " ") {
         e.preventDefault();
 
         const val = tagInput.value.trim();
@@ -1119,7 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-
+    
     tagInput.addEventListener("keyup", async (e) => {
       const searchStr = tagInput.value.trim();
 
@@ -1131,9 +1132,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-        alert("Only letters and numbers allowed.");
+        tagErrorEl.textContent = "Only letters and numbers allowed.";
         return;
       }
+
+      //need to clear the error div container
+      tagErrorEl.textContent = "";
 
       if (searchStr.length < 3) return;
 
