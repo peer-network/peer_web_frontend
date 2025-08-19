@@ -779,6 +779,7 @@
 	gap: 40px;
 	align-items: center;
 	height: 85vh;
+	width: 100%;
 }
 .slider-modal.hidden {
   display: none;
@@ -790,12 +791,14 @@
   overflow: hidden;
   transition: all 0.3s linear;
   max-width: unset !important;
+  width: 100%;
 }
 
 .slider-modal .modal-slider-track {
   display: flex;
   align-items: center;
   transition: transform 0.3s ease-in-out;
+  width: 100%;
 }
 
 
@@ -836,13 +839,13 @@
 
 
 .slider-modal .close-modal {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 30px;
-  color: white;
-  cursor: pointer;
-  z-index: 1;
+	position: absolute;
+	top: 30px;
+	right: 30px;
+	font-size: 50px;
+	color: white;
+	cursor: pointer;
+	z-index: 1;
 }
 
 .slider-modal .modal-thumbnails {
