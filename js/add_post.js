@@ -911,7 +911,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //  Priority: Use recorded audio if it exists and is blob
       if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
         const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-        console.log(base64)
+        // console.log(base64)
         if (base64) combinedBase64.push(base64);
       } else {
         //  Fallback: Use uploaded audio if no recorded audio found
@@ -2368,7 +2368,6 @@ async function trimVideo(background = false) {
 
     // Nach Aufnahme: Download anbieten
     rec.onstop = async () => {
-      
       const blob = new Blob(chunks, { type: "video/mp4" });
       // const url = URL.createObjectURL(blob);
       const base64 = await blobToBase64(blob);
