@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
+  const tagErrorEl = document.getElementById("tagError");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
   const descEl = document.getElementById("descriptionNotes");
@@ -560,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
           span.addEventListener("click", (event) => {
               event.stopPropagation();
               event.preventDefault();
-                current = index; // ✅ Update current index to clicked
+                current = index; // Update current index to clicked
             const images = postBox.querySelectorAll(".collapsed-slide");
             const indicators = imageCounter.querySelectorAll("span");
 
@@ -584,10 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
         collapsedCard.addEventListener("mouseenter", () => {
           const images = postBox.querySelectorAll(".collapsed-slide");
           const indicators = imageCounter.querySelectorAll("span");
-          
-          if (images.length <= 1) return; // no need to auto swap
-
-            
+          if (images.length <= 1) return; // no need to auto swap 
           autoSwapInterval = setInterval(() => {
             current = (current + 1) % images.length;
 
@@ -740,16 +738,18 @@ document.addEventListener("DOMContentLoaded", () => {
         tags,
       });
 
-      //console.log(result.createPost);
-      if (result.createPost.status === "success") {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
-        setTimeout(() => {
-          window.location.href = "./profile.php";
-        }, 1000);
-      } else {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+      //console.log(result);
+      if(result){
+        if (result.createPost.status === "success") {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+          setTimeout(() => {
+            window.location.href = "./profile.php";
+          }, 1000);
+        } else {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+        }
       }
     } catch (error) {
       console.error("Error during create post request:", error);
@@ -760,7 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function pre_post_form_validation(post_type, postMedia) {
-    const tagErrorEl = document.getElementById("tagError");
+    
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
     const imgErrorEl = document.getElementById("imageError");
@@ -770,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear old errors
     titleErrorEl.textContent = "";
     descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
+    // tagErrorEl.textContent = "";
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
@@ -914,7 +914,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //  Priority: Use recorded audio if it exists and is blob
       if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
         const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-        console.log(base64)
+        // console.log(base64)
         if (base64) combinedBase64.push(base64);
       } else {
         //  Fallback: Use uploaded audio if no recorded audio found
@@ -1103,7 +1103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tagInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "," || e.key === " ") {
         e.preventDefault();
 
         const val = tagInput.value.trim();
@@ -1120,7 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-
+    
     tagInput.addEventListener("keyup", async (e) => {
       const searchStr = tagInput.value.trim();
 
@@ -1132,9 +1132,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-        alert("Only letters and numbers allowed.");
+        tagErrorEl.textContent = "Only letters and numbers allowed.";
         return;
       }
+
+      //need to clear the error div container
+      tagErrorEl.textContent = "";
 
       if (searchStr.length < 3) return;
 
@@ -1962,7 +1965,6 @@ function handleEditVideo(event) {
   setTimeout(async () => {
     const video_id = previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
-    console.log(video_id);
     await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
   }, 800);
@@ -2319,9 +2321,16 @@ async function trimVideo(background = false) {
       modal.showModal();
       document.getElementById("nocursor").focus();
     }
+    
+    // console.log('video.duration ', video.duration)
+    // console.log('startPercent ', startPercent)
+    // console.log('endPercent ', endPercent)
+    // console.log('formula ', (startPercent * endPercent))
+
     // Schnitt-Zeiten berechnen
     const startTime = video.duration * startPercent;
     const endTime = video.duration * endPercent;
+
 
     // Sicherstellen, dass keine Wiedergabe läuft
     video.pause();
@@ -2331,11 +2340,18 @@ async function trimVideo(background = false) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d");
-    let mimeType = "video/mp4"; 
+    //let mimeType = "video/mp4"; 
 
     // Canvas streamen
     const stream = canvas.captureStream();
-    const rec = new MediaRecorder(stream, { mimeType });
+    const get_browser = getBrowser();
+      
+      let rec;
+      if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
+          rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
+      } else {
+          rec = new MediaRecorder(stream); // fallback, let browser decide
+      }
     let chunks = [];
     rec.ondataavailable = (e) => e.data && chunks.push(e.data);
 
@@ -2345,6 +2361,7 @@ async function trimVideo(background = false) {
 
     // Start Aufnahme
     rec.start();
+    
     video.play();
 
     // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
@@ -2382,11 +2399,11 @@ async function trimVideo(background = false) {
       // modal.close();
     }
     // Jedes Video pausieren
-    
 }
 trimBtn.onclick = async () => {
   trimVideo(false);
 };
+
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

@@ -39,6 +39,10 @@
   flex-grow: 1;
   cursor: pointer;
 }
+.card.disbale_click {
+	pointer-events: none;
+	cursor: not-allowed;
+}
 .card.double-card {
   opacity: 1;
 	/*flex: 0 0 calc(2 * (100% / 4) - 2rem);
@@ -243,6 +247,7 @@ line-height: 40px;
   gap: 0.4rem;
   cursor: pointer;
 }
+
 .card .social div i {
 	line-height: 0;
 }
