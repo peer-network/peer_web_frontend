@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
+  const tagErrorEl = document.getElementById("tagError");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
   const descEl = document.getElementById("descriptionNotes");
@@ -737,16 +738,18 @@ document.addEventListener("DOMContentLoaded", () => {
         tags,
       });
 
-      //console.log(result.createPost);
-      if (result.createPost.status === "success") {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
-        setTimeout(() => {
-          window.location.href = "./profile.php";
-        }, 1000);
-      } else {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+      //console.log(result);
+      if(result){
+        if (result.createPost.status === "success") {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+          setTimeout(() => {
+            window.location.href = "./profile.php";
+          }, 1000);
+        } else {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+        }
       }
     } catch (error) {
       console.error("Error during create post request:", error);
@@ -757,7 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function pre_post_form_validation(post_type, postMedia) {
-    const tagErrorEl = document.getElementById("tagError");
+    
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
     const imgErrorEl = document.getElementById("imageError");
@@ -767,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear old errors
     titleErrorEl.textContent = "";
     descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
+    // tagErrorEl.textContent = "";
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
@@ -1100,7 +1103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tagInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "," || e.key === " ") {
         e.preventDefault();
 
         const val = tagInput.value.trim();
@@ -1117,7 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-
+    
     tagInput.addEventListener("keyup", async (e) => {
       const searchStr = tagInput.value.trim();
 
@@ -1129,9 +1132,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-        alert("Only letters and numbers allowed.");
+        tagErrorEl.textContent = "Only letters and numbers allowed.";
         return;
       }
+
+      //need to clear the error div container
+      tagErrorEl.textContent = "";
 
       if (searchStr.length < 3) return;
 
@@ -1959,7 +1965,6 @@ function handleEditVideo(event) {
   setTimeout(async () => {
     const video_id = previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
-    console.log(video_id);
     await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
   }, 800);
@@ -2316,9 +2321,16 @@ async function trimVideo(background = false) {
       modal.showModal();
       document.getElementById("nocursor").focus();
     }
+    
+    // console.log('video.duration ', video.duration)
+    // console.log('startPercent ', startPercent)
+    // console.log('endPercent ', endPercent)
+    // console.log('formula ', (startPercent * endPercent))
+
     // Schnitt-Zeiten berechnen
     const startTime = video.duration * startPercent;
     const endTime = video.duration * endPercent;
+
 
     // Sicherstellen, dass keine Wiedergabe läuft
     video.pause();
@@ -2333,7 +2345,7 @@ async function trimVideo(background = false) {
     // Canvas streamen
     const stream = canvas.captureStream();
     const get_browser = getBrowser();
-      //console.log(needsWav)
+      
       let rec;
       if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
           rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
@@ -2391,6 +2403,7 @@ async function trimVideo(background = false) {
 trimBtn.onclick = async () => {
   trimVideo(false);
 };
+
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

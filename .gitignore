@@ -2,6 +2,7 @@
 public/
 test/
 tests/
+video-editor/
 *.html
 *.tmp
 error.txt
