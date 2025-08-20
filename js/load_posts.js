@@ -365,7 +365,7 @@ function commentToDom(c, append = true) {
     
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID) {
-    likeContainer.addEventListener("click", function (event) {
+    likeIcon.addEventListener("click", function (event) {
       event.stopPropagation();
       event.preventDefault();
       likeComment(c.commentid).then((result) => {
@@ -1530,6 +1530,7 @@ async function postClicked(objekt) {
     
     // Zweites -Icon mit #post-like
     const likeContainer = social.querySelector(".post-like ");
+    const postlikeIcon = likeContainer.querySelector("i");
     const postLikes=likeContainer.querySelector("span ");
     postLikes.innerText = objekt.amountlikes;    
     
@@ -1537,18 +1538,19 @@ async function postClicked(objekt) {
       likeContainer.classList.add("active");
       
     } else if (objekt.user.id !== UserID) {
-      likeContainer.addEventListener(
+      postlikeIcon.addEventListener(
         "click",
         function handleLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
-          like_dislike_post(objekt, "like", this);
+          like_dislike_post(objekt, "like", likeContainer);
         },
         { capture: true}
       );
     }
       
     const dislikeContainer = social.querySelector(".post-dislike");
+    const postdislikeIcon = dislikeContainer.querySelector("i");
     const postdisLikes=dislikeContainer.querySelector("span");
     postdisLikes.innerText = objekt.amountdislikes;
     
@@ -1556,12 +1558,12 @@ async function postClicked(objekt) {
       dislikeContainer.classList.add("active");
       
     } else if (objekt.user.id !== UserID) {
-      dislikeContainer.addEventListener(
+      postdislikeIcon.addEventListener(
         "click",
         function handleLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
-          like_dislike_post(objekt, "dislike", this);
+          like_dislike_post(objekt, "dislike", dislikeContainer);
         },
         { capture: true}
       );
@@ -1796,4 +1798,42 @@ async function postClicked(objekt) {
     }
     // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
   } 
+
+
+
+  const postSpan = document.querySelector(".post-view span");
+  if (postSpan) {
+    postSpan.addEventListener("click", async () => {
+      const postid = postSpan.closest(".viewpost").getAttribute("postid");
+      await postInteractionsModal(postid, "VIEW");
+    });
+  }
+
+
+  const likeSpan = document.querySelector(".post-like span");
+  if (likeSpan) {
+    likeSpan.addEventListener("click", async () => {
+      const postid = likeSpan.closest(".viewpost").getAttribute("postid");
+      await postInteractionsModal(postid, "LIKE");
+    });
+  }
+
+
+  const dislikeSpan = document.querySelector(".post-dislike span");
+  if (dislikeSpan) {
+    dislikeSpan.addEventListener("click", async () => {
+      const postid = dislikeSpan.closest(".viewpost").getAttribute("postid");
+      await postInteractionsModal(postid, "DISLIKE");
+    });
+  }
+
+
+  document.body.addEventListener("click", async (e) => {
+    if (e.target.matches(".comment_like span")) {
+      const postid = e.target.closest(".comment_item").getAttribute("id");
+       await postInteractionsModal(postid, "COMMENTLIKE");
+    }
+  });
+
+
  
