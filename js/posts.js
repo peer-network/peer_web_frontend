@@ -355,13 +355,45 @@ async function postInteractionsModal(postid, startType = "VIEW") {
       cachedResults[type] = data;
     }
 
-    // update count in the tab
     const tab = modal.querySelector(`.tab-btn[data-type="${type}"] .count`);
     if (tab) {
       tab.textContent = data.length;
     }
 
+    if (data.length === 0) {
+      let label = "";
+      switch (type) {
+        case "LIKE":
+          label = "likes";
+          break;
+        case "DISLIKE":
+          label = "dislikes";
+          break;
+        case "VIEW":
+          label = "views";
+          break;
+        case "COMMENTLIKE":
+          label = "comment likes";
+          break;
+      }
+      container.innerHTML = `<div class="empty-message">No ${label} yet!</div>`;
+      return;
+    }
     renderUsers(data, container);
+  }
+
+
+  async function preloadInteractions(type) {
+    if (!cachedResults[type] || cachedResults[type].length === 0) {
+      const data = await getPostInteractions(type);
+      cachedResults[type] = data;
+
+      // only update count, NOT results
+      const tab = modal.querySelector(`.tab-btn[data-type="${type}"] .count`);
+      if (tab) {
+        tab.textContent = data.length;
+      }
+    }
   }
 
   // tab switching
@@ -378,13 +410,13 @@ async function postInteractionsModal(postid, startType = "VIEW") {
   openModal(startType);
   await loadInteractions(startType);
 
-  // also preload the other tabs in background (optional)
   if (startType !== "COMMENTLIKE") {
     ["VIEW", "LIKE", "DISLIKE"].forEach(t => {
-      if (t !== startType) loadInteractions(t);
+      if (t !== startType) preloadInteractions(t);
     });
   }
 }
+
 
 
 
