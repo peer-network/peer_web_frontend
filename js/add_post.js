@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM references
   const tagInput = document.getElementById("tag-input");
   const tagContainer = document.getElementById("tagsContainer");
+  const tagErrorEl = document.getElementById("tagError");
   const selectedContainer = document.getElementById("tagsSelected");
   const clearTagHistoryBtn = document.getElementById("clearTagHistory");
   const descEl = document.getElementById("descriptionNotes");
@@ -226,6 +227,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const slide = document.createElement("div");
         slide.className = "slide_item";
 
+        let coverSrc;
+        if (objekt.cover && objekt.cover.length > 0) {
+          coverSrc = objekt.cover[0];
+        } else {
+          coverSrc = 'img/audio-bg.png'; 
+        }
+
         const video = document.createElement("video");
         video.src = media;
         video.controls = true;
@@ -233,14 +241,29 @@ document.addEventListener("DOMContentLoaded", () => {
         video.autoplay = index === 0;
         video.muted = false;
         video.className = "custom-video";
+        slide.style.backgroundImage = `url("${coverSrc}")`;
 
         slide.appendChild(video);
         sliderTrack.appendChild(slide);
 
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("video-item");
+
+        const img = document.createElement("img");
+        img.classList.add("cover");
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.src = coverSrc;
+        img.alt = "Cover";
+        videoContainer.appendChild(img);
+
         const thumb = document.createElement("div");
         thumb.className = "timg";
-        thumb.innerHTML = `<i class="fi fi-sr-play"></i><img src="img/audio-bg.png" alt="">`;
+        thumb.innerHTML = `<i class="fi fi-sr-play">`;
         sliderThumbs.appendChild(thumb);
+        thumb.appendChild(img);
 
         thumb.addEventListener("click", () => updateSlider(index));
       });
@@ -300,6 +323,8 @@ document.addEventListener("DOMContentLoaded", () => {
       array.forEach((media, index) => {
         const slide = document.createElement("div");
         slide.classList.add("slide_item");
+
+        slide.style.backgroundImage = `url("${media}")`;
 
         const img = document.createElement("img");
         img.src = media;
@@ -362,6 +387,10 @@ document.addEventListener("DOMContentLoaded", () => {
     collapsedCard.classList.remove("multi-video", "double-card");
     collapsedCard.removeAttribute("content");
 
+    const shadowDiv = document.createElement("div");
+    shadowDiv.classList.add("shadow");
+    postBox.appendChild(shadowDiv);
+
     const contentType = objekt.contenttype;
     const mediaArray = objekt.media || [];
     const hasMultiple = mediaArray.length > 1;
@@ -382,6 +411,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (index === 0) slide.classList.add("active");
 
       if (contentType === "image") {
+        postBox.classList.add("multi");
+
         slide.style.backgroundImage = `url('${mediaURL}')`;
         slide.style.backgroundSize = "cover";
         slide.style.backgroundPosition = "center";
@@ -415,7 +446,28 @@ document.addEventListener("DOMContentLoaded", () => {
           videoCover.appendChild(img);
         }
 
-        slide.addEventListener("mouseleave", function () {
+        collapsedCard.addEventListener("mousemove", function (event) {
+          const videoCover = this.querySelector(".video-cover");
+          if(videoCover)  videoCover.classList.add("none");
+          const video = this.getElementsByTagName("video")[0];
+
+          if (video.readyState >= 2) {
+            const rect = video.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const relativePosition = mouseX / rect.width;
+
+            if (!video.duration) return;
+
+            video.currentTime = relativePosition * video.duration;
+            /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
+            requestAnimationFrame(() => {
+            if (video.paused || video.currentTime === 0) 
+              video.play().catch(err => { if (err.name !== "AbortError") console.warn("Play error:", err) });
+            });
+          }
+        });
+
+        collapsedCard.addEventListener("mouseleave", function () {
           const videoCover = this.querySelector(".video-cover");
           if (videoCover) videoCover.classList.remove("none");
 
@@ -497,12 +549,61 @@ document.addEventListener("DOMContentLoaded", () => {
         imageCounter.classList.add("image_counter");
 
         mediaArray.forEach((_, i) => {
-          const span = document.createElement("span");
-          span.textContent = i + 1;
-          if (i === 0) span.classList.add("active");
-          span.addEventListener("click", () => switchSlide(i));
-          imageCounter.appendChild(span);
+          const img_indicator = document.createElement("span");
+          img_indicator.textContent = i + 1;
+          if (i === 0) img_indicator.classList.add("active");
+          imageCounter.appendChild(img_indicator);
         });
+
+        let current = 0; // Shared index for both click and auto-swap
+        let autoSwapInterval = null;
+        imageCounter.querySelectorAll("span").forEach((span, index) => {
+          span.addEventListener("click", (event) => {
+              event.stopPropagation();
+              event.preventDefault();
+                current = index; // Update current index to clicked
+            const images = postBox.querySelectorAll(".collapsed-slide");
+            const indicators = imageCounter.querySelectorAll("span");
+
+            images.forEach((img, i) => {
+              // Show only matching image index (match with class image1, image2, etc.)
+              if (i === index) {
+                
+                img.classList.add("active");
+              } else {
+                
+                img.classList.remove("active");
+              }
+            });
+
+            // Update active indicator
+            indicators.forEach(s => s.classList.remove("active"));
+            span.classList.add("active");
+          });
+        });
+
+        collapsedCard.addEventListener("mouseenter", () => {
+          const images = postBox.querySelectorAll(".collapsed-slide");
+          const indicators = imageCounter.querySelectorAll("span");
+          if (images.length <= 1) return; // no need to auto swap 
+          autoSwapInterval = setInterval(() => {
+            current = (current + 1) % images.length;
+
+            images.forEach((img, i) => {
+              img.classList.toggle("active", i === current);
+            });
+
+            indicators.forEach((span, i) => {
+              span.classList.toggle("active", i === current);
+            });
+          }, 1500); // change image every 1.5 seconds
+        });
+
+        collapsedCard.addEventListener("mouseleave", () => {
+          clearInterval(autoSwapInterval);
+          autoSwapInterval = null;
+        });
+
 
         inhaltDiv.insertBefore(imageCounter, postContent);
       }
@@ -611,7 +712,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const coverWrapper = document.getElementById("preview-video");
       const coverImg = coverWrapper.querySelector("img.create-img");
-      cover = coverImg ? [coverImg.src] : "";
+      cover = coverImg ? [coverImg.src] : null;
 
       postMedia = combinedBase64;
       postDescription = description;
@@ -637,16 +738,18 @@ document.addEventListener("DOMContentLoaded", () => {
         tags,
       });
 
-      //console.log(result.createPost);
-      if (result.createPost.status === "success") {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
-        setTimeout(() => {
-          window.location.href = "./profile.php";
-        }, 1000);
-      } else {
-        createPostError.classList.add(result.createPost.status);
-        createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+      //console.log(result);
+      if(result){
+        if (result.createPost.status === "success") {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+          setTimeout(() => {
+            window.location.href = "./profile.php";
+          }, 1000);
+        } else {
+          createPostError.classList.add(result.createPost.status);
+          createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
+        }
       }
     } catch (error) {
       console.error("Error during create post request:", error);
@@ -657,7 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function pre_post_form_validation(post_type, postMedia) {
-    const tagErrorEl = document.getElementById("tagError");
+    
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
     const imgErrorEl = document.getElementById("imageError");
@@ -667,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear old errors
     titleErrorEl.textContent = "";
     descErrorEl.textContent = "";
-    tagErrorEl.textContent = "";
+    // tagErrorEl.textContent = "";
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
@@ -850,11 +953,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       media = combinedBase64;
 
+      const coverWrapper = document.getElementById("preview-video");
+      const coverImg = coverWrapper.querySelector("img.create-img");
+      cover = coverImg ? [coverImg.src] : "";
+
       objekt = {
         title,
         description,
         tags,
         media,
+        cover,
         contenttype: "video",
       };
     }
@@ -995,7 +1103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tagInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "," || e.key === " ") {
         e.preventDefault();
 
         const val = tagInput.value.trim();
@@ -1012,7 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-
+    
     tagInput.addEventListener("keyup", async (e) => {
       const searchStr = tagInput.value.trim();
 
@@ -1024,9 +1132,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-        alert("Only letters and numbers allowed.");
+        tagErrorEl.textContent = "Only letters and numbers allowed.";
         return;
       }
+
+      //need to clear the error div container
+      tagErrorEl.textContent = "";
 
       if (searchStr.length < 3) return;
 
@@ -1464,7 +1575,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const lastDashIndex = id.lastIndexOf("-");
-    // console.log(uploadtype)
     shortid = id.substring(lastDashIndex + 1);
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
     ErrorCont.innerHTML = "";
@@ -1489,26 +1599,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (let file of files) {
-      // if (!file.type.startsWith("image/")) {
-      //   info("Information", `${file.name} ist keine Bilddatei.`);
-      //   return;
-      // }
-      // Restrict both video/webm and audio/webm
- 
       previewItem = "";
       previewItem = document.createElement("div");
       previewItem.className = "preview-item dragable";
       const type = file.type.substring(0, 5);
-      if (uploadtype === "audio") {
-        //type check of file in case of video
-        if(file.type === "video/webm" || file.type === "audio/webm" || file.name.toLowerCase().endsWith(".webm") || file.type.toLowerCase().indexOf("video") !== -1) {
-           ErrorCont.textContent = "WEBM files are not supported. Please upload a different format.";
-          Merror("Error", "WEBM files are not supported. Please upload a different format.");
-          modal.close();
-          return
-        }
 
+      if (uploadtype === "audio") {
         if (id.includes("audiobackground")) {
+          if (!validateFileType(file, "image", modal, ErrorCont)) return;
+
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1519,23 +1618,31 @@ document.addEventListener("DOMContentLoaded", () => {
           insertPosition.innerHTML = ""; // Removes any existing children
           insertPosition.appendChild(previewItem); // Adds the new one
         } else {
-          previewItem.classList.add("audio-item");
-          previewItem.innerHTML = `
+
+        if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+
+        previewItem.classList.add("audio-item");
+        previewItem.innerHTML = `
         <p>${file.name}</p>        
         <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">
+
+
           <div class="audio_player_con" ><div class="time-info" >
           <span id="current-time">0:00</span> / <span id="duration">0:00</span>
         </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
+
           const insertAudioPosition = document.getElementById("audio_upload_block");
           insertAudioPosition.innerHTML = ""; // Removes any existing children
           insertAudioPosition.appendChild(previewItem);
+
           const dropareaaudio = document.getElementById("drop-area-audio");
           dropareaaudio.classList.add("none");
         }
-      } 
-      else if (uploadtype === "image") {
+
+      } else if (uploadtype === "image") {
+        if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
         previewItem.draggable = true;
         previewItem.classList.add("dragable");
         previewItem.innerHTML = `
@@ -1558,6 +1665,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //document.getElementById("drop-area-videocover").classList.add("none");
       } else if (uploadtype === "video") {
         if (id.includes("cover")) {
+          if (!validateFileType(file, 'image', modal, ErrorCont)) return;
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1573,14 +1681,16 @@ document.addEventListener("DOMContentLoaded", () => {
           const insertPosition = document.getElementById("drop-area-videocover");
           insertPosition.insertAdjacentElement("afterend", previewItem);
           document.getElementById("drop-area-videocover").classList.add("none");
-        } 
-        else {
+        } else {
+          if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
+
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+         
           <span class="editVideo" >
             <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
                 <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
@@ -1593,6 +1703,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (id.includes("short")) {
             const insertPosition = document.getElementById("drop-area-videoshort");
             insertPosition.insertAdjacentElement("afterend", previewItem);
+
             document.getElementById("drop-area-videoshort").classList.add("none");
           } else {
             const insertPosition = document.getElementById("drop-area-videolong");
@@ -1614,6 +1725,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element = previewItem.querySelector("img.create-img");
         base64ImagesMap.set(file.name, base64);
 
+
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
       } else if (type === "video") {
@@ -1621,18 +1733,19 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         base64ImagesMap.set(file.name, base64);
-        element?.addEventListener("loadedmetadata", async () => {
+        element.addEventListener("loadedmetadata", async () => {
           generateThumbnails(file.name);
-        }, 
-        {
+
+        }, {
           once: true
         });
+
       }
 
       element.src = base64;
-      element?.classList.remove("none");
-      element?.nextElementSibling ?.remove();
-      element?.nextElementSibling ?.classList.remove("none");
+      element.classList.remove("none");
+      element.nextElementSibling ?.remove();
+      element.nextElementSibling ?.classList.remove("none");
       if (type === "audio") {
         //initAudioplayer(file.name, base64);
         initAudioplayer("audio_upload_block", base64);
@@ -1648,15 +1761,13 @@ document.addEventListener("DOMContentLoaded", () => {
             dropareaaudio.classList.remove("none");
           });
         }
-      } 
-      else if (type === "video") {
+
+      } else if (type === "video") {
         element.autoplay = true;
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
       }
-    } // end of for loop
-
-
+    }
     if (uploadtype === "audio") {
       const voiceRecordWrapper = document.getElementById("voice-record-wrapper");
       const preview_del_btn = voiceRecordWrapper.querySelector(".preview-item .deletePost");
@@ -1781,6 +1892,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   }
+
+  function validateFileType(file, uploadType, modal, errorContainer) {
+    const allowedTypesMap = {
+      audio: {
+        types: ["audio/mp3","audio/m4a","audio/aac", "audio/wav", "audio/mpeg"],
+        message: ".mpeg, .m4a, .aac and .wav files are supported. Please upload a different format for audio."
+      },
+      image: {
+        types: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/tiff"],
+        message: "Unsupported format file. Please upload a different format for image."
+      },
+      video: {
+        types: ["video/mp4", "video/mov","video/m4v","video/mkv","video/3gp", "video/ogg", "video/avi"],
+        message: ".mp4, .m4v, .avi, .ogg, .mov, .mkv and .3gp video files are supported."
+      }
+    };
+
+    const config = allowedTypesMap[uploadType];
+    if (!config) {
+      console.error(`Unknown uploadType: ${uploadType}`);
+      return false;
+    }
+
+    if (!config.types.includes(file.type)) {
+      modal.close();
+      errorContainer.textContent = config.message;
+      return false;
+    }
+
+    errorContainer.textContent = "";
+    return true;
+  }
+
 });
 
 let cropOrg = null;
@@ -1821,7 +1965,6 @@ function handleEditVideo(event) {
   setTimeout(async () => {
     const video_id = previewItem.querySelector("p").innerText;
     document.getElementById("videoTrimContainer").classList.remove("none");
-    // console.log(video_id);
     await videoTrim(video_id);
     previewItem.classList.remove('click_edit');
   }, 800);
@@ -2178,9 +2321,16 @@ async function trimVideo(background = false) {
       modal.showModal();
       document.getElementById("nocursor").focus();
     }
+    
+    // console.log('video.duration ', video.duration)
+    // console.log('startPercent ', startPercent)
+    // console.log('endPercent ', endPercent)
+    // console.log('formula ', (startPercent * endPercent))
+
     // Schnitt-Zeiten berechnen
     const startTime = video.duration * startPercent;
     const endTime = video.duration * endPercent;
+
 
     // Sicherstellen, dass keine Wiedergabe läuft
     video.pause();
@@ -2190,11 +2340,18 @@ async function trimVideo(background = false) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d");
-    let mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : ""; // leer = Default, aber meist WebM
+    //let mimeType = "video/mp4"; 
 
     // Canvas streamen
     const stream = canvas.captureStream();
-    const rec = new MediaRecorder(stream, { mimeType });
+    const get_browser = getBrowser();
+      
+      let rec;
+      if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
+          rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
+      } else {
+          rec = new MediaRecorder(stream); // fallback, let browser decide
+      }
     let chunks = [];
     rec.ondataavailable = (e) => e.data && chunks.push(e.data);
 
@@ -2204,6 +2361,7 @@ async function trimVideo(background = false) {
 
     // Start Aufnahme
     rec.start();
+    
     video.play();
 
     // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
@@ -2222,7 +2380,7 @@ async function trimVideo(background = false) {
 
     // Nach Aufnahme: Download anbieten
     rec.onstop = async () => {
-      const blob = new Blob(chunks, { type: "video/webm" });
+      const blob = new Blob(chunks, { type: "video/mp4" });
       // const url = URL.createObjectURL(blob);
       const base64 = await blobToBase64(blob);
       cuttedVideo = base64; // Geschnittenes Video in Base64 speichern
@@ -2241,11 +2399,11 @@ async function trimVideo(background = false) {
       // modal.close();
     }
     // Jedes Video pausieren
-    
 }
 trimBtn.onclick = async () => {
   trimVideo(false);
 };
+
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

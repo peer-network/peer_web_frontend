@@ -512,3 +512,89 @@ async function getUserInfo() {
     throw error;
   }
 }
+
+
+// function to render users in the modal
+// used in list_follow.js and posts.js for rendering followers and following lists
+function renderUsers(users, container) {
+  container.innerHTML = "";
+  const avatar = "https://media.getpeer.eu";
+  const currentUserId = getCookie("userID");
+
+  users.forEach(user => {
+    const item = document.createElement("div");
+    item.className = "dropdown-item clickable-user";
+    item.innerHTML = `
+      <div class="profilStats">
+        <img src="${avatar}/${user.img}" alt="${user.username}" />
+        <div class="user_info">
+          <span class="user_name">${user.username}</span>  <span class="user_slug">#${user.slug}</span>
+        </div>
+      </div>
+    `;
+
+    item.querySelector("img").onerror = () => { item.querySelector("img").src = "svg/noname.svg"; };
+
+    item.addEventListener("click", () => {
+      window.location.href = `view-profile.php?user=${user.id || user.userid}`;
+    });
+
+    if ((user.id || user.userid) !== currentUserId) {
+      const followButton = document.createElement("button");
+      followButton.classList.add("follow-button");
+      followButton.dataset.userid = user.id || user.userid;
+
+      if (user.isfollowed && user.isfollowing) {
+        followButton.textContent = "Peer";
+        followButton.classList.add("following", "peer");
+      } else if (user.isfollowed) {
+        followButton.textContent = "Following";
+        followButton.classList.add("following", "just-following");
+      } else {
+        followButton.textContent = "Follow +";
+      }
+
+      followButton.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const targetUserId = user.id || user.userid;
+        const newStatus = await toggleFollowStatus(user.id || user.userid);
+
+        if (newStatus !== null) {
+          user.isfollowed = newStatus;
+
+          const followerCountSpan = document.getElementById("following");
+          if (followerCountSpan) {
+            let count = parseInt(followerCountSpan.textContent, 10) || 0;
+            count = newStatus ? count + 1 : Math.max(0, count - 1);
+            followerCountSpan.textContent = count;
+          }
+
+          document.querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`).forEach(btn => {
+            btn.classList.toggle("following", newStatus);
+
+            if (newStatus && user.isfollowing) {
+              btn.textContent = "Peer";
+              btn.classList.add("peer");
+              btn.classList.remove("just-following");
+            } else if (newStatus) {
+              btn.textContent = "Following";
+              btn.classList.add("just-following");
+              btn.classList.remove("peer");
+            } else {
+              btn.textContent = "Follow +";
+              btn.classList.remove("following", "just-following", "peer");
+            }
+          });
+        } else {
+          Merror("Failed to update follow status. Please try again.");
+        }
+      });
+
+      item.appendChild(followButton);
+    }
+
+    container.appendChild(item);
+  });
+}

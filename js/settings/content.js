@@ -1,9 +1,10 @@
 'use strict';
 
-let isInvited = "";
+let isInvited, contentFilteringSeverityLevel = "";
 const toggleCheckBox = document.getElementById("toggle");
 const contentRestored = document.getElementById("contentRestored");
 const returnToLogin = document.getElementById("returnToLogin");
+
 const svg1 = `
   <svg xmlns="http://www.w3.org/2000/svg" width="186" height="186" viewBox="0 0 186 186" fill="none">
     <path d="M93.0001 131.75C97.2803 131.75 100.75 135.22 100.75 139.5C100.75 143.78 97.2803 147.25 93.0001 147.25C88.7199 147.25 85.2501 143.78 85.2501 139.5C85.2501 135.22 88.7199 131.75 93.0001 131.75Z" fill="#FF3B3B"/>
@@ -20,17 +21,20 @@ const svg2 = `
 async function init() {
   if (!storedUserInfo || storedUserInfo === null) storedUserInfo = await getUserInfo()
   isInvited = storedUserInfo ?.invited;
-  const contentFilteringSeverityLevel = storedUserInfo ?.userPreferences ?.contentFilteringSeverityLevel;
-  toggleCheckBox.checked = contentFilteringSeverityLevel == "MYGRANDMAHATES" ? false : true;
+  contentFilteringSeverityLevel = storedUserInfo ?.userPreferences ?.contentFilteringSeverityLevel;
+  toggleCheckBox.checked = contentFilteringSeverityLevel == "MYGRANDMAHATES" ? true : false;
 }
 
 // updating modal text-content
 function updateCheckBoxStatus(flag = null) {
-  if (flag !== null && flag === true) {
-    contentRestored.querySelector("h3").textContent = "Content restored";
+  if (flag) {
+
+       contentRestored.querySelector("h3").textContent = "Content restored";
     contentRestored.querySelector("p").textContent = "Reported posts are now visible in your feed";
   } else {
-    contentRestored.querySelector("h3").textContent = "Hidden successfully";
+
+
+     contentRestored.querySelector("h3").textContent = "Hidden successfully";
     contentRestored.querySelector("p").textContent = "Reported posts have been removed from your feed";
   }
 }
@@ -42,8 +46,8 @@ toggleCheckBox.addEventListener('click', async function () {
   const prevStatus = this.checked ? false : true;
 
   if (this.checked === true) {
-    status = "MYGRANDMALIKES"
-    response = await confirm(
+    status = "MYGRANDMAHATES";
+     response = await confirm(
       "Show reported content?",
       "You're about to see all reported posts in your feed.",
       false,
@@ -53,8 +57,10 @@ toggleCheckBox.addEventListener('click', async function () {
 
     updateCheckBoxStatus(true);
   } else {
-    status = "MYGRANDMAHATES";
-    response = await confirm(
+    status = "MYGRANDMALIKES"
+ 
+
+      response = await confirm(
       "Hide all reported posts?",
       "You're about to hide all reported posts from your feed.",
       false,
@@ -79,8 +85,8 @@ toggleCheckBox.addEventListener('click', async function () {
       if (loader) loader.classList.add("none");
     }
     return
-  } 
-   
+  }
+
   this.checked = prevStatus;
 });
 
@@ -96,7 +102,7 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const graphql = JSON.stringify({
+  const graphqlbody = JSON.stringify({
     query: `
       mutation UpdateUserPreferences {
         updateUserPreferences(
@@ -117,12 +123,11 @@ async function updateReportedContent(contentFilteringSeverityLevel) {
   const requestOptions = {
     method: "POST",
     headers: headers,
-    body: graphql,
+    body: graphqlbody,
   };
 
-  const GraphQL = "https://getpeer.eu/graphql";
   try {
-    const response = await fetch(GraphQL, requestOptions);
+    const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);

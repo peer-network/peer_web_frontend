@@ -28,7 +28,7 @@ function createModal({
     modal.innerHTML = `
       <div class="modal-content ${type}">
         <span class="modal-close">&times;</span>
-        <span class="modal-icon">${(svg === null ? ""  : svg)}</span>
+       ${svg ? `<span class="modal-icon">${svg}</span>` : ""}
         <h2 class="modal-title xxl_font_size">${title}</h2>
         <p class="modal-message xl_font_size">${message}</p>
         ${checkboxHTML}
@@ -101,7 +101,8 @@ function createModal({
     });
 
     // Klick auf den Hintergrund schließt ebenfalls
-    modal.addEventListener("click", (event) => {
+    // khalid commented this out to prevent closing on background click becuase post like and dislike modals should not close on background click.
+    /*modal.addEventListener("click", (event) => {
       if (event.target === modal) {
         const isChecked = checkboxElement ? checkboxElement.checked : false;
 
@@ -116,7 +117,7 @@ function createModal({
         }
         closeModal(modal);
       }
-    });
+    });*/
 
     // Fokus auf Textarea, falls vorhanden
     if (textareaElement) {

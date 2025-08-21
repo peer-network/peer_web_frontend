@@ -161,7 +161,7 @@ async function likePost(postid) {
   if (!(await LiquiudityCheck(likeCost, "Like Post", like))) {
     return false;
   }
- 
+
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -259,6 +259,167 @@ async function dislikePost(postid) {
     });
 }
 
+
+async function postInteractionsModal(postid, startType = "VIEW") {
+  const accessToken = getCookie("authToken");
+  const modal = document.getElementById("interactionsModal");
+
+  // build tabs dynamically
+  let tabsHTML = "";
+  if (startType === "COMMENTLIKE") {
+    tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="fi fi-rr-heart"></i><span class="count">0</span></div>`;
+  } else {
+    tabsHTML = `
+      <div class="tab-btn" data-type="LIKE">Likes <i class="fi fi-rr-heart"></i><span class="count">0</span></div>
+      <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="fi fi-rr-heart-crack"></i><span class="count">0</span></div>
+      <div class="tab-btn" data-type="VIEW">Views <i class="fi fi-rr-eye"></i><span class="count">0</span></div>
+    `;
+  }
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <span class="close-btn"><img class="interactions-close" src="svg/arrow-left.svg"></span>
+
+      <div class="tabs">
+        ${tabsHTML}
+      </div>
+
+      <div id="interactionResults" class="results"></div>
+    </div>
+  `;
+
+  showModal();
+
+  async function getPostInteractions(type = "VIEW") {
+    const query = `
+      query PostInteractions {
+        postInteractions(postOrCommentId: "${postid}", getOnly: ${type}) {
+          status
+          ResponseCode
+          affectedRows {
+            id
+            username
+            slug
+            img
+            isfollowed
+            isfollowing
+          }
+        }
+      }
+    `;  
+
+    try {
+      const response = await fetch(GraphGL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const json = await response.json();
+      return json?.data?.postInteractions?.affectedRows || [];
+    } catch (error) {
+      console.error(`Error loading ${type} interactions:`, error);
+      return [];
+    }
+  }
+
+  let currentType = startType;
+  let cachedResults = { VIEW: [], LIKE: [], DISLIKE: [], COMMENTLIKE: [] };
+
+  function openModal(type) {
+    modal.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.type === type);
+    });
+  }
+
+  function showModal() {
+    modal.classList.remove("none");
+    modal.classList.add("open");
+  }
+
+  function hideModal() {
+    modal.classList.remove("open");
+    modal.classList.add("none");
+  }
+
+  async function loadInteractions(type) {
+    currentType = type;
+    const container = modal.querySelector("#interactionResults");
+
+    let data = cachedResults[type];
+    if (!data || data.length === 0) {
+      data = await getPostInteractions(type);
+      cachedResults[type] = data;
+    }
+
+    const tab = modal.querySelector(`.tab-btn[data-type="${type}"] .count`);
+    if (tab) {
+      tab.textContent = data.length;
+    }
+
+    if (data.length === 0) {
+      let label = "";
+      switch (type) {
+        case "LIKE":
+          label = "likes";
+          break;
+        case "DISLIKE":
+          label = "dislikes";
+          break;
+        case "VIEW":
+          label = "views";
+          break;
+        case "COMMENTLIKE":
+          label = "comment likes";
+          break;
+      }
+      container.innerHTML = `<div class="empty-message">No ${label} yet!</div>`;
+      return;
+    }
+    renderUsers(data, container);
+  }
+
+
+  async function preloadInteractions(type) {
+    if (!cachedResults[type] || cachedResults[type].length === 0) {
+      const data = await getPostInteractions(type);
+      cachedResults[type] = data;
+
+      // only update count, NOT results
+      const tab = modal.querySelector(`.tab-btn[data-type="${type}"] .count`);
+      if (tab) {
+        tab.textContent = data.length;
+      }
+    }
+  }
+
+  // tab switching
+  modal.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const type = btn.dataset.type;
+      openModal(type);
+      loadInteractions(type);
+    });
+  });
+
+  modal.querySelector(".close-btn").addEventListener("click", hideModal);
+
+  openModal(startType);
+  await loadInteractions(startType);
+
+  if (startType !== "COMMENTLIKE") {
+    ["VIEW", "LIKE", "DISLIKE"].forEach(t => {
+      if (t !== startType) preloadInteractions(t);
+    });
+  }
+}
+
+
+
+
 async function LiquiudityCheck(postCosts, title, action) {
   // console.log("Liquidity Check for postCosts:", postCosts);
   const limitIDs = [
@@ -284,6 +445,7 @@ async function LiquiudityCheck(postCosts, title, action) {
   const token = await getLiquiudity();
   //console.log(dailyPostAvailable+"---"+dailyfree);
   if (dailyPostAvailable) {
+   
     let answer = await confirm(title, `🎉 This ${msg[action]} is free! You have ${freeActions[action]} free ${msg[action]}${freeActions[action] > 1 ? "s" : ""} available every 24 hours.`, (dontShowOption = true),msg[action] );
     if (answer === null || answer.button  === cancel) {
       return false;
@@ -377,8 +539,10 @@ async function LiquiudityCheck(postCosts, title, action) {
     await Merror(title, `You need ${(postCosts * tokenPrice).toFixed(2)} Peer Tokens to ${msg[action]}. Your balance is ${token} Peer Tokens.`); //updated
     return false;
   }
-
-  return true;
+    
+    return true;
+  
+  
 }
 
 function isVariableNameInArray(variableObj, nameArray) {
@@ -386,6 +550,7 @@ function isVariableNameInArray(variableObj, nameArray) {
 }
 
 async function sendCreatePost(variables) {
+  
   // postCost is a global variable and updated in global.js -> getActionPrices();
   if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
     return false;
@@ -458,6 +623,7 @@ async function sendCreatePost(variables) {
   //   mediadescription,
   //   contenttype,
   // };
+  
 
   try {
     const response = await fetch(GraphGL, {

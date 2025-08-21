@@ -112,3 +112,6 @@
   <div class="modal-thumbnails"></div> <!-- Thumbnail container -->
 
 </div>
+
+<div id="interactionsModal" class="interactionsModal none">
+</div>

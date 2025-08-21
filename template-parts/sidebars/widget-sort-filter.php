@@ -7,8 +7,9 @@
                 <!-- Sort Filter -->
                 <section class="filter-section">
                     <button type="button" class="filter-toggle filter-section-header" aria-expanded="false" aria-controls="sort-options">
+                        <img src="svg/most-icon.svg" alt="" class="most-icon section-icon">
                         <div class="filter-section-container">
-                            <img src="svg/most-icon.svg" alt="" class="most-icon section-icon">
+                            
                             <span class="section-title">Most...</span>
                         </div>
                         <img src="svg/content-arrow.svg" alt="" class="sort section-arrow">

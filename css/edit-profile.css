@@ -94,6 +94,7 @@
 
 .setting-content .input-field {
   margin: 1rem auto;
+  background: var(--bg-filter);
 }
 
 .profile-back-button a::before {

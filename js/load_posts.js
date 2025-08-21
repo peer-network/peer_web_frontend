@@ -1,5 +1,6 @@
 // :TODO VIEWS
 
+
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
 
@@ -17,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelTimeout();
     });
   }
+
 
   const addComment = document.getElementById("addComment");
   if (addComment) {
@@ -354,6 +356,7 @@ const replyContainer = document.createElement("div");
   if (c.isliked) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID) {
+
     likeContainer.addEventListener(
       "click",
       function (event) {
@@ -368,6 +371,7 @@ const replyContainer = document.createElement("div");
               let current = parseInt(spanLike.textContent);
               spanLike.textContent = formatNumber(current + 1);
             }
+
           }
         });
       },
@@ -507,8 +511,10 @@ function appendPost(json) {
   const letztesDiv = parentElement.lastElementChild;
 }
 
+
 //let manualLoad = false;
 let postoffset = 0;
+
 
 async function postsLaden(postbyUserID = null) {
   const UserID = getCookie("userID");
@@ -658,6 +664,81 @@ async function postsLaden(postbyUserID = null) {
       inhaltDiv.appendChild(postvideoplayerDiv);
     }
 
+	
+    //console.log(postoffset);
+    const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
+    // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
+    const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
+    let audio, video;
+    // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
+    posts.data.listPosts.affectedRows.forEach((objekt,i) => {
+      // Haupt-<section> erstellen
+      const card = document.createElement("section");
+      card.id = objekt.id;
+      card.classList.add("card");
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("idno", i);
+      card.setAttribute("content", objekt.contenttype);
+      // card.setAttribute("tags", objekt.tags.join(","));
+      // <div class="post"> erstellen und Bild hinzufügen
+      //console.log(objekt.id);
+
+      let postDiv;
+      let img;
+      postDiv = document.createElement("div");
+      postDiv.classList.add("post");
+
+      const shadowDiv = document.createElement("div");
+      shadowDiv.classList.add("shadow");
+      postDiv.appendChild(shadowDiv);
+
+      const inhaltDiv = document.createElement("div");
+      inhaltDiv.classList.add("post-inhalt");
+      const userNameSpan = document.createElement("span");
+      userNameSpan.classList.add("post-userName");
+      userNameSpan.textContent = objekt.user.username;
+      const userprofileID = document.createElement("span");
+      userprofileID.classList.add("post-userName", "profile_id");
+      userprofileID.textContent = `#${objekt.user.slug}`;
+      const userImg = document.createElement("img");
+      userImg.classList.add("post-userImg","profile-picture");
+      userImg.onerror = function () {
+        this.src = "svg/noname.svg";
+      };
+
+      userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
+      const title = document.createElement("h3");
+      title.textContent = objekt.title;
+      title.classList.add("post-title","md_font_size","bold");
+      
+      const time_ago = document.createElement("span");
+      time_ago.classList.add("timeAgo");
+      time_ago.textContent = calctimeAgo(objekt.createdat);
+      title.appendChild(time_ago);
+
+      const card_header = document.createElement("div");
+      card_header.classList.add("card-header");
+
+      const card_header_left = document.createElement("div");
+      card_header_left.classList.add("card-header-left");
+      card_header_left.appendChild(userImg);
+      const user_slug_span = document.createElement("span");
+      user_slug_span.classList.add("username-slug");
+      user_slug_span.appendChild(userNameSpan);
+      user_slug_span.appendChild(userprofileID);
+      card_header_left.appendChild(user_slug_span);
+      
+
+
+      card_header_left.addEventListener("click",
+        function handledisLikeClick(event) {
+          event.stopPropagation();
+          event.preventDefault();
+          redirectToProfile(objekt, this);
+        }  
+      );
+
+
     const postContent = document.createElement("div");
     postContent.classList.add("post-content");
     postContent.appendChild(title);
@@ -764,6 +845,7 @@ async function postsLaden(postbyUserID = null) {
         if (i === 1) {
           img.classList.add("active");
         }
+
         img.onload = () => {
           img.setAttribute("height", img.naturalHeight);
           img.setAttribute("width", img.naturalWidth);
@@ -842,6 +924,34 @@ async function postsLaden(postbyUserID = null) {
             if (!video.duration) return;
 
             video.currentTime = relativePosition * video.duration;
+
+        let i = 0;
+        for (const item of array) {
+           i++;
+          video = document.createElement("video");
+          video.classList.add("video_"+i);
+          video.muted = true;
+          video.id = extractAfterComma(item.path);
+          video.src = tempMedia(item.path);
+          video.preload = "metadata";
+          video.controls = false;
+          video.classList.add("custom-video");
+          addMediaListener(video);
+          postDiv.appendChild(video);
+          
+          /* On mouse move over the card, scrub through the video based on cursor position
+          / Only trigger if the video is ready, and play it safely if needed*/
+          card.addEventListener("mousemove", function (event) {
+
+          const videoCover = this.querySelector(".video-cover");
+          if(videoCover)  videoCover.classList.add("none");
+          const video = this.querySelector(".video_1");
+          if (video.readyState >= 2 ) {
+            // const rect = video.getBoundingClientRect();
+            // const mouseX = event.clientX - rect.left;
+            // const relativePosition = mouseX / rect.width;
+            video.currentTime = 0;
+
             /* Wait a tick before trying to play the video Helps avoid timing issues if the video isn't quite ready yet*/
             requestAnimationFrame(() => {
               if (video.paused || video.currentTime === 0)
@@ -1089,6 +1199,20 @@ function like_dislike_post(objekt, action, el) {
   const span = el.querySelector("span");
   const keyIsClicked = isLike ? "isliked" : "isdisliked";
   const keyAmount = isLike ? "amountlikes" : "amountdislikes";
+
+    // Check nearest parent with .card OR .viewpost
+    const parentel = el.closest(".card, .viewpost");
+    
+    if (parentel) {
+      parentel.classList.add("disbale_click");
+
+      // 3 second baad remove kar do
+      setTimeout(() => {
+        parentel.classList.remove("disbale_click");
+      }, 3000);
+    }
+  
+  
 
   apiCall(objekt.id).then((success) => {
     if (success) {
@@ -1461,11 +1585,52 @@ async function postClicked(objekt) {
 
   const postComments = social.querySelector(".post-comments span ");
   postComments.innerText = objekt.amountcomments;
+    
+    // Zweites -Icon mit #post-like
+    const likeContainer = social.querySelector(".post-like ");
+    const postlikeIcon = likeContainer.querySelector("i");
+    const postLikes=likeContainer.querySelector("span ");
+    postLikes.innerText = objekt.amountlikes;    
+    
+    if (objekt.isliked) {
+      likeContainer.classList.add("active");
+      
+    } else if (objekt.user.id !== UserID) {
+      postlikeIcon.addEventListener(
+        "click",
+        function handleLikeClick(event) {
+          event.stopPropagation();
+          event.preventDefault();
 
-  // Zweites -Icon mit #post-like
-  const likeContainer = social.querySelector(".post-like ");
-  const postLikes = likeContainer.querySelector("span ");
-  postLikes.innerText = objekt.amountlikes;
+          like_dislike_post(objekt, "like", likeContainer);
+
+         
+          // like_dislike_post(objekt, "like", this);
+        },
+        { capture: true}
+      );
+    }
+      
+    const dislikeContainer = social.querySelector(".post-dislike");
+    const postdislikeIcon = dislikeContainer.querySelector("i");
+    const postdisLikes=dislikeContainer.querySelector("span");
+    postdisLikes.innerText = objekt.amountdislikes;
+    
+    if (objekt.isdisliked) {
+      dislikeContainer.classList.add("active");
+      
+    } else if (objekt.user.id !== UserID) {
+      postdislikeIcon.addEventListener(
+        "click",
+        function handleLikeClick(event) {
+          event.stopPropagation();
+          event.preventDefault();
+          like_dislike_post(objekt, "dislike", dislikeContainer);
+        },
+        { capture: true}
+      );
+    }
+
 
   if (objekt.isliked) {
     likeContainer.classList.add("active");
@@ -1714,6 +1879,43 @@ function restoreFilterSettings() {
     if (searchTagElem) {
       searchTagElem.value = localStorage.getItem("tagInput") || "";
     }
+
+    // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
+  } 
+
+
+
+  const postSpan = document.querySelector(".post-view span");
+  if (postSpan) {
+    postSpan.addEventListener("click", async () => {
+      const postid = postSpan.closest(".viewpost").getAttribute("postid");
+      await postInteractionsModal(postid, "VIEW");
+    });
   }
-  // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
-}
+
+
+  const likeSpan = document.querySelector(".post-like span");
+  if (likeSpan) {
+    likeSpan.addEventListener("click", async () => {
+      const postid = likeSpan.closest(".viewpost").getAttribute("postid");
+      await postInteractionsModal(postid, "LIKE");
+    });
+  }
+
+
+  const dislikeSpan = document.querySelector(".post-dislike span");
+  if (dislikeSpan) {
+    dislikeSpan.addEventListener("click", async () => {
+      const postid = dislikeSpan.closest(".viewpost").getAttribute("postid");
+      await postInteractionsModal(postid, "DISLIKE");
+    });
+  }
+
+
+  document.body.addEventListener("click", async (e) => {
+    if (e.target.matches(".comment_like span")) {
+      const postid = e.target.closest(".comment_item").getAttribute("id");
+       await postInteractionsModal(postid, "COMMENTLIKE");
+    }
+  });
+
