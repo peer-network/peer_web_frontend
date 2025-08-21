@@ -173,7 +173,18 @@
   height: 30rem;
   flex-direction: column;
   scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1; 
+}
+
+.follow-button.following.peer {
+  background-color: var(--blue-accent, #007BFF) !important;
+  color: #fff !important;
+  border-color: var(--blue-accent, #007BFF) !important;
+}
+
+.follow-button.following.just-following {
+  background-color: #fff !important;
+  color: #000 !important;
+  border-color: #ccc !important;
 }
 
 .empty-message {

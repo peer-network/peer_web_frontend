@@ -546,10 +546,10 @@ function renderUsers(users, container) {
 
       if (user.isfollowed && user.isfollowing) {
         followButton.textContent = "Peer";
-        followButton.classList.add("following");
+        followButton.classList.add("following", "peer");
       } else if (user.isfollowed) {
         followButton.textContent = "Following";
-        followButton.classList.add("following");
+        followButton.classList.add("following", "just-following");
       } else {
         followButton.textContent = "Follow +";
       }
@@ -576,10 +576,15 @@ function renderUsers(users, container) {
 
             if (newStatus && user.isfollowing) {
               btn.textContent = "Peer";
+              btn.classList.add("peer");
+              btn.classList.remove("just-following");
             } else if (newStatus) {
               btn.textContent = "Following";
+              btn.classList.add("just-following");
+              btn.classList.remove("peer");
             } else {
               btn.textContent = "Follow +";
+              btn.classList.remove("following", "just-following", "peer");
             }
           });
         } else {
