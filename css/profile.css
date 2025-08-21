@@ -267,4 +267,56 @@
 
 /*---------- End Profile Header -----------*/
 
+@media screen and (min-width: 3000px) {
+
+  .modalOverlay .modal-content {
+    width: min(90rem, 100vw);
+    padding: 40px 140px;
+  }
+
+  .modalOverlay .modal-body {
+    height: 45rem;
+    padding: 15px 0;
+    gap: 20px;
+  }
+
+  .modalOverlay .tabs {
+    border-radius: 2.5rem;
+  }
+
+  .modalOverlay .tabs .tab-btn {
+    line-height: 70px;
+    border-radius: 2.5rem;
+  }
+
+  .modalOverlay .follow-button {
+    height: 4.5rem;
+    font-size: 26px;
+  }
+
+  .modalOverlay .dropdown-item {
+    padding: 0;
+  }
+
+  .modalOverlay .close-btn {
+    margin-left: 55px;
+    margin-top: 60px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .modalOverlay .interactions-close {
+    width: 12px;
+  }
+
+  .modalOverlay .modal-content .profilStats .user_info .user_slug {
+	font-size: 16px;
+  }
+
+  .modalOverlay .modal-content div img {
+	width: 3.5rem;
+	height: 3.5rem;
+  }
+
+}
 
