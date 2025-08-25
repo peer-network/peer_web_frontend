@@ -407,7 +407,7 @@ input::placeholder {
   letter-spacing: 2%;
 }
 
-input:focus {
+input:not(.button):focus {
   background-color: transparent;
   border: none;
   outline: none;
