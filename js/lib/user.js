@@ -106,13 +106,24 @@ async function getUser() {
   } else {
     document.querySelectorAll(".username").forEach(el => {el.innerText = profil.data.getProfile.affectedRows.username;});
     document.querySelectorAll(".slug").forEach(el => {el.innerText = "#" + profil.data.getProfile.affectedRows.slug;});
-    document.getElementById("userPosts").innerText = profil.data.getProfile.affectedRows.amountposts;
-    document.getElementById("followers").innerText = profil.data.getProfile.affectedRows.amountfollower;
-    document.getElementById("following").innerText = profil.data.getProfile.affectedRows.amountfollowed;
-    if (document.getElementById("Peers")) {
-      document.getElementById("Peers").innerText = profil.data.getProfile.affectedRows.amountfriends;
+    
+    const userPostsEl = document.getElementById("userPosts");
+    if (userPostsEl) {
+      userPostsEl.innerText = profil.data.getProfile.affectedRows.amountposts;
     }
-
+    const userfollowersEl = document.getElementById("followers");
+    if (userfollowersEl) {
+      userfollowersEl.innerText = profil.data.getProfile.affectedRows.amountfollower;
+    }
+    const userfollowingEl = document.getElementById("followers");
+    if (userfollowingEl) {
+      userfollowingEl.innerText = profil.data.getProfile.affectedRows.amountfollowed;
+    }
+    
+    const userPeersEl = document.getElementById("Peers");
+    if (userPeersEl) {
+      userPeersEl.innerText = profil.data.getProfile.affectedRows.amountfriends;
+    }
     const img = document.querySelectorAll(".profilbild").forEach(img => {
       img.onerror = function () {
         this.src = "svg/noname.svg";

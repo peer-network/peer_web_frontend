@@ -126,7 +126,6 @@ function createModal({
       }, 10);
     }
   });
-
   
 }
 
