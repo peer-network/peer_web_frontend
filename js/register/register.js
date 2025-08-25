@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const referralCodeFromRef = urlParams.get("ref");
   const referralCodeFromUuid = urlParams.get("referralUuid");
 
-  const referralInputs = document.querySelectorAll("#referral_code");
+  const referralInputs = document.querySelectorAll(".referral_code");
   const validationMsg = document.getElementById("refValidationMessage");
   const staticUUID = "85d5f836-b1f5-4c4e-9381-1b058e13df93";
   let autoFillCode = null;
@@ -50,8 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!step1Section.classList.contains("none")) {
       const referralValue = referralInputs[0]?.value.trim();
       const isValid = await validateReferralCode(referralValue);
+      console.log("Referral code valid:", isValid);
       if (!isValid) return;
 
+      localStorage.setItem("referralUuid", referralValue);
 
       const inputField = multiStepForm.querySelector(".input-field");
       const loader = inputField.querySelector(".loader");
@@ -118,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await validateReferralCode(autoFillCode);
 
       }
-    }, 3000);
+    }, 200);
   });
 
   async function validateReferralCode(referralString) {
@@ -133,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
     const headers = new Headers({
-    "Content-Type": "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     });
 
     // Define the GraphQL mutation with variables
@@ -215,6 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Asynchrone Funktion, um einen Benutzer zu registrieren
 async function registerUser(email, password, username, referralcode) {
+   const referralUuid = localStorage.getItem("referralUuid") || null;
   // GraphQL-Mutation für die Registrierung eines Benutzers
   const query = `
         mutation Register($input: RegistrationInput!) {
@@ -239,7 +243,7 @@ async function registerUser(email, password, username, referralcode) {
       password: password,
       username: username,
       pkey: null,
-      referralUuid: referralcode,
+      referralUuid,
     },
   };
 
