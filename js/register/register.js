@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const referralCodeFromRef = urlParams.get("ref");
   const referralCodeFromUuid = urlParams.get("referralUuid");
 
-  const referralInputs = document.querySelectorAll(".referral_code");
+  const referralInputs = document.getElementById("referral_code");
   const validationMsg = document.getElementById("refValidationMessage");
   const staticUUID = "85d5f836-b1f5-4c4e-9381-1b058e13df93";
   let autoFillCode = null;
@@ -26,11 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (referralCode) {
     (async () => {
-      if (referralCodeFromUuid) {
-        localStorage.setItem("referralUuid", referralCodeFromUuid);
-      }
-
-      referralInputs.forEach(input => input.value = referralCode);
+      referralInputs.value = referralCode;
       await validateReferralCode(referralCode);
     })();
   }
@@ -48,15 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     if (!step1Section.classList.contains("none")) {
-      const referralValue = referralInputs[0]?.value.trim();
+      const referralValue = referralInputs.value.trim();
       const isValid = await validateReferralCode(referralValue);
       console.log("Referral code valid:", isValid);
       if (!isValid) return;
 
-      localStorage.setItem("referralUuid", referralValue);
-
-      const inputField = multiStepForm.querySelector(".input-field");
-      const loader = inputField.querySelector(".loader");
+  
+      
+      const loader = multiStepForm.querySelector(".loader");
 
       if (loader.style.display === "block") return;
       loader.style.display = "block";
@@ -65,9 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
         loader.style.display = "none";
         multiStepForm.classList.add("none");
         registerForm.classList.remove("none");
-        multiStepForm.reset();
+        //multiStepForm.reset();
 
-        localStorage.setItem("isOnRegister", "true");
+        
       }, 3000);
     }
   });
@@ -105,8 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("submitStep2").addEventListener("click", async function (e) {
     e.preventDefault();
 
-    const inputField = step2Section.querySelector(".input-field");
-    const loader = inputField.querySelector(".loader");
+    
+    const loader = step2Section.querySelector(".loader");
 
     if (loader.style.display === "block") return;
     loader.style.display = "block";
@@ -116,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showStep(1);
 
       if (autoFillCode) {
-        referralInputs.forEach(input => input.value = autoFillCode);
+        referralInputs.value = autoFillCode;
         await validateReferralCode(autoFillCode);
 
       }
@@ -218,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Asynchrone Funktion, um einen Benutzer zu registrieren
 async function registerUser(email, password, username, referralcode) {
-   const referralUuid = localStorage.getItem("referralUuid") || null;
+   
   // GraphQL-Mutation für die Registrierung eines Benutzers
   const query = `
         mutation Register($input: RegistrationInput!) {
@@ -243,7 +238,7 @@ async function registerUser(email, password, username, referralcode) {
       password: password,
       username: username,
       pkey: null,
-      referralUuid,
+      referralUuid:referralcode,
     },
   };
 
