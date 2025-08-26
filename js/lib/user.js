@@ -115,7 +115,7 @@ async function getUser() {
     if (userfollowersEl) {
       userfollowersEl.innerText = profil.data.getProfile.affectedRows.amountfollower;
     }
-    const userfollowingEl = document.getElementById("followers");
+    const userfollowingEl = document.getElementById("following");
     if (userfollowingEl) {
       userfollowingEl.innerText = profil.data.getProfile.affectedRows.amountfollowed;
     }
@@ -128,7 +128,6 @@ async function getUser() {
       img.onerror = function () {
         this.src = "svg/noname.svg";
       };
-    
       img.src = profil.data.getProfile.affectedRows.img ? tempMedia(profil.data.getProfile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
     });
   }

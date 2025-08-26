@@ -64,7 +64,7 @@
                                         <div  class="share-post-link">
                                             <input  type="text" class="share-link-input" value="" readonly>
                                             <button class="copy-link-btn btn-white">
-                                                Copy
+                                                <span>Copy</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="37" height="36" viewBox="0 0 37 36" fill="none">
                                                     <rect x="2" y="7.72266" width="26.2672" height="26.2662" rx="5" stroke="#252525" stroke-width="3"/>
                                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M33.2332 5.98046C33.139 5.71922 33.0467 5.4564 32.9428 5.19889C32.5875 4.31843 31.8845 3.61559 31.0039 3.26051C30.7464 3.15667 30.4836 3.06444 30.2224 2.97036C29.6933 2.7798 29.1227 2.67595 28.528 2.67595H14.8742C12.3343 2.67595 11.4722 0.0078125 14.0122 0.0078125H29.6958C33.2856 0.00786988 36.1958 2.918 36.1958 6.50781V22.1904C36.1957 24.7301 33.528 23.8682 33.528 21.3285V7.67594C33.528 7.08077 33.424 6.50988 33.2332 5.98046Z" fill="#252525"/>
@@ -156,4 +156,7 @@
     </div>
   <div class="modal-thumbnails"></div> <!-- Thumbnail container -->
 
+</div>
+
+<div id="interactionsModal" class="interactionsModal none">
 </div>

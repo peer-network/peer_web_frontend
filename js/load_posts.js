@@ -1,6 +1,9 @@
 // :TODO VIEWS
+
+
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
+
   const everything = document.getElementById("everything");
   if (everything) {
     everything.addEventListener("click", () => {
@@ -13,9 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     closePost.addEventListener("click", () => {
       togglePopup("cardClicked");
       cancelTimeout();
-     
     });
-  }  
+  }
+
 
   const addComment = document.getElementById("addComment");
   if (addComment) {
@@ -34,11 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // result hat das Format { button: <index>, value: <textarea Inhalt> }
         if (result !== null && result.button == 0 && result.value !== "") {
           createComment(attributeValue, result.value).then((result) => {
-            if (result){
-            if (result.data.createComment.status === "success") {
-              commentToDom(result.data.createComment.affectedRows[0], false);
+            if (result) {
+              if (result.data.createComment.status === "success") {
+                commentToDom(result.data.createComment.affectedRows[0], false);
+              }
             }
-          }
           });
         }
         // console.log("Ergebnis:", result);
@@ -46,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // document.getElementById("commentInput").focus();
       // createComment(attributeValue, "test");
     });
-
   }
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -56,43 +58,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initCollapseViewToggle() {
-    const collapseBtn = document.querySelector('.collapse-filters');
-    const collapsibleBtns = document.querySelectorAll(
-      'button[aria-controls="content-options"], ' +
-      'button[aria-controls="feed-options"], ' +
-      'button[aria-controls="time-options"], ' +
-      'button[aria-controls="sort-options"]'
-    );
-    if(collapseBtn){
-      const siteLayout = document.querySelector('.site_layout');
+    const collapseBtn = document.querySelector(".collapse-filters");
+    const collapsibleBtns = document.querySelectorAll('button[aria-controls="content-options"], ' + 'button[aria-controls="feed-options"], ' + 'button[aria-controls="time-options"], ' + 'button[aria-controls="sort-options"]');
+    if (collapseBtn) {
+      const siteLayout = document.querySelector(".site_layout");
       let isCollapsed = false;
 
       function setCollapsedState(collapsed) {
         isCollapsed = collapsed;
 
         if (collapsed) {
-          siteLayout.classList.add('collapsed');
-          collapsibleBtns.forEach(btn => btn.classList.add('collapsed'));
-          document.querySelectorAll('.filter-options.open').forEach(sec => sec.classList.remove('open'));
+          siteLayout.classList.add("collapsed");
+          collapsibleBtns.forEach((btn) => btn.classList.add("collapsed"));
+          document.querySelectorAll(".filter-options.open").forEach((sec) => sec.classList.remove("open"));
         } else {
-          siteLayout.classList.remove('collapsed');
-          collapsibleBtns.forEach(btn => btn.classList.remove('collapsed'));
+          siteLayout.classList.remove("collapsed");
+          collapsibleBtns.forEach((btn) => btn.classList.remove("collapsed"));
         }
 
-        localStorage.setItem('isFiltersCollapsed', JSON.stringify(isCollapsed));
+        localStorage.setItem("isFiltersCollapsed", JSON.stringify(isCollapsed));
       }
 
-      const savedState = localStorage.getItem('isFiltersCollapsed');
+      const savedState = localStorage.getItem("isFiltersCollapsed");
       if (savedState !== null) {
         setCollapsedState(JSON.parse(savedState));
       }
 
-      collapseBtn.addEventListener('click', () => {
+      collapseBtn.addEventListener("click", () => {
         setCollapsedState(!isCollapsed);
       });
 
-      collapsibleBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+      collapsibleBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
           if (isCollapsed) {
             setCollapsedState(false);
           }
@@ -103,48 +100,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initCollapseViewToggle();
 
-
-
-  function initFilterToggles(className = 'filter-toggle') {
-    document.querySelectorAll(`.${className}`).forEach(btn => {
-      btn.addEventListener('click', function () {
-        const targetId = btn.getAttribute('aria-controls');
+  function initFilterToggles(className = "filter-toggle") {
+    document.querySelectorAll(`.${className}`).forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = btn.getAttribute("aria-controls");
         const section = document.getElementById(targetId);
-        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        const isOpen = btn.getAttribute("aria-expanded") === "true";
 
         if (isOpen) {
-          section.classList.remove('open');
-          btn.setAttribute('aria-expanded', 'false');
+          section.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
         } else {
-          section.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
+          section.classList.add("open");
+          btn.setAttribute("aria-expanded", "true");
         }
 
-        const arrow = btn.querySelector('.section-arrow');
-        if (arrow) arrow.classList.toggle('rotated');
+        const arrow = btn.querySelector(".section-arrow");
+        if (arrow) arrow.classList.toggle("rotated");
       });
     });
   }
   initFilterToggles();
-
 
   function setupFilterLabelSwapping(filterType) {
     const headerBtn = document.querySelector(`.${filterType}.filter-section-header`);
     const optionsContainer = document.querySelector(`#${filterType}-options`);
     const radioInputs = optionsContainer.querySelectorAll(`input[name="${filterType}"]`);
 
-    let labelSpan = headerBtn.querySelector('.section-selected-label');
+    let labelSpan = headerBtn.querySelector(".section-selected-label");
     if (!labelSpan) {
       labelSpan = document.createElement("span");
       labelSpan.className = "section-selected-label";
-      headerBtn.querySelector('.filter-section-container').appendChild(labelSpan);
+      headerBtn.querySelector(".filter-section-container").appendChild(labelSpan);
     }
 
     // Restore from localStorage or default to "all"
     const stored = localStorage.getItem(`selected-${filterType}`) || "all";
     setSelectedLabel(stored);
 
-    radioInputs.forEach(input => {
+    radioInputs.forEach((input) => {
       input.addEventListener("change", () => {
         if (input.checked) {
           const value = input.value;
@@ -155,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function setSelectedLabel(value) {
-      radioInputs.forEach(input => {
+      radioInputs.forEach((input) => {
         const label = input.closest("label");
         const labelText = label.querySelector("span").textContent;
 
@@ -175,9 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFilterLabelSwapping("feed");
   setupFilterLabelSwapping("time");
 
-
-
-  function updateFilterHeaderIcons(sectionId = 'content-options', preset = null) {
+  function updateFilterHeaderIcons(sectionId = "content-options", preset = null) {
     const iconMap = {
       IMAGE: "svg/photo.svg",
       VIDEO: "svg/videos.svg",
@@ -185,31 +177,30 @@ document.addEventListener("DOMContentLoaded", () => {
       AUDIO: "svg/music.svg",
       LIKES: "svg/post-like.svg",
       COMMENTS: "svg/post-comment.svg",
-      VIEWS: "svg/most-views.svg", 
-      DISLIKES: "svg/most-dislikes.svg"
+      VIEWS: "svg/most-views.svg",
+      DISLIKES: "svg/most-dislikes.svg",
     };
 
     const section = document.getElementById(sectionId);
     const header = document.querySelector(`button[aria-controls="${sectionId}"]`);
     if (!section || !header) return;
 
-    const container = header.querySelector('.filter-section-container');
-    const arrow = header.querySelector('.section-arrow');
+    const container = header.querySelector(".filter-section-container");
+    const arrow = header.querySelector(".section-arrow");
 
-    container.querySelectorAll('.filter-icon-preview').forEach(el => el.remove());
+    container.querySelectorAll(".filter-icon-preview").forEach((el) => el.remove());
 
     const selectedInputs = section.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
-    selectedInputs.forEach(input => {
-
-      const customIcon = input.getAttribute('data-icon');
-      const key = input.getAttribute('sortby') || input.name;
+    selectedInputs.forEach((input) => {
+      const customIcon = input.getAttribute("data-icon");
+      const key = input.getAttribute("sortby") || input.name;
       const iconSrc = customIcon || iconMap[key];
 
       if (iconSrc) {
         const img = document.createElement("img");
         img.src = iconSrc;
         img.classList.add("filter-icon-preview");
-        
+
         container.appendChild(img);
       }
     });
@@ -219,16 +210,14 @@ document.addEventListener("DOMContentLoaded", () => {
   updateFilterHeaderIcons("content-options");
   updateFilterHeaderIcons("sort-options");
 
-
-
   const checkboxes = document.querySelectorAll(".filterContainer .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
 
       const selectedTypes = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.name);
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.name);
       localStorage.setItem("selectedContentTypes", JSON.stringify(selectedTypes));
 
       const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
@@ -265,21 +254,12 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     });
   });
- 
 
   const storedTypes = JSON.parse(localStorage.getItem("selectedContentTypes"));
   if (storedTypes) {
     updateFilterHeaderIcons(storedTypes);
   }
-
 });
-
-
-
-
-
-
-
 
 async function addScrollBlocker(element) {
     let isAnimating = false;
@@ -385,8 +365,10 @@ function appendPost(json) {
   const letztesDiv = parentElement.lastElementChild;
 }
 
-  //let manualLoad = false;
-  let postoffset=0;
+
+//let manualLoad = false;
+let postoffset = 0;
+
 
 async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
@@ -436,7 +418,7 @@ async function postsLaden(postbyUserID=null) {
     }
 	
     //console.log(postoffset);
-    const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
+    //const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
@@ -498,22 +480,15 @@ async function postsLaden(postbyUserID=null) {
       user_slug_span.appendChild(userprofileID);
       card_header_left.appendChild(user_slug_span);
       
-
-
-      card_header_left.addEventListener("click",
-        function handledisLikeClick(event) {
+      card_header_left.addEventListener("click",function handledisLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
-          redirectToProfile(objekt.user.id);
-        }  
-      );
+          redirectToProfile(objekt.user.id); 
+		});
 
       card_header.appendChild(card_header_left);
       
-
-      
-
-      const followButton = renderFollowButton(objekt, UserID);
+const followButton = renderFollowButton(objekt, UserID);
       if (followButton) {
         const card_header_right = document.createElement("div");
         card_header_right.classList.add("card-header-right");
@@ -525,7 +500,6 @@ async function postsLaden(postbyUserID=null) {
        const postaudioplayerDiv = document.createElement("div");
        const postvideoplayerDiv = document.createElement("div");
       if (objekt.contenttype === "audio") {
-       
         postaudioplayerDiv.classList.add("audio-player");
         const imga = document.createElement("img");
         imga.src = 'img/mucis-player.png';
@@ -535,7 +509,6 @@ async function postsLaden(postbyUserID=null) {
       }
 
       if (objekt.contenttype === "video") {
-       
         postvideoplayerDiv.classList.add("video-player");
         const imga = document.createElement("img");
         imga.src = 'svgnew/play-btn.svg';
@@ -570,9 +543,6 @@ async function postsLaden(postbyUserID=null) {
       postContent.appendChild(post_text_div);
       postContent.appendChild(divtag);
       inhaltDiv.appendChild(postContent);
-
-      
-
 
       const array = JSON.parse(objekt.media);
       let cover = null;
@@ -898,8 +868,8 @@ async function postsLaden(postbyUserID=null) {
 }
 
 async function toggleFollowStatus(userid) {
-        const accessToken = getCookie("authToken");
-        const query = `
+  const accessToken = getCookie("authToken");
+  const query = `
           mutation ToggleUserFollowStatus($userid: ID!) {
             toggleUserFollowStatus(userid: $userid) {
               status
@@ -909,32 +879,31 @@ async function toggleFollowStatus(userid) {
           }
         `;
 
-        const variables = { userid };
+  const variables = { userid };
 
-        try {
-          const response = await fetch(GraphGL,{
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({ query, variables })
-          });
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
 
-          const result = await response.json();
+    const result = await response.json();
 
-          if (result.data && result.data.toggleUserFollowStatus) {
-            return result.data.toggleUserFollowStatus.isfollowing;
-          } else {
-            console.error("GraphQL error:", result.errors);
-            return null;
-          }
-        } catch (error) {
-          console.error("Network error:", error);
-          return null;
-        }
+    if (result.data && result.data.toggleUserFollowStatus) {
+      return result.data.toggleUserFollowStatus.isfollowing;
+    } else {
+      console.error("GraphQL error:", result.errors);
+      return null;
+    }
+  } catch (error) {
+    console.error("Network error:", error);
+    return null;
+  }
 }
-
 
 
 function like_dislike_post(objekt, action, el) {
@@ -982,7 +951,6 @@ function like_dislike_post(objekt, action, el) {
 }
 
 
-  
 let timerId = null;
 function cancelTimeout() {
   clearTimeout(timerId);
@@ -1007,48 +975,82 @@ async function postClicked(objekt) {
 
 
 
+function deleteFilter() {
+  localStorage.removeItem("filterSettings");
+  localStorage.removeItem("tags");
+}
 
+function saveFilterSettings() {
+  let filterSettings = {};
+  let selectedContentTypes = [];
+  let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
 
-  function deleteFilter() {
-    localStorage.removeItem("filterSettings");
-    localStorage.removeItem("tags");
+  checkboxes.forEach((checkbox) => {
+    filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
+
+    if (checkbox.closest(".content-options") && checkbox.checked) {
+      selectedContentTypes.push(checkbox.name); // use name, not id
+    }
+  });
+  localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
+  localStorage.setItem("selectedContentTypes", JSON.stringify(selectedContentTypes));
+  if (document.getElementById("searchGroup")) {
+    localStorage.setItem("tags", document.getElementById("searchGroup").value);
   }
+}
+function restoreFilterSettings() {
+  let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
 
-  function saveFilterSettings() {
-    let filterSettings = {};
-    let selectedContentTypes = [];
+
+  if (filterSettings) {
     let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
-
     checkboxes.forEach((checkbox) => {
-      filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
-
-      if (checkbox.closest('.content-options') && checkbox.checked) {
-        selectedContentTypes.push(checkbox.name); // use name, not id
+      if (filterSettings[checkbox.id] !== undefined) {
+        checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
       }
     });
-    localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
-    localStorage.setItem("selectedContentTypes", JSON.stringify(selectedContentTypes));
-	if(document.getElementById("searchGroup")){
-    	localStorage.setItem("tags", document.getElementById("searchGroup").value);
-	}
   }
-  function restoreFilterSettings() {
-    let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
+  if (window.location.pathname.endsWith("dashboard.php")) {
+    const searchTagElem = document.getElementById("searchTag");
+    if (searchTagElem) {
+      searchTagElem.value = localStorage.getItem("tagInput") || "";
+    }
 
-    if (filterSettings) {
-      let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
-      checkboxes.forEach((checkbox) => {
-        if (filterSettings[checkbox.id] !== undefined) {
-          checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
-        }
-      });
-    }
-    if (window.location.pathname.endsWith('dashboard.php')) {
-      const searchTagElem = document.getElementById("searchTag");
-      if (searchTagElem) {
-        searchTagElem.value = localStorage.getItem("tagInput") || "";
-      }
-    }
     // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
   } 
- 
+
+}
+
+const postSpan = document.querySelector(".post-view span");
+if (postSpan) {
+  postSpan.addEventListener("click", async () => {
+    const postid = postSpan.closest(".viewpost").getAttribute("postid");
+    await postInteractionsModal(postid, "VIEW");
+  });
+}
+
+
+const likeSpan = document.querySelector(".post-like span");
+if (likeSpan) {
+  likeSpan.addEventListener("click", async () => {
+    const postid = likeSpan.closest(".viewpost").getAttribute("postid");
+    await postInteractionsModal(postid, "LIKE");
+  });
+}
+
+
+const dislikeSpan = document.querySelector(".post-dislike span");
+if (dislikeSpan) {
+  dislikeSpan.addEventListener("click", async () => {
+    const postid = dislikeSpan.closest(".viewpost").getAttribute("postid");
+    await postInteractionsModal(postid, "DISLIKE");
+  });
+}
+
+
+document.body.addEventListener("click", async (e) => {
+  if (e.target.matches(".comment_like span")) {
+    const postid = e.target.closest(".comment_item").getAttribute("id");
+      await postInteractionsModal(postid, "COMMENTLIKE");
+  }
+});

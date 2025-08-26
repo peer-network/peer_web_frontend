@@ -10,10 +10,23 @@
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
-.viewpost.disbale_click {
-	pointer-events: none;
-	cursor: not-allowed;
+
+
+.viewpost.disbale_click .inner-container {
+  position: relative;
 }
+
+.viewpost.disbale_click .inner-container::after {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	/* background: #000; */
+	z-index: 2;
+}
+
 .collapsed-preview {
 	display: flex;
 	margin: auto;
@@ -469,6 +482,7 @@
 	border-radius: 70px;
 	color: var(--white);
 	border: 2px solid var(--white, #FFF);
+	-webkit-backdrop-filter: blur(10px);
 	backdrop-filter: blur(10px);
 	display: flex;
 	width: 100%;
@@ -683,10 +697,11 @@
 }
 .viewpost .post_gallery .slider-wrapper .slide_item{
 	background-repeat: no-repeat;
-  background-size: cover;
-  backdrop-filter: blur(500px);
-  align-items: center;
-  justify-content: center;
+	background-size: cover;
+	backdrop-filter: blur(500px);
+	-webkit-backdrop-filter: blur(500px);
+	align-items: center;
+	justify-content: center;
 }
 .viewpost .post_gallery .slider-wrapper .slide_item::before {
 	content: "";
@@ -695,6 +710,7 @@
 	position: absolute;
 	left: 0;
 	top: 0;
+	-webkit-backdrop-filter: blur(20px);
 	backdrop-filter: blur(20px);
 	z-index: -1;
 }
@@ -858,6 +874,7 @@
 	position: absolute;
 	left: 0;
 	top: 0;
+	-webkit-backdrop-filter: blur(5px);
 	backdrop-filter: blur(5px);
 	background: #00000082;
 }
@@ -1087,8 +1104,8 @@
 	border-radius: 100px;
 	margin-left: 60px;
 }
-.comment_list .comment_item .comment_reply_container .reply_btn a span::before,
-.comment_list .comment_item .comment_reply_container .reply_btn a span::after {
+.comment_list .comment_item .comment_reply_container .reply_btn  span::before,
+.comment_list .comment_item .comment_reply_container .reply_btn  span::after {
 	content: "";
 	display: inline-block;
 	border: 3px solid;
@@ -1251,7 +1268,7 @@ button:not(:disabled):hover.switch-btn {
 		
 	}
   	.viewpost .post_gallery.multi .slider-wrapper  .slider-track {
-	height: calc(100% - 200px);
+	height: calc(100% - 140px);
 	}
 
   

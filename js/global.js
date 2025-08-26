@@ -340,15 +340,21 @@ function postdetail(objekt,CurrentUserID) {
           const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
           if (shareLinkInput)  shareLinkInput.value = shareUrl;
 
-          const copyLinkBtn = shareLinkBox.querySelector(".copy-link-btn");
+          let copyLinkBtn = shareLinkBox.querySelector(".copy-link-btn");
+
+            // remove old listeners - > element clone 
+            const newcopyLinkBtn = copyLinkBtn.cloneNode(true);
+            copyLinkBtn.parentNode.replaceChild(newcopyLinkBtn, copyLinkBtn);
+            copyLinkBtn = newcopyLinkBtn;
+
           if (copyLinkBtn && shareLinkInput) {
             copyLinkBtn.addEventListener("click", async () => {
               try {
                 await navigator.clipboard.writeText(shareLinkInput.value);
                 // Optional: user ko feedback dena
-                copyLinkBtn.textContent = "Copied!";
+                copyLinkBtn.querySelector("span").textContent = "Copied!";
                 setTimeout(() => {
-                  copyLinkBtn.textContent = "Copy Link";
+                  copyLinkBtn.querySelector("span").textContent = "Copy";
                 }, 2000);
               } catch (err) {
                 console.error("Failed to copy: ", err);
@@ -417,8 +423,7 @@ function postdetail(objekt,CurrentUserID) {
           const cont_post_title=containerright.querySelector(".post_title h2");
           const cont_post_time=containerright.querySelector(".timeagao");
           const cont_post_tags=containerright.querySelector(".hashtags");
-
-
+         
           
           const card_post_text = objekt.mediadescription;
           cont_post_text.innerHTML = card_post_text;
@@ -599,9 +604,16 @@ function postdetail(objekt,CurrentUserID) {
             });
 
           } else if (objekt.contenttype === "text") {
+
+            
             
             if (containerleft && post_contentright) {
-              containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
+             containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
+
+              const cont_post_text2=containerleft.querySelector(".post_text");
+              for (const item of array) {
+                loadTextFile(tempMedia(item.path), cont_post_text2);
+              }
             }
 
           } else {
@@ -713,43 +725,62 @@ function postdetail(objekt,CurrentUserID) {
           
           // Zweites -Icon mit #post-like
           const likeContainer = social.querySelector(".post-like ");
+          let postlikeIcon = likeContainer.querySelector("i");
           const postLikes=likeContainer.querySelector("span ");
-          postLikes.innerText = objekt.amountlikes;    
-          
+          postLikes.innerText = objekt.amountlikes;  
+          likeContainer.classList.remove("active");
+         
           if (objekt.isliked) {
             likeContainer.classList.add("active");
             
           } else if (objekt.user.id !== UserID && UserID !== null) {
-            likeContainer.addEventListener(
+
+            // Purane listeners remove karne ke liye element clone karo
+            const newPostlikeIcon = postlikeIcon.cloneNode(true);
+            postlikeIcon.parentNode.replaceChild(newPostlikeIcon, postlikeIcon);
+            postlikeIcon = newPostlikeIcon;
+
+            postlikeIcon.addEventListener(
               "click",
-              function handleLikeClick(event) {
+              (event) => {
                 event.stopPropagation();
                 event.preventDefault();
-              
-                like_dislike_post(objekt, "like", this);
+                like_dislike_post(objekt, "like", likeContainer);
+                
               },
               { capture: true}
             );
+           
           }
             
           const dislikeContainer = social.querySelector(".post-dislike");
+          let postdislikeIcon = dislikeContainer.querySelector("i");
           const postdisLikes=dislikeContainer.querySelector("span");
           postdisLikes.innerText = objekt.amountdislikes;
+          dislikeContainer.classList.remove("active");
           
           if (objekt.isdisliked) {
             dislikeContainer.classList.add("active");
             
           } else if (objekt.user.id !== UserID && UserID !== null) {
-            dislikeContainer.addEventListener(
+            // Purane listeners remove karne ke liye element clone karo
+            const newPostDislikeIcon = postdislikeIcon.cloneNode(true);
+            postdislikeIcon.parentNode.replaceChild(newPostDislikeIcon, postdislikeIcon);
+            postdislikeIcon = newPostDislikeIcon;
+
+            postdislikeIcon.addEventListener(
               "click",
-              function handleLikeClick(event) {
+              (event) => {
                 event.stopPropagation();
                 event.preventDefault();
-                like_dislike_post(objekt, "dislike", this);
+                 like_dislike_post(objekt, "dislike", dislikeContainer);
+                
               },
-              { capture: true}
+              { capture: true }
             );
           }
+
+         
 
 
 
@@ -1011,13 +1042,11 @@ function commentToDom(c, append = true) {
   img.onerror = function () {
     this.src = "svg/noname.svg";
   };
-  img.addEventListener("click",
-        function handledisLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-          redirectToProfile(c.user.id);
-        }  
-      );
+  img.addEventListener("click", function handledisLikeClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    redirectToProfile(c, this);
+  });
 
   const imgDiv = document.createElement("div");
   imgDiv.classList.add("commenter-pic");
@@ -1048,60 +1077,71 @@ function commentToDom(c, append = true) {
 
   // Reply container
   const replyBtn = document.createElement("span");
-  replyBtn.classList.add("reply_btn");
-  replyBtn.innerHTML = `<a href="#" class="md_font_size bold">Reply<span></span></a>`;
+const replyContainer = document.createElement("div");
+  if (!c.parentid) {
+    replyBtn.setAttribute("id", c.commentid);
+    replyBtn.classList.add("reply_btn");
+    replyBtn.innerHTML = `Reply `;
 
-  const showReply = document.createElement("span");
-  showReply.classList.add("show_reply", "txt-color-gray");
-  showReply.innerHTML = `Show <span class="reply_total">${c.amountreplies}</span> replies...`;
+    replyBtn.addEventListener("click", function (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      handleReply(c);
+      // Handle reply button click
+    });
 
-  const replyContainer = document.createElement("div");
-  replyContainer.classList.add("comment_reply_container");
-  replyContainer.append(replyBtn, showReply);
+    const showReply = document.createElement("span");
+    showReply.classList.add("show_reply", "txt-color-gray");
+    showReply.innerHTML = `Show <span class="reply_total">${c.amountreplies}</span> replies...`;
 
+    
+    replyContainer.classList.add("comment_reply_container");
+    replyContainer.append(replyBtn, showReply);
+  }
   // Body container
   const commentBody = document.createElement("div");
   commentBody.classList.add("comment_body");
   commentBody.append(commenterInfoDiv, commentTextDiv, replyContainer);
 
-  // Like 
-  
-  const likeContainer = document.createElement("div");
-  likeContainer.classList.add("comment_like","md_font_size");
+  // Like
 
-  
+  const likeContainer = document.createElement("div");
+  likeContainer.classList.add("comment_like", "md_font_size");
 
   const likeIcon = document.createElement("i");
-  likeIcon.classList.add("fi","fi-rr-heart");
+  likeIcon.classList.add("fi", "fi-rr-heart");
   likeContainer.appendChild(likeIcon);
 
   const spanLike = document.createElement("span");
- likeContainer.append(spanLike);
+  likeContainer.append(spanLike);
 
   if (c.isliked) {
-    
     likeContainer.classList.add("active");
-  } else if (c.user.id !== userID && userID !== null) {
-    likeContainer.addEventListener("click", function (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      likeComment(c.commentid).then((result) => {
-        if (result) {
-          c.isliked = true;
-          c.amountlikes++;
-          likeContainer.classList.add("active");
-          if (!spanLike.textContent.includes("K") && !spanLike.textContent.includes("M")) {
-            let current = parseInt(spanLike.textContent);
-            spanLike.textContent = formatNumber(current + 1);
+  } else if (c.user.id !== userID) {
+
+    likeContainer.addEventListener(
+      "click",
+      function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        likeComment(c.commentid).then((result) => {
+          if (result) {
+            c.isliked = true;
+            c.amountlikes++;
+            likeContainer.classList.add("active");
+            if (!spanLike.textContent.includes("K") && !spanLike.textContent.includes("M")) {
+              let current = parseInt(spanLike.textContent);
+              spanLike.textContent = formatNumber(current + 1);
+            }
+
           }
-        }
-      });
-    }, { capture: true, once: true });
+        });
+      },
+      { capture: true, once: true }
+    );
   }
 
-  
   spanLike.textContent = formatNumber(c.amountlikes || 0);
-  
 
   // Final append all parts
   comment.appendChild(commentBody);
@@ -1295,4 +1335,90 @@ async function getUserInfo() {
     console.error("Error:", error.message);
     throw error;
   }
+}
+
+
+// function to render users in the modal
+// used in list_follow.js and posts.js for rendering followers and following lists
+function renderUsers(users, container) {
+  container.innerHTML = "";
+  const avatar = "https://media.getpeer.eu";
+  const currentUserId = getCookie("userID");
+
+  users.forEach(user => {
+    const item = document.createElement("div");
+    item.className = "dropdown-item clickable-user";
+    item.innerHTML = `
+      <div class="profilStats">
+        <img src="${avatar}/${user.img}" alt="${user.username}" />
+        <div class="user_info">
+          <span class="user_name">${user.username}</span>  <span class="user_slug">#${user.slug}</span>
+        </div>
+      </div>
+    `;
+
+    item.querySelector("img").onerror = () => { item.querySelector("img").src = "svg/noname.svg"; };
+
+    item.addEventListener("click", () => {
+      window.location.href = `view-profile.php?user=${user.id || user.userid}`;
+    });
+
+    if ((user.id || user.userid) !== currentUserId) {
+      const followButton = document.createElement("button");
+      followButton.classList.add("follow-button");
+      followButton.dataset.userid = user.id || user.userid;
+
+      if (user.isfollowed && user.isfollowing) {
+        followButton.textContent = "Peer";
+        followButton.classList.add("following", "peer");
+      } else if (user.isfollowed) {
+        followButton.textContent = "Following";
+        followButton.classList.add("following", "just-following");
+      } else {
+        followButton.textContent = "Follow +";
+      }
+
+      followButton.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const targetUserId = user.id || user.userid;
+        const newStatus = await toggleFollowStatus(user.id || user.userid);
+
+        if (newStatus !== null) {
+          user.isfollowed = newStatus;
+
+          const followerCountSpan = document.getElementById("following");
+          if (followerCountSpan) {
+            let count = parseInt(followerCountSpan.textContent, 10) || 0;
+            count = newStatus ? count + 1 : Math.max(0, count - 1);
+            followerCountSpan.textContent = count;
+          }
+
+          document.querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`).forEach(btn => {
+            btn.classList.toggle("following", newStatus);
+
+            if (newStatus && user.isfollowing) {
+              btn.textContent = "Peer";
+              btn.classList.add("peer");
+              btn.classList.remove("just-following");
+            } else if (newStatus) {
+              btn.textContent = "Following";
+              btn.classList.add("just-following");
+              btn.classList.remove("peer");
+            } else {
+              btn.textContent = "Follow +";
+              btn.classList.remove("following", "just-following", "peer");
+            }
+          });
+        } else {
+          Merror("Failed to update follow status. Please try again.");
+        }
+      });
+
+      item.appendChild(followButton);
+    }
+
+    container.appendChild(item);
+  });
 }
