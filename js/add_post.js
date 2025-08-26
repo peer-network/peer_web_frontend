@@ -2580,6 +2580,9 @@ video.addEventListener("loadedmetadata", async () => {
         coreURL: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js"
       });
     }
+     if (!ffmpeg.loaded) {
+    await ffmpeg.load();
+  }
     return ffmpeg;
   }
 
