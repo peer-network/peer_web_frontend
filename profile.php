@@ -40,7 +40,7 @@ checkAuth("unauthorized");
 <body >
 <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
 <div id="profile" class="site_layout">
-  <header class="site-header header-profile"> <img class="logo" src="svg/Home.svg" alt="Peer Network">
+  <header class="site-header header-profile"> <img class="logo" src="svg/dashboard-profile.svg" alt="Peer Network">
     <h1 class="dashboard_h1" id="h1">Profile</h1>
   </header>
   <aside class="left-sidebar left-sidebar-profile"> 
