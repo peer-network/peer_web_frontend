@@ -1,11 +1,15 @@
-
+.site_layout_nonuser header.site-header {
+	
+	padding: 30px;
+	
+}
 .site_layout_nonuser header.site-header h1 {
 	margin: 0;
 	font-size: 0;
 	opacity: 0;
 }
 .site_layout_nonuser header.site-header .logo {
-    width: 18rem !important;
+    width: 10rem !important;
   }
 .site-main-nonuser {
 	display: flex;
@@ -16,17 +20,18 @@
 .site-main-nonuser-inner{
 	display: flex;
 	flex-direction: column;
-	padding: 90px;
+	padding: 0 90px;
 	height: 100vh;
 	max-width: 2600px;
   	width: 100%;
+	gap: 2vh;
 }
 .site_layout_nonuser .viewpost {
 	position: relative;
 	top: auto;
 	left: auto;
 	width: 100%;
-  	height: 100%;
+  	height: 70vh;
 	z-index: 5;
 	background-color: transparent;
 	-webkit-backdrop-filter:unset;
@@ -48,7 +53,13 @@
 }
 .view-only-mode {
 	text-align: center;
-	padding-bottom: 70px;
+	padding: 30px 0;
+	height: 15vh;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-sizing: border-box;
 }
 .view-only-mode .view-only-mode-heading {
 	display: flex;
@@ -58,8 +69,14 @@
 }
 
 .signup-button-container {
-	padding-top: 60px;
+	padding: 30px 0;
 	text-align: center;
+	height: 15vh;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 .signup-button-container .button {
 	margin-bottom: 0;
@@ -95,13 +112,18 @@
 @media screen and (min-width: 2000px) {
   .site_layout_nonuser header.site-header .logo {
     width: 18rem !important;
-   
-  }
+   }
+   .site-main-nonuser-inner{
+		max-width: 2000px;
+	}
 }
 @media screen and (min-width: 3000px) {
-  .site_layout_nonuser header.site-header .logo {
-    width: 18rem !important;
-  }
+	.site_layout_nonuser header.site-header .logo {
+		width: 17rem !important;
+	}
+	.site-main-nonuser-inner{
+		max-width: 2600px;
+	}
 }
 @media screen and (max-width: 2000px) {
 	.view-only-mode .view-only-mode-heading {
@@ -110,6 +132,7 @@
 	.view-only-mode .view-only-mode-heading svg {
 		height: 25px;
 	}
+	
 }
 
 
@@ -126,6 +149,32 @@
 	}
 	.site_layout_nonuser header.site-header .logo {
 		width: 10rem !important;
+	}
+	
+}
+
+@media screen and (max-width: 768px) {
+	.site-main-nonuser-inner {	padding: 0;}
+	.view-only-mode {padding: 0 15px 30px; height: auto;}
+
+	.site_layout_nonuser .viewpost .post_gallery .slide_item {
+		border-radius: 0;
+	}
+	.site_layout_nonuser .viewpost .inner-container {
+		border-radius: 0;
+		padding: 0;
+	}
+	.site-main-nonuser.postloader .viewpost .inner-container::before {
+		border-radius: 0;
+	}
+	.site-main-nonuser.postloader .viewpost .inner-container::after {
+	
+		width: 150px;
+		height: 150px;
+		
+	}
+	.site_layout_nonuser .viewpost .post_gallery .slide_item .zoom {
+		display: none;
 	}
 	
 }
