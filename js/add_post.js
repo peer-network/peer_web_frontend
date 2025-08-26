@@ -2228,68 +2228,68 @@ for (let i = 0; i < times.length; i++) {
 
 
 
-async function generateThumbnails(file, thumbCount = 10) {
-  const ffmpeg = await loadFFmpeg();
-  const inputFilename = 'input.mp4';
+// async function generateThumbnails(file, thumbCount = 10) {
+//   const ffmpeg = await loadFFmpeg();
+//   const inputFilename = 'input.mp4';
 
-  // Write file into FFmpeg FS
-  await ffmpeg.writeFile(inputFilename, await fetchFile(file));
+//   // Write file into FFmpeg FS
+//   await ffmpeg.writeFile(inputFilename, await fetchFile(file));
 
-  // Get video duration
-  let duration = 0;
-  try {
-    await ffmpeg.exec(['-i', inputFilename]);
-  } catch (e) {
-    const stderr = e.message || '';
-    const match = stderr.match(/Duration: (\d+):(\d+):(\d+\.\d+)/);
-    if (match) {
-      duration = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseFloat(match[3]);
-    } else {
-      duration = thumbCount; // fallback
-    }
-  }
+//   // Get video duration
+//   let duration = 0;
+//   try {
+//     await ffmpeg.exec(['-i', inputFilename]);
+//   } catch (e) {
+//     const stderr = e.message || '';
+//     const match = stderr.match(/Duration: (\d+):(\d+):(\d+\.\d+)/);
+//     if (match) {
+//       duration = parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseFloat(match[3]);
+//     } else {
+//       duration = thumbCount; // fallback
+//     }
+//   }
 
-  // Calculate evenly spaced times
-  const times = [];
-  for (let i = 0; i < thumbCount; i++) {
-    times.push((duration * i) / (thumbCount - 1));
-  }
+//   // Calculate evenly spaced times
+//   const times = [];
+//   for (let i = 0; i < thumbCount; i++) {
+//     times.push((duration * i) / (thumbCount - 1));
+//   }
 
-  const thumbs = [];
+//   const thumbs = [];
 
-  // Generate thumbnails at exact times
-  for (let i = 0; i < times.length; i++) {
-    const t = times[i];
-    const outputName = `thumb_${String(i+1).padStart(3,'0')}.jpg`;
+//   // Generate thumbnails at exact times
+//   for (let i = 0; i < times.length; i++) {
+//     const t = times[i];
+//     const outputName = `thumb_${String(i+1).padStart(3,'0')}.jpg`;
 
-    await ffmpeg.exec([
-      '-i', inputFilename,
-      '-ss', String(t),
-      '-frames:v', '1',
-      '-vf', 'scale=160:90',
-      outputName
-    ]);
+//     await ffmpeg.exec([
+//       '-i', inputFilename,
+//       '-ss', String(t),
+//       '-frames:v', '1',
+//       '-vf', 'scale=160:90',
+//       outputName
+//     ]);
 
-    const data = await ffmpeg.readFile(outputName);
-    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'image/jpeg' }));
-    thumbs.push(url);
-    // thumbs.push(URL.createObjectURL(new Blob([data.buffer], { type: 'image/jpeg' })));
-
-
-    const img = document.createElement("img");
-    img.src = url;
-    const timeline = document.getElementById("videoTimeline");
-    timeline.innerHTML = "";
-    timeline.appendChild(img);
+//     const data = await ffmpeg.readFile(outputName);
+//     const url = URL.createObjectURL(new Blob([data.buffer], { type: 'image/jpeg' }));
+//     thumbs.push(url);
+//     // thumbs.push(URL.createObjectURL(new Blob([data.buffer], { type: 'image/jpeg' })));
 
 
-    await ffmpeg.deleteFile(outputName);
-  }
+//     const img = document.createElement("img");
+//     img.src = url;
+//     const timeline = document.getElementById("videoTimeline");
+//     timeline.innerHTML = "";
+//     timeline.appendChild(img);
 
-  await ffmpeg.deleteFile(inputFilename);
-  console.log("i reached here")
-  return thumbs; // array of Blob URLs
-}
+
+//     await ffmpeg.deleteFile(outputName);
+//   }
+
+//   await ffmpeg.deleteFile(inputFilename);
+//   console.log("i reached here")
+//   return thumbs; // array of Blob URLs
+// }
 
 
 
@@ -2580,9 +2580,8 @@ video.addEventListener("loadedmetadata", async () => {
         coreURL: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js"
       });
     }
-     if (!ffmpeg.loaded) {
-    await ffmpeg.load();
-  }
+    
+    if (!ffmpeg.loaded) await ffmpeg.load();
     return ffmpeg;
   }
 
@@ -2615,8 +2614,8 @@ video.addEventListener("loadedmetadata", async () => {
 
       // Trim with fast seek
       await ffmpeg.exec([
-        "-ss", String(startTime),
         "-i", "input.mp4",
+        "-ss", String(startTime),
         "-t", String(trimDuration),
         "-c", "copy",
         "output.mp4"
