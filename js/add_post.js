@@ -2133,7 +2133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 async function generateThumbnailStrip(file, {
-  thumbCount = 12,
+  thumbCount = 10,
   thumbWidth = 160,     // Breite je Einzel-Thumb im Sprite
   marginPct = 0.05      // 5–95 % der Dauer (vermeidet schwarze Start/End-Frames)
 } = {}) {
@@ -2162,29 +2162,29 @@ async function generateThumbnailStrip(file, {
   const W = thumbWidth;      // z.B. 160
   const H = 100;              // feste Höhe wählen (z.B. 100)
 const timeline = document.getElementById("videoTimeline");
-
+timeline.innerHTML = "";
 for (let i = 0; i < times.length; i++) {
   const t = Math.max(0, Math.min(times[i], duration - 0.001));
   const out = `thumb_${String(i + 1).padStart(2, '0')}.jpg`;
 
   await ffmpeg.exec([
-    '-y',                    // overwrite output if exists
-    '-i', inputName,
     '-ss', t.toFixed(3),
+    '-i', inputName,
     '-frames:v', '1',
-    '-vf',
-      // In feste Box (W x H) einpassen ohne Verzerrung, Ränder zentriert auffüllen
-      `scale=${W}:${H}:force_original_aspect_ratio=decrease,` +
-      `pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2`,
+    '-an', '-sn', '-dn', // nur Video
+    '-vf', `scale=${W}:${H}:force_original_aspect_ratio=decrease,
+            pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2`,
     '-q:v', '2',
     out
   ]);
+
+
   const data = await ffmpeg.readFile(out);
-  const blob = new Blob([data.buffer], { type: 'image/jpeg' });
+  const blob = new Blob([data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)], { type: "image/jpeg" });
   const url = URL.createObjectURL(blob);
   const img = document.createElement("img");
   img.src = url;
-  
+  img.onload = () => URL.revokeObjectURL(url);
   timeline.appendChild(img);
 }
 
@@ -2213,11 +2213,11 @@ for (let i = 0; i < times.length; i++) {
     const name = `thumb_${String(i + 1).padStart(2, '0')}.jpg`;
     await ffmpeg.deleteFile(name);
   }
-  await ffmpeg.deleteFile(stripName);
+  // await ffmpeg.deleteFile(stripName);
   await ffmpeg.deleteFile(inputName);
 
   // statusEl.textContent = 'Fertig ✅';
-  return url; // blob: URL der Leiste
+  // return url; // blob: URL der Leiste
 }
 
 
