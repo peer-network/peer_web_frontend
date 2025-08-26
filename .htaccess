@@ -158,3 +158,8 @@ AddCharset utf-8 .appcache \
 .xml
 </IfModule>
 # #Redirect 301 /app/shop.php /app/feed.php
+
+RewriteEngine On
+
+# post.php?postid=... → /post/...
+RewriteRule ^post/([A-Za-z0-9-]+)/?$ post.php?postid=$1 [L,QSA]

@@ -1,6 +1,9 @@
 <?php $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'];
 
+// Basis-URL des Projekts ermitteln
+$baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); 
+
 // Host in Teile zerlegen
 $parts = explode('.', $host);
 

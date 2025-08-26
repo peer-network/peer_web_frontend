@@ -16,6 +16,187 @@
   transition: opacity, backdrop-filter 0.3s ease;
 }
 
+.interactionsModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 10;
+  background-color: #4848487d;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.interactionsModal .tabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 30px;
+  background-color: var(--background-color);
+  width: 100%;
+  position: relative;
+  animation: modal-scale-in 0.3s ease-out;
+  box-sizing: border-box;
+  margin: 15px;
+}
+
+.interactionsModal .tabs .tab-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  gap: 7px;
+  line-height: 50px;
+  border-radius: 30px;
+  transition: all 0.4s ease;
+}
+
+.interactionsModal .close-btn {
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  margin-left: 25px;
+  top: 0;
+  margin-top: 45px;
+  width: 40px;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  padding: 10px;
+  height: 40px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.interactionsModal .interactions-close {
+  width: 10px;
+}
+
+.interactionsModal .tab-btn.active .fi-rr-heart::before {
+  content: "\e9a1";
+  font-family: uicons-solid-rounded !important;
+}
+
+.interactionsModal .tab-btn.active .fi-rr-heart-crack::before {
+  content: "\e9a5";
+  font-family: uicons-solid-rounded !important;
+}
+
+.interactionsModal .tab-btn i {
+  margin-top: 7px;
+}
+
+.interactionsModal .tab-btn.active .fi-rr-heart,
+.interactionsModal .tab-btn.active .fi-rr-heart-crack {
+  color: var(--red-accent, #FF3B3B);
+}
+
+.interactionsModal .modal-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 20px 80px;
+  border-radius: 30px;
+  background-color: var(--background-color);
+  width: min(60rem, 100vw);
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  max-height: 80vh;
+  animation: modal-scale-in 0.3s ease-out;
+  background-color: var(--background-color);
+  background: var(--dark-inactive, #323232);
+}
+
+.interactionsModal .dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  color: var(--text-color);
+  width: 100%;
+}
+
+.interactionsModal .modal-content .profilStats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.interactionsModal .modal-content .profilStats .user_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.interactionsModal .modal-content .profilStats .user_info .user_slug {
+  color: var(--white-opacity-50);
+  font-size: 12px;
+}
+
+.interactionsModal .modal-content div img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.interactionsModal .follow-button {
+  margin: 0;
+  display: flex;
+  height: 2.5rem;
+  font-size: 1rem;
+  align-items: center;
+  background-color:transparent;
+	border-color: var(--white);
+	color: var(--white);
+  width: 20%;
+  justify-content: center;
+}
+
+.interactionsModal .follow-button:hover {
+  background-color:var(--white);
+	border-color: var(--white);
+	color: var(--black);
+}
+
+.interactionsModal .results {
+  overflow-y: auto;
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  height: 30rem;
+  flex-direction: column;
+  scrollbar-width: thin;
+}
+
+.follow-button.following.peer {
+  background-color: var(--blue-accent, #007BFF) !important;
+  color: #fff !important;
+  border-color: var(--blue-accent, #007BFF) !important;
+}
+
+.follow-button.following.just-following {
+  background-color: #fff !important;
+  color: #000 !important;
+  border-color: #ccc !important;
+}
+
+.empty-message {
+  margin: auto;
+}
+
+.interactionsModal .tab-btn.active:not([data-type="COMMENTLIKE"]) {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+}
+
 .modal-container.modal-show {
   display: flex;
   animation: modal-fadeIn 0.3s ease-out;
@@ -276,8 +457,58 @@
     height: auto;
 
   }
+  
 }
 @media screen and (min-width: 3000px) {
+
+  .interactionsModal .modal-content {
+    width: min(90rem, 100vw);
+    padding: 40px 140px;
+  }
+
+  .interactionsModal .results {
+    height: 45rem;
+    padding: 15px 0;
+    gap: 20px;
+  }
+
+  .interactionsModal .tabs {
+    border-radius: 2.5rem;
+  }
+
+  .interactionsModal .tabs .tab-btn {
+    line-height: 70px;
+    border-radius: 2.5rem;
+  }
+
+  .interactionsModal .follow-button {
+    height: 4.5rem;
+    font-size: 26px;
+  }
+
+  .interactionsModal .dropdown-item {
+    padding: 0;
+  }
+
+  .interactionsModal .close-btn {
+    margin-left: 55px;
+    margin-top: 60px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .interactionsModal .interactions-close {
+    width: 12px;
+  }
+
+  .interactionsModal .modal-content .profilStats .user_info .user_slug {
+  font-size: 16px;
+}
+
+.interactionsModal .modal-content div img {
+  width: 3.5rem;
+  height: 3.5rem;
+}
 
   .modal-title {
     font-size: 45px;
