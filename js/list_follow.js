@@ -7,10 +7,14 @@ function getEffectiveUserID() {
 const userID = getEffectiveUserID();
 const avatar = "https://media.getpeer.eu";
 
+console.log("Effective User ID:", userID);
+
 // Modal logic
 async function openRelationsModal(userID, defaultType = "followers") {
   const modal = document.getElementById("modal_Overlay");
   modal.classList.remove("none");
+
+  console.log("Opening modal for userID:", userID, "defaultType:", defaultType);
 
   modal.innerHTML = `
     <div class="modal-content relationsModal">

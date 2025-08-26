@@ -10,10 +10,23 @@
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
-.viewpost.disbale_click {
-	pointer-events: none;
-	cursor: not-allowed;
+
+
+.viewpost.disbale_click .inner-container {
+  position: relative;
 }
+
+.viewpost.disbale_click .inner-container::after {
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	/* background: #000; */
+	z-index: 2;
+}
+
 .collapsed-preview {
 	display: flex;
 	margin: auto;
@@ -231,17 +244,19 @@
 .viewpost .inner-container .btClose {
 	z-index: 2;
 	position: absolute;
-	top: 2rem;
-	right: 2rem;
+	top: 3rem;
+	right: 3rem;
 	display: flex;
-	padding: 0.5rem;
-	transform: rotateZ(45deg);
-	border-radius: 50%;
+	font-size: 0;
 	justify-content: center;
 	align-items: center;
-	width: 3rem;
-	height: auto;
+	width: 1.5rem;
+	height: 1.5rem;
 	cursor: pointer;
+	background-image: url(../svg/close.svg);
+	background-size: cover;
+	background-position: center center;
+	background-repeat: none;
 }
 .viewpost .viewpost-left{
   display: flex;
@@ -369,6 +384,7 @@
   visibility: hidden;
  
 }
+
 .viewpost .postview_footer .more:hover ul.sublist{
   
     opacity:1;
@@ -376,13 +392,93 @@
  
  
 }
+.viewpost .postview_footer .more .share-post-box {
+	position: absolute;
+	bottom: -7px;
+	width: 600px;
+	right: -0px;
+	border-radius: 50px;
+	background: var(--dark-inactive, #323232);
+	box-shadow: 0px 4px 50px 0px rgba(0, 0, 0, 0.50);
+	display: flex;
+	padding: 40px 40px 80px;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 80px;
+	transition: all 0.3s;
+	opacity: 0;
+	visibility: hidden;
+	z-index: 1;
+}
+
+.viewpost .postview_footer .more:hover ul.sublist li.sharelinks:hover .share-post-box {
+  
+    opacity:1;
+    visibility: visible;
+ 
+ 
+}
+.viewpost .postview_footer .more .share-post-box .share-post-subbox {
+	width: 100%;
+}
+.share-post-apps {
+	display: flex;
+	gap: 30px;
+}
+.share-post-apps .share-app, 
+.share-post-apps > a {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
+	color: var(--white);
+	gap: 10px;
+}
+.share-post-apps  .app-icon {
+	background: var(--black-dark, #252525);
+	padding: 10px;
+	border-radius: 100%;
+}
+.share-post-apps > a:hover .app-icon{
+	background: var(--white, rgba(255, 255, 255, 1));
+	
+}
+.share-post-apps .app-icon svg {
+	display: block;
+	border: 0;
+	width: 30px;
+ 	 height: auto;
+}
+.share-post-link {
+	display: flex;
+	background: var(--black-dark, #252525);
+	border-radius: 70px;
+	padding: 20px;
+}
+.share-post-link input {
+	background-color: transparent;
+	padding: 0;
+}
+.share-post-link button {
+	margin: 0;
+	line-height: 60px;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+}
+.share-post-link button svg {
+	width: 25px;
+	height: auto;
+}
 .viewpost .postview_footer .more:hover a.morebtn span.textval {
 	opacity: 0;
 }
 .viewpost .postview_footer .more ul.sublist li {
 	width: 100%;
 }
-.viewpost .postview_footer .more ul.sublist li a {
+.viewpost .postview_footer .more ul.sublist > li > a {
 	border-radius: 70px;
 	color: var(--white);
 	border: 2px solid var(--white, #FFF);
@@ -398,14 +494,14 @@
 	text-decoration: none;
 	text-align: center;
 }
-.viewpost .postview_footer .more ul.sublist li a i {
+.viewpost .postview_footer .more ul.sublist > li >  a i {
 	line-height: 0;
 }
 .viewpost .postview_footer .more ul.sublist li a.reportpost {
 	border-color: var(--red-accent, #FF3B3B);
 	color: var(--red-accent, #FF3B3B);
 }
-.viewpost .postview_footer .more ul.sublist li a:hover {
+.viewpost .postview_footer .more ul.sublist > li > a:hover {
 	background-color: var(--white,#fff);
 	color: var(--black);
 }
@@ -1172,7 +1268,7 @@ button:not(:disabled):hover.switch-btn {
 		
 	}
   	.viewpost .post_gallery.multi .slider-wrapper  .slider-track {
-	height: calc(100% - 200px);
+	height: calc(100% - 140px);
 	}
 
   
@@ -1206,6 +1302,27 @@ button:not(:disabled):hover.switch-btn {
 	.slider-modal .modal-thumbnail {
 		height: 90px;
 		border-radius: 15px;
+	}
+	.viewpost .postview_footer .more .share-post-box {
+		width: 800px;
+		right: 0px;
+		
+	}
+	.share-post-apps .app-icon {
+		padding: 20px;
+	}
+	.share-post-apps .app-icon svg {
+		width: 40px;
+		height: auto;
+	}
+	.share-post-link button {
+		line-height: 80px;
+		height: 80px;
+		gap:20px;
+	}
+	.share-post-link button svg {
+		width: 37px;
+		height: auto;
 	}
    
 }
@@ -1283,7 +1400,7 @@ button:not(:disabled):hover.switch-btn {
 	  width: 500px;
     padding: 40px 40px 80px;
   }
-  .viewpost .postview_footer .more ul.sublist li a {
+  .viewpost .postview_footer .more ul.sublist > li > a {
   line-height: 130px;
   }
 
@@ -1299,6 +1416,27 @@ button:not(:disabled):hover.switch-btn {
 	}
   .post_gallery.audio .audio-item .audio_player_con .time-info {
 	min-width: 140px;
+	}
+	.viewpost .postview_footer .more .share-post-box {
+	
+		width: 1000px;
+		
+	}
+	.share-post-apps .app-icon {
+		padding: 40px;
+	}
+	.share-post-apps .app-icon svg {
+		width: 80px;
+		height: auto;
+	}
+	.share-post-link button {
+	line-height: 100px;
+		height: 100px;
+		gap:20px;
+	}
+	.share-post-link button svg {
+		width: 37px;
+		height: auto;
 	}
 }
 @media screen and (max-width: 2300px) {
@@ -1332,5 +1470,85 @@ button:not(:disabled):hover.switch-btn {
 	
 		font-size: 15px;
 	
+	}
+}
+
+@media screen and (max-width: 1400px) {
+	.viewpost {
+		overflow: hidden;
+	}
+	.viewpost .inner-container {
+		flex-wrap: wrap;
+	}
+	.viewpost .viewpost-left {	
+		width: 100%;
+	}
+	.viewpost .viewpost-right {	
+		width: 100%;
+	}
+}
+@media screen and (max-width: 768px) {
+	.viewpost .inner-container {
+		border-radius: 20px;
+		padding: 20px;
+	}
+	.viewpost .viewpost-left {
+		height: 100vh;
+		min-height: 600px;
+	}
+	.viewpost .post_gallery.multi .slider-wrapper .slide_item img, 
+	.viewpost .post_gallery.images .slider-wrapper .slide_item img {
+		height: auto;
+	}
+	.viewpost .postview_footer {
+		gap: 20px;
+	}
+	.viewpost .social {
+	
+		gap: 15px;
+	}
+
+	.slider-modal {
+		padding: 20px;
+	}
+	.slider-modal .inner {
+		gap: 10px;
+	}
+	.slider-modal .modal-nav {
+		font-size: 10px;
+		width: 30px;
+		height: 30px;
+	}
+	.viewpost .postview_footer .more ul.sublist {
+		bottom: -31px;
+		width: 250px;
+		right: -16px;
+		border-radius: 30px;
+		
+		padding: 20px 20px 80px;
+		
+	}
+
+	.viewpost .postview_footer .more .share-post-box {
+		bottom: 0px;
+		width: 320px;
+		right: 0px;
+		border-radius: 20px;
+		padding: 40px 20px 40px;
+		gap: 60px;
+	}
+	.share-post-link {
+		border-radius: 10px;
+		padding: 10px;
+		display: block;
+	}
+	.share-post-link input {
+		padding: 10px 10px 20px;
+		border-radius: 0;
+	}
+	.share-post-link button {
+		
+		width: 100%;
+		border-radius: 10px;
 	}
 }
