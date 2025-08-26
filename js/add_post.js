@@ -2304,13 +2304,17 @@ video.addEventListener("loadedmetadata", async () => {
   // await generateThumbnails("videoTrim");
   setupTrim();
 });
-
-  function updateVideoInfo() {
+  async function getBlobSizeFromURL(url) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return blob.size;
+  }
+  async function updateVideoInfo() {
     const durationEL = document.getElementById("video_druration");
     if (durationEL) {
       durationEL.textContent = new Date((video.duration * (endPercent - startPercent)) * 1000).toISOString().substr(11, 8);
     }
-    var byteLength = Math.floor(video.src.length * (endPercent - startPercent));
+    var byteLength = await getBlobSizeFromURL(video.src)* (endPercent - startPercent);
     const sizeEL = document.getElementById("video_MB");
     if (sizeEL) {
       sizeEL.textContent = (byteLength / 1024 / 1024).toFixed(2) + " MB";
@@ -2600,12 +2604,12 @@ video.addEventListener("loadedmetadata", async () => {
     const duration = video.duration;
     const startTime = duration * startPercent;
     const endTime = duration * endPercent;
-    const trimDuration = endTime - startTime;
+    const trimDuration = duration * (endPercent - startPercent);
     const ffmpeg = await loadFFmpeg();
 
     try {
       // Fetch video data from the existing video element
-      const response = await fetch(videoElement.src);
+      const response = await fetch(video.src);
       const arrayBuffer = await response.arrayBuffer();
       const uint8 = new Uint8Array(arrayBuffer);
 
@@ -2614,7 +2618,7 @@ video.addEventListener("loadedmetadata", async () => {
 
       // Trim with fast seek
       await ffmpeg.exec([
-        "-i", "input.mp4",
+        "-i", "input.mp4", 
         "-ss", String(startTime),
         "-t", String(trimDuration),
         "-c", "copy",
@@ -2632,6 +2636,7 @@ video.addEventListener("loadedmetadata", async () => {
       // if (preview.srcObjectUrl) URL.revokeObjectURL(preview.srcObjectUrl);
 
       video.src = url;
+      video.load();
       videoElement.src = url;
       document.getElementById("videoTrimContainer").classList.add("none");
       document.getElementById('videocodierung').close();
