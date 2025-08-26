@@ -1739,7 +1739,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element.addEventListener("loadedmetadata", async () => 
         {
           //  generateThumbnails(file.name); before
-           generateThumbnails(file);
+           generateThumbnailStrip(file);
         }, 
         {
           once: true
@@ -2128,6 +2128,105 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error('Unsupported input for fetchFile');
       }
     }
+
+
+
+
+async function generateThumbnailStrip(file, {
+  thumbCount = 12,
+  thumbWidth = 160,     // Breite je Einzel-Thumb im Sprite
+  marginPct = 0.05      // 5–95 % der Dauer (vermeidet schwarze Start/End-Frames)
+} = {}) {
+  // const statusEl = document.getElementById('status');
+  const ffmpeg = await loadFFmpeg();
+
+  // statusEl.textContent = 'Schreibe Input…';
+  const inputName = 'input.mp4';
+  await ffmpeg.writeFile(inputName, await fetchFile(file));
+
+  // Dauer per <video> bestimmen (robust & schnell)
+  let duration = 0;
+  try { duration = await getVideoDuration(file); } catch (_) {}
+  if (!duration || !isFinite(duration)) {
+    // Fallback: 10s annehmen, ergibt trotzdem 10 Frames (gleichmäßig)
+    duration = thumbCount;
+  }
+
+  // Zeitpunkte gleichmäßig verteilt (z. B. 5–95 % der Dauer)
+  const start = duration * marginPct;
+  const end   = duration * (1 - marginPct);
+  const times = Array.from({length: thumbCount}, (_, i) =>
+    start + (i + 1) * (end - start) / (thumbCount + 1)
+  );
+
+  const W = thumbWidth;      // z.B. 160
+  const H = 100;              // feste Höhe wählen (z.B. 100)
+const timeline = document.getElementById("videoTimeline");
+
+for (let i = 0; i < times.length; i++) {
+  const t = Math.max(0, Math.min(times[i], duration - 0.001));
+  const out = `thumb_${String(i + 1).padStart(2, '0')}.jpg`;
+
+  await ffmpeg.exec([
+    '-y',                    // overwrite output if exists
+    '-i', inputName,
+    '-ss', t.toFixed(3),
+    '-frames:v', '1',
+    '-vf',
+      // In feste Box (W x H) einpassen ohne Verzerrung, Ränder zentriert auffüllen
+      `scale=${W}:${H}:force_original_aspect_ratio=decrease,` +
+      `pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2`,
+    '-q:v', '2',
+    out
+  ]);
+  const data = await ffmpeg.readFile(out);
+  const blob = new Blob([data.buffer], { type: 'image/jpeg' });
+  const url = URL.createObjectURL(blob);
+  const img = document.createElement("img");
+  img.src = url;
+  
+  timeline.appendChild(img);
+}
+
+
+  // // Sprite (10x1) aus den Einzelbildern bauen
+  // // statusEl.textContent = 'Erzeuge Sprite…';
+  // const stripName = 'strip.jpg';
+  // await ffmpeg.exec([
+  //   '-framerate', '1',
+  //   '-i', 'thumb_%02d.jpg',
+  //   '-vf', `tile=${thumbCount}x1`,
+  //   '-frames:v', '1',
+  //   stripName
+  // ]);
+
+  // // Auslesen & URL erstellen
+  // // statusEl.textContent = 'Lese Ergebnis…';
+  // const data = await ffmpeg.readFile(stripName);
+  // const blob = new Blob([data.buffer], { type: 'image/jpeg' });
+  // const url = URL.createObjectURL(blob);
+
+  
+
+  // Aufräumen (optional)
+  for (let i = 0; i < thumbCount; i++) {
+    const name = `thumb_${String(i + 1).padStart(2, '0')}.jpg`;
+    await ffmpeg.deleteFile(name);
+  }
+  await ffmpeg.deleteFile(stripName);
+  await ffmpeg.deleteFile(inputName);
+
+  // statusEl.textContent = 'Fertig ✅';
+  return url; // blob: URL der Leiste
+}
+
+
+
+
+
+
+
+
 
 async function generateThumbnails(file, thumbCount = 10) {
   const ffmpeg = await loadFFmpeg();
