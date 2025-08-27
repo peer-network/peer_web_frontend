@@ -2618,11 +2618,11 @@ video.addEventListener("loadedmetadata", async () => {
 
       // Trim with fast seek
       await ffmpeg.exec([
-        "-i", "input.mp4", 
-        "-ss", String(startTime),
-        "-t", String(trimDuration),
-        "-c", "copy",
-        "output.mp4"
+         "-ss", String(startTime), // seek to nearest keyframe (fast)
+  "-i", "input.mp4",
+  "-t", String(trimDuration),
+  "-c", "copy",             // no re-encoding
+  "output.mp4"
       ]);
 
       // Read trimmed output
