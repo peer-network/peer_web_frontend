@@ -3,6 +3,7 @@ let likeCost = 0.3,
   dislikeCost = 0.5,
   commentCost = 0.05,
   postCost = 2;
+  const baseUrl = `${location.protocol}//${location.host}/`;
 
 // below variable used in wallet module
 // need to declare in global scope
@@ -390,7 +391,11 @@ function postdetail(objekt,CurrentUserID) {
           
           const username = objekt.user.username;
           const profile_id = objekt.user.slug;
-          const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : "svg/noname.svg";
+          const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : `${baseUrl}svg/noname.svg`;
+
+           user_img_src.onerror = function () {
+              this.src = `${baseUrl}svg/noname.svg`;
+            };
           
 
           const post_userName=postContainer.querySelector(".post-userName");
@@ -415,7 +420,10 @@ function postdetail(objekt,CurrentUserID) {
             function handledisLikeClick(event) {
               event.stopPropagation();
               event.preventDefault();
-              redirectToProfile(objekt.user.id);
+              if(UserID && UserID !== null){
+                redirectToProfile(objekt.user.id);
+              }
+              
             }  
           );
 
@@ -1047,13 +1055,15 @@ function commentToDom(c, append = true) {
   img.onerror = function () {
     //this.src = "svg/noname.svg";
   };
-  if(userID!==""){
+
     img.addEventListener("click", function handledisLikeClick(event) {
       event.stopPropagation();
       event.preventDefault();
-      redirectToProfile(c, this);
+        if(userID && userID!==""){
+          redirectToProfile(c, this);
+        }
     });
-  }
+
   const imgDiv = document.createElement("div");
   imgDiv.classList.add("commenter-pic");
   imgDiv.appendChild(img);
@@ -1083,7 +1093,7 @@ function commentToDom(c, append = true) {
 
   // Reply container
   const replyBtn = document.createElement("span");
-const replyContainer = document.createElement("div");
+  const replyContainer = document.createElement("div");
   if (!c.parentid) {
     replyBtn.setAttribute("id", c.commentid);
     replyBtn.classList.add("reply_btn");
@@ -1092,7 +1102,10 @@ const replyContainer = document.createElement("div");
     replyBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       event.preventDefault();
-      handleReply(c);
+      if(userID && userID !== null){
+        handleReply(c);
+      }
+     
       // Handle reply button click
     });
 
@@ -1177,6 +1190,125 @@ const replyContainer = document.createElement("div");
     });
   }
 }
+
+
+ function getPostIdFromURL() {
+    // Try query param first (?postid=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    let postid = urlParams.get("postid");
+
+    if (!postid) {
+      const pathParts = window.location.pathname.split("/").filter(Boolean);
+      // Find "post" in path
+      const postIndex = pathParts.indexOf("post");
+      if (postIndex !== -1 && pathParts[postIndex + 1]) {
+        postid = pathParts[postIndex + 1];
+      }
+    }
+
+    return postid;
+  } 
+
+  // Reusable function to fetch post details
+async function fetchPostByID(postID) {
+    try {
+        const accessToken = getCookie("authToken"); // 👈 token check
+
+        // ✅ if logged in then to "ListPosts", else "GuestListPost"
+        const queryName = accessToken ? "ListPosts" : "GuestListPost";
+        const fieldName = accessToken ? "listPosts" : "guestListPost";
+
+        const headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        // ✅ if logged in then to Authorization header add 
+        if (accessToken) {
+            headers.append("Authorization", `Bearer ${accessToken}`);
+        }
+
+        const query = `
+            query ${queryName}($postid: ID!) {
+                ${fieldName}(postid: $postid) {
+                    status
+                    ResponseCode
+                    affectedRows {
+                        id
+                        contenttype
+                        title
+                        media
+                        cover
+                        mediadescription
+                        createdat
+                        amountlikes
+                        amountviews
+                        amountcomments
+                        amountdislikes
+                        amounttrending
+                        isliked
+                        isviewed
+                        isreported
+                        isdisliked
+                        issaved
+                        tags
+                        url
+                        user {
+                            id
+                            username
+                            slug
+                            img
+                            isfollowed
+                            isfollowing
+                        }
+                        comments {
+                            commentid
+                            userid
+                            postid
+                            parentid
+                            content
+                            createdat
+                            amountlikes
+                            amountreplies
+                            isliked
+                            user {
+                                id
+                                username
+                                slug
+                                img
+                                isfollowed
+                                isfollowing
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const response = await fetch(GraphGL, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+                query: query,
+                variables: { postid: postID }
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.data && result.data[fieldName]) {
+            return result.data[fieldName].affectedRows; // ✅ dynamic field handle
+        } else {
+            console.error("GraphQL Error:", result.errors || "No data received");
+            return null;
+        }
+
+    } catch (error) {
+        console.error("GraphQL request failed", error);
+        return null;
+    }
+}
+
+
 
 /*------------ End : View Post Detail Golobal Function -------------*/
 
@@ -1264,12 +1396,15 @@ function shouldShowPopup() {
 
 window.addEventListener('load', () => {
   
-  if (shouldShowPopup()) {
-    setTimeout(() => {
-      showFeedbackPopup();
-      sessionStorage.setItem('popupShown', 'true');
-    }, 30 * 1000); // 30 seconds
-  }
+  const accessToken = getCookie("authToken");
+   if (accessToken) {
+      if (shouldShowPopup()) {
+        setTimeout(() => {
+          showFeedbackPopup();
+          sessionStorage.setItem('popupShown', 'true');
+        }, 30 * 1000); // 30 seconds
+      }
+    }
 
   // Close button
   const closeBtn = document.querySelector('#feebackPopup .close');

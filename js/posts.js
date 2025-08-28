@@ -113,7 +113,6 @@
   }
   async function viewPost(postid) {
     const accessToken = getCookie("authToken");
-
     // Create headers
     const headers = new Headers({
       "Content-Type": "application/json",
@@ -149,8 +148,9 @@
         }
       })
       .catch((error) => {
-        Merror("View Post failed", error);
+       // Merror("View Post failed", error);
         // console.log("error", error);
+        console.error("View Post failed", error);
         return false;
       });
   }
