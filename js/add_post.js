@@ -2780,7 +2780,6 @@ async function loadFFmpeg() {
       await ffmpeg.exec([
         "-i", "input.mp4",
         "-ss", String(startTime), // seek to nearest keyframe (fast)
-
         "-t", String(trimDuration),
         "-c", "copy", // no re-encoding
         "output.mp4"
