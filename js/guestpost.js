@@ -1,8 +1,11 @@
 document.addEventListener("DOMContentLoaded", async  function () {
-  const postID = getPostIdFromURL();
+  const postID = getPostIdFromURL(); // define in global.js
   const postContainer = document.getElementById('cardClicked');
   postContainer.classList.remove('none','scrollable');
   const mainContainer = document.getElementById('nonuser-viewpost');
+
+
+
    const baseUrl = `${location.protocol}//${location.host}/`;
    const accessToken = getCookie("authToken");
     const desktopFallback = baseUrl + "dashboard.php?postid=" + postID;
@@ -19,98 +22,24 @@ document.addEventListener("DOMContentLoaded", async  function () {
     const deepLink = "peer://post/" + postID;
     const androidFallback = "https://play.google.com/store/apps/details?id=eu.peernetwork.app";
     const iosFallback = "https://apps.apple.com/app/peer-network/id6744612499";
-     
+     if (isAndroid) {
+          //console.log("Android device detected");
+          // Try to open the app
+            window.location = deepLink;
+            mainContainer.querySelector('.signup-button-container a').textContent="Download App";
+             mainContainer.querySelector('.signup-button-container a').href=androidFallback;
+      } else if (isIOS) {
+           window.location = deepLink;
+            mainContainer.querySelector('.signup-button-container a').textContent="Download App";
+            mainContainer.querySelector('.signup-button-container a').href=iosFallback;
+      } else {
+          //console.log("desktop device detected");
+      }
 
    if (postID) {
-        try {
-
-          // Create headers
-            const headers = new Headers({
-              "Content-Type": "application/json",
-             
-            });
-
-            // Step 2: GraphQL query banana
-            const query = `
-                query GuestListPost($postid: ID!) {
-                    guestListPost(postid: $postid) {
-                        status
-                        ResponseCode
-                        affectedRows {
-                            id
-                            contenttype
-                            title
-                            media
-                            cover
-                            mediadescription
-                            createdat
-                            amountlikes
-                            amountviews
-                            amountcomments
-                            amountdislikes
-                            amounttrending
-                            isliked
-                            isviewed
-                            isreported
-                            isdisliked
-                            issaved
-                            tags
-                            url
-                            user {
-                                id
-                                username
-                                slug
-                                img
-                                isfollowed
-                                isfollowing
-                            }
-                            comments {
-                                commentid
-                                userid
-                                postid
-                                parentid
-                                content
-                                createdat
-                                amountlikes
-                                amountreplies
-                                isliked
-                                user {
-                                      id
-                                      username
-                                      slug
-                                      img
-                                      isfollowed
-                                      isfollowing
-                                  }
-                            }
-                        }
-                    }
-                }
-            `;
-
-            
-            // Step 3: GraphQL fetch request
-            
-            const response = await fetch(GraphGL, {
-                method: "POST",
-                headers,
-                body: JSON.stringify({
-                    query: query,
-                    variables: { postid: postID }
-                })
-            });
-
-            const result = await response.json();
-            // Step 4: Object assign karna
-            const objekt = result.data.guestListPost.affectedRows;
-
-            // Step 5: Function ko pass karna
-            if (objekt) {
-                postdetail(objekt, null);
-            }
-
-        } catch (error) {
-            console.error("GraphQL request failed", error);
+        const objekt = await fetchPostByID(postID);
+        if (objekt) {
+            postdetail(objekt, null);
         }
     }else{
     const innerContainer = postContainer.querySelector('.inner-container');
@@ -131,21 +60,6 @@ document.addEventListener("DOMContentLoaded", async  function () {
 
 
       
-  function getPostIdFromURL() {
-    // Try query param first (?postid=...)
-    const urlParams = new URLSearchParams(window.location.search);
-    let postid = urlParams.get("postid");
-
-    if (!postid) {
-      const pathParts = window.location.pathname.split("/").filter(Boolean);
-      // Find "post" in path
-      const postIndex = pathParts.indexOf("post");
-      if (postIndex !== -1 && pathParts[postIndex + 1]) {
-        postid = pathParts[postIndex + 1];
-      }
-    }
-
-    return postid;
-  }      
+     
        
 });
