@@ -10,15 +10,18 @@ let storedUserInfo, balance = null;
 
 ///////////////////////////////
 document.addEventListener("DOMContentLoaded", () => {
-  hello();
-  getUser();
-  dailyfree();
-  currentliquidity();
-  getUserInfo();
+const accessToken = getCookie("authToken");
+   if (accessToken) {
+      hello();
+      getUser();
+      dailyfree();
+      currentliquidity();
+      getUserInfo();
 
-  window.addEventListener("online", updateOnlineStatus);
-  window.addEventListener("offline", updateOnlineStatus);
-  updateOnlineStatus();
+      window.addEventListener("online", updateOnlineStatus);
+      window.addEventListener("offline", updateOnlineStatus);
+      updateOnlineStatus();
+   }
 });
 
 function updateOnlineStatus() {
@@ -795,12 +798,14 @@ function postdetail(objekt,CurrentUserID) {
             
             //console.log(c);
               commentToDom(c);
-              fetchChildComments(c.commentid).then((result) => {
-                if (!result) return;
-                result.slice().forEach(function (c2) {
-                  commentToDom(c2, true);
+              if(UserID){ // add this condition not to call on guest user post
+                fetchChildComments(c.commentid).then((result) => {
+                  if (!result) return;
+                  result.slice().forEach(function (c2) {
+                    commentToDom(c2, true);
+                  });
                 });
-              });
+              }
             });
             /*
           mostliked.sort((a, b) => b.liked - a.liked);
@@ -1040,14 +1045,15 @@ function commentToDom(c, append = true) {
   img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
   img.onerror = function () {
-    this.src = "svg/noname.svg";
+    //this.src = "svg/noname.svg";
   };
-  img.addEventListener("click", function handledisLikeClick(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    redirectToProfile(c, this);
-  });
-
+  if(userID!==""){
+    img.addEventListener("click", function handledisLikeClick(event) {
+      event.stopPropagation();
+      event.preventDefault();
+      redirectToProfile(c, this);
+    });
+  }
   const imgDiv = document.createElement("div");
   imgDiv.classList.add("commenter-pic");
   imgDiv.appendChild(img);
@@ -1115,9 +1121,10 @@ const replyContainer = document.createElement("div");
   const spanLike = document.createElement("span");
   likeContainer.append(spanLike);
 
+  //console.log( userID);
   if (c.isliked) {
     likeContainer.classList.add("active");
-  } else if (c.user.id !== userID) {
+  } else if (c.user.id !== userID && userID !== "") {
 
     likeContainer.addEventListener(
       "click",
