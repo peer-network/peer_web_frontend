@@ -1,6 +1,9 @@
 // :TODO VIEWS
+
+
 document.addEventListener("DOMContentLoaded", () => {
   restoreFilterSettings();
+
   const everything = document.getElementById("everything");
   if (everything) {
     everything.addEventListener("click", () => {
@@ -13,9 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     closePost.addEventListener("click", () => {
       togglePopup("cardClicked");
       cancelTimeout();
-     
     });
-  }  
+  }
+
 
   const addComment = document.getElementById("addComment");
   if (addComment) {
@@ -34,11 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // result hat das Format { button: <index>, value: <textarea Inhalt> }
         if (result !== null && result.button == 0 && result.value !== "") {
           createComment(attributeValue, result.value).then((result) => {
-            if (result){
-            if (result.data.createComment.status === "success") {
-              commentToDom(result.data.createComment.affectedRows[0], false);
+            if (result) {
+              if (result.data.createComment.status === "success") {
+                commentToDom(result.data.createComment.affectedRows[0], false);
+              }
             }
-          }
           });
         }
         // console.log("Ergebnis:", result);
@@ -46,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // document.getElementById("commentInput").focus();
       // createComment(attributeValue, "test");
     });
-
   }
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -56,43 +58,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initCollapseViewToggle() {
-    const collapseBtn = document.querySelector('.collapse-filters');
-    const collapsibleBtns = document.querySelectorAll(
-      'button[aria-controls="content-options"], ' +
-      'button[aria-controls="feed-options"], ' +
-      'button[aria-controls="time-options"], ' +
-      'button[aria-controls="sort-options"]'
-    );
-    if(collapseBtn){
-      const siteLayout = document.querySelector('.site_layout');
+    const collapseBtn = document.querySelector(".collapse-filters");
+    const collapsibleBtns = document.querySelectorAll('button[aria-controls="content-options"], ' + 'button[aria-controls="feed-options"], ' + 'button[aria-controls="time-options"], ' + 'button[aria-controls="sort-options"]');
+    if (collapseBtn) {
+      const siteLayout = document.querySelector(".site_layout");
       let isCollapsed = false;
 
       function setCollapsedState(collapsed) {
         isCollapsed = collapsed;
 
         if (collapsed) {
-          siteLayout.classList.add('collapsed');
-          collapsibleBtns.forEach(btn => btn.classList.add('collapsed'));
-          document.querySelectorAll('.filter-options.open').forEach(sec => sec.classList.remove('open'));
+          siteLayout.classList.add("collapsed");
+          collapsibleBtns.forEach((btn) => btn.classList.add("collapsed"));
+          document.querySelectorAll(".filter-options.open").forEach((sec) => sec.classList.remove("open"));
         } else {
-          siteLayout.classList.remove('collapsed');
-          collapsibleBtns.forEach(btn => btn.classList.remove('collapsed'));
+          siteLayout.classList.remove("collapsed");
+          collapsibleBtns.forEach((btn) => btn.classList.remove("collapsed"));
         }
 
-        localStorage.setItem('isFiltersCollapsed', JSON.stringify(isCollapsed));
+        localStorage.setItem("isFiltersCollapsed", JSON.stringify(isCollapsed));
       }
 
-      const savedState = localStorage.getItem('isFiltersCollapsed');
+      const savedState = localStorage.getItem("isFiltersCollapsed");
       if (savedState !== null) {
         setCollapsedState(JSON.parse(savedState));
       }
 
-      collapseBtn.addEventListener('click', () => {
+      collapseBtn.addEventListener("click", () => {
         setCollapsedState(!isCollapsed);
       });
 
-      collapsibleBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+      collapsibleBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
           if (isCollapsed) {
             setCollapsedState(false);
           }
@@ -103,48 +100,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initCollapseViewToggle();
 
-
-
-  function initFilterToggles(className = 'filter-toggle') {
-    document.querySelectorAll(`.${className}`).forEach(btn => {
-      btn.addEventListener('click', function () {
-        const targetId = btn.getAttribute('aria-controls');
+  function initFilterToggles(className = "filter-toggle") {
+    document.querySelectorAll(`.${className}`).forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const targetId = btn.getAttribute("aria-controls");
         const section = document.getElementById(targetId);
-        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        const isOpen = btn.getAttribute("aria-expanded") === "true";
 
         if (isOpen) {
-          section.classList.remove('open');
-          btn.setAttribute('aria-expanded', 'false');
+          section.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
         } else {
-          section.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
+          section.classList.add("open");
+          btn.setAttribute("aria-expanded", "true");
         }
 
-        const arrow = btn.querySelector('.section-arrow');
-        if (arrow) arrow.classList.toggle('rotated');
+        const arrow = btn.querySelector(".section-arrow");
+        if (arrow) arrow.classList.toggle("rotated");
       });
     });
   }
   initFilterToggles();
-
 
   function setupFilterLabelSwapping(filterType) {
     const headerBtn = document.querySelector(`.${filterType}.filter-section-header`);
     const optionsContainer = document.querySelector(`#${filterType}-options`);
     const radioInputs = optionsContainer.querySelectorAll(`input[name="${filterType}"]`);
 
-    let labelSpan = headerBtn.querySelector('.section-selected-label');
+    let labelSpan = headerBtn.querySelector(".section-selected-label");
     if (!labelSpan) {
       labelSpan = document.createElement("span");
       labelSpan.className = "section-selected-label";
-      headerBtn.querySelector('.filter-section-container').appendChild(labelSpan);
+      headerBtn.querySelector(".filter-section-container").appendChild(labelSpan);
     }
 
     // Restore from localStorage or default to "all"
     const stored = localStorage.getItem(`selected-${filterType}`) || "all";
     setSelectedLabel(stored);
 
-    radioInputs.forEach(input => {
+    radioInputs.forEach((input) => {
       input.addEventListener("change", () => {
         if (input.checked) {
           const value = input.value;
@@ -155,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function setSelectedLabel(value) {
-      radioInputs.forEach(input => {
+      radioInputs.forEach((input) => {
         const label = input.closest("label");
         const labelText = label.querySelector("span").textContent;
 
@@ -175,9 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFilterLabelSwapping("feed");
   setupFilterLabelSwapping("time");
 
-
-
-  function updateFilterHeaderIcons(sectionId = 'content-options', preset = null) {
+  function updateFilterHeaderIcons(sectionId = "content-options", preset = null) {
     const iconMap = {
       IMAGE: "svg/photo.svg",
       VIDEO: "svg/videos.svg",
@@ -185,31 +177,30 @@ document.addEventListener("DOMContentLoaded", () => {
       AUDIO: "svg/music.svg",
       LIKES: "svg/post-like.svg",
       COMMENTS: "svg/post-comment.svg",
-      VIEWS: "svg/most-views.svg", 
-      DISLIKES: "svg/most-dislikes.svg"
+      VIEWS: "svg/most-views.svg",
+      DISLIKES: "svg/most-dislikes.svg",
     };
 
     const section = document.getElementById(sectionId);
     const header = document.querySelector(`button[aria-controls="${sectionId}"]`);
     if (!section || !header) return;
 
-    const container = header.querySelector('.filter-section-container');
-    const arrow = header.querySelector('.section-arrow');
+    const container = header.querySelector(".filter-section-container");
+    const arrow = header.querySelector(".section-arrow");
 
-    container.querySelectorAll('.filter-icon-preview').forEach(el => el.remove());
+    container.querySelectorAll(".filter-icon-preview").forEach((el) => el.remove());
 
     const selectedInputs = section.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
-    selectedInputs.forEach(input => {
-
-      const customIcon = input.getAttribute('data-icon');
-      const key = input.getAttribute('sortby') || input.name;
+    selectedInputs.forEach((input) => {
+      const customIcon = input.getAttribute("data-icon");
+      const key = input.getAttribute("sortby") || input.name;
       const iconSrc = customIcon || iconMap[key];
 
       if (iconSrc) {
         const img = document.createElement("img");
         img.src = iconSrc;
         img.classList.add("filter-icon-preview");
-        
+
         container.appendChild(img);
       }
     });
@@ -219,16 +210,14 @@ document.addEventListener("DOMContentLoaded", () => {
   updateFilterHeaderIcons("content-options");
   updateFilterHeaderIcons("sort-options");
 
-
-
   const checkboxes = document.querySelectorAll(".filterContainer .filteritem");
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
 
       const selectedTypes = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.name);
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.name);
       localStorage.setItem("selectedContentTypes", JSON.stringify(selectedTypes));
 
       const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
@@ -265,160 +254,14 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     });
   });
- 
 
   const storedTypes = JSON.parse(localStorage.getItem("selectedContentTypes"));
   if (storedTypes) {
     updateFilterHeaderIcons(storedTypes);
   }
-
 });
 
-
-function commentToDom(c, append = true) {
-  const userID = getCookie("userID");
-  const commentsContainer = document.getElementById("comments");
-  //console.log(c);
-  // Already existing list to track liked comments
-  let mostliked = [];
-
-  const comment = document.createElement("div");
-  comment.classList.add("comment_item");
-  comment.id = c.commentid;
-
-  // Profile Picture
-  const img = document.createElement("img");
-  img.classList.add("profile-picture");
-  img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
-  img.alt = "user image";
-  img.onerror = function () {
-    this.src = "svg/noname.svg";
-  };
-  img.addEventListener("click",
-        function handledisLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-          redirectToProfile(c, this);
-        }  
-      );
-
-  const imgDiv = document.createElement("div");
-  imgDiv.classList.add("commenter-pic");
-  imgDiv.appendChild(img);
-  comment.appendChild(imgDiv);
-
-  // Username + Profile ID + Time
-  const usernameSpan = document.createElement("span");
-  usernameSpan.classList.add("cmt_userName", "md_font_size", "bold");
-  usernameSpan.textContent = c.user.username;
-
-  const profileIdSpan = document.createElement("span");
-  profileIdSpan.classList.add("cmt_profile_id", "txt-color-gray");
-  profileIdSpan.textContent = "#" + c.user.slug;
-
-  const timeAgoSpan = document.createElement("span");
-  timeAgoSpan.classList.add("timeagao", "txt-color-gray");
-  timeAgoSpan.textContent = calctimeAgo(c.createdat);
-
-  const commenterInfoDiv = document.createElement("div");
-  commenterInfoDiv.classList.add("commenter_info");
-  commenterInfoDiv.append(usernameSpan, profileIdSpan, timeAgoSpan);
-
-  // Comment Text
-  const commentTextDiv = document.createElement("div");
-  commentTextDiv.classList.add("comment_text");
-  commentTextDiv.textContent = c.content;
-
-  // Reply container
-  const replyBtn = document.createElement("span");
-  replyBtn.classList.add("reply_btn");
-  replyBtn.innerHTML = `<a href="#" class="md_font_size bold">Reply<span></span></a>`;
-
-  const showReply = document.createElement("span");
-  showReply.classList.add("show_reply", "txt-color-gray");
-  showReply.innerHTML = `Show <span class="reply_total">${c.amountreplies}</span> replies...`;
-
-  const replyContainer = document.createElement("div");
-  replyContainer.classList.add("comment_reply_container");
-  replyContainer.append(replyBtn, showReply);
-
-  // Body container
-  const commentBody = document.createElement("div");
-  commentBody.classList.add("comment_body");
-  commentBody.append(commenterInfoDiv, commentTextDiv, replyContainer);
-
-  // Like 
-  
-  const likeContainer = document.createElement("div");
-  likeContainer.classList.add("comment_like","md_font_size");
-
-  
-
-  const likeIcon = document.createElement("i");
-  likeIcon.classList.add("fi","fi-rr-heart");
-  likeContainer.appendChild(likeIcon);
-
-  const spanLike = document.createElement("span");
- likeContainer.append(spanLike);
-
-  if (c.isliked) {
-    
-    likeContainer.classList.add("active");
-  } else if (c.user.id !== userID) {
-    likeContainer.addEventListener("click", function (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      likeComment(c.commentid).then((result) => {
-        if (result) {
-          c.isliked = true;
-          c.amountlikes++;
-          likeContainer.classList.add("active");
-          if (!spanLike.textContent.includes("K") && !spanLike.textContent.includes("M")) {
-            let current = parseInt(spanLike.textContent);
-            spanLike.textContent = formatNumber(current + 1);
-          }
-        }
-      });
-    }, { capture: true, once: true });
-  }
-
-  
-  spanLike.textContent = formatNumber(c.amountlikes || 0);
-  
-
-  // Final append all parts
-  comment.appendChild(commentBody);
-  comment.appendChild(likeContainer);
-
-  // Insert based on parent
-  if (c.parentid) {
-    const parent = document.getElementById(c.parentid);
-    comment.classList.add("comment-reply");
-    if (parent) parent.insertAdjacentElement("afterend", comment);
-  } else {
-    if (append) commentsContainer.appendChild(comment);
-    else commentsContainer.insertBefore(comment, commentsContainer.firstChild);
-  }
-
-  // Update `mostliked`
-  const existingEntry = mostliked.find((entry) => entry.key === c.commentid);
-  if (existingEntry) {
-    existingEntry.liked += c.amountlikes;
-  } else {
-    mostliked.push({
-      key: c.commentid,
-      liked: c.amountlikes,
-      img: c.user.img,
-      name: c.user.username,
-    });
-  }
-}
-
-
-
-
-
-  async function addScrollBlocker(element) {
+async function addScrollBlocker(element) {
     let isAnimating = false;
     let lastTouchX = 0;
     let lastTouchY = 0;
@@ -486,45 +329,48 @@ function commentToDom(c, append = true) {
       //   ensureSnap(el);
       // }
     }
-  }
+}
 
-  function isScrollSnapEnabled(container) {
-    // Prüfe, ob scroll-snap-type aktiviert ist
-    const style = window.getComputedStyle(container);
-    return style.scrollSnapType && style.scrollSnapType !== "none";
-  }
-  function ensureSnap(container) {
-    setTimeout(() => {
-      // Snap-Positionen für horizontal und vertikal berechnen
-      const snapPositionsX = Array.from(container.children).map((child) => child.offsetLeft);
-      const snapPositionsY = Array.from(container.children).map((child) => child.offsetTop);
+function isScrollSnapEnabled(container) {
+  // Prüfe, ob scroll-snap-type aktiviert ist
+  const style = window.getComputedStyle(container);
+  return style.scrollSnapType && style.scrollSnapType !== "none";
+}
 
-      const currentScrollX = container.scrollLeft;
-      const currentScrollY = container.scrollTop;
+function ensureSnap(container) {
+  setTimeout(() => {
+    // Snap-Positionen für horizontal und vertikal berechnen
+    const snapPositionsX = Array.from(container.children).map((child) => child.offsetLeft);
+    const snapPositionsY = Array.from(container.children).map((child) => child.offsetTop);
 
-      // Nächste Snap-Position für beide Richtungen finden
-      const closestSnapX = snapPositionsX.reduce((prev, curr) => (Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX) ? curr : prev));
-      const closestSnapY = snapPositionsY.reduce((prev, curr) => (Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY) ? curr : prev));
+    const currentScrollX = container.scrollLeft;
+    const currentScrollY = container.scrollTop;
 
-      // Scrolle sanft zur nächsten Snap-Position
-      container.scrollTo({
-        left: closestSnapX,
-        top: closestSnapY,
-        behavior: "smooth",
-      });
-    }, 100); // Warte, bis die Bewegung abgeschlossen ist
-  }
+    // Nächste Snap-Position für beide Richtungen finden
+    const closestSnapX = snapPositionsX.reduce((prev, curr) => (Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX) ? curr : prev));
+    const closestSnapY = snapPositionsY.reduce((prev, curr) => (Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY) ? curr : prev));
+
+    // Scrolle sanft zur nächsten Snap-Position
+    container.scrollTo({
+      left: closestSnapX,
+      top: closestSnapY,
+      behavior: "smooth",
+    });
+  }, 100); // Warte, bis die Bewegung abgeschlossen ist
+}
 
   
-  function appendPost(json) {
-    const parentElement = document.getElementById("parent-id"); // Das übergeordnete Element
-    const letztesDiv = parentElement.lastElementChild;
-  }
+function appendPost(json) {
+  const parentElement = document.getElementById("parent-id"); // Das übergeordnete Element
+  const letztesDiv = parentElement.lastElementChild;
+}
 
-  //let manualLoad = false;
-  let postoffset=0;
 
-  async function postsLaden(postbyUserID=null) {
+//let manualLoad = false;
+let postoffset = 0;
+
+
+async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
     if (postsLaden.offset === undefined) {
       postsLaden.offset = 0; // Initialwert
@@ -572,7 +418,7 @@ function commentToDom(c, append = true) {
     }
 	
     //console.log(postoffset);
-    const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
+    //const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
@@ -634,22 +480,15 @@ function commentToDom(c, append = true) {
       user_slug_span.appendChild(userprofileID);
       card_header_left.appendChild(user_slug_span);
       
-
-
-      card_header_left.addEventListener("click",
-        function handledisLikeClick(event) {
+      card_header_left.addEventListener("click",function handledisLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
-          redirectToProfile(objekt, this);
-        }  
-      );
+          redirectToProfile(objekt.user.id); 
+		});
 
       card_header.appendChild(card_header_left);
       
-
-      
-
-      const followButton = renderFollowButton(objekt, UserID);
+const followButton = renderFollowButton(objekt, UserID);
       if (followButton) {
         const card_header_right = document.createElement("div");
         card_header_right.classList.add("card-header-right");
@@ -661,7 +500,6 @@ function commentToDom(c, append = true) {
        const postaudioplayerDiv = document.createElement("div");
        const postvideoplayerDiv = document.createElement("div");
       if (objekt.contenttype === "audio") {
-       
         postaudioplayerDiv.classList.add("audio-player");
         const imga = document.createElement("img");
         imga.src = 'img/mucis-player.png';
@@ -671,7 +509,6 @@ function commentToDom(c, append = true) {
       }
 
       if (objekt.contenttype === "video") {
-       
         postvideoplayerDiv.classList.add("video-player");
         const imga = document.createElement("img");
         imga.src = 'svgnew/play-btn.svg';
@@ -706,9 +543,6 @@ function commentToDom(c, append = true) {
       postContent.appendChild(post_text_div);
       postContent.appendChild(divtag);
       inhaltDiv.appendChild(postContent);
-
-      
-
 
       const array = JSON.parse(objekt.media);
       let cover = null;
@@ -1034,8 +868,8 @@ function commentToDom(c, append = true) {
 }
 
 async function toggleFollowStatus(userid) {
-        const accessToken = getCookie("authToken");
-        const query = `
+  const accessToken = getCookie("authToken");
+  const query = `
           mutation ToggleUserFollowStatus($userid: ID!) {
             toggleUserFollowStatus(userid: $userid) {
               status
@@ -1045,84 +879,32 @@ async function toggleFollowStatus(userid) {
           }
         `;
 
-        const variables = { userid };
+  const variables = { userid };
 
-        try {
-          const response = await fetch(GraphGL,{
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({ query, variables })
-          });
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
 
-          const result = await response.json();
+    const result = await response.json();
 
-          if (result.data && result.data.toggleUserFollowStatus) {
-            return result.data.toggleUserFollowStatus.isfollowing;
-          } else {
-            console.error("GraphQL error:", result.errors);
-            return null;
-          }
-        } catch (error) {
-          console.error("Network error:", error);
-          return null;
-        }
+    if (result.data && result.data.toggleUserFollowStatus) {
+      return result.data.toggleUserFollowStatus.isfollowing;
+    } else {
+      console.error("GraphQL error:", result.errors);
+      return null;
+    }
+  } catch (error) {
+    console.error("Network error:", error);
+    return null;
+  }
 }
 
-function renderFollowButton(objekt, currentUserId) {
-        if (objekt.user.id === currentUserId) return null;
-
-        const followButton = document.createElement("button");
-        followButton.classList.add("follow-button");
-
-        const followerCountSpan = document.getElementById("following");
-
-        // Check for peer status initially
-        if (objekt.user.isfollowed && objekt.user.isfollowing) {
-          followButton.classList.add("following");
-          followButton.textContent = "Peer";
-        } else if (objekt.user.isfollowed) {
-          followButton.classList.add("following");
-          followButton.textContent = "Following";
-        } else {
-          followButton.textContent = "Follow +";
-        }
-
-        followButton.addEventListener("click", async function (event) {
-          event.stopPropagation();
-          event.preventDefault();
-
-          const newStatus = await toggleFollowStatus(objekt.user.id);
-
-          if (newStatus !== null) {
-            objekt.user.isfollowed = newStatus;
-
-            const isfollowed = objekt.user.isfollowed;
-            const isfollowing = objekt.user.isfollowing;
-
-            if (followerCountSpan) {
-              let count = parseInt(followerCountSpan.textContent, 10) || 0;
-              count = newStatus ? count + 1 : Math.max(0, count - 1);
-              followerCountSpan.textContent = count;
-            }
-
-            followButton.classList.toggle("following", isfollowed);
-
-            if (isfollowed && isfollowing) {
-              followButton.textContent = "Peer";
-            } else if (isfollowed) {
-              followButton.textContent = "Following";
-            } else {
-              followButton.textContent = "Follow +";
-            }
-          } else {
-            alert("Failed to update follow status. Please try again.");
-          }
-        });
-        return followButton;
-}
 
 function like_dislike_post(objekt, action, el) {
   const isLike = action === "like";
@@ -1131,7 +913,20 @@ function like_dislike_post(objekt, action, el) {
   const span = el.querySelector("span");
   const keyIsClicked = isLike ? "isliked" : "isdisliked";
   const keyAmount = isLike ? "amountlikes" : "amountdislikes";
-  el.classList.add('clicked');
+
+    // Check nearest parent with .card OR .viewpost
+    const parentel = el.closest(".card, .viewpost");
+    
+    if (parentel) {
+      parentel.classList.add("disbale_click");
+
+      // 3 second baad remove kar do
+      setTimeout(() => {
+        parentel.classList.remove("disbale_click");
+      }, 3000);
+    }
+  
+  
 
   apiCall(objekt.id).then((success) => {
     if (success) {
@@ -1155,645 +950,107 @@ function like_dislike_post(objekt, action, el) {
   });
 }
 
-function  redirectToProfile (objekt, el) {
-  window.location.href = `view-profile.php?user=${objekt.user.id}`;
-}
-  
+
 let timerId = null;
 function cancelTimeout() {
   clearTimeout(timerId);
 }
 
 async function viewed(object) {
-  viewPost(object.id);
+  await viewPost(object.id);
   object.isviewed = true;
   // console.log(object.id);
 }
 
 async function postClicked(objekt) {
-    const UserID = getCookie("userID");
-    if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(() => viewed(objekt), 1000);
-    togglePopup("cardClicked");
+  const UserID = getCookie("userID");
+  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(async () => await viewed(objekt), 1000);
+  togglePopup("cardClicked");
 
-    document.getElementById("cardClicked").setAttribute("postID", objekt.id);
-    document.getElementById("cardClicked").setAttribute("content", objekt.contenttype);
-    
+  document.getElementById("cardClicked").setAttribute("postID", objekt.id);
+  document.getElementById("cardClicked").setAttribute("content", objekt.contenttype);
 
-    const postContainer = document.getElementById("viewpost-container");
-
-    const containerleft = postContainer.querySelector(".viewpost-left");
-    const containerright = postContainer.querySelector(".viewpost-right");
-    const post_gallery = containerleft.querySelector(".post_gallery");
-    post_gallery.innerHTML="";
-    const post_contentletf=containerleft.querySelector(".post_content");
-    if(post_contentletf)   post_contentletf.remove();
-
-    const post_contentright=containerright.querySelector(".post_content");
-    
-    const array = JSON.parse(objekt.media);
-    //const arraycover = JSON.parse(objekt.cover);
-    let card = document.getElementById(objekt.id);
-    /*--------Card profile Header  -------*/
-    const card_header =card.querySelector(".card-header");
-    const username = card_header.querySelector(".post-userName:not(.profile_id)")?.textContent.trim();
-    const profile_id = card_header.querySelector(".post-userName.profile_id")?.textContent.trim();
-    const user_img_src = card_header.querySelector(".post-userImg")?.getAttribute("src");
-    //const followbutton = card_header.querySelector(".card-header-right")?.outerHTML ?? "";
-
-    const post_userName=postContainer.querySelector(".post-userName");
-    post_userName.innerHTML=username;
-
-    const conprofile_id =postContainer.querySelector(".profile_id");
-    conprofile_id.innerHTML=profile_id;
-
-    const post_userImg=postContainer.querySelector(".post-userImg");
-    post_userImg.src=user_img_src;
-
-    const followButton = renderFollowButton(objekt, UserID);
-    if (followButton) {
-      const post_followbtn=postContainer.querySelector(".profile-header-right");
-      post_followbtn.innerHTML="";
-      post_followbtn.appendChild(followButton);
-    }
-    const profile_header_left=postContainer.querySelector(".profile-header-left");
-   
-    profile_header_left.addEventListener("click",
-        function handledisLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-          redirectToProfile(objekt, this);
-        }  
-      );
-
-    /*--------END: Card profile Header  -------*/
-    
-    /*--------Card Post Title and Text  -------*/
-    
-
-    const cont_post_text=containerright.querySelector(".post_text");
-    const cont_post_title=containerright.querySelector(".post_title h2");
-    const cont_post_time=containerright.querySelector(".timeagao");
-    const cont_post_tags=containerright.querySelector(".hashtags");
-
-
-    
-    const card_post_text = card.querySelector(".post-text");
-    cont_post_text.innerHTML = card_post_text.innerHTML;
-
-    const post_title = card.querySelector(".post-title");
-    const title_text = post_title.childNodes[0].textContent.trim();
-    cont_post_title.innerHTML = title_text;
-
-    const post_time = card.querySelector(".timeAgo");
-    cont_post_time.innerHTML = post_time.innerHTML;
-
-    const hashtags = card.querySelector(".hashtags");
-    cont_post_tags.innerHTML = hashtags.innerHTML;
-
-    /*--------END : Card Post Title and Text  -------*/
-
-    
-    
-    
-
-    if (objekt.contenttype === "audio") {
-      post_gallery.classList.add("audio");
-      post_gallery.classList.remove("multi");
-      post_gallery.classList.remove("images");
-      post_gallery.classList.remove("video");
-      for (const item of array) {
-        const audio = document.createElement("audio");
-        audio.id = "audio2";
-        audio.src = tempMedia(item.path);
-        audio.controls = true;
-        audio.className = "custom-audio";
-
-        // 1. Erzeuge das <div>-Element
-        const audioContainer = document.createElement("div");
-        //audioContainer.id = "audio-container"; // Setze die ID
-         audioContainer.classList.add("audio-item");
-
-        if (objekt.cover) {
-          const cover = JSON.parse(objekt.cover);
-          img = document.createElement("img");
-          img.classList.add("cover");
-          img.onload = () => {
-            img.setAttribute("height", img.naturalHeight);
-            img.setAttribute("width", img.naturalWidth);
-          };
-          img.src = tempMedia(cover[0].path);
-          img.alt = "Cover";
-          audioContainer.appendChild(img);
-        }
-        // 2. Erzeuge das <canvas>-Element
-        const canvas = document.createElement("canvas");
-        canvas.id = "waveform-preview"; // Setze die ID für das Canvas
-
-        // 3. Erzeuge das <button>-Element
-        const button = document.createElement("button");
-        button.id = "play-pause"; // Setze die ID für den Button
-        // button.textContent = "Play"; // Setze den Textinhalt des Buttons
-
-        // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
-        let cover = null;
-        if (objekt.cover) {
-          cover = JSON.parse(objekt.cover);
-        }
-        const audio_player = document.createElement("div");
-        audio_player.className = "audio_player_con";
-        audio_player.id = "audio_player_custom";
-        const timeinfo = document.createElement("div");
-        timeinfo.className = "time-info";
-        timeinfo.innerHTML = `
-          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
-        `;
-        audio_player.appendChild(timeinfo);
-        audio_player.appendChild(canvas);
-        audio_player.appendChild(button);
-        
-        audioContainer.appendChild(audio_player);
-        // audioContainer.appendChild(audio);
-        // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-        post_gallery.appendChild(audioContainer);
-
-        initAudioplayer("audio_player_custom", audio.src);
-      }
-    } else if (objekt.contenttype === "video") {
-      post_gallery.classList.add("video");
-      if (array.length > 1) post_gallery.classList.add("multi");
-      else post_gallery.classList.remove("multi");
-      post_gallery.classList.remove("images");
-      post_gallery.classList.remove("audio");
-
-        post_gallery.innerHTML = `
-            <div class="slider-wrapper">
-              <div class="slider-track"></div>
-              <div class="slider-thumbnails"></div>
-              </div>
-          `;
-      const sliderTrack = post_gallery.querySelector(".slider-track");
-      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
-      let currentIndex = 0;
-
-      for (const [index, item] of array.entries()) {
-
-        const video = document.createElement("video");
-        video.id = "video2";
-        video.src = tempMedia(extractAfterComma(item.path));
-        video.controls = true;
-        video.className = "custom-video";
-        video.autoplay = (index === 0);  // ✅ Autoplay only for the first video
-        video.muted = false;
-        video.loop = true;
-
-        let coversrc = 'img/audio-bg.png';
-        if (objekt.cover) {
-          const cover = JSON.parse(objekt.cover);
-          coversrc = tempMedia(cover[0].path);
-         
-        }
-        
-        const videoContainer = document.createElement("div");
-        videoContainer.classList.add("slide_item");
-        videoContainer.style.backgroundImage = `url("${coversrc}")`;
-        videoContainer.appendChild(video);
-
-        // Thumbnail
-        const img = document.createElement("img");
-        
-        img.src = coversrc;
-        img.alt = "";
-
-        const timg = document.createElement("div");
-        timg.classList.add("timg");
-
-        const playicon = document.createElement("i");
-        playicon.classList.add("fi", "fi-sr-play");
-
-        timg.appendChild(playicon);
-        timg.appendChild(img);
-        sliderThumb.appendChild(timg);
-        sliderTrack.appendChild(videoContainer);
-      }
-
-      // === Slider Control Logic Outside the Loop === //
-
-      function updateSlider(index) {
-        currentIndex = index;
-
-        const targetItem = sliderTrack.children[index];
-        const offsetLeft = targetItem.offsetLeft;
-
-        sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
-
-        // Manage active class
-        sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
-          thumb.classList.toggle("active", i === index);
-        });
-
-        // Play the current video and pause others
-        sliderTrack.querySelectorAll("video").forEach((vid, i) => {
-          //console.log(index +'--'+i);
-          if (i === index) {
-            vid.play();
-          } else {
-            vid.pause();
-            vid.currentTime = 0;
-          }
-        });
-      }
-
-      // Initialize
-      setTimeout(() => updateSlider(0), 50);
-
-      // Add click listeners
-      sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
-        thumb.addEventListener("click", () => {
-          updateSlider(index);
-        });
-      });
-
-    } else if (objekt.contenttype === "text") {
-      
-      if (containerleft && post_contentright) {
-        containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
-      }
-
-      for (const item of array) {
-      }
-    } else {
-      let img;
-      post_gallery.classList.add("images");
-      post_gallery.classList.remove("video");
-      post_gallery.classList.remove("audio");
-      if (array.length > 1) post_gallery.classList.add("multi");
-      else post_gallery.classList.remove("multi");
-
-      
-        post_gallery.innerHTML = `
-            <div class="slider-wrapper">
-              <div class="slider-track"></div>
-              <div class="slider-thumbnails"></div>
-              </div>
-          `;
-
-      const sliderTrack = post_gallery.querySelector(".slider-track");
-      const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
-      const imageSrcArray = [];
-      array.forEach((item, index) => {
-        const image_item = document.createElement("div");
-        image_item.classList.add("slide_item");
-
-        const img = document.createElement("img");
-        const timg = document.createElement("img");
-        const src = tempMedia(item.path);
-        img.src = src;
-        timg.src = src;
-        img.alt = "";
-        timg.alt = "";
-        image_item.style.backgroundImage = `url("${src}")`;
-
-        
-        
-        image_item.appendChild(timg);
-
-         const timg2 = document.createElement("div");
-         timg2.classList.add("timg");
-          timg2.appendChild(img);
-        sliderThumb.appendChild(timg2);
-
-        const zoomElement = document.createElement("span");
-        zoomElement.className = "zoom";
-        zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
-        image_item.appendChild(zoomElement);
-       
-        sliderTrack.appendChild(image_item);
-
-
-        let currentIndex = 0;
-
-        function updateSlider(index) {
-          currentIndex = index;
-
-          const targetItem = sliderTrack.children[index];
-          const offsetLeft = targetItem.offsetLeft;
-
-          sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
-
-          // Manage active class
-          sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
-            thumb.classList.toggle("active", i === index);
-          });
-        }
-
-        // Initialize active thumbnail
-        updateSlider(0);
-
-        // Add click listener to each thumbnail
-        sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
-          thumb.addEventListener("click", () => {
-            updateSlider(index);
-          });
-        });
-
-
-
-        imageSrcArray.push(src);
-
-        // Open modal on click
-        zoomElement.addEventListener("click", () => {
-          openSliderModal(imageSrcArray, index);
-        });
-        
-
-      });
-    }
-
-    /*const title = document.getElementById("comment-title");
-    title.innerText = objekt.title;
-    const text = document.getElementById("comment-text");
-    text.innerText = objekt.mediadescription;*/
-
-    let mostliked = [];
-    const comments = document.getElementById("comments");
-    const commentsContainer =postContainer.querySelector(".comments-container");
-    const comment_count=commentsContainer.querySelector(".comment_count");
-    comment_count.innerText = objekt.amountcomments;
-
-    const social =postContainer.querySelector(".social");
-    const postViews=social.querySelector(".post-view span ");
-    postViews.innerText = objekt.amountviews;
-
-    const postComments=social.querySelector(".post-comments span ");
-    postComments.innerText = objekt.amountcomments;
-
-    
-    // Zweites -Icon mit #post-like
-    const likeContainer = social.querySelector(".post-like ");
-    const postLikes=likeContainer.querySelector("span ");
-    postLikes.innerText = objekt.amountlikes;    
-    
-    if (objekt.isliked) {
-      likeContainer.classList.add("active");
-      
-    } else if (objekt.user.id !== UserID) {
-      likeContainer.addEventListener(
-        "click",
-        function handleLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-          like_dislike_post(objekt, "like", this);
-        },
-        { capture: true}
-      );
-    }
-      
-    const dislikeContainer = social.querySelector(".post-dislike");
-    const postdisLikes=dislikeContainer.querySelector("span");
-    postdisLikes.innerText = objekt.amountdislikes;
-    
-    if (objekt.isdisliked) {
-      dislikeContainer.classList.add("active");
-      
-    } else if (objekt.user.id !== UserID) {
-      dislikeContainer.addEventListener(
-        "click",
-        function handleLikeClick(event) {
-          event.stopPropagation();
-          event.preventDefault();
-          like_dislike_post(objekt, "dislike", this);
-        },
-        { capture: true}
-      );
-    }
-
-
-
-   // document.getElementById("addComment").setAttribute("postID", objekt.id);
-    
-    comments.innerHTML = "";
-	
-    objekt.comments
-      .slice()
-      .reverse()
-      .forEach(function (c) {
-		  
-		  //console.log(c);
-        commentToDom(c);
-        fetchChildComments(c.commentid).then((result) => {
-          if (!result) return;
-          result.slice().forEach(function (c2) {
-            commentToDom(c2, true);
-          });
-        });
-      });
-      /*
-    mostliked.sort((a, b) => b.liked - a.liked);
-    // console.log(mostliked);
-    const mostlikedcontainer = document.getElementById("mostliked");
-    mostlikedcontainer.innerHTML = "";
-    for (let i = 0; i < 3 && i < mostliked.length; i++) {
-      const img = document.createElement("img");
-
-      img.src = mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
-      mostlikedcontainer.appendChild(img);
-    }*/
-
-
-  const postComment = document.getElementById("post_comment");
-    const textarea = postComment.querySelector("textarea");
-    const button = postComment.querySelector("button");
-
-    // Clean up previous listeners (optional but safer)
-    button.replaceWith(button.cloneNode(true));
-    textarea.replaceWith(textarea.cloneNode(true));
-
-    const newTextarea = postComment.querySelector("textarea");
-    const newButton = postComment.querySelector("button");
-
-    // Submit handler
-    function handleCommentSubmit() {
-      const content = newTextarea.value.trim();
-      const postID = objekt.id;
-
-      if ( !postID) {
-        Merror("Error","Content or Post ID is missing.");
-        return;
-      }
-      if (!content) {
-       
-        return;
-      }
-
-      createComment(postID, content).then((result) => {
-        if (result && result.data?.createComment?.status === "success") {
-          dailyfree();
-          commentToDom(result.data.createComment.affectedRows[0], false);
-          newTextarea.value = ""; // Clear textarea
-        } else {
-          const errorMsg = result?.errors?.[0]?.message || "Failed to post comment.";
-          Merror("Error",errorMsg);
-        }
-      });
-    }
-
-    // Click listener
-    newButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      handleCommentSubmit();
-    });
-
-    // Enter key listener
-    newTextarea.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        handleCommentSubmit();
-      }
-    });
-
-
+  postdetail(objekt, UserID); //this funtion  define in global.js and used for guest post as well.
 }
 
 
-  function openSliderModal(images, startIndex = 0) {
-    const modal = document.getElementById("sliderModal");
-    const track = modal.querySelector(".modal-slider-track");
-    const closeBtn = modal.querySelector(".close-modal");
-    const modalContent = modal.querySelector(".slider-modal-content");
-    const thumbnailContainer = modal.querySelector(".modal-thumbnails");
 
-    // Reset track
-    track.innerHTML = "";
-    thumbnailContainer.innerHTML = "";
+function deleteFilter() {
+  localStorage.removeItem("filterSettings");
+  localStorage.removeItem("tags");
+}
 
-    images.forEach((src, index) => {
-      const img = document.createElement("img");
-      img.src = src;
-      img.classList.add("modal-image");
-       if (index === startIndex) img.classList.add("active");
-      track.appendChild(img);
-    });
-    // Add thumbnails
-    images.forEach((src, index) => {
-      const thumb = document.createElement("img");
-      thumb.src = src;
-      thumb.classList.add("modal-thumbnail");
-      if (index === startIndex) thumb.classList.add("active");
-      thumb.addEventListener("click", () => {
-        current = index;
-        update();
-      });
-      thumbnailContainer.appendChild(thumb);
-    });
+function saveFilterSettings() {
+  let filterSettings = {};
+  let selectedContentTypes = [];
+  let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
 
+  checkboxes.forEach((checkbox) => {
+    filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
 
-    let current = startIndex;
-    const total = images.length;
-    const imageElements = track.querySelectorAll(".modal-image");
-    const thumbnailElements = thumbnailContainer.querySelectorAll(".modal-thumbnail");
-
-    function update() {
-      imageElements.forEach((img, i) => {
-      img.classList.remove("active");
-      });
-
-      const activeImg = imageElements[current];
-      activeImg.classList.add("active");
-
-      // Wait for image to load before getting dimensions
-      if (activeImg.complete) {
-        setModalWidth(activeImg);
-      } else {
-        activeImg.onload = () => setModalWidth(activeImg);
-      }
-      // Highlight active thumbnail
-      thumbnailElements.forEach((thumb, i) => {
-        thumb.classList.toggle("active", i === current);
-      });
-      
+    if (checkbox.closest(".content-options") && checkbox.checked) {
+      selectedContentTypes.push(checkbox.name); // use name, not id
     }
-    function setModalWidth(img) {
-    
-    if (img) {
-       const width = img.naturalWidth;
-      modalContent.style.maxWidth  = `${width}px`;
-      track.style.transform = `translateX(-${current * 100}%)`;
-    }
+  });
+  localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
+  localStorage.setItem("selectedContentTypes", JSON.stringify(selectedContentTypes));
+  if (document.getElementById("searchGroup")) {
+    localStorage.setItem("tags", document.getElementById("searchGroup").value);
   }
-
-    modal.querySelector(".modal-nav.prev").onclick = () => {
-      current = (current - 1 + total) % total;
-      update();
-    };
-
-    modal.querySelector(".modal-nav.next").onclick = () => {
-      current = (current + 1) % total;
-      update();
-    };
-
-    closeBtn.onclick = () => modal.classList.add("hidden");
-    modal.onclick = (e) => {
-      if (e.target === modal) modal.classList.add("hidden");
-    };
-
-    update();
-    const navPrev = modal.querySelector(".modal-nav.prev");
-  const navNext = modal.querySelector(".modal-nav.next");
-
-  // Hide navigation if only one image
-  if (total <= 1) {
-    navPrev.style.display = "none";
-    navNext.style.display = "none";
-    thumbnailContainer.style.display = "none";
-  } else {
-    navPrev.style.display = "flex";
-    navNext.style.display = "flex";
-    thumbnailContainer.style.display = "flex";
-  }
-    modal.classList.remove("hidden");
-  }
+}
+function restoreFilterSettings() {
+  let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
 
 
-  function deleteFilter() {
-    localStorage.removeItem("filterSettings");
-    localStorage.removeItem("tags");
-  }
-
-  function saveFilterSettings() {
-    let filterSettings = {};
-    let selectedContentTypes = [];
+  if (filterSettings) {
     let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
-
     checkboxes.forEach((checkbox) => {
-      filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
-
-      if (checkbox.closest('.content-options') && checkbox.checked) {
-        selectedContentTypes.push(checkbox.name); // use name, not id
+      if (filterSettings[checkbox.id] !== undefined) {
+        checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
       }
     });
-    localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
-    localStorage.setItem("selectedContentTypes", JSON.stringify(selectedContentTypes));
-	if(document.getElementById("searchGroup")){
-    	localStorage.setItem("tags", document.getElementById("searchGroup").value);
-	}
   }
-  function restoreFilterSettings() {
-    let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
+  if (window.location.pathname.endsWith("dashboard.php")) {
+    const searchTagElem = document.getElementById("searchTag");
+    if (searchTagElem) {
+      searchTagElem.value = localStorage.getItem("tagInput") || "";
+    }
 
-    if (filterSettings) {
-      let checkboxes = document.querySelectorAll('.filterContainer input[type="checkbox"], .filterContainer input[type="radio"]');
-      checkboxes.forEach((checkbox) => {
-        if (filterSettings[checkbox.id] !== undefined) {
-          checkbox.checked = filterSettings[checkbox.id]; // Zustand setzen
-        }
-      });
-    }
-    if (window.location.pathname.endsWith('dashboard.php')) {
-      const searchTagElem = document.getElementById("searchTag");
-      if (searchTagElem) {
-        searchTagElem.value = localStorage.getItem("tagInput") || "";
-      }
-    }
     // document.getElementById("searchTag").value = localStorage.getItem("tagInput") || ""; // Tags wiederherstellen
   } 
- 
+
+}
+
+const postSpan = document.querySelector(".post-view span");
+if (postSpan) {
+  postSpan.addEventListener("click", async () => {
+    const postid = postSpan.closest(".viewpost").getAttribute("postid");
+    await postInteractionsModal(postid, "VIEW");
+  });
+}
+
+
+const likeSpan = document.querySelector(".post-like span");
+if (likeSpan) {
+  likeSpan.addEventListener("click", async () => {
+    const postid = likeSpan.closest(".viewpost").getAttribute("postid");
+    await postInteractionsModal(postid, "LIKE");
+  });
+}
+
+
+const dislikeSpan = document.querySelector(".post-dislike span");
+if (dislikeSpan) {
+  dislikeSpan.addEventListener("click", async () => {
+    const postid = dislikeSpan.closest(".viewpost").getAttribute("postid");
+    await postInteractionsModal(postid, "DISLIKE");
+  });
+}
+
+
+document.body.addEventListener("click", async (e) => {
+  if (e.target.matches(".comment_like span")) {
+    const postid = e.target.closest(".comment_item").getAttribute("id");
+      await postInteractionsModal(postid, "COMMENTLIKE");
+  }
+});
