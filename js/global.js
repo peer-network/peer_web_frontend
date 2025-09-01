@@ -840,7 +840,7 @@ function postdetail(objekt,CurrentUserID) {
           const newButton = postComment.querySelector("button");
 
           // Submit handler
-          function handleCommentSubmit() {
+          async function handleCommentSubmit() {
             const content = newTextarea.value.trim();
             const postID = objekt.id;
 
@@ -848,33 +848,84 @@ function postdetail(objekt,CurrentUserID) {
               Merror("Error","Content or Post ID is missing.");
               return;
             }
-            if (!content || UserID === null) {
+            if (UserID === null) {
+               
               return;
             }
+            if(content.length === 0) {
+              newTextarea.focus();
+              return; // if no content, return
+            }
+            if (postComment) {
+              postComment.classList.add("disbale_click");
 
-            createComment(postID, content).then((result) => {
-              if (result && result.data?.createComment?.status === "success") {
-                dailyfree();
-                commentToDom(result.data.createComment.affectedRows[0], false);
-                newTextarea.value = ""; // Clear textarea
-              } else {
-                const errorMsg = result?.errors?.[0]?.message || "Failed to post comment.";
-                Merror("Error",errorMsg);
+              // 3 second baad remove kar do
+              setTimeout(() => {
+                postComment.classList.remove("disbale_click");
+              }, 3000);
+            }
+
+             try {
+                // Attempt to change the username after passing validations
+                const result = await createComment(postID, content);
+                if (result && result.data?.createComment?.status === "success") {
+                  dailyfree();
+                  commentToDom(result.data.createComment.affectedRows[0], false);
+                  newTextarea.value = ""; // Clear textarea
+                } /*else {
+
+                   const errorMsg = userfriendlymsg(result.data?.createComment?.ResponseCode) || "Failed to post comment.";
+                    Merror("Error",errorMsg);
+                  
+                }*/
+              } catch (error) {
+                console.error("Error during post comment:", error);
+              } finally {
+                 
               }
-            });
+
+
+            
           }
 
           // Click listener
           newButton.addEventListener("click", (e) => {
             e.preventDefault();
+
             handleCommentSubmit();
           });
 
           // Enter key listener
+          let isSubmitting = false; // flag
           newTextarea.addEventListener("keydown", function (e) {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              handleCommentSubmit();
+
+
+              const modal = document.querySelector(".modal-container");
+              if(modal){
+                const buttonElements = modal.querySelector(".modal-button");
+                if(buttonElements){
+                  buttonElements.focus();
+                  isSubmitting = false; // modal ka case, lock hata do
+                  return;
+                }
+
+              }
+              const currentTarget = e.currentTarget; // 👈 save here
+
+              if (isSubmitting) return; // agar already process ho raha hai to ignore
+               isSubmitting = true; // lock
+              
+              
+              handleCommentSubmit()
+                        .finally(() => {
+                          // jab complete ho jaye to dobara allow karo
+                          isSubmitting = false;
+                            if (currentTarget) {
+                              currentTarget.focus(); // 👈 use saved ref
+                            }
+                        });
             }
           });
 

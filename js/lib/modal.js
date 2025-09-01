@@ -54,8 +54,10 @@ function createModal({
 
     // Button-Handler
     const buttonElements = modal.querySelectorAll(".modal-button");
+   
     buttonElements.forEach((btn) => {
       btn.addEventListener("click", (event) => {
+        event.currentTarget.focus();
         const index = Number(event.target.getAttribute("data-index"));
         const isChecked = checkboxElement ? checkboxElement.checked : false;
 
