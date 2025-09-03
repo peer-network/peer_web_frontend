@@ -374,6 +374,53 @@
 	height: 3.5rem;
   }
 
+  .boostModal .modal-step[data-step="1"],
+  .boostModal .modal-step[data-step="4"] {
+    padding: 80px !important;
+    width: 100% !important;
+    gap: 60px !important;
+  }
+
+  .boostModal .modal-step[data-step="1"] img,
+  .boostModal .modal-step[data-step="4"] img {
+    width: 186px !important;
+  }
+
+  .boostModal .modal-step[data-step="2"]{
+    width: 100% !important;
+    padding: 80px !important;
+    height: 50em !important;
+  }
+
+  .preview_boostedPost.card {
+    height: 52rem !important;
+    border-radius: 50px !important;
+  }
+
+  .preview_boostedPost .card {
+    height: 52rem !important;
+  }
+
+  .preview_boostedPost .card .post-inhalt {
+    padding: 50px !important;
+  }
+
+  .boostModal .pinedbtn .button {
+    padding: 18px 25px !important;
+    font-size: 35px !important;
+    max-width: 440px !important;
+  }
+
+  .boostModal .pinedbtn .button img {
+    width: 35px !important;
+  }
+
+  .boostModal .adDurationInfos {
+    padding: 20px 40px !important;
+    height: 130px !important;
+    margin-bottom: 15px !important;
+  }
+
 }
 
 
@@ -393,34 +440,50 @@
   backdrop-filter: blur(10px);
 }
 
-.boostModal .modal-content {
-  all: unset; 
-}
-
-.boostModal .modal-step[data-step="1"]{
+.boostModal .modal-step[data-step="1"],
+.boostModal .modal-step[data-step="4"] {
   align-items: center;
   padding: 50px;
   justify-content: space-between;
   gap: 20px;
+  max-width: 1350px;
   border-radius: 4.5rem;
-  width: min(40rem, 100vw);
+  width: 40%;
+}
+
+.boostModal .modal-step[data-step="4"] h2 {
+  color: var(--green);
 }
 
 .boostModal .modal-step[data-step="2"]{
-  padding: 30px;
+  padding: 50px;
   justify-content: space-between;
   gap: 20px;
-  border-radius: 1.5rem;
-  width: min(40rem, 100vw);
+  border-radius: 70px;
+  width: 40%;
+  max-width: 1628px;
+}
+
+.preview_boostedPost.card {
+  aspect-ratio: 3/4.34;
+  max-width: 713px;
+  max-height: 897px;
+  width: 100%;
+}
+
+.preview_boostedPost .card {
+  height: 100%;
 }
 
 .boostModal .modal-step .boostDiv {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
+  gap: 30px;
 }
 
-.boostModal .modal-step[data-step="1"] img {
+.boostModal .modal-step[data-step="1"] img,
+.boostModal .modal-step[data-step="4"] img {
   width: 90px;
 }
 
@@ -446,12 +509,107 @@
 }
 
 .boostModal .modal-step.active p {
-  font-weight: 400;
+  margin-bottom: 20px;
 }
 
 .boostModal .modal-step.active {
   display: flex;
   flex-direction: column;
   animation: modal-scale-in 0.3s ease-out;
+  background-color: var(--bg-filter);
+}
+
+.pinedbtn {
+  margin-top: auto;
+}
+
+.boostModal .pinedbtn .button {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 40px;
+  font-size: 18px;
+  border: none;
+  padding: 0 15px;
+  justify-content: space-between;
+  max-width: 300px;
+}
+
+.boostModal .pinedbtn .button img {
+  width: 20px;
+}
+
+.pinedbtn .button.btn-blue:hover {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
+  color: var(--white);
+}
+
+.pinedbtn .button span {
+  color: var(--white-opacity-50);
+}
+
+.preview_boostedPost.card .post .shadow {
+  background-color: rgba(0,0,0,0.3);
+}
+
+.preview_boostedPost .card[content="video"] .post-inhalt:hover .video-player {
+	transform: translateY(20px);
+}
+
+.preview_boostedPost .card[content="video"] .post-inhalt .video-player img {
+  opacity: 1;
+}
+
+.preview_boostedPost .card[content="video"] .post-inhalt:hover .post-content {
+	transition: 0.3s all;
+  transform: translateY(100%);
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.preview_boostedPost .card[content="image"] .post-inhalt:hover .post-content {
+  transition: 0.3s all;
+  transform: translateY(100%);
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.preview_boostedPost .card[content="image"] .post-inhalt:hover .image_counter {
+  transform: translateY(20px);
+}
+
+.preview_boostedPost .card[content="audio"] .post-inhalt:hover .post-content {
+  opacity: 0 !important;
+  height: 0 !important;
+}
+
+.preview_boostedPost .card[content="audio"] .post-inhalt .audio-player {
+  transform: translateY(0);
+}
+
+.boostModal .adDurationInfos {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
   background-color: var(--background-color);
+  border-radius: 100px;
+  padding: 1rem;
+  align-items: center;
+  line-height: 30px;
+}
+
+.margin_bottom_0 {
+  margin-bottom: 20px !important;
+}
+
+.boostModal .adDurationInfos .price {
+  display: flex;
+  gap: 5px;
+}
+
+.boostModal .adDurationInfos .price img{
+  width: 20px;
 }

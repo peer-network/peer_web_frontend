@@ -84,6 +84,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function boostCardClick(card) {
     window.lastBoostedCard = card;
+
+    const previewBoostedPost = document.getElementById("preview_boostedPost");
+    if (previewBoostedPost) {
+      previewBoostedPost.innerHTML = "";
+
+      const clonedCard = card.cloneNode(true);
+
+      clonedCard.querySelectorAll("*").forEach(el => {
+        el.replaceWith(el.cloneNode(true));
+      });
+
+      const usernameEl = clonedCard.querySelector(".post-userName");
+      const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+
+
+      const postInhalt = clonedCard.querySelector(".post-inhalt");
+      const social = clonedCard.querySelector(".social");
+
+      if (postInhalt && social) {
+        const pinnedBtn = document.createElement("div");
+        pinnedBtn.classList.add("pinedbtn");
+        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> @${username} <span>23h</span></a>`;
+
+        postInhalt.insertBefore(pinnedBtn, social);
+      }
+
+      previewBoostedPost.appendChild(clonedCard);
+    }
     modal.classList.remove('none');
     showStep(1);
   }

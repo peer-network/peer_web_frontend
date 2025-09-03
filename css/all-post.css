@@ -225,6 +225,9 @@ line-height: 40px;
 	color: var(--blue-text, #0069FF);
   margin-top: 20px;
 }
+.card .post-inhalt .hashtags:empty {
+	margin: 0;
+}
 .card .post-inhalt .hashtags span {
 	padding-right: 12px;
 	display: inline-block;
