@@ -71,10 +71,18 @@ checkAuth("unauthorized");
         <h2 class="profile_title"><span class="username"  id="username">&nbsp;</span><span id="slug" class="slug profile_no">&nbsp;</span></h2>
         <div class="profile_description" id="biography"> </div>
         <div class="profile_stats"> <span class="post_count"><em id="userPosts">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers">&nbsp;</em> <span class="new_count" id="recent_followers"></span> Followers</span> <span id="following_count" class="following_count"><em id="following">&nbsp;</em> Following</span> <span id="peer_count" class="peer_count"><em id="Peers">0</em> Peers</span> </div>
+        <h4 class="boost_post_description none">Select any post you want to boost for more visibility.</h4>
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
-      <div class="profile_edit_box"><a class="button btn-white edit-profile" href="profileSettings.php">Edit profile</a></div>
+      <div class="profile_edit_box">
+        <a class="button btn-white edit-profile" href="profileSettings.php">Edit profile</a>
+        <div class="button btn-blue promote_posts">Boost post</div>
+        <div class="button btn-white promote_posts_cancel none">Cancel</div>
+      </div>
     </div>
+
+    <!-- Boost Post Modal -->
+    <?php require_once('./template-parts/content-parts/boostPosts.php'); ?>
     <!-- Load Posts Container -->
     <div id="allpost" class="list_all_post"> </div>
     <div id="post_loader"><img src="svg/logo_farbe.svg" alt="loading" /></div>
