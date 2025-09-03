@@ -29,7 +29,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#">
+                <a id="open-onboarding" href="#">
                     <img class="icon" src="svg/qmark.svg" alt="network" />
                     How Peer Works
                 </a>

@@ -19,6 +19,23 @@ const accessToken = getCookie("authToken");
       currentliquidity();
       getUserInfo();
 
+      initOnboarding();
+      // #open-onboarding anchor click par popup kholna
+        const openBtn = document.querySelector("#open-onboarding");
+        if (openBtn) {
+            openBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                showOnboardingPopup();
+            });
+        }
+         // Mock call to show onboarding if newuserreg=1 in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const newuserreg = urlParams.get("newuserreg");
+        if(newuserreg && newuserreg === "1"){
+          showOnboardingPopup();
+        }
+
+
       window.addEventListener("online", updateOnlineStatus);
       window.addEventListener("offline", updateOnlineStatus);
       updateOnlineStatus();
@@ -1615,3 +1632,98 @@ function renderUsers(users, container) {
     container.appendChild(item);
   });
 }
+
+/*----------- Start : Onboarding screens Logic --------------*/
+function initOnboarding() {
+    const onboardingScreens = document.querySelector("#site-onboarding-screens");
+    if (!onboardingScreens) return;
+
+    const inner = onboardingScreens.querySelector(".onboarding-inner");
+    const slides = inner.querySelectorAll(".onboarding-slide");
+    const close_btns = inner.querySelectorAll(".onboarding-close-button");
+    if (close_btns) {
+        close_btns.forEach(btn => {
+              btn.addEventListener("click", function(e) {
+                  e.preventDefault();
+                  onboardingScreens.classList.add('none'); // popup hide
+                  inner.classList.remove('open');
+              });
+        });
+    }
+
+    if (slides.length === 0) return;
+
+    // Dot navigation wrapper
+    const nav = document.createElement("div");
+    nav.classList.add("onboarding-dots");
+
+    slides.forEach((slide, index) => {
+        const dot = document.createElement("span");
+        dot.classList.add("dot");
+
+        if (slide.classList.contains("active")) {
+            dot.classList.add("active");
+        }
+
+        dot.addEventListener("click", () => {
+            showSlide(index, slides, nav);
+        });
+
+        nav.appendChild(dot);
+
+        // --- Next/Prev button events ---
+        const nextBtn = slide.querySelector(".next-btn");
+        const prevBtn = slide.querySelector(".prev-btn");
+
+        if (nextBtn) {
+            nextBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (index < slides.length - 1) {
+                    showSlide(index + 1, slides, nav);
+                }
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (index > 0) {
+                    showSlide(index - 1, slides, nav);
+                }
+            });
+        }
+    });
+
+    // Append nav dots
+    inner.appendChild(nav);
+}
+
+function showOnboardingPopup() {
+  const OnboardingPopup = document.getElementById('site-onboarding-screens');
+  OnboardingPopup.classList.remove('none');
+  setTimeout(() => {
+    OnboardingPopup.querySelector('.onboarding-inner').classList.add('open');
+  }, 100);
+
+}
+
+// Helper function: show slide by index for initOnboarding()
+function showSlide(index, slides, nav) {
+    slides.forEach((s, i) => {
+        s.classList.remove("active");
+        s.classList.add("none");
+    });
+
+    
+    setTimeout(() => {
+        slides[index].classList.add("active");
+      }, 100);
+    slides[index].classList.remove("none");
+
+    // Update dots
+    nav.querySelectorAll(".dot").forEach((d, i) => {
+        d.classList.remove("active");
+        if (i === index) d.classList.add("active");
+    });
+}
+/*----------- End  : Onboarding screens Logic --------------*/
