@@ -24,4 +24,5 @@
         <div class="dont_show_row"> <label class="form-control xl_font_size txt-color-gray">Do not show this message again <input type="checkbox" name="dont_show_feedbackPopup" value="" /> </label></div>
     </div>
 </div>
+<?php require_once('./template-parts/content-parts/onboarding.php'); ?>
 <footer></footer>
