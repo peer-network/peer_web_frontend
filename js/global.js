@@ -42,6 +42,8 @@ const accessToken = getCookie("authToken");
    }
 });
 
+
+
 function updateOnlineStatus() {
   const online_status = document.querySelectorAll(".online_status");
 
@@ -391,6 +393,27 @@ function postdetail(objekt,CurrentUserID) {
           const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
           shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
           
+          let donwloadAnchor = postContainer.querySelector(".more a.download");
+          // remove old listeners - > element clone 
+            const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
+            donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
+            donwloadAnchor = newdonwloadAnchor;
+          donwloadAnchor.setAttribute("href", "");
+
+
+
+          
+          donwloadAnchor.addEventListener("click", (e) => {
+            e.preventDefault();
+            const downloadUrl=e.target.getAttribute("href");
+            console.log(downloadUrl);
+            if(downloadUrl!=""){
+              forceDownload(downloadUrl);
+            }
+            return false;
+          });
+
+
 
           const containerleft = postContainer.querySelector(".viewpost-left");
           const containerright = postContainer.querySelector(".viewpost-right");
@@ -533,7 +556,10 @@ function postdetail(objekt,CurrentUserID) {
               // audioContainer.appendChild(audio);
               // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
               post_gallery.appendChild(audioContainer);
-
+              if(donwloadAnchor){
+                 
+                  donwloadAnchor.setAttribute("href", audio.src);
+                }
               initAudioplayer("audio_player_custom", audio.src);
             }
           } else if (objekt.contenttype === "video") {
@@ -603,6 +629,12 @@ function postdetail(objekt,CurrentUserID) {
               const offsetLeft = targetItem.offsetLeft;
 
               sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+              
+              if(donwloadAnchor){
+                  const video  = targetItem.querySelector("video");
+                  const videoSrc = video ? video.src : null;
+                  donwloadAnchor.setAttribute("href", videoSrc);
+                }
 
               // Manage active class
               sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
@@ -675,6 +707,8 @@ function postdetail(objekt,CurrentUserID) {
               img.alt = "";
               timg.alt = "";
               image_item.style.backgroundImage = `url("${src}")`;
+              
+              
 
               
               
@@ -702,6 +736,11 @@ function postdetail(objekt,CurrentUserID) {
                 const offsetLeft = targetItem.offsetLeft;
 
                 sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+                if(donwloadAnchor){
+                  const img = targetItem.querySelector("img");
+                  const imgSrc = img ? img.src : null;
+                    donwloadAnchor.setAttribute("href", imgSrc);
+                  }
 
                 // Manage active class
                 sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
@@ -948,6 +987,16 @@ function postdetail(objekt,CurrentUserID) {
 
 
 }
+
+
+function forceDownload(url) {
+ const baseUrl = `${location.protocol}//${location.host}/`;
+   window.location.href = baseUrl+"download.php?file=" + encodeURIComponent(url);
+
+}
+
+
+
 function renderFollowButton(objekt, currentUserId) {
   if (objekt.user.id === currentUserId || currentUserId==null) return null;
   
