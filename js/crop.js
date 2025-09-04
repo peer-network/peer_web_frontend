@@ -384,12 +384,12 @@ containerList.addEventListener("drop", (e) => {
   // cropcanvas.width = cropOrg.clientWidth;
   // cropcanvas.height = cropOrg.clientHeight;
   p_element = cropOrg.parentElement.querySelector("p");
-  //console.log(p_element.innerText);
+  console.log(p_element.innerText);
   //console.log(base64ImagesMap);
-  const imageDatasrc = window.base64ImagesMap.get(p_element.innerText);
+  const imageDatasrc = window.uploadedFilesMap.get(p_element.innerText);
 
   if (imageDatasrc) {
-      cropImg.src = imageDatasrc;
+      cropImg.src = URL.createObjectURL( imageDatasrc);
     } else {
       cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
     }

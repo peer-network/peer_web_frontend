@@ -1,3 +1,6 @@
+let cropOrg = null;
+let seekedFinished = true;
+
 document.addEventListener("DOMContentLoaded", () => {
   const MAX_TAGS = 10;
 
@@ -22,11 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const MIN_DURATION = 3; // Sekunden
   const trimBtn = document.getElementById("trimBtn");
   const trimQuitBtn = document.getElementById("trimQuit");
+  video.addEventListener("seeked", () => {
+    seekedFinish = true;
+    // Jetzt ist das Bild an der richtigen Position
+  });
   const {
     FFmpeg
   } = FFmpegWASM; // UMD exposes FFmpegWASM
   // let ffmpeg = null;
-  let cropOrg = null;
   let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
   window.uploadedFilesMap = new Map();
 
@@ -1960,7 +1966,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element = previewItem.querySelector("video");
         //sessionStorage.setItem(file.name, base64);
         // Store base64
-        uploadedFilesMap.set(file.name, file);
+        window.uploadedFilesMap.set(file.name, url);
         element.addEventListener("loadedmetadata", async () => {
           //  generateThumbnails(file.name); before
           generateThumbnailStrip(file);
@@ -2185,9 +2191,9 @@ document.addEventListener("DOMContentLoaded", () => {
     video.setAttribute("data-id", id);
 
     // Set the video source
-    if (uploadedFilesMap.has(id)) {
+    if (window.uploadedFilesMap.has(id)) {
       // video.src = sessionStorage.getItem(id);
-      video.src = uploadedFilesMap.get(id);
+      video.src = window.uploadedFilesMap.get(id);
     } else {
       video.src = videoElement.src;
     }
@@ -2605,7 +2611,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function generateThumbnailStrip(file, {
   thumbWidth = 160,
   THUMB_COUNT = 10,
-  BATCH_SIZE = 3 // number of thumbnails processed simultaneously
+  BATCH_SIZE = 1 // number of thumbnails processed simultaneously
 } = {}) {
   const timeline = document.getElementById("videoTimeline");
   timeline.innerHTML = "";
@@ -2666,8 +2672,12 @@ async function getBlobSizeFromURL(url) {
 }
 async function updateVideoInfo() {
   const durationEL = document.getElementById("video_druration");
+  const videostart = document.getElementById("video_start");
+  const videoend = document.getElementById("video_end");
   if (durationEL) {
     durationEL.textContent = new Date((video.duration * (endPercent - startPercent)) * 1000).toISOString().substr(11, 8);
+    videostart.textContent = new Date((video.duration * startPercent) * 1000).toISOString().substr(11, 8);
+    videoend.textContent = new Date((video.duration * endPercent) * 1000).toISOString().substr(11, 8);
   }
   var byteLength = await getBlobSizeFromURL(video.src) * (endPercent - startPercent);
   const sizeEL = document.getElementById("video_MB");
@@ -2706,7 +2716,7 @@ function positionElements() {
   trimWindow.style.top = timeline.offsetTop + "px";
   trimWindow.style.height = timeline.offsetHeight + "px";
   // Overlays
-  overlayLeft.style.left = "0";
+  overlayLeft.style.left = "0px";
   overlayLeft.style.width = left + "px";
   overlayLeft.style.top = timeline.offsetTop + "px";
   overlayLeft.style.height = timeline.offsetHeight + "px";
@@ -2761,12 +2771,10 @@ window.addEventListener("pointermove", (e) => {
     let nextStart = Math.min(p, endPercent - MIN_DURATION / video.duration);
     nextStart = Math.max(0, Math.min(nextStart, 1));
     startPercent = nextStart;
-    video.currentTime = video.duration * startPercent;
   } else if (dragging === "right") {
     let nextEnd = Math.max(p, startPercent + MIN_DURATION / video.duration);
     nextEnd = Math.max(0, Math.min(nextEnd, 1));
     endPercent = nextEnd;
-    video.currentTime = video.duration * endPercent;
   } else if (dragging === "window") {
     const dx = x - dragStartX;
     const w = timelineRect.width;
@@ -2787,12 +2795,16 @@ window.addEventListener("pointermove", (e) => {
     endPercent = newEnd;
 
   }
-  const startPos = video.duration * startPercent;
-  if (dragging === "right") {
-    video.currentTime = video.duration * endPercent;
-  } else {
-    video.currentTime = startPos;
+
+  const startPos = video.duration * p;
+  if(seekedFinished){
+    if (dragging === "right") {
+      video.currentTime = video.duration * endPercent;
+    } else {
+      video.currentTime = startPos;
+    }
   }
+  
   updateVideoInfo();
   startPercent = Math.max(0, Math.min(startPercent, 1));
   endPercent = Math.max(0, Math.min(endPercent, 1));
@@ -2968,9 +2980,11 @@ async function trimVideo() {
   }
 
   const duration = video.duration;
-  const startTime = duration * startPercent;
-  const endTime = duration * endPercent;
-  const trimDuration = duration * (endPercent - startPercent);
+  let startTime = Math.floor(duration * startPercent); // round to nearest second
+  let endTime = Math.floor(duration * endPercent);
+  const trimDuration = endTime - startTime;
+
+
   const ffmpeg = await loadFFmpeg();
 
   try {
@@ -2984,8 +2998,8 @@ async function trimVideo() {
 
     // Trim with fast seek
     await ffmpeg.exec([
+    "-i", "input.mp4",
       "-ss", String(startTime), // seek to nearest keyframe (fast)
-      "-i", "input.mp4",
       "-t", String(trimDuration),
       "-c", "copy", // no re-encoding
       "output.mp4"
