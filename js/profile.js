@@ -116,6 +116,34 @@ document.addEventListener("DOMContentLoaded", () => {
     showStep(1);
   }
 
+  showStep(3);
+  currentliquidity("token_balance");
+
+  function insertPinnedBtn(card, username, mode = "profile") {
+    if (!card || card.querySelector(".pinedbtn")) return; // already pinned
+
+    const pinnedBtn = document.createElement("div");
+    pinnedBtn.classList.add("pinedbtn");
+    pinnedBtn.innerHTML = `<a class="button btn-blue"><img src="svg/pin.svg" alt="pin"> @${username} <span>23h</span></a>`;
+
+    const postInhalt = card.querySelector(".post-inhalt");
+    const social = card.querySelector(".social");
+    const comments = card.querySelector(".post-comments");
+
+    if (mode === "profile") {
+      // Insert pinnedBtn before social (above the row)
+      if (postInhalt && social) {
+        postInhalt.insertBefore(pinnedBtn, social);
+      }
+    } else if (mode === "post") {
+      // Insert pinnedBtn inside social, after comments
+      if (social && comments) {
+        comments.insertAdjacentElement("afterend", pinnedBtn);
+      }
+    }
+  }
+
+
   modal.addEventListener('click', function(e) {
     if (e.target.classList.contains('next-btn')) {
       showStep(currentStep + 1);
@@ -127,22 +155,32 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.classList.add('none');
     }
     if (e.target.classList.contains('goToProfile-btn')) {
-      // remove boost mode
       profileBox.classList.remove('boostActive');
       listPosts.classList.remove('boostActive');
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
       modal.classList.add('none');
-    }
-    if (e.target.classList.contains('goToPost-btn')) {
-      // remove boost mode
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
-      modal.classList.add('none');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
-      // simulate normal card click
+
       if (window.lastBoostedCard) {
+        const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
+        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+        insertPinnedBtn(window.lastBoostedCard, username, "profile");
+      }
+    }
+
+    if (e.target.classList.contains('goToPost-btn')) {
+      profileBox.classList.remove('boostActive');
+      listPosts.classList.remove('boostActive');
+      modal.classList.add('none');
+      cancelBtn.classList.add("none");
+      boostPostDescription.classList.add("none");
+
+      if (window.lastBoostedCard) {
+        const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
+        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+        insertPinnedBtn(window.lastBoostedCard, username, "post");
+
+        // simulate normal card click
         window.lastBoostedCard.click();
       }
     }
@@ -165,6 +203,23 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         { capture: true } 
       );
+      card.addEventListener("mousemove", (e) => {
+        if (listPosts.classList.contains("boostActive")) {
+          e.stopImmediatePropagation();
+        }
+      }, { capture: true });
+
+      card.addEventListener("mouseenter", (e) => {
+        if (listPosts.classList.contains("boostActive")) {
+          e.stopImmediatePropagation();
+        }
+      }, { capture: true });
+
+      card.addEventListener("mouseleave", (e) => {
+        if (listPosts.classList.contains("boostActive")) {
+          e.stopImmediatePropagation();
+        }
+      }, { capture: true });
     }); 
   }
 
