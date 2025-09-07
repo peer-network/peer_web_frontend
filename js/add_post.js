@@ -466,7 +466,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         collapsedCard.addEventListener("mousemove", function (event) {
-          console.log("i am here")
           const videoCover = this.querySelector(".video-cover");
           if (videoCover) videoCover.classList.add("none");
           const video = this.getElementsByTagName("video")[0];
