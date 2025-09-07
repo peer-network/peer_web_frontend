@@ -189,6 +189,8 @@ async function createComment(postId, content, parentId = null) {
       }
     }
   `;
+  //console.log(query);
+
   const variables = {
     postId,
     content,
@@ -205,11 +207,11 @@ async function createComment(postId, content, parentId = null) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Antwort:", data);
+      //console.log("Antwort:", data);
       return data;
     })
     .catch((error) => {
-      console.error("Fehler:", error);
+      //console.error("Fehler:", error);
       return error;
     });
 }

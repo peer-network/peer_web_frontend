@@ -1,8 +1,27 @@
 // :TODO VIEWS
 
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",  () => {
   restoreFilterSettings();
+
+
+    const postID = getPostIdFromURL(); // define in global.js
+    if (postID) {
+
+      setTimeout(async () => {
+        
+         const objekt = await fetchPostByID(postID);
+         if (objekt) {
+            
+            postClicked(objekt[0]);
+            
+        }
+      
+      }, 100);
+      
+          
+        
+    }
 
   const everything = document.getElementById("everything");
   if (everything) {
@@ -964,6 +983,7 @@ async function viewed(object) {
 
 async function postClicked(objekt) {
   const UserID = getCookie("userID");
+  
   if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(async () => await viewed(objekt), 1000);
   togglePopup("cardClicked");
 

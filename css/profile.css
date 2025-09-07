@@ -19,12 +19,34 @@
     background-image: url(../svg/icon-activity.svg);
 }
 .profile_edit_box .button.edit-profile::before {
-    background-image: url(../svg/edit.svg);
+    background-image: url(../svg/pencil.svg);
+}
+.profile_edit_box .button.promote_posts::before {
+    background-image: url(../svg/boost-post.svg);
+}
+.profile_edit_box .button.promote_posts_cancel {
+    padding: 0 70px;
+}
+.profile_edit_box .button.promote_posts_cancel::before {
+    content: none !important;
+    background: none !important;
+}
+.profile_edit_box .button.promote_posts:hover::before {
+  filter: invert(1);
+}
+.profile_edit_box .button.edit-profile:hover::before {
+  filter: invert(1);
 }
 
 
 
 /*--------- Profile Header--------------*/
+.none {
+  display: none !important;
+}
+.profile_header h4 {
+  font-weight: 400 !important;
+}
 #profil-container.profile_header {
 	display: flex;
 	align-items: flex-start;
@@ -32,6 +54,17 @@
 	gap: 0;
   flex-direction: row;
 }
+
+.profile_header .profile_edit_box {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile_header .profile_edit_box .btn-white,
+.profile_header .profile_edit_box .btn-blue {
+  margin-bottom: 10px;
+}
+
 .profile_header .profile_picture {
 	max-width: 165px;
 	margin-right: 30px;
@@ -40,6 +73,29 @@
 	overflow:hidden;
 
 }
+.profile_header.boostActive {
+  align-items: center !important;
+  margin-top: 10px;
+}
+.profile_header.boostActive .profile_picture {
+  display: none;
+}
+.profile_header.boostActive .profile_description {
+  display: none;
+}
+.profile_header.boostActive .profile_stats {
+  display: none;
+}
+.profile_header.boostActive .profile_title {
+  display: none;
+}
+.profile_header.boostActive .edit-profile {
+  display: none;
+}
+.profile_header.boostActive .promote_posts {
+  display: none;
+}
+
 .profile_header .profile_picture .cropContainer{
 	
 	background-color: #000;
@@ -318,5 +374,242 @@
 	height: 3.5rem;
   }
 
+  .boostModal .modal-step[data-step="1"],
+  .boostModal .modal-step[data-step="4"] {
+    padding: 80px !important;
+    width: 100% !important;
+    gap: 60px !important;
+  }
+
+  .boostModal .modal-step[data-step="1"] img,
+  .boostModal .modal-step[data-step="4"] img {
+    width: 186px !important;
+  }
+
+  .boostModal .modal-step[data-step="2"]{
+    width: 100% !important;
+    padding: 80px !important;
+    height: 50em !important;
+  }
+
+  .preview_boostedPost.card {
+    height: 52rem !important;
+    border-radius: 50px !important;
+  }
+
+  .preview_boostedPost .card {
+    height: 52rem !important;
+  }
+
+  .preview_boostedPost .card .post-inhalt {
+    padding: 50px !important;
+  }
+
+  .boostModal .pinedbtn .button {
+    padding: 18px 25px !important;
+    font-size: 35px !important;
+    max-width: 440px !important;
+  }
+
+  .boostModal .pinedbtn .button img {
+    width: 35px !important;
+  }
+
+  .boostModal .adDurationInfos {
+    padding: 20px 40px !important;
+    height: 130px !important;
+    margin-bottom: 15px !important;
+  }
+
 }
 
+
+
+/* Boost Post Modal */
+.boostModal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #4848487d;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+.boostModal .modal-step[data-step="1"],
+.boostModal .modal-step[data-step="4"] {
+  align-items: center;
+  padding: 50px;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1350px;
+  border-radius: 4.5rem;
+  width: 40%;
+}
+
+.boostModal .modal-step[data-step="4"] h2 {
+  color: var(--green);
+}
+
+.boostModal .modal-step[data-step="2"]{
+  padding: 50px;
+  justify-content: space-between;
+  gap: 20px;
+  border-radius: 70px;
+  width: 40%;
+  max-width: 1628px;
+}
+
+.preview_boostedPost.card {
+  aspect-ratio: 3/4.34;
+  max-width: 713px;
+  max-height: 897px;
+  width: 100%;
+}
+
+.preview_boostedPost .card {
+  height: 100%;
+}
+
+.boostModal .modal-step .boostDiv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 30px;
+}
+
+.boostModal .modal-step[data-step="1"] img,
+.boostModal .modal-step[data-step="4"] img {
+  width: 90px;
+}
+
+.boostModal .modal-step {
+  display: none;
+}
+
+.boostModal .modal-step.active h2 {
+  margin-bottom: 0;
+  font-weight: 700;
+} 
+
+.boostModal .modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.boostModal .modal-footer .button {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.boostModal .modal-step.active p {
+  margin-bottom: 20px;
+}
+
+.boostModal .modal-step.active {
+  display: flex;
+  flex-direction: column;
+  animation: modal-scale-in 0.3s ease-out;
+  background-color: var(--bg-filter);
+}
+
+.pinedbtn {
+  margin-top: auto;
+}
+
+.boostModal .pinedbtn .button {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 40px;
+  font-size: 18px;
+  border: none;
+  padding: 0 15px;
+  justify-content: space-between;
+  max-width: 300px;
+}
+
+.boostModal .pinedbtn .button img {
+  width: 20px;
+}
+
+.pinedbtn .button.btn-blue:hover {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
+  color: var(--white);
+}
+
+.pinedbtn .button span {
+  color: var(--white-opacity-50);
+}
+
+.preview_boostedPost.card .post .shadow {
+  background-color: rgba(0,0,0,0.3);
+}
+
+.preview_boostedPost .card[content="video"] .post-inhalt:hover .video-player {
+	transform: translateY(20px);
+}
+
+.preview_boostedPost .card[content="video"] .post-inhalt .video-player img {
+  opacity: 1;
+}
+
+.preview_boostedPost .card[content="video"] .post-inhalt:hover .post-content {
+	transition: 0.3s all;
+  transform: translateY(100%);
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.preview_boostedPost .card[content="image"] .post-inhalt:hover .post-content {
+  transition: 0.3s all;
+  transform: translateY(100%);
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.preview_boostedPost .card[content="image"] .post-inhalt:hover .image_counter {
+  transform: translateY(20px);
+}
+
+.preview_boostedPost .card[content="audio"] .post-inhalt:hover .post-content {
+  opacity: 0 !important;
+  height: 0 !important;
+}
+
+.preview_boostedPost .card[content="audio"] .post-inhalt .audio-player {
+  transform: translateY(0);
+}
+
+.boostModal .adDurationInfos {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  background-color: var(--background-color);
+  border-radius: 100px;
+  padding: 1rem;
+  align-items: center;
+  line-height: 30px;
+}
+
+.margin_bottom_0 {
+  margin-bottom: 20px !important;
+}
+
+.boostModal .adDurationInfos .price {
+  display: flex;
+  gap: 5px;
+}
+
+.boostModal .adDurationInfos .price img{
+  width: 20px;
+}

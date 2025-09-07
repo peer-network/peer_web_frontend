@@ -3,6 +3,7 @@ let likeCost = 0.3,
   dislikeCost = 0.5,
   commentCost = 0.05,
   postCost = 2;
+  const baseUrl = `${location.protocol}//${location.host}/`;
 
 // below variable used in wallet module
 // need to declare in global scope
@@ -18,11 +19,30 @@ const accessToken = getCookie("authToken");
       currentliquidity();
       getUserInfo();
 
+      initOnboarding();
+      // #open-onboarding anchor click par popup kholna
+        const openBtn = document.querySelector("#open-onboarding");
+        if (openBtn) {
+            openBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                showOnboardingPopup();
+            });
+        }
+         // Mock call to show onboarding if newuserreg=1 in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const newuserreg = urlParams.get("newuserreg");
+        if(newuserreg && newuserreg === "1"){
+          showOnboardingPopup();
+        }
+
+
       window.addEventListener("online", updateOnlineStatus);
       window.addEventListener("offline", updateOnlineStatus);
       updateOnlineStatus();
    }
 });
+
+
 
 function updateOnlineStatus() {
   const online_status = document.querySelectorAll(".online_status");
@@ -373,6 +393,27 @@ function postdetail(objekt,CurrentUserID) {
           const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
           shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
           
+          let donwloadAnchor = postContainer.querySelector(".more a.download");
+          // remove old listeners - > element clone 
+            const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
+            donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
+            donwloadAnchor = newdonwloadAnchor;
+          donwloadAnchor.setAttribute("href", "");
+
+
+
+          
+          donwloadAnchor.addEventListener("click", (e) => {
+            e.preventDefault();
+            const downloadUrl=e.target.getAttribute("href");
+            console.log(downloadUrl);
+            if(downloadUrl!=""){
+              forceDownload(downloadUrl);
+            }
+            return false;
+          });
+
+
 
           const containerleft = postContainer.querySelector(".viewpost-left");
           const containerright = postContainer.querySelector(".viewpost-right");
@@ -390,7 +431,11 @@ function postdetail(objekt,CurrentUserID) {
           
           const username = objekt.user.username;
           const profile_id = objekt.user.slug;
-          const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : "svg/noname.svg";
+          const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : `${baseUrl}svg/noname.svg`;
+
+           user_img_src.onerror = function () {
+              this.src = `${baseUrl}svg/noname.svg`;
+            };
           
 
           const post_userName=postContainer.querySelector(".post-userName");
@@ -415,7 +460,10 @@ function postdetail(objekt,CurrentUserID) {
             function handledisLikeClick(event) {
               event.stopPropagation();
               event.preventDefault();
-              redirectToProfile(objekt.user.id);
+              if(UserID && UserID !== null){
+                redirectToProfile(objekt.user.id);
+              }
+              
             }  
           );
 
@@ -508,7 +556,10 @@ function postdetail(objekt,CurrentUserID) {
               // audioContainer.appendChild(audio);
               // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
               post_gallery.appendChild(audioContainer);
-
+              if(donwloadAnchor){
+                 
+                  donwloadAnchor.setAttribute("href", audio.src);
+                }
               initAudioplayer("audio_player_custom", audio.src);
             }
           } else if (objekt.contenttype === "video") {
@@ -578,6 +629,12 @@ function postdetail(objekt,CurrentUserID) {
               const offsetLeft = targetItem.offsetLeft;
 
               sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+              
+              if(donwloadAnchor){
+                  const video  = targetItem.querySelector("video");
+                  const videoSrc = video ? video.src : null;
+                  donwloadAnchor.setAttribute("href", videoSrc);
+                }
 
               // Manage active class
               sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
@@ -650,6 +707,8 @@ function postdetail(objekt,CurrentUserID) {
               img.alt = "";
               timg.alt = "";
               image_item.style.backgroundImage = `url("${src}")`;
+              
+              
 
               
               
@@ -677,6 +736,11 @@ function postdetail(objekt,CurrentUserID) {
                 const offsetLeft = targetItem.offsetLeft;
 
                 sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+                if(donwloadAnchor){
+                  const img = targetItem.querySelector("img");
+                  const imgSrc = img ? img.src : null;
+                    donwloadAnchor.setAttribute("href", imgSrc);
+                  }
 
                 // Manage active class
                 sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
@@ -832,7 +896,7 @@ function postdetail(objekt,CurrentUserID) {
           const newButton = postComment.querySelector("button");
 
           // Submit handler
-          function handleCommentSubmit() {
+          async function handleCommentSubmit() {
             const content = newTextarea.value.trim();
             const postID = objekt.id;
 
@@ -840,38 +904,99 @@ function postdetail(objekt,CurrentUserID) {
               Merror("Error","Content or Post ID is missing.");
               return;
             }
-            if (!content || UserID === null) {
+            if (UserID === null) {
+               
               return;
             }
+            if(content.length === 0) {
+              newTextarea.focus();
+              return; // if no content, return
+            }
+            if (postComment) {
+              postComment.classList.add("disbale_click");
 
-            createComment(postID, content).then((result) => {
-              if (result && result.data?.createComment?.status === "success") {
-                dailyfree();
-                commentToDom(result.data.createComment.affectedRows[0], false);
-                newTextarea.value = ""; // Clear textarea
-              } else {
-                const errorMsg = result?.errors?.[0]?.message || "Failed to post comment.";
-                Merror("Error",errorMsg);
+              // 3 second baad remove kar do
+              setTimeout(() => {
+                postComment.classList.remove("disbale_click");
+              }, 3000);
+            }
+
+             try {
+                // Attempt to change the username after passing validations
+                const result = await createComment(postID, content);
+                if (result && result.data?.createComment?.status === "success") {
+                  dailyfree();
+                  commentToDom(result.data.createComment.affectedRows[0], false);
+                  newTextarea.value = ""; // Clear textarea
+                } /*else {
+
+                   const errorMsg = userfriendlymsg(result.data?.createComment?.ResponseCode) || "Failed to post comment.";
+                    Merror("Error",errorMsg);
+                  
+                }*/
+              } catch (error) {
+                console.error("Error during post comment:", error);
+              } finally {
+                 
               }
-            });
+
+
+            
           }
 
           // Click listener
           newButton.addEventListener("click", (e) => {
             e.preventDefault();
+
             handleCommentSubmit();
           });
 
           // Enter key listener
+          let isSubmitting = false; // flag
           newTextarea.addEventListener("keydown", function (e) {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              handleCommentSubmit();
+
+
+              const modal = document.querySelector(".modal-container");
+              if(modal){
+                const buttonElements = modal.querySelector(".modal-button");
+                if(buttonElements){
+                  buttonElements.focus();
+                  isSubmitting = false; // modal ka case, lock hata do
+                  return;
+                }
+
+              }
+              const currentTarget = e.currentTarget; // 👈 save here
+
+              if (isSubmitting) return; // agar already process ho raha hai to ignore
+               isSubmitting = true; // lock
+              
+              
+              handleCommentSubmit()
+                        .finally(() => {
+                          // jab complete ho jaye to dobara allow karo
+                          isSubmitting = false;
+                            if (currentTarget) {
+                              currentTarget.focus(); // 👈 use saved ref
+                            }
+                        });
             }
           });
 
 
 }
+
+
+function forceDownload(url) {
+ const baseUrl = `${location.protocol}//${location.host}/`;
+   window.location.href = baseUrl+"download.php?file=" + encodeURIComponent(url);
+
+}
+
+
+
 function renderFollowButton(objekt, currentUserId) {
   if (objekt.user.id === currentUserId || currentUserId==null) return null;
   
@@ -1047,13 +1172,15 @@ function commentToDom(c, append = true) {
   img.onerror = function () {
     //this.src = "svg/noname.svg";
   };
-  if(userID!==""){
+
     img.addEventListener("click", function handledisLikeClick(event) {
       event.stopPropagation();
       event.preventDefault();
-      redirectToProfile(c, this);
+        if(userID && userID!==""){
+          redirectToProfile(c, this);
+        }
     });
-  }
+
   const imgDiv = document.createElement("div");
   imgDiv.classList.add("commenter-pic");
   imgDiv.appendChild(img);
@@ -1083,7 +1210,7 @@ function commentToDom(c, append = true) {
 
   // Reply container
   const replyBtn = document.createElement("span");
-const replyContainer = document.createElement("div");
+  const replyContainer = document.createElement("div");
   if (!c.parentid) {
     replyBtn.setAttribute("id", c.commentid);
     replyBtn.classList.add("reply_btn");
@@ -1092,7 +1219,10 @@ const replyContainer = document.createElement("div");
     replyBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       event.preventDefault();
-      handleReply(c);
+      if(userID && userID !== null){
+        handleReply(c);
+      }
+     
       // Handle reply button click
     });
 
@@ -1177,6 +1307,125 @@ const replyContainer = document.createElement("div");
     });
   }
 }
+
+
+ function getPostIdFromURL() {
+    // Try query param first (?postid=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    let postid = urlParams.get("postid");
+
+    if (!postid) {
+      const pathParts = window.location.pathname.split("/").filter(Boolean);
+      // Find "post" in path
+      const postIndex = pathParts.indexOf("post");
+      if (postIndex !== -1 && pathParts[postIndex + 1]) {
+        postid = pathParts[postIndex + 1];
+      }
+    }
+
+    return postid;
+  } 
+
+  // Reusable function to fetch post details
+async function fetchPostByID(postID) {
+    try {
+        const accessToken = getCookie("authToken"); // 👈 token check
+
+        // ✅ if logged in then to "ListPosts", else "GuestListPost"
+        const queryName = accessToken ? "ListPosts" : "GuestListPost";
+        const fieldName = accessToken ? "listPosts" : "guestListPost";
+
+        const headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        // ✅ if logged in then to Authorization header add 
+        if (accessToken) {
+            headers.append("Authorization", `Bearer ${accessToken}`);
+        }
+
+        const query = `
+            query ${queryName}($postid: ID!) {
+                ${fieldName}(postid: $postid) {
+                    status
+                    ResponseCode
+                    affectedRows {
+                        id
+                        contenttype
+                        title
+                        media
+                        cover
+                        mediadescription
+                        createdat
+                        amountlikes
+                        amountviews
+                        amountcomments
+                        amountdislikes
+                        amounttrending
+                        isliked
+                        isviewed
+                        isreported
+                        isdisliked
+                        issaved
+                        tags
+                        url
+                        user {
+                            id
+                            username
+                            slug
+                            img
+                            isfollowed
+                            isfollowing
+                        }
+                        comments {
+                            commentid
+                            userid
+                            postid
+                            parentid
+                            content
+                            createdat
+                            amountlikes
+                            amountreplies
+                            isliked
+                            user {
+                                id
+                                username
+                                slug
+                                img
+                                isfollowed
+                                isfollowing
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const response = await fetch(GraphGL, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+                query: query,
+                variables: { postid: postID }
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.data && result.data[fieldName]) {
+            return result.data[fieldName].affectedRows; // ✅ dynamic field handle
+        } else {
+            console.error("GraphQL Error:", result.errors || "No data received");
+            return null;
+        }
+
+    } catch (error) {
+        console.error("GraphQL request failed", error);
+        return null;
+    }
+}
+
+
 
 /*------------ End : View Post Detail Golobal Function -------------*/
 
@@ -1264,12 +1513,15 @@ function shouldShowPopup() {
 
 window.addEventListener('load', () => {
   
-  if (shouldShowPopup()) {
-    setTimeout(() => {
-      showFeedbackPopup();
-      sessionStorage.setItem('popupShown', 'true');
-    }, 30 * 1000); // 30 seconds
-  }
+  const accessToken = getCookie("authToken");
+   if (accessToken) {
+      if (shouldShowPopup()) {
+        setTimeout(() => {
+          showFeedbackPopup();
+          sessionStorage.setItem('popupShown', 'true');
+        }, 30 * 1000); // 30 seconds
+      }
+    }
 
   // Close button
   const closeBtn = document.querySelector('#feebackPopup .close');
@@ -1429,3 +1681,98 @@ function renderUsers(users, container) {
     container.appendChild(item);
   });
 }
+
+/*----------- Start : Onboarding screens Logic --------------*/
+function initOnboarding() {
+    const onboardingScreens = document.querySelector("#site-onboarding-screens");
+    if (!onboardingScreens) return;
+
+    const inner = onboardingScreens.querySelector(".onboarding-inner");
+    const slides = inner.querySelectorAll(".onboarding-slide");
+    const close_btns = inner.querySelectorAll(".onboarding-close-button");
+    if (close_btns) {
+        close_btns.forEach(btn => {
+              btn.addEventListener("click", function(e) {
+                  e.preventDefault();
+                  onboardingScreens.classList.add('none'); // popup hide
+                  inner.classList.remove('open');
+              });
+        });
+    }
+
+    if (slides.length === 0) return;
+
+    // Dot navigation wrapper
+    const nav = document.createElement("div");
+    nav.classList.add("onboarding-dots");
+
+    slides.forEach((slide, index) => {
+        const dot = document.createElement("span");
+        dot.classList.add("dot");
+
+        if (slide.classList.contains("active")) {
+            dot.classList.add("active");
+        }
+
+        dot.addEventListener("click", () => {
+            showSlide(index, slides, nav);
+        });
+
+        nav.appendChild(dot);
+
+        // --- Next/Prev button events ---
+        const nextBtn = slide.querySelector(".next-btn");
+        const prevBtn = slide.querySelector(".prev-btn");
+
+        if (nextBtn) {
+            nextBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (index < slides.length - 1) {
+                    showSlide(index + 1, slides, nav);
+                }
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (index > 0) {
+                    showSlide(index - 1, slides, nav);
+                }
+            });
+        }
+    });
+
+    // Append nav dots
+    inner.appendChild(nav);
+}
+
+function showOnboardingPopup() {
+  const OnboardingPopup = document.getElementById('site-onboarding-screens');
+  OnboardingPopup.classList.remove('none');
+  setTimeout(() => {
+    OnboardingPopup.querySelector('.onboarding-inner').classList.add('open');
+  }, 100);
+
+}
+
+// Helper function: show slide by index for initOnboarding()
+function showSlide(index, slides, nav) {
+    slides.forEach((s, i) => {
+        s.classList.remove("active");
+        s.classList.add("none");
+    });
+
+    
+    setTimeout(() => {
+        slides[index].classList.add("active");
+      }, 100);
+    slides[index].classList.remove("none");
+
+    // Update dots
+    nav.querySelectorAll(".dot").forEach((d, i) => {
+        d.classList.remove("active");
+        if (i === index) d.classList.add("active");
+    });
+}
+/*----------- End  : Onboarding screens Logic --------------*/
