@@ -466,6 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         collapsedCard.addEventListener("mousemove", function (event) {
+          console.log("i am here")
           const videoCover = this.querySelector(".video-cover");
           if (videoCover) videoCover.classList.add("none");
           const video = this.getElementsByTagName("video")[0];
@@ -2967,11 +2968,20 @@ async function trimVideo() {
     return;
   }
 
+  // const duration = video.duration;
+  // const startTime = duration * startPercent;
+  // const endTime = duration * endPercent;
+  // const trimDuration = duration * (endPercent - startPercent);
+
   const duration = video.duration;
-  const startTime = duration * startPercent;
-  const endTime = duration * endPercent;
-  const trimDuration = duration * (endPercent - startPercent);
+  let startTime = Math.floor(duration * startPercent); // round to nearest second
+  let endTime = Math.floor(duration * endPercent);
+  const trimDuration = endTime - startTime;
+
+
   const ffmpeg = await loadFFmpeg();
+ 
+  // for testing purposes
 
   try {
     // Fetch video data from the existing video element
