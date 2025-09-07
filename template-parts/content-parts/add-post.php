@@ -181,6 +181,8 @@
                 </div>
                 <div id="trimButtons">
                     <span class="button btn-transparent" id="trimQuit">Back</span>
+                    <span id="video_start"></span>
+                    <span id="video_end"></span>
                     <span id="video_druration"></span>
                     <span id="video_MB"></span>
                     <span class="button btn-blue" id="trimBtn">Save</span>
