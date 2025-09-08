@@ -50,12 +50,42 @@
 
     <!-- Step 3 -->
     <div class="modal-step" data-step="3">
-      <img src="example3.jpg" alt="Boost">
-      <h2>Step 3 Title</h2>
-      <p>Description for step 4.</p>
+      <h2 class="xxl_font_size">Pricing & Cost breakdown</h2>  
+      <div class="available_tokens_breakdown">
+        <div class="available_tokens">Available tokens</div>
+        <div class="container"><span id="token_balance" class="bold xxl_font_size token_balance"></span><img src="svg/logo_sw.svg" alt="peer logo"></div>
+      </div>
+      <div class="pricing_breakdown">
+        <div class="boostPost_left">
+            <p class="">Payable tokens for ad</p>
+            <span class="bold xxxl_font_size price">2 000 <img src="svg/logo_sw.svg" alt="peer logo"></span>
+        </div>
+         <!-- Vertical Divider -->
+        <div class="vr"></div>
+        <div class="boostPost_right">
+            <p>Token distribution</p>
+            <div class="token_distribution">
+                <span class="total_cost">96% Burn pccount </span>
+                <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">1 536 </span>
+            </div>
+            <div class="token_distribution">
+                <span class="total_cost bold">1% @wosk_kolloin</span>
+                <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
+            </div>
+            <div class="token_distribution">
+                <span class="total_cost">1% Liquidity pool</span>
+                <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
+            </div>
+            <div class="token_distribution">
+                <span class="total_cost">2% Peer bank</span>
+                <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">32 </span>
+            </div>
+        </div>
+      </div>
+      <p class="ad_message">All set! Your ad is ready to go - click 'Pay' to lunch your ad.</p>
       <div class="modal-footer">
-        <div class="button btn-transparent back-btn">Back</div>
-        <div class="button btn-blue next-btn">Continue</div>
+        <div class="button btn-transparent back-btn"><img src="" alt="">Back</div>
+        <div class="button btn-blue next-btn">Pay</div>
       </div>
     </div>
 
