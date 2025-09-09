@@ -248,16 +248,21 @@ async function getLiquiudity() {
   }
 }
 
-async function currentliquidity() {
+async function currentliquidity(targetId = "token") {
   const token = await getLiquiudity();
-  const tokenEl = document.getElementById("token");
+  const tokenEl = document.getElementById(targetId);
 
   if (token !== null && tokenEl) {
     tokenEl.innerText = token;
     const formatted = (token * 0.1).toFixed(2).replace(".", ",") + " €";
-    document.getElementById("money").innerText = formatted;
+
+    const moneyEl = document.getElementById("money");
+    if (moneyEl) {
+      moneyEl.innerText = formatted;
+    }
   }
 }
+
 
 async function getDailyFreeStatus() {
   const accessToken = getCookie("authToken");
@@ -408,7 +413,7 @@ function postdetail(objekt,CurrentUserID) {
             const downloadUrl=e.target.getAttribute("href");
             console.log(downloadUrl);
             if(downloadUrl!=""){
-              forceDownload(downloadUrl);
+              //forceDownload(downloadUrl);
             }
             return false;
           });
@@ -847,7 +852,9 @@ function postdetail(objekt,CurrentUserID) {
             );
           }
 
-         
+         if(donwloadAnchor){
+            donwloadAnchor.setAttribute("href", "");
+          }
 
 
 

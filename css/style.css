@@ -178,7 +178,7 @@ letter-spacing: 0.02em; /* 2% = 0.02em */
 }
 .xxl_font_size { font-weight: 700;}
 .xl_font_size{font-size: 20px;}
-
+.xxxl_font_size {font-size: 60px;}
 
 
 h2 {
@@ -1915,6 +1915,11 @@ footer {grid-area: footer;}
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 	}
 
+	.xxxl_font_size {
+		font-size: 128px;
+
+		font-size: clamp(4rem, 2rem + 3vw, 8rem);
+	}
 
 	h1,.xxl_font_size {
 		font-size: 64px;
