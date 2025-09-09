@@ -191,8 +191,12 @@ function cropIt() {
   croppedCtx.clearRect(0, 0, crop.w, crop.h);
   croppedCtx.drawImage(cropImg, sx, sy, sw, sh, 0, 0, crop.w, crop.h);
   // cropOrg.src = croppedCanvas.toDataURL("image/png");
+
   croppedCanvas.toBlob((blob) => { 
-    cropOrg.src = URL.createObjectURL(blob)
+    //console.log(URL.createObjectURL(blob));
+    //cropOrg.src = URL.createObjectURL(blob);
+    previewItem.querySelector('img.create-img').src = URL.createObjectURL(blob);
+    console.log("file Name:",previewItem.querySelector('p').innerText);
     // const fileName =  previewItem.childNodes[1].innerText
     // const file = new File([blob], fileName, { type: "image/png" });
     // uploadedFilesMap.set(cropOrg, file);
@@ -208,6 +212,7 @@ function cropIt() {
   previewItem.setAttribute("data-aspectratio", aspect_Ratio);
   
   cropping=false;
+  
 }
 
 cropQuit.addEventListener("click", () => {
@@ -377,23 +382,26 @@ containerList.addEventListener("drop", (e) => {
 
  function cropImage(imgContainer) {
   
-  cropOrg = imgContainer.querySelector("img");
+  cropOrg = imgContainer.querySelector("img.create-img");
   if (!cropOrg) return;
   // cropcanvas.width = cropOrg.clientWidth;
   // cropcanvas.height = cropOrg.clientHeight;
   p_element = cropOrg.parentElement.querySelector("p");
 
-    const localImg = new Image();
+   /* const localImg = new Image();
 
   localImg.onload = () => {
     cropImg = localImg;   // <-- update the global reference safely
     draw();
     if (cropping) cropIt();
-  };
+  };*/
 
 
   const imageDatasrc = window.uploadedFilesMap.get(p_element.innerText);
+  //console.log(imageDatasrc);
   if (imageDatasrc) {
+
+    //console.log(URL.createObjectURL(imageDatasrc));
       cropImg.src = URL.createObjectURL(imageDatasrc);
     } else {
       cropImg.src = cropOrg.src; // Das Bild aus dem Element holen
@@ -416,7 +424,8 @@ async function cropAllImages() {
     imgContainer.setAttribute("data-aspectratio", aspect_Ratio);
     cropImage(imgContainer);
     while(cropping) {
-      await sleep(25);
+      
+      await sleep(1000);
     }
   }
   // All images done cropping

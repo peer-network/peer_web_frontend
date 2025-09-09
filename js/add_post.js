@@ -1843,6 +1843,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let previewItem, previewContainer = "";
 
     modal.showModal();
+    
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
