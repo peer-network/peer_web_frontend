@@ -323,106 +323,6 @@
 
 /*---------- End Profile Header -----------*/
 
-@media screen and (min-width: 3000px) {
-
-  .modalOverlay .modal-content {
-    width: min(90rem, 100vw);
-    padding: 40px 140px;
-  }
-
-  .modalOverlay .modal-body {
-    height: 45rem;
-    padding: 15px 0;
-    gap: 20px;
-  }
-
-  .modalOverlay .tabs {
-    border-radius: 2.5rem;
-  }
-
-  .modalOverlay .tabs .tab-btn {
-    line-height: 70px;
-    border-radius: 2.5rem;
-  }
-
-  .modalOverlay .follow-button {
-    height: 4.5rem;
-    font-size: 26px;
-  }
-
-  .modalOverlay .dropdown-item {
-    padding: 0;
-  }
-
-  .modalOverlay .close-btn {
-    margin-left: 55px;
-    margin-top: 60px;
-    width: 60px;
-    height: 60px;
-  }
-
-  .modalOverlay .interactions-close {
-    width: 12px;
-  }
-
-  .modalOverlay .modal-content .profilStats .user_info .user_slug {
-	font-size: 16px;
-  }
-
-  .modalOverlay .modal-content div img {
-	width: 3.5rem;
-	height: 3.5rem;
-  }
-
-  .boostModal .modal-step[data-step="1"],
-  .boostModal .modal-step[data-step="4"] {
-    padding: 80px !important;
-    width: 100% !important;
-    gap: 60px !important;
-  }
-
-  .boostModal .modal-step[data-step="1"] img,
-  .boostModal .modal-step[data-step="4"] img {
-    width: 186px !important;
-  }
-
-  .boostModal .modal-step[data-step="2"],
-  .boostModal .modal-step[data-step="3"] {
-    width: 100% !important;
-    padding: 80px !important;
-    height: 50em !important;
-  }
-
-  .preview_boostedPost.card {
-    height: 52rem !important;
-    border-radius: 50px !important;
-  }
-
-  .preview_boostedPost .card {
-    height: 52rem !important;
-  }
-
-  .preview_boostedPost .card .post-inhalt {
-    padding: 50px !important;
-  }
-
-  .boostModal .pinedbtn .button {
-    padding: 18px 25px !important;
-    font-size: 35px !important;
-    max-width: 440px !important;
-  }
-
-  .boostModal .pinedbtn .button img {
-    width: 35px !important;
-  }
-
-  .boostModal .adDurationInfos {
-    padding: 20px 40px !important;
-    height: 130px !important;
-    margin-bottom: 15px !important;
-  }
-
-}
 
 
 
@@ -447,9 +347,9 @@
   padding: 50px;
   justify-content: space-between;
   gap: 20px;
-  max-width: 1350px;
-  border-radius: 4.5rem;
-  width: 40%;
+  max-width: 900px;
+  border-radius: 30px;
+  width: 100%;
 }
 
 .boostModal .modal-step[data-step="4"] h2 {
@@ -460,10 +360,10 @@
 .boostModal .modal-step[data-step="3"] {
   padding: 50px;
   justify-content: space-between;
-  gap: 20px;
-  border-radius: 70px;
-  width: 40%;
-  max-width: 1628px;
+  gap: 40px;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 1000px;
 }
 
 .preview_boostedPost.card {
@@ -497,7 +397,14 @@
   margin-bottom: 0;
   font-weight: 700;
 } 
-
+.boostModal .modal-body {
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+}
+.boostModal .modal-step[data-step="4"] .modal-body {
+	align-items: center;
+}
 .boostModal .modal-footer {
   display: flex;
   justify-content: center;
@@ -546,10 +453,11 @@
   border-color: var(--button-hover);
   color: var(--white);
 }
-
-.pinedbtn .button span {
-  color: var(--white-opacity-50);
+.pinedbtn .button span.ad_username {
+	
+	font-style: italic;
 }
+
 
 .preview_boostedPost.card .post .shadow,
 .boostActive .post .shadow {
@@ -612,38 +520,41 @@
   line-height: 30px;
   margin-bottom: 5px;
   border-radius: 100px;
-  padding: 1rem;
+  padding: 20px 40px;
   background-color: var(--background-color);
 }
 
 .boostModal .token_distribution {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
   align-items: center;
   line-height: 30px;
 }
 
 .margin_bottom_0 {
-  margin-bottom: 20px !important;
+  margin-bottom: 40px !important;
 }
 
 .boostModal .adDurationInfos .price,
 .boostModal .token_distribution .price {
   display: flex;
-  gap: 5px;
+  gap: 14px;
+  align-items: center;
 }
 
-.boostModal .adDurationInfos .price img,
+.boostModal .adDurationInfos .price img {
+  width: 25px;
+}
 .boostModal .token_distribution .price img {
-  width: 20px;
+  width: 15px;
 }
 
 .boostModal .pricing_breakdown {
   display: flex;
-  align-items: flex-start;
+
   justify-content: space-between;
-  gap: 2rem;
+
   padding: 40px;
   background-color: var(--background-color);
   border-radius: 30px;         
@@ -653,29 +564,35 @@
 .boostModal .pricing_breakdown .boostPost_right {
   flex: 1;          
 }
-
+.boostModal .pricing_breakdown p.xl_font_size {
+	margin-bottom: 22px;
+}
+.boostModal .pricing_breakdown .boostPost_left img {
+	width: 50px;
+}
 .boostModal .pricing_breakdown .vr {
-  border-left: 2px solid #ccc;
-  height: 12rem;    
-  opacity: 0.5; 
+	border-left: 2px solid var(--white-secondary);
+	margin: 0 40px;
 }
 
 .available_tokens_breakdown {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--background-color);
-  padding: 20px;
-  border-radius: 30px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding:20px 40px 20px 0;
+	border-radius: 30px;
+	background-image: url(../img/blue-gradient-bg.png);
+
+	background-size: cover;
 }
 
 .available_tokens_breakdown .available_tokens {
-  background-color: var(--blue);
-  padding: 5px 20px;
-  border-radius: 40px;
+	background-color: var(--blue);
+	padding: 15px 50px;
+	border-radius: 40px;
 }
 
-.available_tokens_breakdown .container {
+.available_tokens_breakdown .available_tokens_amount {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -685,15 +602,160 @@
   margin: 0;
 }
 
-.available_tokens_breakdown .container img {
+.available_tokens_breakdown .available_tokens_amount img {
   width: 30px;
 }
 
 .token_distribution .total_cost {
-  font-size: 15px;
-  color: var(--white-opacity-50);
+  
+  color: var(--white-secondary)
 }
 
 .boostModal .ad_message {
   margin: auto;
+}
+
+
+
+@media screen and (min-width: 3000px) {
+
+  .modalOverlay .modal-content {
+    width: min(90rem, 100vw);
+    padding: 40px 140px;
+  }
+
+  .modalOverlay .modal-body {
+    height: 45rem;
+    padding: 15px 0;
+    gap: 20px;
+  }
+
+  .modalOverlay .tabs {
+    border-radius: 2.5rem;
+  }
+
+  .modalOverlay .tabs .tab-btn {
+    line-height: 70px;
+    border-radius: 2.5rem;
+  }
+
+  .modalOverlay .follow-button {
+    height: 4.5rem;
+    font-size: 26px;
+  }
+
+  .modalOverlay .dropdown-item {
+    padding: 0;
+  }
+
+  .modalOverlay .close-btn {
+    margin-left: 55px;
+    margin-top: 60px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .modalOverlay .interactions-close {
+    width: 12px;
+  }
+
+  
+  .modalOverlay .modal-content .profilStats .user_info .user_slug {
+	font-size: 16px;
+  }
+
+  .modalOverlay .modal-content div img {
+	width: 3.5rem;
+	height: 3.5rem;
+  }
+
+  .boostModal .modal-step[data-step="1"],
+  .boostModal .modal-step[data-step="4"] {
+    padding: 80px;
+    width: 100%;
+    border-radius:70px;
+    max-width: 1350px;
+    gap: 60px;
+  }
+
+  .boostModal .modal-step[data-step="1"] img,
+  .boostModal .modal-step[data-step="4"] img {
+    width: 186px;
+  }
+
+  .boostModal .modal-step[data-step="2"],
+  .boostModal .modal-step[data-step="3"] {
+    width: 100% ;
+    padding: 80px;
+    border-radius:70px;
+    gap: 80px;
+    max-width: 1628px;
+  }
+
+  .preview_boostedPost.card {
+    height: 52rem ;
+    border-radius: 50px;
+  }
+
+  .preview_boostedPost .card {
+    height: 52rem;
+  }
+
+  .preview_boostedPost .card .post-inhalt {
+    padding: 50px;
+  }
+
+  .boostModal .pinedbtn .button {
+    padding: 18px 25px ;
+    font-size: 35px ;
+    max-width: 440px;
+  }
+
+  .boostModal .pinedbtn .button img {
+    width: 35px;
+  }
+
+  .boostModal .adDurationInfos {
+    padding: 20px 40px;
+    height: 130px;
+    margin-bottom: 15px;
+  }
+  .boostModal .adDurationInfos .price img {
+    width: 35px;
+  }
+  .boostModal .token_distribution {
+
+    margin-bottom: 25px;
+    
+  }
+  .boostModal .pricing_breakdown p.xl_font_size {
+    margin-bottom: 42px;
+  }
+  .boostModal .token_distribution .price img {
+    width: 26px;
+  }
+  .available_tokens_breakdown {
+
+	
+    border-radius: 70px;
+    
+    min-height: 197px;
+    
+  }
+  
+  .available_tokens_breakdown .available_tokens_amount img {
+    width: 50px;
+  }
+  .boostModal .pricing_breakdown {
+    padding: 100px;
+    border-radius: 70px;
+  }
+  .boostModal .pricing_breakdown .vr {
+   
+    margin: 0 80px;
+  }
+  .boostModal .pricing_breakdown .boostPost_left img {
+    width: 96px;
+  }
+
 }
