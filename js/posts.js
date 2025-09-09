@@ -29,11 +29,8 @@
         filterBy: [${filterBy}]`;
 
     postsList += tag && tag.length >= 2 ? `, tag: "${tag}"` : "";
-
     postsList += title && title.length >= 1 ? `, title: "${title}"` : "";
-
     postsList += userID !== null ? `, userid: "${userID}"` : "";
-
     postsList += `) {
           status
           ResponseCode
@@ -111,6 +108,7 @@
         throw error;
       });
   }
+  
   async function viewPost(postid) {
     const accessToken = getCookie("authToken");
     // Create headers
@@ -148,7 +146,7 @@
         }
       })
       .catch((error) => {
-       // Merror("View Post failed", error);
+        // Merror("View Post failed", error);
         // console.log("error", error);
         console.error("View Post failed", error);
         return false;
@@ -671,14 +669,14 @@
   async function checkEligibility() {
     const accessToken = await getAccessToken();
     const query = `
-  query PostEligibility {
-    postEligibility {
-      status
-      ResponseCode
-      eligibilityToken
-    }
-  }
-`;
+          query PostEligibility {
+            postEligibility {
+              status
+              ResponseCode
+              eligibilityToken
+            }
+          }
+        `;
 
     try {
       const response = await fetch(GraphGL, {
@@ -694,10 +692,8 @@
 
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
       const result = await response.json();
       if (result.errors) throw new Error(result.errors[0].message);
-
       const eligibility = result.data.postEligibility;
       if (!eligibility || eligibility.ResponseCode !== "10901") {
         throw new Error("Eligibility failed");
@@ -788,7 +784,16 @@
       tags
     };
 
+    if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
+      return false;
+    }
+
     const accessToken = await getAccessToken();
+
+    if (!accessToken) {
+      throw new Error("Auth token is missing or invalid.");
+    }
+
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
@@ -820,9 +825,7 @@
       // console.error("Error create Post:", error);
       return false;
     }
-
   }
-
 
   async function getBitcoinPriceEUR() {
     const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur";

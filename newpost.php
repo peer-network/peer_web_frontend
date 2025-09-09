@@ -91,7 +91,7 @@ checkAuth("unauthorized");
     </dialog>
     <dialog id="videoloading">
         <img src="svg/logo_farbe.svg" alt="codierung">
-        The file is loading.
+        Processing...
     </dialog>
 </body>
 

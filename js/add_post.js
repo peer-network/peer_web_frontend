@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // let ffmpeg = null;
   let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
   window.uploadedFilesMap = new Map();
+  const modal = document.getElementById('videoloading');
 
   updateTagUIVisibility(); // suggestions + selected
   /********************* Preview posts functionality ******************************/
@@ -768,9 +769,18 @@ document.addEventListener("DOMContentLoaded", () => {
       break;
 
       case "image": {
-        files = Array.from(uploadedFilesMap.values());
+      const imageWrappers = document.querySelectorAll(".create-img");
+      files = await Promise.all(
+        Array.from(imageWrappers)
+            .map(async (img, index) => {
+                const response = await fetch(img.src);   
+                const blob = await response.blob(); 
+                return new File([blob], `image${index}.png`, { type: blob.type });
+            })
+      );
         postDescription = description;
       }
+    
       break;
       case "audio": {
         let audioFiles = [];
@@ -802,8 +812,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const coverWrapper = document.getElementById("audio-cover-image-preview");
         const coverImg = coverWrapper?.querySelector("img.create-img");
         const emptyCover = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-        cover = coverImg ? [coverImg.src] : [emptyCover];
-        cover = convertImageToBase64(cover);
+        cover = coverImg ? await blobUrlToBase64(coverImg.src) : [emptyCover];
         postDescription = description;
       }
       break;
@@ -811,8 +820,7 @@ document.addEventListener("DOMContentLoaded", () => {
           files = await getFilesFromVideos(videoWrappers);
           const coverWrapper = document.getElementById("preview-video");
           const coverImg = coverWrapper?.querySelector("img.create-img");
-          cover = coverImg ? [coverImg.src] : null;
-
+          cover = coverImg ? await blobUrlToBase64(coverImg.src) : null;
           postDescription = description;
       }
       break;
@@ -820,12 +828,11 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("Unsupported post type:", post_type);
         break;
     }
-
     hasError = pre_post_form_validation(post_type, files); // check form validation
     // If any error, stop
     if (hasError) return;
     submitButton.disabled = true;
-
+  
     try {
       token = await checkEligibility();
     } catch (err) {
@@ -836,12 +843,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
+     modal.showModal();
       uploadedFiles = await uploadFiles(token, files);
     } catch (err) {
       console.error("File upload failed:", err);
       createPostError.innerHTML = "Failed to upload files. Please try again.";
       submitButton.disabled = false;
       return; // stop here
+    } finally {
+         modal.close();
     }
 
     try {
@@ -888,7 +898,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //BASE64 approach
   // function pre_post_form_validation(post_type, postMedia) {
-
   //   const titleErrorEl = document.getElementById("titleError");
   //   const descErrorEl = document.getElementById("descriptionError");
   //   const imgErrorEl = document.getElementById("imageError");
@@ -1832,7 +1841,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function processFiles(files, id) {
     let previewItem, previewContainer = "";
-    const modal = document.getElementById('videoloading');
+
     modal.showModal();
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
@@ -2996,6 +3005,8 @@ async function trimVideo() {
 
   try {
     // Fetch video data from the existing video element
+         modal.showModal();
+
     const response = await fetch(video.src);
     const arrayBuffer = await response.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
@@ -3008,7 +3019,7 @@ async function trimVideo() {
     "-i", "input.mp4",
       "-ss", String(startTime), // seek to nearest keyframe (fast)
       "-t", String(trimDuration),
-      "-c", "copy", // no re-encoding
+      "-c", "copy", 
       "output.mp4"
     ]);
 
@@ -3044,6 +3055,9 @@ async function trimVideo() {
   } catch (err) {
     console.error("Video trimming failed:", err);
     alert("Trimming failed. Check console for details.");
+  
+  } finally {
+     modal.close();
   }
 }
 
@@ -3059,4 +3073,15 @@ trimBtn.onclick = async () => {
 //     reader.readAsDataURL(blob);
 //   });
 // }
+async function blobUrlToBase64(blobUrl) {
+  const res = await fetch(blobUrl);
+  const blob = await res.blob();   
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob); 
+  });
+}
+
 });
