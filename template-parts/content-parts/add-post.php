@@ -122,7 +122,7 @@
                                             fill="white" />
                                     </svg>
                                 </span>
-                                <audio id="recorded-audio" src=""></audio>
+                                <audio id="recorded-audio"></audio>
                             </div>
                             <!--<img class="micButton none" src="svg/recorded-voice.svg" alt="recorded voice media">-->
                         </div>
@@ -146,7 +146,7 @@
                                 <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                                 <span class="upload-label">Add short video</span>
                             </div>
-                            <input type="file" id="file-input-videolong" accept=".mp4, .avi, .mov" hidden />
+                            <input type="file" id="file-input-videolong" accept=".mp4, .avi, .ogg, .mkv, .3gp, .m4v" hidden />
                         </div>
 
                         <div id="drop-area-videoshort" class="drop-area none">
@@ -154,7 +154,7 @@
                                 <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                                 <span class="upload-label">Add long video</span>
                             </div>
-                            <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .mov" hidden />
+                            <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .ogg, .mkv, .3gp, .m4v" hidden />
                         </div>
 
                     </div>
@@ -181,6 +181,8 @@
                 </div>
                 <div id="trimButtons">
                     <span class="button btn-transparent" id="trimQuit">Back</span>
+                    <span id="video_start"></span>
+                    <span id="video_end"></span>
                     <span id="video_druration"></span>
                     <span id="video_MB"></span>
                     <span class="button btn-blue" id="trimBtn">Save</span>

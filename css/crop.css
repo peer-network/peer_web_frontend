@@ -213,13 +213,13 @@ implement in all-post.css
   overflow-x: auto;
   position: absolute;
   left: 0;
-  gap: 0 1rem;
+  gap: 0 5px;
 }
 #videoTimeline img {
-  object-fit: cover;
+  object-fit: contain;
   cursor: pointer;
   border-radius: 1rem;
-  width: 10%;
+  width: 100%;
   height: 100%;
 }
 .timeline-wrapper {
