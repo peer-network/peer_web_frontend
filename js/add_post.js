@@ -2340,252 +2340,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Configuration
 
-  // async function fetchFile(file) {
-  //   console.log("i am in fetchFile")
-
-  //   if (file instanceof File || file instanceof Blob) {
-  //     return new Uint8Array(await file.arrayBuffer());
-  //   } else if (typeof file === 'string') {
-  //     const response = await fetch(file);
-  //     const arrayBuffer = await response.arrayBuffer();
-  //     return new Uint8Array(arrayBuffer);
-  //   } else {
-  //     throw new Error('Unsupported input for fetchFile');
-  //   }
-  // }
-
-  // olaf one
-  // async function generateThumbnailStrip(file, {
-  //   thumbCount = 10,
-  //   thumbWidth = 160,     // Breite je Einzel-Thumb im Sprite
-  //   marginPct = 0.05      // 5–95 % der Dauer (vermeidet schwarze Start/End-Frames)
-  // } = {}) {
-  //   // const statusEl = document.getElementById('status');
-  //   const ffmpeg = await loadFFmpeg();
-
-  //   // statusEl.textContent = 'Schreibe Input…';
-  //   const inputName = 'input.mp4';
-  //   await ffmpeg.writeFile(inputName, await fetchFile(file));
-
-  //   // Dauer per <video> bestimmen (robust & schnell)
-  //   let duration = 0;
-  //   try { duration = await getVideoDuration(file); } catch (_) {}
-  //   if (!duration || !isFinite(duration)) {
-  //     // Fallback: 10s annehmen, ergibt trotzdem 10 Frames (gleichmäßig)
-  //     duration = thumbCount;
-  //   }
-
-  //   // Zeitpunkte gleichmäßig verteilt (z. B. 5–95 % der Dauer)
-  //   const start = duration * marginPct;
-  //   const end   = duration * (1 - marginPct);
-  //   const times = Array.from({length: thumbCount}, (_, i) =>
-  //     start + (i + 1) * (end - start) / (thumbCount + 1)
-  //   );
-
-  //   const W = thumbWidth;      // z.B. 160
-  //   const H = 100;              // feste Höhe wählen (z.B. 100)
-  // const timeline = document.getElementById("videoTimeline");
-  // timeline.innerHTML = "";
-  // for (let i = 0; i < times.length; i++) {
-  //   const t = Math.max(0, Math.min(times[i], duration - 0.001));
-  //   const out = `thumb_${String(i + 1).padStart(2, '0')}.jpg`;
-
-  //   await ffmpeg.exec([
-  //     '-ss', t.toFixed(3),
-  //     '-i', inputName,
-  //     '-frames:v', '1',
-  //     '-an', '-sn', '-dn', // nur Video
-  //     '-vf', `scale=${W}:${H}:force_original_aspect_ratio=decrease,
-  //             pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2`,
-  //     '-q:v', '2',
-  //     out
-  //   ]);
-
-
-  //   const data = await ffmpeg.readFile(out);
-  //   const blob = new Blob([data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)], { type: "image/jpeg" });
-  //   const url = URL.createObjectURL(blob);
-  //   const img = document.createElement("img");
-  //   img.src = url;
-  //   img.onload = () => URL.revokeObjectURL(url);
-  //   timeline.appendChild(img);
-  // }
-
-
-  //   // // Sprite (10x1) aus den Einzelbildern bauen
-  //   // // statusEl.textContent = 'Erzeuge Sprite…';
-  //   // const stripName = 'strip.jpg';
-  //   // await ffmpeg.exec([
-  //   //   '-framerate', '1',
-  //   //   '-i', 'thumb_%02d.jpg',
-  //   //   '-vf', `tile=${thumbCount}x1`,
-  //   //   '-frames:v', '1',
-  //   //   stripName
-  //   // ]);
-
-  //   // // Auslesen & URL erstellen
-  //   // // statusEl.textContent = 'Lese Ergebnis…';
-  //   // const data = await ffmpeg.readFile(stripName);
-  //   // const blob = new Blob([data.buffer], { type: 'image/jpeg' });
-  //   // const url = URL.createObjectURL(blob);
-
-  //   // Aufräumen (optional)
-  //   for (let i = 0; i < thumbCount; i++) {
-  //     const name = `thumb_${String(i + 1).padStart(2, '0')}.jpg`;
-  //     await ffmpeg.deleteFile(name);
-  //   }
-  //   // await ffmpeg.deleteFile(stripName);
-  //   await ffmpeg.deleteFile(inputName);
-
-  //   // statusEl.textContent = 'Fertig ✅';
-  //   // return url; // blob: URL der Leiste
-  // }
-
-// function getVideoDuration(file) {
-//   return new Promise((resolve, reject) => {
-//     const video = document.createElement("video");
-//     video.preload = "metadata";
-//     video.onloadedmetadata = () => resolve(video.duration);
-//     video.onerror = reject;
-//     video.src = URL.createObjectURL(file);
-//   });
-// }
-
-// async function generateThumbnailStrip(file, { thumbWidth = 160, marginPct = 0.05 } = {}) {
-//   const ffmpeg = await loadFFmpeg();
-//   const inputName = "input.mp4";
-//   await ffmpeg.writeFile(inputName, await fetchFile(file));
-
-//   // Get duration
-//   let duration = 0;
-//   try {
-//     duration = await getVideoDuration(file);
-//   } catch (_) {}
-//   if (!duration || !isFinite(duration)) duration = THUMB_COUNT;
-
-//   // Compute FPS dynamically so we get exactly THUMB_COUNT frames
-//   const fps = THUMB_COUNT / duration;
-
-//   // Run once → generate all thumbs
-//   await ffmpeg.exec(
-//     "-i", inputName,
-//     "-vf", `fps=${fps},scale=${thumbWidth}:-1:force_original_aspect_ratio=decrease`,
-//     "thumb%d.jpg"
-//   );
-
-//   const timeline = document.getElementById("videoTimeline");
-//   timeline.innerHTML = "";
-
-//   // Read back all generated files in parallel
-//   await Promise.all(
-//     Array.from({ length: THUMB_COUNT }, async (_, i) => {
-//       const data = await ffmpeg.readFile(`thumb${i + 1}.jpg`);
-//       const blob = new Blob([data.buffer], { type: "image/jpeg" });
-//       const url = URL.createObjectURL(blob);
-//       const img = document.createElement("img");
-//       img.src = url;
-//       img.style.marginRight = `${marginPct * 100}%`;
-//       img.onload = () => URL.revokeObjectURL(url);
-//       timeline.appendChild(img);
-//     })
-//   );
-
-//   // Clean up
-//   for (let i = 1; i <= THUMB_COUNT; i++) {
-//     await ffmpeg.deleteFile(`thumb${i}.jpg`);
-//   }
-//   await ffmpeg.deleteFile(inputName);
-// }
-
-// async function generateThumbnailStrip(file, { thumbWidth = 220, thumbHeight = 180, marginPct = 0.0 } = {}) {
-//   const timeline = document.getElementById("videoTimeline");
-//   timeline.innerHTML = "";
-
-//   const THUMB_COUNT = 10;
-//   const canvas = document.createElement("canvas");
-//   canvas.width = thumbWidth;
-//   canvas.height = thumbHeight;
-//   const ctx = canvas.getContext("2d");
-
-//   const video = document.createElement("video");
-//   video.preload = "metadata";
-//   video.src = URL.createObjectURL(file);
-//   await new Promise(res => video.addEventListener("loadedmetadata", res, { once: true }));
-
-//   const duration = video.duration;
-//   const times = Array.from({ length: THUMB_COUNT }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
-
-//   for (let t of times) {
-//     video.currentTime = t;
-//     await new Promise(res => video.addEventListener("seeked", res, { once: true }));
-
-//     // Draw frame scaled to new width & height
-//     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-//     const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
-//     const img = document.createElement("img");
-//     img.src = URL.createObjectURL(blob);
-//     img.onload = () => URL.revokeObjectURL(img.src);
-//     img.style.marginRight = `${marginPct * 100}%`;
-//     timeline.appendChild(img);
-//   }
-
-//   URL.revokeObjectURL(video.src);
-// }
-// async function generateThumbnailStrip(file, { thumbWidth = 160, THUMB_COUNT = 10 } = {}) {
-//   const timeline = document.getElementById("videoTimeline");
-//   timeline.innerHTML = "";
-
-//   // 1️⃣ Create video element and load file
-//   const video = document.createElement("video");
-//   video.preload = "metadata";
-//   video.src = URL.createObjectURL(file);
-
-//   // Wait for metadata to load
-//   await new Promise((resolve, reject) => {
-//     video.onloadedmetadata = () => resolve();
-//     video.onerror = reject;
-//   });
-
-//   const duration = video.duration;
-
-//   const canvas = document.createElement("canvas");
-//   canvas.width = thumbWidth;
-//   canvas.height = Math.round((video.videoHeight / video.videoWidth) * thumbWidth);
-//   const ctx = canvas.getContext("2d");
-
-//   // 2️⃣ Generate times
-//   const times = Array.from({ length: THUMB_COUNT }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
-
-//   // 3️⃣ Seek and capture thumbnails
-//   for (let t of times) {
-//     await new Promise((resolve) => {
-//       const handler = () => {
-//         resolve();
-//         video.removeEventListener("seeked", handler);
-//       };
-//       video.addEventListener("seeked", handler);
-//       video.currentTime = t;
-//     });
-
-//     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-//     const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg'));
-//     const img = document.createElement("img");
-//     img.src = URL.createObjectURL(blob);
-//     img.onload = () => URL.revokeObjectURL(img.src);
-//     timeline.appendChild(img);
-//   }
-// }
-
-// async function generateThumbnailStrip(file, { thumbWidth = 120, THUMB_COUNT = 10 } = {}) {
+// async function generateThumbnailStrip(file, {
+//   thumbWidth = 160,
+//   THUMB_COUNT = 10,
+//   BATCH_SIZE = 1 // number of thumbnails processed simultaneously
+// } = {}) {
 //   const timeline = document.getElementById("videoTimeline");
 //   timeline.innerHTML = "";
 
 //   const video = document.createElement("video");
 //   video.preload = "metadata";
 //   video.src = URL.createObjectURL(file);
-
 //   await new Promise((res, rej) => {
 //     video.onloadedmetadata = res;
 //     video.onerror = rej;
@@ -2596,32 +2361,34 @@ document.addEventListener("DOMContentLoaded", () => {
 //   canvas.width = thumbWidth;
 //   canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
 //   const ctx = canvas.getContext("2d");
-
 //   const times = Array.from({ length: THUMB_COUNT }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
 
-//   for (let t of times) {
-//     await new Promise(res => {
-//       const handler = () => { res(); video.removeEventListener("seeked", handler); };
-//       video.addEventListener("seeked", handler);
-//       video.currentTime = t;
-//     });
+//   // Process in batches
+//   for (let i = 0; i < times.length; i += BATCH_SIZE) {
+//     const batch = times.slice(i, i + BATCH_SIZE);
+//     await Promise.all(batch.map(async t => {
+//       await new Promise(res => {
+//         const handler = () => { res(); video.removeEventListener("seeked", handler); };
+//         video.addEventListener("seeked", handler);
+//         video.currentTime = t;
+//       });
 
-//     const bitmap = await createImageBitmap(video);
-//     ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-//     bitmap.close();
+//       const bitmap = await createImageBitmap(video);
+//       ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+//       bitmap.close();
 
-//     const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
-//     const img = document.createElement("img");
-//     img.src = URL.createObjectURL(blob);
-//     img.onload = () => URL.revokeObjectURL(img.src);
-//     timeline.appendChild(img);
+//       const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
+//       const img = document.createElement("img");
+//       img.src = URL.createObjectURL(blob);
+//       img.onload = () => URL.revokeObjectURL(img.src);
+//       timeline.appendChild(img);
+//     }));
 //   }
 // }
-
 async function generateThumbnailStrip(file, {
   thumbWidth = 160,
   THUMB_COUNT = 10,
-  BATCH_SIZE = 1 // number of thumbnails processed simultaneously
+  BATCH_SIZE = 3 // number of thumbnails processed simultaneously
 } = {}) {
   const timeline = document.getElementById("videoTimeline");
   timeline.innerHTML = "";
@@ -2663,6 +2430,18 @@ async function generateThumbnailStrip(file, {
     }));
   }
 }
+
+video.addEventListener("loadedmetadata", async () => {
+  video.removeEventListener('timeupdate', () => {
+    showVideoPos();
+  });
+  video.addEventListener('timeupdate', () => {
+    showVideoPos();
+  });
+  setupTrim(true);
+  // await generateThumbnails("videoTrim");
+  // setupTrim();
+});
 
 video.addEventListener("loadedmetadata", async () => {
   video.removeEventListener('timeupdate', () => {
@@ -2983,31 +2762,98 @@ return window.ffmpegInstance;
  * @param {number} startPercent - Start point (0 to 1)
  * @param {number} endPercent - End point (0 to 1)
  */
+// async function trimVideo() {
+//   if (!video.duration) {
+//     alert("Video ist noch nicht geladen!");
+//     return;
+//   }
+
+//   // const duration = video.duration;
+//   // const startTime = duration * startPercent;
+//   // const endTime = duration * endPercent;
+//   // const trimDuration = duration * (endPercent - startPercent);
+
+//   const duration = video.duration;
+//   let startTime = Math.floor(duration * startPercent); // round to nearest second
+//   let endTime = Math.floor(duration * endPercent);
+//   const trimDuration = endTime - startTime;
+
+
+//   const ffmpeg = await loadFFmpeg();
+ 
+//   // for testing purposes
+
+//   try {
+//     // Fetch video data from the existing video element
+//          modal.showModal();
+
+//     const response = await fetch(video.src);
+//     const arrayBuffer = await response.arrayBuffer();
+//     const uint8 = new Uint8Array(arrayBuffer);
+
+//     // Write to FFmpeg FS
+//     await ffmpeg.writeFile("input.mp4", uint8);
+
+//     // Trim with fast seek
+//     await ffmpeg.exec([
+//     "-i", "input.mp4",
+//       "-ss", String(startTime), // seek to nearest keyframe (fast)
+//       "-t", String(trimDuration),
+//       "-c", "copy", 
+//       "output.mp4"
+//     ]);
+
+//     // Read trimmed output
+//     const data = await ffmpeg.readFile("output.mp4");
+//     const blob = new Blob([data], {
+//       type: "video/mp4"
+//     });
+//     const url = URL.createObjectURL(blob);
+
+//     // Clean up old preview URL
+//     // if (preview.srcObjectUrl) URL.revokeObjectURL(preview.srcObjectUrl);
+
+//     video.src = url;
+//     video.load();
+//     videoElement.src = url;
+//     document.getElementById("videoTrimContainer").classList.add("none");
+//     document.getElementById('videocodierung').close();
+//     video.play();
+
+//     // UI adjustments
+//     // document.getElementById("videoTrimContainer").classList.add("none");
+//     // if (document.getElementById("videocodierung").close) {
+//     //   document.getElementById("videocodierung").close();
+//     // }
+
+//     // // Revoke blob after playback
+//     // preview.onended = () => {
+//     //   URL.revokeObjectURL(url);
+//     //   preview.srcObjectUrl = null;
+//     // };
+
+//   } catch (err) {
+//     console.error("Video trimming failed:", err);
+//     alert("Trimming failed. Check console for details.");
+  
+//   } finally {
+//      modal.close();
+//   }
+// }
 async function trimVideo() {
   if (!video.duration) {
     alert("Video ist noch nicht geladen!");
     return;
   }
 
-  // const duration = video.duration;
-  // const startTime = duration * startPercent;
-  // const endTime = duration * endPercent;
-  // const trimDuration = duration * (endPercent - startPercent);
-
   const duration = video.duration;
-  let startTime = Math.floor(duration * startPercent); // round to nearest second
-  let endTime = Math.floor(duration * endPercent);
-  const trimDuration = endTime - startTime;
-
-
+  const startTime = duration * startPercent;
+  const endTime = duration * endPercent;
+  const trimDuration = duration * (endPercent - startPercent);
   const ffmpeg = await loadFFmpeg();
- 
-  // for testing purposes
 
   try {
     // Fetch video data from the existing video element
-         modal.showModal();
-
     const response = await fetch(video.src);
     const arrayBuffer = await response.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
@@ -3017,10 +2863,10 @@ async function trimVideo() {
 
     // Trim with fast seek
     await ffmpeg.exec([
-    "-i", "input.mp4",
       "-ss", String(startTime), // seek to nearest keyframe (fast)
+      "-i", "input.mp4",
       "-t", String(trimDuration),
-      "-c", "copy", 
+      "-c", "copy", // no re-encoding
       "output.mp4"
     ]);
 
@@ -3056,9 +2902,6 @@ async function trimVideo() {
   } catch (err) {
     console.error("Video trimming failed:", err);
     alert("Trimming failed. Check console for details.");
-  
-  } finally {
-     modal.close();
   }
 }
 
