@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         postsLaden(CurrentUserID);
+        attachWrapperListeners();
         // console.log("Der Footer ist jetzt im Viewport sichtbar!");
       }
     });
@@ -59,11 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("⚠️ Post Loader element not found — cannot observe.");
   }
   
-});
 
 
-// function for the boost post posts button & cancel boost post button
-document.addEventListener("DOMContentLoaded", () => {
+
+  // function for the boost post posts button & cancel boost post button
+
   const promoteBtn = document.querySelector(".promote_posts");
   const cancelBtn = document.querySelector(".promote_posts_cancel");
   const profileBox = document.querySelector(".profile_header");
@@ -105,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (postInhalt && social) {
         const pinnedBtn = document.createElement("div");
         pinnedBtn.classList.add("pinedbtn");
-        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> @${username} <span>23h</span></a>`;
+        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">23h</span></a>`;
 
         postInhalt.insertBefore(pinnedBtn, social);
       }
@@ -192,34 +193,41 @@ document.addEventListener("DOMContentLoaded", () => {
   function attachWrapperListeners() {
     const cards = listPosts.querySelectorAll(".card");
     cards.forEach(card => {
-      card.addEventListener(
-        "click",
-        (e) => {
+      // Add only once
+      if (!card.dataset.listenersAdded) {
+        card.addEventListener(
+          "click",
+          (e) => {
+            if (listPosts.classList.contains("boostActive")) {
+              e.stopImmediatePropagation();
+
+              boostCardClick(card);
+            } 
+          },
+          { capture: true } 
+        );
+        /*card.addEventListener("mousemove", (e) => {
           if (listPosts.classList.contains("boostActive")) {
             e.stopImmediatePropagation();
+          }
+        }, { capture: true });
 
-            boostCardClick(card);
-          } 
-        },
-        { capture: true } 
-      );
-      card.addEventListener("mousemove", (e) => {
-        if (listPosts.classList.contains("boostActive")) {
-          e.stopImmediatePropagation();
-        }
-      }, { capture: true });
+        card.addEventListener("mouseenter", (e) => {
+          if (listPosts.classList.contains("boostActive")) {
+            e.stopImmediatePropagation();
+          }
+        }, { capture: true });
 
-      card.addEventListener("mouseenter", (e) => {
-        if (listPosts.classList.contains("boostActive")) {
-          e.stopImmediatePropagation();
-        }
-      }, { capture: true });
+        card.addEventListener("mouseleave", (e) => {
+          if (listPosts.classList.contains("boostActive")) {
+            e.stopImmediatePropagation();
+          }
+        }, { capture: true });*/
 
-      card.addEventListener("mouseleave", (e) => {
-        if (listPosts.classList.contains("boostActive")) {
-          e.stopImmediatePropagation();
-        }
-      }, { capture: true });
+        // Mark as attached
+      card.dataset.listenersAdded = true;
+
+      }
     }); 
   }
 

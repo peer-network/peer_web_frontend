@@ -413,7 +413,7 @@ function postdetail(objekt,CurrentUserID) {
             const downloadUrl=e.target.getAttribute("href");
             console.log(downloadUrl);
             if(downloadUrl!=""){
-              forceDownload(downloadUrl);
+              //forceDownload(downloadUrl);
             }
             return false;
           });
@@ -852,7 +852,9 @@ function postdetail(objekt,CurrentUserID) {
             );
           }
 
-         
+         if(donwloadAnchor){
+            donwloadAnchor.setAttribute("href", "");
+          }
 
 
 
