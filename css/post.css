@@ -276,6 +276,10 @@
 		border-radius: 0;
 	}
 	.site_layout_nonuser .viewpost	.post_gallery.audio #play-pause {
-		height: 50px;
+		height: 80px;
+	}
+	.site_layout_nonuser .viewpost .postview_footer .more .share-post-box {
+		bottom: -13px;
+		gap: 30px;
 	}
 }

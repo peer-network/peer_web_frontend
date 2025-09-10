@@ -257,6 +257,56 @@
       });
   }
 
+  async function reportPostAPIcall(postid) {
+
+    const accessToken = getCookie("authToken");
+    const cancel = 0;
+      const answer = await confirm("Report Post", `Are you sure you want to report this post?`, (dontShowOption = false));
+      if (answer === null || answer.button === cancel) {
+        return false;
+      }
+
+
+    // Create headers
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    });
+
+    var graphql = JSON.stringify({
+      query: `mutation ResolvePostAction {
+          resolvePostAction(postid: "${postid}", action: REPORT) {
+            status
+            ResponseCode
+          }
+        }`,
+
+      variables: {},
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: graphql,
+      redirect: "follow",
+    };
+
+    return fetch(GraphGL, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.data.resolvePostAction.status == "error") {
+          throw new Error(userfriendlymsg(result.data.resolvePostAction.ResponseCode));
+        } else {
+          return true;
+        }
+      })
+      .catch((error) => {
+        Merror("Report Post failed", error);
+        //console.log("error", error);
+        return false;
+      });
+  }
+
   async function postInteractionsModal(postid, startType = "VIEW") {
     const accessToken = getCookie("authToken");
     const modal = document.getElementById("interactionsModal");

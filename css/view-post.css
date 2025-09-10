@@ -826,14 +826,18 @@
 	box-sizing: border-box;
   position: absolute;
   top: 50%;
+      min-height: 220px;
 }
 
 .post_gallery.audio .audio-item .audio_player_con .time-info {
-  min-width: 90px;
+  min-width: 100px;
+    position: absolute;
+    left: 35px;
+    bottom: 34px;
 }
 
 .post_gallery.audio canvas {
-	width: 100%;
+	width: 70%;
 	flex: 1;
 }
 .post_gallery.audio #play-pause {
