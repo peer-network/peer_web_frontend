@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const titleEl = document.getElementById("titleNotes");
   const video = document.getElementById("videoTrim");
   const timeline = document.getElementById("videoTimeline");
-  const THUMB_COUNT = 10; // beliebig wählbar
+  // const THUMB_COUNT = 10; // beliebig wählbar
   const trimWindow = document.getElementById("trim-window");
   const overlayLeft = document.getElementById("overlay-left");
   const overlayRight = document.getElementById("overlay-right");
@@ -1829,9 +1829,8 @@ document.addEventListener("DOMContentLoaded", () => {
       dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
     }
     // File-Input-Change-Event
-    if (fileInput) {
+    if (fileInput) 
       fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
-    }
   });
 
   document.getElementById("more-images_upload").addEventListener("click", function () {
@@ -1928,7 +1927,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
-
+          // videoId = id.includes("short") ? "video-short" : "video-long";
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
@@ -1946,17 +1945,14 @@ document.addEventListener("DOMContentLoaded", () => {
           if (id.includes("short")) {
             const insertPosition = document.getElementById("drop-area-videoshort");
             insertPosition.insertAdjacentElement("afterend", previewItem);
-
             document.getElementById("drop-area-videoshort").classList.add("none");
           } else {
             const insertPosition = document.getElementById("drop-area-videolong");
             insertPosition.insertAdjacentElement("afterend", previewItem);
-            if (!document.getElementById("deletecover")) {
+            if (!document.getElementById("deletecover")) 
               document.getElementById("drop-area-videocover").classList.remove("none");
-            }
-            if (!document.getElementById("deleteshort")) {
+            if (!document.getElementById("deleteshort")) 
               document.getElementById("drop-area-videoshort").classList.remove("none");
-            }
             document.getElementById("drop-area-videolong").classList.add("none");
           }
         }
@@ -1976,12 +1972,13 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         window.uploadedFilesMap.set(file.name, url);
-        element.addEventListener("loadedmetadata", async () => {
-          //  generateThumbnails(file.name); before
-          generateThumbnailStrip(file);
-        }, {
-          once: true
-        });
+        // element.addEventListener("loadedmetadata", async (e) => {
+        // // const videoId =  e.target.getAttribute('id');
+        // // generateThumbnails(file.name); before
+        // // generateThumbnailStrip(file, videoId);
+        // }, {
+        //   once: true
+        // });
       }
 
       element.src = url;
@@ -2169,8 +2166,9 @@ document.addEventListener("DOMContentLoaded", () => {
     element.addEventListener("click", handleEditVideo);
   }
 
-  function handleEditVideo(event) {
+  async function handleEditVideo(event) {
     event.preventDefault();
+    // console.log('e.target.files ', event.target.closest(".editVideo").previousElementSibling)
     const container = document.getElementById('preview-video');
     const videos = container.querySelectorAll('video');
 
@@ -2182,12 +2180,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const previewItem = event.target.closest(".preview-item");
     previewItem.classList.add('click_edit');
     // Show the Trim container after a short delay
-    setTimeout(async () => {
-      const video_id = previewItem.querySelector("p").innerText;
+    // setTimeout(async () => {
+      const video_id = previewItem.querySelector("video").getAttribute('id');
       document.getElementById("videoTrimContainer").classList.remove("none");
       await videoTrim(video_id);
       previewItem.classList.remove('click_edit');
-    }, 500);
+    // }, 500);
   }
 
   async function videoTrim(id) {
@@ -2210,6 +2208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show the trim container
     document.getElementById("videoTrimContainer").classList.remove("none");
     document.getElementById("videoTrimContainer").classList.add("active");
+    generateThumbnailStrip(video.src)
   }
 
   function addEditImageListener(element) {
@@ -2333,68 +2332,25 @@ document.addEventListener("DOMContentLoaded", () => {
   //       img.src = videothumbs[videoId][t];
   //     }
   //     if (dataId)
-  // timeline.appendChild(img);
+  //     timeline.appendChild(img);
   //   }
   // }
 
   // Configuration
-
-// async function generateThumbnailStrip(file, {
-//   thumbWidth = 160,
-//   THUMB_COUNT = 10,
-//   BATCH_SIZE = 1 // number of thumbnails processed simultaneously
-// } = {}) {
-//   const timeline = document.getElementById("videoTimeline");
-//   timeline.innerHTML = "";
-
-//   const video = document.createElement("video");
-//   video.preload = "metadata";
-//   video.src = URL.createObjectURL(file);
-//   await new Promise((res, rej) => {
-//     video.onloadedmetadata = res;
-//     video.onerror = rej;
-//   });
-
-//   const duration = video.duration;
-//   const canvas = document.createElement("canvas");
-//   canvas.width = thumbWidth;
-//   canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
-//   const ctx = canvas.getContext("2d");
-//   const times = Array.from({ length: THUMB_COUNT }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
-
-//   // Process in batches
-//   for (let i = 0; i < times.length; i += BATCH_SIZE) {
-//     const batch = times.slice(i, i + BATCH_SIZE);
-//     await Promise.all(batch.map(async t => {
-//       await new Promise(res => {
-//         const handler = () => { res(); video.removeEventListener("seeked", handler); };
-//         video.addEventListener("seeked", handler);
-//         video.currentTime = t;
-//       });
-
-//       const bitmap = await createImageBitmap(video);
-//       ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-//       bitmap.close();
-
-//       const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
-//       const img = document.createElement("img");
-//       img.src = URL.createObjectURL(blob);
-//       img.onload = () => URL.revokeObjectURL(img.src);
-//       timeline.appendChild(img);
-//     }));
-//   }
-// }
 async function generateThumbnailStrip(file, {
   thumbWidth = 160,
   THUMB_COUNT = 10,
   BATCH_SIZE = 3 // number of thumbnails processed simultaneously
 } = {}) {
+  console.log(file)
   const timeline = document.getElementById("videoTimeline");
   timeline.innerHTML = "";
-
   const video = document.createElement("video");
   video.preload = "metadata";
-  video.src = URL.createObjectURL(file);
+  video.src = file;
+
+  modal.showModal()
+
   await new Promise((res, rej) => {
     video.onloadedmetadata = res;
     video.onerror = rej;
@@ -2428,9 +2384,10 @@ async function generateThumbnailStrip(file, {
       timeline.appendChild(img);
     }));
   }
+    modal.close();
 }
 
-video.addEventListener("loadedmetadata", async () => {
+video.addEventListener("loadedmetadata", async (e) => {
   video.removeEventListener('timeupdate', () => {
     showVideoPos();
   });
@@ -2442,17 +2399,6 @@ video.addEventListener("loadedmetadata", async () => {
   // setupTrim();
 });
 
-video.addEventListener("loadedmetadata", async () => {
-  video.removeEventListener('timeupdate', () => {
-    showVideoPos();
-  });
-  video.addEventListener('timeupdate', () => {
-    showVideoPos();
-  });
-  setupTrim(true);
-  // await generateThumbnails("videoTrim");
-  // setupTrim();
-});
 async function getBlobSizeFromURL(url) {
   const res = await fetch(url);
   const blob = await res.blob();
@@ -2844,10 +2790,10 @@ async function trimVideo() {
     alert("Video ist noch nicht geladen!");
     return;
   }
-
+  modal.showModal();
   const duration = video.duration;
   const startTime = duration * startPercent;
-  const endTime = duration * endPercent;
+  // const endTime = duration * endPercent;
   const trimDuration = duration * (endPercent - startPercent);
   const ffmpeg = await loadFFmpeg();
 
