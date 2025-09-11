@@ -3,10 +3,17 @@
   const dislike = 3;
   const comment = 1;
 
-
   async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
 
     const accessToken = getCookie("authToken");
+
+    // LocalStorage -> userData :: setting in getUserInfo() -> global.js
+    const savedUserData = localStorage.getItem("userData");
+    let severityLevel = null;
+    if (savedUserData) {
+      const parsedData = JSON.parse(savedUserData);
+      severityLevel = parsedData.userPreferences?.contentFilteringSeverityLevel || null;
+    }
 
     // Create headers
     const headers = new Headers({
@@ -26,7 +33,8 @@
         sortBy: ${sortby},
         limit: ${limit},
         offset: ${offset},
-        filterBy: [${filterBy}]`;
+        filterBy: [${filterBy}]
+        ${severityLevel ? `, contentFilterBy: ${severityLevel}` : ""}`;
 
     postsList += tag && tag.length >= 2 ? `, tag: "${tag}"` : "";
     postsList += title && title.length >= 1 ? `, title: "${title}"` : "";

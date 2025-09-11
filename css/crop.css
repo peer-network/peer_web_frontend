@@ -46,10 +46,10 @@
   transform: scale(0.8);
 }
 #videoTrim {
-	width: auto;
-	height: 95%;
-	object-fit: cover;
-	margin-bottom: 5%;
+	width: 100%;
+  height: 100%;
+	background-color: #000;
+	margin-bottom: 40px;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -73,10 +73,28 @@
   margin-top: 30px;
 }
 #trimButtons {
- padding-top: 25px;
-  z-index: 1000;
-  justify-content: space-between;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+  max-width: 2000px;
+	gap: 30px;
+	background: var(--dark-inactive, #323232);
+	padding: 30px;
+	border-radius: 100px;
 }
+#trimButtons .button {
+	margin: 0;
+}
+
+.time-indication {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	gap: 10px;
+  
+}
+
+
 #cropButtons .button {
 	min-width: 200px;
 	line-height: 70px;
@@ -190,37 +208,43 @@ implement in all-post.css
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
   flex-direction: column;
   z-index: 99;
   margin: 0;
- 
+  padding: 40px;
 }
+
 .video-trim-wrapper {
 	padding: 50px;
-	max-height: 80vh;
-  width: 70%;
+	height: 75vh;
+ 
 	position: relative;
-  padding-bottom: 130px;
+  border-radius: 70px;
+  background: var(--dark-inactive, #323232);
+  display: flex;
+  flex-direction: column;
 }
 #videoTimeline {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100px;
-  overflow-x: auto;
-  position: absolute;
-  left: 0;
-  gap: 0 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100px;
+	overflow-x: auto;
+	position: absolute;
+	left: 0;
+	gap: 0;
+	background-color: #fff;
 }
 #videoTimeline img {
-  object-fit: contain;
-  cursor: pointer;
-  border-radius: 1rem;
-  width: 100%;
-  height: 100%;
+	object-fit: cover;
+	cursor: pointer;
+	border-radius: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
 }
 .timeline-wrapper {
   width: 100%;
@@ -254,9 +278,13 @@ implement in all-post.css
 }
 
 /* Overlays */
+.croping-panel {
+	position: relative;
+  height: 110px;
+}
 .trim-overlay {
   position: absolute;
-  top: 0;
+  top: 0 !important;
   height: 100%;
   background: rgba(40, 40, 40, 0.55);
   z-index: 3;
@@ -267,7 +295,7 @@ implement in all-post.css
 /* Trim-Bereich */
 .trim-window {
   position: absolute;
-  top: 0;
+  top: 0 !important;
   height: 100%;
   border: 3px solid #2ce;
   border-radius: 7px;
