@@ -418,6 +418,24 @@ function postdetail(objekt,CurrentUserID) {
             return false;
           });
 
+            let reportpost_btn = postContainer.querySelector(".more a.reportpost");
+
+            // remove old listeners - > element clone 
+            const newreportpost_btn = reportpost_btn.cloneNode(true);
+            reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
+            reportpost_btn = newreportpost_btn;
+          
+
+            reportpost_btn.addEventListener(
+              "click",
+              (event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                reportPost(objekt, postContainer);
+                
+              },
+              { capture: true}
+            );
 
 
           const containerleft = postContainer.querySelector(".viewpost-left");

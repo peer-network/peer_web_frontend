@@ -39,10 +39,30 @@
   flex-grow: 1;
   cursor: pointer;
 }
+.card .reported {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 30px;
+	align-items: center;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #0b0b0bb8;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	z-index: 3;
+}
+.card .reported img {
+	max-width: 30%;
+	min-width: 100px;
+}
 .card.disbale_click {
 	pointer-events: none;
 	cursor: not-allowed;
 }
+
+
 .card.double-card {
   opacity: 1;
 	/*flex: 0 0 calc(2 * (100% / 4) - 2rem);

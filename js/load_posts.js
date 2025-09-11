@@ -969,6 +969,52 @@ function like_dislike_post(objekt, action, el) {
   });
 }
 
+function reportPost(objekt, el) {
+  
+
+    // Check nearest parent with .card OR .viewpost
+    const parentel = el.closest(".viewpost");
+    const postCardId = document.getElementById(objekt.id);
+    
+    if (parentel) {
+      parentel.classList.add("disbale_click");
+
+      // 3 second baad remove kar do
+      setTimeout(() => {
+        parentel.classList.remove("disbale_click");
+      }, 3000);
+    }
+  
+  
+
+  reportPostAPIcall(objekt.id).then((success) => {
+    if (success) {
+      togglePopup("cardClicked");
+      cancelTimeout();
+
+      // Add animation class
+
+      postCardId.classList.add("card_reported");
+     
+
+      
+        const reported_div = document.createElement("div");
+
+       reported_div.classList.add("reported");
+        reported_div.innerHTML = `
+          <img src="svg/error.svg" alt="reported">
+          <p class="xl_font_size">Post reported</p>
+        `;
+
+        // Step 4: Ab reported_div ko parent div ke andar append karo
+        postCardId.appendChild(reported_div);
+
+
+
+    }
+  });
+}
+
 
 let timerId = null;
 function cancelTimeout() {
