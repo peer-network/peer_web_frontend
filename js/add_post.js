@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const trimBtn = document.getElementById("trimBtn");
   const trimQuitBtn = document.getElementById("trimQuit");
   video.addEventListener("seeked", () => {
-    seekedFinish = true;
+    seekedFinished = true;
     // Jetzt ist das Bild an der richtigen Position
   });
   const {
@@ -2238,7 +2238,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function generateThumbnailStrip(file, timelineId, {
     thumbWidth = 160,
     THUMB_COUNT = 10,
-    BATCH_SIZE = 3
+    BATCH_SIZE = 1
   } = {}) {
     const timeline = document.getElementById(timelineId);
     timeline.innerHTML = "";
@@ -2434,10 +2434,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const startPos = video.duration * p;
     if (seekedFinished) {
+      seekedFinished = false;
       if (dragging === "right") {
-        video.currentTime = video.duration * endPercent;
+        if ("fastSeek" in video) video.fastSeek(video.duration * endPercent);
+        else video.currentTime = video.duration * endPercent;
       } else {
-        video.currentTime = startPos;
+        if ("fastSeek" in video) video.fastSeek(video.duration * endPercent);
+        else video.currentTime = startPos;
       }
     }
 
@@ -2625,7 +2628,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "-ss", String(startTime), // seek to nearest keyframe (fast)
         "-i", "input.mp4",
         "-t", String(trimDuration),
-        "-c", "copy", // no re-encoding
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-b:a", "160k",
         "output.mp4"
       ]);
 
