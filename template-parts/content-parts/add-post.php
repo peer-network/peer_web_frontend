@@ -175,6 +175,8 @@
                             <div id="videoTimeline">
                             
                             </div>
+                            <div id="longVideoTimeline"></div>
+                            <div id="shortVideoTimeline"></div>
                             <span id="videoPos"></span>
                             <div id="overlay-left" class="trim-overlay"></div>
                             <div id="overlay-right" class="trim-overlay"></div>
