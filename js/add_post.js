@@ -25,14 +25,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const MIN_DURATION = 3; // Sekunden
   const trimBtn = document.getElementById("trimBtn");
   const trimQuitBtn = document.getElementById("trimQuit");
+
+
+
   video.addEventListener("seeked", () => {
-    seekedFinish = true;
+    seekedFinished = true;
     // Jetzt ist das Bild an der richtigen Position
   });
   const {
     FFmpeg
   } = FFmpegWASM; // UMD exposes FFmpegWASM
   // let ffmpeg = null;
+
+
+
   let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
   window.uploadedFilesMap = new Map();
   const modal = document.getElementById('videoloading');
@@ -2238,7 +2244,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function generateThumbnailStrip(file, timelineId, {
     thumbWidth = 160,
     THUMB_COUNT = 10,
-    BATCH_SIZE = 3
+    BATCH_SIZE = 1
   } = {}) {
     const timeline = document.getElementById(timelineId);
     timeline.innerHTML = "";
@@ -2433,17 +2439,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const startPos = video.duration * p;
-    if (seekedFinished) {
+    if (1 || seekedFinished) {
+      seekedFinished = false;
       if (dragging === "right") {
-        video.currentTime = video.duration * endPercent;
+        if ("fastSeek" in video) video.fastSeek(video.duration * endPercent);
+        else video.currentTime = video.duration * endPercent;
       } else {
-        video.currentTime = startPos;
+        if ("fastSeek" in video) video.fastSeek(startPos);
+        else video.currentTime = startPos;
       }
     }
-
-    updateVideoInfo();
     startPercent = Math.max(0, Math.min(startPercent, 1));
     endPercent = Math.max(0, Math.min(endPercent, 1));
+    updateVideoInfo();
     positionElements();
   });
 
@@ -2451,6 +2459,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("pointerup", (e) => {
     if (dragging) {
       dragging = null;
+      showVideoPos() ;
       document.body.style.cursor = "";
       // video.currentTime = video.duration * startPercent;
       // trimVideo(true); // Video trimmen
@@ -2603,15 +2612,36 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Video ist noch nicht geladen!");
       return;
     }
-    modal.showModal();
+    
+    // modal.showModal();
     const duration = video.duration;
     const startTime = duration * startPercent;
     // const endTime = duration * endPercent;
     const trimDuration = duration * (endPercent - startPercent);
     const ffmpeg = await loadFFmpeg();
-
+    // let lastUpdate = 0;
+      
     try {
+      const bar = document.getElementById('bar');
+      bar.value = 0;
+        
+      const pct = document.getElementById('pct');
+      pct.textContent = "0%";
+      const nocursor = document.getElementById('focus');
       modal.showModal();
+      nocursor.focus();
+
+      ffmpeg.on("progress", ({ time }) => {
+        // Achtung: manche Builds liefern "time" in Sekunden, andere in ms
+        const seconds = typeof time === "number" ? time / 1000000 : parseFloat(time);
+        const ratio = seconds / trimDuration;
+
+        const percent = Math.min(100, Math.round(ratio * 100));
+        if(seconds <= trimDuration) {
+          bar.value = percent;
+          pct.textContent = percent + "%";
+        }
+      });
       // Fetch video data from the existing video element
       const response = await fetch(video.src);
       const arrayBuffer = await response.arrayBuffer();
@@ -2625,7 +2655,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "-ss", String(startTime), // seek to nearest keyframe (fast)
         "-i", "input.mp4",
         "-t", String(trimDuration),
-        "-c", "copy", // no re-encoding
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-b:a", "160k",
         "output.mp4"
       ]);
 
@@ -2661,6 +2691,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Video trimming failed:", err);
       alert("Trimming failed. Check console for details.");
     } finally {
+      pct.textContent = "0%";
       modal.close();
     }
   }

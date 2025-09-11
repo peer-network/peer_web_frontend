@@ -402,6 +402,15 @@ implement in all-post.css
   -webkit-user-drag: none; /* verhindert Drag in Safari/Chrome */
   pointer-events: none;    /* optional: macht das Bild komplett "durchklickbar" */
   cursor: none;
+  border: none;
+}
+#focus {
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
 }
 @keyframes rotate {
   from { transform: rotate(0deg);}
