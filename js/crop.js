@@ -392,6 +392,7 @@ function cropImage(imgContainer) {
   // cropcanvas.height = cropOrg.clientHeight;
   const p_element = cropOrg.parentElement.querySelector("p");
   const imageDatasrc = window.uploadedFilesMap.get(p_element.innerText);
+  //console.log(imageDatasrc);
   if (imageDatasrc) {
     cropImg.src = URL.createObjectURL(imageDatasrc);
   } else {

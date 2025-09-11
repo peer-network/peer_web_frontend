@@ -1842,6 +1842,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let previewItem, previewContainer = "";
 
     modal.showModal();
+    
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
@@ -1854,7 +1855,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (uploadtype === "audio") {
         if (id.includes("audiobackground")) {
           if (!validateFileType(file, "image", modal, ErrorCont)) return;
-
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -2798,6 +2798,7 @@ async function trimVideo() {
   const ffmpeg = await loadFFmpeg();
 
   try {
+    modal.showModal();
     // Fetch video data from the existing video element
     const response = await fetch(video.src);
     const arrayBuffer = await response.arrayBuffer();
@@ -2847,7 +2848,7 @@ async function trimVideo() {
   } catch (err) {
     console.error("Video trimming failed:", err);
     alert("Trimming failed. Check console for details.");
-  } finally {
+  } finally{
     modal.close();
   }
 }
