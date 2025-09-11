@@ -1490,21 +1490,23 @@ footer {grid-area: footer;}
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 	position: relative;
 	transition: all 0.3s ease-in-out;
-	
+}
+.onboarding-inner .body-box{
+	transition: all 0.3s ease-in-out;
 	opacity: 0;
 	transform: scale(0.6);
 }
-.onboarding-inner.open{
+.onboarding-inner.open .body-box{
 	opacity: 1;
 	transform: scale(1);
 	transition: all 0.3s ease-in-out;
 }
-.onboarding-slide .onboarding-slide-content {
+.onboarding-slide .onboarding-slide-content  .body-box{
 	transition: all 0.3s ease-in-out;
 	opacity: 0;
 	transform: scale(0.6);
 }
-.onboarding-slide.active .onboarding-slide-content {
+.onboarding-slide.active .onboarding-slide-content .body-box {
 	opacity: 1;
 	transform: scale(1);
 	transition: all 0.3s ease-in-out;

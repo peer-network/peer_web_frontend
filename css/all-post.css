@@ -52,6 +52,10 @@
 	-webkit-backdrop-filter: blur(10px);
 	backdrop-filter: blur(10px);
 	z-index: 3;
+  	
+}
+.card.card_reported {
+	pointer-events: none;
 }
 .card .reported img {
 	max-width: 30%;

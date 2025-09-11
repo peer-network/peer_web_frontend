@@ -1878,6 +1878,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         window.uploadedFilesMap.set(file.name, url);
+
         element.addEventListener("loadedmetadata", async () => {
           // generateThumbnails(file.name); before
           generateThumbnailStrip(file.name);
