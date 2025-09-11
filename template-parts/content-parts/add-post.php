@@ -163,6 +163,7 @@
 
             </div>
             <div id="videoTrimContainer" class="none timeline-wrapper">
+<<<<<<< HEAD
                 <div class="video-trim-wrapper">
                     <video id="videoTrim"></video>
                     <div id="videoTimeline">
@@ -188,6 +189,41 @@
                     <span class="button btn-blue" id="trimBtn">Save</span>
                 </div>
                 
+=======
+
+                
+                    <div class="video-trim-wrapper">
+                        <video id="videoTrim"></video>
+                        
+                        <div class="croping-panel">
+                            <div id="videoTimeline">
+                            
+                            </div>
+                            <div id="longVideoTimeline"></div>
+                            <div id="shortVideoTimeline"></div>
+                            <span id="videoPos"></span>
+                            <div id="overlay-left" class="trim-overlay"></div>
+                            <div id="overlay-right" class="trim-overlay"></div>
+                            <!-- Trim window -->
+                            <div id="trim-window" class="trim-window">
+                                <div id="handle-left" class="trim-handle"></div>
+                                <div style="flex:1"></div>
+                                <div id="handle-right" class="trim-handle"></div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div id="trimButtons">
+                        <span class="button btn-transparent" id="trimQuit">Back</span>
+                        <span class="time-indication start-piont"><label class="txt-color-gray">Start time</label><span id="video_start"></span></span>
+                        <span class="time-indication end-piont"><label class="txt-color-gray">End time</label><span id="video_end"></span></span>
+                        <span class="time-indication duration"><label class="txt-color-gray">Duration</label><span id="video_druration"></span></span>
+                        <span class="time-indication videosize"><label class="txt-color-gray">Size</label><span id="video_MB"></span></span>
+                        <span class="button btn-blue" id="trimBtn">Save</span>
+                    </div>
+               
+
+>>>>>>> 8add4dbd3c61e96bc10a637b8c0adc472303911e
             </div>
             <div id="crop-container" class="none">
                 <div class="crop-container-inner">

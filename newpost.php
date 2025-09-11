@@ -92,6 +92,9 @@ checkAuth("unauthorized");
     <dialog id="videoloading">
         <img src="svg/logo_farbe.svg" alt="codierung">
         Processing...
+        <progress id="bar" max="100" value="0"></progress>
+        <div id="pct">0%</div>
+        <input id="focus" type="text" class="" />
     </dialog>
 </body>
 
