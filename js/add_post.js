@@ -2340,7 +2340,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function generateThumbnailStrip(file, {
   thumbWidth = 160,
   THUMB_COUNT = 10,
-  BATCH_SIZE = 3 // number of thumbnails processed simultaneously
+  BATCH_SIZE = 3
 } = {}) {
   console.log(file)
   const timeline = document.getElementById("videoTimeline");
