@@ -3,7 +3,7 @@
         <form id="create_new_post" class=" resettable-form" method="post" data-post-type="text">
             <div id="preview-image" class="upload">
                 <div class="drop-preview-area preview-container">
-                    <div class="image-preview-container">
+                    <div  class="image-preview-container">
                         <span class="button nav-button prev-button none"><i class="fi fi-rr-angle-left"></i></span>
                         <div class="preview-track-wrapper">
                             <div class="preview-track">
@@ -16,10 +16,9 @@
                     <div id="drop-area-image" class="drop-area">
                         <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                         <span class="upload-label">Upload Images</span>
-                        <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden
-                            multiple />
+                        <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden  multiple />
                     </div>
-
+                    
 
                 </div>
                 <div class="images_action_buttons">
@@ -29,8 +28,8 @@
                         <input type="radio" id="ar-22" name="aspectRatioMul" value="0.8">
                         <label for="ar-22">4:5 Vertical</label>
                     </div>
-
-                    <div id="more-images_upload">
+                    
+                    <div id="more-images_upload" >
                         <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                         <span class="upload-label">Upload more images</span>
                     </div>
@@ -43,37 +42,35 @@
                     <div class="col-left">
                         <div id="drop-area-audio" class="drop-area">
                             <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                            <span class="upload-label">Upload .mp3, .wav, .flac, .aac, m4a</span>
+                          <span class="upload-label">Upload .mp3, .wav, .flac, .aac, m4a</span>
                             <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac, .m4a" hidden />
                         </div>
                     </div>
                     <div class="col-right">
                         <div id="voice-record-wrapper" class="voice-media">
                             <div class="audiobackground_uploader none">
-                                <div id="drop-area-audiobackground" class="drop-area drop-area-audiobackground">
+                                <div id="drop-area-audiobackground"  class="drop-area drop-area-audiobackground">
                                     <div class="upload-content">
                                         <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
                                         <span class="upload-label">Choose background image</span>
                                     </div>
-                                    <input type="file" id="file-input-audiobackground"
-                                        accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
+                                    <input type="file" id="file-input-audiobackground" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
                                 </div>
-                                <div id="audio-cover-image-preview"></div>
+                                <div id="audio-cover-image-preview" ></div>
                             </div>
 
-
+                            
                             <div class="recodring-block">
-                                <span id="recordingStatusText" class="md_font_size txt-color-gray">Start
-                                    recording</span>
-                                <!-- Voice Bar -->
-                                <div class="visualizer-wrapper">
+                                <span id="recordingStatusText" class="md_font_size txt-color-gray">Start recording</span>
+                                 <!-- Voice Bar -->
+                                    <div class="visualizer-wrapper">
                                     <?php require_once('./template-parts/content-parts/voice-bar-svg.php'); ?>
-                                </div>
+                                    </div>
                                 <!-- mic icon svg -->
                                 <div class="micButton">
                                     <span class="icon-mic none" id="voice-media-off">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"
-                                            viewBox="0 0 65 65" fill="none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 65 65"
+                                            fill="none">
                                             <path
                                                 d="M59.4721 38.8339C64.6339 36.2592 64.641 28.8966 59.4842 26.312L11.1378 2.0804C6.48316 -0.252548 1.00137 3.13165 1.00126 8.33821L1.00024 56.6856C1.00013 61.8864 6.47075 65.2712 11.1247 62.9498L59.4721 38.8339Z"
                                                 fill="white" stroke="white" stroke-width="2" stroke-linejoin="round" />
@@ -81,8 +78,8 @@
                                     </span>
 
                                     <span class="icon-mic" id="voice-media-steady">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="82" height="104"
-                                            viewBox="0 0 82 104" fill="none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="82" height="104" viewBox="0 0 82 104"
+                                            fill="none">
                                             <rect x="22.3145" y="3.5" width="37.4444" height="59.6765" rx="18.7222"
                                                 stroke="white" stroke-width="7" stroke-linecap="round" />
                                             <path
@@ -92,8 +89,8 @@
                                     </span>
 
                                     <span class="icon-mic none" id="voice-media-on">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="71"
-                                            viewBox="0 0 52 71" fill="none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="71" viewBox="0 0 52 71"
+                                            fill="none">
                                             <path d="M5.53286 5.5L5.53125 65.5" stroke="white" stroke-width="10"
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                             <path d="M46.2477 5.5L46.2461 65.5" stroke="white" stroke-width="10"
@@ -102,12 +99,12 @@
                                     </span>
                                 </div>
                                 <span id="recordingTimer" class="record-time md_font_size  none">00:00</span>
-
+                                
                             </div>
                             <div id="audio_upload_block">
 
                             </div>
-
+                            
                         </div>
                         <!-- Add preview block HERE -->
                         <div id="preview-audio" class="blockscroll preview-container">
@@ -129,48 +126,48 @@
                             </div>
                             <!--<img class="micButton none" src="svg/recorded-voice.svg" alt="recorded voice media">-->
                         </div>
-                        <div class="blockscroll preview-container"></div>
+                        <div  class="blockscroll preview-container"></div>
                     </div>
                 </div>
                 <span class="response_msg error" id="audioError"></span>
             </div>
             <div id="preview-video" class="upload">
-
-                <div class="blockscroll drop-preview-area  preview-container preview-container-video">
-                    <div id="drop-area-videocover" class="drop-area none">
-                        <div class="upload-content">
-                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                            <span class="upload-label">Upload video cover</span>
+               
+                    <div class="blockscroll drop-preview-area  preview-container preview-container-video">
+                        <div id="drop-area-videocover" class="drop-area none">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Upload video cover</span>
+                            </div>
+                            <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
                         </div>
-                        <input type="file" id="file-input-videocover" accept=".png, .jpg, .jpeg, .gif, .webp" hidden />
-                    </div>
-                    <div id="drop-area-videolong" class="drop-area">
-                        <div class="upload-content">
-                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                            <span class="upload-label">Add short video</span>
+                        <div id="drop-area-videolong" class="drop-area">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Add short video</span>
+                            </div>
+                            <input type="file" id="file-input-videolong" accept=".mp4, .avi, .ogg, .mkv, .3gp, .m4v" hidden />
                         </div>
-                        <input type="file" id="file-input-videolong" accept=".mp4, .avi, .ogg, .mkv, .3gp, .m4v"
-                            hidden />
-                    </div>
 
-                    <div id="drop-area-videoshort" class="drop-area none">
-                        <div class="upload-content">
-                            <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
-                            <span class="upload-label">Add long video</span>
+                        <div id="drop-area-videoshort" class="drop-area none">
+                            <div class="upload-content">
+                                <div class="plus-icon"><i class="fi fi-sr-plus"></i></div>
+                                <span class="upload-label">Add long video</span>
+                            </div>
+                            <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .ogg, .mkv, .3gp, .m4v" hidden />
                         </div>
-                        <input type="file" id="file-input-videoshort" accept=".mp4, .avi, .ogg, .mkv, .3gp, .m4v"
-                            hidden />
-                    </div>
 
-                </div>
-                <span class="response_msg error" id="videoError"></span>
+                    </div>
+                    <span class="response_msg error" id="videoError"></span>
+                
+
             </div>
             <div id="videoTrimContainer" class="none timeline-wrapper">
                 <div class="video-trim-wrapper">
                     <video id="videoTrim"></video>
-                    <div id="videoTimeline"></div>
-                    <div id="longVideoTimeline"></div>
-                    <div id="shortVideoTimeline"></div>
+                    <div id="videoTimeline">
+                        
+                    </div>
                     <span id="videoPos"></span>
                     <div id="overlay-left" class="trim-overlay"></div>
                     <div id="overlay-right" class="trim-overlay"></div>
@@ -179,6 +176,7 @@
                         <div id="handle-left" class="trim-handle"></div>
                         <div style="flex:1"></div>
                         <div id="handle-right" class="trim-handle"></div>
+                        
                     </div>
                 </div>
                 <div id="trimButtons">
@@ -189,7 +187,7 @@
                     <span id="video_MB"></span>
                     <span class="button btn-blue" id="trimBtn">Save</span>
                 </div>
-
+                
             </div>
             <div id="crop-container" class="none">
                 <div class="crop-container-inner">
@@ -212,9 +210,8 @@
                     <label for="titleNotes" class="md_font_size">Title*</label>
                 </div>
                 <div class="col-right input-wrapper">
-                    <input type="text" id="titleNotes" placeholder="Title" name="text-input" />
-                    <span id="title_limit_box" class="char-counter md_font_size" data-target="titleNotes"><span
-                            class="char_count">0</span>/<span class="char_limit">63</span></span>
+                    <input type="text" id="titleNotes" placeholder="Title" name="text-input"  />
+                     <span id="title_limit_box" class="char-counter md_font_size" data-target="titleNotes"><span class="char_count">0</span>/<span class="char_limit">63</span></span>
                     <span class="response_msg error" id="titleError"></span>
                 </div>
             </div>
@@ -226,8 +223,7 @@
                     <div class="textarea-wrapper">
                         <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength=""></textarea>
-                        <span id="desc_limit_box" class="char-counter md_font_size" data-target="descriptionNotes"><span
-                                class="char_count">0</span>/<span class="char_limit">20000</span></span>
+                        <span id="desc_limit_box" class="char-counter md_font_size" data-target="descriptionNotes"><span class="char_count">0</span>/<span class="char_limit">20000</span></span>
                     </div>
                     <span class="response_msg error" id="descriptionError"></span>
                 </div>

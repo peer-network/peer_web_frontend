@@ -1857,8 +1857,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // const base64 = await convertImageToBase64(file);
-      const videoId = id.includes("short") ? "shortVideoTimeline" : "longVideoTimeline";
-      console.log('videoId ', videoId)
+      // const videoId = id.includes("short") ? "shortVideoTimeline" : "longVideoTimeline";
+
       const url = URL.createObjectURL(file);
       let element = null;
       if (type === "image") {
@@ -1872,9 +1872,9 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         window.uploadedFilesMap.set(file.name, url);
-        element.addEventListener("loadedmetadata", async (e) => {
+        element.addEventListener("loadedmetadata", async () => {
           // generateThumbnails(file.name); before
-          generateThumbnailStrip(url, videoId);
+          generateThumbnailStrip(file.name);
         }, {
           once: true
         });
@@ -2106,7 +2106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show the trim container
     document.getElementById("videoTrimContainer").classList.remove("none");
     document.getElementById("videoTrimContainer").classList.add("active");
-    // generateThumbnailStrip(video.src)
+    generateThumbnailStrip(id)
   }
 
   function addEditImageListener(element) {
@@ -2235,59 +2235,78 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
 
   // Configuration
-  async function generateThumbnailStrip(file, timelineId, {
-    thumbWidth = 160,
-    THUMB_COUNT = 10,
-    BATCH_SIZE = 3
+  let videothumbs = {};
+  async function generateThumbnailStrip(id, {
+  thumbWidth = 160,
+  THUMB_COUNT = 10
   } = {}) {
-    const timeline = document.getElementById(timelineId);
-    timeline.innerHTML = "";
-    const video = document.createElement("video");
-    video.preload = "metadata";
-    video.src = file;
+  const video = document.getElementById(id);
+  if (!video) return console.error("No video element found:", id);
 
-    // modal.showModal()
+  const videoId = video.getAttribute("id") || id;
+  const timeline = document.getElementById("videoTimeline");
+  if (!timeline) return console.error("No timeline container found");
+  timeline.innerHTML = "";
 
-    await new Promise((res, rej) => {
-      video.onloadedmetadata = res;
-      video.onerror = rej;
-    });
-
-    const duration = video.duration;
-    const canvas = document.createElement("canvas");
-    canvas.width = thumbWidth;
-    canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
-    const ctx = canvas.getContext("2d");
-    const times = Array.from({
-      length: THUMB_COUNT
-    }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
-
-    // Process in batches
-    for (let i = 0; i < times.length; i += BATCH_SIZE) {
-      const batch = times.slice(i, i + BATCH_SIZE);
-      await Promise.all(batch.map(async t => {
-        await new Promise(res => {
-          const handler = () => {
-            res();
-            video.removeEventListener("seeked", handler);
-          };
-          video.addEventListener("seeked", handler);
-          video.currentTime = t;
-        });
-
-        const bitmap = await createImageBitmap(video);
-        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-        bitmap.close();
-
-        const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(blob);
-        img.onload = () => URL.revokeObjectURL(img.src);
-        timeline.appendChild(img);
-      }));
-    }
-    // modal.close();
+  // Reuse if already cached
+  if (videothumbs[videoId]?.length > 0) {
+  console.log(`Using cached thumbs for ${videoId}`);
+  videothumbs[videoId].forEach(({ src }) => {
+    const img = document.createElement("img");
+    img.src = src;
+    timeline.appendChild(img);
+  });
+  return;
   }
+
+  // Wait for metadata
+  await new Promise(res => {
+  if (video.readyState >= 1) res();
+  else video.addEventListener("loadedmetadata", res, { once: true });
+  });
+
+  const duration = video.duration;
+  const canvas = document.createElement("canvas");
+  canvas.width = thumbWidth;
+  canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
+  const ctx = canvas.getContext("2d");
+
+  const times = Array.from({ length: THUMB_COUNT }, (_, i) =>
+  (i * duration) / (THUMB_COUNT - 1)
+  );
+
+  videothumbs[videoId] = [];
+
+  // Sequential processing to avoid race conditions
+  for (const t of times) {
+  await new Promise(res => {
+    video.currentTime = t;
+    video.addEventListener("seeked", res, { once: true });
+  });
+
+  const bitmap = await createImageBitmap(video);
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
+
+  // Convert blob to base64
+  const src = await new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+
+  videothumbs[videoId].push({ time: t, src });
+
+  const img = document.createElement("img");
+  img.src = src;
+  timeline.appendChild(img);
+  }
+
+  console.log("Generated thumbs:", videothumbs[videoId]);
+  }
+
 
   video.addEventListener("loadedmetadata", async (e) => {
     video.removeEventListener('timeupdate', () => {
