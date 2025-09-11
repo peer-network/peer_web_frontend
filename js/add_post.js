@@ -677,7 +677,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("create_new_post").addEventListener("submit", async (event) => {
     event.preventDefault();
     let token, uploadedFiles;
-      let files = [];
+    let files = [];
     const post_type = event.target.getAttribute("data-post-type");
     const createPostError = document.getElementById("createPostError");
     const submitButton = document.getElementById("submitPost");
@@ -761,78 +761,88 @@ document.addEventListener("DOMContentLoaded", () => {
     switch (post_type) {
       case "text": {
         // create a temporary text file from description
-        const textBlob = new Blob([description], { type: "text/plain" });
-        const textFile = new File([textBlob], "post.txt", { type: "text/plain" });
+        const textBlob = new Blob([description], {
+          type: "text/plain"
+        });
+        const textFile = new File([textBlob], "post.txt", {
+          type: "text/plain"
+        });
         files = [textFile];
         postDescription = description;
       }
       break;
 
-      case "image": {
+    case "image": {
       const imageWrappers = document.querySelectorAll(".create-img");
       files = await Promise.all(
         Array.from(imageWrappers)
-            .map(async (img, index) => {
-                const response = await fetch(img.src);   
-                const blob = await response.blob(); 
-                return new File([blob], `image${index}.png`, { type: blob.type });
-            })
-      );
-        postDescription = description;
-      }
-    
-      break;
-      case "audio": {
-        let audioFiles = [];
-
-        // Priority: recorded audio
-        const recordedAudio = document.getElementById("recorded-audio");
-        if (recordedAudio?.src?.startsWith("blob:")) {
-          const response = await fetch(recordedAudio.src);
+        .map(async (img, index) => {
+          const response = await fetch(img.src);
           const blob = await response.blob();
-          // Give a valid name & MIME type for backend
-          audioFiles.push(new File([blob], "recording.mp3", { type: "audio/mpeg" }));
-        }
+          return new File([blob], `image${index}.png`, {
+            type: blob.type
+          });
+        })
+      );
+      postDescription = description;
+    }
 
-        // Fallback: other <audio> elements
-        const audioElements = document.querySelectorAll(".create-audio");
-        for (const audio of audioElements) {
-          if (audio === recordedAudio) continue; // skip already added
-          if (audio?.src?.startsWith("blob:")) {
-            const response = await fetch(audio.src);
-            const blob = await response.blob();
-            audioFiles.push(new File([blob], "recording.mp3", { type: "audio/mpeg" }));
-          }
-        }
+    break;
+    case "audio": {
+      let audioFiles = [];
 
-        // Only take the first file if needed (or send all)
-        files = audioFiles[0] || null;
-
-        // Optional cover image
-        const coverWrapper = document.getElementById("audio-cover-image-preview");
-        const coverImg = coverWrapper?.querySelector("img.create-img");
-        const emptyCover = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-        cover = coverImg ? await blobUrlToBase64(coverImg.src) : [emptyCover];
-        postDescription = description;
+      // Priority: recorded audio
+      const recordedAudio = document.getElementById("recorded-audio");
+      if (recordedAudio ?.src ?.startsWith("blob:")) {
+        const response = await fetch(recordedAudio.src);
+        const blob = await response.blob();
+        // Give a valid name & MIME type for backend
+        audioFiles.push(new File([blob], "recording.mp3", {
+          type: "audio/mpeg"
+        }));
       }
-      break;
-      case "video": {
-          files = await getFilesFromVideos(videoWrappers);
-          const coverWrapper = document.getElementById("preview-video");
-          const coverImg = coverWrapper?.querySelector("img.create-img");
-          cover = coverImg ? await blobUrlToBase64(coverImg.src) : null;
-          postDescription = description;
+
+      // Fallback: other <audio> elements
+      const audioElements = document.querySelectorAll(".create-audio");
+      for (const audio of audioElements) {
+        if (audio === recordedAudio) continue; // skip already added
+        if (audio ?.src ?.startsWith("blob:")) {
+          const response = await fetch(audio.src);
+          const blob = await response.blob();
+          audioFiles.push(new File([blob], "recording.mp3", {
+            type: "audio/mpeg"
+          }));
+        }
       }
+
+      // Only take the first file if needed (or send all)
+      files = audioFiles[0] || null;
+
+      // Optional cover image
+      const coverWrapper = document.getElementById("audio-cover-image-preview");
+      const coverImg = coverWrapper ?.querySelector("img.create-img");
+      const emptyCover = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+      cover = coverImg ? await blobUrlToBase64(coverImg.src) : [emptyCover];
+      postDescription = description;
+    }
+    break;
+    case "video": {
+      files = await getFilesFromVideos(videoWrappers);
+      const coverWrapper = document.getElementById("preview-video");
+      const coverImg = coverWrapper ?.querySelector("img.create-img");
+      cover = coverImg ? await blobUrlToBase64(coverImg.src) : null;
+      postDescription = description;
+    }
+    break;
+    default:
+      console.warn("Unsupported post type:", post_type);
       break;
-      default:
-        console.warn("Unsupported post type:", post_type);
-        break;
     }
     hasError = pre_post_form_validation(post_type, files); // check form validation
     // If any error, stop
     if (hasError) return;
     submitButton.disabled = true;
-  
+
     try {
       token = await checkEligibility();
     } catch (err) {
@@ -843,7 +853,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-     modal.showModal();
+      modal.showModal();
       uploadedFiles = await uploadFiles(token, files);
     } catch (err) {
       console.error("File upload failed:", err);
@@ -851,17 +861,17 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.disabled = false;
       return; // stop here
     } finally {
-         modal.close();
+      modal.close();
     }
 
     try {
       const result = await sendCreatePost({
-          title: title,
-          mediadescription: postDescription,
-          contenttype: post_type,
-          uploadedFiles: uploadedFiles,
-          cover: cover,
-          tags: tags,
+        title: title,
+        mediadescription: postDescription,
+        contenttype: post_type,
+        uploadedFiles: uploadedFiles,
+        cover: cover,
+        tags: tags,
       });
 
       if (result.createPost.ResponseCode == "11513" || result.createPost.ResponseCode == "11508") {
@@ -889,7 +899,9 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const vid of videoWrappers) {
       if (vid.src.startsWith("blob:")) {
         const blob = await fetch(vid.src).then(r => r.blob());
-        const file = new File([blob], vid.id + ".mp4", { type: blob.type });
+        const file = new File([blob], vid.id + ".mp4", {
+          type: blob.type
+        });
         files.push(file);
       }
     }
@@ -1051,139 +1063,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return hasError;
   }
 
-  // document.getElementById("previewButton").addEventListener("click", async function () {
-  //   const previewSection = document.getElementById('previewSection');
-  //   const addPostSection = document.getElementById('addPostSection');
-  //   const title = titleEl.value.trim();
-  //   const description = descEl.value.trim();
-  //   const tags = getTagHistory();
-  //   const form = document.getElementById("create_new_post");
-  //   const post_type = form.getAttribute("data-post-type");
-  //   let hasError = false;
-  //   let objekt;
-
-  //   switch (post_type) {
-  //     case "text": {
-  //       // Convert to base64
-  //       const base64String = btoa(new TextEncoder().encode(description).reduce((acc, val) => acc + String.fromCharCode(val), ""));
-  //       const base64WithMime = [`data:text/plain;base64,${base64String}`];
-
-  //       media = base64WithMime;
-
-  //       objekt = {
-  //         id: "preview-text-post",
-  //         contenttype: "text",
-  //         title,
-  //         description,
-  //         tags,
-  //         media: [],
-  //       };
-
-  //     }
-  //     break;
-  //   case "image": {
-  //     const imageContainer = document.getElementById("preview-image");
-  //     const imageWrappers = imageContainer.querySelectorAll(".create-img");
-  //     const combinedBase64 = Array.from(imageWrappers)
-  //       .map((img) => img.src)
-  //       .filter((src) => src.startsWith("data:image/"));
-
-  //     media = combinedBase64;
-
-  //     cover = null;
-
-  //     objekt = {
-  //       contenttype: "image",
-  //       title,
-  //       description,
-  //       tags,
-  //       media,
-  //     };
-
-  //   }
-  //   break;
-  //   case "audio": {
-  //     let combinedBase64 = [];
-  //     const recordedAudio = document.getElementById("recorded-audio");
-  //     //  Priority: Use recorded audio if it exists and is blob
-  //     if (recordedAudio && recordedAudio.src.startsWith("blob:")) {
-  //       const base64 = await convertBlobUrlToBase64(recordedAudio.src);
-  //       // console.log(base64)
-  //       if (base64) combinedBase64.push(base64);
-  //     } else {
-  //       //  Fallback: Use uploaded audio if no recorded audio found
-  //       const audioWrappers = document.querySelectorAll(".create-audio");
-  //       combinedBase64 = Array.from(audioWrappers)
-  //         .map((audio) => audio.src)
-  //         .filter((src) => src.startsWith("data:audio/"));
-  //     }
-  //     const coverWrapper = document.getElementById("audio-cover-image-preview");
-  //     const coverImg = coverWrapper.querySelector("img.create-img");
-
-  //     const emptyBase64img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
-  //     cover = coverImg ? [coverImg.src] : [emptyBase64img];
-
-
-  //     media = combinedBase64;
-
-  //     objekt = {
-  //       title,
-  //       description,
-  //       tags,
-  //       media,
-  //       cover,
-  //       contenttype: "audio",
-  //     };
-
-
-  //   }
-  //   break;
-  //   case "video": {
-  //     const videoWrappers = document.querySelectorAll(".create-video");
-  //     const combinedBase64 = Array.from(videoWrappers)
-  //       .map((vid) => vid.src)
-  //       .filter((src) => src.startsWith("data:video/"));
-
-  //     media = combinedBase64;
-
-  //     const coverWrapper = document.getElementById("preview-video");
-  //     const coverImg = coverWrapper.querySelector("img.create-img");
-  //     cover = coverImg ? [coverImg.src] : "";
-
-  //     objekt = {
-  //       title,
-  //       description,
-  //       tags,
-  //       media,
-  //       cover,
-  //       contenttype: "video",
-  //     };
-  //   }
-  //   break;
-  //   default:
-  //     console.warn("Unsupported post type:", post_type);
-  //     break;
-  //   }
-
-  //   hasError = pre_post_form_validation(post_type, media); // check form validation
-  //   // If any error, stop
-  //   if (hasError) return;
-
-  //   window.currentPreviewObjekt = objekt;
-
-  //   addPostSection.classList.add('none');
-  //   previewSection.classList.remove('none');
-
-  //   const fullView = document.getElementById("preview-post-container");
-  //   const collapsedView = document.querySelector("section");
-
-  //   fullView.style.display = "";
-  //   collapsedView.style.display = "none";
-
-  //   previewPost(objekt);
-
-  // });
   document.getElementById("previewButton").addEventListener("click", async function () {
     const previewSection = document.getElementById('previewSection');
     const addPostSection = document.getElementById('addPostSection');
@@ -1214,10 +1093,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const imageContainer = document.getElementById("preview-image");
         const imageWrappers = imageContainer.querySelectorAll(".create-img");
         media = Array.from(imageWrappers)
-                    .map(img => img.src)
-                    .filter(src => src); // use raw src for preview
+          .map(img => img.src)
+          .filter(src => src); // use raw src for preview
 
-        objekt = { contenttype: "image", title, description, tags, media };
+        objekt = {
+          contenttype: "image",
+          title,
+          description,
+          tags,
+          media
+        };
         break;
       }
 
@@ -1228,29 +1113,43 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           const audioWrappers = document.querySelectorAll(".create-audio");
           media = Array.from(audioWrappers)
-                      .map(audio => audio.src)
-                      .filter(src => src);
+            .map(audio => audio.src)
+            .filter(src => src);
         }
 
         const coverWrapper = document.getElementById("audio-cover-image-preview");
         const coverImg = coverWrapper.querySelector("img.create-img");
         const emptyCover = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
         cover = [coverImg ? coverImg.src : emptyCover];
-        objekt = { title, description, tags, media, cover, contenttype: "audio" };
+        objekt = {
+          title,
+          description,
+          tags,
+          media,
+          cover,
+          contenttype: "audio"
+        };
         break;
       }
 
       case "video": {
         const videoWrappers = document.querySelectorAll(".create-video");
         media = Array.from(videoWrappers)
-                    .map(video => video.src)
-                    .filter(src => src);
+          .map(video => video.src)
+          .filter(src => src);
 
         const coverWrapper = document.getElementById("preview-video");
         const coverImg = coverWrapper.querySelector("img.create-img");
         cover = coverImg ? [coverImg.src] : [];
 
-        objekt = { title, description, tags, media, cover, contenttype: "video" };
+        objekt = {
+          title,
+          description,
+          tags,
+          media,
+          cover,
+          contenttype: "video"
+        };
         break;
       }
 
@@ -1258,7 +1157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("Unsupported post type:", post_type);
         return;
     }
-   
+
     hasError = pre_post_form_validation(post_type, media);
     if (hasError) return;
 
@@ -1829,7 +1728,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
     }
     // File-Input-Change-Event
-    if (fileInput) 
+    if (fileInput)
       fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
   });
 
@@ -1842,7 +1741,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let previewItem, previewContainer = "";
 
     modal.showModal();
-    
+
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
@@ -1927,7 +1826,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
           previewItem.classList.add("video-item");
           previewItem.classList.add(id);
-          // videoId = id.includes("short") ? "video-short" : "video-long";
           previewItem.innerHTML = `
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
@@ -1949,9 +1847,9 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             const insertPosition = document.getElementById("drop-area-videolong");
             insertPosition.insertAdjacentElement("afterend", previewItem);
-            if (!document.getElementById("deletecover")) 
+            if (!document.getElementById("deletecover"))
               document.getElementById("drop-area-videocover").classList.remove("none");
-            if (!document.getElementById("deleteshort")) 
+            if (!document.getElementById("deleteshort"))
               document.getElementById("drop-area-videoshort").classList.remove("none");
             document.getElementById("drop-area-videolong").classList.add("none");
           }
@@ -1959,6 +1857,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // const base64 = await convertImageToBase64(file);
+      const videoId = id.includes("short") ? "shortVideoTimeline" : "longVideoTimeline";
+      console.log('videoId ', videoId)
       const url = URL.createObjectURL(file);
       let element = null;
       if (type === "image") {
@@ -1972,13 +1872,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         window.uploadedFilesMap.set(file.name, url);
-        // element.addEventListener("loadedmetadata", async (e) => {
-        // // const videoId =  e.target.getAttribute('id');
-        // // generateThumbnails(file.name); before
-        // // generateThumbnailStrip(file, videoId);
-        // }, {
-        //   once: true
-        // });
+        element.addEventListener("loadedmetadata", async (e) => {
+          // generateThumbnails(file.name); before
+          generateThumbnailStrip(url, videoId);
+        }, {
+          once: true
+        });
       }
 
       element.src = url;
@@ -2125,7 +2024,6 @@ document.addEventListener("DOMContentLoaded", () => {
         image_container.classList.remove("image_added");
       }
     }
-
   } // END OF PROCESS-FILES
 
   function validateFileType(file, uploadType, modal, errorContainer) {
@@ -2181,10 +2079,10 @@ document.addEventListener("DOMContentLoaded", () => {
     previewItem.classList.add('click_edit');
     // Show the Trim container after a short delay
     // setTimeout(async () => {
-      const video_id = previewItem.querySelector("video").getAttribute('id');
-      document.getElementById("videoTrimContainer").classList.remove("none");
-      await videoTrim(video_id);
-      previewItem.classList.remove('click_edit');
+    const video_id = previewItem.querySelector("video").getAttribute('id');
+    document.getElementById("videoTrimContainer").classList.remove("none");
+    await videoTrim(video_id);
+    previewItem.classList.remove('click_edit');
     // }, 500);
   }
 
@@ -2208,7 +2106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show the trim container
     document.getElementById("videoTrimContainer").classList.remove("none");
     document.getElementById("videoTrimContainer").classList.add("active");
-    generateThumbnailStrip(video.src)
+    // generateThumbnailStrip(video.src)
   }
 
   function addEditImageListener(element) {
@@ -2337,543 +2235,456 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
 
   // Configuration
-async function generateThumbnailStrip(file, {
-  thumbWidth = 160,
-  THUMB_COUNT = 10,
-  BATCH_SIZE = 3
-} = {}) {
-  console.log(file)
-  const timeline = document.getElementById("videoTimeline");
-  timeline.innerHTML = "";
-  const video = document.createElement("video");
-  video.preload = "metadata";
-  video.src = file;
+  async function generateThumbnailStrip(file, timelineId, {
+    thumbWidth = 160,
+    THUMB_COUNT = 10,
+    BATCH_SIZE = 3
+  } = {}) {
+    const timeline = document.getElementById(timelineId);
+    timeline.innerHTML = "";
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.src = file;
 
-  modal.showModal()
+    // modal.showModal()
 
-  await new Promise((res, rej) => {
-    video.onloadedmetadata = res;
-    video.onerror = rej;
+    await new Promise((res, rej) => {
+      video.onloadedmetadata = res;
+      video.onerror = rej;
+    });
+
+    const duration = video.duration;
+    const canvas = document.createElement("canvas");
+    canvas.width = thumbWidth;
+    canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
+    const ctx = canvas.getContext("2d");
+    const times = Array.from({
+      length: THUMB_COUNT
+    }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
+
+    // Process in batches
+    for (let i = 0; i < times.length; i += BATCH_SIZE) {
+      const batch = times.slice(i, i + BATCH_SIZE);
+      await Promise.all(batch.map(async t => {
+        await new Promise(res => {
+          const handler = () => {
+            res();
+            video.removeEventListener("seeked", handler);
+          };
+          video.addEventListener("seeked", handler);
+          video.currentTime = t;
+        });
+
+        const bitmap = await createImageBitmap(video);
+        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        bitmap.close();
+
+        const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(blob);
+        img.onload = () => URL.revokeObjectURL(img.src);
+        timeline.appendChild(img);
+      }));
+    }
+    // modal.close();
+  }
+
+  video.addEventListener("loadedmetadata", async (e) => {
+    video.removeEventListener('timeupdate', () => {
+      showVideoPos();
+    });
+    video.addEventListener('timeupdate', () => {
+      showVideoPos();
+    });
+    setupTrim(true);
+    // await generateThumbnails("videoTrim");
+    // setupTrim();
   });
 
-  const duration = video.duration;
-  const canvas = document.createElement("canvas");
-  canvas.width = thumbWidth;
-  canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
-  const ctx = canvas.getContext("2d");
-  const times = Array.from({ length: THUMB_COUNT }, (_, i) => (i * duration) / (THUMB_COUNT - 1));
+  async function getBlobSizeFromURL(url) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return blob.size;
+  }
+  async function updateVideoInfo() {
+    const durationEL = document.getElementById("video_druration");
+    const videostart = document.getElementById("video_start");
+    const videoend = document.getElementById("video_end");
+    if (durationEL) {
+      durationEL.textContent = new Date((video.duration * (endPercent - startPercent)) * 1000).toISOString().substr(11, 8);
+      videostart.textContent = new Date((video.duration * startPercent) * 1000).toISOString().substr(11, 8);
+      videoend.textContent = new Date((video.duration * endPercent) * 1000).toISOString().substr(11, 8);
+    }
+    var byteLength = await getBlobSizeFromURL(video.src) * (endPercent - startPercent);
+    const sizeEL = document.getElementById("video_MB");
+    if (sizeEL) {
+      sizeEL.textContent = (byteLength / 1024 / 1024).toFixed(2) + " MB";
+    }
+  }
 
-  // Process in batches
-  for (let i = 0; i < times.length; i += BATCH_SIZE) {
-    const batch = times.slice(i, i + BATCH_SIZE);
-    await Promise.all(batch.map(async t => {
-      await new Promise(res => {
-        const handler = () => { res(); video.removeEventListener("seeked", handler); };
-        video.addEventListener("seeked", handler);
-        video.currentTime = t;
+  let windowStartPercent = 0;
+  let windowEndPercent = 0;
+  let dragging = null; // 'left' | 'right' | null
+  let dragStartX = 0;
+  // const wrapper = document.querySelector(".timeline-wrapper");
+  // const timelineRect = timeline.getBoundingClientRect();
+  // const wrapperRect = wrapper.getBoundingClientRect();
+
+  function setupTrim(reset = false) {
+    if (reset) {
+      startPercent = 0.0000;
+      endPercent = 1.0000;
+      updateVideoInfo();
+      positionElements();
+      cuttedVideo = null;
+    }
+    positionElements();
+  }
+
+  function positionElements() {
+    const w = timeline.offsetWidth;
+    // Positionen berechnen
+    const left = Math.round(startPercent * w);
+    const right = Math.round(endPercent * w);
+    // Trim-Fenster
+    trimWindow.style.left = left + "px";
+    trimWindow.style.width = right - left + "px";
+    trimWindow.style.top = timeline.offsetTop + "px";
+    trimWindow.style.height = timeline.offsetHeight + "px";
+    // Overlays
+    overlayLeft.style.left = "0px";
+    overlayLeft.style.width = left + "px";
+    overlayLeft.style.top = timeline.offsetTop + "px";
+    overlayLeft.style.height = timeline.offsetHeight + "px";
+    overlayRight.style.left = right + "px";
+    overlayRight.style.width = w - right + "px";
+    overlayRight.style.top = timeline.offsetTop + "px";
+    overlayRight.style.height = timeline.offsetHeight + "px";
+    showVideoPos();
+  }
+
+  function percentFromX(x) {
+    // x relativ zum Timeline-Container
+    const rect = timeline.getBoundingClientRect();
+    let p = (x - rect.left) / rect.width;
+    return Math.min(Math.max(p, 0), 1);
+  }
+
+  // Drag-Handler
+  handleLeft.addEventListener("pointerdown", (e) => {
+    dragging = "left";
+    dragStartX = e.clientX;
+    document.body.style.cursor = "ew-resize";
+    e.preventDefault();
+  });
+  handleRight.addEventListener("pointerdown", (e) => {
+    dragging = "right";
+    dragStartX = e.clientX;
+    document.body.style.cursor = "ew-resize";
+    e.preventDefault();
+  });
+  trimWindow.addEventListener("pointerdown", (e) => {
+    if (e.target === handleLeft || e.target === handleRight) return;
+    dragging = "window";
+    dragStartX = e.clientX;
+    windowStartPercent = startPercent;
+    windowEndPercent = endPercent;
+    trimWindow.style.cursor = "grabbing";
+    document.body.style.cursor = "grabbing";
+    e.preventDefault();
+  });
+  // Haupt-Drag-Events
+  window.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    cuttedVideo = null;
+    // const wrapper = document.querySelector(".timeline-wrapper");
+    const timelineRect = timeline.getBoundingClientRect();
+    // const wrapperRect = wrapper.getBoundingClientRect();
+    video.pause();
+    const x = e.clientX;
+    const p = percentFromX(x);
+    if (dragging === "left") {
+      let nextStart = Math.min(p, endPercent - MIN_DURATION / video.duration);
+      nextStart = Math.max(0, Math.min(nextStart, 1));
+      startPercent = nextStart;
+    } else if (dragging === "right") {
+      let nextEnd = Math.max(p, startPercent + MIN_DURATION / video.duration);
+      nextEnd = Math.max(0, Math.min(nextEnd, 1));
+      endPercent = nextEnd;
+    } else if (dragging === "window") {
+      const dx = x - dragStartX;
+      const w = timelineRect.width;
+      const percentShift = dx / w;
+      let newStart = windowStartPercent + percentShift;
+      let newEnd = windowEndPercent + percentShift;
+      // Begrenzung, damit das Fenster im Bereich bleibt
+      const winWidth = windowEndPercent - windowStartPercent;
+      if (newStart < 0) {
+        newStart = 0;
+        newEnd = winWidth;
+      }
+      if (newEnd > 1) {
+        newEnd = 1;
+        newStart = 1 - winWidth;
+      }
+      startPercent = newStart;
+      endPercent = newEnd;
+
+    }
+
+    const startPos = video.duration * p;
+    if (seekedFinished) {
+      if (dragging === "right") {
+        video.currentTime = video.duration * endPercent;
+      } else {
+        video.currentTime = startPos;
+      }
+    }
+
+    updateVideoInfo();
+    startPercent = Math.max(0, Math.min(startPercent, 1));
+    endPercent = Math.max(0, Math.min(endPercent, 1));
+    positionElements();
+  });
+
+  // window.removeEventListener('pointerup', (e) => {});
+  window.addEventListener("pointerup", (e) => {
+    if (dragging) {
+      dragging = null;
+      document.body.style.cursor = "";
+      // video.currentTime = video.duration * startPercent;
+      // trimVideo(true); // Video trimmen
+    }
+    window.pointerUpRegistered = true;
+  });
+
+  // Bei Fenstergröße ändern → alles nachjustieren
+  window.addEventListener("resize", () => {
+    positionElements();
+  });
+
+  // Initial-Positionierung
+  positionElements();
+
+  trimQuitBtn.onclick = () => {
+    document.getElementById("videoTrimContainer").classList.add("none");
+    document.getElementById("videoTrimContainer").classList.remove("active");
+  }
+
+  function showVideoPos() {
+    const videoPos = document.getElementById("videoPos");
+    if (videoPos) {
+      videoPos.style.left = (video.currentTime / video.duration) * 100 + "%";
+    }
+  }
+  // const downloadLink = document.getElementById("download-link");
+  // Beachte: Diese Variablen (startPercent, endPercent) sind im Trim-Code definiert!
+  // let startPercent = 0.15;
+  // let endPercent = 0.85;
+
+  // Funktion für den Schnitt
+  // let cuttedVideo = null; // Variable für das geschnittene Video
+  // async function trimVideo(background = false) {
+  //   // Stelle sicher, dass Metadaten da sind
+  //   if (!video.duration) {
+  //     alert("Video ist noch nicht geladen!");
+  //     return;
+  //   }
+  //   const container = document.getElementById('preview-video');
+  //   const videos = container.querySelectorAll('video');
+  //   // Jedes Video pausieren
+  //   videos.forEach(video => { if( !video.paused ) video.pause() });
+  //   if (cuttedVideo) {
+  //     // Wenn bereits ein geschnittenes Video vorhanden ist, nutze es direkt
+  //     videoElement.src = cuttedVideo;
+  //   } else {
+  //     const modal = document.getElementById('videocodierung');
+  //     if(!background){
+  //       modal.showModal();
+  //       document.getElementById("nocursor").focus();
+  //     }
+
+  //     // console.log('video.duration ', video.duration)
+  //     // console.log('startPercent ', startPercent)
+  //     // console.log('endPercent ', endPercent)
+  //     // console.log('formula ', (startPercent * endPercent))
+
+  //     // Schnitt-Zeiten berechnen
+  //     const startTime = video.duration * startPercent;
+  //     const endTime = video.duration * endPercent;
+
+  //     // Sicherstellen, dass keine Wiedergabe läuft
+  //     video.pause();
+
+  //     // Canvas zum Capturen des Videos
+  //     const canvas = document.createElement("canvas");
+  //     canvas.width = video.videoWidth;
+  //     canvas.height = video.videoHeight;
+  //     const ctx = canvas.getContext("2d");
+  //     //let mimeType = "video/mp4"; 
+
+  //     // Canvas streamen
+  //     const stream = canvas.captureStream();
+  //     const get_browser = getBrowser();
+
+  //     let rec;
+
+  //     if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
+  //         rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
+  //     } else {
+  //         rec = new MediaRecorder(stream); // fallback, let browser decide
+  //     }
+
+  //     let chunks = [];
+  //     rec.ondataavailable = (e) => e.data && chunks.push(e.data);
+  //     // Trim Vorgang
+  //     video.currentTime = startTime;
+  //     await new Promise((res) => (video.onseeked = res));
+  //     // Start Aufnahme
+  //     rec.start();
+  //     //
+  //     video.play();
+  //     // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
+  //     let animationId;
+  //     function drawFrame() {
+  //       if (video.currentTime >= endTime || video.ended) {
+  //         video.pause();
+  //         rec.stop();
+  //         cancelAnimationFrame(animationId);
+  //         return;
+  //       }
+  //       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  //       animationId = requestAnimationFrame(drawFrame);
+  //     }
+  //     drawFrame();
+
+  //     // Nach Aufnahme: Download anbieten
+  //     rec.onstop = async () => {
+  //       const blob = new Blob(chunks, { type: "video/mp4" });
+  //       // const url = URL.createObjectURL(blob);
+  //       const base64 = await blobToBase64(blob);
+  //       cuttedVideo = base64; // Geschnittenes Video in Base64 speichern
+  //       if(!background){
+  //         videoElement.src = base64; // Update video source to trimmed video
+  //         document.getElementById("videoTrimContainer").classList.add("none");
+  //         modal.close();
+  //         videos.forEach(video => {
+  //           video.play();
+  //         });
+  //       }
+  //     };
+  //   };
+  //   if(!background){
+  //       document.getElementById("videoTrimContainer").classList.add("none");
+  //       // modal.close();
+  //     }
+  //     // Jedes Video pausieren
+  // }
+
+  async function loadFFmpeg() {
+    if (!window.ffmpegInstance) {
+      window.ffmpegInstance = new FFmpeg({
+        corePath: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
+        log: true
+      });
+      await window.ffmpegInstance.load();
+    }
+    return window.ffmpegInstance;
+  }
+
+  /**
+   * Trim a video between startPercent and endPercent
+   * @param {File} videoFile - Original uploaded video file
+   * @param {number} startPercent - Start point (0 to 1)
+   * @param {number} endPercent - End point (0 to 1)
+   */
+  async function trimVideo() {
+    if (!video.duration) {
+      alert("Video ist noch nicht geladen!");
+      return;
+    }
+    modal.showModal();
+    const duration = video.duration;
+    const startTime = duration * startPercent;
+    // const endTime = duration * endPercent;
+    const trimDuration = duration * (endPercent - startPercent);
+    const ffmpeg = await loadFFmpeg();
+
+    try {
+      modal.showModal();
+      // Fetch video data from the existing video element
+      const response = await fetch(video.src);
+      const arrayBuffer = await response.arrayBuffer();
+      const uint8 = new Uint8Array(arrayBuffer);
+
+      // Write to FFmpeg FS
+      await ffmpeg.writeFile("input.mp4", uint8);
+
+      // Trim with fast seek
+      await ffmpeg.exec([
+        "-ss", String(startTime), // seek to nearest keyframe (fast)
+        "-i", "input.mp4",
+        "-t", String(trimDuration),
+        "-c", "copy", // no re-encoding
+        "output.mp4"
+      ]);
+
+      // Read trimmed output
+      const data = await ffmpeg.readFile("output.mp4");
+      const blob = new Blob([data], {
+        type: "video/mp4"
       });
 
-      const bitmap = await createImageBitmap(video);
-      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-      bitmap.close();
+      // Clean up old preview URL
+      // if (preview.srcObjectUrl) URL.revokeObjectURL(preview.srcObjectUrl);
+      const url = URL.createObjectURL(blob);
+      video.src = url;
+      video.load();
+      videoElement.src = url;
+      document.getElementById("videoTrimContainer").classList.add("none");
+      document.getElementById('videocodierung').close();
+      video.play();
 
-      const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(blob);
-      img.onload = () => URL.revokeObjectURL(img.src);
-      timeline.appendChild(img);
-    }));
-  }
-    modal.close();
-}
+      // UI adjustments
+      // document.getElementById("videoTrimContainer").classList.add("none");
+      // if (document.getElementById("videocodierung").close) {
+      //   document.getElementById("videocodierung").close();
+      // }
 
-video.addEventListener("loadedmetadata", async (e) => {
-  video.removeEventListener('timeupdate', () => {
-    showVideoPos();
-  });
-  video.addEventListener('timeupdate', () => {
-    showVideoPos();
-  });
-  setupTrim(true);
-  // await generateThumbnails("videoTrim");
-  // setupTrim();
-});
+      // // Revoke blob after playback
+      // preview.onended = () => {
+      //   URL.revokeObjectURL(url);
+      //   preview.srcObjectUrl = null;
+      // };
 
-async function getBlobSizeFromURL(url) {
-  const res = await fetch(url);
-  const blob = await res.blob();
-  return blob.size;
-}
-async function updateVideoInfo() {
-  const durationEL = document.getElementById("video_druration");
-  const videostart = document.getElementById("video_start");
-  const videoend = document.getElementById("video_end");
-  if (durationEL) {
-    durationEL.textContent = new Date((video.duration * (endPercent - startPercent)) * 1000).toISOString().substr(11, 8);
-    videostart.textContent = new Date((video.duration * startPercent) * 1000).toISOString().substr(11, 8);
-    videoend.textContent = new Date((video.duration * endPercent) * 1000).toISOString().substr(11, 8);
-  }
-  var byteLength = await getBlobSizeFromURL(video.src) * (endPercent - startPercent);
-  const sizeEL = document.getElementById("video_MB");
-  if (sizeEL) {
-    sizeEL.textContent = (byteLength / 1024 / 1024).toFixed(2) + " MB";
-  }
-}
-
-let windowStartPercent = 0;
-let windowEndPercent = 0;
-let dragging = null; // 'left' | 'right' | null
-let dragStartX = 0;
-// const wrapper = document.querySelector(".timeline-wrapper");
-// const timelineRect = timeline.getBoundingClientRect();
-// const wrapperRect = wrapper.getBoundingClientRect();
-
-function setupTrim(reset = false) {
-  if (reset) {
-    startPercent = 0.0000;
-    endPercent = 1.0000;
-    updateVideoInfo();
-    positionElements();
-    cuttedVideo = null;
-  }
-  positionElements();
-}
-
-function positionElements() {
-  const w = timeline.offsetWidth;
-  // Positionen berechnen
-  const left = Math.round(startPercent * w);
-  const right = Math.round(endPercent * w);
-  // Trim-Fenster
-  trimWindow.style.left = left + "px";
-  trimWindow.style.width = right - left + "px";
-  trimWindow.style.top = timeline.offsetTop + "px";
-  trimWindow.style.height = timeline.offsetHeight + "px";
-  // Overlays
-  overlayLeft.style.left = "0px";
-  overlayLeft.style.width = left + "px";
-  overlayLeft.style.top = timeline.offsetTop + "px";
-  overlayLeft.style.height = timeline.offsetHeight + "px";
-  overlayRight.style.left = right + "px";
-  overlayRight.style.width = w - right + "px";
-  overlayRight.style.top = timeline.offsetTop + "px";
-  overlayRight.style.height = timeline.offsetHeight + "px";
-  showVideoPos();
-}
-
-function percentFromX(x) {
-  // x relativ zum Timeline-Container
-  const rect = timeline.getBoundingClientRect();
-  let p = (x - rect.left) / rect.width;
-  return Math.min(Math.max(p, 0), 1);
-}
-
-// Drag-Handler
-handleLeft.addEventListener("pointerdown", (e) => {
-  dragging = "left";
-  dragStartX = e.clientX;
-  document.body.style.cursor = "ew-resize";
-  e.preventDefault();
-});
-handleRight.addEventListener("pointerdown", (e) => {
-  dragging = "right";
-  dragStartX = e.clientX;
-  document.body.style.cursor = "ew-resize";
-  e.preventDefault();
-});
-trimWindow.addEventListener("pointerdown", (e) => {
-  if (e.target === handleLeft || e.target === handleRight) return;
-  dragging = "window";
-  dragStartX = e.clientX;
-  windowStartPercent = startPercent;
-  windowEndPercent = endPercent;
-  trimWindow.style.cursor = "grabbing";
-  document.body.style.cursor = "grabbing";
-  e.preventDefault();
-});
-// Haupt-Drag-Events
-window.addEventListener("pointermove", (e) => {
-  if (!dragging) return;
-  cuttedVideo = null;
-  // const wrapper = document.querySelector(".timeline-wrapper");
-  const timelineRect = timeline.getBoundingClientRect();
-  // const wrapperRect = wrapper.getBoundingClientRect();
-  video.pause();
-  const x = e.clientX;
-  const p = percentFromX(x);
-  if (dragging === "left") {
-    let nextStart = Math.min(p, endPercent - MIN_DURATION / video.duration);
-    nextStart = Math.max(0, Math.min(nextStart, 1));
-    startPercent = nextStart;
-  } else if (dragging === "right") {
-    let nextEnd = Math.max(p, startPercent + MIN_DURATION / video.duration);
-    nextEnd = Math.max(0, Math.min(nextEnd, 1));
-    endPercent = nextEnd;
-  } else if (dragging === "window") {
-    const dx = x - dragStartX;
-    const w = timelineRect.width;
-    const percentShift = dx / w;
-    let newStart = windowStartPercent + percentShift;
-    let newEnd = windowEndPercent + percentShift;
-    // Begrenzung, damit das Fenster im Bereich bleibt
-    const winWidth = windowEndPercent - windowStartPercent;
-    if (newStart < 0) {
-      newStart = 0;
-      newEnd = winWidth;
-    }
-    if (newEnd > 1) {
-      newEnd = 1;
-      newStart = 1 - winWidth;
-    }
-    startPercent = newStart;
-    endPercent = newEnd;
-
-  }
-
-  const startPos = video.duration * p;
-  if(seekedFinished){
-    if (dragging === "right") {
-      video.currentTime = video.duration * endPercent;
-    } else {
-      video.currentTime = startPos;
+    } catch (err) {
+      console.error("Video trimming failed:", err);
+      alert("Trimming failed. Check console for details.");
+    } finally {
+      modal.close();
     }
   }
-  
-  updateVideoInfo();
-  startPercent = Math.max(0, Math.min(startPercent, 1));
-  endPercent = Math.max(0, Math.min(endPercent, 1));
-  positionElements();
-});
 
-// window.removeEventListener('pointerup', (e) => {});
-window.addEventListener("pointerup", (e) => {
-  if (dragging) {
-    dragging = null;
-    document.body.style.cursor = "";
-    // video.currentTime = video.duration * startPercent;
-    // trimVideo(true); // Video trimmen
-  }
-  window.pointerUpRegistered = true;
-});
+  trimBtn.onclick = async () => {
+    trimVideo(false);
+  };
 
-// Bei Fenstergröße ändern → alles nachjustieren
-window.addEventListener("resize", () => {
-  positionElements();
-});
-
-// Initial-Positionierung
-positionElements();
-
-trimQuitBtn.onclick = () => {
-  document.getElementById("videoTrimContainer").classList.add("none");
-  document.getElementById("videoTrimContainer").classList.remove("active");
-}
-
-function showVideoPos() {
-  const videoPos = document.getElementById("videoPos");
-  if (videoPos) {
-    videoPos.style.left = (video.currentTime / video.duration) * 100 + "%";
-  }
-}
-// const downloadLink = document.getElementById("download-link");
-// Beachte: Diese Variablen (startPercent, endPercent) sind im Trim-Code definiert!
-// let startPercent = 0.15;
-// let endPercent = 0.85;
-
-// Funktion für den Schnitt
-// let cuttedVideo = null; // Variable für das geschnittene Video
-// async function trimVideo(background = false) {
-//   // Stelle sicher, dass Metadaten da sind
-//   if (!video.duration) {
-//     alert("Video ist noch nicht geladen!");
-//     return;
-//   }
-//   const container = document.getElementById('preview-video');
-//   const videos = container.querySelectorAll('video');
-//   // Jedes Video pausieren
-//   videos.forEach(video => { if( !video.paused ) video.pause() });
-//   if (cuttedVideo) {
-//     // Wenn bereits ein geschnittenes Video vorhanden ist, nutze es direkt
-//     videoElement.src = cuttedVideo;
-//   } else {
-//     const modal = document.getElementById('videocodierung');
-//     if(!background){
-//       modal.showModal();
-//       document.getElementById("nocursor").focus();
-//     }
-
-//     // console.log('video.duration ', video.duration)
-//     // console.log('startPercent ', startPercent)
-//     // console.log('endPercent ', endPercent)
-//     // console.log('formula ', (startPercent * endPercent))
-
-//     // Schnitt-Zeiten berechnen
-//     const startTime = video.duration * startPercent;
-//     const endTime = video.duration * endPercent;
-
-//     // Sicherstellen, dass keine Wiedergabe läuft
-//     video.pause();
-
-//     // Canvas zum Capturen des Videos
-//     const canvas = document.createElement("canvas");
-//     canvas.width = video.videoWidth;
-//     canvas.height = video.videoHeight;
-//     const ctx = canvas.getContext("2d");
-//     //let mimeType = "video/mp4"; 
-
-//     // Canvas streamen
-//     const stream = canvas.captureStream();
-//     const get_browser = getBrowser();
-
-//     let rec;
-
-//     if (get_browser === "Chrome" || get_browser === "Safari" || get_browser === "Edge") {
-//         rec = new MediaRecorder(stream, { mimeType: "video/mp4" }); // use webm
-//     } else {
-//         rec = new MediaRecorder(stream); // fallback, let browser decide
-//     }
-
-//     let chunks = [];
-//     rec.ondataavailable = (e) => e.data && chunks.push(e.data);
-//     // Trim Vorgang
-//     video.currentTime = startTime;
-//     await new Promise((res) => (video.onseeked = res));
-//     // Start Aufnahme
-//     rec.start();
-//     //
-//     video.play();
-//     // Frame für Frame auf das Canvas kopieren, bis zur Endzeit
-//     let animationId;
-//     function drawFrame() {
-//       if (video.currentTime >= endTime || video.ended) {
-//         video.pause();
-//         rec.stop();
-//         cancelAnimationFrame(animationId);
-//         return;
-//       }
-//       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-//       animationId = requestAnimationFrame(drawFrame);
-//     }
-//     drawFrame();
-
-//     // Nach Aufnahme: Download anbieten
-//     rec.onstop = async () => {
-//       const blob = new Blob(chunks, { type: "video/mp4" });
-//       // const url = URL.createObjectURL(blob);
-//       const base64 = await blobToBase64(blob);
-//       cuttedVideo = base64; // Geschnittenes Video in Base64 speichern
-//       if(!background){
-//         videoElement.src = base64; // Update video source to trimmed video
-//         document.getElementById("videoTrimContainer").classList.add("none");
-//         modal.close();
-//         videos.forEach(video => {
-//           video.play();
-//         });
-//       }
-//     };
-//   };
-//   if(!background){
-//       document.getElementById("videoTrimContainer").classList.add("none");
-//       // modal.close();
-//     }
-//     // Jedes Video pausieren
-// }
-
-
-// async function loadFFmpeg() {
-//   if (!ffmpeg) {
-//     ffmpeg = new FFmpeg({
-//       corePath: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
-//       log: true
-//     });
-//     await ffmpeg.load();
-//   }
-//   return ffmpeg;
-// }
-async function loadFFmpeg() {
-if (!window.ffmpegInstance) {
-  window.ffmpegInstance = new FFmpeg({
-    corePath: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
-    log: true
-  });
-  await window.ffmpegInstance.load();
-}
-return window.ffmpegInstance;
-}
-
-/**
- * Trim a video between startPercent and endPercent
- * @param {File} videoFile - Original uploaded video file
- * @param {number} startPercent - Start point (0 to 1)
- * @param {number} endPercent - End point (0 to 1)
- */
-// async function trimVideo() {
-//   if (!video.duration) {
-//     alert("Video ist noch nicht geladen!");
-//     return;
-//   }
-
-//   // const duration = video.duration;
-//   // const startTime = duration * startPercent;
-//   // const endTime = duration * endPercent;
-//   // const trimDuration = duration * (endPercent - startPercent);
-
-//   const duration = video.duration;
-//   let startTime = Math.floor(duration * startPercent); // round to nearest second
-//   let endTime = Math.floor(duration * endPercent);
-//   const trimDuration = endTime - startTime;
-
-
-//   const ffmpeg = await loadFFmpeg();
- 
-//   // for testing purposes
-
-//   try {
-//     // Fetch video data from the existing video element
-//          modal.showModal();
-
-//     const response = await fetch(video.src);
-//     const arrayBuffer = await response.arrayBuffer();
-//     const uint8 = new Uint8Array(arrayBuffer);
-
-//     // Write to FFmpeg FS
-//     await ffmpeg.writeFile("input.mp4", uint8);
-
-//     // Trim with fast seek
-//     await ffmpeg.exec([
-//     "-i", "input.mp4",
-//       "-ss", String(startTime), // seek to nearest keyframe (fast)
-//       "-t", String(trimDuration),
-//       "-c", "copy", 
-//       "output.mp4"
-//     ]);
-
-//     // Read trimmed output
-//     const data = await ffmpeg.readFile("output.mp4");
-//     const blob = new Blob([data], {
-//       type: "video/mp4"
-//     });
-//     const url = URL.createObjectURL(blob);
-
-//     // Clean up old preview URL
-//     // if (preview.srcObjectUrl) URL.revokeObjectURL(preview.srcObjectUrl);
-
-//     video.src = url;
-//     video.load();
-//     videoElement.src = url;
-//     document.getElementById("videoTrimContainer").classList.add("none");
-//     document.getElementById('videocodierung').close();
-//     video.play();
-
-//     // UI adjustments
-//     // document.getElementById("videoTrimContainer").classList.add("none");
-//     // if (document.getElementById("videocodierung").close) {
-//     //   document.getElementById("videocodierung").close();
-//     // }
-
-//     // // Revoke blob after playback
-//     // preview.onended = () => {
-//     //   URL.revokeObjectURL(url);
-//     //   preview.srcObjectUrl = null;
-//     // };
-
-//   } catch (err) {
-//     console.error("Video trimming failed:", err);
-//     alert("Trimming failed. Check console for details.");
-  
-//   } finally {
-//      modal.close();
-//   }
-// }
-async function trimVideo() {
-  if (!video.duration) {
-    alert("Video ist noch nicht geladen!");
-    return;
-  }
-  modal.showModal();
-  const duration = video.duration;
-  const startTime = duration * startPercent;
-  // const endTime = duration * endPercent;
-  const trimDuration = duration * (endPercent - startPercent);
-  const ffmpeg = await loadFFmpeg();
-
-  try {
-    modal.showModal();
-    // Fetch video data from the existing video element
-    const response = await fetch(video.src);
-    const arrayBuffer = await response.arrayBuffer();
-    const uint8 = new Uint8Array(arrayBuffer);
-
-    // Write to FFmpeg FS
-    await ffmpeg.writeFile("input.mp4", uint8);
-
-    // Trim with fast seek
-    await ffmpeg.exec([
-      "-ss", String(startTime), // seek to nearest keyframe (fast)
-      "-i", "input.mp4",
-      "-t", String(trimDuration),
-      "-c", "copy", // no re-encoding
-      "output.mp4"
-    ]);
-
-    // Read trimmed output
-    const data = await ffmpeg.readFile("output.mp4");
-    const blob = new Blob([data], {
-      type: "video/mp4"
+  // function blobToBase64(blob) {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => resolve(reader.result); // gibt ein Data-URL-String zurück (inkl. "data:video/webm;base64,...")
+  //     reader.onerror = reject;
+  //     reader.readAsDataURL(blob);
+  //   });
+  // }
+  async function blobUrlToBase64(blobUrl) {
+    const res = await fetch(blobUrl);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
-    const url = URL.createObjectURL(blob);
-
-    // Clean up old preview URL
-    // if (preview.srcObjectUrl) URL.revokeObjectURL(preview.srcObjectUrl);
-
-    video.src = url;
-    video.load();
-    videoElement.src = url;
-    document.getElementById("videoTrimContainer").classList.add("none");
-    document.getElementById('videocodierung').close();
-    video.play();
-
-    // UI adjustments
-    // document.getElementById("videoTrimContainer").classList.add("none");
-    // if (document.getElementById("videocodierung").close) {
-    //   document.getElementById("videocodierung").close();
-    // }
-
-    // // Revoke blob after playback
-    // preview.onended = () => {
-    //   URL.revokeObjectURL(url);
-    //   preview.srcObjectUrl = null;
-    // };
-
-  } catch (err) {
-    console.error("Video trimming failed:", err);
-    alert("Trimming failed. Check console for details.");
-  } finally{
-    modal.close();
   }
-}
-
-trimBtn.onclick = async () => {
-  trimVideo(false);
-};
-
-// function blobToBase64(blob) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.onloadend = () => resolve(reader.result); // gibt ein Data-URL-String zurück (inkl. "data:video/webm;base64,...")
-//     reader.onerror = reject;
-//     reader.readAsDataURL(blob);
-//   });
-// }
-async function blobUrlToBase64(blobUrl) {
-  const res = await fetch(blobUrl);
-  const blob = await res.blob();   
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob); 
-  });
-}
-
 });

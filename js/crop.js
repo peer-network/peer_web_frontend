@@ -7,9 +7,7 @@ const croppedCtx = croppedCanvas.getContext("2d");
 const aspectRatioSelect = document.getElementById("aspectRatioSelect");
 const aspectRatioInputs = document.querySelectorAll('input[name="aspectRatio"]');
 
-
 let cropImg = new Image();
-
 let isDragging = false;
 let dragStart = {
   x: 0,
@@ -23,6 +21,7 @@ let offset = {
   x: 0,
   y: 0
 };
+
 let scale = 1;
 let aspect_Ratio = 1;
 
@@ -392,7 +391,6 @@ function cropImage(imgContainer) {
   // cropcanvas.height = cropOrg.clientHeight;
   const p_element = cropOrg.parentElement.querySelector("p");
   const imageDatasrc = window.uploadedFilesMap.get(p_element.innerText);
-  //console.log(imageDatasrc);
   if (imageDatasrc) {
     cropImg.src = URL.createObjectURL(imageDatasrc);
   } else {
