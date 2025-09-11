@@ -6,7 +6,7 @@
                     <h2 class="main-heading xxl_font_size">How <strong><em>Peer</em></strong> Works?</h2>
                     <p class="md_font_size">Peer is the first social platform where your posts, likes, comments, and views help you earn real rewards.</p>
                 </div>
-                <div class="onboarding-diagram">
+                <div class="body-box onboarding-diagram">
 
                  <img src="svg/peer-interaction.svg" alt="Onboarding interaction diagram" />
                     <!-- <div class="diagram-icon icon-engage">
@@ -82,7 +82,7 @@
                     <p class="md_font_size">Your daily free pass</p>
                 </div>
 
-                <div class="onboarding-plc">
+                <div class=" body-box onboarding-plc">
                     <div class="onboarding-plc-inner">
                         <div class="box-info">
                             <svg xmlns="http://www.w3.org/2000/svg" width="65" height="64" viewBox="0 0 65 64" fill="none">
@@ -108,7 +108,7 @@
 
                     </div>
                 </div>
-                <div class="onboarding-want-more">
+                <div class=" body-box onboarding-want-more">
                     <p class="md_font_size">Want more?</p>
                     <div class="moreitem">
                         <div class="moreitem-left">
@@ -190,7 +190,7 @@
                 <div class="onboarding-header">
                     <h2 class="main-heading xxl_font_size">Engage & Earn</h2>
                 </div>
-                <div class="engage-earn-box">
+                <div class="body-box engage-earn-box">
                    
                     <div class="onboarding-post-preview">
                         <img src="svg/text-post-preview.svg" alt="Engage & Earn" />
@@ -279,7 +279,7 @@
                 <div class="onboarding-header">
                     <h2 class="main-heading xxl_font_size">Your effort = Your reward</h2>
                 </div>
-                <div class="distributed-daily-diagram">
+                <div class=" body-box distributed-daily-diagram">
                     <p class="md_font_size">The more Gems you earn, the bigger your slice of the daily pool.</p>
                     <div class="distributed-daily-preview">
                         <img src="svg/distributed-daily-digram.svg" alt="Your effort = Your reward" />
@@ -318,7 +318,7 @@
                 <div class="onboarding-header">
                     <h2 class="main-heading xxl_font_size">How to use tokens?</h2>
                 </div>
-                <div class="use-token-box">
+                <div class="body-box use-token-box">
                     <div class="token-box">
                         <span class="icon-box">
                             <svg xmlns="http://www.w3.org/2000/svg" width="60" height="59" viewBox="0 0 60 59" fill="none">

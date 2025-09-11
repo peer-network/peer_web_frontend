@@ -1972,13 +1972,13 @@ document.addEventListener("DOMContentLoaded", () => {
         //sessionStorage.setItem(file.name, base64);
         // Store base64
         window.uploadedFilesMap.set(file.name, url);
-        // element.addEventListener("loadedmetadata", async (e) => {
-        // // const videoId =  e.target.getAttribute('id');
-        // // generateThumbnails(file.name); before
-        // // generateThumbnailStrip(file, videoId);
-        // }, {
-        //   once: true
-        // });
+        element.addEventListener("loadedmetadata", async (e) => {
+        // const videoId =  e.target.getAttribute('id');
+        // generateThumbnails(file.name); before
+        // generateThumbnailStrip(file, videoId);
+        }, {
+          once: true
+        });
       }
 
       element.src = url;

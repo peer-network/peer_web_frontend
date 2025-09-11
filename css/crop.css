@@ -47,7 +47,7 @@
 }
 #videoTrim {
 	width: 100%;
-  height: 100%;
+  height: calc(100% - 130px );
 	background-color: #000;
 	margin-bottom: 40px;
 	margin-left: auto;
@@ -232,18 +232,18 @@ implement in all-post.css
 	align-items: center;
 	width: 100%;
 	height: 100px;
-	overflow-x: auto;
+	overflow: hidden;
 	position: absolute;
 	left: 0;
 	gap: 0;
-	background-color: #fff;
+  border-radius: 7px;
+	
 }
 #videoTimeline img {
 	object-fit: cover;
 	cursor: pointer;
 	border-radius: 0;
-	width: 100%;
-	height: 100%;
+	width: 10%; /* 10 images in timline */
 	display: block;
 }
 .timeline-wrapper {
@@ -375,3 +375,10 @@ implement in all-post.css
   #cropQuit::before {    width: 30px;    height: 30px;  }
 }
 
+@media screen and (max-width: 3000px) {
+  #trimButtons {
+
+    max-width: 1000px;
+   
+  }
+}
