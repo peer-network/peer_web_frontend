@@ -1879,14 +1879,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Store base64
         window.uploadedFilesMap.set(file.name, url);
         element.addEventListener("loadedmetadata", async (e) => {
-<<<<<<< HEAD
         // const videoId =  e.target.getAttribute('id');
         // generateThumbnails(file.name); before
-        // generateThumbnailStrip(file, videoId);
-=======
-          // generateThumbnails(file.name); before
-          generateThumbnailStrip(url, videoId);
->>>>>>> 8add4dbd3c61e96bc10a637b8c0adc472303911e
+        generateThumbnailStrip(file.name);
         }, {
           once: true
         });
