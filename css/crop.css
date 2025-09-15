@@ -239,7 +239,6 @@ implement in all-post.css
   border-radius: 7px;
 	
 }
-
 #videoTimeline img {
 	object-fit: cover;
 	cursor: pointer;
@@ -247,48 +246,6 @@ implement in all-post.css
 	width: 10%; /* 10 images in timline */
 	display: block;
 }
-/**/
-#longVideoTimeline {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100px;
-  overflow-x: auto;
-  position: absolute;
-  left: 0;
-  gap: 0 5px;
-}
-
-#longVideoTimeline img {
-  object-fit: contain;
-  cursor: pointer;
-  border-radius: 1rem;
-  width: 100%;
-  height: 100%;
-}
-
-#shortVideoTimeline {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100px;
-  overflow-x: auto;
-  position: absolute;
-  left: 0;
-  gap: 0 5px;
-}
-
-#shortVideoTimeline img {
-  object-fit: contain;
-  cursor: pointer;
-  border-radius: 1rem;
-  width: 100%;
-  height: 100%;
-}
-/**/
-
 .timeline-wrapper {
   width: 100%;
   max-width: 900px;

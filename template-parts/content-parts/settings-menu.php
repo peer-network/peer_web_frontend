@@ -4,5 +4,6 @@
     <li data-target="notification-settings"><a href="#" class="md_font_size">Notification Settings</a></li>
     <li data-target="prefrences"><a href="#" class="md_font_size">Prefrences</a></li>
     <li data-target="content-settings"><a href="#" class="md_font_size">Content Settings</a></li>
+    <li data-target="share-feedback"><a href="https://docs.google.com/forms/d/e/1FAIpQLSeTRecbfUTKmpYHSaE7bSawEagUpkOPagJtLqZdsec659HaGw/viewform" class="md_font_size">Share Feedback</a></li>
   </ul>
 </div>

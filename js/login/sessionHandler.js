@@ -56,7 +56,8 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
       console.log("Refreshing token now...");
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
-        const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+        //const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+        const newRefreshToken = getCookie("refreshToken");
         scheduleSilentRefresh(newAccessToken, newRefreshToken);
       }
     }, refreshIn);
@@ -105,12 +106,18 @@ async function refreshAccessToken(refreshToken) {
       }
 
       // Store updated tokens
-      const storage = localStorage.getItem('userEmail') ? localStorage : sessionStorage;
-      storage.setItem('accessToken', accessToken);
-      storage.setItem('refreshToken', newRefreshToken);
+      //const storage = localStorage.getItem('userEmail') ? localStorage : sessionStorage;
+      //storage.setItem('accessToken', accessToken);
+      //storage.setItem('refreshToken', newRefreshToken);
 
-      document.cookie = `authToken=${accessToken}; path=/; secure; SameSite=Strict`;
-      document.cookie = `refreshToken=${newRefreshToken}; path=/; secure; SameSite=Strict`;
+      //document.cookie = `authToken=${accessToken}; path=/; secure; SameSite=Strict`;
+      //document.cookie = `refreshToken=${newRefreshToken}; path=/; secure; SameSite=Strict`;
+
+  // Save updated tokens back into cookies
+  console.log('I am here');
+      setCookie("authToken", accessToken, 7);     // keep same lifetime
+      setCookie("refreshToken", newRefreshToken, 7);
+
 
       return accessToken;
     } else {
