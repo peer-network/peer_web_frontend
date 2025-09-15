@@ -1743,56 +1743,46 @@ document.addEventListener("DOMContentLoaded", () => {
     if (fileInput) fileInput.click();
   });
 
-  async function processFiles(files, id) {
-    let previewItem, previewContainer = "";
+  async function createAudioPreview(file, uploadtype, modal, ErrorCont, previewItem, id) {
+    if (id.includes("audiobackground")) {
+      if (!validateFileType(file, "image", modal, ErrorCont)) return;
+      previewItem.innerHTML = `
+        <p>${file.name}</p>
+        <img class="image-wrapper create-img none" alt="Vorschau" />
+        <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+        <img src="svg/edit.svg" class="editImage " alt="edit">
+        <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
+      const insertPosition = document.getElementById("audio-cover-image-preview");
+      insertPosition.innerHTML = ""; // Removes any existing children
+      insertPosition.appendChild(previewItem); // Adds the new one
+      return true
+    } else {
+      if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+      previewItem.classList.add("audio-item");
+      previewItem.innerHTML = `
+        <p>${file.name}</p>        
+        <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
+        <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+        <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">
+        <div class="audio_player_con" ><div class="time-info" >
+        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
 
-    modal.showModal();
+      const insertAudioPosition = document.getElementById("audio_upload_block");
+      insertAudioPosition.innerHTML = ""; // Removes any existing children
+      insertAudioPosition.appendChild(previewItem);
 
-    const types = ["video", "audio", "image"];
-    const uploadtype = types.find((wort) => id.includes(wort));
-    const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
-    ErrorCont.innerHTML = "";
-    previewContainer = (uploadtype === "image" ? document.querySelector("#preview-" + uploadtype + " .preview-track") : document.getElementById("preview-" + uploadtype))
-    for (let file of files) {
-      previewItem = document.createElement("div");
-      previewItem.className = "preview-item dragable";
-      const type = file.type.substring(0, 5);
-      if (uploadtype === "audio") {
-        if (id.includes("audiobackground")) {
-          if (!validateFileType(file, "image", modal, ErrorCont)) return;
-          previewItem.innerHTML = `
-          <p>${file.name}</p>
-          <img class="image-wrapper create-img none" alt="Vorschau" />
-          <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/edit.svg" class="editImage " alt="edit">
-          <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
-          const insertPosition = document.getElementById("audio-cover-image-preview");
-          insertPosition.innerHTML = ""; // Removes any existing children
-          insertPosition.appendChild(previewItem); // Adds the new one
-        } else {
-          if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
-          previewItem.classList.add("audio-item");
-          previewItem.innerHTML = `
-          <p>${file.name}</p>        
-          <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
-          <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-          <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">
-          <div class="audio_player_con" ><div class="time-info" >
-          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
-          </div><canvas id="waveform-preview" width="700" height="130"></canvas><span id="play-pause">Play</span></div>`;
+      const dropareaaudio = document.getElementById("drop-area-audio");
+      dropareaaudio.classList.add("none");
+      return true
+    }
+  }
 
-          const insertAudioPosition = document.getElementById("audio_upload_block");
-          insertAudioPosition.innerHTML = ""; // Removes any existing children
-          insertAudioPosition.appendChild(previewItem);
-
-          const dropareaaudio = document.getElementById("drop-area-audio");
-          dropareaaudio.classList.add("none");
-        }
-      } else if (uploadtype === "image") {
-        if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
-        previewItem.draggable = true;
-        previewItem.classList.add("dragable");
-        previewItem.innerHTML = `
+  async function createImagePreview(file, uploadtype, modal, ErrorCont, previewItem, previewContainer) {
+    if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+    previewItem.draggable = true;
+    previewItem.classList.add("dragable");
+    previewItem.innerHTML = `
         <p>${file.name}</p>
         <img class="image-wrapper create-img none" alt="Vorschau" />
         <img src="svg/logo_farbe.svg" class="loading" alt="loading">
@@ -1804,16 +1794,18 @@ document.addEventListener("DOMContentLoaded", () => {
           Click to crop
         </span>
         <img src="svg/plus2.svg" class=" btClose deletePost" alt="delete">`;
-        if (previewContainer.children.length > 0) {
-          previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
-        } else {
-          previewContainer.appendChild(previewItem);
-        }
-        //document.getElementById("drop-area-videocover").classList.add("none");
-      } else if (uploadtype === "video") {
-        if (id.includes("cover")) {
-          if (!validateFileType(file, 'image', modal, ErrorCont)) return;
-          previewItem.innerHTML = `
+    if (previewContainer.children.length > 0) {
+      previewContainer.children[0].insertAdjacentElement("afterend", previewItem);
+    } else {
+      previewContainer.appendChild(previewItem);
+    }
+    //document.getElementById("drop-area-videocover").classList.add("none");
+  }
+
+  async function createVideoPreview(file, uploadtype, modal, ErrorCont, previewItem, id) {
+    if (id.includes("cover")) {
+      if (!validateFileType(file, 'image', modal, ErrorCont)) return;
+      previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
@@ -1825,18 +1817,18 @@ document.addEventListener("DOMContentLoaded", () => {
           Click to crop
         </span>
           <img src="svg/plus2.svg" id="deletecover" class="btClose deletePost" alt="delete">`;
-          const insertPosition = document.getElementById("drop-area-videocover");
-          insertPosition.insertAdjacentElement("afterend", previewItem);
-          document.getElementById("drop-area-videocover").classList.add("none");
-        } else {
-          if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
-          previewItem.classList.add("video-item");
-          previewItem.classList.add(id);
-          previewItem.innerHTML = `
+      const insertPosition = document.getElementById("drop-area-videocover");
+      insertPosition.insertAdjacentElement("afterend", previewItem);
+      document.getElementById("drop-area-videocover").classList.add("none");
+    } else {
+      if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+      previewItem.classList.add("video-item");
+      previewItem.classList.add(id);
+      previewItem.innerHTML = `
           <p>${file.name}</p>
           <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-         
+          
           <span class="editVideo" >
             <svg xmlns="http://www.w3.org/2000/svg" width="61" height="60" viewBox="0 0 61 60" fill="none">
                 <circle cx="30.5003" cy="30.0003" r="20.7581" stroke="white" stroke-width="3"/>
@@ -1846,26 +1838,48 @@ document.addEventListener("DOMContentLoaded", () => {
           </span>
           <img src="svg/plus2.svg" id="${id.includes("short") ? "deleteshort" : "deletelong"}" class="btClose deletePost" alt="delete">`;
 
-          if (id.includes("short")) {
-            const insertPosition = document.getElementById("drop-area-videoshort");
-            insertPosition.insertAdjacentElement("afterend", previewItem);
-            document.getElementById("drop-area-videoshort").classList.add("none");
-          } else {
-            const insertPosition = document.getElementById("drop-area-videolong");
-            insertPosition.insertAdjacentElement("afterend", previewItem);
-            if (!document.getElementById("deletecover"))
-              document.getElementById("drop-area-videocover").classList.remove("none");
-            if (!document.getElementById("deleteshort"))
-              document.getElementById("drop-area-videoshort").classList.remove("none");
-            document.getElementById("drop-area-videolong").classList.add("none");
-          }
-        }
+      if (id.includes("short")) {
+        const insertPosition = document.getElementById("drop-area-videoshort");
+        insertPosition.insertAdjacentElement("afterend", previewItem);
+        document.getElementById("drop-area-videoshort").classList.add("none");
+      } else {
+        const insertPosition = document.getElementById("drop-area-videolong");
+        insertPosition.insertAdjacentElement("afterend", previewItem);
+        if (!document.getElementById("deletecover"))
+          document.getElementById("drop-area-videocover").classList.remove("none");
+        if (!document.getElementById("deleteshort"))
+          document.getElementById("drop-area-videoshort").classList.remove("none");
+        document.getElementById("drop-area-videolong").classList.add("none");
+      }
+    }
+  }
+
+  async function processFiles(files, id) {
+    let previewItem, previewContainer = "";
+    modal.showModal();
+    const types = ["video", "audio", "image"];
+    const uploadtype = types.find((wort) => id.includes(wort));
+    const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
+    ErrorCont.innerHTML = "";
+    previewContainer = (uploadtype === "image" ?
+      document.querySelector("#preview-" + uploadtype + " .preview-track") :
+      document.getElementById("preview-" + uploadtype))
+
+
+    for (let file of files) {
+      previewItem = document.createElement("div");
+      previewItem.className = "preview-item dragable";
+      if (uploadtype === "audio") {
+        await createAudioPreview(file, uploadtype, modal, ErrorCont, previewItem, id);
+      } else if (uploadtype === "image") {
+        await createImagePreview(file, uploadtype, modal, ErrorCont, previewItem, previewContainer);
+      } else if (uploadtype === "video") {
+        await createVideoPreview(file, uploadtype, modal, ErrorCont, previewItem, id);
       }
 
       // const base64 = await convertImageToBase64(file);
-      // const videoId = id.includes("short") ? "shortVideoTimeline" : "longVideoTimeline";
-
       const url = URL.createObjectURL(file);
+      const type = file.type.substring(0, 5);
       let element = null;
       if (type === "image") {
         //sessionStorage.setItem(file.name, base64);
@@ -1873,26 +1887,6 @@ document.addEventListener("DOMContentLoaded", () => {
         uploadedFilesMap.set(file.name, file);
       } else if (type === "audio") {
         element = previewItem.querySelector("audio");
-      } else if (type === "video") {
-        element = previewItem.querySelector("video");
-        //sessionStorage.setItem(file.name, base64);
-        // Store base64
-        window.uploadedFilesMap.set(file.name, url);
-        element.addEventListener("loadedmetadata", async () => {
-          // generateThumbnails(file.name); before
-          generateThumbnailStrip(file.name);
-        }, {
-          once: true
-        });
-      }
-
-      element.src = url;
-      element.classList.remove("none");
-      element.nextElementSibling ?.remove();
-      element.nextElementSibling ?.classList.remove("none");
-      if (type === "audio") {
-        //initAudioplayer(file.name, base64);
-        // initAudioplayer("audio_upload_block", base64);
         initAudioplayer("audio_upload_block", url);
         document.querySelector(".audiobackground_uploader") ?.classList.remove("none");
         document.querySelector(".recodring-block") ?.classList.add("none");
@@ -1906,12 +1900,48 @@ document.addEventListener("DOMContentLoaded", () => {
             dropareaaudio.classList.remove("none");
           });
         }
-
       } else if (type === "video") {
+        element = previewItem.querySelector("video");
+        //sessionStorage.setItem(file.name, base64);
+        // Store base64
+        window.uploadedFilesMap.set(file.name, url);
         element.autoplay = true;
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
+        element.addEventListener("loadedmetadata", async () => {
+          // generateThumbnails(file.name); before
+          generateThumbnailStrip(file.name);
+        }, {
+          once: true
+        });
       }
+
+      element.src = url;
+      element.classList.remove("none");
+      element.nextElementSibling ?.remove();
+      element.nextElementSibling ?.classList.remove("none");
+      // if (type === "audio") {
+        //initAudioplayer(file.name, base64);
+        //initAudioplayer("audio_upload_block", base64);
+        // initAudioplayer("audio_upload_block", url);
+        // document.querySelector(".audiobackground_uploader") ?.classList.remove("none");
+        // document.querySelector(".recodring-block") ?.classList.add("none");
+        // const audio_upload_block = document.getElementById("audio_upload_block");
+        // const audio_del_btn = audio_upload_block.querySelector(".preview-item .deletePost");
+        // if (audio_del_btn) {
+        //   audio_del_btn.addEventListener("click", () => {
+        //     document.querySelector(".audiobackground_uploader") ?.classList.add("none");
+        //     document.querySelector(".recodring-block") ?.classList.remove("none");
+        //     const dropareaaudio = document.getElementById("drop-area-audio");
+        //     dropareaaudio.classList.remove("none");
+        //   });
+        // }
+
+      // } else if (type === "video") {
+        // element.autoplay = true;
+        // element.loop = true;
+        // element.muted = true; // Optional: Video ohne Ton abspielen
+      // }
     } // end of for loop
 
     if (uploadtype === "audio") {
@@ -2243,74 +2273,83 @@ document.addEventListener("DOMContentLoaded", () => {
   // Configuration
   let videothumbs = {};
   async function generateThumbnailStrip(id, {
-  thumbWidth = 160,
-  THUMB_COUNT = 10
+    thumbWidth = 160,
+    THUMB_COUNT = 10
   } = {}) {
-  const video = document.getElementById(id);
-  if (!video) return console.error("No video element found:", id);
+    const video = document.getElementById(id);
+    if (!video) return console.error("No video element found:", id);
 
-  const videoId = video.getAttribute("id") || id;
-  const timeline = document.getElementById("videoTimeline");
-  if (!timeline) return console.error("No timeline container found");
-  timeline.innerHTML = "";
+    const videoId = video.getAttribute("id") || id;
+    const timeline = document.getElementById("videoTimeline");
+    if (!timeline) return console.error("No timeline container found");
+    timeline.innerHTML = "";
 
-  // Reuse if already cached
-  if (videothumbs[videoId]?.length > 0) {
-  console.log(`Using cached thumbs for ${videoId}`);
-  videothumbs[videoId].forEach(({ src }) => {
-    const img = document.createElement("img");
-    img.src = src;
-    timeline.appendChild(img);
-  });
-  return;
-  }
+    // Reuse if already cached
+    if (videothumbs[videoId] ?.length > 0) {
+      console.log(`Using cached thumbs for ${videoId}`);
+      videothumbs[videoId].forEach(({
+        src
+      }) => {
+        const img = document.createElement("img");
+        img.src = src;
+        timeline.appendChild(img);
+      });
+      return;
+    }
 
-  // Wait for metadata
-  await new Promise(res => {
-  if (video.readyState >= 1) res();
-  else video.addEventListener("loadedmetadata", res, { once: true });
-  });
+    // Wait for metadata
+    await new Promise(res => {
+      if (video.readyState >= 1) res();
+      else video.addEventListener("loadedmetadata", res, {
+        once: true
+      });
+    });
 
-  const duration = video.duration;
-  const canvas = document.createElement("canvas");
-  canvas.width = thumbWidth;
-  canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
-  const ctx = canvas.getContext("2d");
+    const duration = video.duration;
+    const canvas = document.createElement("canvas");
+    canvas.width = thumbWidth;
+    canvas.height = Math.round(video.videoHeight / video.videoWidth * thumbWidth);
+    const ctx = canvas.getContext("2d");
 
-  const times = Array.from({ length: THUMB_COUNT }, (_, i) =>
-  (i * duration) / (THUMB_COUNT - 1)
-  );
+    const times = Array.from({
+        length: THUMB_COUNT
+      }, (_, i) =>
+      (i * duration) / (THUMB_COUNT - 1)
+    );
 
-  videothumbs[videoId] = [];
+    videothumbs[videoId] = [];
 
-  // Sequential processing to avoid race conditions
-  for (const t of times) {
-  await new Promise(res => {
-    video.currentTime = t;
-    video.addEventListener("seeked", res, { once: true });
-  });
+    // Sequential processing to avoid race conditions
+    for (const t of times) {
+      await new Promise(res => {
+        video.currentTime = t;
+        video.addEventListener("seeked", res, {
+          once: true
+        });
+      });
 
-  const bitmap = await createImageBitmap(video);
-  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
+      const bitmap = await createImageBitmap(video);
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
 
-  const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
+      const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg"));
 
-  // Convert blob to base64
-  const src = await new Promise(resolve => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.readAsDataURL(blob);
-  });
+      // Convert blob to base64
+      const src = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
 
-  videothumbs[videoId].push({ time: t, src });
+      videothumbs[videoId].push({
+        time: t,
+        src
+      });
 
-  const img = document.createElement("img");
-  img.src = src;
-  timeline.appendChild(img);
-  }
-
-  console.log("Generated thumbs:", videothumbs[videoId]);
+      const img = document.createElement("img");
+      img.src = src;
+      timeline.appendChild(img);
+    }
   }
 
 
@@ -2478,7 +2517,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("pointerup", (e) => {
     if (dragging) {
       dragging = null;
-      showVideoPos() ;
+      showVideoPos();
       document.body.style.cursor = "";
       // video.currentTime = video.duration * startPercent;
       // trimVideo(true); // Video trimmen
@@ -2631,7 +2670,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Video ist noch nicht geladen!");
       return;
     }
-    
+
     // modal.showModal();
     const duration = video.duration;
     const startTime = duration * startPercent;
@@ -2639,24 +2678,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const trimDuration = duration * (endPercent - startPercent);
     const ffmpeg = await loadFFmpeg();
     // let lastUpdate = 0;
-      
+
     try {
       const bar = document.getElementById('bar');
       bar.value = 0;
-        
+
       const pct = document.getElementById('pct');
       pct.textContent = "0%";
       const nocursor = document.getElementById('focus');
       modal.showModal();
       nocursor.focus();
 
-      ffmpeg.on("progress", ({ time }) => {
+      ffmpeg.on("progress", ({
+        time
+      }) => {
         // Achtung: manche Builds liefern "time" in Sekunden, andere in ms
         const seconds = typeof time === "number" ? time / 1000000 : parseFloat(time);
         const ratio = seconds / trimDuration;
 
         const percent = Math.min(100, Math.round(ratio * 100));
-        if(seconds <= trimDuration) {
+        if (seconds <= trimDuration) {
           bar.value = percent;
           pct.textContent = percent + "%";
         }
