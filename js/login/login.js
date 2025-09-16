@@ -1,6 +1,9 @@
 const rememberMeCheckbox = document.getElementById("rememberMe");
 const emailInput = document.getElementById("email");
 
+  
+
+
 // Restore cookies
 const accessToken = getCookie("authToken");
 const refreshToken = getCookie("refreshToken");
@@ -8,6 +11,8 @@ const storedEmail = getCookie("userEmail");
 
 // Auto-login if tokens exist
 if (accessToken && refreshToken) {
+
+
   //console.log("User already logged in with token:", accessToken);
   rememberMeCheckbox.checked = true;
   
@@ -45,15 +50,16 @@ document.addEventListener("DOMContentLoaded", function () {
       if (result.status === "success" && result.ResponseCode === "10801") {
         // Use cookie helpers consistently
         if (rememberMeChecked) {
+          
           setCookie("authToken", result.accessToken,7); //7 days
           setCookie("refreshToken", result.refreshToken, 7);
           setCookie("userEmail", email, 7);
-          setCookie("remember", tru, 7);
-          setCookie("rememberMe", rememberMeChecked, 7);
+          
         } else {
           setCookie("authToken", result.accessToken);
           setCookie("refreshToken", result.refreshToken);
           setCookie("userEmail", email);
+         
         }
 
          
@@ -105,14 +111,20 @@ async function loginRequest(email, password) {
 }
 
 // Cookie helpers
+
 function setCookie(name, value, days) {
   let expires = "";
   if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (days*24*60*60*1000));
-    expires = "; expires=" + date.toUTCString();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = date.toUTCString(); // just store date
   }
-  document.cookie = name + "=" + encodeURIComponent(value || "") + expires + "; path=/; Secure; SameSite=Strict";
+  document.cookie = `${name}=${encodeURIComponent(value || "")}; expires=${expires}; path=/; Secure; SameSite=Strict`;
+
+  // Save expiry separately for later reuse
+  if (days) {
+    localStorage.setItem(name + "_expiry", expires);
+  }
 }
 
 function getCookie(name) {
@@ -124,7 +136,16 @@ function getCookie(name) {
   }
   return null;
 }
-
+// Update value but keep expiry
+function updateCookieValue(name, value) {
+  const expiry = localStorage.getItem(name + "_expiry");
+  if (expiry) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
+  }else{
+     setCookie(name, value);
+  }
+}
 function eraseCookie(name) {
-  document.cookie = name + "=; Max-Age=-99999999; path=/";
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; SameSite=Strict`;
+  localStorage.removeItem(name + "_expiry");
 }
