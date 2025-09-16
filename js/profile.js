@@ -121,24 +121,36 @@ document.addEventListener("DOMContentLoaded", () => {
   currentliquidity("token_balance");
 
   function insertPinnedBtn(card, username, mode = "profile") {
-    if (!card || card.querySelector(".pinedbtn")) return; // already pinned
+    if (!card || card.querySelector(".pinedbtn")) return; 
 
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
-    pinnedBtn.innerHTML = `<a class="button btn-blue"><img src="svg/pin.svg" alt="pin"> @${username} <span>23h</span></a>`;
+    pinnedBtn.innerHTML = `<a class="button btn-blue"><img src="svg/pin.svg" alt="pin"><span class="ad_username bold"> @${username}</span> <span class="ad_duration txt-color-gray">23h</span></a>`;
 
     const postInhalt = card.querySelector(".post-inhalt");
     const social = card.querySelector(".social");
-    const comments = card.querySelector(".post-comments");
 
     if (mode === "profile") {
-      // Insert pinnedBtn before social (above the row)
       if (postInhalt && social) {
         postInhalt.insertBefore(pinnedBtn, social);
       }
-    } else if (mode === "post") {
-      // Insert pinnedBtn inside social, after comments
-      if (social && comments) {
+    } 
+  }
+
+  function insertPinnedBtnToOpenedPost(username, mode = "post") {
+    const viewpost = document.querySelector(".viewpost");
+    if (!viewpost) return; 
+
+    const pinnedBtn = document.createElement("div");
+    pinnedBtn.classList.add("pinedbtn");
+    pinnedBtn.innerHTML = `<a class="button btn-blue"><img src="svg/pin.svg" alt="pin"><span class="ad_username bold"> @${username}</span> <span class="ad_duration txt-color-gray">23h</span></a>`;
+
+    const footer = viewpost.querySelector(".postview_footer");
+    const comments = viewpost.querySelector(".post-comments");
+    if (!footer || footer.querySelector(".pinedbtn")) return;
+
+    if (mode === "post") {
+      if (footer && comments) {
         comments.insertAdjacentElement("afterend", pinnedBtn);
       }
     }
@@ -179,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "post");
+        insertPinnedBtnToOpenedPost(username, "post");
 
         // simulate normal card click
         window.lastBoostedCard.click();
