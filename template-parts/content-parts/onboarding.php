@@ -89,21 +89,21 @@
                                 <path d="M13.5078 28.3595C13.5078 25.0458 16.1941 22.3595 19.5078 22.3595H28.9328C29.5588 22.3595 30.1161 21.9632 30.3215 21.3719V21.3719C31.3487 18.4154 34.1352 16.4336 37.265 16.4336H39.1623C42.2921 16.4336 45.0787 18.4154 46.1058 21.3719V21.3719C46.3113 21.9632 46.8686 22.3595 47.4946 22.3595H56.9196C60.2333 22.3595 62.9196 25.0458 62.9196 28.3595V50.4336C62.9196 53.7473 60.2333 56.4336 56.9196 56.4336H19.5078C16.1941 56.4336 13.5078 53.7473 13.5078 50.4336V28.3595Z" stroke="white" stroke-width="3.045"/>
                                 <rect x="29.9844" y="30.5508" width="16.4706" height="16.4706" rx="8.23529" stroke="white" stroke-width="3"/>
                             </svg>
-                            <span class="xl_font_size">1 post</span>
+                            <span class="xl_font_size"><span id="no_of_free_posts">1</span> post</span>
                         </div>
                         <div class="box-info-spacer"></div>
                         <div class="box-info">
                             <svg xmlns="http://www.w3.org/2000/svg" width="52" height="44" viewBox="0 0 52 44" fill="none">
                                 <path d="M37.2704 2.33203C32.3648 2.33203 28.1288 4.99203 26 8.87203C23.8712 4.99203 19.6352 2.33203 14.7296 2.33203C7.6976 2.33203 2 7.79203 2 14.512C2 21.232 6.3608 27.392 11.996 32.452C17.6312 37.512 26 42.332 26 42.332C26 42.332 34.0976 37.592 40.004 32.452C46.304 26.972 50 21.252 50 14.512C50 7.77203 44.3024 2.33203 37.2704 2.33203Z" fill="#FF3B3B" stroke="#FF3B3B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span class="xl_font_size">3 likes</span>
+                            <span class="xl_font_size"><span id="no_of_free_likes">3</span> likes</span>
                         </div>
                         <div class="box-info-spacer"></div>
                         <div class="box-info">
                             <svg xmlns="http://www.w3.org/2000/svg" width="56" height="44" viewBox="0 0 56 44" fill="none">
                                 <path d="M27.9994 41.832C33.0852 41.832 38.0568 40.659 42.2855 38.4614C46.5142 36.2638 49.8101 33.1402 51.7563 29.4857C53.7026 25.8312 54.2118 21.8098 53.2196 17.9302C52.2274 14.0506 49.7784 10.487 46.1822 7.6899C42.586 4.89285 38.0041 2.98804 33.016 2.21633C28.028 1.44463 22.8577 1.8407 18.159 3.35445C13.4603 4.8682 9.44431 7.43165 6.61879 10.7206C3.79327 14.0096 2.28516 17.8764 2.28516 21.832C2.28516 25.1387 3.31373 28.2565 5.1423 31.0031L2.28516 41.832L16.208 39.6098C19.7394 41.032 23.7509 41.832 27.9994 41.832Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span class="xl_font_size">4 comments</span>
+                            <span class="xl_font_size"><span id="no_of_free_comments">4</span> comments</span>
                         </div>
 
                     </div>
@@ -119,7 +119,7 @@
                             <span class="md_font_size">Extra post</span>
                         </div>
                         <div class="moreitem-right">
-                            <span class="used-tokens xl_font_size bold">20</span>
+                            <span id="extra_post_price" class="used-tokens xl_font_size bold">20</span>
                         </div>
                     </div>
                     <div class="moreitem">
@@ -130,7 +130,7 @@
                             <span class="md_font_size">Extra like</span>
                         </div>
                         <div class="moreitem-right">
-                            <span class="used-tokens xl_font_size bold">3</span>
+                            <span id="extra_like_price" class="used-tokens xl_font_size bold">3</span>
                         </div>
                     </div>
 
@@ -142,7 +142,7 @@
                             <span class="md_font_size">Extra comments</span>
                         </div>
                         <div class="moreitem-right">
-                            <span class="used-tokens xl_font_size bold">1</span>
+                            <span id="extra_comment_price" class="used-tokens xl_font_size bold">1</span>
                         </div>
                     </div>
 
@@ -154,7 +154,7 @@
                             <span class="md_font_size">Want to give a dislike?</span>
                         </div>
                         <div class="moreitem-right">
-                            <span class="used-tokens xl_font_size bold">3</span>
+                            <span id="dislike_price" class="used-tokens xl_font_size bold">3</span>
                         </div>
                     </div>
                     
@@ -206,7 +206,7 @@
                                 <span class="md_font_size bold">Got a like</span>
                             </div>
                             <div class="moreitem-right">
-                                <span class="used-tokens xl_font_size bold">+ 5</span>
+                                <span id="gems_return_like" class="used-tokens xl_font_size bold">+ 5</span>
                             </div>
                         </div>
                         <div class="moreitem">
@@ -217,7 +217,7 @@
                                 <span class="md_font_size bold">Got a dislike</span>
                             </div>
                             <div class="moreitem-right">
-                                <span class="used-tokens xl_font_size bold">- 3</span>
+                                <span id="gems_return_dislike" class="used-tokens xl_font_size bold">- 3</span>
                             </div>
                         </div>
 
@@ -229,7 +229,7 @@
                                 <span class="md_font_size bold">Got a comment</span>
                             </div>
                             <div class="moreitem-right">
-                                <span class="used-tokens xl_font_size bold">+ 2</span>
+                                <span id="gems_return_comment" class="used-tokens xl_font_size bold">+ 2</span>
                             </div>
                         </div>
 
@@ -242,7 +242,7 @@
                                 <span class="md_font_size bold">Got a view</span>
                             </div>
                             <div class="moreitem-right">
-                                <span class="used-tokens xl_font_size bold">+ 0.25</span>
+                                <span id="gems_return_view" class="used-tokens xl_font_size bold">+ 0.25</span>
                             </div>
                         </div>
                         

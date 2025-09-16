@@ -8,6 +8,8 @@ let likeCost = 0.3,
 // below variable used in wallet module
 // need to declare in global scope
 let storedUserInfo, balance = null;
+// Global variable to hold tokenomics data
+window.tokenomicsData = null;
 
 ///////////////////////////////
 document.addEventListener("DOMContentLoaded", () => {
@@ -18,7 +20,7 @@ const accessToken = getCookie("authToken");
       dailyfree();
       currentliquidity();
       getUserInfo();
-
+      fetchTokenomics();
       initOnboarding();
       // #open-onboarding anchor click par popup kholna
         const openBtn = document.querySelector("#open-onboarding");
@@ -28,11 +30,33 @@ const accessToken = getCookie("authToken");
                 showOnboardingPopup();
             });
         }
-         // Mock call to show onboarding if newuserreg=1 in URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const newuserreg = urlParams.get("newuserreg");
-        if(newuserreg && newuserreg === "1"){
-          showOnboardingPopup();
+
+        const savedUserData = localStorage.getItem("userData");
+        let newUserReg=true;
+        if (savedUserData) {
+          const parsedData = JSON.parse(savedUserData);
+
+          const onboardings = parsedData.userPreferences?.onboardingsWereShown || [];
+
+          //console.log(onboardings); 
+          // ["INTROONBOARDING"]
+
+          // Example: check if INTROONBOARDING is already shown
+          if (onboardings.includes("INTROONBOARDING")) {
+            newUserReg=false;
+          } else {
+            setTimeout(async () => {
+                await updateUserPreferences();
+              }, 100);
+            newUserReg=true;
+          }
+        }
+
+        if(newUserReg){
+          setTimeout(() => {
+              showOnboardingPopup();
+            }, 2000);
+          
         }
 
 
@@ -1590,6 +1614,7 @@ async function getUserInfo() {
             invited
             userPreferences {
                 contentFilteringSeverityLevel
+                onboardingsWereShown
             }
         }
       }
@@ -1606,10 +1631,10 @@ async function getUserInfo() {
   try {
     // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
-
+ const result = await response.json();
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
+   
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
@@ -1802,3 +1827,146 @@ function showSlide(index, slides, nav) {
     });
 }
 /*----------- End  : Onboarding screens Logic --------------*/
+
+ // Function to fetch Tokenomics
+async function fetchTokenomics() {
+
+  const accessToken = getCookie("authToken");
+  // Create headers
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+
+  const graphql = JSON.stringify({
+    query: `query GetUserInfo {
+      getTokenomics {
+        status
+        ResponseCode
+        actionTokenPrices {
+          postPrice
+          likePrice
+          dislikePrice
+          commentPrice
+        }
+        actionGemsReturns {
+          viewGemsReturn
+          likeGemsReturn
+          dislikeGemsReturn
+          commentGemsReturn
+        }
+        mintingData {
+          tokensMintedYesterday
+        }
+      }
+    }`,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  try {
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    if (response.ok && result.data && result.data.getTokenomics) {
+      window.tokenomicsData = result.data.getTokenomics;
+      /*-- Action Prices --*/
+      const extra_post_price = document.getElementById("extra_post_price");
+      const extra_like_price = document.getElementById("extra_like_price");
+      const extra_comment_price = document.getElementById("extra_comment_price");
+      const dislike_price = document.getElementById("dislike_price");
+
+      if (extra_post_price) 
+      extra_post_price.innerText = result.data.getTokenomics.actionTokenPrices.postPrice;
+      if (extra_like_price) 
+      extra_like_price.innerText = result.data.getTokenomics.actionTokenPrices.likePrice;
+      if (extra_comment_price) 
+      extra_comment_price.innerText = result.data.getTokenomics.actionTokenPrices.commentPrice;
+      if (dislike_price) 
+      dislike_price.innerText = result.data.getTokenomics.actionTokenPrices.dislikePrice;
+
+      /*-- Gems Return Prices --*/
+      const gems_return_like = document.getElementById("gems_return_like");
+      const gems_return_dislike = document.getElementById("gems_return_dislike");
+      const gems_return_comment = document.getElementById("gems_return_comment");
+      const gems_return_view = document.getElementById("gems_return_view");
+      const likeReturn = result.data.getTokenomics.actionGemsReturns.likeGemsReturn;
+      const dislikeReturn = result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
+      const commentReturn = result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
+      const viewReturn = result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
+      if (gems_return_like)  
+      gems_return_like.innerText = likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
+      if (gems_return_dislike) 
+      gems_return_dislike.innerText = dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
+      if (gems_return_comment) 
+      gems_return_comment.innerText = commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
+      if (gems_return_view) 
+      gems_return_view.innerText = viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
+    
+    
+
+
+      //console.log("Tokenomics loaded:", window.tokenomicsData);
+    } else {
+      console.error("Failed to load tokenomics:", result);
+    }
+  } catch (error) {
+    console.error("Tokenomics API error:", error);
+  }
+}
+
+async function updateUserPreferences() {
+  const accessToken = getCookie("authToken");
+  if (!accessToken) {
+    throw new Error("Auth token is missing or invalid.");
+  }
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const graphql = JSON.stringify({
+    query: `mutation UpdateUserPreferences {
+      updateUserPreferences(
+        userPreferences: { shownOnboardings: [INTROONBOARDING] }
+      ) {
+        status
+        ResponseCode
+        affectedRows {
+          onboardingsWereShown
+        }
+      }
+    }`,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers,
+    body: graphql,
+  };
+
+  try {
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
+    const {
+      status,
+      ResponseCode,
+      affectedRows
+    } = result.data.updateUserPreferences;
+
+    if (ResponseCode !== "11014" && status!=="success") console.warn("Error Message:", userfriendlymsg(ResponseCode));
+
+    return affectedRows;
+  } catch (error) {
+    console.error("Error updating User preferences:", error);
+  }
+}
