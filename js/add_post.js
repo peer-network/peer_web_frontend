@@ -917,11 +917,11 @@ document.addEventListener("DOMContentLoaded", () => {
   //BASE64 approach
   function pre_post_form_validation(post_type, postMedia) {
 
-  // Ensure postMedia is always an array
+    // Ensure postMedia is always an array
     const files = Array.isArray(postMedia) ? postMedia : [postMedia];
     const totalSizeBytes = files.reduce((sum, file) => sum + file.size, 0);
 
-  //const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(2);
+    //const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(2);
 
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
@@ -980,7 +980,7 @@ document.addEventListener("DOMContentLoaded", () => {
         imgErrorEl.textContent = "Please select at least one image.";
         hasError = true;
       } else if (totalSizeBytes > 500 * 1024 * 1024) {
-        imgErrorEl.textContent = "The image(s) size exceeds the 500MB limit. Please reduce the number or size of the images and try again." ;
+        imgErrorEl.textContent = "The image(s) size exceeds the 500MB limit. Please reduce the number or size of the images and try again.";
         hasError = true;
       } else if (postMedia.length > 20) {
         imgErrorEl.textContent = "You can upload up to 20 images per post. Please remove some images and try again.";
@@ -1001,7 +1001,7 @@ document.addEventListener("DOMContentLoaded", () => {
     break;
 
     case "video": {
-      
+
       if (postMedia.length === 0) {
         videoErrorEl.textContent = "Please select video.";
         hasError = true;
@@ -1067,7 +1067,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //       }
   //       break;
   //     case "video":{
-        
+
   //       if (!files || files.length === 0) {
   //         videoErrorEl.textContent = "Please select a video.";
   //         hasError = true;
@@ -1933,28 +1933,7 @@ document.addEventListener("DOMContentLoaded", () => {
       element.classList.remove("none");
       element.nextElementSibling ?.remove();
       element.nextElementSibling ?.classList.remove("none");
-      // if (type === "audio") {
-        //initAudioplayer(file.name, base64);
-        //initAudioplayer("audio_upload_block", base64);
-        // initAudioplayer("audio_upload_block", url);
-        // document.querySelector(".audiobackground_uploader") ?.classList.remove("none");
-        // document.querySelector(".recodring-block") ?.classList.add("none");
-        // const audio_upload_block = document.getElementById("audio_upload_block");
-        // const audio_del_btn = audio_upload_block.querySelector(".preview-item .deletePost");
-        // if (audio_del_btn) {
-        //   audio_del_btn.addEventListener("click", () => {
-        //     document.querySelector(".audiobackground_uploader") ?.classList.add("none");
-        //     document.querySelector(".recodring-block") ?.classList.remove("none");
-        //     const dropareaaudio = document.getElementById("drop-area-audio");
-        //     dropareaaudio.classList.remove("none");
-        //   });
-        // }
-
-      // } else if (type === "video") {
-        // element.autoplay = true;
-        // element.loop = true;
-        // element.muted = true; // Optional: Video ohne Ton abspielen
-      // }
+      
     } // end of for loop
 
     if (uploadtype === "audio") {
@@ -1981,21 +1960,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".deletePost").forEach(addDeleteListener);
     }
 
-    let currentIndex = 0;
-
-    function scrollToIndex(index) {
-      const previewTrack = document.querySelector("#preview-image .preview-track");
-      const previewItems = previewTrack.querySelectorAll(".preview-item");
-      if (index < 0 || index >= previewItems.length) return;
-      // Sum widths of all items before the target index
-      let offset = 0;
-      for (let i = 0; i < index; i++) {
-        offset += previewItems[i].offsetWidth + 20; // Add 20px gap
-      }
-      previewTrack.style.transform = `translateX(-${offset}px)`;
-      currentIndex = index;
-    }
-
     document.querySelector(".next-button").addEventListener("click", () => {
       const previewItems = document.querySelectorAll("#preview-image .preview-track .preview-item");
       if (currentIndex < previewItems.length - 1) {
@@ -2009,54 +1973,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    function handleImageDelete(event) {
-      event.preventDefault();
-      const previewTrack = document.querySelector("#preview-image .preview-track");
-      const previewItem = event.target.closest(".preview-item");
-      previewItem.remove();
-
-      const items = previewTrack.querySelectorAll(".preview-item");
-      const totalItems = items.length;
-
-      // Clamp index
-      if (currentIndex >= totalItems) {
-        currentIndex = totalItems - 1;
-      }
-      setTimeout(toggleScrollButtons, 200);
-      imageItemCount();
-      scrollToIndex(currentIndex);
-    }
-
-    const container = document.querySelector('.preview-track-wrapper');
-    const track = container.querySelector('.preview-track');
-    const nextBtn = document.querySelector('.next-button');
-    const prevBtn = document.querySelector('.prev-button');
-
-    function isElementInViewportX(child, container) {
-      const containerRect = container.getBoundingClientRect();
-      const childRect = child.getBoundingClientRect();
-
-      return (
-        childRect.left >= containerRect.left &&
-        childRect.right <= containerRect.right
-      );
-    }
-
-    function toggleScrollButtons() {
-      const isVisible = isElementInViewportX(track, container);
-      if (!isVisible) {
-        nextBtn.classList.remove('none');
-        prevBtn.classList.remove('none');
-        document.getElementById("preview-image").classList.add("enbale_more_upload_btn");
-      } else {
-        nextBtn.classList.add('none');
-        prevBtn.classList.add('none');
-        document.getElementById("preview-image").classList.remove("enbale_more_upload_btn")
-      }
-      // console.log("Is first item visible?", isElementInViewportX(track, container));
-      imageItemCount();
-    }
-
     // Call once on load
     setTimeout(toggleScrollButtons, 200);
 
@@ -2064,16 +1980,77 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('resize', toggleScrollButtons);
     container.addEventListener('scroll', toggleScrollButtons);
 
-    function imageItemCount() {
-      const image_container = document.getElementById("preview-image");
-      const imageItemCount = image_container.querySelectorAll(".preview-item").length;
-      if (imageItemCount > 0) {
-        image_container.classList.add("image_added");
-      } else {
-        image_container.classList.remove("image_added");
-      }
-    }
   } // END OF PROCESS-FILES
+
+  function scrollToIndex(index) {
+    let currentIndex = 0;
+    const previewTrack = document.querySelector("#preview-image .preview-track");
+    const previewItems = previewTrack.querySelectorAll(".preview-item");
+    if (index < 0 || index >= previewItems.length) return;
+    // Sum widths of all items before the target index
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      offset += previewItems[i].offsetWidth + 20; // Add 20px gap
+    }
+    previewTrack.style.transform = `translateX(-${offset}px)`;
+    currentIndex = index;
+  }
+
+  function handleImageDelete(event) {
+    event.preventDefault();
+    const previewTrack = document.querySelector("#preview-image .preview-track");
+    const previewItem = event.target.closest(".preview-item");
+    previewItem.remove();
+
+    const items = previewTrack.querySelectorAll(".preview-item");
+    const totalItems = items.length;
+
+    // Clamp index
+    if (currentIndex >= totalItems) {
+      currentIndex = totalItems - 1;
+    }
+    setTimeout(toggleScrollButtons, 200);
+    imageItemCount();
+    scrollToIndex(currentIndex);
+  }
+
+  function isElementInViewportX(child, container) {
+    const containerRect = container.getBoundingClientRect();
+    const childRect = child.getBoundingClientRect();
+
+    return (
+      childRect.left >= containerRect.left &&
+      childRect.right <= containerRect.right
+    );
+  }
+
+  function toggleScrollButtons() {
+    const container = document.querySelector('.preview-track-wrapper');
+    const track = container.querySelector('.preview-track');
+    const nextBtn = document.querySelector('.next-button');
+    const prevBtn = document.querySelector('.prev-button');
+
+    const isVisible = isElementInViewportX(track, container);
+    if (!isVisible) {
+      nextBtn.classList.remove('none');
+      prevBtn.classList.remove('none');
+      document.getElementById("preview-image").classList.add("enbale_more_upload_btn");
+    } else {
+      nextBtn.classList.add('none');
+      prevBtn.classList.add('none');
+      document.getElementById("preview-image").classList.remove("enbale_more_upload_btn")
+    }
+    // console.log("Is first item visible?", isElementInViewportX(track, container));
+    imageItemCount();
+  }
+
+  function imageItemCount() {
+    const image_container = document.getElementById("preview-image");
+    const imageItemCount = image_container.querySelectorAll(".preview-item").length;
+    imageItemCount > 0 ?
+      image_container.classList.add("image_added") :
+      image_container.classList.remove("image_added");
+  }
 
   function validateFileType(file, uploadType, modal, errorContainer) {
     const allowedTypesMap = {
@@ -2283,7 +2260,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // }
 
-  // Configuration
+  // Configurationf
   let videothumbs = {};
   async function generateThumbnailStrip(id, {
     thumbWidth = 160,
