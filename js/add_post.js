@@ -1973,6 +1973,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    const container = document.querySelector('.preview-track-wrapper');
     // Call once on load
     setTimeout(toggleScrollButtons, 200);
 
