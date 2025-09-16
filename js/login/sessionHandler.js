@@ -37,8 +37,8 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     // Override for testing (refresh in 2 minutes instead of 45)
     const isTesting = true;
     if (isTesting) {
-      exp = Date.now() + (2 * 60 * 1000)  + buffer; // 2 minutes from now
-      console.warn(" TEST MODE: Overriding token expiry to 2 minutes from now");
+      exp = Date.now() + (0.3 * 60 * 1000)  + buffer; // 5 minutes from now
+      console.warn(" TEST MODE: Overriding token expiry to 5 minutes from now");
     }
 
    
@@ -114,9 +114,14 @@ async function refreshAccessToken(refreshToken) {
       //document.cookie = `refreshToken=${newRefreshToken}; path=/; secure; SameSite=Strict`;
 
   // Save updated tokens back into cookies
-  console.log('I am here');
-      setCookie("authToken", accessToken, 7);     // keep same lifetime
-      setCookie("refreshToken", newRefreshToken, 7);
+
+          
+          updateCookieValue("authToken", accessToken); // keep same lifetime
+          updateCookieValue("refreshToken", newRefreshToken);
+          
+        
+
+     
 
 
       return accessToken;
