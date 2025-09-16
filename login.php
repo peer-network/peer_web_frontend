@@ -28,10 +28,11 @@ if (isset($_GET['message'])) {
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
     <script src="js/password.js?<?php echo filemtime('js/password.js'); ?>" defer></script>
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
+    <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
      <script src="js/login/sessionHandler.js?<?php echo filemtime('js/login/sessionHandler.js'); ?>" defer></script>
+    <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
     <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
-    <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
    
     <!-- <script src="sw_instal.min.js" async></script> -->
     <?php

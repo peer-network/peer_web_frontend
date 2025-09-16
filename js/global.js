@@ -1801,4 +1801,182 @@ function showSlide(index, slides, nav) {
         if (i === index) d.classList.add("active");
     });
 }
+"use strict";
+const accessToken = getCookie("authToken");
+const refreshToken = getCookie("refreshToken");
+const storedEmail = getCookie("userEmail");
+// function scheduleSilentRefresh(accessToken, refreshToken) {
+//   try {
+//     const payload = JSON.parse(atob(accessToken.split('.')[1]));
+//     console.log(payload)
+//     const exp = payload.exp * 1000;
+//     const buffer = (3 * 60) * 1000; // refresh 3 min before expiry
+//     const refreshIn = exp - Date.now() - buffer;
+
+//     console.log('exp ', exp)
+//     console.log('refreshIn ', refreshIn)
+
+//     if (refreshIn <= 0) return;
+
+//     setTimeout(async () => {
+//       const newAccessToken = await refreshAccessToken(refreshToken);
+//       if (newAccessToken) {
+//         const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+//         scheduleSilentRefresh(newAccessToken, newRefreshToken);
+//       }
+//     }, refreshIn);
+//   } catch (err) {
+//     console.error("Error in scheduling token refresh:", err);
+//   }
+// }
+
+function scheduleSilentRefresh(accessToken, refreshToken) {
+  try {
+    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    console.log("Decoded JWT payload:", payload);
+
+    // Original expiry time (from backend)
+    let exp = payload.exp * 1000;
+
+    const buffer = .5 * 60 * 1000; // refresh 3 minutes before expiry
+    // Override for testing (refresh in 2 minutes instead of 45)
+    const isTesting = false;
+    if (isTesting) {
+      exp = Date.now()  + buffer; // 30 seconds from now
+      console.warn(" TEST MODE: Overriding token expiry to 30 seconds from now");
+    }
+
+   
+    const refreshIn = exp - Date.now();
+
+    console.log("exp (ms):", exp);
+    console.log("refreshIn (ms):", refreshIn);
+
+    if (refreshIn <= 0) {
+      console.warn(" refreshIn is <= 0 — skipping setTimeout");
+      return;
+    }
+
+    setTimeout(async () => {
+
+      console.log("Refreshing token now...");
+      const newAccessToken = await refreshAccessToken(refreshToken);
+      if (newAccessToken) {
+        //const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+        const newRefreshToken = getCookie("refreshToken");
+        scheduleSilentRefresh(newAccessToken, newRefreshToken);
+        console.log("New AuthToken:", newAccessToken);
+      }
+    }, refreshIn);
+  } catch (err) {
+    console.error("Error in scheduling token refresh:", err);
+  }
+}
+
+async function refreshAccessToken(refreshToken) {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+
+  const graphql = JSON.stringify({
+    query: `mutation RefreshToken {
+      refreshToken(refreshToken: "${refreshToken}") {
+        status
+        ResponseCode
+        accessToken
+        refreshToken
+      }
+    }`,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers,
+    body: graphql,
+    redirect: "follow",
+  };
+
+  try {
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+
+    if (response.ok && result.data && result.data.refreshToken) {
+      const {
+        status,
+        ResponseCode,
+        accessToken,
+        refreshToken: newRefreshToken
+      } = result.data.refreshToken;
+
+      if (status !== "success" && ( ResponseCode == "10801" || ResponseCode == "10901")) {
+        throw new Error("Refresh failed with code: " + ResponseCode);
+      }
+
+      // Store updated tokens
+      //const storage = localStorage.getItem('userEmail') ? localStorage : sessionStorage;
+      //storage.setItem('accessToken', accessToken);
+      //storage.setItem('refreshToken', newRefreshToken);
+
+      //document.cookie = `authToken=${accessToken}; path=/; secure; SameSite=Strict`;
+      //document.cookie = `refreshToken=${newRefreshToken}; path=/; secure; SameSite=Strict`;
+
+  // Save updated tokens back into cookies
+
+          
+          updateCookieValue("authToken", accessToken); // keep same lifetime
+          updateCookieValue("refreshToken", newRefreshToken);
+          
+        
+
+     
+
+
+      return accessToken;
+    } else {
+      throw new Error("Invalid response from refresh mutation");
+    }
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    return null;
+  }
+}
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = date.toUTCString(); // just store date
+  }
+  document.cookie = `${name}=${encodeURIComponent(value || "")}; expires=${expires}; path=/; Secure; SameSite=Strict`;
+
+  // Save expiry separately for later reuse
+  if (days) {
+    localStorage.setItem(name + "_expiry", expires);
+  }
+}
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for(let c of ca) {
+    c = c.trim();
+    if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length));
+  }
+  return null;
+}
+// Update value but keep expiry
+function updateCookieValue(name, value) {
+  const expiry = localStorage.getItem(name + "_expiry");
+  if (expiry) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
+  }else{
+     setCookie(name, value);
+  }
+}
+function eraseCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; SameSite=Strict`;
+  localStorage.removeItem(name + "_expiry");
+}
+
+scheduleSilentRefresh(accessToken, refreshToken);
 /*----------- End  : Onboarding screens Logic --------------*/
