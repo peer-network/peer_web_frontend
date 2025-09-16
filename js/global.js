@@ -45,15 +45,13 @@ const accessToken = getCookie("authToken");
           if (onboardings.includes("INTROONBOARDING")) {
             newUserReg=false;
           } else {
-            setTimeout(async () => {
-                await updateUserPreferences();
-              }, 100);
             newUserReg=true;
           }
         }
 
         if(newUserReg){
-          setTimeout(() => {
+          setTimeout(async () => {
+             await updateUserPreferences();
               showOnboardingPopup();
             }, 2000);
           
