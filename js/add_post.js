@@ -1869,6 +1869,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function processFiles(files, id) {
     let previewItem, previewContainer = "";
+    let currentIndex = 0;
     modal.showModal();
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
@@ -1933,7 +1934,7 @@ document.addEventListener("DOMContentLoaded", () => {
       element.classList.remove("none");
       element.nextElementSibling ?.remove();
       element.nextElementSibling ?.classList.remove("none");
-      
+
     } // end of for loop
 
     if (uploadtype === "audio") {
@@ -1963,16 +1964,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".next-button").addEventListener("click", () => {
       const previewItems = document.querySelectorAll("#preview-image .preview-track .preview-item");
       if (currentIndex < previewItems.length - 1) {
-        scrollToIndex(currentIndex + 1);
+        currentIndex = scrollToIndex(currentIndex + 1);
       }
     });
 
     document.querySelector(".prev-button").addEventListener("click", () => {
       if (currentIndex > 0) {
-        scrollToIndex(currentIndex - 1);
+        currentIndex = scrollToIndex(currentIndex - 1);
       }
     });
 
+    const container = document.querySelector('.preview-track-wrapper');
     // Call once on load
     setTimeout(toggleScrollButtons, 200);
 
@@ -1983,7 +1985,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } // END OF PROCESS-FILES
 
   function scrollToIndex(index) {
-    let currentIndex = 0;
+
     const previewTrack = document.querySelector("#preview-image .preview-track");
     const previewItems = previewTrack.querySelectorAll(".preview-item");
     if (index < 0 || index >= previewItems.length) return;
@@ -1993,7 +1995,7 @@ document.addEventListener("DOMContentLoaded", () => {
       offset += previewItems[i].offsetWidth + 20; // Add 20px gap
     }
     previewTrack.style.transform = `translateX(-${offset}px)`;
-    currentIndex = index;
+    return index;
   }
 
   function handleImageDelete(event) {
