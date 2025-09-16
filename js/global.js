@@ -403,7 +403,7 @@ function postdetail(objekt,CurrentUserID) {
             const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
             donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
             donwloadAnchor = newdonwloadAnchor;
-          donwloadAnchor.setAttribute("href", "");
+          //donwloadAnchor.setAttribute("href", "");
 
 
 
@@ -411,7 +411,7 @@ function postdetail(objekt,CurrentUserID) {
           donwloadAnchor.addEventListener("click", (e) => {
             e.preventDefault();
             const downloadUrl=e.target.getAttribute("href");
-            console.log(downloadUrl);
+           // console.log(downloadUrl);
             if(downloadUrl!=""){
               //forceDownload(downloadUrl);
             }
@@ -760,9 +760,12 @@ function postdetail(objekt,CurrentUserID) {
 
                 sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
                 if(donwloadAnchor){
+                  
                   const img = targetItem.querySelector("img");
                   const imgSrc = img ? img.src : null;
+                  
                     donwloadAnchor.setAttribute("href", imgSrc);
+                    
                   }
 
                 // Manage active class
@@ -870,9 +873,7 @@ function postdetail(objekt,CurrentUserID) {
             );
           }
 
-         if(donwloadAnchor){
-            donwloadAnchor.setAttribute("href", "");
-          }
+         
 
 
 

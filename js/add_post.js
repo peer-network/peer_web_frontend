@@ -915,159 +915,172 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //BASE64 approach
-  // function pre_post_form_validation(post_type, postMedia) {
-  //   const titleErrorEl = document.getElementById("titleError");
-  //   const descErrorEl = document.getElementById("descriptionError");
-  //   const imgErrorEl = document.getElementById("imageError");
-  //   const audioErrorEl = document.getElementById("audioError");
-  //   const videoErrorEl = document.getElementById("videoError");
+  function pre_post_form_validation(post_type, postMedia) {
 
-  //   // Clear old errors
-  //   titleErrorEl.textContent = "";
-  //   descErrorEl.textContent = "";
-  //   // tagErrorEl.textContent = "";
-  //   imgErrorEl.textContent = "";
-  //   audioErrorEl.textContent = "";
-  //   videoErrorEl.textContent = "";
-  //   const title = titleEl.value.trim();
-  //   const description = descEl.value.trim();
-  //   // Validation
-  //   let hasError = false;
-  //   const title_char_count = setupCharCounter(titleEl);
-  //   if (!title) {
-  //     titleErrorEl.textContent = "Title is required.";
-  //     hasError = true;
-  //   } else if (title.length < 2) {
-  //     titleErrorEl.textContent = "Title must be at least 2 character.";
-  //     hasError = true;
-  //   } else if (!title_char_count) {
-  //     hasError = true;
+  // Ensure postMedia is always an array
+    const files = Array.isArray(postMedia) ? postMedia : [postMedia];
+    const totalSizeBytes = files.reduce((sum, file) => sum + file.size, 0);
 
-  //   }
-  //   const dec_char_count = setupCharCounter(descEl);
-  //   if (!description && post_type == 'text') {
-  //     descErrorEl.textContent = "Description is required.";
-  //     hasError = true;
-  //     //} else if (description.length < 10) {
-  //     //descErrorEl.textContent = "Description must be at least 10 characters.";
-  //     //hasError = true;
-  //   } else if (!dec_char_count) {
-  //     hasError = true;
-  //   }
+  //const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(2);
 
-  //   /*if (tags.length === 0) {
-  //     tagErrorEl.textContent = "Please add at least one tag.";
-  //     hasError = true;
-  //   }*/
-
-  //   switch (post_type) {
-  //     case "text": {
-  //       if (postMedia.join("").length > 5 * 1024 * 1024) {
-  //         descErrorEl.textContent = "The text size exceeds the 5MB limit. Please upload a smaller text.";
-  //         hasError = true;
-  //       }
-  //     }
-  //     break;
-  //   case "image": {
-  //     if (postMedia.length === 0) {
-  //       imgErrorEl.textContent = "Please select at least one image.";
-  //       hasError = true;
-  //     } else if (postMedia.join("").length > 5 * 1024 * 1024) {
-  //       imgErrorEl.textContent = "The image(s) size exceeds the 5MB limit. Please reduce the number or size of the images and try again.";
-  //       hasError = true;
-  //     } else if (postMedia.length > 20) {
-  //       imgErrorEl.textContent = "You can upload up to 20 images per post. Please remove some images and try again.";
-  //       hasError = true;
-  //     }
-  //   }
-  //   break;
-
-  //   case "audio": {
-  //     if (postMedia.length === 0) {
-  //       audioErrorEl.textContent = "Please upload audio or record audio.";
-  //       hasError = true;
-  //     } else if (postMedia.join("").length > 5 * 1024 * 1024) {
-  //       audioErrorEl.textContent = "The audio size exceeds the 5MB limit. Please reduce the  size of the audio and try again.";
-  //       hasError = true;
-  //     }
-  //   }
-  //   break;
-
-  //   case "video": {
-  //     if (postMedia.length === 0) {
-  //       videoErrorEl.textContent = "Please select video.";
-  //       hasError = true;
-  //     } else if (postMedia.join("").length > 5 * 1024 * 1024) {
-  //       videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
-  //       hasError = true;
-  //     }
-  //   }
-  //   break;
-
-  //   default:
-  //     console.warn("Unsupported post type:", post_type);
-  //     break;
-  //   }
-
-  //   return hasError;
-  // }
-
-  //MULTIPART approach
-  function pre_post_form_validation(post_type, files) {
     const titleErrorEl = document.getElementById("titleError");
     const descErrorEl = document.getElementById("descriptionError");
     const imgErrorEl = document.getElementById("imageError");
     const audioErrorEl = document.getElementById("audioError");
     const videoErrorEl = document.getElementById("videoError");
+
+    // Clear old errors
     titleErrorEl.textContent = "";
     descErrorEl.textContent = "";
+    // tagErrorEl.textContent = "";
     imgErrorEl.textContent = "";
     audioErrorEl.textContent = "";
     videoErrorEl.textContent = "";
-
     const title = titleEl.value.trim();
     const description = descEl.value.trim();
+    // Validation
     let hasError = false;
-
-    // Title check
+    const title_char_count = setupCharCounter(titleEl);
     if (!title) {
       titleErrorEl.textContent = "Title is required.";
       hasError = true;
     } else if (title.length < 2) {
-      titleErrorEl.textContent = "Title must be at least 2 characters.";
+      titleErrorEl.textContent = "Title must be at least 2 character.";
+      hasError = true;
+    } else if (!title_char_count) {
+      hasError = true;
+
+    }
+    const dec_char_count = setupCharCounter(descEl);
+    if (!description && post_type == 'text') {
+      descErrorEl.textContent = "Description is required.";
+      hasError = true;
+      //} else if (description.length < 10) {
+      //descErrorEl.textContent = "Description must be at least 10 characters.";
+      //hasError = true;
+    } else if (!dec_char_count) {
       hasError = true;
     }
 
-    // Description check for text posts
-    if (post_type === "text" && !description) {
-      descErrorEl.textContent = "Text content cannot be empty.";
+    /*if (tags.length === 0) {
+      tagErrorEl.textContent = "Please add at least one tag.";
       hasError = true;
-    }
+    }*/
 
-    // File check for media posts
     switch (post_type) {
-      case "image":
-        if (!files || files.length === 0) {
-          imgErrorEl.textContent = "Please select at least one image.";
+      case "text": {
+        if (totalSizeBytes > 500 * 1024 * 1024) {
+          descErrorEl.textContent = "The text size exceeds the 500MB limit. Please upload a smaller text.";
           hasError = true;
         }
-        break;
-      case "audio":
-        if (!files || files.length === 0) {
-          audioErrorEl.textContent = "Please upload or record audio.";
-          hasError = true;
-        }
-        break;
-      case "video":
-        if (!files || files.length === 0) {
-          videoErrorEl.textContent = "Please select a video.";
-          hasError = true;
-        }
-        break;
+      }
+      break;
+    case "image": {
+      if (postMedia.length === 0) {
+        imgErrorEl.textContent = "Please select at least one image.";
+        hasError = true;
+      } else if (totalSizeBytes > 500 * 1024 * 1024) {
+        imgErrorEl.textContent = "The image(s) size exceeds the 500MB limit. Please reduce the number or size of the images and try again." ;
+        hasError = true;
+      } else if (postMedia.length > 20) {
+        imgErrorEl.textContent = "You can upload up to 20 images per post. Please remove some images and try again.";
+        hasError = true;
+      }
+    }
+    break;
+
+    case "audio": {
+      if (postMedia.length === 0) {
+        audioErrorEl.textContent = "Please upload audio or record audio.";
+        hasError = true;
+      } else if (totalSizeBytes > 500 * 1024 * 1024) {
+        audioErrorEl.textContent = "The audio size exceeds the 500MB limit. Please reduce the  size of the audio and try again.";
+        hasError = true;
+      }
+    }
+    break;
+
+    case "video": {
+      
+      if (postMedia.length === 0) {
+        videoErrorEl.textContent = "Please select video.";
+        hasError = true;
+      } else if (totalSizeBytes > 500 * 1024 * 1024) {
+        videoErrorEl.textContent = "The video(s) size exceeds the 500MB limit. Please reduce the  size of the video and try again.";
+        hasError = true;
+      }
+    }
+    break;
+
+    default:
+      console.warn("Unsupported post type:", post_type);
+      break;
     }
 
     return hasError;
   }
+
+  //MULTIPART approach
+  // function pre_post_form_validation(post_type, files) {
+  //   const titleErrorEl = document.getElementById("titleError");
+  //   const descErrorEl = document.getElementById("descriptionError");
+  //   const imgErrorEl = document.getElementById("imageError");
+  //   const audioErrorEl = document.getElementById("audioError");
+  //   const videoErrorEl = document.getElementById("videoError");
+  //   titleErrorEl.textContent = "";
+  //   descErrorEl.textContent = "";
+  //   imgErrorEl.textContent = "";
+  //   audioErrorEl.textContent = "";
+  //   videoErrorEl.textContent = "";
+
+  //   const title = titleEl.value.trim();
+  //   const description = descEl.value.trim();
+  //   let hasError = false;
+
+  //   // Title check
+  //   if (!title) {
+  //     titleErrorEl.textContent = "Title is required.";
+  //     hasError = true;
+  //   } else if (title.length < 2) {
+  //     titleErrorEl.textContent = "Title must be at least 2 characters.";
+  //     hasError = true;
+  //   }
+
+  //   // Description check for text posts
+  //   if (post_type === "text" && !description) {
+  //     descErrorEl.textContent = "Text content cannot be empty.";
+  //     hasError = true;
+  //   }
+
+  //   // File check for media posts
+  //   switch (post_type) {
+  //     case "image":
+  //       if (!files || files.length === 0) {
+  //         imgErrorEl.textContent = "Please select at least one image.";
+  //         hasError = true;
+  //       }
+  //       break;
+  //     case "audio":
+  //       if (!files || files.length === 0) {
+  //         audioErrorEl.textContent = "Please upload or record audio.";
+  //         hasError = true;
+  //       }
+  //       break;
+  //     case "video":{
+        
+  //       if (!files || files.length === 0) {
+  //         videoErrorEl.textContent = "Please select a video.";
+  //         hasError = true;
+  //       } else if (files.size > 500 * 1024 * 1024) {
+  //        videoErrorEl.textContent = "The video(s) size exceeds the 5MB limit. Please reduce the  size of the video and try again.";
+  //         hasError = true;
+  //       }
+  //     }
+  //       break;
+  //   }
+
+  //   return hasError;
+  // }
 
   document.getElementById("previewButton").addEventListener("click", async function () {
     const previewSection = document.getElementById('previewSection');
