@@ -1,5 +1,4 @@
 // :TODO VIEWS
-
 document.addEventListener("DOMContentLoaded", () => {
   const post_loader = document.getElementById("post_loader");
   let observer;
@@ -335,7 +334,4 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error in postsLaden():", err);
     }
   }
- 
-
 });
-
