@@ -19,7 +19,7 @@ const accessToken = getCookie("authToken");
       getUser();
       dailyfree();
       currentliquidity();
-      const userData=await getUserInfo();
+      const userData = await getUserInfo();
       fetchTokenomics();
       initOnboarding();
       // #open-onboarding anchor click par popup kholna
@@ -44,8 +44,6 @@ const accessToken = getCookie("authToken");
             }, 2000);
           }
         }
-
-
 
       window.addEventListener("online", updateOnlineStatus);
       window.addEventListener("offline", updateOnlineStatus);
@@ -738,16 +736,7 @@ function postdetail(objekt,CurrentUserID) {
             const nextBtn = document.querySelector('.next_button');
             const prevBtn = document.querySelector('.prev_button');
 
-            // function isElementInViewportX(child, thumbsWrapper) {
-            //   const thumbContainerRect = thumbsWrapper.getBoundingClientRect();
-            //   const thumbChildRect = child.getBoundingClientRect();
-
-            //   return (
-            //     thumbChildRect.left >= thumbContainerRect.left &&
-            //     thumbChildRect.right <= thumbContainerRect.right
-            //   );
-            // }
-
+        
             function toggleTheScrollButtons() {
               const totalWidth = sliderThumb.scrollWidth;   
               const visibleWidth = thumbsWrapper.clientWidth; 
@@ -1520,24 +1509,21 @@ async function fetchPostByID(postID) {
         return null;
     }
 }
-
-
-
 /*------------ End : View Post Detail Golobal Function -------------*/
 
 /*----------- Start : FeedbackPopup Logic --------------*/
 
-function setCookie(name, value, days = 365) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
-}
+// function setCookie(name, value, days = 365) {
+//   const expires = new Date(Date.now() + days * 864e5).toUTCString();
+//   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+// }
 
-function getCookie(name) {
-  return document.cookie.split('; ').reduce((r, v) => {
-    const parts = v.split('=');
-    return parts[0] === name ? decodeURIComponent(parts[1]) : r
-  }, '');
-}
+// function getCookie(name) {
+//   return document.cookie.split('; ').reduce((r, v) => {
+//     const parts = v.split('=');
+//     return parts[0] === name ? decodeURIComponent(parts[1]) : r
+//   }, '');
+// }
 
 const POPUP_KEY = 'feedbackPopupData';
 
@@ -1872,39 +1858,92 @@ function showSlide(index, slides, nav) {
         if (i === index) d.classList.add("active");
     });
 }
+
 /*----------- End  : Onboarding screens Logic --------------*/
 
- // Function to fetch Tokenomics
-async function fetchTokenomics() {
+const accessToken = getCookie("authToken");
+const refreshToken = getCookie("refreshToken");
+const storedEmail = getCookie("userEmail");
+// function scheduleSilentRefresh(accessToken, refreshToken) {
+//   try {
+//     const payload = JSON.parse(atob(accessToken.split('.')[1]));
+//     console.log(payload)
+//     const exp = payload.exp * 1000;
+//     const buffer = (3 * 60) * 1000; // refresh 3 min before expiry
+//     const refreshIn = exp - Date.now() - buffer;
 
-  const accessToken = getCookie("authToken");
-  // Create headers
+//     console.log('exp ', exp)
+//     console.log('refreshIn ', refreshIn)
+
+//     if (refreshIn <= 0) return;
+
+//     setTimeout(async () => {
+//       const newAccessToken = await refreshAccessToken(refreshToken);
+//       if (newAccessToken) {
+//         const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+//         scheduleSilentRefresh(newAccessToken, newRefreshToken);
+//       }
+//     }, refreshIn);
+//   } catch (err) {
+//     console.error("Error in scheduling token refresh:", err);
+//   }
+// }
+
+function scheduleSilentRefresh(accessToken, refreshToken) {
+  try {
+    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    console.log("Decoded JWT payload:", payload);
+
+    // Original expiry time (from backend)
+    let exp = payload.exp * 1000;
+
+    const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
+    // Override for testing (refresh in 2 minutes instead of 45)
+    const isTesting = false;
+    if (isTesting) {
+      exp = Date.now()  + buffer; // 30 seconds from now
+      console.warn(" TEST MODE: Overriding token expiry to 30 seconds from now");
+    }
+
+   
+    const refreshIn = exp - Date.now();
+
+    console.log("exp (ms):", exp);
+    console.log("refreshIn (ms):", refreshIn);
+
+    if (refreshIn <= 0) {
+      console.warn(" refreshIn is <= 0 — skipping setTimeout");
+      return;
+    }
+
+    setTimeout(async () => {
+
+      console.log("Refreshing token now...");
+      const newAccessToken = await refreshAccessToken(refreshToken);
+      if (newAccessToken) {
+        //const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+        const newRefreshToken = getCookie("refreshToken");
+        scheduleSilentRefresh(newAccessToken, newRefreshToken);
+        console.log("New AuthToken:", newAccessToken);
+      }
+    }, refreshIn);
+  } catch (err) {
+    console.error("Error in scheduling token refresh:", err);
+  }
+}
+
+async function refreshAccessToken(refreshToken) {
   const headers = new Headers({
     "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
   });
 
-
   const graphql = JSON.stringify({
-    query: `query GetUserInfo {
-      getTokenomics {
+    query: `mutation RefreshToken {
+      refreshToken(refreshToken: "${refreshToken}") {
         status
         ResponseCode
-        actionTokenPrices {
-          postPrice
-          likePrice
-          dislikePrice
-          commentPrice
-        }
-        actionGemsReturns {
-          viewGemsReturn
-          likeGemsReturn
-          dislikeGemsReturn
-          commentGemsReturn
-        }
-        mintingData {
-          tokensMintedYesterday
-        }
+        accessToken
+        refreshToken
       }
     }`,
   });
@@ -1920,99 +1959,83 @@ async function fetchTokenomics() {
     const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
 
-    if (response.ok && result.data && result.data.getTokenomics) {
-      window.tokenomicsData = result.data.getTokenomics;
-      /*-- Action Prices --*/
-      const extra_post_price = document.getElementById("extra_post_price");
-      const extra_like_price = document.getElementById("extra_like_price");
-      const extra_comment_price = document.getElementById("extra_comment_price");
-      const dislike_price = document.getElementById("dislike_price");
+    if (response.ok && result.data && result.data.refreshToken) {
+      const {
+        status,
+        ResponseCode,
+        accessToken,
+        refreshToken: newRefreshToken
+      } = result.data.refreshToken;
 
-      if (extra_post_price) 
-      extra_post_price.innerText = result.data.getTokenomics.actionTokenPrices.postPrice;
-      if (extra_like_price) 
-      extra_like_price.innerText = result.data.getTokenomics.actionTokenPrices.likePrice;
-      if (extra_comment_price) 
-      extra_comment_price.innerText = result.data.getTokenomics.actionTokenPrices.commentPrice;
-      if (dislike_price) 
-      dislike_price.innerText = result.data.getTokenomics.actionTokenPrices.dislikePrice;
+      if (status !== "success" && ( ResponseCode == "10801" || ResponseCode == "10901")) {
+        throw new Error("Refresh failed with code: " + ResponseCode);
+      }
 
-      /*-- Gems Return Prices --*/
-      const gems_return_like = document.getElementById("gems_return_like");
-      const gems_return_dislike = document.getElementById("gems_return_dislike");
-      const gems_return_comment = document.getElementById("gems_return_comment");
-      const gems_return_view = document.getElementById("gems_return_view");
-      const likeReturn = result.data.getTokenomics.actionGemsReturns.likeGemsReturn;
-      const dislikeReturn = result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
-      const commentReturn = result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
-      const viewReturn = result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
-      if (gems_return_like)  
-      gems_return_like.innerText = likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
-      if (gems_return_dislike) 
-      gems_return_dislike.innerText = dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
-      if (gems_return_comment) 
-      gems_return_comment.innerText = commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
-      if (gems_return_view) 
-      gems_return_view.innerText = viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
-    
-    
+      // Store updated tokens
+      //const storage = localStorage.getItem('userEmail') ? localStorage : sessionStorage;
+      //storage.setItem('accessToken', accessToken);
+      //storage.setItem('refreshToken', newRefreshToken);
+
+      //document.cookie = `authToken=${accessToken}; path=/; secure; SameSite=Strict`;
+      //document.cookie = `refreshToken=${newRefreshToken}; path=/; secure; SameSite=Strict`;
+
+  // Save updated tokens back into cookies
+
+          
+          updateCookieValue("authToken", accessToken); // keep same lifetime
+          updateCookieValue("refreshToken", newRefreshToken);
+          
+        
+
+     
 
 
-      //console.log("Tokenomics loaded:", window.tokenomicsData);
+      return accessToken;
     } else {
-      console.error("Failed to load tokenomics:", result);
+      throw new Error("Invalid response from refresh mutation");
     }
   } catch (error) {
-    console.error("Tokenomics API error:", error);
+    console.error("Refresh token error:", error);
+    return null;
+  }
+}
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = date.toUTCString(); // just store date
+  }
+  document.cookie = `${name}=${encodeURIComponent(value || "")}; expires=${expires}; path=/; Secure; SameSite=Strict`;
+
+  // Save expiry separately for later reuse
+  if (days) {
+    localStorage.setItem(name + "_expiry", expires);
   }
 }
 
-async function updateUserPreferences() {
-  const accessToken = getCookie("authToken");
-  if (!accessToken) {
-    throw new Error("Auth token is missing or invalid.");
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for(let c of ca) {
+    c = c.trim();
+    if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length));
   }
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  };
-
-  const graphql = JSON.stringify({
-    query: `mutation UpdateUserPreferences {
-      updateUserPreferences(
-        userPreferences: { shownOnboardings: [INTROONBOARDING] }
-      ) {
-        status
-        ResponseCode
-        affectedRows {
-          onboardingsWereShown
-        }
-      }
-    }`,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers,
-    body: graphql,
-  };
-
-  try {
-    const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
-
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    const {
-      status,
-      ResponseCode,
-      affectedRows
-    } = result.data.updateUserPreferences;
-
-    if (ResponseCode !== "11014" && status!=="success") console.warn("Error Message:", userfriendlymsg(ResponseCode));
-
-    return affectedRows;
-  } catch (error) {
-    console.error("Error updating User preferences:", error);
+  return null;
+}
+// Update value but keep expiry
+function updateCookieValue(name, value) {
+  const expiry = localStorage.getItem(name + "_expiry");
+  if (expiry) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
+  }else{
+     setCookie(name, value);
   }
 }
+function eraseCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; SameSite=Strict`;
+  localStorage.removeItem(name + "_expiry");
+}
+
+scheduleSilentRefresh(accessToken, refreshToken);
+

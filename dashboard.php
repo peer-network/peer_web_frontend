@@ -41,7 +41,7 @@ checkAuth("unauthorized");
     <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
     <script src="js/comments.js?<?php echo filemtime('js/comments.js'); ?>" defer></script>
 
-
+    
     <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
 
 
