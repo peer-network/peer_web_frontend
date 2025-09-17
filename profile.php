@@ -75,7 +75,7 @@ checkAuth("unauthorized");
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       <div class="profile_edit_box">
-        <a class="button btn-white edit-profile" href="profileSettings.php">Edit profile</a>
+        <a class="button btn-white edit-profile" href="profileSettings.php">Edit</a>
         <div class="button btn-blue promote_posts">Boost post</div>
         <div class="button btn-white promote_posts_cancel none">Cancel</div>
       </div>

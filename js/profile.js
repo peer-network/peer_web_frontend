@@ -121,37 +121,68 @@ document.addEventListener("DOMContentLoaded", () => {
   currentliquidity("token_balance");
 
   function insertPinnedBtn(card, username, mode = "profile") {
-    if (!card || card.querySelector(".pinedbtn")) return; 
+    if (!card) return;
+    if (card.querySelector(".pinedbtn")) return; 
 
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
-    pinnedBtn.innerHTML = `<a class="button btn-blue"><img src="svg/pin.svg" alt="pin"><span class="ad_username bold"> @${username}</span> <span class="ad_duration txt-color-gray">23h</span></a>`;
+    pinnedBtn.innerHTML = `
+      <a class="button btn-blue">
+        <img src="svg/pin.svg" alt="pin">
+        <span class="ad_username bold">@${username}</span>
+        <span class="ad_duration txt-color-gray">23h</span>
+      </a>
+    `;
 
     const postInhalt = card.querySelector(".post-inhalt");
     const social = card.querySelector(".social");
+    const viewpost = document.querySelector(".viewpost");
+    const footer = viewpost?.querySelector(".postview_footer");
+    const comments = viewpost?.querySelector(".post-comments");
 
     if (mode === "profile") {
       if (postInhalt && social) {
         postInhalt.insertBefore(pinnedBtn, social);
       }
-    } 
+    }
+
+    if (mode === "post") {
+      if (footer && comments && !footer.querySelector(".pinedbtn")) {
+        comments.insertAdjacentElement("afterend", pinnedBtn);
+      }
+    }
   }
 
-  function insertPinnedBtnToOpenedPost(username, mode = "post") {
+  function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
     const viewpost = document.querySelector(".viewpost");
     if (!viewpost) return; 
 
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
-    pinnedBtn.innerHTML = `<a class="button btn-blue"><img src="svg/pin.svg" alt="pin"><span class="ad_username bold"> @${username}</span> <span class="ad_duration txt-color-gray">23h</span></a>`;
+    pinnedBtn.innerHTML = `
+      <a class="button btn-blue">
+        <img src="svg/pin.svg" alt="pin">
+        <span class="ad_username bold">@${username}</span>
+        <span class="ad_duration txt-color-gray">23h</span>
+      </a>
+    `;
 
     const footer = viewpost.querySelector(".postview_footer");
     const comments = viewpost.querySelector(".post-comments");
+    const postInhalt = card.querySelector(".post-inhalt");
+    const social = card.querySelector(".social");
+
     if (!footer || footer.querySelector(".pinedbtn")) return;
 
     if (mode === "post") {
       if (footer && comments) {
         comments.insertAdjacentElement("afterend", pinnedBtn);
+      }
+    }
+
+    if (mode === "profile") {
+      if (postInhalt && social) {
+        postInhalt.insertBefore(pinnedBtn, social);
       }
     }
   }
@@ -191,10 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtnToOpenedPost(username, "post");
+        insertPinnedBtn(window.lastBoostedCard, username, "profile");
 
-        // simulate normal card click
         window.lastBoostedCard.click();
+
+        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post");
       }
     }
     if (e.target === modal) {

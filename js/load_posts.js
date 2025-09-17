@@ -1002,8 +1002,8 @@ function reportPost(objekt, el) {
 
        reported_div.classList.add("reported");
         reported_div.innerHTML = `
-          <img src="svg/error.svg" alt="reported">
-          <p class="xl_font_size">Post reported</p>
+          <img src="svg/Union.svg" alt="reported">
+          <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
         `;
 
         // Step 4: Ab reported_div ko parent div ke andar append karo
