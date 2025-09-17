@@ -12,50 +12,39 @@ let storedUserInfo, balance = null;
 window.tokenomicsData = null;
 
 ///////////////////////////////
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",  async() => {
 const accessToken = getCookie("authToken");
    if (accessToken) {
       hello();
       getUser();
       dailyfree();
       currentliquidity();
-      getUserInfo();
+      const userData=await getUserInfo();
       fetchTokenomics();
       initOnboarding();
       // #open-onboarding anchor click par popup kholna
         const openBtn = document.querySelector("#open-onboarding");
         if (openBtn) {
             openBtn.addEventListener("click", function(e) {
+
                 e.preventDefault();
                 showOnboardingPopup();
             });
         }
 
-        const savedUserData = localStorage.getItem("userData");
-        let newUserReg=true;
-        if (savedUserData) {
-          const parsedData = JSON.parse(savedUserData);
-
-          const onboardings = parsedData.userPreferences?.onboardingsWereShown || [];
-
-          //console.log(onboardings); 
-          // ["INTROONBOARDING"]
-
+        //console.log(userData.userPreferences.onboardingsWereShown);
+       
+        if (userData) {
+          const onboardings = userData.userPreferences.onboardingsWereShown || [];
           // Example: check if INTROONBOARDING is already shown
-          if (onboardings.includes("INTROONBOARDING")) {
-            newUserReg=false;
-          } else {
-            newUserReg=true;
-          }
-        }
-
-        if(newUserReg){
-          setTimeout(async () => {
+          if (!onboardings.includes("INTROONBOARDING")) {
+            setTimeout(async () => {
              await updateUserPreferences();
               showOnboardingPopup();
             }, 2000);
-          
+          }
         }
+
 
 
       window.addEventListener("online", updateOnlineStatus);
@@ -743,6 +732,7 @@ function postdetail(objekt,CurrentUserID) {
             array.forEach((item, index) => {
               const image_item = document.createElement("div");
               image_item.classList.add("slide_item");
+              console.log(item)
 
               const img = document.createElement("img");
               const timg = document.createElement("img");
