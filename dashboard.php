@@ -43,7 +43,6 @@ checkAuth("unauthorized");
 
     
     <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
-     <script src="js/login/sessionHandler.js?<?php echo filemtime('js/login/sessionHandler.js'); ?>" defer></script>
 
 
     <?php

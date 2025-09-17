@@ -1838,7 +1838,7 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     // Original expiry time (from backend)
     let exp = payload.exp * 1000;
 
-    const buffer = .5 * 60 * 1000; // refresh 3 minutes before expiry
+    const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
     // Override for testing (refresh in 2 minutes instead of 45)
     const isTesting = false;
     if (isTesting) {
