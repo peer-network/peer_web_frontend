@@ -852,7 +852,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       token = await checkEligibility();
     } catch (err) {
-      console.error("Eligibility check failed:", err);
+      // console.error("Eligibility check failed:", err);
       createPostError.innerHTML = "You are not eligible to create a post.";
       submitButton.disabled = false;
       return; // stop here
@@ -880,7 +880,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tags: tags,
       });
 
-      if (result.createPost.ResponseCode == "11513" || result.createPost.ResponseCode == "11508") {
+      if (result?.createPost?.ResponseCode == "11513" || result?.createPost?.ResponseCode == "11508") {
         if (result.createPost.status === "success") {
           createPostError.classList.add(result.createPost.status);
           createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
