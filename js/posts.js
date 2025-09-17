@@ -795,6 +795,45 @@
     cover,
     tags
   }) {
+    
+    const modalProcess = document.getElementById('processing_modal');
+    if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
+      return false;
+    }
+
+
+    const accessToken = await getAccessToken();
+
+    if (!accessToken) {
+      throw new Error("Auth token is missing or invalid.");
+    }
+   
+    try {
+      
+      var eligibilitytToken = await checkEligibility();
+    } catch (err) {
+      //console.error("Eligibility check failed:", err);
+      Merror("Eligibility check failed:", err);
+      //createPostError.innerHTML = "You are not eligible to create a post.";
+      //submitButton.disabled = false;
+      return; // stop here
+    }
+
+    try {
+      modalProcess.showModal();
+      
+      uploadedFiles= await uploadFiles(eligibilitytToken, uploadedFiles);
+    } catch (err) {
+      console.error("File upload failed:", err);
+      Merror("File upload failed:", err);
+      //createPostError.innerHTML = "Failed to upload files. Please try again.";
+      //submitButton.disabled = false;
+      return; // stop here
+    } finally {
+      modalProcess.close();
+    }
+
+
     const mutation = `
         mutation CreatePost($title: String!, $uploadedFiles: String!, $cover: [String!], $mediadescription: String!, $contenttype: ContentType!, $tags: [String!]) {
           createPost(
@@ -842,15 +881,7 @@
       tags
     };
 
-    if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
-      return false;
-    }
-
-    const accessToken = await getAccessToken();
-
-    if (!accessToken) {
-      throw new Error("Auth token is missing or invalid.");
-    }
+    
 
     const headers = {
       "Content-Type": "application/json",

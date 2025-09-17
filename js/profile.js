@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById('boostModal');
   let currentStep = 1;
 
-
+  // ----------------- Show Step Function -----------------
   function showStep(step) {
     document.querySelectorAll('.modal-step').forEach(el => {
       el.classList.remove('active');
@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentStep = step;
   }
 
+  // ----------------- Boost Card Click -----------------
   function boostCardClick(card) {
     window.lastBoostedCard = card;
 
@@ -91,14 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
       previewBoostedPost.innerHTML = "";
 
       const clonedCard = card.cloneNode(true);
-
       clonedCard.querySelectorAll("*").forEach(el => {
         el.replaceWith(el.cloneNode(true));
       });
 
       const usernameEl = clonedCard.querySelector(".post-userName");
       const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-
 
       const postInhalt = clonedCard.querySelector(".post-inhalt");
       const social = clonedCard.querySelector(".social");
@@ -107,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const pinnedBtn = document.createElement("div");
         pinnedBtn.classList.add("pinedbtn");
         pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">23h</span></a>`;
-
         postInhalt.insertBefore(pinnedBtn, social);
       }
 
@@ -120,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
   showStep(3);
   currentliquidity("token_balance");
 
+  // ----------------- Insert Pinned Button -----------------
   function insertPinnedBtn(card, username, mode = "profile") {
     if (!card) return;
     if (card.querySelector(".pinedbtn")) return; 
@@ -153,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ----------------- Insert Pinned Button in Opened Post -----------------
   function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
     const viewpost = document.querySelector(".viewpost");
     if (!viewpost) return; 
@@ -187,7 +187,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ----------------- Mark Card as Boosted -----------------
+  function markCardAsBoosted(card) {
+    card.classList.add("boosted");
 
+    // Wrap card content in front/back container if not already wrapped
+    if (!card.querySelector(".post-card-inner")) {
+      const inner = document.createElement("div");
+      inner.classList.add("post-card-inner");
+
+      const front = document.createElement("div");
+      front.classList.add("post-card-front");
+      front.append(...Array.from(card.childNodes));
+
+      const back = document.createElement("div");
+      back.classList.add("post-card-back", "bold", "xl_font_size");
+      back.textContent = "This Post has already been boosted";
+
+      inner.appendChild(front);
+      inner.appendChild(back);
+      card.appendChild(inner);
+    }
+  }
+
+  // ----------------- Modal Buttons -----------------
   modal.addEventListener('click', function(e) {
     if (e.target.classList.contains('next-btn')) {
       showStep(currentStep + 1);
@@ -198,6 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.classList.contains('close-btn')) {
       modal.classList.add('none');
     }
+
     if (e.target.classList.contains('goToProfile-btn')) {
       profileBox.classList.remove('boostActive');
       listPosts.classList.remove('boostActive');
@@ -208,7 +232,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
+        markCardAsBoosted(window.lastBoostedCard); 
       }
     }
 
@@ -222,13 +248,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
+        markCardAsBoosted(window.lastBoostedCard);
 
         window.lastBoostedCard.click();
-
         insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post");
       }
     }
+
     if (e.target === modal) {
       modal.classList.add('none'); 
     }
@@ -236,8 +264,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function attachWrapperListeners() {
     const cards = listPosts.querySelectorAll(".card");
+
     cards.forEach(card => {
-      // Add only once
       if (!card.dataset.listenersAdded) {
         card.addEventListener(
           "click",
@@ -245,36 +273,27 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listPosts.classList.contains("boostActive")) {
               e.stopImmediatePropagation();
 
-              boostCardClick(card);
-            } 
+              if (card.classList.contains("boosted")) {
+                markCardAsBoosted(card);
+                card.classList.add("flipped"); 
+
+                setTimeout(() => {
+                  card.classList.remove("flipped");
+                }, 2000);
+              } else {
+                boostCardClick(card);
+              }
+            }
           },
-          { capture: true } 
+          { capture: true }
         );
-        /*card.addEventListener("mousemove", (e) => {
-          if (listPosts.classList.contains("boostActive")) {
-            e.stopImmediatePropagation();
-          }
-        }, { capture: true });
-
-        card.addEventListener("mouseenter", (e) => {
-          if (listPosts.classList.contains("boostActive")) {
-            e.stopImmediatePropagation();
-          }
-        }, { capture: true });
-
-        card.addEventListener("mouseleave", (e) => {
-          if (listPosts.classList.contains("boostActive")) {
-            e.stopImmediatePropagation();
-          }
-        }, { capture: true });*/
-
-        // Mark as attached
-      card.dataset.listenersAdded = true;
-
+        card.dataset.listenersAdded = true;
       }
-    }); 
+    });
   }
 
+
+  // ----------------- Promote / Cancel Buttons -----------------
   if (promoteBtn) {
     promoteBtn.addEventListener("click", () => {
       profileBox.classList.add("boostActive");

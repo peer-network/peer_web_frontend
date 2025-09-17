@@ -2012,6 +2012,8 @@ const refreshToken = getCookie("refreshToken");
 const storedEmail = getCookie("userEmail");
 
 function scheduleSilentRefresh(accessToken, refreshToken) {
+
+  if (!refreshToken){ return;}
   try {
     const payload = JSON.parse(atob(accessToken.split('.')[1]));
     console.log("Decoded JWT payload:", payload);
