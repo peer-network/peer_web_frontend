@@ -1838,8 +1838,8 @@ document.addEventListener("DOMContentLoaded", () => {
       previewItem.classList.add("video-item");
       previewItem.classList.add(id);
       previewItem.innerHTML = `
-          <p>${file.name}</p>
-          <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
+          <p>${id.includes("short") ? "shortFile" : "longFile"}_${file.name}</p>
+          <video id="${id.includes("short") ? "shortFile" : "longFile"}_${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
           
           <span class="editVideo" >
@@ -1916,15 +1916,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else if (type === "video") {
         element = previewItem.querySelector("video");
-        //sessionStorage.setItem(file.name, base64);
-        // Store base64
         window.uploadedFilesMap.set(file.name, url);
         element.autoplay = true;
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
         element.addEventListener("loadedmetadata", async () => {
           // generateThumbnails(file.name); before
-          generateThumbnailStrip(file.name);
+          const fileName = element.getAttribute("id") || file.name;
+          generateThumbnailStrip(fileName);
         }, {
           once: true
         });
@@ -2722,19 +2721,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("videoTrimContainer").classList.add("none");
       document.getElementById('videocodierung').close();
       video.play();
-
-      // UI adjustments
-      // document.getElementById("videoTrimContainer").classList.add("none");
-      // if (document.getElementById("videocodierung").close) {
-      //   document.getElementById("videocodierung").close();
-      // }
-
-      // // Revoke blob after playback
-      // preview.onended = () => {
-      //   URL.revokeObjectURL(url);
-      //   preview.srcObjectUrl = null;
-      // };
-
     } catch (err) {
       console.error("Video trimming failed:", err);
       alert("Trimming failed. Check console for details.");
