@@ -2692,7 +2692,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "-ss", String(startTime), // seek to nearest keyframe (fast)
         "-i", "input.mp4",
         "-t", String(trimDuration),
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-b:a", "160k",
+        // "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-b:a", "160k",
+         '-c', 'copy',
         "output.mp4"
       ]);
 
