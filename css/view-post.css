@@ -717,8 +717,6 @@
 .viewpost .post_gallery.multi .slider-wrapper .slide_item img,
 .viewpost .post_gallery.images .slider-wrapper .slide_item img {
 	display: block;
-	max-height: 100%;
-	height: 100%;
 	max-width: 100%;
 	width: auto;
 	scroll-snap-align: start;
@@ -734,7 +732,34 @@
 }
 .viewpost .post_gallery.multi .slider-wrapper .slider-thumbnails {
 	display: flex;
-	
+}
+.slider_thumbnails_wrapper {
+  overflow-x: hidden;
+}
+.thumbs-wrapper {
+  display: flex;
+  align-items: center;
+}
+.button.nav-button.prev_button,
+.button.nav-button.next_button {
+  margin-bottom: 0;
+  padding: 0 5px;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  background-color: transparent;
+  border: none;
+}
+.button.nav-button.prev_button {
+	margin-right: 10px;
+}
+.button.nav-button.next_button {
+	margin-left: 10px;
+}
+.button.nav-button.prev_button:hover,
+.button.nav-button.next_button:hover {
+  background: var(--black-dark, #252525);
+  border: none;
 }
 .viewpost .post_gallery .slider-wrapper .slider-thumbnails .timg{
 	display: flex;
@@ -1431,6 +1456,11 @@ button:not(:disabled):hover.switch-btn {
 	.slider-modal .modal-thumbnail {
 		height: 140px;
 		border-radius: 20px;
+	}
+	.button.nav-button.next_button,
+	.button.nav-button.prev_button {
+		line-height: 0;
+		min-width: 0;
 	}
   .post_gallery.audio .audio-item .audio_player_con .time-info {
 	min-width: 140px;

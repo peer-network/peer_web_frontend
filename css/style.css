@@ -1088,6 +1088,10 @@ footer {grid-area: footer;}
 	color: var(--text-color);
 }
 
+.white_border {
+  border: 2px solid #fff !important;
+}
+
 .widget ul.menu li a .icon, 
 .widget ul.menu li a svg{
 	width: 1.3rem;

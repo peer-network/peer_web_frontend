@@ -711,12 +711,70 @@ function postdetail(objekt,CurrentUserID) {
               post_gallery.innerHTML = `
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
-                    <div class="slider-thumbnails"></div>
+                    <div class="thumbs-wrapper">
+                      <span class="button nav-button prev_button"><i class="fi fi-rr-angle-left"></i></span>
+                      <div class="slider_thumbnails_wrapper">
+                        <div class="slider-thumbnails"></div>
+                      </div>
+                      <span class="button nav-button next_button"><i class="fi fi-rr-angle-right"></i></span>
                     </div>
+                  </div>
                 `;
 
             const sliderTrack = post_gallery.querySelector(".slider-track");
-            const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+            const thumbsWrapper = document.querySelector(".slider_thumbnails_wrapper");
+            const sliderThumb = thumbsWrapper.querySelector(".slider-thumbnails");
+            const nextBtn = document.querySelector('.next_button');
+            const prevBtn = document.querySelector('.prev_button');
+
+            // function isElementInViewportX(child, thumbsWrapper) {
+            //   const thumbContainerRect = thumbsWrapper.getBoundingClientRect();
+            //   const thumbChildRect = child.getBoundingClientRect();
+
+            //   return (
+            //     thumbChildRect.left >= thumbContainerRect.left &&
+            //     thumbChildRect.right <= thumbContainerRect.right
+            //   );
+            // }
+
+            function toggleTheScrollButtons() {
+              const totalWidth = sliderThumb.scrollWidth;   
+              const visibleWidth = thumbsWrapper.clientWidth; 
+
+              if (totalWidth > visibleWidth) {
+                // Content is overflowing → show arrows depending on scroll position
+                if (thumbsWrapper.scrollLeft > 0) {
+                  prevBtn.classList.remove("none");
+                } else {
+                  prevBtn.classList.add("none");
+                }
+
+                if (thumbsWrapper.scrollLeft + visibleWidth < totalWidth) {
+                  nextBtn.classList.remove("none");
+                } else {
+                  nextBtn.classList.add("none");
+                }
+              } else {
+                // All thumbnails fit → hide both arrows
+                nextBtn.classList.add("none");
+                prevBtn.classList.add("none");
+              }
+            }
+
+            nextBtn.addEventListener('click', () => {
+              thumbsWrapper.scrollBy({ left: 150, behavior: 'smooth' });
+            });
+
+            prevBtn.addEventListener('click', () => {
+              thumbsWrapper.scrollBy({ left: -150, behavior: 'smooth' });
+            });
+
+          
+            setTimeout(toggleTheScrollButtons, 0);
+            window.addEventListener('resize', toggleTheScrollButtons);
+            thumbsWrapper.addEventListener('scroll', toggleTheScrollButtons);
+
+
             const imageSrcArray = [];
             array.forEach((item, index) => {
               const image_item = document.createElement("div");
