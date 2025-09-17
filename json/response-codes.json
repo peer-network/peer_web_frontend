@@ -1,5 +1,6 @@
 {
-    "createdAt": 1748955699,
+    "createdAt": 1758007898,
+    "hash": "9fca3b5896224f7f7ea218f6bf9ffe0f0055744a0c86f54ab5e005757620a7d6",
     "name": "response-codes",
     "data": {
         "10401": {
@@ -19,8 +20,8 @@
             "userFriendlyComment": "Login successful! Welcome back."
         },
         "10901": {
-            "comment": "Success: Token refreshed successfully. You can continue using your session",
-            "userFriendlyComment": "Session refreshed! You can continue using the app."
+            "comment": "Success: Eligibility token retrieved successfully.",
+            "userFriendlyComment": "You’ve successfully got your eligibility token."
         },
         "11001": {
             "comment": "Success: Users retrieved successfully",
@@ -63,8 +64,20 @@
             "userFriendlyComment": "Statistics updated successfully."
         },
         "11011": {
-            "comment": "Success: Referral info fetched successfuly ",
+            "comment": "Success: Referral info fetched successfully",
             "userFriendlyComment": "Referral information loaded."
+        },
+        "11012": {
+            "comment": "Success: User has been reported successfully",
+            "userFriendlyComment": "User was reported successfully."
+        },
+        "11013": {
+            "comment": "Success: Account deleted successfully",
+            "userFriendlyComment": "Your account has been deleted successfully."
+        },
+        "11014": {
+            "comment": "User preferences updated successfully.",
+            "userFriendlyComment": "Your preferences have been updated successfully."
         },
         "11101": {
             "comment": "Success: Follows data prepared successfully",
@@ -217,6 +230,10 @@
         "11514": {
             "comment": "Success: Daily free like used successfully",
             "userFriendlyComment": "Daily free like used."
+        },
+        "11515": {
+            "comment": "Success: File uploaded successfully.",
+            "userFriendlyComment": "Your file was uploaded successfully."
         },
         "11601": {
             "comment": "Success: Retrieved comments successfully",
@@ -483,11 +500,11 @@
             "userFriendlyComment": "Invalid post ID format."
         },
         "30210": {
-            "comment": "The 'title' field (Title of the post to search for) must be between 2 and 63 characters long and can only contain letters, numbers, spaces, dashes (-), and underscores (_)",
-            "userFriendlyComment": "Title must be 2-63 chars with letters, numbers, spaces, - or _."
+            "comment": "The 'title' field (Title of the post to search for) must be between 2 and 63 characters long",
+            "userFriendlyComment": "Title must be 2–63 chars"
         },
         "30211": {
-            "comment": "The 'tag' field (Tags to search for in posts) must be an array of up to five tags, each between 2 and 53 characters long",
+            "comment": "The 'tag' field (Tags to search for in posts) must be an array of up to 5 tags, each between 2 and 53 characters long",
             "userFriendlyComment": "Tags must be 2-53 chars, max 5 tags."
         },
         "30212": {
@@ -666,10 +683,6 @@
             "comment": "The 'tagName' field (Tag identifier) must be between 2 and 53 characters long, must not contain spaces, and may include letters, numbers, special characters, underscores _, and hyphens - (format: valid-tag_name-123)",
             "userFriendlyComment": "Tag name must be 2-53 chars without spaces (can use - and _)."
         },
-        "30256": {
-            "comment": "Title must be between 2 and 30 characters. Please adjust and try again",
-            "userFriendlyComment": "Title must be 2-30 characters."
-        },
         "30257": {
             "comment": "Invalid IP address. Please enter a valid IPv4 (e.g. 192.168.0.1) or IPv6 (e.g. 2001:0db8:85a3:0000:0000:8a2e:0370:7334) address",
             "userFriendlyComment": "Invalid IP address format."
@@ -691,7 +704,7 @@
             "userFriendlyComment": "File too large. Please reduce size."
         },
         "30262": {
-            "comment": "The 'tag' field (Tags in post creation) must be an array of up to ten tags, each between 2 and 53 characters long",
+            "comment": "The 'tag' field (Tags in post creation) must be an array of up to 10 tags, each between 2 and 53 characters long",
             "userFriendlyComment": "Max 10 tags, each 2-53 characters."
         },
         "30263": {
@@ -716,7 +729,7 @@
         },
         "30268": {
             "comment": "The cover field must contain at most only 1 image",
-            "userFriendlyComment": "Only one cover image allowed."
+            "userFriendlyComment": "Only 1 cover image allowed."
         },
         "30301": {
             "comment": "Input Required: Input is required to proceed. Please provide the necessary information and try again",
@@ -786,6 +799,22 @@
             "comment": "Information Not Found: No users found. Please refine your search or try a different query",
             "userFriendlyComment": "No users found. Try different search terms."
         },
+        "31008": {
+            "comment": "User has already been reported.",
+            "userFriendlyComment": "You have already reported this user."
+        },
+        "31009": {
+            "comment": "User cannot report themselves.",
+            "userFriendlyComment": "You cannot report your own account."
+        },
+        "31010": {
+            "comment": "Invalid Referral String: The referral code provided is invalid or does not match any existing records.",
+            "userFriendlyComment": "The referral code you entered is invalid. Please check and try again."
+        },
+        "31011": {
+            "comment": "INVALID_ONBOARDING_VALUE — input contains onboarding not listed in AVAILABLE_ONBOARDINGS",
+            "userFriendlyComment": "The onboarding value you entered is not valid. Please select a valid option and try again."
+        },
         "31101": {
             "comment": "Not Allowed: You can only perform this action with users on your friends list",
             "userFriendlyComment": "This action is only available for friends."
@@ -817,6 +846,10 @@
         "31202": {
             "comment": "Not Allowed: You are not allowed to initiate transfers to your own address",
             "userFriendlyComment": "You can't transfer to yourself."
+        },
+        "31203": {
+            "comment": "Unauthorized to initiate transfers to Pool accounts.",
+            "userFriendlyComment": "You are not authorized to transfer to pool accounts."
         },
         "31501": {
             "comment": "Invalid Action: You have already liked this post",
@@ -857,6 +890,10 @@
         "31510": {
             "comment": "Information Not Found: No post found for the provided post ID. Please check the ID and try again.",
             "userFriendlyComment": "Post not found. Check the ID and try again."
+        },
+        "31511": {
+            "comment": "Temporary File Error: A temporary file was used. Please try uploading the post again.",
+            "userFriendlyComment": "Please try creating the post again."
         },
         "31601": {
             "comment": "Information Not Found: No comment found for the provided comment ID. Please check the ID and try again",
@@ -1006,6 +1043,10 @@
             "comment": "Unexpected Error: An unexpected error occured while trying to refresh the AccessToken. Please try again later or contact support",
             "userFriendlyComment": "We're having trouble keeping you logged in. Please try again or contact support."
         },
+        "40902": {
+            "comment": "Invalid Action: Invalid eligibility token provided.",
+            "userFriendlyComment": "The eligibility token is invalid. Please try again."
+        },
         "41001": {
             "comment": "Unexpected Error: Failed to retrieve user information. Please try again later or contact support",
             "userFriendlyComment": "We couldn't get your profile information. Please try again."
@@ -1055,8 +1096,20 @@
             "userFriendlyComment": "We couldn't update your statistics. Please try again."
         },
         "41013": {
-            "comment": "Unexpected error: Internal server error while retrieving referral info. ",
+            "comment": "Unexpected error: Internal server error while retrieving referral info.",
             "userFriendlyComment": "We're having trouble loading your referral information. Please try again."
+        },
+        "41014": {
+            "comment": "Unexpected Error: Failed to delete account.",
+            "userFriendlyComment": "We couldn't delete your account. Please try again."
+        },
+        "41015": {
+            "comment": "Unexpected error: Internal server error while reporting user.",
+            "userFriendlyComment": "We're having trouble reporting the user right now. Please try again later."
+        },
+        "41016": {
+            "comment": "Failed to update user preferences.",
+            "userFriendlyComment": "We couldn’t update your preferences. Please try again later."
         },
         "41101": {
             "comment": "Unexpected Error: Failed to retrieve friends data. Please try again later or contact support",
@@ -1174,6 +1227,10 @@
             "comment": "Unexpected Error: Invalid action type",
             "userFriendlyComment": "This action isn't valid. Please try something else."
         },
+        "41222": {
+            "comment": "Unexpected Error: One of the pool accounts in the env file is missing.",
+            "userFriendlyComment": "A configuration error occurred. Please contact support."
+        },
         "41401": {
             "comment": "Unexpected Error: Failed to create transaction. Please try again later or contact support",
             "userFriendlyComment": "We couldn't complete this transaction. Please try again."
@@ -1229,6 +1286,10 @@
         "41513": {
             "comment": "Unexpected Error: Failed to fetch posts",
             "userFriendlyComment": "We couldn't load these posts. Please try again."
+        },
+        "41514": {
+            "comment": "Upload Failed: Could not upload the file due to an error.",
+            "userFriendlyComment": "Failed to upload the file. Please try again."
         },
         "41601": {
             "comment": "Failure: Failed to retrieve Comment Informations. Please try again later or contact support",

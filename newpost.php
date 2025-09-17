@@ -84,10 +84,9 @@ checkAuth("unauthorized");
         </aside>
         <?php require_once('./template-parts/footer.php'); ?>
     </div>
-    <dialog id="videocodierung">
+    <dialog id="processing_modal">
         <img src="svg/logo_farbe.svg" alt="codierung">
-        The video is being re-encoded.
-        <span id="nocursor" tabindex="-1"></span>
+        Processing...
     </dialog>
     <dialog id="videoloading">
         <img src="svg/logo_farbe.svg" alt="codierung">

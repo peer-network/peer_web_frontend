@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let videoElement = null; // Wird später gesetzt, wenn das Video geladen ist
   window.uploadedFilesMap = new Map();
   const modal = document.getElementById('videoloading');
+  const modalProcess = document.getElementById('processing_modal');
 
   updateTagUIVisibility(); // suggestions + selected
   /********************* Preview posts functionality ******************************/
@@ -849,33 +850,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hasError) return;
     submitButton.disabled = true;
 
-    try {
-      token = await checkEligibility();
-    } catch (err) {
-      console.error("Eligibility check failed:", err);
-      createPostError.innerHTML = "You are not eligible to create a post.";
-      submitButton.disabled = false;
-      return; // stop here
-    }
+ 
 
     try {
-      modal.showModal();
-      uploadedFiles = await uploadFiles(token, files);
-    } catch (err) {
-      console.error("File upload failed:", err);
-      createPostError.innerHTML = "Failed to upload files. Please try again.";
-      submitButton.disabled = false;
-      return; // stop here
-    } finally {
-      modal.close();
-    }
-
-    try {
-      const result = await sendCreatePost({
+        const result = await sendCreatePost({
         title: title,
         mediadescription: postDescription,
         contenttype: post_type,
-        uploadedFiles: uploadedFiles,
+        uploadedFiles: files,
         cover: cover,
         tags: tags,
       });
@@ -895,6 +877,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error during create post request:", error);
     } finally {
+      modalProcess.close();
       // Re-enable the form and hide loading indicator
       submitButton.disabled = false;
     }
@@ -1758,7 +1741,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function createAudioPreview(file, uploadtype, modal, ErrorCont, previewItem, id) {
     if (id.includes("audiobackground")) {
-      if (!validateFileType(file, "image", modal, ErrorCont)) return;
+      if (!validateFileType(file, "image", modalProcess, ErrorCont)) return;
       previewItem.innerHTML = `
         <p>${file.name}</p>
         <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1770,7 +1753,7 @@ document.addEventListener("DOMContentLoaded", () => {
       insertPosition.appendChild(previewItem); // Adds the new one
       return true
     } else {
-      if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+      if (!validateFileType(file, uploadtype, modalProcess, ErrorCont)) return;
       previewItem.classList.add("audio-item");
       previewItem.innerHTML = `
         <p>${file.name}</p>        
@@ -1792,7 +1775,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function createImagePreview(file, uploadtype, modal, ErrorCont, previewItem, previewContainer) {
-    if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+    if (!validateFileType(file, uploadtype, modalProcess, ErrorCont)) return;
     previewItem.draggable = true;
     previewItem.classList.add("dragable");
     previewItem.innerHTML = `
@@ -1817,7 +1800,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function createVideoPreview(file, uploadtype, modal, ErrorCont, previewItem, id) {
     if (id.includes("cover")) {
-      if (!validateFileType(file, 'image', modal, ErrorCont)) return;
+      if (!validateFileType(file, 'image', modalProcess, ErrorCont)) return;
       previewItem.innerHTML = `
           <p>${file.name}</p>
           <img class="image-wrapper create-img none" alt="Vorschau" />
@@ -1834,7 +1817,7 @@ document.addEventListener("DOMContentLoaded", () => {
       insertPosition.insertAdjacentElement("afterend", previewItem);
       document.getElementById("drop-area-videocover").classList.add("none");
     } else {
-      if (!validateFileType(file, uploadtype, modal, ErrorCont)) return;
+      if (!validateFileType(file, uploadtype, modalProcess, ErrorCont)) return;
       previewItem.classList.add("video-item");
       previewItem.classList.add(id);
       previewItem.innerHTML = `
@@ -1870,7 +1853,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function processFiles(files, id) {
     let previewItem, previewContainer = "";
     
-    modal.showModal();
+    modalProcess.showModal();
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
     const ErrorCont = document.querySelector("#preview-" + uploadtype + " .response_msg");
@@ -1947,7 +1930,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
-    modal.close();
+    modalProcess.close();
 
     document.querySelectorAll(".editImage").forEach(addEditImageListener);
     document.querySelectorAll(".editVideo").forEach(addEditVideoListener);
@@ -2050,7 +2033,7 @@ document.addEventListener("DOMContentLoaded", () => {
       image_container.classList.remove("image_added");
   }
 
-  function validateFileType(file, uploadType, modal, errorContainer) {
+  function validateFileType(file, uploadType, modalProcess, errorContainer) {
     const allowedTypesMap = {
       audio: {
         types: ["audio/mp3", "audio/m4a", "audio/aac", "audio/wav", "audio/mpeg"],
@@ -2061,8 +2044,10 @@ document.addEventListener("DOMContentLoaded", () => {
         message: "Unsupported format file. Please upload a different format for image."
       },
       video: {
-        types: ["video/mp4", "video/m4v", "video/mkv", "video/3gp", "video/ogg", "video/avi"],
-        message: ".mp4, .m4v, .avi, .ogg, .mkv and .3gp video files are supported."
+        //types: ["video/mp4", "video/m4v", "video/x-matroska", "video/3gpp", "video/avi","video/x-msvideo"],
+        //message: ".mp4, .m4v, .mkv, .avi and .3gp video files are supported."
+        types: ["video/mp4", "video/m4v"],
+        message: ".mp4 and .m4v video files are supported."
       }
       //"video/quicktime",
     };
@@ -2072,9 +2057,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(`Unknown uploadType: ${uploadType}`);
       return false;
     }
+    //console.log(file.type);
 
     if (!config.types.includes(file.type)) {
-      modal.close();
+      modalProcess.close();
       errorContainer.textContent = config.message;
       return false;
     }
@@ -2554,7 +2540,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //   } else {
   //     const modal = document.getElementById('videocodierung');
   //     if(!background){
-  //       modal.showModal();
+  //       modalProcess.showModal();
   //       document.getElementById("nocursor").focus();
   //     }
 
@@ -2621,7 +2607,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //       if(!background){
   //         videoElement.src = base64; // Update video source to trimmed video
   //         document.getElementById("videoTrimContainer").classList.add("none");
-  //         modal.close();
+  //         modalProcess.close();
   //         videos.forEach(video => {
   //           video.play();
   //         });
@@ -2630,7 +2616,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //   };
   //   if(!background){
   //       document.getElementById("videoTrimContainer").classList.add("none");
-  //       // modal.close();
+  //       // modalProcess.close();
   //     }
   //     // Jedes Video pausieren
   // }
@@ -2719,7 +2705,7 @@ document.addEventListener("DOMContentLoaded", () => {
       video.load();
       videoElement.src = url;
       document.getElementById("videoTrimContainer").classList.add("none");
-      document.getElementById('videocodierung').close();
+      //document.getElementById('videocodierung').close();
       video.play();
     } catch (err) {
       console.error("Video trimming failed:", err);
