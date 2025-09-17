@@ -849,9 +849,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // If any error, stop
     if (hasError) return;
     submitButton.disabled = true;
-
- 
-
     try {
         const result = await sendCreatePost({
         title: title,
@@ -862,7 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tags: tags,
       });
 
-      if (result.createPost.ResponseCode == "11513" || result.createPost.ResponseCode == "11508") {
+      if (result?.createPost?.ResponseCode == "11513" || result?.createPost?.ResponseCode == "11508") {
         if (result.createPost.status === "success") {
           createPostError.classList.add(result.createPost.status);
           createPostError.innerHTML = userfriendlymsg(result.createPost.ResponseCode);
@@ -2624,11 +2621,18 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadFFmpeg() {
     if (!window.ffmpegInstance) {
       window.ffmpegInstance = new FFmpeg({
-        corePath: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
+        corePath: window.location.origin + "/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
         log: true
       });
-      await window.ffmpegInstance.load();
+    
+      try {
+        await window.ffmpegInstance.load();
+        console.log("ffmpeg-core.js loaded successfully");
+      } catch (err) {
+         console.error("Failed to load ffmpeg-core.js:", err);
+      }
     }
+
     return window.ffmpegInstance;
   }
 
