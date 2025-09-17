@@ -717,12 +717,10 @@
 .viewpost .post_gallery.multi .slider-wrapper .slide_item img,
 .viewpost .post_gallery.images .slider-wrapper .slide_item img {
 	display: block;
-	max-height: 100%;
-	height: 100%;
 	max-width: 100%;
-	width: auto;
+	width: 100%;
 	scroll-snap-align: start;
-	object-fit: cover;
+	object-fit: contain;
 }
 
 .viewpost .post_gallery .slider-wrapper .slider-thumbnails{
