@@ -35,7 +35,7 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a href="#">
+                <a class="white_border" href="#">
                     <img class="icon" src="svg/invite-friend-icon.svg" alt="network" />
                     Invite a friend
                 </a>

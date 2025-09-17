@@ -8,33 +8,42 @@ let likeCost = 0.3,
 // below variable used in wallet module
 // need to declare in global scope
 let storedUserInfo, balance = null;
+// Global variable to hold tokenomics data
+window.tokenomicsData = null;
 
 ///////////////////////////////
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",  async() => {
 const accessToken = getCookie("authToken");
    if (accessToken) {
       hello();
       getUser();
       dailyfree();
       currentliquidity();
-      getUserInfo();
-
+      const userData = await getUserInfo();
+      fetchTokenomics();
       initOnboarding();
       // #open-onboarding anchor click par popup kholna
         const openBtn = document.querySelector("#open-onboarding");
         if (openBtn) {
             openBtn.addEventListener("click", function(e) {
+
                 e.preventDefault();
                 showOnboardingPopup();
             });
         }
-         // Mock call to show onboarding if newuserreg=1 in URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const newuserreg = urlParams.get("newuserreg");
-        if(newuserreg && newuserreg === "1"){
-          showOnboardingPopup();
-        }
 
+        //console.log(userData.userPreferences.onboardingsWereShown);
+       
+        if (userData) {
+          const onboardings = userData.userPreferences.onboardingsWereShown || [];
+          // Example: check if INTROONBOARDING is already shown
+          if (!onboardings.includes("INTROONBOARDING")) {
+            setTimeout(async () => {
+             await updateUserPreferences();
+              showOnboardingPopup();
+            }, 2000);
+          }
+        }
 
       window.addEventListener("online", updateOnlineStatus);
       window.addEventListener("offline", updateOnlineStatus);
@@ -711,16 +720,66 @@ function postdetail(objekt,CurrentUserID) {
               post_gallery.innerHTML = `
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
-                    <div class="slider-thumbnails"></div>
+                    <div class="thumbs-wrapper">
+                      <span class="button nav-button prev_button"><i class="fi fi-rr-angle-left"></i></span>
+                      <div class="slider_thumbnails_wrapper">
+                        <div class="slider-thumbnails"></div>
+                      </div>
+                      <span class="button nav-button next_button"><i class="fi fi-rr-angle-right"></i></span>
                     </div>
+                  </div>
                 `;
 
             const sliderTrack = post_gallery.querySelector(".slider-track");
-            const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+            const thumbsWrapper = document.querySelector(".slider_thumbnails_wrapper");
+            const sliderThumb = thumbsWrapper.querySelector(".slider-thumbnails");
+            const nextBtn = document.querySelector('.next_button');
+            const prevBtn = document.querySelector('.prev_button');
+
+        
+            function toggleTheScrollButtons() {
+              const totalWidth = sliderThumb.scrollWidth;   
+              const visibleWidth = thumbsWrapper.clientWidth; 
+
+              if (totalWidth > visibleWidth) {
+                // Content is overflowing → show arrows depending on scroll position
+                if (thumbsWrapper.scrollLeft > 0) {
+                  prevBtn.classList.remove("none");
+                } else {
+                  prevBtn.classList.add("none");
+                }
+
+                if (thumbsWrapper.scrollLeft + visibleWidth < totalWidth) {
+                  nextBtn.classList.remove("none");
+                } else {
+                  nextBtn.classList.add("none");
+                }
+              } else {
+                // All thumbnails fit → hide both arrows
+                nextBtn.classList.add("none");
+                prevBtn.classList.add("none");
+              }
+            }
+
+            nextBtn.addEventListener('click', () => {
+              thumbsWrapper.scrollBy({ left: 150, behavior: 'smooth' });
+            });
+
+            prevBtn.addEventListener('click', () => {
+              thumbsWrapper.scrollBy({ left: -150, behavior: 'smooth' });
+            });
+
+          
+            setTimeout(toggleTheScrollButtons, 0);
+            window.addEventListener('resize', toggleTheScrollButtons);
+            thumbsWrapper.addEventListener('scroll', toggleTheScrollButtons);
+
+
             const imageSrcArray = [];
             array.forEach((item, index) => {
               const image_item = document.createElement("div");
               image_item.classList.add("slide_item");
+              console.log(item)
 
               const img = document.createElement("img");
               const timg = document.createElement("img");
@@ -1450,24 +1509,21 @@ async function fetchPostByID(postID) {
         return null;
     }
 }
-
-
-
 /*------------ End : View Post Detail Golobal Function -------------*/
 
 /*----------- Start : FeedbackPopup Logic --------------*/
 
-function setCookie(name, value, days = 365) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
-}
+// function setCookie(name, value, days = 365) {
+//   const expires = new Date(Date.now() + days * 864e5).toUTCString();
+//   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+// }
 
-function getCookie(name) {
-  return document.cookie.split('; ').reduce((r, v) => {
-    const parts = v.split('=');
-    return parts[0] === name ? decodeURIComponent(parts[1]) : r
-  }, '');
-}
+// function getCookie(name) {
+//   return document.cookie.split('; ').reduce((r, v) => {
+//     const parts = v.split('=');
+//     return parts[0] === name ? decodeURIComponent(parts[1]) : r
+//   }, '');
+// }
 
 const POPUP_KEY = 'feedbackPopupData';
 
@@ -1590,6 +1646,7 @@ async function getUserInfo() {
             invited
             userPreferences {
                 contentFilteringSeverityLevel
+                onboardingsWereShown
             }
         }
       }
@@ -1606,10 +1663,10 @@ async function getUserInfo() {
   try {
     // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
-
+ const result = await response.json();
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const result = await response.json();
+   
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
@@ -1801,7 +1858,9 @@ function showSlide(index, slides, nav) {
         if (i === index) d.classList.add("active");
     });
 }
-"use strict";
+
+/*----------- End  : Onboarding screens Logic --------------*/
+
 const accessToken = getCookie("authToken");
 const refreshToken = getCookie("refreshToken");
 const storedEmail = getCookie("userEmail");
@@ -1979,4 +2038,4 @@ function eraseCookie(name) {
 }
 
 scheduleSilentRefresh(accessToken, refreshToken);
-/*----------- End  : Onboarding screens Logic --------------*/
+

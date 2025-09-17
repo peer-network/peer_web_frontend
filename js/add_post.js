@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlayRight = document.getElementById("overlay-right");
   const handleLeft = document.getElementById("handle-left");
   const handleRight = document.getElementById("handle-right");
-  let startPercent = 0.0000; // Anfang 0%
-  let endPercent = 1.0000; // Ende 100%
   const MIN_DURATION = 3; // Sekunden
   const trimBtn = document.getElementById("trimBtn");
   const trimQuitBtn = document.getElementById("trimQuit");
-
-
+  const previewContainer = document.querySelector('.preview-track-wrapper');
+  let startPercent = 0.0000; // Anfang 0%
+  let endPercent = 1.0000; // Ende 100%
+  let currentIndex = 0;
 
   video.addEventListener("seeked", () => {
     seekedFinished = true;
@@ -1838,8 +1838,8 @@ document.addEventListener("DOMContentLoaded", () => {
       previewItem.classList.add("video-item");
       previewItem.classList.add(id);
       previewItem.innerHTML = `
-          <p>${file.name}</p>
-          <video id="${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
+          <p>${id.includes("short") ? "shortFile" : "longFile"}_${file.name}</p>
+          <video id="${id.includes("short") ? "shortFile" : "longFile"}_${file.name}" class="image-wrapper create-video none " alt="Vorschau" controls=""></video>
           <img src="svg/logo_farbe.svg" class="loading" alt="loading">
           
           <span class="editVideo" >
@@ -1869,6 +1869,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function processFiles(files, id) {
     let previewItem, previewContainer = "";
+    
     modal.showModal();
     const types = ["video", "audio", "image"];
     const uploadtype = types.find((wort) => id.includes(wort));
@@ -1915,15 +1916,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else if (type === "video") {
         element = previewItem.querySelector("video");
-        //sessionStorage.setItem(file.name, base64);
-        // Store base64
         window.uploadedFilesMap.set(file.name, url);
         element.autoplay = true;
         element.loop = true;
         element.muted = true; // Optional: Video ohne Ton abspielen
         element.addEventListener("loadedmetadata", async () => {
           // generateThumbnails(file.name); before
-          generateThumbnailStrip(file.name);
+          const fileName = element.getAttribute("id") || file.name;
+          generateThumbnailStrip(fileName);
         }, {
           once: true
         });
@@ -1932,8 +1932,8 @@ document.addEventListener("DOMContentLoaded", () => {
       element.src = url;
       element.classList.remove("none");
       element.nextElementSibling ?.remove();
-      element.nextElementSibling ?.classList.remove("none");
-      
+      // element.nextElementSibling ?.classList.remove("none");
+
     } // end of for loop
 
     if (uploadtype === "audio") {
@@ -1963,13 +1963,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".next-button").addEventListener("click", () => {
       const previewItems = document.querySelectorAll("#preview-image .preview-track .preview-item");
       if (currentIndex < previewItems.length - 1) {
-        scrollToIndex(currentIndex + 1);
+        currentIndex = scrollToIndex(currentIndex + 1);
       }
     });
 
     document.querySelector(".prev-button").addEventListener("click", () => {
       if (currentIndex > 0) {
-        scrollToIndex(currentIndex - 1);
+        currentIndex = scrollToIndex(currentIndex - 1);
       }
     });
 
@@ -1978,12 +1978,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Optionally recheck on window resize or DOM change
     window.addEventListener('resize', toggleScrollButtons);
-    container.addEventListener('scroll', toggleScrollButtons);
+    previewContainer.addEventListener('scroll', toggleScrollButtons);
 
   } // END OF PROCESS-FILES
 
   function scrollToIndex(index) {
-    let currentIndex = 0;
     const previewTrack = document.querySelector("#preview-image .preview-track");
     const previewItems = previewTrack.querySelectorAll(".preview-item");
     if (index < 0 || index >= previewItems.length) return;
@@ -1993,7 +1992,7 @@ document.addEventListener("DOMContentLoaded", () => {
       offset += previewItems[i].offsetWidth + 20; // Add 20px gap
     }
     previewTrack.style.transform = `translateX(-${offset}px)`;
-    currentIndex = index;
+    return index;
   }
 
   function handleImageDelete(event) {
@@ -2014,7 +2013,7 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollToIndex(currentIndex);
   }
 
-  function isElementInViewportX(child, container) {
+  function isElementInViewportX(child, container = previewContainer) {
     const containerRect = container.getBoundingClientRect();
     const childRect = child.getBoundingClientRect();
 
@@ -2025,12 +2024,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function toggleScrollButtons() {
-    const container = document.querySelector('.preview-track-wrapper');
-    const track = container.querySelector('.preview-track');
+    const track = previewContainer.querySelector('.preview-track');
     const nextBtn = document.querySelector('.next-button');
     const prevBtn = document.querySelector('.prev-button');
 
-    const isVisible = isElementInViewportX(track, container);
+    const isVisible = isElementInViewportX(track);
     if (!isVisible) {
       nextBtn.classList.remove('none');
       prevBtn.classList.remove('none');
@@ -2188,40 +2186,40 @@ document.addEventListener("DOMContentLoaded", () => {
     event.target.parentElement.remove();
   }
 
-  async function convertImageToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      const type = file.type.substring(0, 5);
-      if (type === "audio") {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("Failed to read file as Base64."));
-      } else if (type === "video") {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("Failed to read file as Base64."));
-      } else if (type === "image") {
-        const img = new Image();
-        reader.onload = () => {
-          img.src = reader.result;
-        };
-        reader.onerror = reject;
+  // async function convertImageToBase64(file) {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     const type = file.type.substring(0, 5);
+  //     if (type === "audio") {
+  //       reader.onload = () => resolve(reader.result);
+  //       reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+  //     } else if (type === "video") {
+  //       reader.onload = () => resolve(reader.result);
+  //       reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+  //     } else if (type === "image") {
+  //       const img = new Image();
+  //       reader.onload = () => {
+  //         img.src = reader.result;
+  //       };
+  //       reader.onerror = reject;
 
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
+  //       img.onload = () => {
+  //         const canvas = document.createElement("canvas");
+  //         canvas.width = img.width;
+  //         canvas.height = img.height;
+  //         const ctx = canvas.getContext("2d");
+  //         ctx.drawImage(img, 0, 0);
 
-          // Konvertiere zu WebP und hole die Base64-Daten
-          const webpDataUrl = canvas.toDataURL("image/webp");
-          resolve(webpDataUrl);
-          // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
-        };
-      }
+  //         // Konvertiere zu WebP und hole die Base64-Daten
+  //         const webpDataUrl = canvas.toDataURL("image/webp");
+  //         resolve(webpDataUrl);
+  //         // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
+  //       };
+  //     }
 
-      reader.readAsDataURL(file);
-    });
-  }
+  //     reader.readAsDataURL(file);
+  //   });
+  // }
   // ----------- THUMBNAILS GENERIEREN (wie vorher) ----------
   // videothumbs = []; // Globales Objekt für Thumbnails
   // async function generateThumbnails(id) {
@@ -2276,7 +2274,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Reuse if already cached
     if (videothumbs[videoId] ?.length > 0) {
-      console.log(`Using cached thumbs for ${videoId}`);
       videothumbs[videoId].forEach(({
         src
       }) => {
@@ -2724,19 +2721,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("videoTrimContainer").classList.add("none");
       document.getElementById('videocodierung').close();
       video.play();
-
-      // UI adjustments
-      // document.getElementById("videoTrimContainer").classList.add("none");
-      // if (document.getElementById("videocodierung").close) {
-      //   document.getElementById("videocodierung").close();
-      // }
-
-      // // Revoke blob after playback
-      // preview.onended = () => {
-      //   URL.revokeObjectURL(url);
-      //   preview.srcObjectUrl = null;
-      // };
-
     } catch (err) {
       console.error("Video trimming failed:", err);
       alert("Trimming failed. Check console for details.");
