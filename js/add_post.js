@@ -1916,9 +1916,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else if (type === "video") {
         element = previewItem.querySelector("video");
-        console.log()
-        //sessionStorage.setItem(file.name, base64);
-        // Store base64
         window.uploadedFilesMap.set(file.name, url);
         element.autoplay = true;
         element.loop = true;
@@ -2639,7 +2636,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
 
   async function loadFFmpeg() {
-    console.log(window.location.origin)
     if (!window.ffmpegInstance) {
       window.ffmpegInstance = new FFmpeg({
         corePath: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
