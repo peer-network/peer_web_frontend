@@ -2638,11 +2638,18 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadFFmpeg() {
     if (!window.ffmpegInstance) {
       window.ffmpegInstance = new FFmpeg({
-        corePath: window.location.origin + "/peer_web_frontend/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
+        corePath: window.location.origin + "/js/ffmpeg/core/package/dist/umd/ffmpeg-core.js",
         log: true
       });
-      await window.ffmpegInstance.load();
+    
+      try {
+        await window.ffmpegInstance.load();
+        console.log("ffmpeg-core.js loaded successfully");
+      } catch (err) {
+         console.error("Failed to load ffmpeg-core.js:", err);
+      }
     }
+
     return window.ffmpegInstance;
   }
 
