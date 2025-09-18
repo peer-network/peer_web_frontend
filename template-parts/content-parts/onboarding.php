@@ -383,7 +383,7 @@
                         <button class="onboarding-close-button btn-transparent ">
                             Skip
                         </button>
-                        <a class="button btn-blue onboarding-close-button" href="#">
+                        <a class="button btn-blue onboarding-complete-button" href="#">
                             <span class="blod">Lets go!</span>
                         </a>
                     </div>
