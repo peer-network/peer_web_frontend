@@ -1773,6 +1773,28 @@ function initOnboarding() {
     const inner = onboardingScreens.querySelector(".onboarding-inner");
     const slides = inner.querySelectorAll(".onboarding-slide");
     const close_btns = inner.querySelectorAll(".onboarding-close-button");
+    
+    // Get userid from localStorage
+    let userId = null;
+    try {
+        const parsed = JSON.parse(localStorage.getItem("userData"));
+        userId = parsed?.userid || null;
+    } catch (e) {
+        console.error("Error parsing userData", e);
+    }
+
+    // Set the user ID in GA
+    if (typeof firebase !== 'undefined') {
+      if (userId) {
+        firebase.analytics().setUserId(userId);
+      }
+    }
+
+
+    
+
+   
+    
     if (close_btns) {
         close_btns.forEach(btn => {
               btn.addEventListener("click", function(e) {
@@ -1780,6 +1802,13 @@ function initOnboarding() {
                   onboardingScreens.classList.add('none'); // popup hide
                   inner.classList.remove('open');
               });
+
+              // Log onboarding skipped event
+              if (typeof firebase !== 'undefined') {
+                firebase.analytics().logEvent('onboarding', {
+                  skipped: 1  // 1 = true
+                });
+              }
         });
     }
 
@@ -1806,12 +1835,13 @@ function initOnboarding() {
         // --- Next/Prev button events ---
         const nextBtn = slide.querySelector(".next-btn");
         const prevBtn = slide.querySelector(".prev-btn");
+        const completeBtn = slide.querySelector(".onboarding-complete-button");
 
         if (nextBtn) {
             nextBtn.addEventListener("click", (e) => {
                 e.preventDefault();
                 if (index < slides.length - 1) {
-                    showSlide(index + 1, slides, nav);
+                    showSlide(index + 1, slides, nav); 
                 }
             });
         }
@@ -1824,6 +1854,23 @@ function initOnboarding() {
                 }
             });
         }
+
+        if (completeBtn) {
+            completeBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                onboardingScreens.classList.add('none');
+                inner.classList.remove('open');
+
+                // Log onboarding completed
+                if (typeof firebase !== 'undefined') {
+                  firebase.analytics().logEvent('onboarding', {
+                    skipped: 0  // 0 = false
+                  });
+                }
+
+            });
+        }
+
     });
 
     // Append nav dots
