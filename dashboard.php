@@ -29,6 +29,27 @@ checkAuth("unauthorized");
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
     
+    <!-- Firebase App (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+    <!-- Firebase Analytics (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js"></script>
+
+    <script>
+        // Your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRrV8AuxJlS_9DQ2jZKqTHT8m70AhGxiU",
+            authDomain: "peer-de113.firebaseapp.com",
+            projectId: "peer-de113",
+            storageBucket: "peer-de113.firebasestorage.app",
+            messagingSenderId: "1088506353097",
+            appId: "1:1088506353097:web:e74867ffd43d0fad440418",
+            measurementId: "G-RYR3LKVF4L"
+        };
+        //  This works with compat
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+    </script>   
+
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
