@@ -779,7 +779,7 @@ function postdetail(objekt,CurrentUserID) {
             array.forEach((item, index) => {
               const image_item = document.createElement("div");
               image_item.classList.add("slide_item");
-              console.log(item)
+              //console.log(item)
 
               const img = document.createElement("img");
               const timg = document.createElement("img");
@@ -866,7 +866,6 @@ function postdetail(objekt,CurrentUserID) {
           const commentsContainer =postContainer.querySelector(".comments-container");
           const comment_count=commentsContainer.querySelector(".comment_count");
           comment_count.innerText = objekt.amountcomments;
-
           const social =postContainer.querySelector(".social");
           const postViews=social.querySelector(".post-view span ");
           postViews.innerText = objekt.amountviews;
