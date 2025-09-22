@@ -1111,6 +1111,7 @@
 
 .comment_list .comment_item .comment_reply_container{
   margin-top: 10px;
+  display: none; /*----Disable Reply Feature-----*/
 }
 .comment_list .comment_item .comment_reply_container .reply_btn,
 .comment_list .comment_item .comment_reply_container .show_reply  {
