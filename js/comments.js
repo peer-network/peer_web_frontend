@@ -273,6 +273,7 @@ async function fetchChildComments(parentId, offset = 1) {
       if (res.data.listChildComments.status === "error") {
         throw new Error(userfriendlymsg(res.data.listChildComments.ResponseCode));
       } else {
+        console.log('res.data.listChildComments.affectedRows ', res.data.listChildComments.affectedRows)
         return res.data.listChildComments.affectedRows;
       }
     })

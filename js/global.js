@@ -1239,6 +1239,7 @@ function openSliderModal(images, startIndex = 0) {
 }
 
 function commentToDom(c, append = true) {
+  console.log('c ', c);
   const userID = getCookie("userID");
   const commentsContainer = document.getElementById("comments");
   //console.log(c);
@@ -1254,17 +1255,17 @@ function commentToDom(c, append = true) {
   img.classList.add("profile-picture");
   img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
-  img.onerror = function () {
-    //this.src = "svg/noname.svg";
-  };
+  // img.onerror = function () {
+  //   // this.src = "svg/noname.svg";
+  // };
 
-    img.addEventListener("click", function handledisLikeClick(event) {
-      event.stopPropagation();
-      event.preventDefault();
-        if(userID && userID!==""){
-          redirectToProfile(c, this);
-        }
-    });
+  img.addEventListener("click", function handledisLikeClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+      if(userID && userID!==""){
+        redirectToProfile(c, this);
+      }
+  });
 
   const imgDiv = document.createElement("div");
   imgDiv.classList.add("commenter-pic");
@@ -1314,7 +1315,9 @@ function commentToDom(c, append = true) {
     const showReply = document.createElement("span");
     showReply.classList.add("show_reply", "txt-color-gray");
     showReply.innerHTML = `Show <span class="reply_total">${c.amountreplies}</span> replies...`;
-
+    showReply.addEventListener('click', function() {
+      
+    });
     
     replyContainer.classList.add("comment_reply_container");
     replyContainer.append(replyBtn, showReply);
@@ -1325,7 +1328,6 @@ function commentToDom(c, append = true) {
   commentBody.append(commenterInfoDiv, commentTextDiv, replyContainer);
 
   // Like
-
   const likeContainer = document.createElement("div");
   likeContainer.classList.add("comment_like", "md_font_size");
 
@@ -1414,9 +1416,9 @@ function commentToDom(c, append = true) {
   // Reusable function to fetch post details
 async function fetchPostByID(postID) {
     try {
-        const accessToken = getCookie("authToken"); // 👈 token check
+        const accessToken = getCookie("authToken"); //  token check
 
-        // ✅ if logged in then to "ListPosts", else "GuestListPost"
+        // if logged in then to "ListPosts", else "GuestListPost"
         const queryName = accessToken ? "ListPosts" : "GuestListPost";
         const fieldName = accessToken ? "listPosts" : "guestListPost";
 
@@ -1424,7 +1426,7 @@ async function fetchPostByID(postID) {
             "Content-Type": "application/json",
         });
 
-        // ✅ if logged in then to Authorization header add 
+        // if logged in then to Authorization header add 
         if (accessToken) {
             headers.append("Authorization", `Bearer ${accessToken}`);
         }
