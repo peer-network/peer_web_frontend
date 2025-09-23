@@ -93,7 +93,7 @@ if (isset($_GET['message'])) {
             </form>
             <div class="footer">
                 <a href="" class="privacy">Privacy Policy</a>
-                <p class="version">Version 1.0.0</p>
+                <p class="version">Version 1.8.1</p>
             </div>
         </div>
     </div>

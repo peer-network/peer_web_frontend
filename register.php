@@ -152,7 +152,7 @@ include 'host.php';
 
             <div class="footer">
                 <a href="https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724" class="privacy regPr">Privacy Policy</a>
-                <p class="version">Version 1.0.0</p>
+                <p class="version">Version 1.8.1</p>
             </div>
         </div>
     </div>

@@ -392,8 +392,8 @@ let postoffset = 0;
 
 async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
-    if (postsLaden.offset === undefined) {
-      postsLaden.offset = 0; // Initialwert
+    if (postoffset === undefined) {
+      postoffset = 0; // Initialwert
     }
     //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
     //manualLoad = false;
