@@ -432,6 +432,7 @@
 .button-row button,
 .button-row a {
   width: 100%;
+  margin: 0;
 }
 .modal-checkbox {
   margin: 0.5em 0;

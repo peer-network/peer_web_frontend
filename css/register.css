@@ -248,9 +248,7 @@ body {
 }
 
 .description {
-  font-weight: 400;
-  font-size: 0.6rem;
-  line-height: 0.8rem;
+  line-height: 30px;
   letter-spacing: 2%;
   max-width: 20rem;
   color: var( --white-opacity-50);
@@ -280,7 +278,6 @@ body {
 
 .regPr {
   text-decoration: underline !important;
-  color: var(--button-bg) !important;
   letter-spacing: 2%;
   font-weight: 100;
 }
@@ -329,6 +326,7 @@ body {
 
 .input-field span {
   line-height: 50px;
+  font-size: 0.8rem;
 }
 
 .input-text {
@@ -354,7 +352,7 @@ input.disabled {
   font-weight: 500;
   font-size: 0.8rem;
   color: var(--button-color);
-  margin: 1.7rem 0 0.5rem 0;
+  margin: 1.7rem 0 1rem 0;
   cursor: pointer;
   transform-origin: 100% 100%;
   border: none;
@@ -389,8 +387,17 @@ a.disable {
 .signIn {
   display: flex;
   justify-content: center;
-  margin: 1rem 0;
+  flex-direction: column;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  margin-left: 150px;
+  margin-bottom: 1rem;
   /* align-items: center; */
+}
+
+.signIn_peer {
+  text-align: center;
 }
 
 .link {
@@ -398,7 +405,7 @@ a.disable {
   letter-spacing: 2%;
   font-size: 0.6rem;
   text-decoration: underline;
-  color: var( --white-opacity-50);
+  color: var( --white);
 }
 
 input::placeholder {
@@ -468,10 +475,27 @@ body::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 450px;
+  text-align: center;
+  gap: 30px;
+  margin-bottom: 150px;
+}
+
+.ageConfirm img {
+  width: 170px;
+}
+
+.ageConfirm p {
+  margin: 0;
+  line-height: 30px;
+}
+
+.ageConfirm .ageConfirm2_p {
+  color: var(--white-opacity-50);
 }
 
 .ageConfirm h2 {
-  font-weight: 300;
+  margin: 0;
 }
 
 .btn-transparent {
