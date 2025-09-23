@@ -63,7 +63,7 @@ if (isset($_GET['message'])) {
                 <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
                 <?php endif; ?>
                 <div class="peerLogo">
-                    <img src="svg/PeerLogoWhite.svg" alt="Peer logo"/>
+                    <img src="svg/peerLogoWhite.svg" alt="Peer logo"/>
                 </div>
                 <div class="head">
                     <h1 class="heading">Hey there,<br> Welcome back!</h1>
