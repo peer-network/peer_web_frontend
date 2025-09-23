@@ -1920,7 +1920,7 @@ async function fetchTokenomics() {
 
 
   const graphql = JSON.stringify({
-    query: `query GetUserInfo {
+    query: `query GetTokenomics {
       getTokenomics {
         status
         ResponseCode
