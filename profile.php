@@ -76,7 +76,7 @@ checkAuth("unauthorized");
       </div>
       <div class="profile_edit_box">
         <a class="button btn-white edit-profile" href="profileSettings.php">Edit</a>
-        <div class="button btn-blue promote_posts">Boost post</div>
+        <!--<div class="button btn-blue promote_posts">Boost post</div>-->
         <div class="button btn-white promote_posts_cancel none">Cancel</div>
       </div>
     </div>
