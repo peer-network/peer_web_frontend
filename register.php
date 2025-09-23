@@ -89,7 +89,7 @@ include 'host.php';
                         <img id="copyIcon" class="copy" src="svg/copy.svg" alt="copy icon">
                        
                     </div>
-                    <!-- <div class="validationMessage" id="refValidationMessage" for="password"></div> -->
+                    <div class="validationMessage" id="refValidationMessage" for="password"></div>
                     <input id="submitStep1" class="button" type="submit" value="Verify code">
                     <div class="signIn_peer">
                         <span class="description">Don't have a code?&nbsp;
