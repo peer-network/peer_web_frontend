@@ -1,8 +1,27 @@
 // :TODO VIEWS
 
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",  () => {
   restoreFilterSettings();
+
+
+    const postID = getPostIdFromURL(); // define in global.js
+    if (postID) {
+
+      setTimeout(async () => {
+        
+         const objekt = await fetchPostByID(postID);
+         if (objekt) {
+            
+            postClicked(objekt[0]);
+            
+        }
+      
+      }, 100);
+      
+          
+        
+    }
 
   const everything = document.getElementById("everything");
   if (everything) {
@@ -259,6 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (storedTypes) {
     updateFilterHeaderIcons(storedTypes);
   }
+  
 });
 
 async function addScrollBlocker(element) {
@@ -488,7 +508,7 @@ async function postsLaden(postbyUserID=null) {
 
       card_header.appendChild(card_header_left);
       
-const followButton = renderFollowButton(objekt, UserID);
+      const followButton = renderFollowButton(objekt, UserID);
       if (followButton) {
         const card_header_right = document.createElement("div");
         card_header_right.classList.add("card-header-right");
@@ -864,7 +884,51 @@ const followButton = renderFollowButton(objekt, UserID);
       no_post_found.classList.remove("active");
       post_loader.classList.remove("hideloader");
     }
-	 
+	 const cards = document.querySelectorAll(".card");
+
+  const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const sources = entry.target.querySelectorAll(".post video, .post audio, .post img");
+    if(!sources) return;
+    sources.forEach(el => {
+      if (entry.isIntersecting) {
+        // Element ist im Viewport → wieder laden
+        if (!el.src) {
+          el.src = el.dataset.src;
+          // el.muted ??= true;            // für Autoplay auf Mobile
+          el.playsInline ??= true;
+          el.load?.(); // nur für <video> relevant
+          
+        }
+      } else {
+        // Element ist nicht im Viewport → entladen
+        if (el.tagName === "VIDEO" || el.tagName === "AUDIO") {
+          
+
+          el.pause();
+          if(!el.dataset.src && el.src) {
+            el.dataset.src = el.src; // Quelle zwischenspeichern
+          }
+          if (el.src) {
+            el.removeAttribute("src");
+            el.load(); // wichtig, um Speicher freizugeben
+          }
+        } else if (el.tagName === "IMG") {
+          if(!el.dataset.src && el.src) {
+            el.dataset.src = el.src; // Quelle zwischenspeichern
+          }
+          el.removeAttribute("src");
+        }
+      }
+    });
+  });
+}, {
+  root: null,        // Viewport     
+  rootMargin: "100% 0px 100% 0px",
+  threshold: 0       // sobald auch nur ein Pixel sichtbar ist
+});
+
+cards.forEach(post => observer.observe(post));
 }
 
 async function toggleFollowStatus(userid) {
@@ -950,6 +1014,52 @@ function like_dislike_post(objekt, action, el) {
   });
 }
 
+function reportPost(objekt, el) {
+  
+
+    // Check nearest parent with .card OR .viewpost
+    const parentel = el.closest(".viewpost");
+    const postCardId = document.getElementById(objekt.id);
+    
+    if (parentel) {
+      parentel.classList.add("disbale_click");
+
+      // 3 second baad remove kar do
+      setTimeout(() => {
+        parentel.classList.remove("disbale_click");
+      }, 3000);
+    }
+  
+  
+
+  reportPostAPIcall(objekt.id).then((success) => {
+    if (success) {
+      togglePopup("cardClicked");
+      cancelTimeout();
+
+      // Add animation class
+
+      postCardId.classList.add("card_reported");
+     
+
+      
+        const reported_div = document.createElement("div");
+
+       reported_div.classList.add("reported");
+        reported_div.innerHTML = `
+          <img src="svg/Union.svg" alt="reported">
+          <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
+        `;
+
+        // Step 4: Ab reported_div ko parent div ke andar append karo
+        postCardId.appendChild(reported_div);
+
+
+
+    }
+  });
+}
+
 
 let timerId = null;
 function cancelTimeout() {
@@ -964,6 +1074,7 @@ async function viewed(object) {
 
 async function postClicked(objekt) {
   const UserID = getCookie("userID");
+  
   if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(async () => await viewed(objekt), 1000);
   togglePopup("cardClicked");
 

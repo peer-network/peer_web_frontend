@@ -1,8 +1,8 @@
 async function likeComment(commentId) {
   // likeCost is a global variable and updated in global.js -> getActionPrices();
-  if (!(await LiquiudityCheck(likeCost, "Like Comment", like))) {
+  /*if (!(await LiquiudityCheck(likeCost, "Like Comment", like))) {
     return false;
-  }
+  }*/
 
   const accessToken = getCookie("authToken");
 
@@ -189,6 +189,8 @@ async function createComment(postId, content, parentId = null) {
       }
     }
   `;
+  //console.log(query);
+
   const variables = {
     postId,
     content,
@@ -205,15 +207,15 @@ async function createComment(postId, content, parentId = null) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Antwort:", data);
+      //console.log("Antwort:", data);
       return data;
     })
     .catch((error) => {
-      console.error("Fehler:", error);
+      //console.error("Fehler:", error);
       return error;
     });
 }
-async function fetchChildComments(parentId, offset = 1) {
+async function fetchChildComments(parentId) {
   // Definiere den GraphQL-Query mit einer Variablen
   const accessToken = getCookie("authToken");
 
@@ -224,9 +226,8 @@ async function fetchChildComments(parentId, offset = 1) {
   });
 
   const query = `
-  query listChildComments($parent: ID!, $offset: Int!) {
-    listChildComments(parent: $parent, offset: $offset) {
-        
+  query listChildComments($parent: ID!) {
+    listChildComments(parent: $parent) {
         status
         counter
         ResponseCode
@@ -253,7 +254,6 @@ async function fetchChildComments(parentId, offset = 1) {
   // Setze die Variable für den Request
   const variables = {
     parent: parentId,
-    offset: offset
   };
 
   // Ersetze die URL mit der deines GraphQL-Endpunkts

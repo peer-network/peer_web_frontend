@@ -12,9 +12,9 @@ $fullUrl=$protocol . '://' . $hostname;
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="Peernetwork">
 <meta property="og:description" content="Peernetwork Social Media Platform">
-<meta property="og:url" content="<?php echo $fullUrl; ?>/<?= $baseUrl ?>/">
+<meta property="og:url" content="<?php echo $fullUrl; ?><?= $baseUrl ?>/">
 <meta property="og:site_name" content="Peernetwork">
-<meta property="og:image" content="<?php echo $fullUrl; ?>/<?= $baseUrl ?>/img/PeerLogo_SW.png">
+<meta property="og:image" content="<?php echo $fullUrl; ?><?= $baseUrl ?>/img/PeerLogo_SW.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -22,13 +22,13 @@ $fullUrl=$protocol . '://' . $hostname;
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:description" content="<?php echo $beschreibung; ?>">
 <meta name="twitter:title" content="Peernetwork">
-<link rel="icon" type="image/svg+xml" href="<?= $baseUrl ?>/svg/logo_farbe.svg">
-<link rel="apple-touch-icon" href="<?= $baseUrl ?>/img/apple.png">
+<link rel="icon" type="image/svg+xml" href="<?php echo $fullUrl; ?><?= $baseUrl ?>/svg/logo_farbe.svg">
+<link rel="apple-touch-icon" href="<?php echo $fullUrl; ?><?= $baseUrl ?>/img/apple.png">
 <meta name="theme-color" content="#00beff">
-<link rel="manifest" href="<?= $baseUrl ?>/json/webmanifest.json">
+<link rel="manifest" href="<?php echo $fullUrl; ?><?= $baseUrl ?>/json/webmanifest.json">
 <script type="application/ld+json">
-    < ? php include($baseUrl.'json/Organization.min.json'); ? >
+    <?php include($baseUrl.'json/Organization.min.json'); ?>
 </script>
 <script type="application/ld+json">
-    < ? php include($baseUrl.'json/WebPage.min.json'); ? >
+    <?php include($baseUrl.'json/WebPage.min.json'); ?>
 </script>

@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // });
 
 
+  // referral.js
   const urlParams = new URLSearchParams(window.location.search);
   const referralCodeFromRef = urlParams.get("ref");
   const referralCodeFromUuid = urlParams.get("referralUuid");
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const staticUUID = "85d5f836-b1f5-4c4e-9381-1b058e13df93";
   let autoFillCode = null;
 
-  const formSteps = document.querySelectorAll(".form-step");
+  const formSteps = document.querySelectorAll(".referral_formStep");
   const multiStepForm = document.getElementById("multiStepForm");
   const registerForm = document.getElementById("registerForm");
   const backBtn = document.getElementById("back-btn");
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const step2Section = document.querySelector('.form-step[data-step="2"]');
   const referralCode = referralCodeFromRef || referralCodeFromUuid;
 
+  // Autofill referral if code is in URL
   if (referralCode) {
     (async () => {
       referralInputs.value = referralCode;
@@ -31,41 +33,150 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-
-  showStep(1);
-
+  // "No code" → use static UUID
   noCodeLink?.addEventListener("click", (e) => {
     e.preventDefault();
     autoFillCode = staticUUID;
-    showStep(2);
+    showReferralStep(2);
   });
 
-  multiStepForm.addEventListener("submit", async (e) => {
+  // Submit referral form (Step 1)
+  document.getElementById("submitStep1").addEventListener("click", async (e) => {
     e.preventDefault();
 
-    if (!step1Section.classList.contains("none")) {
       const referralValue = referralInputs.value.trim();
       const isValid = await validateReferralCode(referralValue);
-      console.log("Referral code valid:", isValid);
+      //console.log("Referral code valid:", isValid);
       if (!isValid) return;
+      multiStepForm.classList.add("none");
+      registerForm.classList.remove("none");
+      showRegister(true);
+    
+  });
 
+  const ageConfirmation = document.getElementById("ageConfirmation");
+  const confirmAgeBtn = document.getElementById("confirmAge");
+  const cancelAgeBtn = document.getElementById("cancelAge");
+  const ageSteps = ageConfirmation.querySelectorAll(".ageConfirm");
+  const passwordMinLength = 8;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;
+
+  showAgeStep(1);
   
+  // Handle "I am 18+"
+  confirmAgeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    ageConfirmation.classList.add("none");
+    multiStepForm.classList.remove("none");
+    showReferralStep(1);
+  });
+
+
+  // Handle "No, I'm under 18"
+  cancelAgeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    showAgeStep(2);
+  });
+
+  // Register Form Submit
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+    const referralCode = document.getElementById("referral_code").value.trim();
+  
+
+    // Validation
+    if (username === "" || email === "" || password === "" || confirmPassword === "") {
+      return displayValidationMessage(userfriendlymsg("All fields must be filled out!!"), "regValidationMessage");
+    }
+    if (password.length < passwordMinLength) {
+      return displayValidationMessage(userfriendlymsg("Password too short (min. 8 chars)!!"), "regValidationMessage");
+    }
+    if (!/[A-Z]/.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Add at least 1 uppercase letter!!"), "regValidationMessage");
+    }
+    if (!/\d/.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Add at least 1 number!!"), "regValidationMessage");
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Include a special character (!@#$...)!!"), "regValidationMessage");
+    }
+    if (!passwordRegex.test(password)) {
+      return displayValidationMessage(userfriendlymsg("Password does not meet requirements!!"), "regValidationMessage");
+    }
+    if (password !== confirmPassword) {
+      return displayValidationMessage(userfriendlymsg("Passwords do not match!!"), "confirmValidationMessage");
+    }
+
+    try {
+      const status = await registerUser(email, password, username, referralCode);
+      if (status === true) {
+        registerForm.classList.add("none");
+        ageConfirmation.classList.remove("none");
+        showAgeStep(3);
+
+        return;
+      }
       
-      const loader = multiStepForm.querySelector(".loader");
-
-      if (loader.style.display === "block") return;
-      loader.style.display = "block";
-
-      setTimeout(() => {
-        loader.style.display = "none";
-        multiStepForm.classList.add("none");
-        registerForm.classList.remove("none");
-        //multiStepForm.reset();
-
-        
-      }, 3000);
+    } catch (error) {
+      console.error("Registration error:", error);
     }
   });
+
+  function showAgeStep(step) {
+    ageSteps.forEach(section => {
+      section.classList.toggle("none", section.dataset.step !== String(step));
+    });
+    updateFooterAndBack("age", step)
+  }
+
+  function showRegister(show) {
+    const registerForm = document.getElementById("registerForm");
+    if (!registerForm) return;
+
+    if (show) {
+      registerForm.classList.remove("none");
+    } else {
+      registerForm.classList.add("none");
+    }
+    updateFooterAndBack("register", null);
+  }
+
+
+  function updateFooterAndBack(currentContext, step) {
+    const footer = document.querySelector(".footer");
+    const backBtn = document.getElementById("back-btn");
+
+    if (currentContext === "age") {
+      if (step === 1) {
+        footer?.classList.add("none");
+        backBtn?.classList.remove("none");
+      } else {
+        footer?.classList.add("none");
+        backBtn?.classList.add("none");
+      }
+    }
+
+    if (currentContext === "referral") {
+      if (!multiStepForm.classList.contains("none")) {
+        footer?.classList.remove("none");
+        backBtn?.classList.remove("none");
+      } else {
+        footer?.classList.add("none");
+        backBtn?.classList.remove("none");
+      }
+    }
+
+    if (currentContext === "register") {
+      footer?.classList.add("none");
+      backBtn?.classList.remove("none");
+    }
+  }
+
 
   backBtn.addEventListener("click", (e) => {
     const currentRegisterVisible = !registerForm.classList.contains("none");
@@ -75,48 +186,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (currentRegisterVisible) {
       e.preventDefault();
-      localStorage.removeItem("isOnRegister");
-
       registerForm.classList.add("none");
       multiStepForm.classList.remove("none");
-
-      const inputField = multiStepForm.querySelector(".input-field");
-      const loader = inputField.querySelector(".loader");
-      loader.style.display = "none";
-
-      showStep(1);
+      showReferralStep(1);
     } else if (currentMultiStepVisible && stepNumber !== "1") {
       e.preventDefault();
-      showStep(1);
+      showReferralStep(1);
     }
   });
 
-  function showStep(step) {
+  function showReferralStep(step) {
     formSteps.forEach(section => {
       section.classList.toggle("none", section.dataset.step !== String(step));
     });
-  }
+    updateFooterAndBack("referral", step)
+  } 
 
   document.getElementById("submitStep2").addEventListener("click", async function (e) {
     e.preventDefault();
-
-    
-    const loader = step2Section.querySelector(".loader");
-
-    if (loader.style.display === "block") return;
-    loader.style.display = "block";
-
-    setTimeout(async () => {
-      loader.style.display = "none";
-      showStep(1);
-
-      if (autoFillCode) {
-        referralInputs.value = autoFillCode;
-        await validateReferralCode(autoFillCode);
-
-      }
-    }, 200);
+    showReferralStep(1);
+    if (autoFillCode) {
+      referralInputs.value = autoFillCode;
+      await validateReferralCode(autoFillCode);
+    }
   });
+
 
   async function validateReferralCode(referralString) {
     const accessToken = getCookie("authToken");
@@ -134,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
       Authorization: `Bearer ${accessToken}`,
     });
 
-    // Define the GraphQL mutation with variables
     const graphql = JSON.stringify({
       query: `mutation VerifyReferralString ($referralString: String!) {
           verifyReferralString(referralString: $referralString) {
@@ -153,7 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    // Define request options
     const requestOptions = {
       method: "POST",
       headers: headers,
@@ -201,12 +293,29 @@ document.addEventListener("DOMContentLoaded", () => {
   //   showStep(1);
   // }
 
-  document.getElementById("copyIcon").addEventListener("click", function () {
-    const input = document.getElementById("referral_code");
-    input.select();
-    input.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(input.value);
+  document.querySelectorAll(".copy").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = btn.closest("div").querySelector(".referral_code");
+      if (!input) return;
+
+      let textToCopy = "";
+
+      if (input.tagName === "INPUT" || input.tagName === "TEXTAREA") {
+        input.focus();
+        input.select();
+        input.setSelectionRange(0, 99999);
+        textToCopy = input.value;
+      } else {
+        textToCopy = input.textContent;
+      }
+
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => console.log("Referral code copied!"))
+        .catch(err => console.error("Failed to copy:", err));
+    });
   });
+
+
 });
 
 
@@ -289,140 +398,6 @@ async function registerUser(email, password, username, referralcode) {
   }
 }
 
-// Event-Listener für das Registrierungsformular, der ausgelöst wird, wenn das Formular abgeschickt wird
-document.addEventListener("DOMContentLoaded", () => {
-  const registerForm = document.getElementById("registerForm");
-  const ageConfirmation = document.getElementById("ageConfirmation");
-  const formSteps = ageConfirmation.querySelectorAll(".ageConfirm");
-  const confirmButton = document.getElementById("confirmAge");
-  const cancelButton = document.getElementById("cancelAge");
-  const loaders = document.querySelectorAll(".regLoader");
-
-  const passwordMinLength = 8;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;
-
-  function showAgeStep(stepNumber) {
-    formSteps.forEach(section => {
-      section.style.display = section.dataset.step === String(stepNumber) ? "flex" : "none";
-    });
-
-    const backBtn = document.getElementById("back-btn");
-    const footer = document.querySelector(".footer"); 
-
-    if (["1", "2", "3"].includes(String(stepNumber))) {
-      backBtn?.classList.add("none");
-      footer?.classList.add("none");
-    } else {
-      backBtn?.classList.remove("none");
-      footer?.classList.remove("none");
-    }
-  }
-
-  registerForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    clearValidationMessage("regValidationMessage");
-
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirm_password").value;
-    // const registerBtn = document.getElementById("registerBtn");
-
-    // const isFilled = username !== "" && email !== "" && password !== "" && confirmPassword !== "";
-    // const isPasswordValid = password.length >= passwordMinLength && /[A-Z]/.test(password) && /\d/.test(password) && /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    // const isMatching = password === confirmPassword ;
-
-    // if (isFilled && isPasswordValid && isMatching) {
-    //    registerBtn.classList.remove('disabled');
-    // }
-    // else {
-    //   registerBtn.classList.add('disabled');
-    // }
-
-
-    // Validation
-    if (username === "" || email === "" || password === "" || confirmPassword === "") {
-      return displayValidationMessage(userfriendlymsg("All fields must be filled out!!"), "regValidationMessage");
-    }
-    if (password.length < passwordMinLength) {
-      return displayValidationMessage(userfriendlymsg("Password too short (min. 8 chars)!!"), "regValidationMessage");
-    }
-    if (!/[A-Z]/.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Add at least 1 uppercase letter!!"), "regValidationMessage");
-    }
-    if (!/\d/.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Add at least 1 number!!"), "regValidationMessage");
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Include a special character (!@#$...)!!"), "regValidationMessage");
-    }
-    if (!passwordRegex.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Password does not meet requirements!!"), "regValidationMessage");
-    }
-    if (password !== confirmPassword) {
-      return displayValidationMessage(userfriendlymsg("Passwords do not match!!"), "confirmValidationMessage");
-    }
-
-    loaders.forEach(loader => {
-      loader.classList.add("active");
-    });
-    setTimeout(() => {
-      loaders.forEach(loader => {
-        loader.classList.remove("active");
-      });
-      registerForm.classList.add("none");
-      ageConfirmation.classList.remove("none");
-      showAgeStep(1);
-    }, 3000);
-  });
-
-  confirmButton.addEventListener("click", async () => {
-    const referralCode = document.getElementById("referral_code").value.trim();
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    loaders.forEach(loader => {
-      loader.classList.add("active");
-    });
-    try {
-      const status = await registerUser(email, password, username, referralCode);
-      if (status === true) {
-        loaders.forEach(loader => {
-          loader.classList.add("active");
-        });
-        setTimeout(() => { 
-          loaders.forEach(loader => {
-            loader.classList.remove("active");
-          });
-          showAgeStep(3);
-        }, 3000);
-      } else {
-        loaders.forEach(loader => {
-          loader.classList.add("active");
-        });
-        setTimeout(() => { 
-          loaders.forEach(loader => {
-            loader.classList.remove("active");
-          });
-          ageConfirmation.classList.add("none");
-          registerForm.classList.remove("none");
-        }, 3000);
-        
-      }
-      
-    } catch (error) {
-      console.error("Registration error:", error);
-    }
-  });
-
-  cancelButton.addEventListener("click", () => {
-    showAgeStep(2); // No registration called
-  });
-});
-
-
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren
 async function verifyUser2(userid) {
@@ -452,21 +427,21 @@ async function verifyUser2(userid) {
       console.log("Mutation result:", data);
       // Ergebnis der Mutation verarbeiten
       const { status, ResponseCode } = data.data.verifyAccount;
-      const validationMessage = document.getElementById("finalValidationMessage");
+      // const validationMessage = document.getElementById("finalValidationMessage");
       // console.log("Status:", status);
       // console.log("Error Message:", ResponseCode);
-      if (status === "success") {
-        // Erfolgreiche Verifizierung
-        validationMessage.innerText = "";
-        validationMessage.classList.add("validText");
-        displayValidationMessage(userfriendlymsg(ResponseCode), "finalValidationMessage");
-        // Optional: Weiterleitung oder andere Aktionen nach erfolgreicher Verifizierung
-        // window.location.href = "login.php"; // Beispiel: Weiterleitung zur Login-Seite
-      } else {
-        // Fehler bei der Verifizierung
-        validationMessage.innerText = "";
-        validationMessage.classList.remove("validText");
-      }
+      // if (status === "success") {
+      //   // Erfolgreiche Verifizierung
+      //   validationMessage.innerText = "";
+      //   validationMessage.classList.add("validText");
+      //   displayValidationMessage(userfriendlymsg(ResponseCode), "finalValidationMessage");
+      //   // Optional: Weiterleitung oder andere Aktionen nach erfolgreicher Verifizierung
+      //   // window.location.href = "login.php"; // Beispiel: Weiterleitung zur Login-Seite
+      // } else {
+      //   // Fehler bei der Verifizierung
+      //   validationMessage.innerText = "";
+      //   validationMessage.classList.remove("validText");
+      // }
     })
     .catch((error) => {
       // Fehlerbehandlung

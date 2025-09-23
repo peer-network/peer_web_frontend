@@ -5,7 +5,7 @@
                 <path d="M2 32L32 2M2 2L32 32" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </span>
-        <img src="<?= $baseUrl ?>/svg/PeerLogoWhite.svg" alt="Peer logo">
+        <img src="<?= $baseUrl ?>/svg/peerLogoWhite.svg" alt="Peer logo">
         <p class="xxl_font_size blod">Got thoughts or ideas?</p>
         <p class="xl_font_size">Tap the button below to share your feedback.</p>
         <div class="button-row">       
@@ -24,4 +24,5 @@
         <div class="dont_show_row"> <label class="form-control xl_font_size txt-color-gray">Do not show this message again <input type="checkbox" name="dont_show_feedbackPopup" value="" /> </label></div>
     </div>
 </div>
+<?php require_once('./template-parts/content-parts/onboarding.php'); ?>
 <footer></footer>

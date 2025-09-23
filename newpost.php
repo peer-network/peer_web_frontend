@@ -25,21 +25,21 @@ checkAuth("unauthorized");
         href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <link rel="stylesheet" href="css/add-post.css?<?php echo filemtime('css/add-post.css'); ?>" />
-      <link rel="stylesheet" href="css/all-post.css?<?php echo filemtime('css/all-post.css'); ?>" />
+    <link rel="stylesheet" href="css/all-post.css?<?php echo filemtime('css/all-post.css'); ?>" />
     <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
-     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
+    <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/crop.css?<?php echo filemtime('css/crop.css'); ?>" />
-    <!-- <script src="sw_instal.min.js" async></script> -->
-  
 
+    <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
-    <script src="js/crop.js?<?php echo filemtime('js/crop.js'); ?>" defer></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
+    <script src="js/crop.js?<?php echo filemtime('js/crop.js'); ?>" defer></script>
     <script src="js/voiceRecorderApi.js?<?php echo filemtime('js/voiceRecorderApi.js'); ?>" defer></script>
 
+    <script src="js/ffmpeg/ffmpeg/package/dist/umd/ffmpeg.js?<?php echo filemtime('js/ffmpeg/ffmpeg/package/dist/umd/ffmpeg.js'); ?>"></script>
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
@@ -84,14 +84,16 @@ checkAuth("unauthorized");
         </aside>
         <?php require_once('./template-parts/footer.php'); ?>
     </div>
-    <dialog id="videocodierung">
+    <dialog id="processing_modal">
         <img src="svg/logo_farbe.svg" alt="codierung">
-        The video is being re-encoded.
-        <span id="nocursor" tabindex="-1"></span>
+        Processing...
     </dialog>
     <dialog id="videoloading">
         <img src="svg/logo_farbe.svg" alt="codierung">
-        The file is loading.
+        Processing...
+        <progress id="bar" max="100" value="0"></progress>
+        <div id="pct">0%</div>
+        <input id="focus" type="text" class="" />
     </dialog>
 </body>
 

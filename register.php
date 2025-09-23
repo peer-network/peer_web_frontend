@@ -30,7 +30,6 @@ include 'host.php';
             <div class="screen">
                 <img src="img/register.webp" alt="Login" width="612" height="612">
             </div>
-
             <div class="home-button">
                 <img src="svg/logo_sw.svg" alt="PeerLogo" width="96" height="96">
             </div>
@@ -46,210 +45,118 @@ include 'host.php';
                     <span>Back</span>
                 </a>
             </div>
-            <form class="form-container" id="multiStepForm">
+
+            <!-- 🔹 Age confirmation FIRST -->
+            <div class="ageConfirmation form-container" id="ageConfirmation">
+                <section class="ageConfirm ageConfirm1" data-step="1">
+                    <img src="svg/ageIcon.svg" alt="">
+                    <p>You must be 18+ to proceed. By continuing, you confirm your eligibility.</p>
+                    <div class="button-row">
+                        <button class="btn-transparent" id="cancelAge">No, I'm under 18</button>
+                        <button class="btn-red" id="confirmAge">I am 18+</button>
+                    </div>
                     
-                    <section id="referralCodeForm" class="form-step" data-step="1">
+                </section>
+
+                <section class="ageConfirm ageConfirm2" data-step="2">
+                    <img src="svg/Union.svg" alt="">
+                    <h2>Oops! Age confirmation needed</h2>
+                    <p class="ageConfirm2_p">To use Peer, you need to confirm that you're 18 or older. Unfortunately, we can't continue without this confirmation.</p>
+                    <div class="button-row">
+                        <a class="button btn-blue" href="login.php" id="cancelAge">Exit</a>
+                    </div>
+                </section>
+
+                <section class="ageConfirm ageConfirm3" data-step="3">
+                    <img src="svg/confirmIcon.svg" alt="">
+                    <h2>Welcome to <span class="extra-bold">peer!</span></h2>
+                    <p>Your account is ready! Start exploring and earn your first token today.</p>
+                    <a href="login.php" class="button"><span>Login&nbsp;</span></a>
+                    <!-- <div class="validationMessage" id="finalValidationMessage" for="register"></div> -->
+                </section>
+            </div>
+
+            <!-- 🔹 Referral form AFTER age -->
+            <form class="form-container none" id="multiStepForm">
+                <section id="referralCodeForm" class="referral_formStep" data-step="1">
                     <div class="head">
                         <h1 class="heading">Welcome to <span class="extra-bold">peer!</span></h1>
-                        <p class="description">One quick step left! Enter your referral code to complete registration.</p>
+                        <p class="description">One quick step left! Enter your referral code to continue registration.</p>
                     </div>
                     <div class="input-field">
-                        <img class="referral" src="svg/referral.svg"  alt="email icon">
-                        <input type="text" id="referral_code" name="referral_code" value="" placeholder="Enter referral code" class="referral_code input-text"></input>
-                        <img id="copyIcon" class="copy" src="svg/copy.svg"  alt="email icon">
-                        <div class="loader">
-                            <svg width="60" height="30" viewBox="0 0 100 50">
-                                <line x1="10" y1="25" x2="10" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="30" y1="25" x2="30" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="50" y1="25" x2="50" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="70" y1="25" x2="70" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="90" y1="25" x2="90" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                </line>
-                            </svg>
-                        </div>
+                        <img class="referral" src="svg/referral.svg" alt="referral icon">
+                        <input type="text" id="referral_code" name="referral_code" value="" placeholder="Enter referral code" class="referral_code input-text">
+                        <img id="copyIcon" class="copy" src="svg/copy.svg" alt="copy icon">
+                       
                     </div>
                     <div class="validationMessage" id="refValidationMessage" for="password"></div>
-                    <input class="button" type="submit" name="registrieren" value="Verify code">
-                    <div class="signIn">
+                    <input id="submitStep1" class="button" type="submit" value="Verify code">
+                    <div class="signIn_peer">
                         <span class="description">Don't have a code?&nbsp;
-                        <a id="noCodeLink" class="link" href="#"> <span class="extra-bold">Click&nbsp;here</span> </a> to get peer code.
+                            <a id="noCodeLink" class="link" href="#"><span class="extra-bold">Click&nbsp;here</span></a> to use peer code.
                         </span>
                     </div>
                 </section>
 
-                <section id="peersCode" class="form-step" data-step="2">
+                <section id="peersCode" class="referral_formStep" data-step="2">
                     <div class="head">
-                        <h1 class="heading">This is <span class="extra-bold">peers</span> Code!</h1>
+                        <h1 class="heading">Claim your invitation</h1>
                         <p class="description">Earning starts the moment you enter this magic code.</p>
                     </div>
                     <div class="input-field">
-                        <img class="email-icon" src="svg/referral.svg"  alt="email icon">
+                        <img class="email-icon" src="svg/referral.svg" alt="referral icon">
                         <span id="referral-code-company" class="referral-code referral_code">85d5f836-b1f5-4c4e-9381-1b058e13df93</span>
-                        
-                        <div class="loader">
-                            <svg width="60" height="30" viewBox="0 0 100 50">
-                                <line x1="10" y1="25" x2="10" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="30" y1="25" x2="30" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="50" y1="25" x2="50" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="70" y1="25" x2="70" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="90" y1="25" x2="90" y2="25" stroke="#00050d" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                </line>
-                            </svg>
-                        </div>
+                        <img id="copyIcon" class="copy" src="svg/copy.svg" alt="copy icon">
+                        <!-- <div class="loader">loader reused</div> -->
                     </div>
-                    <div class="validationMessage" id="refValidationMessage" for="password"></div>
-                    <input id="submitStep2" class="button" type="submit" name="registrieren" value="Use this code">
+                    <!-- <div class="validationMessage" id="refValidationMessage"></div> -->
+                    <input id="submitStep2" class="button" type="submit" value="Use this code">
                 </section>
             </form>
 
+            <!-- 🔹 Register form after referral -->
             <form id="registerForm" class="form-container none">
-                <section class="form-step none" data-step="1">
+                <section class="form-step " data-step="1">
                     <div class="head">
                         <h1 class="heading">Register</h1>
-                        <p class="description">Create your account in few seconds and start earning on your favorite content.</p>
+                        <p class="description">Create your account in a few seconds and start earning.</p>
                     </div>
                     <div id="regField" class="input-field">
-                        <img class="email-icon" src="svg/email-icon.svg"  alt="email icon">
-                        <input type="email" id="email" name="e_mail" placeholder="E-Mail" required class="input-text" autocomplete="on"></input>
+                        <img class="email-icon" src="svg/email-icon.svg" alt="email icon">
+                        <input type="email" id="email" name="e_mail" placeholder="E-Mail" required class="input-text" autocomplete="on">
                         <img id="emailValidationIcon" class="tick none" src="svg/tick-icon.svg" alt="tick">
                     </div>
-                    <div class="validationMessage" id="emailValidationMessage" for="register"></div>
+                    <div class="validationMessage" id="emailValidationMessage"></div>
                     <div id="regField" class="input-field">
-                        <img class="user" src="svg/user.svg" alt="tick">
-                        <input type="text" id="username" name="username" class="input-text" placeholder="Username" required autocomplete="off"  onfocus="this.removeAttribute('readonly')"readonly></input>
+                        <img class="user" src="svg/user.svg" alt="user">
+                        <input type="text" id="username" name="username" class="input-text" placeholder="Username" required autocomplete="off" onfocus="this.removeAttribute('readonly')" readonly>
                         <img id="userValidationIcon" class="tick none" src="svg/tick-icon.svg" alt="tick">
                     </div>
-                    <div class="validationMessage" id="userValidationMessage" for="register"></div>
+                    <div class="validationMessage" id="userValidationMessage"></div>
+                    
                     <!-- Password Component -->
                     <div class="password-component" data-show-strength="true" data-show-message="false" data-name="password"></div>
                     <!-- Confirm Password Component -->
-                    <div class="confirm-password-component"  data-name="confirm_password"></div>
-                    <input id="registerBtn" class="button " type="submit" name="registrieren" value="Register">
-                    <div class="validationMessage" id="regValidationMessage" for="register"></div>
-                    <div class="regLoader" id="registerLoader">
-                            <svg width="120" height="60" viewBox="0 0 100 50">
-                                <line x1="10" y1="25" x2="10" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="30" y1="25" x2="30" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="50" y1="25" x2="50" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="70" y1="25" x2="70" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="90" y1="25" x2="90" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                </line>
-                            </svg>
-                        </div>
-                    
+                    <div class="confirm-password-component" data-name="confirm_password"></div>
+
+                    <input id="registerBtn" class="button" type="submit" value="Register">
+                    <div class="validationMessage" id="regValidationMessage"></div>
+                    <!-- <!-- <div class="regLoader" id="registerLoader">loader reused</div>  -->
+
                     <div class="signIn">
-                        <span class="description">Already have an account?&nbsp;</span>
-                        <a class="link" href="login.php">Sign&nbsp;in</a>
+                        <span class="description">Already registered?&nbsp;</span>
+                        <a class="link" href="login.php">Login&nbsp;now</a>
                     </div>
-                    <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
                 </section>
             </form>
 
-            <div class="ageConfirmation form-container none" id="ageConfirmation">
-                <section class="ageConfirm" data-step="1">
-                    <img src="svg/ageIcon.svg" alt="">
-                    <p>You must be 18+ to proceed. By continuing, you confirm your eligibility.</p>
-                    <div class="button-row">
-                        <button class="btn-transparent" id="cancelAge">No, I'm under 18 </button>
-                        <button class="btn-red" id="confirmAge">I am 18+</button>
-                    </div>
-                    <div class="regLoader" id="registerLoader">
-                            <svg width="120" height="60" viewBox="0 0 100 50">
-                                <line x1="10" y1="25" x2="10" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="30" y1="25" x2="30" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.2s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="50" y1="25" x2="50" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.4s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="70" y1="25" x2="70" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.6000000000000001s" repeatCount="indefinite"></animate>
-                                </line>
-                                <line x1="90" y1="25" x2="90" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round">
-                                    <animate attributeName="y1" values="25;10;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                    <animate attributeName="y2" values="25;40;25" dur="1s" begin="0.8s" repeatCount="indefinite"></animate>
-                                </line>
-                            </svg>
-                    </div>
-                </section>
-
-                <section class="ageConfirm" data-step="2">
-                    <img src="svg/ageIcon.svg" alt="">
-                    <h2>Age requirement are not met!</h2>
-                    <p>Per our Terms of Service, this application is restricted to users aged 18 and above.</p>
-                    <div class="button-row">
-                        <a class="btn-transparent" href="login.php" id="cancelAge">Exit</a>
-                        <a class="btn-red" href="" id="confirmAge">Read Policy</a>
-                    </div>
-                </section>
-
-                <section class="ageConfirm" data-step="3">
-                    <img src="svg/confirmIcon.svg" alt="">
-                    <h2>Welcome to <span class="extra-bold">peer!</span></h2>
-                    <p>Your account is ready! Start exploring and earn your first token today.</p>
-                    <a href="login.php" class="button">
-                        <span>Login&nbsp;</span>
-                    </a>
-                    <div class="validationMessage" id="finalValidationMessage" for="register"></div>
-                </section>
-
-            </div>
-
             <div class="footer">
-                <span>By continuing, you agree to</span>
-                <a href="" class="privacy regPr">Privacy Policy</a>
+                <a href="https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724" class="privacy regPr">Privacy Policy</a>
                 <p class="version">Version 1.0.0</p>
             </div>
         </div>
     </div>
 </body>
+
 
 </html>
