@@ -215,7 +215,7 @@ async function createComment(postId, content, parentId = null) {
       return error;
     });
 }
-async function fetchChildComments(parentId, offset = 1) {
+async function fetchChildComments(parentId) {
   // Definiere den GraphQL-Query mit einer Variablen
   const accessToken = getCookie("authToken");
 
@@ -226,9 +226,8 @@ async function fetchChildComments(parentId, offset = 1) {
   });
 
   const query = `
-  query listChildComments($parent: ID!, $offset: Int!) {
-    listChildComments(parent: $parent, offset: $offset) {
-        
+  query listChildComments($parent: ID!) {
+    listChildComments(parent: $parent) {
         status
         counter
         ResponseCode
@@ -255,7 +254,6 @@ async function fetchChildComments(parentId, offset = 1) {
   // Setze die Variable für den Request
   const variables = {
     parent: parentId,
-    offset: offset
   };
 
   // Ersetze die URL mit der deines GraphQL-Endpunkts
@@ -273,7 +271,6 @@ async function fetchChildComments(parentId, offset = 1) {
       if (res.data.listChildComments.status === "error") {
         throw new Error(userfriendlymsg(res.data.listChildComments.ResponseCode));
       } else {
-        console.log('res.data.listChildComments.affectedRows ', res.data.listChildComments.affectedRows)
         return res.data.listChildComments.affectedRows;
       }
     })
