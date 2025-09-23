@@ -278,6 +278,7 @@ document.addEventListener("DOMContentLoaded",  () => {
   if (storedTypes) {
     updateFilterHeaderIcons(storedTypes);
   }
+  
 });
 
 async function addScrollBlocker(element) {
@@ -507,7 +508,7 @@ async function postsLaden(postbyUserID=null) {
 
       card_header.appendChild(card_header_left);
       
-const followButton = renderFollowButton(objekt, UserID);
+      const followButton = renderFollowButton(objekt, UserID);
       if (followButton) {
         const card_header_right = document.createElement("div");
         card_header_right.classList.add("card-header-right");
@@ -883,7 +884,51 @@ const followButton = renderFollowButton(objekt, UserID);
       no_post_found.classList.remove("active");
       post_loader.classList.remove("hideloader");
     }
-	 
+	 const cards = document.querySelectorAll(".card");
+
+  const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const sources = entry.target.querySelectorAll(".post video, .post audio, .post img");
+    if(!sources) return;
+    sources.forEach(el => {
+      if (entry.isIntersecting) {
+        // Element ist im Viewport → wieder laden
+        if (!el.src) {
+          el.src = el.dataset.src;
+          // el.muted ??= true;            // für Autoplay auf Mobile
+          el.playsInline ??= true;
+          el.load?.(); // nur für <video> relevant
+          
+        }
+      } else {
+        // Element ist nicht im Viewport → entladen
+        if (el.tagName === "VIDEO" || el.tagName === "AUDIO") {
+          
+
+          el.pause();
+          if(!el.dataset.src && el.src) {
+            el.dataset.src = el.src; // Quelle zwischenspeichern
+          }
+          if (el.src) {
+            el.removeAttribute("src");
+            el.load(); // wichtig, um Speicher freizugeben
+          }
+        } else if (el.tagName === "IMG") {
+          if(!el.dataset.src && el.src) {
+            el.dataset.src = el.src; // Quelle zwischenspeichern
+          }
+          el.removeAttribute("src");
+        }
+      }
+    });
+  });
+}, {
+  root: null,        // Viewport     
+  rootMargin: "100% 0px 100% 0px",
+  threshold: 0       // sobald auch nur ein Pixel sichtbar ist
+});
+
+cards.forEach(post => observer.observe(post));
 }
 
 async function toggleFollowStatus(userid) {

@@ -33,16 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   });
 
-     
-   
-  
-   const post_loader = document.getElementById("post_loader");
+const post_loader = document.getElementById("post_loader");
+  let observer;
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
   const observerCallback = (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         postsLaden(CurrentUserID);
-        attachWrapperListeners();
         // console.log("Der Footer ist jetzt im Viewport sichtbar!");
       }
     });
@@ -54,13 +51,33 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (post_loader) {
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    //console.log(post_loader)
+     observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
-  } else {
-    console.warn("⚠️ Post Loader element not found — cannot observe.");
-  }
-  
 
+    
+    // If post_loader is already visible on load (e.g. big screen), load posts
+   /* window.addEventListener("load", () => {
+      const rect = post_loader.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        //postsLaden();
+      } else {
+        requestAnimationFrame(ensurePostLoaderVisible); // Try again next frame
+      }
+    });*/
+
+    // 3. Manual check on scroll (in case layout shifts after interaction)
+    window.addEventListener("scroll", () => {
+      const rect = post_loader.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        console.log("Fallback load triggered (on scroll)");
+        postsLaden(CurrentUserID);
+      }
+    }, { passive: true });
+
+   } else {
+    console.warn(" Post Loader element not found — cannot observe.");
+  }
 
 
   // function for the boost post posts button & cancel boost post button
