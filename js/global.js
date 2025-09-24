@@ -51,7 +51,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-
+function getHostConfig() {
+  const config = document.querySelector("#config");
+  
+  if (!config) {
+    console.error('Config element not found');
+    return { domain: 'getpeer.eu', server: 'test' }; // fallback
+  }
+  
+  const host = config.getAttribute('data-host');
+  
+  if (!host) {
+    console.error('data-host attribute not found');
+    return { domain: 'getpeer.eu', server: 'test' }; // fallback
+  }
+  
+  // Remove protocol if present (https://, http://)
+  const cleanHost = host.replace(/^https?:\/\//, '');
+  const parts = cleanHost.split('.');
+  
+  let server, domain;
+  
+  if (parts.length > 2) {
+    // Get subdomain (everything except the last 2 parts)
+    const subdomain = parts.slice(0, parts.length - 2).join('.');
+    
+    if (subdomain === 'frontend') {
+      domain = 'peernetwork.eu';
+      server = "production";
+    } else if (subdomain === 'testing') {
+      domain = 'getpeer.eu';
+      server = "test";
+    } else {
+      domain = 'getpeer.eu';
+      server = "test";
+    }
+  } else {
+    domain = 'getpeer.eu';
+    server = "test";
+  }
+  
+  return { domain, server };
+}
 
 function updateOnlineStatus() {
   const online_status = document.querySelectorAll(".online_status");
@@ -1310,7 +1351,7 @@ function commentToDom(c, append = true) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID && userID !== "") {
 
-    likeContainer.addEventListener(
+    likeIcon.addEventListener(
       "click",
       function (event) {
         event.stopPropagation();
@@ -1749,6 +1790,13 @@ function initOnboarding() {
   const slides = inner.querySelectorAll(".onboarding-slide");
   const close_btns = inner.querySelectorAll(".onboarding-close-button");
 
+
+    // Get Server
+    const config = getHostConfig();
+    //console.log('Domain:', config.domain);
+    //console.log('Server:', config.server);
+
+ 
   // Get userid from localStorage
   let userId = null;
   try {
@@ -1757,18 +1805,14 @@ function initOnboarding() {
   } catch (e) {
     console.error("Error parsing userData", e);
   }
-
+  
   // Set the user ID in GA
-  if (typeof firebase !== 'undefined') {
+  if (typeof firebase !== 'undefined' && config.server!=='test') {
     if (userId) {
+      //console.log(userId);
       firebase.analytics().setUserId(userId);
     }
   }
-
-
-
-
-
 
   if (close_btns) {
     close_btns.forEach(btn => {
@@ -1776,14 +1820,18 @@ function initOnboarding() {
         e.preventDefault();
         onboardingScreens.classList.add('none'); // popup hide
         inner.classList.remove('open');
+        // Log onboarding skipped event
+       try {
+          if (typeof firebase !== 'undefined' && firebase.analytics && config.server!=='test') {
+                firebase.analytics().logEvent('onboarding', {
+                  skipped: 1 // 1 = true
+                });
+                //console.log("skipped event fire");
+              }
+          } catch (error) {
+          console.error('Firebase analytics error:', error);
+        }
       });
-
-      // Log onboarding skipped event
-      if (typeof firebase !== 'undefined') {
-        firebase.analytics().logEvent('onboarding', {
-          skipped: 1 // 1 = true
-        });
-      }
     });
   }
 
@@ -1836,12 +1884,18 @@ function initOnboarding() {
         onboardingScreens.classList.add('none');
         inner.classList.remove('open');
 
-        // Log onboarding completed
-        if (typeof firebase !== 'undefined') {
-          firebase.analytics().logEvent('onboarding', {
-            skipped: 0 // 0 = false
-          });
+         // Log onboarding completed
+        try {
+          if (typeof firebase !== 'undefined' && firebase.analytics && config.server!=='test') {
+                firebase.analytics().logEvent('onboarding', {
+                  skipped: 0 // 0 = false
+                });
+                //console.log("Complete Fired");
+              }
+          } catch (error) {
+          console.error('Firebase analytics error:', error);
         }
+       
 
       });
     }
