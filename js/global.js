@@ -1892,6 +1892,9 @@ function initOnboarding() {
                 });
                 //console.log("Complete Fired");
               }
+              if(config.server!=='test') {
+                console.log("Firebase event not fired on "+config.server);
+              }
           } catch (error) {
           console.error('Firebase analytics error:', error);
         }
