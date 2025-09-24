@@ -772,7 +772,12 @@
     const fileArray = Array.isArray(files) ? files : [files];
     for (const file of fileArray) form.append("file[]", file, file.name);
 
-    const uploadUrl = "https://getpeer.eu/upload-post";
+      const config = getHostConfig();
+    //console.log('Domain:', config.domain);
+    //console.log('Server:', config.server);
+
+    const uploadUrl = "https://"+config.domain+"/upload-post";
+    //console.log("uploadUrl: ",uploadUrl);
     const res = await fetch(uploadUrl, {
       method: "POST",
       headers: {
