@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
     updateOnlineStatus();
+    
   }
 });
 
@@ -68,22 +69,23 @@ function getHostConfig() {
   
   // Remove protocol if present (https://, http://)
   const cleanHost = host.replace(/^https?:\/\//, '');
-  const parts = cleanHost.split('.');
+
+  
   
   let server, domain;
   
-  if (parts.length > 2) {
-    // Get subdomain (everything except the last 2 parts)
-    const subdomain = parts.slice(0, parts.length - 2).join('.');
+  if (cleanHost) {
     
-    if (subdomain === 'frontend') {
-      domain = 'peernetwork.eu';
+    
+    if (cleanHost === 'peernetwork.eu') {
+      domain = cleanHost;
       server = "production";
-    } else if (subdomain === 'testing') {
-      domain = 'getpeer.eu';
-      server = "test";
+    } else if (cleanHost === 'getpeer.eu') {
+      domain = cleanHost;
+      server = 'test';
+     
     } else {
-      domain = 'getpeer.eu';
+      domain = cleanHost;
       server = "test";
     }
   } else {
@@ -1894,6 +1896,9 @@ function initOnboarding() {
               }
               if(config.server=='test') {
                 console.log("Firebase event not fired on "+config.server);
+              }else{
+
+                console.log("Firebase event fired on "+config.server);
               }
           } catch (error) {
           console.error('Firebase analytics error:', error);
