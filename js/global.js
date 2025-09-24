@@ -1892,7 +1892,7 @@ function initOnboarding() {
                 });
                 //console.log("Complete Fired");
               }
-              if(config.server!=='test') {
+              if(config.server=='test') {
                 console.log("Firebase event not fired on "+config.server);
               }
           } catch (error) {
