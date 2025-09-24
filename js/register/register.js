@@ -1,485 +1,572 @@
-document.addEventListener("DOMContentLoaded", () => {
 
-  // document.getElementById("goToRegister")?.addEventListener("click", function (e) {
-  //   e.preventDefault();
-  //   resetToReferralStep();
-  // });
+        // Enhanced Registration Form Controller with Accessibility
+        class AccessibleRegistrationForm {
+            constructor() {
+                this.currentStep = 1;
+                this.formData = {};
+                this.validators = {};
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupValidators();
+                this.updateProgress();
+                
+                // Check for URL parameters
+                this.handleURLParams();
+                
+                // Announce current step to screen readers
+                this.announceStep();
+            }
+
+            setupEventListeners() {
+                // Age verification
+                document.getElementById('confirmAgeBtn')?.addEventListener('click', () => this.handleAgeConfirm());
+                document.getElementById('underAgeBtn')?.addEventListener('click', () => this.handleAgeReject());
+
+                // Referral code
+                document.getElementById('referralForm')?.addEventListener('submit', (e) => this.handleReferralSubmit(e));
+                document.getElementById('useDefaultCodeBtn')?.addEventListener('click', () => this.showDefaultReferral());
+                document.getElementById('useThisCodeBtn')?.addEventListener('click', () => this.useDefaultReferral());
+
+                // Registration
+                document.getElementById('registrationForm')?.addEventListener('submit', (e) => this.handleRegistration(e));
+
+                // Navigation
+                document.getElementById('backBtn')?.addEventListener('click', () => this.goBack());
+
+                // Copy buttons
+                this.setupCopyButtons();
+
+                // Password toggle
+                document.getElementById('togglePasswordBtn')?.addEventListener('click', () => this.togglePasswordVisibility());
+
+                // Real-time validation
+                this.setupRealTimeValidation();
+            }
+
+            setupValidators() {
+                this.validators = {
+                    email: {
+                        regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: 'Please enter a valid email address'
+                    },
+                    username: {
+                        regex: /^[a-zA-Z][a-zA-Z0-9_]{4,19}$/,
+                        message: 'Username must be 5-20 characters, starting with a letter'
+                    },
+                    referralCode: {
+                        regex: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+                        message: 'Invalid referral code format'
+                    }
+                };
+            }
+
+            setupRealTimeValidation() {
+                // Email validation
+                const emailInput = document.getElementById('email');
+                emailInput?.addEventListener('input', () => this.validateField('email'));
+                emailInput?.addEventListener('blur', () => this.validateField('email'));
+
+                // Username validation
+                const usernameInput = document.getElementById('username');
+                usernameInput?.addEventListener('input', () => this.validateField('username'));
+                usernameInput?.addEventListener('blur', () => this.validateField('username'));
+
+                // Password validation
+                const passwordInput = document.getElementById('password');
+                passwordInput?.addEventListener('input', () => {
+                    this.validatePassword();
+                    this.validateField('confirmPassword'); // Re-validate confirm password
+                });
+
+                // Confirm password validation
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+                confirmPasswordInput?.addEventListener('input', () => this.validateField('confirmPassword'));
+
+                // Referral code validation
+                const referralInput = document.getElementById('referralCode');
+                referralInput?.addEventListener('input', () => this.validateField('referralCode'));
+            }
+
+            validateField(fieldName) {
+                const input = document.getElementById(fieldName);
+                const field = document.getElementById(`${fieldName}Field`);
+                const validationElement = document.getElementById(`${fieldName}Validation`);
+                const validIcon = document.getElementById(`${fieldName}ValidIcon`);
+
+                if (!input || !field || !validationElement) return false;
+
+                const value = input.value.trim();
+                let isValid = false;
+                let message = '';
+
+                if (value === '') {
+                    // Field is empty
+                    this.clearFieldValidation(field, validationElement, validIcon);
+                    return false;
+                }
+
+                switch (fieldName) {
+                    case 'email':
+                    case 'username':
+                    case 'referralCode':
+                        isValid = this.validators[fieldName].regex.test(value);
+                        message = isValid ? '' : this.validators[fieldName].message;
+                        break;
+
+                    case 'confirmPassword':
+                        const password = document.getElementById('password').value;
+                        isValid = value === password && value.length > 0;
+                        message = isValid ? '' : 'Passwords do not match';
+                        break;
+                }
+
+                this.updateFieldValidation(field, validationElement, validIcon, isValid, message);
+                return isValid;
+            }
+
+            validatePassword() {
+                const passwordInput = document.getElementById('password');
+                const password = passwordInput.value;
+                
+                const requirements = {
+                    length: password.length >= 8,
+                    upper: /[A-Z]/.test(password),
+                    number: /\d/.test(password),
+                    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                };
+
+                // Update requirement indicators
+                Object.keys(requirements).forEach(req => {
+                    const element = document.getElementById(`${req}Req`);
+                    if (element) {
+                        element.classList.toggle('met', requirements[req]);
+                    }
+                });
+
+                // Update strength meter
+                const strengthFill = document.getElementById('strengthFill');
+                const metCount = Object.values(requirements).filter(Boolean).length;
+                let strength = 'weak';
+                let width = '25%';
+
+                if (metCount >= 3) {
+                    strength = 'medium';
+                    width = '60%';
+                }
+                if (metCount === 4) {
+                    strength = 'strong';
+                    width = '100%';
+                }
+
+                if (strengthFill) {
+                    strengthFill.className = `strength-fill ${strength}`;
+                    strengthFill.style.width = width;
+                }
+
+                return Object.values(requirements).every(Boolean);
+            }
+
+            updateFieldValidation(field, validationElement, validIcon, isValid, message) {
+                field.classList.remove('valid', 'invalid');
+                validationElement.classList.remove('valid');
+                
+                if (isValid) {
+                    field.classList.add('valid');
+                    validationElement.classList.add('valid');
+                    validIcon?.classList.add('show');
+                    validationElement.textContent = '';
+                } else {
+                    field.classList.add('invalid');
+                    validIcon?.classList.remove('show');
+                    validationElement.textContent = message;
+                }
+            }
+
+            clearFieldValidation(field, validationElement, validIcon) {
+                field.classList.remove('valid', 'invalid');
+                validationElement.classList.remove('valid');
+                validIcon?.classList.remove('show');
+                validationElement.textContent = '';
+            }
+
+            setupCopyButtons() {
+                document.querySelectorAll('.copy-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        
+                        let textToCopy = '';
+                        if (btn.id === 'copyReferralBtn') {
+                            textToCopy = document.getElementById('referralCode').value;
+                        } else if (btn.id === 'copyDefaultBtn') {
+                            textToCopy = document.getElementById('defaultReferralCode').textContent.trim();
+                        }
+
+                        try {
+                            await navigator.clipboard.writeText(textToCopy);
+                            this.showToast('Referral code copied!', 'success');
+                            
+                            // Update button text temporarily
+                            const originalText = btn.innerHTML;
+                            btn.innerHTML = '✓';
+                            setTimeout(() => btn.innerHTML = originalText, 1500);
+                        } catch (err) {
+                            this.showToast('Failed to copy code', 'error');
+                        }
+                    });
+                });
+            }
+
+            togglePasswordVisibility() {
+                const passwordInput = document.getElementById('password');
+                const toggleBtn = document.getElementById('togglePasswordBtn');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleBtn.innerHTML = '🙈';
+                    toggleBtn.setAttribute('aria-label', 'Hide password');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleBtn.innerHTML = '👁️';
+                    toggleBtn.setAttribute('aria-label', 'Show password');
+                }
+            }
+
+            handleURLParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const referralCode = urlParams.get('ref') || urlParams.get('referralUuid');
+                
+                if (referralCode) {
+                    this.formData.referralCode = referralCode;
+                    // Auto-fill when we get to the referral step
+                }
+            }
+
+            handleAgeConfirm() {
+                this.goToStep(2);
+                this.announceStep('Proceeding to referral code entry');
+            }
+
+            handleAgeReject() {
+                this.showStep('ageRejection');
+                this.announceStep('Age verification failed');
+            }
+
+            showDefaultReferral() {
+                this.showStep('defaultReferralStep');
+                this.updateBackButton(true);
+            }
+
+            useDefaultReferral() {
+                const defaultCode = document.getElementById('defaultReferralCode').textContent.trim();
+                this.formData.referralCode = defaultCode;
+                
+                // Go back to referral step and auto-fill
+                this.showStep('referralStep');
+                document.getElementById('referralCode').value = defaultCode;
+                this.validateField('referralCode');
+            }
+
+            async handleReferralSubmit(e) {
+                e.preventDefault();
+                const submitBtn = document.getElementById('verifyReferralBtn');
+                const referralCode = document.getElementById('referralCode').value.trim();
+
+                if (!this.validateField('referralCode')) {
+                    this.focusFirstError('referralStep');
+                    //return;
+                }
+
+                this.setButtonLoading(submitBtn, true);
+
+                try {
+                    const isValid = await this.verifyReferralCode(referralCode);
+                    if (isValid) {
+                        this.formData.referralCode = referralCode;
+                        this.goToStep(3);
+                        this.announceStep('Referral code verified, proceeding to registration');
+                    }
+                } catch (error) {
+                    this.showToast('Error verifying referral code', 'error');
+                } finally {
+                    this.setButtonLoading(submitBtn, false);
+                }
+            }
+
+            async handleRegistration(e) {
+                e.preventDefault();
+                const submitBtn = document.getElementById('registerBtn');
+
+                // Validate all fields
+                const emailValid = this.validateField('email');
+                const usernameValid = this.validateField('username');
+                const passwordValid = this.validatePassword();
+                const confirmPasswordValid = this.validateField('confirmPassword');
+
+                if (!emailValid || !usernameValid || !passwordValid || !confirmPasswordValid) {
+                    this.focusFirstError('registrationStep');
+                    this.announceStep('Please correct the errors in the form');
+                    return;
+                }
+
+                const formData = {
+                    email: document.getElementById('email').value.trim(),
+                    username: document.getElementById('username').value.trim(),
+                    password: document.getElementById('password').value,
+                    referralCode: this.formData.referralCode
+                };
+
+                this.setButtonLoading(submitBtn, true);
+
+                try {
+                    const success = await this.registerUser(formData);
+                    if (success) {
+                        this.goToStep(4);
+                        this.announceStep('Registration successful! Welcome to peer!');
+                    }
+                } catch (error) {
+                    this.showToast('Registration failed: ' + error.message, 'error');
+                } finally {
+                    this.setButtonLoading(submitBtn, false);
+                }
+            }
+
+           
+
+            async  verifyReferralCode(referralString) {
+              const accessToken = getCookie("authToken");
+
+              const isValid = this.validators.referralCode.regex.test(referralString);
+             
+              if (!isValid) {
+                 this.showToast('Invalid or missing referral code format.', 'error');
+                return false;
+              }
+              
+              const headers = new Headers({
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              });
+
+              const graphql = JSON.stringify({
+                query: `mutation VerifyReferralString ($referralString: String!) {
+                    verifyReferralString(referralString: $referralString) {
+                      ResponseCode
+                      affectedRows {
+                        uid
+                        username
+                        slug
+                        img
+                      }
+                      status
+                    }
+                  }`,
+                variables: {
+                referralString,
+                },
+              });
+
+              const requestOptions = {
+                method: "POST",
+                headers: headers,
+                body: graphql,
+                redirect: "follow",
+              };
+              try {
+                const response = await fetch(GraphGL, requestOptions);
+                const result = await response.json();
+                const data = result?.data?.verifyReferralString;
+
+                if (data && data.status === "success") {
+                  this.showToast(userfriendlymsg(data.ResponseCode), 'success');
+                  return true;
+                } else {
+                  this.showToast(userfriendlymsg(data.ResponseCode), 'error');
+                  return false;
+                }
+
+              } catch (error) {
+                console.error("Error verifying referral code:", error);
+                this.showToast('Error verifying referral code', 'error');
+                return false;
+              }
+            }
 
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const referralCodeFromRef = urlParams.get("ref");
-  const referralCodeFromUuid = urlParams.get("referralUuid");
 
-  const referralInputs = document.getElementById("referral_code");
-  const validationMsg = document.getElementById("refValidationMessage");
-  const staticUUID = "85d5f836-b1f5-4c4e-9381-1b058e13df93";
-  let autoFillCode = null;
+            async registerUser(formData) {
+                // Simulate API call - replace with actual implementation
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        // Mock success - in real app, make GraphQL call
+                        if (Math.random() > 0.1) { // 90% success rate for demo
+                            resolve(true);
+                        } else {
+                            reject(new Error('Email already exists'));
+                        }
+                    }, 2000);
+                });
+            }
 
-  const formSteps = document.querySelectorAll(".form-step");
-  const multiStepForm = document.getElementById("multiStepForm");
-  const registerForm = document.getElementById("registerForm");
-  const backBtn = document.getElementById("back-btn");
-  const noCodeLink = document.getElementById("noCodeLink");
-  const step1Section = document.querySelector('.form-step[data-step="1"]');
-  const step2Section = document.querySelector('.form-step[data-step="2"]');
-  const referralCode = referralCodeFromRef || referralCodeFromUuid;
+            goToStep(stepNumber) {
+                this.currentStep = stepNumber;
+                this.showStep(this.getStepId(stepNumber));
+                this.updateProgress();
+                this.updateBackButton(stepNumber > 1);
+                
+                // Auto-fill referral code if we have it
+                if (stepNumber === 2 && this.formData.referralCode) {
+                    setTimeout(() => {
+                        document.getElementById('referralCode').value = this.formData.referralCode;
+                        this.validateField('referralCode');
+                    }, 100);
+                }
+            }
 
-  if (referralCode) {
-    (async () => {
-      referralInputs.value = referralCode;
-      await validateReferralCode(referralCode);
-    })();
-  }
+            getStepId(stepNumber) {
+                const stepMap = {
+                    1: 'ageVerification',
+                    2: 'referralStep',
+                    3: 'registrationStep',
+                    4: 'successStep'
+                };
+                return stepMap[stepNumber];
+            }
 
+            showStep(stepId) {
+                document.querySelectorAll('.form-step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                const targetStep = document.getElementById(stepId);
+                if (targetStep) {
+                    targetStep.classList.add('active');
+                    
+                    // Focus first interactive element
+                    setTimeout(() => {
+                        const focusable = targetStep.querySelector('input, button, select, textarea');
+                        focusable?.focus();
+                    }, 100);
+                }
+            }
 
-  showStep(1);
+            updateProgress() {
+                const progressFill = document.querySelector('.progress-fill');
+                const progressPercentages = {
+                    1: '25%',
+                    2: '50%',
+                    3: '75%',
+                    4: '100%'
+                };
+                
+                if (progressFill) {
+                    progressFill.style.width = progressPercentages[this.currentStep];
+                }
 
-  noCodeLink?.addEventListener("click", (e) => {
-    e.preventDefault();
-    autoFillCode = staticUUID;
-    showStep(2);
-  });
+                // Update progress bar aria-label
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.setAttribute('aria-valuenow', this.currentStep);
+                    progressBar.setAttribute('aria-valuemax', '4');
+                    progressBar.setAttribute('aria-valuetext', `Step ${this.currentStep} of 4`);
+                }
+            }
 
-  multiStepForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+            updateBackButton(show) {
+                const backBtn = document.getElementById('backBtn');
+                if (backBtn) {
+                    backBtn.style.display = show ? 'flex' : 'none';
+                }
+            }
 
-    if (!step1Section.classList.contains("none")) {
-      const referralValue = referralInputs.value.trim();
-      const isValid = await validateReferralCode(referralValue);
-      console.log("Referral code valid:", isValid);
-      if (!isValid) return;
+            goBack() {
+                if (this.currentStep > 1) {
+                    this.goToStep(this.currentStep - 1);
+                    this.announceStep('Navigated back to previous step');
+                }
+            }
 
-  
-      
-      const loader = multiStepForm.querySelector(".loader");
+            setButtonLoading(button, loading) {
+                if (loading) {
+                    button.disabled = true;
+                    button.classList.add('loading');
+                    button.setAttribute('aria-busy', 'true');
+                } else {
+                    button.disabled = false;
+                    button.classList.remove('loading');
+                    button.setAttribute('aria-busy', 'false');
+                }
+            }
 
-      if (loader.style.display === "block") return;
-      loader.style.display = "block";
+            focusFirstError(stepId) {
+                const step = document.getElementById(stepId);
+                const firstError = step?.querySelector('.input-field.invalid input');
+                firstError?.focus();
+            }
 
-      setTimeout(() => {
-        loader.style.display = "none";
-        multiStepForm.classList.add("none");
-        registerForm.classList.remove("none");
-        //multiStepForm.reset();
+            announceStep(customMessage) {
+                const announcer = this.getOrCreateAnnouncer();
+                const stepTitles = {
+                    1: 'Age Verification',
+                    2: 'Referral Code Entry',
+                    3: 'Registration Form',
+                    4: 'Registration Complete'
+                };
+
+                const message = customMessage || `Now on step ${this.currentStep}: ${stepTitles[this.currentStep]}`;
+                announcer.textContent = message;
+            }
+
+            getOrCreateAnnouncer() {
+                let announcer = document.getElementById('step-announcer');
+                if (!announcer) {
+                    announcer = document.createElement('div');
+                    announcer.id = 'step-announcer';
+                    announcer.className = 'sr-only';
+                    announcer.setAttribute('aria-live', 'polite');
+                    announcer.setAttribute('aria-atomic', 'true');
+                    document.body.appendChild(announcer);
+                }
+                return announcer;
+            }
+
+            showToast(message, type = 'info') {
+                // Remove existing toast
+                const existingToast = document.querySelector('.toast');
+                existingToast?.remove();
+
+                // Create new toast
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+
+                document.body.appendChild(toast);
+
+                // Show toast
+                setTimeout(() => toast.classList.add('show'), 100);
+
+                // Hide toast after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        }
 
         
-      }, 3000);
-    }
-  });
 
-  backBtn.addEventListener("click", (e) => {
-    const currentRegisterVisible = !registerForm.classList.contains("none");
-    const currentMultiStepVisible = !multiStepForm.classList.contains("none");
-    const currentStep = multiStepForm.querySelector('.form-step:not(.none)');
-    const stepNumber = currentStep?.dataset.step;
-
-    if (currentRegisterVisible) {
-      e.preventDefault();
-      localStorage.removeItem("isOnRegister");
-
-      registerForm.classList.add("none");
-      multiStepForm.classList.remove("none");
-
-      const inputField = multiStepForm.querySelector(".input-field");
-      const loader = inputField.querySelector(".loader");
-      loader.style.display = "none";
-
-      showStep(1);
-    } else if (currentMultiStepVisible && stepNumber !== "1") {
-      e.preventDefault();
-      showStep(1);
-    }
-  });
-
-  function showStep(step) {
-    formSteps.forEach(section => {
-      section.classList.toggle("none", section.dataset.step !== String(step));
-    });
-  }
-
-  document.getElementById("submitStep2").addEventListener("click", async function (e) {
-    e.preventDefault();
-
-    
-    const loader = step2Section.querySelector(".loader");
-
-    if (loader.style.display === "block") return;
-    loader.style.display = "block";
-
-    setTimeout(async () => {
-      loader.style.display = "none";
-      showStep(1);
-
-      if (autoFillCode) {
-        referralInputs.value = autoFillCode;
-        await validateReferralCode(autoFillCode);
-
-      }
-    }, 200);
-  });
-
-  async function validateReferralCode(referralString) {
-    const accessToken = getCookie("authToken");
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-    if (!referralString || !uuidRegex.test(referralString)) {
-      if (validationMsg) {
-        validationMsg.innerText = "Invalid or missing referral code format.";
-        validationMsg.classList.add("notvalid");
-      }
-      return false;
-    }
-    const headers = new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    });
-
-    // Define the GraphQL mutation with variables
-    const graphql = JSON.stringify({
-      query: `mutation VerifyReferralString ($referralString: String!) {
-          verifyReferralString(referralString: $referralString) {
-            ResponseCode
-            affectedRows {
-              uid
-              username
-              slug
-              img
-            }
-            status
-          }
-        }`,
-      variables: {
-      referralString,
-      },
-    });
-
-    // Define request options
-    const requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: graphql,
-      redirect: "follow",
-    };
-
-    
-
-    try {
-      const response = await fetch(GraphGL, requestOptions);
-      const result = await response.json();
-      const data = result?.data?.verifyReferralString;
-
-      if (data && data.status === "success") {
-        if (validationMsg) {
-          validationMsg.innerText = ""; 
-          validationMsg.classList.remove("notvalid");
-        }
-        return true;
-      } else {
-        if (validationMsg) {
-          validationMsg.innerText = userfriendlymsg(data.ResponseCode);
-          validationMsg.classList.add("notvalid");
-        }
-        return false;
-      }
-
-    } catch (error) {
-      console.error("Error verifying referral code:", error);
-      if (validationMsg) {
-        validationMsg.innerText = "Error verifying referral code.";
-        validationMsg.classList.add("notvalid");
-      }
-      return false;
-    }
-  }
-
-
-  // const isOnRegister = localStorage.getItem("isOnRegister") === "true";
-  // if (isOnRegister) {
-  //   multiStepForm.classList.add("none");
-  //   registerForm.classList.remove("none");
-  // } else {
-  //   showStep(1);
-  // }
-
-  document.getElementById("copyIcon").addEventListener("click", function () {
-    const input = document.getElementById("referral_code");
-    input.select();
-    input.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(input.value);
-  });
-});
-
-
-
-// Asynchrone Funktion, um einen Benutzer zu registrieren
-async function registerUser(email, password, username, referralcode) {
-   
-  // GraphQL-Mutation für die Registrierung eines Benutzers
-  const query = `
-        mutation Register($input: RegistrationInput!) {
-            register(input: $input) {
-                status
-                ResponseCode
-                userid
-            }
-        }
-    `;
-  // mutation Register {
-  //     register(input: { email: "hu@bu.de", password: "1234567oO#", username: "olli" }) {
-  //         status
-  //         ResponseCode
-  //         userid
-  //     }
-  // }
-  // Variablen, die an die Mutation übergeben werden (E-Mail, Passwort, Benutzername)
-  const variables = {
-    input: {
-      email: email,
-      password: password,
-      username: username,
-      pkey: null,
-      referralUuid:referralcode,
-    },
-  };
-
-  try {
-    // API-Anfrage an den GraphQL-Server
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Konvertierung der Mutation und Variablen in JSON-Format
-      body: JSON.stringify({
-        query: query,
-        variables: variables,
-      }),
-    });
-
-    // Überprüfen, ob die HTTP-Antwort erfolgreich war
-    if (!response.ok) {
-      throw new Error(`HTTP Fehler! Status: ${response.status}`);
-    }
-
-    // Das Ergebnis als JSON parsen
-    const result = await response.json();
-
-    // Erfolgreiche Registrierung
-    if (result.data.register.status === "success") {
-      // console.log("Registrierung erfolgreich! Benutzer-ID:", result.data.register.userid);
-      // validationMessage.innerText = "";
-      // validationMessage.classList.add("validText");
-      // displayValidationMessage(userfriendlymsg("User registered successfully"), "ageValidationMessage");
-      // displayValidationMessage(userfriendlymsg(result.data.register.ResponseCode), "ageValidationMessage");
-      // Benutzer nach erfolgreicher Registrierung verifizieren
-      verifyUser2(result.data.register.userid);
-      return true;
-    }
-    // Fehler: Benutzername bereits vergeben
-    else {
-      // Merror("Register failed", result.data.register.ResponseCode);
-      validationMessage.classList.remove("validText");
-      displayValidationMessage("Registration failed. " + userfriendlymsg(result.data.register.ResponseCode), "regValidationMessage");
-      console.error("Register failed:" + result.data.register.ResponseCode);
-      return false;
-    }
-  } catch (error) {
-    // Fehlerbehandlung bei Netzwerkfehlern oder anderen Problemen
-    console.error("An Error occured:", error);
-  }
-}
-
-// Event-Listener für das Registrierungsformular, der ausgelöst wird, wenn das Formular abgeschickt wird
-document.addEventListener("DOMContentLoaded", () => {
-  const registerForm = document.getElementById("registerForm");
-  const ageConfirmation = document.getElementById("ageConfirmation");
-  const formSteps = ageConfirmation.querySelectorAll(".ageConfirm");
-  const confirmButton = document.getElementById("confirmAge");
-  const cancelButton = document.getElementById("cancelAge");
-  const loaders = document.querySelectorAll(".regLoader");
-
-  const passwordMinLength = 8;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;
-
-  function showAgeStep(stepNumber) {
-    formSteps.forEach(section => {
-      section.style.display = section.dataset.step === String(stepNumber) ? "flex" : "none";
-    });
-
-    const backBtn = document.getElementById("back-btn");
-    const footer = document.querySelector(".footer"); 
-
-    if (["1", "2", "3"].includes(String(stepNumber))) {
-      backBtn?.classList.add("none");
-      footer?.classList.add("none");
-    } else {
-      backBtn?.classList.remove("none");
-      footer?.classList.remove("none");
-    }
-  }
-
-  registerForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    clearValidationMessage("regValidationMessage");
-
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirm_password").value;
-    // const registerBtn = document.getElementById("registerBtn");
-
-    // const isFilled = username !== "" && email !== "" && password !== "" && confirmPassword !== "";
-    // const isPasswordValid = password.length >= passwordMinLength && /[A-Z]/.test(password) && /\d/.test(password) && /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    // const isMatching = password === confirmPassword ;
-
-    // if (isFilled && isPasswordValid && isMatching) {
-    //    registerBtn.classList.remove('disabled');
-    // }
-    // else {
-    //   registerBtn.classList.add('disabled');
-    // }
-
-
-    // Validation
-    if (username === "" || email === "" || password === "" || confirmPassword === "") {
-      return displayValidationMessage(userfriendlymsg("All fields must be filled out!!"), "regValidationMessage");
-    }
-    if (password.length < passwordMinLength) {
-      return displayValidationMessage(userfriendlymsg("Password too short (min. 8 chars)!!"), "regValidationMessage");
-    }
-    if (!/[A-Z]/.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Add at least 1 uppercase letter!!"), "regValidationMessage");
-    }
-    if (!/\d/.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Add at least 1 number!!"), "regValidationMessage");
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Include a special character (!@#$...)!!"), "regValidationMessage");
-    }
-    if (!passwordRegex.test(password)) {
-      return displayValidationMessage(userfriendlymsg("Password does not meet requirements!!"), "regValidationMessage");
-    }
-    if (password !== confirmPassword) {
-      return displayValidationMessage(userfriendlymsg("Passwords do not match!!"), "confirmValidationMessage");
-    }
-
-    loaders.forEach(loader => {
-      loader.classList.add("active");
-    });
-    setTimeout(() => {
-      loaders.forEach(loader => {
-        loader.classList.remove("active");
-      });
-      registerForm.classList.add("none");
-      ageConfirmation.classList.remove("none");
-      showAgeStep(1);
-    }, 3000);
-  });
-
-  confirmButton.addEventListener("click", async () => {
-    const referralCode = document.getElementById("referral_code").value.trim();
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    loaders.forEach(loader => {
-      loader.classList.add("active");
-    });
-    try {
-      const status = await registerUser(email, password, username, referralCode);
-      if (status === true) {
-        loaders.forEach(loader => {
-          loader.classList.add("active");
+        // Initialize the form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AccessibleRegistrationForm();
         });
-        setTimeout(() => { 
-          loaders.forEach(loader => {
-            loader.classList.remove("active");
-          });
-          showAgeStep(3);
-        }, 3000);
-      } else {
-        loaders.forEach(loader => {
-          loader.classList.add("active");
-        });
-        setTimeout(() => { 
-          loaders.forEach(loader => {
-            loader.classList.remove("active");
-          });
-          ageConfirmation.classList.add("none");
-          registerForm.classList.remove("none");
-        }, 3000);
-        
-      }
-      
-    } catch (error) {
-      console.error("Registration error:", error);
-    }
-  });
 
-  cancelButton.addEventListener("click", () => {
-    showAgeStep(2); // No registration called
-  });
-});
-
-
-
-// Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren
-async function verifyUser2(userid) {
-  // Definiere den GraphQL-Mutation-Query mit einer Variablen
-  const query = `
-    mutation VerifiedAccount($userId: ID!) {
-      verifyAccount(userid: $userId) {
-        status
-        ResponseCode
-      }
-    }
-  `;
-
-  // Setze die Variable für den Request
-  const variables = { userId: userid };
-
-  // Ersetze die URL mit der deines GraphQL-Endpunkts
-  fetch(GraphGL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query, variables }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Mutation result:", data);
-      // Ergebnis der Mutation verarbeiten
-      const { status, ResponseCode } = data.data.verifyAccount;
-      const validationMessage = document.getElementById("finalValidationMessage");
-      // console.log("Status:", status);
-      // console.log("Error Message:", ResponseCode);
-      if (status === "success") {
-        // Erfolgreiche Verifizierung
-        validationMessage.innerText = "";
-        validationMessage.classList.add("validText");
-        displayValidationMessage(userfriendlymsg(ResponseCode), "finalValidationMessage");
-        // Optional: Weiterleitung oder andere Aktionen nach erfolgreicher Verifizierung
-        // window.location.href = "login.php"; // Beispiel: Weiterleitung zur Login-Seite
-      } else {
-        // Fehler bei der Verifizierung
-        validationMessage.innerText = "";
-        validationMessage.classList.remove("validText");
-      }
-    })
-    .catch((error) => {
-      // Fehlerbehandlung
-      console.error("Error:", error);
-    });
-}
-
-// Funktion, um einen Cookie-Wert anhand des Cookie-Namens zu erhalten
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-}
-
-
-
+        // Additional utility for cookie handling (keeping your original function)
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
