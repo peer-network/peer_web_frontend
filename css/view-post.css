@@ -314,8 +314,7 @@
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
-  overflow-y: auto;
-  
+  /*overflow-y: auto;*/
 }
 .viewpost .post_content .hashtags {
   color: #0069FF;
