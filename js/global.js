@@ -3,7 +3,7 @@ let likeCost = 0.3,
   dislikeCost = 0.5,
   commentCost = 0.05,
   postCost = 2;
-  const baseUrl = `${location.protocol}//${location.host}/`;
+const baseUrl = `${location.protocol}//${location.host}/`;
 
 // below variable used in wallet module
 // need to declare in global scope
@@ -12,46 +12,89 @@ let storedUserInfo, balance = null;
 window.tokenomicsData = null;
 
 ///////////////////////////////
-document.addEventListener("DOMContentLoaded",  async() => {
-const accessToken = getCookie("authToken");
-   if (accessToken) {
-      hello();
-      getUser();
-      dailyfree();
-      currentliquidity();
-      const userData = await getUserInfo();
-      fetchTokenomics();
-      initOnboarding();
-      // #open-onboarding anchor click par popup kholna
-        const openBtn = document.querySelector("#open-onboarding");
-        if (openBtn) {
-            openBtn.addEventListener("click", function(e) {
+document.addEventListener("DOMContentLoaded", async () => {
+  const accessToken = getCookie("authToken");
+  if (accessToken) {
+    hello();
+    getUser();
+    dailyfree();
+    currentliquidity();
+    const userData = await getUserInfo();
+    fetchTokenomics();
+    initOnboarding();
+    // #open-onboarding anchor click par popup kholna
+    const openBtn = document.querySelector("#open-onboarding");
+    if (openBtn) {
+      openBtn.addEventListener("click", function (e) {
 
-                e.preventDefault();
-                showOnboardingPopup();
-            });
-        }
+        e.preventDefault();
+        showOnboardingPopup();
+      });
+    }
 
-        //console.log(userData.userPreferences.onboardingsWereShown);
-       
-        if (userData) {
-          const onboardings = userData.userPreferences.onboardingsWereShown || [];
-          // Example: check if INTROONBOARDING is already shown
-          if (!onboardings.includes("INTROONBOARDING")) {
-            setTimeout(async () => {
-             await updateUserPreferences();
-              showOnboardingPopup();
-            }, 2000);
-          }
-        }
+    //console.log(userData.userPreferences.onboardingsWereShown);
 
-      window.addEventListener("online", updateOnlineStatus);
-      window.addEventListener("offline", updateOnlineStatus);
-      updateOnlineStatus();
-   }
+    if (userData) {
+      const onboardings = userData.userPreferences.onboardingsWereShown || [];
+      // Example: check if INTROONBOARDING is already shown
+      if (!onboardings.includes("INTROONBOARDING")) {
+        setTimeout(async () => {
+          await updateUserPreferences();
+          showOnboardingPopup();
+        }, 2000);
+      }
+    }
+
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+    updateOnlineStatus();
+    
+  }
 });
 
+function getHostConfig() {
+  const config = document.querySelector("#config");
+  
+  if (!config) {
+    console.error('Config element not found');
+    return { domain: 'getpeer.eu', server: 'test' }; // fallback
+  }
+  
+  const host = config.getAttribute('data-host');
+  
+  if (!host) {
+    console.error('data-host attribute not found');
+    return { domain: 'getpeer.eu', server: 'test' }; // fallback
+  }
+  
+  // Remove protocol if present (https://, http://)
+  const cleanHost = host.replace(/^https?:\/\//, '');
 
+  
+  
+  let server, domain;
+  
+  if (cleanHost) {
+    
+    
+    if (cleanHost === 'peernetwork.eu') {
+      domain = cleanHost;
+      server = "production";
+    } else if (cleanHost === 'getpeer.eu') {
+      domain = cleanHost;
+      server = 'test';
+     
+    } else {
+      domain = cleanHost;
+      server = "test";
+    }
+  } else {
+    domain = 'getpeer.eu';
+    server = "test";
+  }
+  
+  return { domain, server };
+}
 
 function updateOnlineStatus() {
   const online_status = document.querySelectorAll(".online_status");
@@ -249,7 +292,7 @@ async function getLiquiudity() {
     const result = await response.json();
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
-    balance = result.data.balance.currentliquidity; 
+    balance = result.data.balance.currentliquidity;
     return balance;
   } catch (error) {
     console.error("Error:", error.message);
@@ -367,357 +410,351 @@ function calctimeAgo(datetime) {
 /*------------ View Post Detail Golobal Function -------------*/
 /*--------- These functions are called in load_posts.js and guestpost.js ---------*/
 
-function postdetail(objekt,CurrentUserID) {
-  const UserID  = CurrentUserID || null; // Default to null if not provided
-    
-          const postContainer = document.getElementById("viewpost-container");
-          const shareLinkBox = document.getElementById("share-link-box");
-          const shareUrl = window.location.origin + "/post/" + objekt.id;
+function postdetail(objekt, CurrentUserID) {
+  const UserID = CurrentUserID || null; // Default to null if not provided
 
-          const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
-          if (shareLinkInput)  shareLinkInput.value = shareUrl;
+  const postContainer = document.getElementById("viewpost-container");
+  const shareLinkBox = document.getElementById("share-link-box");
+  const shareUrl = window.location.origin + "/post/" + objekt.id;
 
-          let copyLinkBtn = shareLinkBox.querySelector(".copy-link-btn");
+  const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
+  if (shareLinkInput) shareLinkInput.value = shareUrl;
 
-            // remove old listeners - > element clone 
-            const newcopyLinkBtn = copyLinkBtn.cloneNode(true);
-            copyLinkBtn.parentNode.replaceChild(newcopyLinkBtn, copyLinkBtn);
-            copyLinkBtn = newcopyLinkBtn;
+  let copyLinkBtn = shareLinkBox.querySelector(".copy-link-btn");
 
-          if (copyLinkBtn && shareLinkInput) {
-            copyLinkBtn.addEventListener("click", async () => {
-              try {
-                await navigator.clipboard.writeText(shareLinkInput.value);
-                // Optional: user ko feedback dena
-                copyLinkBtn.querySelector("span").textContent = "Copied!";
-                setTimeout(() => {
-                  copyLinkBtn.querySelector("span").textContent = "Copy";
-                }, 2000);
-              } catch (err) {
-                console.error("Failed to copy: ", err);
-                alert("Copy failed. Please copy manually.");
-              }
-            });
-          }
+  // remove old listeners - > element clone 
+  const newcopyLinkBtn = copyLinkBtn.cloneNode(true);
+  copyLinkBtn.parentNode.replaceChild(newcopyLinkBtn, copyLinkBtn);
+  copyLinkBtn = newcopyLinkBtn;
 
-          
-          const whatsappShare = "https://wa.me/?text=" + encodeURIComponent(shareUrl);
-          shareLinkBox.querySelector(".whatsapplink").setAttribute("href", whatsappShare);
-
-          const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
-          shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
-          
-          let donwloadAnchor = postContainer.querySelector(".more a.download");
-          // remove old listeners - > element clone 
-            const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
-            donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
-            donwloadAnchor = newdonwloadAnchor;
-          //donwloadAnchor.setAttribute("href", "");
+  if (copyLinkBtn && shareLinkInput) {
+    copyLinkBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(shareLinkInput.value);
+        // Optional: user ko feedback dena
+        copyLinkBtn.querySelector("span").textContent = "Copied!";
+        setTimeout(() => {
+          copyLinkBtn.querySelector("span").textContent = "Copy";
+        }, 2000);
+      } catch (err) {
+        console.error("Failed to copy: ", err);
+        alert("Copy failed. Please copy manually.");
+      }
+    });
+  }
 
 
+  const whatsappShare = "https://wa.me/?text=" + encodeURIComponent(shareUrl);
+  shareLinkBox.querySelector(".whatsapplink").setAttribute("href", whatsappShare);
 
-          
-          donwloadAnchor.addEventListener("click", (e) => {
-            e.preventDefault();
-            const downloadUrl=e.target.getAttribute("href");
-           // console.log(downloadUrl);
-            if(downloadUrl!=""){
-              //forceDownload(downloadUrl);
-            }
-            return false;
-          });
+  const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
+  shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
 
-            let reportpost_btn = postContainer.querySelector(".more a.reportpost");
-
-            // remove old listeners - > element clone 
-            const newreportpost_btn = reportpost_btn.cloneNode(true);
-            reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
-            reportpost_btn = newreportpost_btn;
-          
-
-            reportpost_btn.addEventListener(
-              "click",
-              (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                reportPost(objekt, postContainer);
-                
-              },
-              { capture: true}
-            );
+  let donwloadAnchor = postContainer.querySelector(".more a.download");
+  // remove old listeners - > element clone 
+  const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
+  donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
+  donwloadAnchor = newdonwloadAnchor;
+  //donwloadAnchor.setAttribute("href", "");
 
 
-          const containerleft = postContainer.querySelector(".viewpost-left");
-          const containerright = postContainer.querySelector(".viewpost-right");
-          const post_gallery = containerleft.querySelector(".post_gallery");
-          post_gallery.innerHTML="";
-          const post_contentletf=containerleft.querySelector(".post_content");
-          if(post_contentletf)   post_contentletf.remove();
 
-          const post_contentright=containerright.querySelector(".post_content");
-          
-          const array = JSON.parse(objekt.media);
-          //const arraycover = JSON.parse(objekt.cover);
-          
-          /*--------Card profile Header  -------*/
-          
-          const username = objekt.user.username;
-          const profile_id = objekt.user.slug;
-          const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : `${baseUrl}svg/noname.svg`;
 
-           user_img_src.onerror = function () {
-              this.src = `${baseUrl}svg/noname.svg`;
-            };
-          
+  donwloadAnchor.addEventListener("click", (e) => {
+    e.preventDefault();
+    const downloadUrl = e.target.getAttribute("href");
+    // console.log(downloadUrl);
+    if (downloadUrl != "") {
+      //forceDownload(downloadUrl);
+    }
+    return false;
+  });
 
-          const post_userName=postContainer.querySelector(".post-userName");
-          post_userName.innerHTML=username;
+  let reportpost_btn = postContainer.querySelector(".more a.reportpost");
 
-          const conprofile_id =postContainer.querySelector(".profile_id");
-          conprofile_id.innerHTML="#"+profile_id;
+  // remove old listeners - > element clone 
+  const newreportpost_btn = reportpost_btn.cloneNode(true);
+  reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
+  reportpost_btn = newreportpost_btn;
 
-          const post_userImg=postContainer.querySelector(".post-userImg");
-          post_userImg.src=user_img_src;
 
-         const followButton = renderFollowButton(objekt, UserID);
-        
-          if (followButton) {
-            const post_followbtn=postContainer.querySelector(".profile-header-right");
-            post_followbtn.innerHTML="";
-            post_followbtn.appendChild(followButton);
-          }
-          const profile_header_left=postContainer.querySelector(".profile-header-left");
-        
-          profile_header_left.addEventListener("click",
-            function handledisLikeClick(event) {
-              event.stopPropagation();
-              event.preventDefault();
-              if(UserID && UserID !== null){
-                redirectToProfile(objekt.user.id);
-              }
-              
-            }  
-          );
+  reportpost_btn.addEventListener(
+    "click",
+    (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      reportPost(objekt, postContainer);
 
-          /*--------END: Card profile Header  -------*/
-          
-          /*--------Card Post Title and Text  -------*/
-          const cont_post_text=containerright.querySelector(".post_text");
-          const cont_post_title=containerright.querySelector(".post_title h2");
-          const cont_post_time=containerright.querySelector(".timeagao");
-          const cont_post_tags=containerright.querySelector(".hashtags");
-         
-          
-          const card_post_text = objekt.mediadescription;
-          cont_post_text.innerHTML = card_post_text;
+    }, {
+      capture: true
+    }
+  );
 
-          const post_title = objekt.title;
-          const title_text = post_title.trim();
-          cont_post_title.innerHTML = title_text;
 
-          const post_time = calctimeAgo(objekt.createdat);
-          cont_post_time.innerHTML = post_time;
+  const containerleft = postContainer.querySelector(".viewpost-left");
+  const containerright = postContainer.querySelector(".viewpost-right");
+  const post_gallery = containerleft.querySelector(".post_gallery");
+  post_gallery.innerHTML = "";
+  const post_contentletf = containerleft.querySelector(".post_content");
+  if (post_contentletf) post_contentletf.remove();
 
-          // Check if tags exist and are an array
-          if (Array.isArray(objekt.tags)) {
-            objekt.tags.forEach((tag) => {
-              const span = document.createElement("span");
-              span.className = "hashtag";
-              span.textContent = `#${tag}`;
-              cont_post_tags.appendChild(span);
-            });
-          }
-          /*--------END : Card Post Title and Text  -------*/
+  const post_contentright = containerright.querySelector(".post_content");
 
-          if (objekt.contenttype === "audio") {
-            post_gallery.classList.add("audio");
-            post_gallery.classList.remove("multi");
-            post_gallery.classList.remove("images");
-            post_gallery.classList.remove("video");
-            for (const item of array) {
-              const audio = document.createElement("audio");
-              audio.id = "audio2";
-              audio.src = tempMedia(item.path);
-              audio.controls = true;
-              audio.className = "custom-audio";
+  const array = JSON.parse(objekt.media);
+  //const arraycover = JSON.parse(objekt.cover);
 
-              // 1. Erzeuge das <div>-Element
-              const audioContainer = document.createElement("div");
-              //audioContainer.id = "audio-container"; // Setze die ID
-              audioContainer.classList.add("audio-item");
+  /*--------Card profile Header  -------*/
 
-              if (objekt.cover) {
-                const cover = JSON.parse(objekt.cover);
-                img = document.createElement("img");
-                img.classList.add("cover");
-                img.onload = () => {
-                  img.setAttribute("height", img.naturalHeight);
-                  img.setAttribute("width", img.naturalWidth);
-                };
-                img.src = tempMedia(cover[0].path);
-                img.alt = "Cover";
-                audioContainer.appendChild(img);
-              }
-              // 2. Erzeuge das <canvas>-Element
-              const canvas = document.createElement("canvas");
-              canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+  const username = objekt.user.username;
+  const profile_id = objekt.user.slug;
+  const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : `${baseUrl}svg/noname.svg`;
 
-              // 3. Erzeuge das <button>-Element
-              const button = document.createElement("button");
-              button.id = "play-pause"; // Setze die ID für den Button
-              // button.textContent = "Play"; // Setze den Textinhalt des Buttons
+  user_img_src.onerror = function () {
+    this.src = `${baseUrl}svg/noname.svg`;
+  };
 
-              // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
-              let cover = null;
-              if (objekt.cover) {
-                cover = JSON.parse(objekt.cover);
-              }
-              const audio_player = document.createElement("div");
-              audio_player.className = "audio_player_con";
-              audio_player.id = "audio_player_custom";
-              const timeinfo = document.createElement("div");
-              timeinfo.className = "time-info";
-              timeinfo.innerHTML = `
+
+  const post_userName = postContainer.querySelector(".post-userName");
+  post_userName.innerHTML = username;
+
+  const conprofile_id = postContainer.querySelector(".profile_id");
+  conprofile_id.innerHTML = "#" + profile_id;
+
+  const post_userImg = postContainer.querySelector(".post-userImg");
+  post_userImg.src = user_img_src;
+
+  const followButton = renderFollowButton(objekt, UserID);
+
+  if (followButton) {
+    const post_followbtn = postContainer.querySelector(".profile-header-right");
+    post_followbtn.innerHTML = "";
+    post_followbtn.appendChild(followButton);
+  }
+  const profile_header_left = postContainer.querySelector(".profile-header-left");
+
+  profile_header_left.addEventListener("click",
+    function handledisLikeClick(event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if (UserID && UserID !== null) {
+        redirectToProfile(objekt.user.id);
+      }
+
+    }
+  );
+
+  /*--------END: Card profile Header  -------*/
+
+  /*--------Card Post Title and Text  -------*/
+  const cont_post_text = containerright.querySelector(".post_text");
+  const cont_post_title = containerright.querySelector(".post_title h2");
+  const cont_post_time = containerright.querySelector(".timeagao");
+  const cont_post_tags = containerright.querySelector(".hashtags");
+
+
+  const card_post_text = objekt.mediadescription;
+  cont_post_text.innerHTML = card_post_text;
+
+  const post_title = objekt.title;
+  const title_text = post_title.trim();
+  cont_post_title.innerHTML = title_text;
+
+  const post_time = calctimeAgo(objekt.createdat);
+  cont_post_time.innerHTML = post_time;
+
+  // Check if tags exist and are an array
+  if (Array.isArray(objekt.tags)) {
+    objekt.tags.forEach((tag) => {
+      const span = document.createElement("span");
+      span.className = "hashtag";
+      span.textContent = `#${tag}`;
+      cont_post_tags.appendChild(span);
+    });
+  }
+  /*--------END : Card Post Title and Text  -------*/
+
+  if (objekt.contenttype === "audio") {
+    post_gallery.classList.add("audio");
+    post_gallery.classList.remove("multi");
+    post_gallery.classList.remove("images");
+    post_gallery.classList.remove("video");
+    for (const item of array) {
+      const audio = document.createElement("audio");
+      audio.id = "audio2";
+      audio.src = tempMedia(item.path);
+      audio.controls = true;
+      audio.className = "custom-audio";
+
+      // 1. Erzeuge das <div>-Element
+      const audioContainer = document.createElement("div");
+      //audioContainer.id = "audio-container"; // Setze die ID
+      audioContainer.classList.add("audio-item");
+
+      if (objekt.cover) {
+        const cover = JSON.parse(objekt.cover);
+        img = document.createElement("img");
+        img.classList.add("cover");
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.src = tempMedia(cover[0].path);
+        img.alt = "Cover";
+        audioContainer.appendChild(img);
+      }
+      // 2. Erzeuge das <canvas>-Element
+      const canvas = document.createElement("canvas");
+      canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+
+      // 3. Erzeuge das <button>-Element
+      const button = document.createElement("button");
+      button.id = "play-pause"; // Setze die ID für den Button
+      // button.textContent = "Play"; // Setze den Textinhalt des Buttons
+
+      // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+      let cover = null;
+      if (objekt.cover) {
+        cover = JSON.parse(objekt.cover);
+      }
+      const audio_player = document.createElement("div");
+      audio_player.className = "audio_player_con";
+      audio_player.id = "audio_player_custom";
+      const timeinfo = document.createElement("div");
+      timeinfo.className = "time-info";
+      timeinfo.innerHTML = `
                 <span id="current-time">0:00</span> / <span id="duration">0:00</span>
               `;
-              audio_player.appendChild(timeinfo);
-              audio_player.appendChild(canvas);
-              audio_player.appendChild(button);
-              
-              audioContainer.appendChild(audio_player);
-              // audioContainer.appendChild(audio);
-              // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
-              post_gallery.appendChild(audioContainer);
-              if(donwloadAnchor){
-                 
-                  donwloadAnchor.setAttribute("href", audio.src);
-                }
-              initAudioplayer("audio_player_custom", audio.src);
-            }
-          } else if (objekt.contenttype === "video") {
-            post_gallery.classList.add("video");
-            if (array.length > 1) post_gallery.classList.add("multi");
-            else post_gallery.classList.remove("multi");
-            post_gallery.classList.remove("images");
-            post_gallery.classList.remove("audio");
+      audio_player.appendChild(timeinfo);
+      audio_player.appendChild(canvas);
+      audio_player.appendChild(button);
 
-              post_gallery.innerHTML = `
+      audioContainer.appendChild(audio_player);
+      // audioContainer.appendChild(audio);
+      // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+      post_gallery.appendChild(audioContainer);
+      if (donwloadAnchor) {
+
+        donwloadAnchor.setAttribute("href", audio.src);
+      }
+      initAudioplayer("audio_player_custom", audio.src);
+    }
+  } else if (objekt.contenttype === "video") {
+    post_gallery.classList.add("video");
+    if (array.length > 1) post_gallery.classList.add("multi");
+    else post_gallery.classList.remove("multi");
+    post_gallery.classList.remove("images");
+    post_gallery.classList.remove("audio");
+
+    post_gallery.innerHTML = `
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
                     <div class="slider-thumbnails"></div>
                     </div>
                 `;
-            const sliderTrack = post_gallery.querySelector(".slider-track");
-            const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
-            let currentIndex = 0;
+    const sliderTrack = post_gallery.querySelector(".slider-track");
+    const sliderThumb = post_gallery.querySelector(".slider-thumbnails");
+    let currentIndex = 0;
 
-            for (const [index, item] of array.entries()) {
+    for (const [index, item] of array.entries()) {
 
-              const video = document.createElement("video");
-              video.id = "video2";
-              video.src = tempMedia(extractAfterComma(item.path));
-              video.controls = true;
-              video.className = "custom-video";
-              video.autoplay = (index === 0);  // ✅ Autoplay only for the first video
-              video.muted = false;
-              video.loop = true;
+      const video = document.createElement("video");
+      video.id = "video2";
+      video.src = tempMedia(extractAfterComma(item.path));
+      video.controls = true;
+      video.className = "custom-video";
+      video.autoplay = (index === 0); // ✅ Autoplay only for the first video
+      video.muted = false;
+      video.loop = true;
 
-              let coversrc = 'img/audio-bg.png';
-              if (objekt.cover) {
-                const cover = JSON.parse(objekt.cover);
-                coversrc = tempMedia(cover[0].path);
-              
-              }
-              
-              const videoContainer = document.createElement("div");
-              videoContainer.classList.add("slide_item");
-              videoContainer.style.backgroundImage = `url("${coversrc}")`;
-              videoContainer.appendChild(video);
+      let coversrc = 'img/audio-bg.png';
+      if (objekt.cover) {
+        const cover = JSON.parse(objekt.cover);
+        coversrc = tempMedia(cover[0].path);
 
-              // Thumbnail
-              const img = document.createElement("img");
-              
-              img.src = coversrc;
-              img.alt = "";
+      }
 
-              const timg = document.createElement("div");
-              timg.classList.add("timg");
+      const videoContainer = document.createElement("div");
+      videoContainer.classList.add("slide_item");
+      videoContainer.style.backgroundImage = `url("${coversrc}")`;
+      videoContainer.appendChild(video);
 
-              const playicon = document.createElement("i");
-              playicon.classList.add("fi", "fi-sr-play");
+      // Thumbnail
+      const img = document.createElement("img");
 
-              timg.appendChild(playicon);
-              timg.appendChild(img);
-              sliderThumb.appendChild(timg);
-              sliderTrack.appendChild(videoContainer);
-            }
+      img.src = coversrc;
+      img.alt = "";
 
-            // === Slider Control Logic Outside the Loop === //
+      const timg = document.createElement("div");
+      timg.classList.add("timg");
 
-            function updateSlider(index) {
-              currentIndex = index;
+      const playicon = document.createElement("i");
+      playicon.classList.add("fi", "fi-sr-play");
 
-              const targetItem = sliderTrack.children[index];
-              const offsetLeft = targetItem.offsetLeft;
+      timg.appendChild(playicon);
+      timg.appendChild(img);
+      sliderThumb.appendChild(timg);
+      sliderTrack.appendChild(videoContainer);
+    }
 
-              sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
-              
-              if(donwloadAnchor){
-                  const video  = targetItem.querySelector("video");
-                  const videoSrc = video ? video.src : null;
-                  donwloadAnchor.setAttribute("href", videoSrc);
-                }
+    // === Slider Control Logic Outside the Loop === //
 
-              // Manage active class
-              sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
-                thumb.classList.toggle("active", i === index);
-              });
+    function updateSlider(index) {
+      currentIndex = index;
+      const targetItem = sliderTrack.children[index];
+      const offsetLeft = targetItem.offsetLeft;
+      sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+      if (donwloadAnchor) {
+        const video = targetItem.querySelector("video");
+        const videoSrc = video ? video.src : null;
+        donwloadAnchor.setAttribute("href", videoSrc);
+      }
 
-              // Play the current video and pause others
-              sliderTrack.querySelectorAll("video").forEach((vid, i) => {
-                //console.log(index +'--'+i);
-                if (i === index) {
-                  vid.play();
-                } else {
-                  vid.pause();
-                  vid.currentTime = 0;
-                }
-              });
-            }
+      // Manage active class
+      sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === index);
+      });
 
-            // Initialize
-            setTimeout(() => updateSlider(0), 50);
+      // Play the current video and pause others
+      sliderTrack.querySelectorAll("video").forEach((vid, i) => {
+        //console.log(index +'--'+i);
+        if (i === index) {
+          vid.play();
+        } else {
+          vid.pause();
+          vid.currentTime = 0;
+        }
+      });
+    }
 
-            // Add click listeners
-            sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
-              thumb.addEventListener("click", () => {
-                updateSlider(index);
-              });
-            });
+    // Initialize
+    setTimeout(() => updateSlider(0), 50);
 
-          } else if (objekt.contenttype === "text") {
+    // Add click listeners
+    sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+      thumb.addEventListener("click", () => {
+        updateSlider(index);
+      });
+    });
 
-            
-            
-            if (containerleft && post_contentright) {
-             containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
+  } else if (objekt.contenttype === "text") {
+    if (containerleft && post_contentright) {
+      containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
 
-              const cont_post_text2=containerleft.querySelector(".post_text");
-              for (const item of array) {
-                loadTextFile(tempMedia(item.path), cont_post_text2);
-              }
-            }
+      const cont_post_text2 = containerleft.querySelector(".post_text");
+      for (const item of array) {
+        loadTextFile(tempMedia(item.path), cont_post_text2);
+      }
+    }
+  } else {
+    let img;
+    post_gallery.classList.add("images");
+    post_gallery.classList.remove("video");
+    post_gallery.classList.remove("audio");
+    if (array.length > 1) post_gallery.classList.add("multi");
+    else post_gallery.classList.remove("multi");
 
-          } else {
-            let img;
-            post_gallery.classList.add("images");
-            post_gallery.classList.remove("video");
-            post_gallery.classList.remove("audio");
-            if (array.length > 1) post_gallery.classList.add("multi");
-            else post_gallery.classList.remove("multi");
 
-            
-              post_gallery.innerHTML = `
+    post_gallery.innerHTML = `
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
                     <div class="thumbs-wrapper">
@@ -730,232 +767,205 @@ function postdetail(objekt,CurrentUserID) {
                   </div>
                 `;
 
-            const sliderTrack = post_gallery.querySelector(".slider-track");
-            const thumbsWrapper = document.querySelector(".slider_thumbnails_wrapper");
-            const sliderThumb = thumbsWrapper.querySelector(".slider-thumbnails");
-            const nextBtn = document.querySelector('.next_button');
-            const prevBtn = document.querySelector('.prev_button');
+    const sliderTrack = post_gallery.querySelector(".slider-track");
+    const thumbsWrapper = document.querySelector(".slider_thumbnails_wrapper");
+    const sliderThumb = thumbsWrapper.querySelector(".slider-thumbnails");
+    const nextBtn = document.querySelector('.next_button');
+    const prevBtn = document.querySelector('.prev_button');
 
-        
-            function toggleTheScrollButtons() {
-              const totalWidth = sliderThumb.scrollWidth;   
-              const visibleWidth = thumbsWrapper.clientWidth; 
+    function toggleTheScrollButtons() {
+      const totalWidth = sliderThumb.scrollWidth;
+      const visibleWidth = thumbsWrapper.clientWidth;
+      if (totalWidth > visibleWidth) {
+        // Content is overflowing → show arrows depending on scroll position
+        if (thumbsWrapper.scrollLeft > 0) {
+          prevBtn.classList.remove("none");
+        } else {
+          prevBtn.classList.add("none");
+        }
+        if (thumbsWrapper.scrollLeft + visibleWidth < totalWidth) {
+          nextBtn.classList.remove("none");
+        } else {
+          nextBtn.classList.add("none");
+        }
+      } else {
+        // All thumbnails fit → hide both arrows
+        nextBtn.classList.add("none");
+        prevBtn.classList.add("none");
+      }
+    }
 
-              if (totalWidth > visibleWidth) {
-                // Content is overflowing → show arrows depending on scroll position
-                if (thumbsWrapper.scrollLeft > 0) {
-                  prevBtn.classList.remove("none");
-                } else {
-                  prevBtn.classList.add("none");
-                }
+    nextBtn.addEventListener('click', () => {
+      thumbsWrapper.scrollBy({
+        left: 150,
+        behavior: 'smooth'
+      });
+    });
 
-                if (thumbsWrapper.scrollLeft + visibleWidth < totalWidth) {
-                  nextBtn.classList.remove("none");
-                } else {
-                  nextBtn.classList.add("none");
-                }
-              } else {
-                // All thumbnails fit → hide both arrows
-                nextBtn.classList.add("none");
-                prevBtn.classList.add("none");
-              }
-            }
+    prevBtn.addEventListener('click', () => {
+      thumbsWrapper.scrollBy({
+        left: -150,
+        behavior: 'smooth'
+      });
+    });
 
-            nextBtn.addEventListener('click', () => {
-              thumbsWrapper.scrollBy({ left: 150, behavior: 'smooth' });
-            });
+    setTimeout(toggleTheScrollButtons, 0);
+    window.addEventListener('resize', toggleTheScrollButtons);
+    thumbsWrapper.addEventListener('scroll', toggleTheScrollButtons);
+    const imageSrcArray = [];
+    array.forEach((item, index) => {
+      const image_item = document.createElement("div");
+      image_item.classList.add("slide_item");
+      //console.log(item)
 
-            prevBtn.addEventListener('click', () => {
-              thumbsWrapper.scrollBy({ left: -150, behavior: 'smooth' });
-            });
+      const img = document.createElement("img");
+      const timg = document.createElement("img");
+      const src = tempMedia(item.path);
+      img.src = src;
+      timg.src = src;
+      img.alt = "";
+      timg.alt = "";
+      image_item.style.backgroundImage = `url("${src}")`;
+      image_item.appendChild(timg);
+      const timg2 = document.createElement("div");
+      timg2.classList.add("timg");
+      timg2.appendChild(img);
+      sliderThumb.appendChild(timg2);
 
-          
-            setTimeout(toggleTheScrollButtons, 0);
-            window.addEventListener('resize', toggleTheScrollButtons);
-            thumbsWrapper.addEventListener('scroll', toggleTheScrollButtons);
+      const zoomElement = document.createElement("span");
+      zoomElement.className = "zoom";
+      zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+      image_item.appendChild(zoomElement);
 
+      sliderTrack.appendChild(image_item);
+      let currentIndex = 0;
 
-            const imageSrcArray = [];
-            array.forEach((item, index) => {
-              const image_item = document.createElement("div");
-              image_item.classList.add("slide_item");
-              //console.log(item)
+      function updateSlider(index) {
+        currentIndex = index;
+        const targetItem = sliderTrack.children[index];
+        const offsetLeft = targetItem.offsetLeft;
+        sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+        if (donwloadAnchor) {
+          const img = targetItem.querySelector("img");
+          const imgSrc = img ? img.src : null;
+          donwloadAnchor.setAttribute("href", imgSrc);
+        }
+        // Manage active class
+        sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+          thumb.classList.toggle("active", i === index);
+        });
+      }
+      // Initialize active thumbnail
+      updateSlider(0);
+      // Add click listener to each thumbnail
+      sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+        thumb.addEventListener("click", () => {
+          updateSlider(index);
+        });
+      });
 
-              const img = document.createElement("img");
-              const timg = document.createElement("img");
-              const src = tempMedia(item.path);
-              img.src = src;
-              timg.src = src;
-              img.alt = "";
-              timg.alt = "";
-              image_item.style.backgroundImage = `url("${src}")`;
-              
-              
+      imageSrcArray.push(src);
+      // Open modal on click
+      zoomElement.addEventListener("click", () => {
+        openSliderModal(imageSrcArray, index);
+      });
+    });
+  }
 
-              
-              
-              image_item.appendChild(timg);
+  /*const title = document.getElementById("comment-title");
+  title.innerText = objekt.title;
+  const text = document.getElementById("comment-text");
+  text.innerText = objekt.mediadescription;*/
 
-              const timg2 = document.createElement("div");
-              timg2.classList.add("timg");
-                timg2.appendChild(img);
-              sliderThumb.appendChild(timg2);
+  // let mostliked = [];
+  const comments = document.getElementById("comments");
+  const commentsContainer = postContainer.querySelector(".comments-container");
+  const comment_count = commentsContainer.querySelector(".comment_count");
+  comment_count.innerText = objekt.amountcomments;
+  const social = postContainer.querySelector(".social");
+  const postViews = social.querySelector(".post-view span ");
+  postViews.innerText = objekt.amountviews;
 
-              const zoomElement = document.createElement("span");
-              zoomElement.className = "zoom";
-              zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
-              image_item.appendChild(zoomElement);
-            
-              sliderTrack.appendChild(image_item);
-
-
-              let currentIndex = 0;
-
-              function updateSlider(index) {
-                currentIndex = index;
-
-                const targetItem = sliderTrack.children[index];
-                const offsetLeft = targetItem.offsetLeft;
-
-                sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
-                if(donwloadAnchor){
-                  
-                  const img = targetItem.querySelector("img");
-                  const imgSrc = img ? img.src : null;
-                  
-                    donwloadAnchor.setAttribute("href", imgSrc);
-                    
-                  }
-
-                // Manage active class
-                sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
-                  thumb.classList.toggle("active", i === index);
-                });
-              }
-
-              // Initialize active thumbnail
-              updateSlider(0);
-
-              // Add click listener to each thumbnail
-              sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
-                thumb.addEventListener("click", () => {
-                  updateSlider(index);
-                });
-              });
-
-
-
-              imageSrcArray.push(src);
-
-              // Open modal on click
-              zoomElement.addEventListener("click", () => {
-                openSliderModal(imageSrcArray, index);
-              });
-              
-
-            });
-          }
-
-          /*const title = document.getElementById("comment-title");
-          title.innerText = objekt.title;
-          const text = document.getElementById("comment-text");
-          text.innerText = objekt.mediadescription;*/
-
-          let mostliked = [];
-          const comments = document.getElementById("comments");
-          const commentsContainer =postContainer.querySelector(".comments-container");
-          const comment_count=commentsContainer.querySelector(".comment_count");
-          comment_count.innerText = objekt.amountcomments;
-          const social =postContainer.querySelector(".social");
-          const postViews=social.querySelector(".post-view span ");
-          postViews.innerText = objekt.amountviews;
-
-          const postComments=social.querySelector(".post-comments span ");
-          postComments.innerText = objekt.amountcomments;
-
-          
-          // Zweites -Icon mit #post-like
-          const likeContainer = social.querySelector(".post-like ");
-          let postlikeIcon = likeContainer.querySelector("i");
-          const postLikes=likeContainer.querySelector("span ");
-          postLikes.innerText = objekt.amountlikes;  
-          likeContainer.classList.remove("active");
-         
-          if (objekt.isliked) {
-            likeContainer.classList.add("active");
-            
-          } else if (objekt.user.id !== UserID && UserID !== null) {
-
-            // Purane listeners remove karne ke liye element clone karo
-            const newPostlikeIcon = postlikeIcon.cloneNode(true);
-            postlikeIcon.parentNode.replaceChild(newPostlikeIcon, postlikeIcon);
-            postlikeIcon = newPostlikeIcon;
-
-            postlikeIcon.addEventListener(
-              "click",
-              (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                like_dislike_post(objekt, "like", likeContainer);
-                
-              },
-              { capture: true}
-            );
-           
-          }
-            
-          const dislikeContainer = social.querySelector(".post-dislike");
-          let postdislikeIcon = dislikeContainer.querySelector("i");
-          const postdisLikes=dislikeContainer.querySelector("span");
-          postdisLikes.innerText = objekt.amountdislikes;
-          dislikeContainer.classList.remove("active");
-          
-          if (objekt.isdisliked) {
-            dislikeContainer.classList.add("active");
-            
-          } else if (objekt.user.id !== UserID && UserID !== null) {
-            // Purane listeners remove karne ke liye element clone karo
-            const newPostDislikeIcon = postdislikeIcon.cloneNode(true);
-            postdislikeIcon.parentNode.replaceChild(newPostDislikeIcon, postdislikeIcon);
-            postdislikeIcon = newPostDislikeIcon;
-
-            postdislikeIcon.addEventListener(
-              "click",
-              (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                 like_dislike_post(objekt, "dislike", dislikeContainer);
-                
-              },
-              { capture: true }
-            );
-          }
-
-         
+  const postComments = social.querySelector(".post-comments span ");
+  postComments.innerText = objekt.amountcomments;
 
 
+  // Zweites -Icon mit #post-like
+  const likeContainer = social.querySelector(".post-like ");
+  let postlikeIcon = likeContainer.querySelector("i");
+  const postLikes = likeContainer.querySelector("span ");
+  postLikes.innerText = objekt.amountlikes;
+  likeContainer.classList.remove("active");
 
-        // document.getElementById("addComment").setAttribute("postID", objekt.id);
-          
-          comments.innerHTML = "";
-        
-          objekt.comments
-            .slice()
-            .reverse()
-            .forEach(function (c) {
-            
-            //console.log(c);
-              commentToDom(c);
-              if(UserID){ // add this condition not to call on guest user post
-                fetchChildComments(c.commentid).then((result) => {
-                  if (!result) return;
-                  result.slice().forEach(function (c2) {
-                    commentToDom(c2, true);
-                  });
-                });
-              }
-            });
-            /*
+  if (objekt.isliked) {
+    likeContainer.classList.add("active");
+
+  } else if (objekt.user.id !== UserID && UserID !== null) {
+
+    // Purane listeners remove karne ke liye element clone karo
+    const newPostlikeIcon = postlikeIcon.cloneNode(true);
+    postlikeIcon.parentNode.replaceChild(newPostlikeIcon, postlikeIcon);
+    postlikeIcon = newPostlikeIcon;
+
+    postlikeIcon.addEventListener(
+      "click",
+      (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        like_dislike_post(objekt, "like", likeContainer);
+
+      }, {
+        capture: true
+      }
+    );
+
+  }
+
+  const dislikeContainer = social.querySelector(".post-dislike");
+  let postdislikeIcon = dislikeContainer.querySelector("i");
+  const postdisLikes = dislikeContainer.querySelector("span");
+  postdisLikes.innerText = objekt.amountdislikes;
+  dislikeContainer.classList.remove("active");
+
+  if (objekt.isdisliked) {
+    dislikeContainer.classList.add("active");
+
+  } else if (objekt.user.id !== UserID && UserID !== null) {
+    // Purane listeners remove karne ke liye element clone karo
+    const newPostDislikeIcon = postdislikeIcon.cloneNode(true);
+    postdislikeIcon.parentNode.replaceChild(newPostDislikeIcon, postdislikeIcon);
+    postdislikeIcon = newPostDislikeIcon;
+
+    postdislikeIcon.addEventListener(
+      "click",
+      (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        like_dislike_post(objekt, "dislike", dislikeContainer);
+
+      }, {
+        capture: true
+      }
+    );
+  }
+
+  // document.getElementById("addComment").setAttribute("postID", objekt.id);
+  comments.innerHTML = "";
+  objekt.comments
+    .slice()
+    .reverse()
+    .forEach(function (c) {
+      commentToDom(c);
+      // if(UserID){ // add this condition not to call on guest user post
+      //   fetchChildComments(c.commentid).then((result) => {
+      //     if (!result) return;
+      //     result.slice().forEach(function (c2) {
+      //       commentToDom(c2, true);
+      //     });
+      //   });
+      // }
+    });
+  /*
           mostliked.sort((a, b) => b.liked - a.liked);
           // console.log(mostliked);
           const mostlikedcontainer = document.getElementById("mostliked");
@@ -968,122 +978,106 @@ function postdetail(objekt,CurrentUserID) {
           }*/
 
 
-        const postComment = document.getElementById("post_comment");
-          const textarea = postComment.querySelector("textarea");
-          const button = postComment.querySelector("button");
+  const postComment = document.getElementById("post_comment");
+  const textarea = postComment.querySelector("textarea");
+  const button = postComment.querySelector("button");
 
-          // Clean up previous listeners (optional but safer)
-          button.replaceWith(button.cloneNode(true));
-          textarea.replaceWith(textarea.cloneNode(true));
+  // Clean up previous listeners (optional but safer)
+  button.replaceWith(button.cloneNode(true));
+  textarea.replaceWith(textarea.cloneNode(true));
 
-          const newTextarea = postComment.querySelector("textarea");
-          const newButton = postComment.querySelector("button");
+  const newTextarea = postComment.querySelector("textarea");
+  const newButton = postComment.querySelector("button");
 
-          // Submit handler
-          async function handleCommentSubmit() {
-            const content = newTextarea.value.trim();
-            const postID = objekt.id;
+  // Submit handler
+  async function handleCommentSubmit() {
+    const content = newTextarea.value.trim();
+    const postID = objekt.id;
 
-            if ( !postID) {
-              Merror("Error","Content or Post ID is missing.");
-              return;
-            }
-            if (UserID === null) {
-               
-              return;
-            }
-            if(content.length === 0) {
-              newTextarea.focus();
-              return; // if no content, return
-            }
-            if (postComment) {
-              postComment.classList.add("disbale_click");
+    if (!postID) {
+      Merror("Error", "Content or Post ID is missing.");
+      return;
+    }
+    if (UserID === null) {
 
-              // 3 second baad remove kar do
-              setTimeout(() => {
-                postComment.classList.remove("disbale_click");
-              }, 3000);
-            }
+      return;
+    }
+    if (content.length === 0) {
+      newTextarea.focus();
+      return; // if no content, return
+    }
+    if (postComment) {
+      postComment.classList.add("disbale_click");
 
-             try {
-                // Attempt to change the username after passing validations
-                const result = await createComment(postID, content);
-                if (result && result.data?.createComment?.status === "success") {
-                  dailyfree();
-                  commentToDom(result.data.createComment.affectedRows[0], false);
-                  newTextarea.value = ""; // Clear textarea
-                } /*else {
+      // 3 second baad remove kar do
+      setTimeout(() => {
+        postComment.classList.remove("disbale_click");
+      }, 3000);
+    }
 
-                   const errorMsg = userfriendlymsg(result.data?.createComment?.ResponseCode) || "Failed to post comment.";
-                    Merror("Error",errorMsg);
-                  
-                }*/
-              } catch (error) {
-                console.error("Error during post comment:", error);
-              } finally {
-                 
-              }
+    try {
+      // Attempt to change the username after passing validations
+      const result = await createComment(postID, content);
+      if (result && result.data ?.createComment ?.status === "success") {
+        dailyfree();
+        commentToDom(result.data.createComment.affectedRows[0], false);
+        newTextarea.value = ""; // Clear textarea
+      }
+      /*else {
+        const errorMsg = userfriendlymsg(result.data?.createComment?.ResponseCode) || "Failed to post comment.";
+        Merror("Error",errorMsg);
+                       
+      }*/
+    } catch (error) {
+      console.error("Error during post comment:", error);
+    }
+  }
 
+  // Click listener
+  newButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    handleCommentSubmit();
+  });
 
-            
+  // Enter key listener
+  let isSubmitting = false; // flag
+  newTextarea.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      const modal = document.querySelector(".modal-container");
+      if (modal) {
+        const buttonElements = modal.querySelector(".modal-button");
+        if (buttonElements) {
+          buttonElements.focus();
+          isSubmitting = false; // modal ka case, lock hata do
+          return;
+        }
+
+      }
+      const currentTarget = e.currentTarget; // save here
+      if (isSubmitting) return; // agar already process ho raha hai to ignore
+      isSubmitting = true; // lock
+      handleCommentSubmit()
+        .finally(() => {
+          // jab complete ho jaye to dobara allow karo
+          isSubmitting = false;
+          if (currentTarget) {
+            currentTarget.focus(); // use saved ref
           }
-
-          // Click listener
-          newButton.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            handleCommentSubmit();
-          });
-
-          // Enter key listener
-          let isSubmitting = false; // flag
-          newTextarea.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-
-
-              const modal = document.querySelector(".modal-container");
-              if(modal){
-                const buttonElements = modal.querySelector(".modal-button");
-                if(buttonElements){
-                  buttonElements.focus();
-                  isSubmitting = false; // modal ka case, lock hata do
-                  return;
-                }
-
-              }
-              const currentTarget = e.currentTarget; // 👈 save here
-
-              if (isSubmitting) return; // agar already process ho raha hai to ignore
-               isSubmitting = true; // lock
-              
-              
-              handleCommentSubmit()
-                        .finally(() => {
-                          // jab complete ho jaye to dobara allow karo
-                          isSubmitting = false;
-                            if (currentTarget) {
-                              currentTarget.focus(); // 👈 use saved ref
-                            }
-                        });
-            }
-          });
-
-
+        });
+    }
+  });
 }
-
 
 function forceDownload(url) {
- const baseUrl = `${location.protocol}//${location.host}/`;
-   window.location.href = baseUrl+"download.php?file=" + encodeURIComponent(url);
+  const baseUrl = `${location.protocol}//${location.host}/`;
+  window.location.href = baseUrl + "download.php?file=" + encodeURIComponent(url);
 
 }
 
-
-
 function renderFollowButton(objekt, currentUserId) {
-  if (objekt.user.id === currentUserId || currentUserId==null) return null;
-  
+  if (objekt.user.id === currentUserId || currentUserId == null) return null;
+
   const followButton = document.createElement("button");
   followButton.classList.add("follow-button");
 
@@ -1134,94 +1128,93 @@ function renderFollowButton(objekt, currentUserId) {
   return followButton;
 }
 
-function  redirectToProfile (userProfileID) {
+function redirectToProfile(userProfileID) {
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 
-
 function openSliderModal(images, startIndex = 0) {
-    const modal = document.getElementById("sliderModal");
-    const track = modal.querySelector(".modal-slider-track");
-    const closeBtn = modal.querySelector(".close-modal");
-    const modalContent = modal.querySelector(".slider-modal-content");
-    const thumbnailContainer = modal.querySelector(".modal-thumbnails");
+  const modal = document.getElementById("sliderModal");
+  const track = modal.querySelector(".modal-slider-track");
+  const closeBtn = modal.querySelector(".close-modal");
+  const modalContent = modal.querySelector(".slider-modal-content");
+  const thumbnailContainer = modal.querySelector(".modal-thumbnails");
 
-    // Reset track
-    track.innerHTML = "";
-    thumbnailContainer.innerHTML = "";
+  // Reset track
+  track.innerHTML = "";
+  thumbnailContainer.innerHTML = "";
 
-    images.forEach((src, index) => {
-      const img = document.createElement("img");
-      img.src = src;
-      img.classList.add("modal-image");
-        if (index === startIndex) img.classList.add("active");
-      track.appendChild(img);
+  images.forEach((src, index) => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.classList.add("modal-image");
+    if (index === startIndex) img.classList.add("active");
+    track.appendChild(img);
+  });
+  // Add thumbnails
+  images.forEach((src, index) => {
+    const thumb = document.createElement("img");
+    thumb.src = src;
+    thumb.classList.add("modal-thumbnail");
+    if (index === startIndex) thumb.classList.add("active");
+    thumb.addEventListener("click", () => {
+      current = index;
+      update();
     });
-    // Add thumbnails
-    images.forEach((src, index) => {
-      const thumb = document.createElement("img");
-      thumb.src = src;
-      thumb.classList.add("modal-thumbnail");
-      if (index === startIndex) thumb.classList.add("active");
-      thumb.addEventListener("click", () => {
-        current = index;
-        update();
-      });
-      thumbnailContainer.appendChild(thumb);
-    });
+    thumbnailContainer.appendChild(thumb);
+  });
 
 
-    let current = startIndex;
-    const total = images.length;
-    const imageElements = track.querySelectorAll(".modal-image");
-    const thumbnailElements = thumbnailContainer.querySelectorAll(".modal-thumbnail");
+  let current = startIndex;
+  const total = images.length;
+  const imageElements = track.querySelectorAll(".modal-image");
+  const thumbnailElements = thumbnailContainer.querySelectorAll(".modal-thumbnail");
 
-    function update() {
-      imageElements.forEach((img, i) => {
+  function update() {
+    imageElements.forEach((img, i) => {
       img.classList.remove("active");
-      });
+    });
 
-      const activeImg = imageElements[current];
-      activeImg.classList.add("active");
+    const activeImg = imageElements[current];
+    activeImg.classList.add("active");
 
-      // Wait for image to load before getting dimensions
-      if (activeImg.complete) {
-        setModalWidth(activeImg);
-      } else {
-        activeImg.onload = () => setModalWidth(activeImg);
-      }
-      // Highlight active thumbnail
-      thumbnailElements.forEach((thumb, i) => {
-        thumb.classList.toggle("active", i === current);
-      });
-      
+    // Wait for image to load before getting dimensions
+    if (activeImg.complete) {
+      setModalWidth(activeImg);
+    } else {
+      activeImg.onload = () => setModalWidth(activeImg);
     }
-    function setModalWidth(img) {
-    
+    // Highlight active thumbnail
+    thumbnailElements.forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === current);
+    });
+
+  }
+
+  function setModalWidth(img) {
     if (img) {
-        const width = img.naturalWidth;
-      modalContent.style.maxWidth  = `${width}px`;
+      const width = img.naturalWidth;
+      modalContent.style.maxWidth = `${width}px`;
       track.style.transform = `translateX(-${current * 100}%)`;
     }
   }
 
-    modal.querySelector(".modal-nav.prev").onclick = () => {
-      current = (current - 1 + total) % total;
-      update();
-    };
-
-    modal.querySelector(".modal-nav.next").onclick = () => {
-      current = (current + 1) % total;
-      update();
-    };
-
-    closeBtn.onclick = () => modal.classList.add("hidden");
-    modal.onclick = (e) => {
-      if (e.target === modal) modal.classList.add("hidden");
-    };
-
+  modal.querySelector(".modal-nav.prev").onclick = () => {
+    current = (current - 1 + total) % total;
     update();
-    const navPrev = modal.querySelector(".modal-nav.prev");
+  };
+
+  modal.querySelector(".modal-nav.next").onclick = () => {
+    current = (current + 1) % total;
+    update();
+  };
+
+  closeBtn.onclick = () => modal.classList.add("hidden");
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.classList.add("hidden");
+  };
+
+  update();
+  const navPrev = modal.querySelector(".modal-nav.prev");
   const navNext = modal.querySelector(".modal-nav.next");
 
   // Hide navigation if only one image
@@ -1234,7 +1227,7 @@ function openSliderModal(images, startIndex = 0) {
     navNext.style.display = "flex";
     thumbnailContainer.style.display = "flex";
   }
-    modal.classList.remove("hidden");
+  modal.classList.remove("hidden");
 }
 
 function commentToDom(c, append = true) {
@@ -1253,17 +1246,17 @@ function commentToDom(c, append = true) {
   img.classList.add("profile-picture");
   img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
-  img.onerror = function () {
-    //this.src = "svg/noname.svg";
-  };
+  // img.onerror = function () {
+  //   // this.src = "svg/noname.svg";
+  // };
 
-    img.addEventListener("click", function handledisLikeClick(event) {
-      event.stopPropagation();
-      event.preventDefault();
-        if(userID && userID!==""){
-          redirectToProfile(c, this);
-        }
-    });
+  img.addEventListener("click", function handledisLikeClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (userID && userID !== "") {
+      redirectToProfile(c, this);
+    }
+  });
 
   const imgDiv = document.createElement("div");
   imgDiv.classList.add("commenter-pic");
@@ -1303,10 +1296,9 @@ function commentToDom(c, append = true) {
     replyBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       event.preventDefault();
-      if(userID && userID !== null){
+      if (userID && userID !== null) {
         handleReply(c);
       }
-     
       // Handle reply button click
     });
 
@@ -1314,9 +1306,31 @@ function commentToDom(c, append = true) {
     showReply.classList.add("show_reply", "txt-color-gray");
     showReply.innerHTML = `Show <span class="reply_total">${c.amountreplies}</span> replies...`;
 
-    
+    const hideReply = document.createElement("span");
+    hideReply.classList.add("hide_reply", "txt-color-gray", "none");
+    hideReply.innerHTML = `Hide`;
+
+
+    showReply.addEventListener('click', function () {
+      this.classList.add('none')
+      hideReply.classList.remove("none");
+      
+      fetchChildComments(c.commentid).then((result) => {
+        if (!result) return;
+        result.slice().forEach(function (c2) {
+          commentToDom(c2, true);
+        });
+      });
+    });
+
+
+    // hideReply.addEventListener('click', function () {
+    //   this.closest('.comment_item').classList.add('none')
+    //   console.log(' heir ');
+    // });
+
     replyContainer.classList.add("comment_reply_container");
-    replyContainer.append(replyBtn, showReply);
+    replyContainer.append(replyBtn, showReply, hideReply);
   }
   // Body container
   const commentBody = document.createElement("div");
@@ -1324,7 +1338,6 @@ function commentToDom(c, append = true) {
   commentBody.append(commenterInfoDiv, commentTextDiv, replyContainer);
 
   // Like
-
   const likeContainer = document.createElement("div");
   likeContainer.classList.add("comment_like", "md_font_size");
 
@@ -1340,7 +1353,7 @@ function commentToDom(c, append = true) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID && userID !== "") {
 
-    likeContainer.addEventListener(
+    likeIcon.addEventListener(
       "click",
       function (event) {
         event.stopPropagation();
@@ -1357,8 +1370,10 @@ function commentToDom(c, append = true) {
 
           }
         });
-      },
-      { capture: true, once: true }
+      }, {
+        capture: true,
+        once: true
+      }
     );
   }
 
@@ -1393,42 +1408,42 @@ function commentToDom(c, append = true) {
 }
 
 
- function getPostIdFromURL() {
-    // Try query param first (?postid=...)
-    const urlParams = new URLSearchParams(window.location.search);
-    let postid = urlParams.get("postid");
+function getPostIdFromURL() {
+  // Try query param first (?postid=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  let postid = urlParams.get("postid");
 
-    if (!postid) {
-      const pathParts = window.location.pathname.split("/").filter(Boolean);
-      // Find "post" in path
-      const postIndex = pathParts.indexOf("post");
-      if (postIndex !== -1 && pathParts[postIndex + 1]) {
-        postid = pathParts[postIndex + 1];
-      }
+  if (!postid) {
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+    // Find "post" in path
+    const postIndex = pathParts.indexOf("post");
+    if (postIndex !== -1 && pathParts[postIndex + 1]) {
+      postid = pathParts[postIndex + 1];
+    }
+  }
+
+  return postid;
+}
+
+// Reusable function to fetch post details
+async function fetchPostByID(postID) {
+  try {
+    const accessToken = getCookie("authToken"); //  token check
+
+    // if logged in then to "ListPosts", else "GuestListPost"
+    const queryName = accessToken ? "ListPosts" : "GuestListPost";
+    const fieldName = accessToken ? "listPosts" : "guestListPost";
+
+    const headers = new Headers({
+      "Content-Type": "application/json",
+    });
+
+    // if logged in then to Authorization header add 
+    if (accessToken) {
+      headers.append("Authorization", `Bearer ${accessToken}`);
     }
 
-    return postid;
-  } 
-
-  // Reusable function to fetch post details
-async function fetchPostByID(postID) {
-    try {
-        const accessToken = getCookie("authToken"); // 👈 token check
-
-        // ✅ if logged in then to "ListPosts", else "GuestListPost"
-        const queryName = accessToken ? "ListPosts" : "GuestListPost";
-        const fieldName = accessToken ? "listPosts" : "guestListPost";
-
-        const headers = new Headers({
-            "Content-Type": "application/json",
-        });
-
-        // ✅ if logged in then to Authorization header add 
-        if (accessToken) {
-            headers.append("Authorization", `Bearer ${accessToken}`);
-        }
-
-        const query = `
+    const query = `
             query ${queryName}($postid: ID!) {
                 ${fieldName}(postid: $postid) {
                     status
@@ -1485,28 +1500,30 @@ async function fetchPostByID(postID) {
             }
         `;
 
-        const response = await fetch(GraphGL, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-                query: query,
-                variables: { postid: postID }
-            })
-        });
-
-        const result = await response.json();
-
-        if (result.data && result.data[fieldName]) {
-            return result.data[fieldName].affectedRows; // ✅ dynamic field handle
-        } else {
-            console.error("GraphQL Error:", result.errors || "No data received");
-            return null;
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query: query,
+        variables: {
+          postid: postID
         }
+      })
+    });
 
-    } catch (error) {
-        console.error("GraphQL request failed", error);
-        return null;
+    const result = await response.json();
+
+    if (result.data && result.data[fieldName]) {
+      return result.data[fieldName].affectedRows; // ✅ dynamic field handle
+    } else {
+      console.error("GraphQL Error:", result.errors || "No data received");
+      return null;
     }
+
+  } catch (error) {
+    console.error("GraphQL request failed", error);
+    return null;
+  }
 }
 /*------------ End : View Post Detail Golobal Function -------------*/
 
@@ -1566,7 +1583,7 @@ function closeFeedbackPopup(increment = false) {
   data.lastClosed = Date.now();
 
   const dontShowCheckbox = popup.querySelector('input[name="dont_show_feedbackPopup"]');
-  if (dontShowCheckbox?.checked) {
+  if (dontShowCheckbox ?.checked) {
     data.disabled = true;
   }
 
@@ -1583,36 +1600,36 @@ function shouldShowPopup() {
   const sessionShown = sessionStorage.getItem('popupShown') === 'true';
   const closedRecently = (now - data.lastClosed) < fiveDays;
 
-  
+
 
   if (data.disabled || data.count >= 3 || sessionShown || closedRecently) {
-   
+
     return false;
   }
   return true;
 }
 
 window.addEventListener('load', () => {
-  
+
   const accessToken = getCookie("authToken");
-   if (accessToken) {
-      if (shouldShowPopup()) {
-        setTimeout(() => {
-          showFeedbackPopup();
-          sessionStorage.setItem('popupShown', 'true');
-        }, 30 * 1000); // 30 seconds
-      }
+  if (accessToken) {
+    if (shouldShowPopup()) {
+      setTimeout(() => {
+        showFeedbackPopup();
+        sessionStorage.setItem('popupShown', 'true');
+      }, 30 * 1000); // 30 seconds
     }
+  }
 
   // Close button
   const closeBtn = document.querySelector('#feebackPopup .close');
-  closeBtn?.addEventListener('click', () => {
+  closeBtn ?.addEventListener('click', () => {
     closeFeedbackPopup(); // Do not increment count here, already incremented on show
   });
 
   // "Share Feedback" button
   const shareBtn = document.querySelector('#feebackPopup a[href*="docs.google.com"]');
-  shareBtn?.addEventListener('click', () => {
+  shareBtn ?.addEventListener('click', () => {
     closeFeedbackPopup(false); // Do not increment count here, already incremented on show
   });
 });
@@ -1662,10 +1679,10 @@ async function getUserInfo() {
   try {
     // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
- const result = await response.json();
+    const result = await response.json();
     // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-   
+
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
@@ -1698,7 +1715,9 @@ function renderUsers(users, container) {
       </div>
     `;
 
-    item.querySelector("img").onerror = () => { item.querySelector("img").src = "svg/noname.svg"; };
+    item.querySelector("img").onerror = () => {
+      item.querySelector("img").src = "svg/noname.svg";
+    };
 
     item.addEventListener("click", () => {
       window.location.href = `view-profile.php?user=${user.id || user.userid}`;
@@ -1766,114 +1785,133 @@ function renderUsers(users, container) {
 
 /*----------- Start : Onboarding screens Logic --------------*/
 function initOnboarding() {
-    const onboardingScreens = document.querySelector("#site-onboarding-screens");
-    if (!onboardingScreens) return;
+  const onboardingScreens = document.querySelector("#site-onboarding-screens");
+  if (!onboardingScreens) return;
 
-    const inner = onboardingScreens.querySelector(".onboarding-inner");
-    const slides = inner.querySelectorAll(".onboarding-slide");
-    const close_btns = inner.querySelectorAll(".onboarding-close-button");
-    
-    // Get userid from localStorage
-    let userId = null;
-    try {
-        const parsed = JSON.parse(localStorage.getItem("userData"));
-        userId = parsed?.userid || null;
-    } catch (e) {
-        console.error("Error parsing userData", e);
+  const inner = onboardingScreens.querySelector(".onboarding-inner");
+  const slides = inner.querySelectorAll(".onboarding-slide");
+  const close_btns = inner.querySelectorAll(".onboarding-close-button");
+
+
+    // Get Server
+    const config = getHostConfig();
+    //console.log('Domain:', config.domain);
+    //console.log('Server:', config.server);
+
+ 
+  // Get userid from localStorage
+  let userId = null;
+  try {
+    const parsed = JSON.parse(localStorage.getItem("userData"));
+    userId = parsed ?.userid || null;
+  } catch (e) {
+    console.error("Error parsing userData", e);
+  }
+  
+  // Set the user ID in GA
+  if (typeof firebase !== 'undefined' && config.server!=='test') {
+    if (userId) {
+      //console.log(userId);
+      firebase.analytics().setUserId(userId);
     }
+  }
 
-    // Set the user ID in GA
-    if (typeof firebase !== 'undefined') {
-      if (userId) {
-        firebase.analytics().setUserId(userId);
-      }
-    }
-
-
-    
-
-   
-    
-    if (close_btns) {
-        close_btns.forEach(btn => {
-              btn.addEventListener("click", function(e) {
-                  e.preventDefault();
-                  onboardingScreens.classList.add('none'); // popup hide
-                  inner.classList.remove('open');
-              });
-
-              // Log onboarding skipped event
-              if (typeof firebase !== 'undefined') {
+  if (close_btns) {
+    close_btns.forEach(btn => {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        onboardingScreens.classList.add('none'); // popup hide
+        inner.classList.remove('open');
+        // Log onboarding skipped event
+       try {
+          if (typeof firebase !== 'undefined' && firebase.analytics && config.server!=='test') {
                 firebase.analytics().logEvent('onboarding', {
-                  skipped: 1  // 1 = true
+                  skipped: 1 // 1 = true
                 });
+                //console.log("skipped event fire");
               }
-        });
+          } catch (error) {
+          console.error('Firebase analytics error:', error);
+        }
+      });
+    });
+  }
+
+  if (slides.length === 0) return;
+
+  // Dot navigation wrapper
+  const nav = document.createElement("div");
+  nav.classList.add("onboarding-dots");
+
+  slides.forEach((slide, index) => {
+    const dot = document.createElement("span");
+    dot.classList.add("dot");
+
+    if (slide.classList.contains("active")) {
+      dot.classList.add("active");
     }
 
-    if (slides.length === 0) return;
-
-    // Dot navigation wrapper
-    const nav = document.createElement("div");
-    nav.classList.add("onboarding-dots");
-
-    slides.forEach((slide, index) => {
-        const dot = document.createElement("span");
-        dot.classList.add("dot");
-
-        if (slide.classList.contains("active")) {
-            dot.classList.add("active");
-        }
-
-        dot.addEventListener("click", () => {
-            showSlide(index, slides, nav);
-        });
-
-        nav.appendChild(dot);
-
-        // --- Next/Prev button events ---
-        const nextBtn = slide.querySelector(".next-btn");
-        const prevBtn = slide.querySelector(".prev-btn");
-        const completeBtn = slide.querySelector(".onboarding-complete-button");
-
-        if (nextBtn) {
-            nextBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                if (index < slides.length - 1) {
-                    showSlide(index + 1, slides, nav); 
-                }
-            });
-        }
-
-        if (prevBtn) {
-            prevBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                if (index > 0) {
-                    showSlide(index - 1, slides, nav);
-                }
-            });
-        }
-
-        if (completeBtn) {
-            completeBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                onboardingScreens.classList.add('none');
-                inner.classList.remove('open');
-
-                // Log onboarding completed
-                if (typeof firebase !== 'undefined') {
-                  firebase.analytics().logEvent('onboarding', {
-                    skipped: 0  // 0 = false
-                  });
-                }
-
-            });
-        }
-
+    dot.addEventListener("click", () => {
+      showSlide(index, slides, nav);
     });
 
-    // Append nav dots
-    inner.appendChild(nav);
+    nav.appendChild(dot);
+
+    // --- Next/Prev button events ---
+    const nextBtn = slide.querySelector(".next-btn");
+    const prevBtn = slide.querySelector(".prev-btn");
+    const completeBtn = slide.querySelector(".onboarding-complete-button");
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (index < slides.length - 1) {
+          showSlide(index + 1, slides, nav);
+        }
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (index > 0) {
+          showSlide(index - 1, slides, nav);
+        }
+      });
+    }
+
+    if (completeBtn) {
+      completeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        onboardingScreens.classList.add('none');
+        inner.classList.remove('open');
+
+         // Log onboarding completed
+        try {
+          if (typeof firebase !== 'undefined' && firebase.analytics && config.server!=='test') {
+                firebase.analytics().logEvent('onboarding', {
+                  skipped: 0 // 0 = false
+                });
+                //console.log("Complete Fired");
+              }
+              if(config.server=='test') {
+                console.log("Firebase event not fired on "+config.server);
+              }else{
+
+                console.log("Firebase event fired on "+config.server);
+              }
+          } catch (error) {
+          console.error('Firebase analytics error:', error);
+        }
+       
+
+      });
+    }
+
+  });
+
+  // Append nav dots
+  inner.appendChild(nav);
 }
 
 function showOnboardingPopup() {
@@ -1887,28 +1925,28 @@ function showOnboardingPopup() {
 
 // Helper function: show slide by index for initOnboarding()
 function showSlide(index, slides, nav) {
-    slides.forEach((s, i) => {
-        s.classList.remove("active");
-        s.classList.add("none");
-    });
+  slides.forEach((s, i) => {
+    s.classList.remove("active");
+    s.classList.add("none");
+  });
 
-    
-    setTimeout(() => {
-        slides[index].classList.add("active");
-      }, 100);
-    slides[index].classList.remove("none");
 
-    // Update dots
-    nav.querySelectorAll(".dot").forEach((d, i) => {
-        d.classList.remove("active");
-        if (i === index) d.classList.add("active");
-    });
+  setTimeout(() => {
+    slides[index].classList.add("active");
+  }, 100);
+  slides[index].classList.remove("none");
+
+  // Update dots
+  nav.querySelectorAll(".dot").forEach((d, i) => {
+    d.classList.remove("active");
+    if (i === index) d.classList.add("active");
+  });
 }
 
 /*----------- End  : Onboarding screens Logic --------------*/
 
 
- // Function to fetch Tokenomics
+// Function to fetch Tokenomics
 async function fetchTokenomics() {
 
   const accessToken = getCookie("authToken");
@@ -1920,7 +1958,7 @@ async function fetchTokenomics() {
 
 
   const graphql = JSON.stringify({
-    query: `query GetUserInfo {
+    query: `query GetTokenomics {
       getTokenomics {
         status
         ResponseCode
@@ -1962,14 +2000,14 @@ async function fetchTokenomics() {
       const extra_comment_price = document.getElementById("extra_comment_price");
       const dislike_price = document.getElementById("dislike_price");
 
-      if (extra_post_price) 
-      extra_post_price.innerText = result.data.getTokenomics.actionTokenPrices.postPrice;
-      if (extra_like_price) 
-      extra_like_price.innerText = result.data.getTokenomics.actionTokenPrices.likePrice;
-      if (extra_comment_price) 
-      extra_comment_price.innerText = result.data.getTokenomics.actionTokenPrices.commentPrice;
-      if (dislike_price) 
-      dislike_price.innerText = result.data.getTokenomics.actionTokenPrices.dislikePrice;
+      if (extra_post_price)
+        extra_post_price.innerText = result.data.getTokenomics.actionTokenPrices.postPrice;
+      if (extra_like_price)
+        extra_like_price.innerText = result.data.getTokenomics.actionTokenPrices.likePrice;
+      if (extra_comment_price)
+        extra_comment_price.innerText = result.data.getTokenomics.actionTokenPrices.commentPrice;
+      if (dislike_price)
+        dislike_price.innerText = result.data.getTokenomics.actionTokenPrices.dislikePrice;
 
       /*-- Gems Return Prices --*/
       const gems_return_like = document.getElementById("gems_return_like");
@@ -1980,16 +2018,16 @@ async function fetchTokenomics() {
       const dislikeReturn = result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
       const commentReturn = result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
       const viewReturn = result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
-      if (gems_return_like)  
-      gems_return_like.innerText = likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
-      if (gems_return_dislike) 
-      gems_return_dislike.innerText = dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
-      if (gems_return_comment) 
-      gems_return_comment.innerText = commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
-      if (gems_return_view) 
-      gems_return_view.innerText = viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
-    
-    
+      if (gems_return_like)
+        gems_return_like.innerText = likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
+      if (gems_return_dislike)
+        gems_return_dislike.innerText = dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
+      if (gems_return_comment)
+        gems_return_comment.innerText = commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
+      if (gems_return_view)
+        gems_return_view.innerText = viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
+
+
 
 
       //console.log("Tokenomics loaded:", window.tokenomicsData);
@@ -2043,7 +2081,7 @@ async function updateUserPreferences() {
       affectedRows
     } = result.data.updateUserPreferences;
 
-    if (ResponseCode !== "11014" && status!=="success") console.warn("Error Message:", userfriendlymsg(ResponseCode));
+    if (ResponseCode !== "11014" && status !== "success") console.warn("Error Message:", userfriendlymsg(ResponseCode));
 
     return affectedRows;
   } catch (error) {
@@ -2058,43 +2096,35 @@ const refreshToken = getCookie("refreshToken");
 const storedEmail = getCookie("userEmail");
 
 function scheduleSilentRefresh(accessToken, refreshToken) {
-
-  if (!refreshToken){ return;}
+  if (!refreshToken) {
+    return;
+  }
   try {
     const payload = JSON.parse(atob(accessToken.split('.')[1]));
-    console.log("Decoded JWT payload:", payload);
-
     // Original expiry time (from backend)
     let exp = payload.exp * 1000;
-
-    const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
+    // const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
     // Override for testing (refresh in 2 minutes instead of 45)
-    const isTesting = false;
-    if (isTesting) {
-      exp = Date.now()  + buffer; // 30 seconds from now
-      console.warn(" TEST MODE: Overriding token expiry to 30 seconds from now");
-    }
+    // const isTesting = false;
+    // if (isTesting) {
+    //   exp = Date.now() + buffer; // 30 seconds from now
+    //   console.warn(" TEST MODE: Overriding token expiry to 30 seconds from now");
+    // }
 
-   
     const refreshIn = exp - Date.now();
-
-    console.log("exp (ms):", exp);
-    console.log("refreshIn (ms):", refreshIn);
-
     if (refreshIn <= 0) {
       console.warn(" refreshIn is <= 0 — skipping setTimeout");
       return;
     }
 
     setTimeout(async () => {
-
       console.log("Refreshing token now...");
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
         //const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
         const newRefreshToken = getCookie("refreshToken");
         scheduleSilentRefresh(newAccessToken, newRefreshToken);
-        console.log("New AuthToken:", newAccessToken);
+        // console.log("New AuthToken:", newAccessToken);
       }
     }, refreshIn);
   } catch (err) {
@@ -2137,10 +2167,10 @@ async function refreshAccessToken(refreshToken) {
         refreshToken: newRefreshToken
       } = result.data.refreshToken;
 
-      if (status !== "success" && ( ResponseCode == "10801" || ResponseCode == "10901")) {
+      if (status !== "success" && (ResponseCode == "10801" || ResponseCode == "10901")) {
         throw new Error("Refresh failed with code: " + ResponseCode);
       }
-        // Store updated tokens
+      // Store updated tokens
       // Save updated tokens back into cookies
       updateCookieValue("authToken", accessToken); // keep same lifetime
       updateCookieValue("refreshToken", newRefreshToken);
@@ -2153,6 +2183,7 @@ async function refreshAccessToken(refreshToken) {
     return null;
   }
 }
+
 function setCookie(name, value, days) {
   let expires = "";
   if (days) {
@@ -2171,7 +2202,7 @@ function setCookie(name, value, days) {
 function getCookie(name) {
   const nameEQ = name + "=";
   const ca = document.cookie.split(';');
-  for(let c of ca) {
+  for (let c of ca) {
     c = c.trim();
     if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length));
   }
@@ -2182,12 +2213,13 @@ function updateCookieValue(name, value) {
   const expiry = localStorage.getItem(name + "_expiry");
   if (expiry) {
     document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
-  }else{
-     setCookie(name, value);
+  } else {
+    setCookie(name, value);
   }
 }
+
 function eraseCookie(name) {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; SameSite=Strict`;
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; SameSite=Strict`;
   localStorage.removeItem(name + "_expiry");
 }
 

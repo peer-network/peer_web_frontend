@@ -5,9 +5,10 @@
 		<img src="svg/next-arrow.svg" alt="" class="feedback_arrow">
 	</a>
     	
-	<a href="version_history.php" class="widget-inner widget-version">
-	
-		<p>Version 1.0.0</p>
-	
-	</a>
-</div>
+
+    	<div class="widget-inner widget-version">
+        
+        	<p>Version 1.8.1</p>
+        
+    	</div>
+    </div>

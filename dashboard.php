@@ -48,7 +48,7 @@ checkAuth("unauthorized");
         //  This works with compat
         firebase.initializeApp(firebaseConfig);
         firebase.analytics();
-    </script>   
+    </script>
 
 
     <!-- <script src="sw_instal.min.js" async></script> -->

@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const referralValue = referralInputs.value.trim();
       const isValid = await validateReferralCode(referralValue);
-      console.log("Referral code valid:", isValid);
+      //console.log("Referral code valid:", isValid);
       if (!isValid) return;
       multiStepForm.classList.add("none");
       registerForm.classList.remove("none");

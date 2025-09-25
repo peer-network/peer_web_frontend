@@ -45,8 +45,8 @@
              </div>
            </div>
          </div>
-         <a href="#" id="deactivateProfile" class="button change-pass-btn full-width-btn btn-red-transparent">Deactivate
-           profile</a>
+         <!--<a href="#" id="deactivateProfile" class="button change-pass-btn full-width-btn btn-red-transparent">Deactivate
+           profile</a>-->
        </div>
      </div>
      <div id="imageModal" class="modal">
