@@ -721,6 +721,32 @@ footer {grid-area: footer;}
 	gap: 20px;
 }
 
+.widget.share_version {
+  gap: 10px;
+}
+
+.widget .share_feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-color) !important;
+  gap: 8px;
+  transition: transform 0.3s ease;
+}
+
+.widget .share_feedback:hover {
+  transform: translateX(10px);
+}
+
+.widget .share_feedback .feedback_arrow {
+  width: 18px;
+}
+
+.widget-inner.widget-version {
+  text-decoration: none;
+}
+
 .widget .widget-head {
   display: flex;
   gap: 15px;
