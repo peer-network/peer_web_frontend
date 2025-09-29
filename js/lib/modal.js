@@ -6,9 +6,10 @@ function createModal({
   textarea = false,
   dontShowOption = false, // Neu: Standardmäßig keine Checkbox anzeigen
   typeKey = null, // e.g., 'like', 'dislike', 'post', 'comment'
-  svg = null
+  svg = null,
 }) {
-  const savedSettings = JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
+  const savedSettings =
+    JSON.parse(localStorage.getItem("modalDoNotShow")) || {};
   if (typeKey && dontShowOption && savedSettings[typeKey] === true) {
     return Promise.resolve({ button: 1, dontShow: true });
   }
@@ -32,13 +33,30 @@ function createModal({
         <h2 class="modal-title xxl_font_size">${title}</h2>
         <p class="modal-message xl_font_size">${message}</p>
         ${checkboxHTML}
-        ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
+        ${
+          textarea
+            ? `<textarea class="modal-textarea" placeholder="${
+                typeof textarea === "object" && textarea.placeholder
+                  ? textarea.placeholder
+                  : ""
+              }">${
+                typeof textarea === "object" && textarea.value
+                  ? textarea.value
+                  : ""
+              }</textarea>`
+            : ""
+        }
         <div class="modal-buttons">
-          ${buttons.map((btn, index) => {
-            const label = typeof btn === "string" ? btn : btn.text;
-            const extraClass = typeof btn === "object" && btn.className ? ` ${btn.className}` : "";
-            return `<button class="modal-button${extraClass}" data-index="${index}">${label}</button>`;
-          }).join("")}
+          ${buttons
+            .map((btn, index) => {
+              const label = typeof btn === "string" ? btn : btn.text;
+              const extraClass =
+                typeof btn === "object" && btn.className
+                  ? ` ${btn.className}`
+                  : "";
+              return `<button class="modal-button${extraClass}" data-index="${index}">${label}</button>`;
+            })
+            .join("")}
         </div>
       </div>
     `;
@@ -47,14 +65,16 @@ function createModal({
     setTimeout(() => modal.classList.add("modal-show"), 10);
 
     // Falls Checkbox angezeigt wird: Referenz holen
-    const checkboxElement = dontShowOption ? modal.querySelector("#dont-show-checkbox") : null;
+    const checkboxElement = dontShowOption
+      ? modal.querySelector("#dont-show-checkbox")
+      : null;
 
     // Falls Textarea vorhanden
     const textareaElement = modal.querySelector(".modal-textarea");
 
     // Button-Handler
     const buttonElements = modal.querySelectorAll(".modal-button");
-   
+
     buttonElements.forEach((btn) => {
       btn.addEventListener("click", (event) => {
         event.currentTarget.focus();
@@ -62,18 +82,22 @@ function createModal({
         const isChecked = checkboxElement ? checkboxElement.checked : false;
 
         // Wenn Checkbox da ist und angehakt, in localStorage speichern
-        
+
         /*if (dontShowOption && isChecked &&  index) {
           localStorage.setItem("modalDoNotShow", "true");
         }*/
-        
+
         if (dontShowOption && isChecked && typeKey && index === 1) {
           savedSettings[typeKey] = true;
           localStorage.setItem("modalDoNotShow", JSON.stringify(savedSettings));
         }
 
         if (textareaElement) {
-          resolve({ button: index, value: textareaElement.value, dontShow: isChecked });
+          resolve({
+            button: index,
+            value: textareaElement.value,
+            dontShow: isChecked,
+          });
         } else if (dontShowOption) {
           resolve({ button: index, dontShow: isChecked });
         } else {
@@ -89,9 +113,9 @@ function createModal({
     closeButton.addEventListener("click", () => {
       const isChecked = checkboxElement ? checkboxElement.checked : false;
 
-      if (dontShowOption && isChecked) {
-        localStorage.setItem("modalDoNotShow", "true");
-      }
+      // if (dontShowOption && isChecked) {
+      //   localStorage.setItem("modalDoNotShow", "true");
+      // }
 
       if (dontShowOption) {
         resolve({ button: null, dontShow: isChecked });
@@ -128,16 +152,14 @@ function createModal({
       }, 10);
     }
   });
-  
 }
 
-
 function closeModal(modalElement) {
-    modalElement.classList.add("modal-fade-out");
-    setTimeout(() => {
-      modalElement.remove();
-    }, 300);
- }
+  modalElement.classList.add("modal-fade-out");
+  setTimeout(() => {
+    modalElement.remove();
+  }, 300);
+}
 
 function userfriendlymsg(code) {
   let msg;
@@ -152,7 +174,10 @@ function info(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
+    buttons: [
+      { text: "Cancel", className: "btn-transparent" },
+      { text: "Confirm", className: "btn-white" },
+    ],
     type: "info",
     dontShowOption: dontShowOption,
   });
@@ -172,19 +197,31 @@ function warnig(title, text = "", dontShowOption = false) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
+    buttons: [
+      { text: "Cancel", className: "btn-transparent" },
+      { text: "Confirm", className: "btn-white" },
+    ],
     type: "warning",
     dontShowOption: dontShowOption,
   });
 }
-function confirm(title, text = "", dontShowOption = false, typeKey = null, svg = null) {
+function confirm(
+  title,
+  text = "",
+  dontShowOption = false,
+  typeKey = null,
+  svg = null
+) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: [{ text: "No", className: "btn-white" }, { text: "Yes", className: "btn-blue" }],
+    buttons: [
+      { text: "No", className: "btn-white" },
+      { text: "Yes", className: "btn-blue" },
+    ],
     type: "warning",
     dontShowOption: dontShowOption,
     typeKey: typeKey, // Pass down to createModal
-    svg: svg
+    svg: svg,
   });
 }

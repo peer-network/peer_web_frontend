@@ -7,7 +7,8 @@ const baseUrl = `${location.protocol}//${location.host}/`;
 
 // below variable used in wallet module
 // need to declare in global scope
-let storedUserInfo, balance = null;
+let storedUserInfo,
+  balance = null;
 // Global variable to hold tokenomics data
 window.tokenomicsData = null;
 
@@ -26,7 +27,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const openBtn = document.querySelector("#open-onboarding");
     if (openBtn) {
       openBtn.addEventListener("click", function (e) {
-
         e.preventDefault();
         showOnboardingPopup();
       });
@@ -51,7 +51,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+<<<<<<< Updated upstream
 
+=======
+function getHostConfig() {
+  const config = document.querySelector("#config");
+
+  if (!config) {
+    console.error("Config element not found");
+    return { domain: "getpeer.eu", server: "test" }; // fallback
+  }
+
+  const host = config.getAttribute("data-host");
+
+  if (!host) {
+    console.error("data-host attribute not found");
+    return { domain: "getpeer.eu", server: "test" }; // fallback
+  }
+
+  // Remove protocol if present (https://, http://)
+  const cleanHost = host.replace(/^https?:\/\//, "");
+
+  let server, domain;
+
+  if (cleanHost) {
+    if (cleanHost === "peernetwork.eu") {
+      domain = cleanHost;
+      server = "production";
+    } else if (cleanHost === "getpeer.eu") {
+      domain = cleanHost;
+      server = "test";
+    } else {
+      domain = cleanHost;
+      server = "test";
+    }
+  } else {
+    domain = "getpeer.eu";
+    server = "test";
+  }
+
+  return { domain, server };
+}
+>>>>>>> Stashed changes
 
 function updateOnlineStatus() {
   const online_status = document.querySelectorAll(".online_status");
@@ -72,11 +113,17 @@ function updateOnlineStatus() {
 function extractWords(str) {
   const words = str.split(" ");
 
-  const hashtags = words.filter((word) => word.startsWith("#")).map((word) => word.slice(1));
+  const hashtags = words
+    .filter((word) => word.startsWith("#"))
+    .map((word) => word.slice(1));
 
-  const usernames = words.filter((word) => word.startsWith("@")).map((word) => word.slice(1));
+  const usernames = words
+    .filter((word) => word.startsWith("@"))
+    .map((word) => word.slice(1));
 
-  const normalWords = words.filter((word) => !word.startsWith("#") && !word.startsWith("@"));
+  const normalWords = words.filter(
+    (word) => !word.startsWith("#") && !word.startsWith("@")
+  );
 
   return {
     hashtags,
@@ -117,7 +164,6 @@ function addMediaListener(mediaElement) {
     });
   });
 }
-
 
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -182,7 +228,9 @@ async function dailyfree() {
     result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
       const used = document.getElementById(entry.name + "used");
       const available = document.getElementById(entry.name + "available");
-      const iconContainer = document.querySelector(`.progress-icons[data-type="${entry.name}"]`);
+      const iconContainer = document.querySelector(
+        `.progress-icons[data-type="${entry.name}"]`
+      );
       if (used) {
         used.innerText = entry.used;
       }
@@ -272,7 +320,6 @@ async function currentliquidity(targetId = "token") {
   }
 }
 
-
 async function getDailyFreeStatus() {
   const accessToken = getCookie("authToken");
 
@@ -341,7 +388,7 @@ async function getDailyFreeStatus() {
 
 function calctimeAgo(datetime) {
   // Clean microseconds and treat as UTC
-  const cleaned = datetime.replace(/\.\d+$/, '') + 'Z';
+  const cleaned = datetime.replace(/\.\d+$/, "") + "Z";
   const timestamp = new Date(cleaned);
   const now = Date.now();
 
@@ -379,7 +426,7 @@ function postdetail(objekt, CurrentUserID) {
 
   let copyLinkBtn = shareLinkBox.querySelector(".copy-link-btn");
 
-  // remove old listeners - > element clone 
+  // remove old listeners - > element clone
   const newcopyLinkBtn = copyLinkBtn.cloneNode(true);
   copyLinkBtn.parentNode.replaceChild(newcopyLinkBtn, copyLinkBtn);
   copyLinkBtn = newcopyLinkBtn;
@@ -400,22 +447,26 @@ function postdetail(objekt, CurrentUserID) {
     });
   }
 
-
   const whatsappShare = "https://wa.me/?text=" + encodeURIComponent(shareUrl);
-  shareLinkBox.querySelector(".whatsapplink").setAttribute("href", whatsappShare);
+  shareLinkBox
+    .querySelector(".whatsapplink")
+    .setAttribute("href", whatsappShare);
 
-  const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
-  shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
+  const telegramShare =
+    "https://t.me/share/url?url=" +
+    encodeURIComponent(shareUrl) +
+    "&text=" +
+    encodeURIComponent(objekt.title);
+  shareLinkBox
+    .querySelector(".telegramlink")
+    .setAttribute("href", telegramShare);
 
   let donwloadAnchor = postContainer.querySelector(".more a.download");
-  // remove old listeners - > element clone 
+  // remove old listeners - > element clone
   const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
   donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
   donwloadAnchor = newdonwloadAnchor;
   //donwloadAnchor.setAttribute("href", "");
-
-
-
 
   donwloadAnchor.addEventListener("click", (e) => {
     e.preventDefault();
@@ -429,11 +480,10 @@ function postdetail(objekt, CurrentUserID) {
 
   let reportpost_btn = postContainer.querySelector(".more a.reportpost");
 
-  // remove old listeners - > element clone 
+  // remove old listeners - > element clone
   const newreportpost_btn = reportpost_btn.cloneNode(true);
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
-
 
   reportpost_btn.addEventListener(
     "click",
@@ -441,12 +491,11 @@ function postdetail(objekt, CurrentUserID) {
       event.stopPropagation();
       event.preventDefault();
       reportPost(objekt, postContainer);
-
-    }, {
-      capture: true
+    },
+    {
+      capture: true,
     }
   );
-
 
   const containerleft = postContainer.querySelector(".viewpost-left");
   const containerright = postContainer.querySelector(".viewpost-right");
@@ -464,12 +513,13 @@ function postdetail(objekt, CurrentUserID) {
 
   const username = objekt.user.username;
   const profile_id = objekt.user.slug;
-  const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : `${baseUrl}svg/noname.svg`;
+  const user_img_src = objekt.user.img
+    ? tempMedia(objekt.user.img)
+    : `${baseUrl}svg/noname.svg`;
 
   user_img_src.onerror = function () {
     this.src = `${baseUrl}svg/noname.svg`;
   };
-
 
   const post_userName = postContainer.querySelector(".post-userName");
   post_userName.innerHTML = username;
@@ -479,6 +529,9 @@ function postdetail(objekt, CurrentUserID) {
 
   const post_userImg = postContainer.querySelector(".post-userImg");
   post_userImg.src = user_img_src;
+  post_userImg.onerror = function () {
+    this.src = `${baseUrl}svg/noname.svg`;
+  };
 
   const followButton = renderFollowButton(objekt, UserID);
 
@@ -487,16 +540,18 @@ function postdetail(objekt, CurrentUserID) {
     post_followbtn.innerHTML = "";
     post_followbtn.appendChild(followButton);
   }
-  const profile_header_left = postContainer.querySelector(".profile-header-left");
+  const profile_header_left = postContainer.querySelector(
+    ".profile-header-left"
+  );
 
-  profile_header_left.addEventListener("click",
+  profile_header_left.addEventListener(
+    "click",
     function handledisLikeClick(event) {
       event.stopPropagation();
       event.preventDefault();
       if (UserID && UserID !== null) {
         redirectToProfile(objekt.user.id);
       }
-
     }
   );
 
@@ -507,7 +562,6 @@ function postdetail(objekt, CurrentUserID) {
   const cont_post_title = containerright.querySelector(".post_title h2");
   const cont_post_time = containerright.querySelector(".timeagao");
   const cont_post_tags = containerright.querySelector(".hashtags");
-
 
   const card_post_text = objekt.mediadescription;
   cont_post_text.innerHTML = card_post_text;
@@ -590,7 +644,6 @@ function postdetail(objekt, CurrentUserID) {
       // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
       post_gallery.appendChild(audioContainer);
       if (donwloadAnchor) {
-
         donwloadAnchor.setAttribute("href", audio.src);
       }
       initAudioplayer("audio_player_custom", audio.src);
@@ -613,21 +666,19 @@ function postdetail(objekt, CurrentUserID) {
     let currentIndex = 0;
 
     for (const [index, item] of array.entries()) {
-
       const video = document.createElement("video");
       video.id = "video2";
       video.src = tempMedia(extractAfterComma(item.path));
       video.controls = true;
       video.className = "custom-video";
-      video.autoplay = (index === 0); // ✅ Autoplay only for the first video
+      video.autoplay = index === 0; // ✅ Autoplay only for the first video
       video.muted = false;
       video.loop = true;
 
-      let coversrc = 'img/audio-bg.png';
+      let coversrc = "img/audio-bg.png";
       if (objekt.cover) {
         const cover = JSON.parse(objekt.cover);
         coversrc = tempMedia(cover[0].path);
-
       }
 
       const videoContainer = document.createElement("div");
@@ -692,7 +743,6 @@ function postdetail(objekt, CurrentUserID) {
         updateSlider(index);
       });
     });
-
   } else if (objekt.contenttype === "text") {
     if (containerleft && post_contentright) {
       containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
@@ -710,7 +760,6 @@ function postdetail(objekt, CurrentUserID) {
     if (array.length > 1) post_gallery.classList.add("multi");
     else post_gallery.classList.remove("multi");
 
-
     post_gallery.innerHTML = `
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
@@ -727,8 +776,8 @@ function postdetail(objekt, CurrentUserID) {
     const sliderTrack = post_gallery.querySelector(".slider-track");
     const thumbsWrapper = document.querySelector(".slider_thumbnails_wrapper");
     const sliderThumb = thumbsWrapper.querySelector(".slider-thumbnails");
-    const nextBtn = document.querySelector('.next_button');
-    const prevBtn = document.querySelector('.prev_button');
+    const nextBtn = document.querySelector(".next_button");
+    const prevBtn = document.querySelector(".prev_button");
 
     function toggleTheScrollButtons() {
       const totalWidth = sliderThumb.scrollWidth;
@@ -752,23 +801,23 @@ function postdetail(objekt, CurrentUserID) {
       }
     }
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener("click", () => {
       thumbsWrapper.scrollBy({
         left: 150,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     });
 
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addEventListener("click", () => {
       thumbsWrapper.scrollBy({
         left: -150,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     });
 
     setTimeout(toggleTheScrollButtons, 0);
-    window.addEventListener('resize', toggleTheScrollButtons);
-    thumbsWrapper.addEventListener('scroll', toggleTheScrollButtons);
+    window.addEventListener("resize", toggleTheScrollButtons);
+    thumbsWrapper.addEventListener("scroll", toggleTheScrollButtons);
     const imageSrcArray = [];
     array.forEach((item, index) => {
       const image_item = document.createElement("div");
@@ -846,7 +895,6 @@ function postdetail(objekt, CurrentUserID) {
   const postComments = social.querySelector(".post-comments span ");
   postComments.innerText = objekt.amountcomments;
 
-
   // Zweites -Icon mit #post-like
   const likeContainer = social.querySelector(".post-like ");
   let postlikeIcon = likeContainer.querySelector("i");
@@ -856,9 +904,7 @@ function postdetail(objekt, CurrentUserID) {
 
   if (objekt.isliked) {
     likeContainer.classList.add("active");
-
   } else if (objekt.user.id !== UserID && UserID !== null) {
-
     // Purane listeners remove karne ke liye element clone karo
     const newPostlikeIcon = postlikeIcon.cloneNode(true);
     postlikeIcon.parentNode.replaceChild(newPostlikeIcon, postlikeIcon);
@@ -870,12 +916,11 @@ function postdetail(objekt, CurrentUserID) {
         event.stopPropagation();
         event.preventDefault();
         like_dislike_post(objekt, "like", likeContainer);
-
-      }, {
-        capture: true
+      },
+      {
+        capture: true,
       }
     );
-
   }
 
   const dislikeContainer = social.querySelector(".post-dislike");
@@ -886,11 +931,13 @@ function postdetail(objekt, CurrentUserID) {
 
   if (objekt.isdisliked) {
     dislikeContainer.classList.add("active");
-
   } else if (objekt.user.id !== UserID && UserID !== null) {
     // Purane listeners remove karne ke liye element clone karo
     const newPostDislikeIcon = postdislikeIcon.cloneNode(true);
-    postdislikeIcon.parentNode.replaceChild(newPostDislikeIcon, postdislikeIcon);
+    postdislikeIcon.parentNode.replaceChild(
+      newPostDislikeIcon,
+      postdislikeIcon
+    );
     postdislikeIcon = newPostDislikeIcon;
 
     postdislikeIcon.addEventListener(
@@ -899,9 +946,9 @@ function postdetail(objekt, CurrentUserID) {
         event.stopPropagation();
         event.preventDefault();
         like_dislike_post(objekt, "dislike", dislikeContainer);
-
-      }, {
-        capture: true
+      },
+      {
+        capture: true,
       }
     );
   }
@@ -934,7 +981,6 @@ function postdetail(objekt, CurrentUserID) {
             mostlikedcontainer.appendChild(img);
           }*/
 
-
   const postComment = document.getElementById("post_comment");
   const textarea = postComment.querySelector("textarea");
   const button = postComment.querySelector("button");
@@ -956,7 +1002,6 @@ function postdetail(objekt, CurrentUserID) {
       return;
     }
     if (UserID === null) {
-
       return;
     }
     if (content.length === 0) {
@@ -975,7 +1020,7 @@ function postdetail(objekt, CurrentUserID) {
     try {
       // Attempt to change the username after passing validations
       const result = await createComment(postID, content);
-      if (result && result.data ?.createComment ?.status === "success") {
+      if (result && result.data?.createComment?.status === "success") {
         dailyfree();
         commentToDom(result.data.createComment.affectedRows[0], false);
         newTextarea.value = ""; // Clear textarea
@@ -1009,27 +1054,25 @@ function postdetail(objekt, CurrentUserID) {
           isSubmitting = false; // modal ka case, lock hata do
           return;
         }
-
       }
       const currentTarget = e.currentTarget; // save here
       if (isSubmitting) return; // agar already process ho raha hai to ignore
       isSubmitting = true; // lock
-      handleCommentSubmit()
-        .finally(() => {
-          // jab complete ho jaye to dobara allow karo
-          isSubmitting = false;
-          if (currentTarget) {
-            currentTarget.focus(); // use saved ref
-          }
-        });
+      handleCommentSubmit().finally(() => {
+        // jab complete ho jaye to dobara allow karo
+        isSubmitting = false;
+        if (currentTarget) {
+          currentTarget.focus(); // use saved ref
+        }
+      });
     }
   });
 }
 
 function forceDownload(url) {
   const baseUrl = `${location.protocol}//${location.host}/`;
-  window.location.href = baseUrl + "download.php?file=" + encodeURIComponent(url);
-
+  window.location.href =
+    baseUrl + "download.php?file=" + encodeURIComponent(url);
 }
 
 function renderFollowButton(objekt, currentUserId) {
@@ -1120,11 +1163,11 @@ function openSliderModal(images, startIndex = 0) {
     thumbnailContainer.appendChild(thumb);
   });
 
-
   let current = startIndex;
   const total = images.length;
   const imageElements = track.querySelectorAll(".modal-image");
-  const thumbnailElements = thumbnailContainer.querySelectorAll(".modal-thumbnail");
+  const thumbnailElements =
+    thumbnailContainer.querySelectorAll(".modal-thumbnail");
 
   function update() {
     imageElements.forEach((img, i) => {
@@ -1144,7 +1187,6 @@ function openSliderModal(images, startIndex = 0) {
     thumbnailElements.forEach((thumb, i) => {
       thumb.classList.toggle("active", i === current);
     });
-
   }
 
   function setModalWidth(img) {
@@ -1190,7 +1232,6 @@ function openSliderModal(images, startIndex = 0) {
 function commentToDom(c, append = true) {
   const userID = getCookie("userID");
   const commentsContainer = document.getElementById("comments");
-  //console.log(c);
   // Already existing list to track liked comments
   let mostliked = [];
 
@@ -1201,17 +1242,21 @@ function commentToDom(c, append = true) {
   // Profile Picture
   const img = document.createElement("img");
   img.classList.add("profile-picture");
-  img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
+  img.src =
+    c.user && c.user.img
+      ? tempMedia(c.user.img.replace("media/", ""))
+      : "svg/noname.svg";
   img.alt = "user image";
-  // img.onerror = function () {
-  //   // this.src = "svg/noname.svg";
-  // };
+  img.onerror = function () {
+    this.src = "svg/noname.svg";
+  };
 
   img.addEventListener("click", function handledisLikeClick(event) {
     event.stopPropagation();
     event.preventDefault();
     if (userID && userID !== "") {
-      redirectToProfile(c, this);
+      // redirectToProfile(c, this);
+      redirectToProfile(c.userid);
     }
   });
 
@@ -1267,11 +1312,10 @@ function commentToDom(c, append = true) {
     hideReply.classList.add("hide_reply", "txt-color-gray", "none");
     hideReply.innerHTML = `Hide`;
 
-
-    showReply.addEventListener('click', function () {
-      this.classList.add('none')
+    showReply.addEventListener("click", function () {
+      this.classList.add("none");
       hideReply.classList.remove("none");
-      
+
       fetchChildComments(c.commentid).then((result) => {
         if (!result) return;
         result.slice().forEach(function (c2) {
@@ -1279,7 +1323,6 @@ function commentToDom(c, append = true) {
         });
       });
     });
-
 
     // hideReply.addEventListener('click', function () {
     //   this.closest('.comment_item').classList.add('none')
@@ -1309,8 +1352,12 @@ function commentToDom(c, append = true) {
   if (c.isliked) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID && userID !== "") {
+<<<<<<< Updated upstream
 
     likeContainer.addEventListener(
+=======
+    likeIcon.addEventListener(
+>>>>>>> Stashed changes
       "click",
       function (event) {
         event.stopPropagation();
@@ -1320,16 +1367,19 @@ function commentToDom(c, append = true) {
             c.isliked = true;
             c.amountlikes++;
             likeContainer.classList.add("active");
-            if (!spanLike.textContent.includes("K") && !spanLike.textContent.includes("M")) {
+            if (
+              !spanLike.textContent.includes("K") &&
+              !spanLike.textContent.includes("M")
+            ) {
               let current = parseInt(spanLike.textContent);
               spanLike.textContent = formatNumber(current + 1);
             }
-
           }
         });
-      }, {
+      },
+      {
         capture: true,
-        once: true
+        once: true,
       }
     );
   }
@@ -1364,7 +1414,6 @@ function commentToDom(c, append = true) {
   }
 }
 
-
 function getPostIdFromURL() {
   // Try query param first (?postid=...)
   const urlParams = new URLSearchParams(window.location.search);
@@ -1395,7 +1444,7 @@ async function fetchPostByID(postID) {
       "Content-Type": "application/json",
     });
 
-    // if logged in then to Authorization header add 
+    // if logged in then to Authorization header add
     if (accessToken) {
       headers.append("Authorization", `Bearer ${accessToken}`);
     }
@@ -1463,9 +1512,9 @@ async function fetchPostByID(postID) {
       body: JSON.stringify({
         query: query,
         variables: {
-          postid: postID
-        }
-      })
+          postid: postID,
+        },
+      }),
     });
 
     const result = await response.json();
@@ -1476,7 +1525,6 @@ async function fetchPostByID(postID) {
       console.error("GraphQL Error:", result.errors || "No data received");
       return null;
     }
-
   } catch (error) {
     console.error("GraphQL request failed", error);
     return null;
@@ -1498,15 +1546,17 @@ async function fetchPostByID(postID) {
 //   }, '');
 // }
 
-const POPUP_KEY = 'feedbackPopupData';
+const POPUP_KEY = "feedbackPopupData";
 
 function getPopupData() {
   const stored = getCookie(POPUP_KEY);
-  return stored ? JSON.parse(stored) : {
-    count: 0,
-    lastClosed: 0,
-    disabled: false
-  };
+  return stored
+    ? JSON.parse(stored)
+    : {
+        count: 0,
+        lastClosed: 0,
+        disabled: false,
+      };
 }
 
 function setPopupData(data) {
@@ -1514,10 +1564,10 @@ function setPopupData(data) {
 }
 
 function showFeedbackPopup() {
-  const popup = document.getElementById('feebackPopup');
-  popup.classList.remove('none');
+  const popup = document.getElementById("feebackPopup");
+  popup.classList.remove("none");
   setTimeout(() => {
-    popup.querySelector('.feeback_popup_container').classList.add('open');
+    popup.querySelector(".feeback_popup_container").classList.add("open");
   }, 100);
 
   // Increment display count
@@ -1527,11 +1577,11 @@ function showFeedbackPopup() {
 }
 
 function closeFeedbackPopup(increment = false) {
-  const popup = document.getElementById('feebackPopup');
-  popup.querySelector(".feeback_popup_container").classList.remove('open');
+  const popup = document.getElementById("feebackPopup");
+  popup.querySelector(".feeback_popup_container").classList.remove("open");
 
   setTimeout(() => {
-    popup.classList.add('none');
+    popup.classList.add("none");
   }, 200);
 
   const data = getPopupData();
@@ -1539,8 +1589,10 @@ function closeFeedbackPopup(increment = false) {
 
   data.lastClosed = Date.now();
 
-  const dontShowCheckbox = popup.querySelector('input[name="dont_show_feedbackPopup"]');
-  if (dontShowCheckbox ?.checked) {
+  const dontShowCheckbox = popup.querySelector(
+    'input[name="dont_show_feedbackPopup"]'
+  );
+  if (dontShowCheckbox?.checked) {
     data.disabled = true;
   }
 
@@ -1554,39 +1606,37 @@ function shouldShowPopup() {
 
   //const fiveDays =  60 * 1000; // 1 mint for testing
 
-  const sessionShown = sessionStorage.getItem('popupShown') === 'true';
-  const closedRecently = (now - data.lastClosed) < fiveDays;
-
-
+  const sessionShown = sessionStorage.getItem("popupShown") === "true";
+  const closedRecently = now - data.lastClosed < fiveDays;
 
   if (data.disabled || data.count >= 3 || sessionShown || closedRecently) {
-
     return false;
   }
   return true;
 }
 
-window.addEventListener('load', () => {
-
+window.addEventListener("load", () => {
   const accessToken = getCookie("authToken");
   if (accessToken) {
     if (shouldShowPopup()) {
       setTimeout(() => {
         showFeedbackPopup();
-        sessionStorage.setItem('popupShown', 'true');
+        sessionStorage.setItem("popupShown", "true");
       }, 30 * 1000); // 30 seconds
     }
   }
 
   // Close button
-  const closeBtn = document.querySelector('#feebackPopup .close');
-  closeBtn ?.addEventListener('click', () => {
+  const closeBtn = document.querySelector("#feebackPopup .close");
+  closeBtn?.addEventListener("click", () => {
     closeFeedbackPopup(); // Do not increment count here, already incremented on show
   });
 
   // "Share Feedback" button
-  const shareBtn = document.querySelector('#feebackPopup a[href*="docs.google.com"]');
-  shareBtn ?.addEventListener('click', () => {
+  const shareBtn = document.querySelector(
+    '#feebackPopup a[href*="docs.google.com"]'
+  );
+  shareBtn?.addEventListener("click", () => {
     closeFeedbackPopup(false); // Do not increment count here, already incremented on show
   });
 });
@@ -1630,7 +1680,7 @@ async function getUserInfo() {
   const requestOptions = {
     method: "POST",
     headers: headers,
-    body: graphql
+    body: graphql,
   };
 
   try {
@@ -1643,7 +1693,7 @@ async function getUserInfo() {
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
-    isInvited = userData ?.invited;
+    isInvited = userData?.invited;
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
   } catch (error) {
@@ -1652,7 +1702,6 @@ async function getUserInfo() {
   }
 }
 
-
 // function to render users in the modal
 // used in list_follow.js and posts.js for rendering followers and following lists
 function renderUsers(users, container) {
@@ -1660,7 +1709,7 @@ function renderUsers(users, container) {
   const avatar = "https://media.getpeer.eu";
   const currentUserId = getCookie("userID");
 
-  users.forEach(user => {
+  users.forEach((user) => {
     const item = document.createElement("div");
     item.className = "dropdown-item clickable-user";
     item.innerHTML = `
@@ -1712,22 +1761,24 @@ function renderUsers(users, container) {
             followerCountSpan.textContent = count;
           }
 
-          document.querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`).forEach(btn => {
-            btn.classList.toggle("following", newStatus);
+          document
+            .querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`)
+            .forEach((btn) => {
+              btn.classList.toggle("following", newStatus);
 
-            if (newStatus && user.isfollowing) {
-              btn.textContent = "Peer";
-              btn.classList.add("peer");
-              btn.classList.remove("just-following");
-            } else if (newStatus) {
-              btn.textContent = "Following";
-              btn.classList.add("just-following");
-              btn.classList.remove("peer");
-            } else {
-              btn.textContent = "Follow +";
-              btn.classList.remove("following", "just-following", "peer");
-            }
-          });
+              if (newStatus && user.isfollowing) {
+                btn.textContent = "Peer";
+                btn.classList.add("peer");
+                btn.classList.remove("just-following");
+              } else if (newStatus) {
+                btn.textContent = "Following";
+                btn.classList.add("just-following");
+                btn.classList.remove("peer");
+              } else {
+                btn.textContent = "Follow +";
+                btn.classList.remove("following", "just-following", "peer");
+              }
+            });
         } else {
           Merror("Failed to update follow status. Please try again.");
         }
@@ -1749,17 +1800,29 @@ function initOnboarding() {
   const slides = inner.querySelectorAll(".onboarding-slide");
   const close_btns = inner.querySelectorAll(".onboarding-close-button");
 
+<<<<<<< Updated upstream
+=======
+  // Get Server
+  const config = getHostConfig();
+  //console.log('Domain:', config.domain);
+  //console.log('Server:', config.server);
+
+>>>>>>> Stashed changes
   // Get userid from localStorage
   let userId = null;
   try {
     const parsed = JSON.parse(localStorage.getItem("userData"));
-    userId = parsed ?.userid || null;
+    userId = parsed?.userid || null;
   } catch (e) {
     console.error("Error parsing userData", e);
   }
 
   // Set the user ID in GA
+<<<<<<< Updated upstream
   if (typeof firebase !== 'undefined') {
+=======
+  if (typeof firebase !== "undefined" && config.server !== "test") {
+>>>>>>> Stashed changes
     if (userId) {
       firebase.analytics().setUserId(userId);
     }
@@ -1771,11 +1834,31 @@ function initOnboarding() {
 
 
   if (close_btns) {
-    close_btns.forEach(btn => {
+    close_btns.forEach((btn) => {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
+<<<<<<< Updated upstream
         onboardingScreens.classList.add('none'); // popup hide
         inner.classList.remove('open');
+=======
+        onboardingScreens.classList.add("none"); // popup hide
+        inner.classList.remove("open");
+        // Log onboarding skipped event
+        try {
+          if (
+            typeof firebase !== "undefined" &&
+            firebase.analytics &&
+            config.server !== "test"
+          ) {
+            firebase.analytics().logEvent("onboarding", {
+              skipped: 1, // 1 = true
+            });
+            //console.log("skipped event fire");
+          }
+        } catch (error) {
+          console.error("Firebase analytics error:", error);
+        }
+>>>>>>> Stashed changes
       });
 
       // Log onboarding skipped event
@@ -1833,19 +1916,40 @@ function initOnboarding() {
     if (completeBtn) {
       completeBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        onboardingScreens.classList.add('none');
-        inner.classList.remove('open');
+        onboardingScreens.classList.add("none");
+        inner.classList.remove("open");
 
         // Log onboarding completed
+<<<<<<< Updated upstream
         if (typeof firebase !== 'undefined') {
           firebase.analytics().logEvent('onboarding', {
             skipped: 0 // 0 = false
           });
         }
 
+=======
+        try {
+          if (
+            typeof firebase !== "undefined" &&
+            firebase.analytics &&
+            config.server !== "test"
+          ) {
+            firebase.analytics().logEvent("onboarding", {
+              skipped: 0, // 0 = false
+            });
+            //console.log("Complete Fired");
+          }
+          if (config.server == "test") {
+            console.log("Firebase event not fired on " + config.server);
+          } else {
+            console.log("Firebase event fired on " + config.server);
+          }
+        } catch (error) {
+          console.error("Firebase analytics error:", error);
+        }
+>>>>>>> Stashed changes
       });
     }
-
   });
 
   // Append nav dots
@@ -1853,12 +1957,11 @@ function initOnboarding() {
 }
 
 function showOnboardingPopup() {
-  const OnboardingPopup = document.getElementById('site-onboarding-screens');
-  OnboardingPopup.classList.remove('none');
+  const OnboardingPopup = document.getElementById("site-onboarding-screens");
+  OnboardingPopup.classList.remove("none");
   setTimeout(() => {
-    OnboardingPopup.querySelector('.onboarding-inner').classList.add('open');
+    OnboardingPopup.querySelector(".onboarding-inner").classList.add("open");
   }, 100);
-
 }
 
 // Helper function: show slide by index for initOnboarding()
@@ -1867,7 +1970,6 @@ function showSlide(index, slides, nav) {
     s.classList.remove("active");
     s.classList.add("none");
   });
-
 
   setTimeout(() => {
     slides[index].classList.add("active");
@@ -1883,17 +1985,14 @@ function showSlide(index, slides, nav) {
 
 /*----------- End  : Onboarding screens Logic --------------*/
 
-
 // Function to fetch Tokenomics
 async function fetchTokenomics() {
-
   const accessToken = getCookie("authToken");
   // Create headers
   const headers = new Headers({
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-
 
   const graphql = JSON.stringify({
     query: `query GetTokenomics {
@@ -1935,38 +2034,53 @@ async function fetchTokenomics() {
       /*-- Action Prices --*/
       const extra_post_price = document.getElementById("extra_post_price");
       const extra_like_price = document.getElementById("extra_like_price");
-      const extra_comment_price = document.getElementById("extra_comment_price");
+      const extra_comment_price = document.getElementById(
+        "extra_comment_price"
+      );
       const dislike_price = document.getElementById("dislike_price");
 
       if (extra_post_price)
-        extra_post_price.innerText = result.data.getTokenomics.actionTokenPrices.postPrice;
+        extra_post_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.postPrice;
       if (extra_like_price)
-        extra_like_price.innerText = result.data.getTokenomics.actionTokenPrices.likePrice;
+        extra_like_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.likePrice;
       if (extra_comment_price)
-        extra_comment_price.innerText = result.data.getTokenomics.actionTokenPrices.commentPrice;
+        extra_comment_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.commentPrice;
       if (dislike_price)
-        dislike_price.innerText = result.data.getTokenomics.actionTokenPrices.dislikePrice;
+        dislike_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.dislikePrice;
 
       /*-- Gems Return Prices --*/
       const gems_return_like = document.getElementById("gems_return_like");
-      const gems_return_dislike = document.getElementById("gems_return_dislike");
-      const gems_return_comment = document.getElementById("gems_return_comment");
+      const gems_return_dislike = document.getElementById(
+        "gems_return_dislike"
+      );
+      const gems_return_comment = document.getElementById(
+        "gems_return_comment"
+      );
       const gems_return_view = document.getElementById("gems_return_view");
-      const likeReturn = result.data.getTokenomics.actionGemsReturns.likeGemsReturn;
-      const dislikeReturn = result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
-      const commentReturn = result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
-      const viewReturn = result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
+      const likeReturn =
+        result.data.getTokenomics.actionGemsReturns.likeGemsReturn;
+      const dislikeReturn =
+        result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
+      const commentReturn =
+        result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
+      const viewReturn =
+        result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
       if (gems_return_like)
-        gems_return_like.innerText = likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
+        gems_return_like.innerText =
+          likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
       if (gems_return_dislike)
-        gems_return_dislike.innerText = dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
+        gems_return_dislike.innerText =
+          dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
       if (gems_return_comment)
-        gems_return_comment.innerText = commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
+        gems_return_comment.innerText =
+          commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
       if (gems_return_view)
-        gems_return_view.innerText = viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
-
-
-
+        gems_return_view.innerText =
+          viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
 
       //console.log("Tokenomics loaded:", window.tokenomicsData);
     } else {
@@ -2013,13 +2127,11 @@ async function updateUserPreferences() {
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-    const {
-      status,
-      ResponseCode,
-      affectedRows
-    } = result.data.updateUserPreferences;
+    const { status, ResponseCode, affectedRows } =
+      result.data.updateUserPreferences;
 
-    if (ResponseCode !== "11014" && status !== "success") console.warn("Error Message:", userfriendlymsg(ResponseCode));
+    if (ResponseCode !== "11014" && status !== "success")
+      console.warn("Error Message:", userfriendlymsg(ResponseCode));
 
     return affectedRows;
   } catch (error) {
@@ -2027,7 +2139,6 @@ async function updateUserPreferences() {
   }
 }
 /*----------- End  :  fetch Tokenomics --------------*/
-
 
 const accessToken = getCookie("authToken");
 const refreshToken = getCookie("refreshToken");
@@ -2038,7 +2149,7 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     return;
   }
   try {
-    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    const payload = JSON.parse(atob(accessToken.split(".")[1]));
     // Original expiry time (from backend)
     let exp = payload.exp * 1000;
     // const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
@@ -2102,10 +2213,13 @@ async function refreshAccessToken(refreshToken) {
         status,
         ResponseCode,
         accessToken,
-        refreshToken: newRefreshToken
+        refreshToken: newRefreshToken,
       } = result.data.refreshToken;
 
-      if (status !== "success" && (ResponseCode == "10801" || ResponseCode == "10901")) {
+      if (
+        status !== "success" &&
+        (ResponseCode == "10801" || ResponseCode == "10901")
+      ) {
         throw new Error("Refresh failed with code: " + ResponseCode);
       }
       // Store updated tokens
@@ -2126,10 +2240,12 @@ function setCookie(name, value, days) {
   let expires = "";
   if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = date.toUTCString(); // just store date
   }
-  document.cookie = `${name}=${encodeURIComponent(value || "")}; expires=${expires}; path=/; Secure; SameSite=Strict`;
+  document.cookie = `${name}=${encodeURIComponent(
+    value || ""
+  )}; expires=${expires}; path=/; Secure; SameSite=Strict`;
 
   // Save expiry separately for later reuse
   if (days) {
@@ -2139,10 +2255,11 @@ function setCookie(name, value, days) {
 
 function getCookie(name) {
   const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
+  const ca = document.cookie.split(";");
   for (let c of ca) {
     c = c.trim();
-    if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length));
+    if (c.indexOf(nameEQ) == 0)
+      return decodeURIComponent(c.substring(nameEQ.length));
   }
   return null;
 }
@@ -2150,7 +2267,9 @@ function getCookie(name) {
 function updateCookieValue(name, value) {
   const expiry = localStorage.getItem(name + "_expiry");
   if (expiry) {
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
+    document.cookie = `${name}=${encodeURIComponent(
+      value
+    )}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
   } else {
     setCookie(name, value);
   }

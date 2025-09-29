@@ -1,9 +1,9 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-include 'phpheader.php';
-include 'host.php';
-require_once 'auth.php';
-checkAuth("unauthorized");
+    header('Access-Control-Allow-Origin: *');
+    include 'phpheader.php';
+    include 'host.php';
+    require_once 'auth.php';
+    checkAuth("unauthorized");
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -28,7 +28,7 @@ checkAuth("unauthorized");
     <link rel="stylesheet" href="css/all-post.css?<?php echo filemtime('css/all-post.css'); ?>" />
     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
     <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
-    
+
     <!-- Firebase App (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
     <!-- Firebase Analytics (Compat) -->
@@ -53,22 +53,22 @@ checkAuth("unauthorized");
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-    
+
     <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
-    
+
     <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
     <script src="js/comments.js?<?php echo filemtime('js/comments.js'); ?>" defer></script>
 
-    
+
     <script src="js/dashboard.js?<?php echo filemtime('js/dashboard.js'); ?>" defer></script>
 
 
     <?php
-    $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
-    include 'meta.min.php';
+        $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
+        include 'meta.min.php';
     ?>
 </head>
 
@@ -85,14 +85,14 @@ checkAuth("unauthorized");
             <div class="inner-scroll for-filters">
                 <!-- Load sidebar widgets -->
                  <div class="inner-scroll-filters">
-                    <?php require_once('./template-parts/sidebars/widget-filter.php'); ?>
-                    <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
+                    <?php require_once './template-parts/sidebars/widget-filter.php'; ?>
+                    <?php require_once './template-parts/sidebars/widget-sort-filter.php'; ?>
                 </div>
-                <?php require_once('./template-parts/sidebars/widget-collapse-button.php'); ?>
+                <?php require_once './template-parts/sidebars/widget-collapse-button.php'; ?>
             </div>
         </aside>
         <main class="site-main site-main-dashboard">
-            <?php require_once ('./template-parts/content-parts/post-search-filters.php'); ?>
+            <?php require_once './template-parts/content-parts/post-search-filters.php'; ?>
             <!-- Load Posts Container -->
             <div id="allpost" class="list_all_post"> </div>
             <div id="post_loader"><img src="svg/logo_farbe.svg" alt="loading" /></div>
@@ -102,14 +102,14 @@ checkAuth("unauthorized");
         <aside class="right-sidebar right-sidebar-dashboard">
             <div class="inner-scroll">
                 <!-- Load sidebar widgets -->
-                <?php require_once('./template-parts/sidebars/widget-profile.php'); ?>
-                <?php require_once('./template-parts/sidebars/widget-main-menu.php'); ?>
-                <?php require_once('./template-parts/sidebars/widget-add-new-post.php'); ?>
-                <?php require_once('./template-parts/sidebars/widget-web-version.php'); ?>
+                <?php require_once './template-parts/sidebars/widget-profile.php'; ?>
+                <?php require_once './template-parts/sidebars/widget-main-menu.php'; ?>
+                <?php require_once './template-parts/sidebars/widget-add-new-post.php'; ?>
+                <?php require_once './template-parts/sidebars/widget-web-version.php'; ?>
             </div>
         </aside>
-        <?php require_once('./template-parts/footer.php'); ?>
-        <?php require_once('./template-parts/content-parts/view-post.php'); ?>
+        <?php require_once './template-parts/footer.php'; ?>
+        <?php require_once './template-parts/content-parts/view-post.php'; ?>
     </div>
 </body>
 
