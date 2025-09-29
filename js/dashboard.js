@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   const lupe = document.querySelector(".lupe");
-  const avatar = "https://media.getpeer.eu";
+  // const avatar = "https://media.getpeer.eu";
 
 
 
@@ -138,9 +138,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       users.forEach(user => {
+        const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
         const item = document.createElement("div");
         item.className = "dropdown-item";
-        item.innerHTML = `<img src="${avatar}/${user.img}"> ${user.username}`;
+        item.innerHTML = `<img src="${userimg}"> ${user.username}`;
         
         const img = item.querySelector("img");
         img.onerror = function () {

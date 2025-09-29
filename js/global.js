@@ -1700,15 +1700,16 @@ async function getUserInfo() {
 // used in list_follow.js and posts.js for rendering followers and following lists
 function renderUsers(users, container) {
   container.innerHTML = "";
-  const avatar = "https://media.getpeer.eu";
+  // const avatar = "https://media.getpeer.eu";
   const currentUserId = getCookie("userID");
 
   users.forEach(user => {
+    const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
     const item = document.createElement("div");
     item.className = "dropdown-item clickable-user";
     item.innerHTML = `
       <div class="profilStats">
-        <img src="${avatar}/${user.img}" alt="${user.username}" />
+        <img src="${userimg}" alt="${user.username}" />
         <div class="user_info">
           <span class="user_name">${user.username}</span>  <span class="user_slug">#${user.slug}</span>
         </div>

@@ -5,7 +5,7 @@ function getEffectiveUserID() {
 }
 
 const userID = getEffectiveUserID();
-const avatar = "https://media.getpeer.eu";
+// const avatar = "https://media.getpeer.eu";
 
 // Modal logic
 async function openRelationsModal(userID, defaultType = "followers") {

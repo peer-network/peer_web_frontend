@@ -42,7 +42,7 @@
 
                 <div class="profile-header">
                     <div class="profile-header-left">
-                        <img id="profilbild" class="profilbild post-userImg profile-picture"  src="https://media.getpeer.eu/profile/b6085cd0-ccc9-449a-9e5d-fa4784280ba2.jpeg">
+                        <img id="profilbild" class="profilbild post-userImg profile-picture"  src="">
                         <span class="username-slug xl_font_size">
                             <span id="username" class="username post-userName  bold">&nbsp;</span>
                             <span id="slug" class="slug post-userName profile_id txt-color-gray">&nbsp;</span>
