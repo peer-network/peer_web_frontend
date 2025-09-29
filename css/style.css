@@ -1364,6 +1364,7 @@ footer {grid-area: footer;}
 	height: 25rem;
 	max-height: 25rem;
 	padding-top: 60px;
+	overflow-y: auto;
 }
 
 .search-group .dropdown .dropdown-item {

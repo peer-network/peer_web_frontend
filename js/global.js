@@ -522,6 +522,9 @@ function postdetail(objekt, CurrentUserID) {
 
   const post_userImg = postContainer.querySelector(".post-userImg");
   post_userImg.src = user_img_src;
+  post_userImg.onerror = function () {
+    this.src = `${baseUrl}svg/noname.svg`;
+  };
 
   const followButton = renderFollowButton(objekt, UserID);
 
@@ -1246,15 +1249,16 @@ function commentToDom(c, append = true) {
   img.classList.add("profile-picture");
   img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
-  // img.onerror = function () {
-  //   // this.src = "svg/noname.svg";
-  // };
+  img.onerror = function () {
+    this.src = `${baseUrl}svg/noname.svg`;
+  };
 
   img.addEventListener("click", function handledisLikeClick(event) {
     event.stopPropagation();
     event.preventDefault();
     if (userID && userID !== "") {
-      redirectToProfile(c, this);
+      // redirectToProfile(c, this);
+      redirectToProfile(c.userid);
     }
   });
 
