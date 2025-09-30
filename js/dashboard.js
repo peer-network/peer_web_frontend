@@ -34,10 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });*/
 
     // 3. Manual check on scroll (in case layout shifts after interaction)
+   let lastScrollCheck = 0;
+
     window.addEventListener("scroll", () => {
+      const now = Date.now();
+      if (now - lastScrollCheck < 500) return; // Only check every 500ms
+      lastScrollCheck = now;
+      
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        console.log("Fallback load triggered (on scroll)");
         postsLaden();
       }
     }, { passive: true });
