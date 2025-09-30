@@ -392,9 +392,9 @@ let postoffset = 0;
 
 async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
-    if (postoffset === undefined) {
-      postoffset = 0; // Initialwert
-    }
+    // if (postoffset === undefined) {
+    //   postoffset = 0; // Initialwert
+    // }
     //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
     //manualLoad = false;
     const form = document.querySelector(".filterContainer");
@@ -431,9 +431,9 @@ async function postsLaden(postbyUserID=null) {
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
     let  posts;
-    if(postbyUserID!=null){
+    if (postbyUserID!=null){
         posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
-    }else{
+    } else{
       posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
     }
 	
@@ -870,8 +870,9 @@ async function postsLaden(postbyUserID=null) {
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
     });
-    //console.log(posts.data.listPosts.affectedRows.length);
+    // console.log(posts.data.listPosts.affectedRows.length);
     postoffset += posts.data.listPosts.affectedRows.length;
+    // console.log("postoffset ", postoffset)
 
      const post_loader = document.getElementById("post_loader");
     const no_post_found = document.getElementById("no_post_found");

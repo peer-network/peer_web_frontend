@@ -14,7 +14,7 @@
                                 <span>&nbsp;left)</span> -->
                 </div>
                 <div class="progress-icons" data-type="Likes">
-                    <div id="LikesStat" class="progress"></div>
+                    <div id="LikesStat"></div>
                     <!-- <img src="svg/like_icon.svg" alt="" class="icon">
                                 <img src="svg/like_icon.svg" alt="" class="icon">
                                 <img src="svg/like_icon.svg" alt="" class="icon"> -->
@@ -52,7 +52,7 @@
                                 <span>&nbsp;left)</span> -->
                 </div>
                 <div class="progress-icons" data-type="Comments">
-                    <div id="CommentsStat" class="progress"></div>
+                    <div id="CommentsStat"></div>
                     <!-- <div id="CommentsStat" class="progress" ></div> -->
                     <!-- <img src="svg/comment_icon.svg" alt="" class="icon">
                                 <img src="svg/comment_icon.svg" alt="" class="icon">

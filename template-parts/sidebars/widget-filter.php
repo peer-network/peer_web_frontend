@@ -43,7 +43,7 @@
     <form class="filterContainer">
         
         <!-- Feed Filter -->
-        <section class="filter-section">
+        <section class="filter-section none">
             <button type="button" class="feed filter-toggle filter-section-header" aria-expanded="false" aria-controls="feed-options">
                 <img src="svg/feed-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">
@@ -76,7 +76,7 @@
     <form class="filterContainer">
 
         <!-- Time Filter -->
-        <section class="filter-section">
+        <section class="filter-section none">
             <button type="button" class="time filter-toggle filter-section-header" aria-expanded="false" aria-controls="time-options">
                 <img src="svg/time-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">

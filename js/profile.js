@@ -1,39 +1,38 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const CurrentUserID = getCookie("userID");
   getUser().then(profile2 => {
     const bioPath = profile2.data.getProfile.affectedRows.biography;
-
     const biography = document.getElementById("biography");
+    biography.innerText = "Biography not available";
 
-  // Check if bioPath is valid
-  if (bioPath && biography) {
-  const fullPath = tempMedia(profile2.data.getProfile.affectedRows.biography);
+    // Check if bioPath is valid
+    if (bioPath && biography) {
+      const fullPath = tempMedia(profile2.data.getProfile.affectedRows.biography);
 
-
-    fetch(fullPath, { cache: "no-store" })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch biography text file");
-        }
-        return response.text();
-      })
-      .then(biographyText => {
-        //console.log(biographyText);
-        document.getElementById("biography").innerText = biographyText;
-      })
-      .catch(error => {
-        console.error("Error loading biography:", error);
-        document.getElementById("biography").innerText = "Biography not available";
-      });
-  } else {
-    //document.getElementById("biography").innerText = "No biography found";
-  }
-
-
+      fetch(fullPath, {
+          cache: "no-store"
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch biography text file");
+          }
+          return response.text();
+        })
+        .then(biographyText => {
+          //console.log(biographyText);
+          biography.innerText = biographyText;
+        })
+        .catch(error => {
+          console.error("Error loading biography:", error);
+          // document.getElementById("biography").innerText = "Biography not available";
+        });
+    } 
+    // else {
+    //   document.getElementById("biography").innerText = "No biography found";
+    // }
   });
 
-const post_loader = document.getElementById("post_loader");
+  const post_loader = document.getElementById("post_loader");
   let observer;
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
   const observerCallback = (entries) => {
@@ -52,19 +51,19 @@ const post_loader = document.getElementById("post_loader");
 
   if (post_loader) {
     //console.log(post_loader)
-     observer = new IntersectionObserver(observerCallback, observerOptions);
+    observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
 
-    
+
     // If post_loader is already visible on load (e.g. big screen), load posts
-   /* window.addEventListener("load", () => {
-      const rect = post_loader.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        //postsLaden();
-      } else {
-        requestAnimationFrame(ensurePostLoaderVisible); // Try again next frame
-      }
-    });*/
+    /* window.addEventListener("load", () => {
+       const rect = post_loader.getBoundingClientRect();
+       if (rect.top < window.innerHeight && rect.bottom >= 0) {
+         //postsLaden();
+       } else {
+         requestAnimationFrame(ensurePostLoaderVisible); // Try again next frame
+       }
+     });*/
 
     // 3. Manual check on scroll (in case layout shifts after interaction)
     window.addEventListener("scroll", () => {
@@ -73,9 +72,11 @@ const post_loader = document.getElementById("post_loader");
         console.log("Fallback load triggered (on scroll)");
         postsLaden(CurrentUserID);
       }
-    }, { passive: true });
+    }, {
+      passive: true
+    });
 
-   } else {
+  } else {
     console.warn(" Post Loader element not found — cannot observe.");
   }
 
@@ -138,7 +139,7 @@ const post_loader = document.getElementById("post_loader");
   // ----------------- Insert Pinned Button -----------------
   function insertPinnedBtn(card, username, mode = "profile") {
     if (!card) return;
-    if (card.querySelector(".pinedbtn")) return; 
+    if (card.querySelector(".pinedbtn")) return;
 
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
@@ -153,8 +154,8 @@ const post_loader = document.getElementById("post_loader");
     const postInhalt = card.querySelector(".post-inhalt");
     const social = card.querySelector(".social");
     const viewpost = document.querySelector(".viewpost");
-    const footer = viewpost?.querySelector(".postview_footer");
-    const comments = viewpost?.querySelector(".post-comments");
+    const footer = viewpost ?.querySelector(".postview_footer");
+    const comments = viewpost ?.querySelector(".post-comments");
 
     if (mode === "profile") {
       if (postInhalt && social) {
@@ -172,7 +173,7 @@ const post_loader = document.getElementById("post_loader");
   // ----------------- Insert Pinned Button in Opened Post -----------------
   function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
     const viewpost = document.querySelector(".viewpost");
-    if (!viewpost) return; 
+    if (!viewpost) return;
 
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
@@ -228,13 +229,13 @@ const post_loader = document.getElementById("post_loader");
   }
 
   // ----------------- Modal Buttons -----------------
-  modal.addEventListener('click', function(e) {
+  modal.addEventListener('click', function (e) {
     if (e.target.classList.contains('next-btn')) {
       showStep(currentStep + 1);
     }
     if (e.target.classList.contains('back-btn')) {
       if (currentStep > 1) showStep(currentStep - 1);
-    } 
+    }
     if (e.target.classList.contains('close-btn')) {
       modal.classList.add('none');
     }
@@ -251,7 +252,7 @@ const post_loader = document.getElementById("post_loader");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
 
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
-        markCardAsBoosted(window.lastBoostedCard); 
+        markCardAsBoosted(window.lastBoostedCard);
       }
     }
 
@@ -275,7 +276,7 @@ const post_loader = document.getElementById("post_loader");
     }
 
     if (e.target === modal) {
-      modal.classList.add('none'); 
+      modal.classList.add('none');
     }
   });
 
@@ -292,7 +293,7 @@ const post_loader = document.getElementById("post_loader");
 
               if (card.classList.contains("boosted")) {
                 markCardAsBoosted(card);
-                card.classList.add("flipped"); 
+                card.classList.add("flipped");
 
                 setTimeout(() => {
                   card.classList.remove("flipped");
@@ -301,8 +302,9 @@ const post_loader = document.getElementById("post_loader");
                 boostCardClick(card);
               }
             }
-          },
-          { capture: true }
+          }, {
+            capture: true
+          }
         );
         card.dataset.listenersAdded = true;
       }
@@ -332,4 +334,3 @@ const post_loader = document.getElementById("post_loader");
   }
 
 });
-
