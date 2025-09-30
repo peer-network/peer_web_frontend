@@ -269,11 +269,10 @@
 
     const accessToken = getCookie("authToken");
     const cancel = 0;
-      const answer = await confirm("Report Post", `Are you sure you want to report this post?`, (dontShowOption = false));
-      if (answer === null || answer.button === cancel) {
-        return false;
-      }
-
+    const answer = await confirm("Report Post", `Are you sure you want to report this post?`, (dontShowOption = false));
+    if (answer === null || answer.button === cancel) {
+      return false;
+    }
 
     // Create headers
     const headers = new Headers({

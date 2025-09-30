@@ -4,10 +4,10 @@ let isFetchingUsers = false;
 let hasMoreUsers = true;
 
 // Initialization
- function initAppData() {
-   nextMint();
-   dailyWin();
-   dailyPays();
+function initAppData() {
+  nextMint();
+  dailyWin();
+  dailyPays();
 }
 
 window.addEventListener('DOMContentLoaded', initAppData);
@@ -217,7 +217,9 @@ async function dailyPays() {
   }
 }
 
-document.getElementById("openTransferDropdown").addEventListener("click", async () => { renderUsers() });
+document.getElementById("openTransferDropdown").addEventListener("click", async () => {
+  renderUsers()
+});
 
 async function renderUsers() {
   const dropdown = document.getElementById("transferDropdown");
@@ -270,16 +272,20 @@ async function renderUsers() {
   // Search logic on input
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
-    userList.innerHTML = "";
+
 
     if (!search) {
       //load/render friends-list
+      userList.innerHTML = "";
       renderFriendListUI(userList);
       return;
     }
 
     const results = await searchUser(search);
     if (!results.length) return;
+
+    // need to make it empty before executing loop
+    userList.innerHTML = "";
 
     results.forEach(user => {
       const item = document.createElement("div");
@@ -306,11 +312,12 @@ async function renderUsers() {
     });
   });
 
+
   dropdown.appendChild(wrapper);
 }
 
 async function renderFriendListUI(container) {
-   //loadFrinds
+  //loadFrinds
   const frindsList = await loadFrinds();
   if (frindsList) {
     frindsList.forEach(user => {
@@ -343,13 +350,13 @@ async function loadFrinds() {
 
   // Create headers
   const headers = new Headers({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
   });
 
   // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
-  query: `query ListFriends {
+    query: `query ListFriends {
                 listFriends {
                     status
                     counter
@@ -359,8 +366,6 @@ async function loadFrinds() {
                       img
                       username
                       slug
-                      biography
-                      updatedat
                     }
                 }
             }
@@ -369,18 +374,18 @@ async function loadFrinds() {
 
   // Define request options
   const requestOptions = {
-  method: "POST",
-  headers: headers,
-  body: graphql
+    method: "POST",
+    headers: headers,
+    body: graphql
   };
 
   try {
-  // Send the request and handle the response
-  const response = await fetch(GraphGL, requestOptions);
-  const result = await response.json();
-  // Check for errors in response
-  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-  if (result.errors) throw new Error(result.errors[0].message);
+    // Send the request and handle the response
+    const response = await fetch(GraphGL, requestOptions);
+    const result = await response.json();
+    // Check for errors in response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0].message);
     return result.data.listFriends.affectedRows;
   } catch (error) {
     console.error("Error:", error.message);
@@ -404,13 +409,13 @@ async function searchUser(username = null) {
             username
             slug
             img
-            status
-            biography
           }
         }
       }
     `,
-    variables: { username },
+    variables: {
+      username
+    },
   });
 
   try {
@@ -421,7 +426,7 @@ async function searchUser(username = null) {
     });
 
     const json = await res.json();
-    return json?.data?.searchUser?.affectedRows || [];
+    return json ?.data ?.searchUser ?.affectedRows || [];
   } catch (err) {
     console.error("searchUser() failed:", err);
     return [];
@@ -469,7 +474,7 @@ function renderTransferFormView(user) {
   const name = document.createElement("strong");
   name.textContent = user.username;
   meta.append(name);
-  
+
   infoWrap.append(img, meta);
   const check = document.createElement("div");
   check.className = "check-circle";
@@ -507,7 +512,7 @@ function renderTransferFormView(user) {
   nextBtn.textContent = "Next";
   nextBtn.onclick = () => {
     const raw = input.value.trim();
-    if (!raw) return alert("Enter an amount");
+    if (!raw) return Merror("Enter an amount");
     const amount = parseFloat(raw);
     if (isNaN(amount)) return alert("Invalid amount");
     renderCheckoutScreen(user, amount);
@@ -531,7 +536,9 @@ function renderCheckoutScreen(user, amount) {
   }
 
   const totalAmount = calculateTotalWithFee(amount);
-  const { breakdown } = getCommissionBreakdown(amount);
+  const {
+    breakdown
+  } = getCommissionBreakdown(amount);
 
   const wrapper = document.createElement("div");
   wrapper.className = "transfer-form-screen";
@@ -544,7 +551,7 @@ function renderCheckoutScreen(user, amount) {
   const closeBtn = document.createElement("button");
   closeBtn.className = "close-transfer btn-white";
   closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = closeModal;
+  closeBtn.onclick = closeTransferModal;
   header.append(h2, closeBtn);
 
   // Recipient
@@ -608,21 +615,27 @@ function renderCheckoutScreen(user, amount) {
   const transferBtn = document.createElement("button");
   transferBtn.className = "btn-next";
   transferBtn.innerHTML = `Transfer &rarr;`;
-  
+
   transferBtn.onclick = async () => {
+
     if (balance < totalAmount) {
       const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
-      if (!confirmContinue) return;
+      if (confirmContinue === null || confirmContinue.button === 0) {
+        return false;
+      }
+
       balance = await getLiquiudity();
+      await new Promise(resolve => setTimeout(resolve, 300));
       if (balance < totalAmount) {
-        info("Still insufficient balance.");
-        return;
+        Merror("Still insufficient balance.");
+        closeModal();
+        return false
       }
     }
 
     try {
       renderLoaderScreen();
-      const userId = (user?.userid === undefined) ? user?.id : user?.userid; 
+      const userId = (user ?.userid === undefined) ? user ?.id : user ?.userid;
       const res = await resolveTransfer(userId, amount);
       if (res.status === "success") {
         renderFinalScreen(totalAmount, user);
@@ -759,8 +772,10 @@ function renderFinalScreen(transferredAmount, user) {
 
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
-  avatar.src = tempMedia(user?.img.replace("media/", ""));
-  avatar.onerror = () => { this.src = "./svg/noname.svg" };
+  avatar.src = tempMedia(user ?.img.replace("media/", ""));
+  avatar.onerror = () => {
+    this.src = "./svg/noname.svg"
+  };
 
   const username = document.createElement("span");
   username.innerHTML = `<strong>${user.username}</strong> #${user.slug}`;
@@ -798,7 +813,7 @@ function renderFinalScreen(transferredAmount, user) {
 
   repeatBtn.textContent = "Repeat";
   repeatBtn.appendChild(repeatIcon);
-  repeatBtn.onclick = () => renderUsers(true);
+  // repeatBtn.onclick = () => renderUsers(true);
 
   // Receipt Button
   const receiptBtn = document.createElement("button");
@@ -861,7 +876,7 @@ async function resolveTransfer(recipientId, numberOfTokens) {
 }
 
 function calculateTotalWithFee(amount) {
- const feePercent = isInvited === "" ? 0.04 : 0.05;
+  const feePercent = isInvited === "" ? 0.04 : 0.05;
   const fee = amount * feePercent;
   return parseFloat(amount + fee);
 }
@@ -875,11 +890,16 @@ function getCommissionBreakdown(transferAmount) {
   const liquidityFee = baseAmount * 0.01;
   const burnFee = baseAmount * 0.01;
 
-  breakdown.push(
-    { label: "2% retained by the platform", amount: platformFee },
-    { label: "1% is allocated to a liquidity pool", amount: liquidityFee },
-    { label: "1% is burned, ensuring deflation", amount: burnFee }
-  );
+  breakdown.push({
+    label: "2% retained by the platform",
+    amount: platformFee
+  }, {
+    label: "1% is allocated to a liquidity pool",
+    amount: liquidityFee
+  }, {
+    label: "1% is burned, ensuring deflation",
+    amount: burnFee
+  });
 
   let inviterFee = 0;
   if (isInvited !== "") {
@@ -901,11 +921,18 @@ function getCommissionBreakdown(transferAmount) {
   };
 }
 
-function closeModal() {
+function closeTransferModal() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.classList.add("hidden");
   dropdown.classList.remove("modal-mode");
 
   const backdrop = document.querySelector(".transfer-backdrop");
   if (backdrop) backdrop.remove();
+}
+
+function closeModal() {
+  document.querySelectorAll(".modal-container").forEach(modal => {
+    modal.classList.remove("modal-show");
+    modal.classList.remove("modal-hide");
+  });
 }
