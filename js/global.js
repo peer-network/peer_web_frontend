@@ -1319,12 +1319,12 @@ function commentToDom(c, append = true) {
       this.classList.add('none')
       hideReply.classList.remove("none");
       
-      fetchChildComments(c.commentid).then((result) => {
-        if (!result) return;
-        result.slice().forEach(function (c2) {
-          commentToDom(c2, true);
-        });
-      });
+      // fetchChildComments(c.commentid).then((result) => {
+      //   if (!result) return;
+      //   result.slice().forEach(function (c2) {
+      //     commentToDom(c2, true);
+      //   });
+      // });
     });
 
 
