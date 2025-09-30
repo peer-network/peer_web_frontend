@@ -1,16 +1,10 @@
 const rememberMeCheckbox = document.getElementById("rememberMe");
 const emailInput = document.getElementById("email");
 
-  
-
-
 // Restore cookies
-
 async function main() {
   // Auto-login if tokens exist
   if (refreshToken) {
-
-
     //console.log("User already logged in with token:", accessToken);
     rememberMeCheckbox.checked = true;
     const accessToken = await refreshAccessToken(refreshToken);
