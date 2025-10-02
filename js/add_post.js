@@ -1273,8 +1273,86 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  if (tagInput) {
+  // if (tagInput) {
+  //   tagInput.value = "";
+
+  //   tagInput.addEventListener("focus", () => {
+  //     const history = getTagHistory();
+  //     if (history.length > 0) renderTagHistory();
+  //     if (tagInput.value.trim().length > 0) updateTagUIVisibility();
+  //   });
+
+  //   tagInput.addEventListener("keydown", (e) => {
+  //     if (e.key === "Enter" || e.key === "," || e.key === " ") {
+  //       e.preventDefault();
+  //       const val = tagInput.value.trim();
+  //       const formatted = val.replace(/^#+/, "").trim();
+  //       const clean = formatted.toLowerCase();
+  //       const existingTags = getAllUsedTagsSet();
+  //       if (val.length >= 3 && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
+  //         tag_addTag(formatted);
+  //         tagInput.value = "";
+  //         clearTagContainer();
+  //         updateTagUIVisibility();
+  //       }
+  //     }
+  //   });
+
+  //   tagInput.addEventListener("keyup", async (e) => {
+  //     const searchStr = tagInput.value.trim();
+  //     if (searchStr === "") {
+  //       clearTagContainer();
+  //       renderTagHistory();
+  //       updateTagUIVisibility();
+  //       return;
+  //     }
+
+  //     if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
+  //       tagErrorEl.textContent = "Only letters and numbers allowed.";
+  //       return;
+  //     }
+
+  //     //need to clear the error div container
+  //     tagErrorEl.textContent = "";
+
+  //     if (searchStr.length < 3) return;
+
+  //     try {
+  //       const tags = await fetchTags(searchStr);
+  //       const existingTags = getAllUsedTagsSet();
+  //       clearTagContainer();
+  //       tags.forEach((tag) => {
+  //         if (tag.count === 0 || tag.records === 0) return;
+  //         const original = tag.name.replace(/^#+/, "").trim();
+  //         const clean = original.toLowerCase();
+
+  //         if (!existingTags.has(clean)) {
+  //           const el = createTagElement(original, "suggestion");
+  //           tagContainer.appendChild(el);
+  //           existingTags.add(clean);
+  //         }
+  //       });
+
+  //       updateTagUIVisibility();
+  //     } catch (error) {
+  //       console.error("Tag fetch error:", error);
+  //     }
+  //   });
+
+  //   clearTagHistoryBtn.addEventListener("click", () => {
+  //     localStorage.removeItem("tagHistory");
+  //     renderTagHistory();
+  //     updateTagUIVisibility();
+  //   });
+  // }
+
+  // ===== TAG MANAGEMENT =====
+  // Add a flag to prevent duplicate initialization
+  if (tagInput && !tagInput.dataset.initialized) {
+    tagInput.dataset.initialized = "true";
     tagInput.value = "";
+
+    let currentFetchController = null;
 
     tagInput.addEventListener("focus", () => {
       const history = getTagHistory();
@@ -1289,7 +1367,29 @@ document.addEventListener("DOMContentLoaded", () => {
         const formatted = val.replace(/^#+/, "").trim();
         const clean = formatted.toLowerCase();
         const existingTags = getAllUsedTagsSet();
-        if (val.length >= 3 && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
+        
+        // Clear any previous errors
+        tagErrorEl.textContent = "";
+        
+        // Validate length
+        if (formatted.length < 3) {
+          tagErrorEl.textContent = "Tag must be at least 3 characters long.";
+          return;
+        }
+        console.log('i am here')
+        
+        if (formatted.length > 53) {
+          tagErrorEl.textContent = "Tag must not exceed 53 characters.";
+          return;
+        }
+        
+        // Validate characters
+        if (!/^[a-zA-Z0-9]+$/.test(formatted)) {
+          tagErrorEl.textContent = "Only letters and numbers allowed.";
+          return;
+        }
+        
+        if (!existingTags.has(clean)) {
           tag_addTag(formatted);
           tagInput.value = "";
           clearTagContainer();
@@ -1298,46 +1398,81 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    tagInput.addEventListener("keyup", async (e) => {
-      const searchStr = tagInput.value.trim();
-      if (searchStr === "") {
-        clearTagContainer();
-        renderTagHistory();
-        updateTagUIVisibility();
-        return;
-      }
+    // tagInput.addEventListener("keyup", async (e) => {
+    //   const searchStr = tagInput.value.trim();
+      
+    //   if (searchStr === "") {
+    //     tagErrorEl.textContent = "";
+    //     clearTagContainer();
+    //     renderTagHistory();
+    //     updateTagUIVisibility();
+        
+    //     if (currentFetchController) {
+    //       currentFetchController.abort();
+    //       currentFetchController = null;
+    //     }
+    //     return;
+    //   }
 
-      if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
-        tagErrorEl.textContent = "Only letters and numbers allowed.";
-        return;
-      }
+    //   // Validate characters first
+    //   if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
+    //     tagErrorEl.textContent = "Only letters and numbers allowed.";
+    //     clearTagContainer();
+    //     updateTagUIVisibility();
+    //     return;
+    //   }
+      
+    //   // Validate max length
+    //   if (searchStr.length > 53) {
+    //     tagErrorEl.textContent = "Tag must not exceed 53 characters.";
+    //     clearTagContainer();
+    //     updateTagUIVisibility();
+    //     return;
+    //   }
 
-      //need to clear the error div container
-      tagErrorEl.textContent = "";
+    //   console.log('i reached here')
+    //   // Clear error if validations pass
+    //   tagErrorEl.textContent = "";
 
-      if (searchStr.length < 3) return;
+    //   // Don't fetch if less than 2 characters (but don't show error during typing)
+    //   if (searchStr.length < 2) {
+    //     clearTagContainer();
+    //     updateTagUIVisibility();
+    //     return;
+    //   }
 
-      try {
-        const tags = await fetchTags(searchStr);
-        const existingTags = getAllUsedTagsSet();
-        clearTagContainer();
-        tags.forEach((tag) => {
-          if (tag.count === 0 || tag.records === 0) return;
-          const original = tag.name.replace(/^#+/, "").trim();
-          const clean = original.toLowerCase();
+    //   try {
+    //     if (currentFetchController) {
+    //       currentFetchController.abort();
+    //     }
+        
+    //     currentFetchController = new AbortController();
+    //     const tags = await fetchTags(searchStr, currentFetchController.signal);
+        
+    //     if (tagInput.value.trim() !== searchStr) return;
+        
+    //     const existingTags = getAllUsedTagsSet();
+    //     clearTagContainer();
+        
+    //     tags.forEach((tag) => {
+    //       if (tag.count === 0 || tag.records === 0) return;
+    //       const original = tag.name.replace(/^#+/, "").trim();
+    //       const clean = original.toLowerCase();
 
-          if (!existingTags.has(clean)) {
-            const el = createTagElement(original, "suggestion");
-            tagContainer.appendChild(el);
-            existingTags.add(clean);
-          }
-        });
+    //       if (!existingTags.has(clean)) {
+    //         const el = createTagElement(original, "suggestion");
+    //         tagContainer.appendChild(el);
+    //         existingTags.add(clean);
+    //       }
+    //     });
 
-        updateTagUIVisibility();
-      } catch (error) {
-        console.error("Tag fetch error:", error);
-      }
-    });
+    //     updateTagUIVisibility();
+    //   } catch (error) {
+    //     if (error.name !== 'AbortError') {
+    //       console.error("Tag fetch error:", error);
+    //     }
+    //   }
+    // });
 
     clearTagHistoryBtn.addEventListener("click", () => {
       localStorage.removeItem("tagHistory");
@@ -1346,7 +1481,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== TAG MANAGEMENT =====
   function tag_addTag(tagText, silent = false) {
     const cleanText = tagText.replace(/^#+/, "");
 

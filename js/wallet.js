@@ -813,7 +813,7 @@ function renderFinalScreen(transferredAmount, user) {
 
   repeatBtn.textContent = "Repeat";
   repeatBtn.appendChild(repeatIcon);
-  // repeatBtn.onclick = () => renderUsers(true);
+  repeatBtn.onclick = () => renderUsers(true);
 
   // Receipt Button
   const receiptBtn = document.createElement("button");
