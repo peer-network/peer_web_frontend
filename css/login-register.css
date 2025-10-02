@@ -1005,3 +1005,18 @@
                 gap: 3px;
             }
         }
+
+        @media screen and (max-width: 500px) {
+             .container {
+                grid-template-columns: 5% 95%;
+            
+            }
+            .container_right .container_inner {
+                padding: 30px 15px;
+            }
+            .container_left .logo {
+                width: 15vw;	
+                right: -3vw;
+            }
+
+        }
