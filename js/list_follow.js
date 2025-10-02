@@ -14,13 +14,19 @@ async function openRelationsModal(userID, defaultType = "followers") {
 
   console.log("Opening modal for userID:", userID, "defaultType:", defaultType);
 
+  const currentUserId = getCookie("userID");
+  const isOwnProfile = userID === currentUserId;
+
+  // Only show Peers tab if viewing own profile
+  const peersTab = isOwnProfile ? '<div class="tab-btn" data-type="peers">Peers</div>' : '';
+
   modal.innerHTML = `
     <div class="modal-content relationsModal">
       <button class="modal-close">&times;</button>
       <div class="tabs">
         <div class="tab-btn" data-type="followers">Followers</div>
         <div class="tab-btn" data-type="following">Following</div>
-        <div class="tab-btn" data-type="peers">Peers</div>
+        ${peersTab}
       </div>
       <div class="modal-body">Loading...</div>
     </div>`;
@@ -34,7 +40,7 @@ async function openRelationsModal(userID, defaultType = "followers") {
 
   const accessToken = getCookie("authToken");
 
-  // cache results so we don’t refetch on tab switch
+  // cache results so we don't refetch on tab switch
   const cached = {};
 
   async function fetchRelations(type) {
@@ -42,6 +48,12 @@ async function openRelationsModal(userID, defaultType = "followers") {
 
     try {
       if (type === "peers") {
+        // Only fetch peers for current user
+        if (!isOwnProfile) {
+          cached[type] = [];
+          return cached[type];
+        }
+
         const [peersResp, relationsResp] = await Promise.all([
           fetch(GraphGL, {
             method: "POST",
@@ -64,7 +76,7 @@ async function openRelationsModal(userID, defaultType = "followers") {
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
             body: JSON.stringify({ query: `
               query {
-                listFollowRelations(userid: "${userID}") {
+                listFollowRelations(userid: "${currentUserId}") {
                   affectedRows {
                     followers { id }
                     following { id }
@@ -82,13 +94,14 @@ async function openRelationsModal(userID, defaultType = "followers") {
         const followers = relationsData.data.listFollowRelations.affectedRows.followers || [];
         const following = relationsData.data.listFollowRelations.affectedRows.following || [];
 
-        const followerIds = new Set(followers.map(f => f.id));
         const followingIds = new Set(following.map(f => f.id));
+        const followerIds = new Set(followers.map(f => f.id));
 
         cached[type] = peers.map(peer => ({
           ...peer,
-          isfollowed: followerIds.has(peer.userid),
-          isfollowing: followingIds.has(peer.userid)
+          id: peer.userid,
+          isfollowed: followingIds.has(peer.userid), // You follow them
+          isfollowing: followerIds.has(peer.userid)  // They follow you
         }));
 
       } else {
@@ -144,24 +157,43 @@ async function openRelationsModal(userID, defaultType = "followers") {
   });
 
   // load the default tab (clicked type)
-  loadTab(defaultType);
+  // If peers is clicked on someone else's profile, default to followers
+  const tabToLoad = (defaultType === "peers" && !isOwnProfile) ? "followers" : defaultType;
+  loadTab(tabToLoad);
 }
 
 // bind clicks
-document.getElementById("followers_count").addEventListener("click", () => {
-  openRelationsModal(userID, "followers");
-  console.log("Followers clicked");
-});
+const profileUserID = userID; // or however you're setting this variable
 
-document.getElementById("following_count").addEventListener("click", () => {
-  openRelationsModal(userID, "following");
-});
-
-if (document.getElementById("peer_count")) {
-  document.getElementById("peer_count").addEventListener("click", () => {
-    openRelationsModal(userID, "peers");
+document.querySelectorAll(".followers_count").forEach(el => {
+  el.addEventListener("click", () => {
+    openRelationsModal(profileUserID, "followers");
+    console.log("Followers clicked");
   });
-}
+});
+
+document.querySelectorAll(".following_count").forEach(el => {
+  el.addEventListener("click", () => {
+    openRelationsModal(profileUserID, "following");
+  });
+});
+
+document.querySelectorAll(".peer_count").forEach(el => {
+  el.addEventListener("click", () => {
+    const currentUserId = getCookie("userID");
+    
+    // Only open peers modal if it's the logged-in user's profile
+    if (profileUserID === currentUserId) {
+      openRelationsModal(profileUserID, "peers");
+    }
+  });
+});
+
+// if (document.getElementById("peer_count")) {
+//   document.getElementById("peer_count").addEventListener("click", () => {
+//     openRelationsModal(userID, "peers");
+//   });
+// }
 
 
 // Follow/unfollow toggle mutation
