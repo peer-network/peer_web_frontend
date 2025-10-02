@@ -1,4 +1,6 @@
- // Get user ID from URL or cookie
+const limit = 20; 
+const offset = 0;
+// Get user ID from URL or cookie
 function getEffectiveUserID() {
   const params = new URLSearchParams(window.location.search);
   return params.get("user") || getCookie("userID");
@@ -76,7 +78,10 @@ async function openRelationsModal(userID, defaultType = "followers") {
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
             body: JSON.stringify({ query: `
               query {
-                listFollowRelations(userid: "${currentUserId}") {
+                listFollowRelations(
+                userid: "${currentUserId}"
+                limit: ${limit}
+                offset: ${offset}) {
                   affectedRows {
                     followers { id }
                     following { id }
@@ -110,7 +115,10 @@ async function openRelationsModal(userID, defaultType = "followers") {
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
           body: JSON.stringify({ query: `
             query {
-              listFollowRelations(userid: "${userID}") {
+              listFollowRelations(
+              userid: "${userID}"
+              limit: ${limit}
+              offset: ${offset}) {
                 affectedRows {
                   followers {
                     id username slug img isfollowed isfollowing
