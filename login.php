@@ -22,78 +22,161 @@ if (isset($_GET['message'])) {
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="stylesheet" href="css/password.css?<?php echo filemtime('css/password.css'); ?>">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
-    <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>">
-    <script src="js/password.js?<?php echo filemtime('js/password.js'); ?>" defer></script>
-    <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" defer></script>
-    <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
+   <title>Peer Network - Login</title>
+    <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
+    <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
+    <link rel="stylesheet" href="css/login-register.css?<?php echo filemtime('css/login-register.css'); ?>" media="all" rel="preload">
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
-    <script src="js/login/confirmLoginRegister.js?<?php echo filemtime('js/login/confirmLoginRegister.js'); ?>" defer></script>
    
-    <!-- <script src="sw_instal.min.js" async></script> -->
+   
+   
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
     ?>
-    <title>Login Peer</title>
+    
 </head>
 
-<body class="container">
+<body>
     <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
 
-    <aside class="bild">
-        <div class="phone">
-            <div class="screen">
-                <img src="img/register.webp" alt="Login" width="612" height="612">
+    <div class="container large_font">
+        <div class="container_left">
+            <div class="phone">
+                <div class="screen">
+                    <img src="img/register.webp" alt="Login" width="612" height="612">
+                </div>
+                <div class="home-button">
+                    <img src="svg/logo_sw.svg" alt="PeerLogo" width="96" height="96">
+                </div>
             </div>
-            <div class="home-button">
-                <img src="svg/logo_sw.svg" alt="PeerLogo" width="96" height="96">
-            </div>
+            <img class="logo" src="svg/logo_farbe.svg" alt="Peer logo" width="96" height="96" />
         </div>
-        <img class="logo" src="svg/logo_farbe.svg" alt="Peer logo" width="96" height="96" />
-    </aside>
-
-    <div class="cont"> 
-        <div class="inner-cont">
-            <form id="registerForm" class="form-container">
-                <?php if ($message): ?>
-                <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
+        <div class="container_right">
+            <div class="container_inner">
+                <div class="top_head_area">
+                    <?php if ($message): ?>
+                    <div class="error-warning medium_font">
+                    <span aria-hidden="true">
+                        <i class="peer-icon  peer-icon-warning"></i>
+                    </span> 
+                    <?php echo htmlspecialchars($message); ?>
+                    </div>
                 <?php endif; ?>
-                <div class="peerLogo">
-                    <img src="svg/peerLogoWhite.svg" alt="Peer logo"/>
+    
                 </div>
-                <div class="head">
-                    <h1 class="heading">Hey there,<br> Welcome back!</h1>
-                    <p class="description">It’s good to see you again! Log in to continue your journey with us!</p>
-                </div>
-                <div class="input-field">
-                    <img class="email-icon" src="svg/email-icon.svg"  alt="email icon">
-                    <input type="email" id="email" name="e_mail" placeholder="E-mail" required class="input-text" autocomplete="on"></input>
-                    <img id="emailValidationIcon" class="tick none" src="svg/tick-icon.svg" alt="tick">
-                </div>
-                <div class="validationMessage" id="emailValidationMessage" for="register"></div>
-                <!-- Password Component -->
-                <div class="password-component" data-show-strength="false" data-show-message="true" data-name="password"></div>
-
-                <div class="rem-for">
-                    <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"/>Remember me</label>
-                    <a class="link" href="forgotpassword.php">forgot&nbsp;password?</a>
-                </div>
-                <input id="submit" class="button" type="submit" name="Login" value="Login">
-                <div class="line-with-text"><span>OR</span></div>
-                <a href="register.php?" class="button reg">
-                    <span>Register&nbsp;now</span>
-                    <img src="svg/arrow1.svg" alt="">
-                </a>
-                <!-- <p class="description" style="opacity: 0;">Start posting with peer today!</p> -->
                 
-            </form>
-            <div class="footer">
-                <a href="" class="privacy">Privacy Policy</a>
-                <p class="version">Version 1.8.1</p>
+                <div class="center_area">
+        
+                    <div class="form-step active" id="loginStep" >
+                        <div class="step-header">
+                            <div class="peerLogo">
+                                <img src="svg/peerLogoWhite.svg" alt="Peer logo">
+                            </div>
+                            <h2 class="x_large_font">
+                                Hey there,<br />
+                                Welcome back
+                            </h2>
+                            <p class="large_font">It's good to see you again! Log in to continue your journey with us!</p>
+                        </div>
+
+                        <form id="loginForm" novalidate>
+                            <!-- Email Field -->
+                            <div class="input-group">
+                                <div class="input-field" id="emailField">
+                                    <span class="input-icon" aria-hidden="true">
+                                        <i class="peer-icon peer-icon-envelope"></i>
+                                    </span>
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email"
+                                        placeholder="E-mail"
+                                        required
+                                        aria-describedby="emailValidation emailHelp"
+                                        autocomplete="email"
+                                    >
+                                    <span class="validation-icon" id="emailValidIcon" aria-hidden="true">
+                                        <i class="peer-icon peer-icon-tick-circle"></i>
+                                    </span>
+                                </div>
+                                <div class="validation-message medium_font" id="emailValidation" role="alert" aria-live="polite"></div>
+                                <div id="emailHelp" class="sr-only">Enter a valid email address</div>
+                            </div>
+
+                           
+
+                            <!-- Password Field -->
+                            <div class="input-group">
+                                
+                                <div class="input-field" id="passwordField">
+                                    <span class="input-icon" aria-hidden="true">
+                                        <i class="peer-icon peer-icon-lock"></i>
+                                    </span>
+                                    <input 
+                                        type="password" 
+                                        id="password" 
+                                        name="password"
+                                        placeholder="Password"
+                                        required
+                                        aria-describedby="passwordValidation passwordHelp passwordStrength"
+                                        autocomplete="new-password"
+                                    >
+                                    
+                                    <span class="toggle-passwordBtn-icon" id="togglePasswordBtn" title="Toggle password visibility" aria-label="Show/hide password">
+                                       <i class="peer-icon peer-icon-eye-close"></i> 
+                                    </span>
+                                </div>
+                                <div class="validation-message medium_font" id="passwordValidation" role="alert" aria-live="polite"></div>
+                                
+                              
+                            </div>
+                            <div class="input-group remember_forgetlink">
+                               
+                                <!-- Remember me Checkbox -->
+                                <div class="checkbox-field" id="rememberMeField">
+                                    <label class="checkbox-wrapper" for="rememberMe">
+                                        <input 
+                                            type="checkbox" 
+                                            id="rememberMe" 
+                                            name="rememberMe"
+                                            aria-describedby="checkboxValidation"
+                                        >
+                                        <span class="checkbox-label medium_font">
+                                            Remember me
+                                        </span>
+                                    </label>
+                                </div>
+
+                                 
+                                <div class="forgetpassword-link medium_font" >
+                                    <a href="forgotpassword.php">Forgot password?</a>
+                                </div>
+                                <!-- Validation Message -->
+                                <div class="validation-message medium_font" id="checkboxValidation" role="alert" aria-live="polite"></div>
+                                
+                                
+                            </div>
+                           
+
+                            <button type="submit" class="btn btn-primary" id="loginBtn">
+                                Login
+                            </button>
+                            
+                        </form>
+
+                        <div class="line-with-text"><span class="medium_font">OR</span></div>
+                           
+                        <a href="register.php" class="btn btn-white">Register now <span aria-hidden="true"><i class="peer-icon medium_font peer-icon-arrow-right-bold"></i></span></a>
+                                
+                    </div>
+
+                </div>
+                <div class="footer_area medium_font">
+                    <a href="https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724" target="_blank">Privacy Policy.</a>
+                   <p class="version">Version 1.8.1</p>
+                </div>
             </div>
         </div>
     </div>
