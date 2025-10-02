@@ -1088,7 +1088,7 @@ function renderFollowButton(objekt, currentUserId) {
 
   // Check for peer status initially
   if (objekt.user.isfollowed && objekt.user.isfollowing) {
-    followButton.classList.add("Peer");
+    followButton.classList.add("Peer", "btn-blue");
     followButton.textContent = "Peer";
   } else if (objekt.user.isfollowed) {
     followButton.classList.add("following");
@@ -1728,31 +1728,29 @@ function renderUsers(users, container) {
       window.location.href = `view-profile.php?user=${user.id || user.userid}`;
     });
     
-    // Only show follow button if not viewing your own profile in the list
+    // Only show follow button if not viewing your own profile
     if ((user.id || user.userid) !== currentUserId) {
       const followButton = document.createElement("button");
       followButton.classList.add("follow-button");
       followButton.dataset.userid = user.id || user.userid;
       
-      // Use the flags as provided (perspective depends on whose profile modal was opened from)
-      const isfollowed = user.isfollowed;  // Profile owner follows them
-      const isfollowing = user.isfollowing; // They follow profile owner
+      // Use isfollowedByYou and isfollowingYou if they exist (for other user's peers)
+      // Otherwise use isfollowed and isfollowing (for own profile or other tabs)
+      const youFollowThem = user.isfollowedByYou !== undefined ? user.isfollowedByYou : user.isfollowed;
+      const theyFollowYou = user.isfollowingYou !== undefined ? user.isfollowingYou : user.isfollowing;
       
-      // Initial button state based on the relationship
-      if (isfollowed && isfollowing) {
-        followButton.classList.add("Peer");
+      // Initial button state
+      if (youFollowThem && theyFollowYou) {
+        followButton.classList.add("Peer", "btn-blue");
         followButton.textContent = "Peer";
-      } else if (isfollowed) {
-        followButton.classList.add("following");
+      } else if (youFollowThem) {
+        followButton.classList.add("following", "btn-white");
         followButton.textContent = "Following";
       } else {
+        followButton.classList.add("follow", "btn-transparent");
         followButton.textContent = "Follow +";
       }
       
-      // Note: The follow button click handler would only work correctly
-      // when viewing YOUR OWN profile's relations, because toggleFollowStatus
-      // works from the current user's perspective.
-      // For other users' profiles, these buttons are informational only.
       followButton.addEventListener("click", async (event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -1762,7 +1760,14 @@ function renderUsers(users, container) {
         
         if (newStatus !== null) {
           // Update the user object
-          user.isfollowed = newStatus;
+          if (user.isfollowedByYou !== undefined) {
+            user.isfollowedByYou = newStatus;
+          } else {
+            user.isfollowed = newStatus;
+          }
+          
+          const youNowFollowThem = user.isfollowedByYou !== undefined ? user.isfollowedByYou : user.isfollowed;
+          const theyStillFollowYou = user.isfollowingYou !== undefined ? user.isfollowingYou : user.isfollowing;
           
           // Update following count
           const followerCountSpan = document.getElementById("following");
@@ -1777,10 +1782,10 @@ function renderUsers(users, container) {
             // Clear all classes first
             btn.classList.remove("following", "Peer");
             
-            if (user.isfollowed && user.isfollowing) {
+            if (youNowFollowThem && theyStillFollowYou) {
               btn.textContent = "Peer";
               btn.classList.add("Peer");
-            } else if (user.isfollowed) {
+            } else if (youNowFollowThem) {
               btn.textContent = "Following";
               btn.classList.add("following");
             } else {
