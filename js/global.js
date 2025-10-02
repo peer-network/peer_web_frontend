@@ -1088,7 +1088,7 @@ function renderFollowButton(objekt, currentUserId) {
 
   // Check for peer status initially
   if (objekt.user.isfollowed && objekt.user.isfollowing) {
-    followButton.classList.add("following");
+    followButton.classList.add("Peer");
     followButton.textContent = "Peer";
   } else if (objekt.user.isfollowed) {
     followButton.classList.add("following");
@@ -1704,9 +1704,8 @@ async function getUserInfo() {
 // used in list_follow.js and posts.js for rendering followers and following lists
 function renderUsers(users, container) {
   container.innerHTML = "";
-  // const avatar = "https://media.getpeer.eu";
   const currentUserId = getCookie("userID");
-
+  
   users.forEach(user => {
     const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
     const item = document.createElement("div");
@@ -1715,75 +1714,87 @@ function renderUsers(users, container) {
       <div class="profilStats">
         <img src="${userimg}" alt="${user.username}" />
         <div class="user_info">
-          <span class="user_name">${user.username}</span>  <span class="user_slug">#${user.slug}</span>
+          <span class="user_name">${user.username}</span>
+          <span class="user_slug">#${user.slug}</span>
         </div>
       </div>
     `;
-
+    
     item.querySelector("img").onerror = () => {
       item.querySelector("img").src = "svg/noname.svg";
     };
-
+    
     item.addEventListener("click", () => {
       window.location.href = `view-profile.php?user=${user.id || user.userid}`;
     });
-
+    
+    // Only show follow button if not viewing your own profile in the list
     if ((user.id || user.userid) !== currentUserId) {
       const followButton = document.createElement("button");
       followButton.classList.add("follow-button");
       followButton.dataset.userid = user.id || user.userid;
-
-      if (user.isfollowed && user.isfollowing) {
+      
+      // Use the flags as provided (perspective depends on whose profile modal was opened from)
+      const isfollowed = user.isfollowed;  // Profile owner follows them
+      const isfollowing = user.isfollowing; // They follow profile owner
+      
+      // Initial button state based on the relationship
+      if (isfollowed && isfollowing) {
+        followButton.classList.add("Peer");
         followButton.textContent = "Peer";
-        followButton.classList.add("following", "peer");
-      } else if (user.isfollowed) {
+      } else if (isfollowed) {
+        followButton.classList.add("following");
         followButton.textContent = "Following";
-        followButton.classList.add("following", "just-following");
       } else {
         followButton.textContent = "Follow +";
       }
-
+      
+      // Note: The follow button click handler would only work correctly
+      // when viewing YOUR OWN profile's relations, because toggleFollowStatus
+      // works from the current user's perspective.
+      // For other users' profiles, these buttons are informational only.
       followButton.addEventListener("click", async (event) => {
         event.stopPropagation();
         event.preventDefault();
-
+        
         const targetUserId = user.id || user.userid;
-        const newStatus = await toggleFollowStatus(user.id || user.userid);
-
+        const newStatus = await toggleFollowStatus(targetUserId);
+        
         if (newStatus !== null) {
+          // Update the user object
           user.isfollowed = newStatus;
-
+          
+          // Update following count
           const followerCountSpan = document.getElementById("following");
           if (followerCountSpan) {
             let count = parseInt(followerCountSpan.textContent, 10) || 0;
             count = newStatus ? count + 1 : Math.max(0, count - 1);
             followerCountSpan.textContent = count;
           }
-
+          
+          // Update all buttons for this user across the modal
           document.querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`).forEach(btn => {
-            btn.classList.toggle("following", newStatus);
-
-            if (newStatus && user.isfollowing) {
+            // Clear all classes first
+            btn.classList.remove("following", "Peer");
+            
+            if (user.isfollowed && user.isfollowing) {
               btn.textContent = "Peer";
-              btn.classList.add("peer");
-              btn.classList.remove("just-following");
-            } else if (newStatus) {
+              btn.classList.add("Peer");
+            } else if (user.isfollowed) {
               btn.textContent = "Following";
-              btn.classList.add("just-following");
-              btn.classList.remove("peer");
+              btn.classList.add("following");
             } else {
               btn.textContent = "Follow +";
-              btn.classList.remove("following", "just-following", "peer");
             }
           });
         } else {
           Merror("Failed to update follow status. Please try again.");
         }
       });
-
+      
       item.appendChild(followButton);
     }
-
+    
     container.appendChild(item);
   });
 }

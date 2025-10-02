@@ -37,11 +37,11 @@
            Out</a>
          <div id="modalOverlay" class="modal-overlay none">
            <div class="logOut-pop" id="logOutPop">
-             <img src="svg/error.svg" alt="logout">
-             <p class="xl_font_size">Are you sure you want to log out?</p>
+             <img src="svg/Union.svg" alt="logout">
+             <p class="xl_font_size bold">Are you sure you want to log out?</p>
              <div class="button-row">
-               <button id="cancelLogoutBtn" class="btn-transparent">Cancel</button>
-               <button id="confirmLogoutBtn" class="btn-blue">Yes</button>
+               <button id="cancelLogoutBtn" class="btn-white">Cancel</button>
+               <button id="confirmLogoutBtn" class="btn-red-transparent">Log Out</button>
              </div>
            </div>
          </div>
