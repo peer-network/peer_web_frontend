@@ -23,6 +23,8 @@ if (isset($_GET['message'])) {
 <html lang="de">
 <head>
    <title>Peer Network - Login</title>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
     <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
     <link rel="stylesheet" href="css/login-register.css?<?php echo filemtime('css/login-register.css'); ?>" media="all" rel="preload">
@@ -72,7 +74,7 @@ if (isset($_GET['message'])) {
                     <div class="form-step active" id="loginStep" >
                         <div class="step-header">
                             <div class="peerLogo">
-                                <img src="svg/peerLogoWhite.svg" alt="Peer logo">
+                                <img src="svg/PeerLogoWhite.svg" alt="Peer logo">
                             </div>
                             <h2 class="x_large_font">
                                 Hey there,<br />
