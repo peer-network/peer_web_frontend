@@ -152,9 +152,6 @@
   height: 2.5rem;
   font-size: 1rem;
   align-items: center;
-  background-color:transparent;
-	border-color: var(--white);
-	color: var(--white);
   width: 20%;
   justify-content: center;
 }
