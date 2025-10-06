@@ -59,6 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const fullPath2 = tempMedia(userprofile.affectedRows.biography);
 
 
+
+
           fetch(fullPath2, { cache: "no-store" })
             .then(response => {
               if (!response.ok) {

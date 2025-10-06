@@ -872,7 +872,16 @@ function postdetail(objekt, CurrentUserID) {
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
-      let currentIndex = 0;
+     
+
+      imageSrcArray.push(src);
+      // Open modal on click
+      zoomElement.addEventListener("click", () => {
+        openSliderModal(imageSrcArray, index);
+      });
+    });
+
+     let currentIndex = 0;
 
       function updateSlider(index) {
         currentIndex = index;
@@ -898,12 +907,40 @@ function postdetail(objekt, CurrentUserID) {
         });
       });
 
-      imageSrcArray.push(src);
-      // Open modal on click
-      zoomElement.addEventListener("click", () => {
-        openSliderModal(imageSrcArray, index);
-      });
-    });
+       
+
+      // Swipe logic
+let startX = 0;
+let endX = 0;
+
+sliderTrack.addEventListener("touchstart", (e) => {
+  startX = e.touches[0].clientX;
+});
+
+sliderTrack.addEventListener("touchmove", (e) => {
+  endX = e.touches[0].clientX;
+});
+
+sliderTrack.addEventListener("touchend", () => {
+  const diff = startX - endX;
+  const threshold = 50;
+
+  if (Math.abs(diff) > threshold) {
+    const totalSlides = sliderTrack.children.length;
+
+    if (diff > 0) {
+      currentIndex = (currentIndex + 1) % totalSlides; // Next
+    } else {
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+    }
+
+    updateSlider(currentIndex);
+  }
+
+  startX = 0;
+  endX = 0;
+});
+
   }
 
   /*const title = document.getElementById("comment-title");
