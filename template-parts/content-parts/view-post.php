@@ -30,7 +30,15 @@
                             <li><a href="#" class="reportpost"><i class="fi fi-rr-triangle-warning"></i> Report post</a></li>
                             <li><a href="#" class="download"><i class="fi fi-rr-down-to-line"></i> Download</a></li>
                             <li class="sharelinks"><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a>
-                                <div id="share-link-box" class="share-post-box">
+                               
+                            </li>
+                            <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
+                        </ul>
+                        
+                    </ul>
+
+                     <div id="share-link-box" class="share-post-box">
+                        <div id="closeSharebox" class="btClose">X</div>
                                     <div class="share-post-subbox">
                                         <h3 class="xl_font_size">Share</h3>
                                         <div class="share-post-apps">
@@ -73,11 +81,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
-                            <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
-                        </ul>
-                        
-                    </ul>
                 </div>
             </div>
             

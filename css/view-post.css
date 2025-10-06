@@ -409,8 +409,11 @@
 	visibility: hidden;
 	z-index: 1;
 }
+.site_layout_nonuser .postview_footer .more .share-post-box .btClose {
+	display: flex;
+}
 
-.viewpost .postview_footer .more:hover ul.sublist li.sharelinks:hover .share-post-box {
+.viewpost .postview_footer .more .share-post-box.active {
   
     opacity:1;
     visibility: visible;
@@ -1348,7 +1351,7 @@ button:not(:disabled):hover.switch-btn {
 	}
 	.viewpost .postview_footer .more .share-post-box {
 		width: 800px;
-		right: 0px;
+		right: -42px;
 		
 	}
 	.share-post-apps .app-icon {
