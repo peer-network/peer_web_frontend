@@ -345,9 +345,15 @@
     showModal();
 
     async function getPostInteractions(type = "VIEW") {
+      const limit = 20; 
+      const offset = 0;
       const query = `
         query PostInteractions {
-          postInteractions(postOrCommentId: "${postid}", getOnly: ${type}) {
+          postInteractions(
+          postOrCommentId: "${postid}", 
+          getOnly: ${type},
+          limit: ${limit},
+          offset: ${offset}) {
             status
             ResponseCode
             affectedRows {

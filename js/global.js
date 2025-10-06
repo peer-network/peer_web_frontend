@@ -1177,57 +1177,110 @@ function forceDownload(url) {
 
 }
 
+// ============================================
+// GLOBAL.JS - Follow Button Renderer
+// ============================================
+
+/**
+ * Renders a follow button for a single post/profile
+ * @param {Object} objekt - Object containing user data
+ * @param {string|null} currentUserId - Current logged-in user's ID
+ * @returns {HTMLButtonElement|null} Follow button element or null
+ */
 function renderFollowButton(objekt, currentUserId) {
-  if (objekt.user.id === currentUserId || currentUserId == null) return null;
+  if (!objekt?.user?.id || objekt.user.id === currentUserId || !currentUserId) {
+    return null;
+  }
 
   const followButton = document.createElement("button");
   followButton.classList.add("follow-button");
+  followButton.dataset.userid = objekt.user.id;
 
-  const followerCountSpan = document.getElementById("following");
+  updateFollowButtonState(followButton, objekt.user.isfollowed, objekt.user.isfollowing);
 
-  // Check for peer status initially
-  if (objekt.user.isfollowed && objekt.user.isfollowing) {
-    followButton.classList.add("Peer", "btn-blue");
-    followButton.textContent = "Peer";
-  } else if (objekt.user.isfollowed) {
-    followButton.classList.add("following");
-    followButton.textContent = "Following";
-  } else {
-    followButton.textContent = "Follow +";
-  }
-
-  followButton.addEventListener("click", async function (event) {
+  followButton.addEventListener("click", async (event) => {
     event.stopPropagation();
     event.preventDefault();
+    
+    await handleFollowButtonClick(followButton, objekt.user);
+  });
 
-    const newStatus = await toggleFollowStatus(objekt.user.id);
+  return followButton;
+}
+
+/**
+ * Updates follow button visual state
+ * @param {HTMLButtonElement} button - Button element to update
+ * @param {boolean} isfollowed - Whether current user follows this user
+ * @param {boolean} isfollowing - Whether this user follows current user
+ */
+function updateFollowButtonState(button, isfollowed, isfollowing) {
+  button.classList.remove("Peer", "btn-blue", "following", "btn-white", "follow", "btn-transparent");
+
+  if (isfollowed && isfollowing) {
+    button.classList.add("Peer", "btn-blue");
+    button.textContent = "Peer";
+    button.setAttribute("aria-label", "Mutual followers");
+  } else if (isfollowed) {
+    button.classList.add("following", "btn-white");
+    button.textContent = "Following";
+    button.setAttribute("aria-label", "You follow this user");
+  } else {
+    button.classList.add("follow", "btn-transparent");
+    button.textContent = "Follow +";
+    button.setAttribute("aria-label", "Follow this user");
+  }
+}
+
+/**
+ * Handles follow button click
+ * @param {HTMLButtonElement} button - Button that was clicked
+ * @param {Object} user - User object
+ */
+async function handleFollowButtonClick(button, user) {
+  button.disabled = true;
+
+  try {
+    const newStatus = await toggleFollowStatus(user.id);
 
     if (newStatus !== null) {
-      objekt.user.isfollowed = newStatus;
-
-      const isfollowed = objekt.user.isfollowed;
-      const isfollowing = objekt.user.isfollowing;
-
-      if (followerCountSpan) {
-        let count = parseInt(followerCountSpan.textContent, 10) || 0;
-        count = newStatus ? count + 1 : Math.max(0, count - 1);
-        followerCountSpan.textContent = count;
-      }
-
-      followButton.classList.toggle("following", isfollowed);
-
-      if (isfollowed && isfollowing) {
-        followButton.textContent = "Peer";
-      } else if (isfollowed) {
-        followButton.textContent = "Following";
-      } else {
-        followButton.textContent = "Follow +";
-      }
+      user.isfollowed = newStatus;
+      updateFollowButtonState(button, user.isfollowed, user.isfollowing);
+      updateFollowingCount(newStatus);
     } else {
-      alert("Failed to update follow status. Please try again.");
+      showError("Failed to update follow status. Please try again.");
     }
-  });
-  return followButton;
+  } catch (error) {
+    console.error("Error toggling follow status:", error);
+    showError("An error occurred. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+/**
+ * Updates the following count in the UI
+ * @param {boolean} isFollowing - Whether user is now being followed
+ */
+function updateFollowingCount(isFollowing) {
+  const followerCountSpan = document.getElementById("following");
+  if (!followerCountSpan) return;
+
+  let count = parseInt(followerCountSpan.textContent, 10) || 0;
+  count = isFollowing ? count + 1 : Math.max(0, count - 1);
+  followerCountSpan.textContent = count;
+}
+
+/**
+ * Shows error message (replace with your error notification system)
+ * @param {string} message - Error message to display
+ */
+function showError(message) {
+  if (typeof Merror === "function") {
+    Merror(message);
+  } else {
+    alert(message);
+  }
 }
 
 function redirectToProfile(userProfileID) {
@@ -1801,105 +1854,136 @@ async function getUserInfo() {
 
 // function to render users in the modal
 // used in list_follow.js and posts.js for rendering followers and following lists
+// ============================================
+// GLOBAL.JS - User List Renderer
+// ============================================
+
+/**
+ * Renders a list of users in a container
+ * @param {Array} users - Array of user objects
+ * @param {HTMLElement} container - Container element to render users into
+ */
 function renderUsers(users, container) {
   container.innerHTML = "";
   const currentUserId = getCookie("userID");
-  
+
+  if (!users || users.length === 0) {
+    container.innerHTML = "<p>No users found.</p>";
+    return;
+  }
+
   users.forEach(user => {
-    const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
-    const item = document.createElement("div");
-    item.className = "dropdown-item clickable-user";
-    item.innerHTML = `
-      <div class="profilStats">
-        <img src="${userimg}" alt="${user.username}" />
-        <div class="user_info">
-          <span class="user_name">${user.username}</span>
-          <span class="user_slug">#${user.slug}</span>
-        </div>
+    const userItem = createUserItem(user, currentUserId);
+    container.appendChild(userItem);
+  });
+}
+
+/**
+ * Creates a single user item element
+ * @param {Object} user - User data object
+ * @param {string} currentUserId - Current logged-in user's ID
+ * @returns {HTMLElement} User item element
+ */
+function createUserItem(user, currentUserId) {
+  const userId = user.id || user.userid;
+  const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
+
+  const item = document.createElement("div");
+  item.className = "dropdown-item clickable-user";
+  item.innerHTML = `
+    <div class="profilStats">
+      <img src="${userimg}" alt="${user.username || 'User'}" />
+      <div class="user_info">
+        <span class="user_name">${user.username || 'Unknown'}</span>
+        <span class="user_slug">#${user.slug || 'unknown'}</span>
       </div>
-    `;
-    
-    item.querySelector("img").onerror = () => {
-      item.querySelector("img").src = "svg/noname.svg";
-    };
-    
-    item.addEventListener("click", () => {
-      window.location.href = `view-profile.php?user=${user.id || user.userid}`;
-    });
-    
-    // Only show follow button if not viewing your own profile
-    if ((user.id || user.userid) !== currentUserId) {
-      const followButton = document.createElement("button");
-      followButton.classList.add("follow-button");
-      followButton.dataset.userid = user.id || user.userid;
-      
-      // Use isfollowedByYou and isfollowingYou if they exist (for other user's peers)
-      // Otherwise use isfollowed and isfollowing (for own profile or other tabs)
-      const youFollowThem = user.isfollowedByYou !== undefined ? user.isfollowedByYou : user.isfollowed;
-      const theyFollowYou = user.isfollowingYou !== undefined ? user.isfollowingYou : user.isfollowing;
-      
-      // Initial button state
-      if (youFollowThem && theyFollowYou) {
-        followButton.classList.add("Peer", "btn-blue");
-        followButton.textContent = "Peer";
-      } else if (youFollowThem) {
-        followButton.classList.add("following", "btn-white");
-        followButton.textContent = "Following";
-      } else {
-        followButton.classList.add("follow", "btn-transparent");
-        followButton.textContent = "Follow +";
-      }
-      
-      followButton.addEventListener("click", async (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        
-        const targetUserId = user.id || user.userid;
-        const newStatus = await toggleFollowStatus(targetUserId);
-        
-        if (newStatus !== null) {
-          // Update the user object
-          if (user.isfollowedByYou !== undefined) {
-            user.isfollowedByYou = newStatus;
-          } else {
-            user.isfollowed = newStatus;
-          }
-          
-          const youNowFollowThem = user.isfollowedByYou !== undefined ? user.isfollowedByYou : user.isfollowed;
-          const theyStillFollowYou = user.isfollowingYou !== undefined ? user.isfollowingYou : user.isfollowing;
-          
-          // Update following count
-          const followerCountSpan = document.getElementById("following");
-          if (followerCountSpan) {
-            let count = parseInt(followerCountSpan.textContent, 10) || 0;
-            count = newStatus ? count + 1 : Math.max(0, count - 1);
-            followerCountSpan.textContent = count;
-          }
-          
-          // Update all buttons for this user across the modal
-          document.querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`).forEach(btn => {
-            // Clear all classes first
-            btn.classList.remove("following", "Peer");
-            
-            if (youNowFollowThem && theyStillFollowYou) {
-              btn.textContent = "Peer";
-              btn.classList.add("Peer");
-            } else if (youNowFollowThem) {
-              btn.textContent = "Following";
-              btn.classList.add("following");
-            } else {
-              btn.textContent = "Follow +";
-            }
-          });
-        } else {
-          Merror("Failed to update follow status. Please try again.");
-        }
-      });
-      
-      item.appendChild(followButton);
+    </div>
+  `;
+
+  const imgElement = item.querySelector("img");
+  imgElement.onerror = () => {
+    imgElement.src = "svg/noname.svg";
+  };
+
+  item.addEventListener("click", () => {
+    window.location.href = `view-profile.php?user=${userId}`;
+  });
+
+  // Add follow button if not viewing own profile
+  if (userId !== currentUserId) {
+    const followButton = createModalFollowButton(user, currentUserId);
+    item.appendChild(followButton);
+  }
+
+  return item;
+}
+
+/**
+ * Creates a follow button for modal user lists
+ * @param {Object} user - User data object
+ * @param {string} currentUserId - Current logged-in user's ID
+ * @returns {HTMLButtonElement} Follow button element
+ */
+function createModalFollowButton(user, currentUserId) {
+  const userId = user.id || user.userid;
+  const followButton = document.createElement("button");
+  followButton.classList.add("follow-button");
+  followButton.dataset.userid = userId;
+
+  // Determine follow status - use isfollowed/isfollowing consistently
+  const youFollowThem = user.isfollowed ?? false;
+  const theyFollowYou = user.isfollowing ?? false;
+
+  updateFollowButtonState(followButton, youFollowThem, theyFollowYou);
+
+  followButton.addEventListener("click", async (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    await handleModalFollowButtonClick(followButton, user);
+  });
+
+  return followButton;
+}
+
+/**
+ * Handles follow button click in modal
+ * @param {HTMLButtonElement} button - Button that was clicked
+ * @param {Object} user - User object
+ */
+async function handleModalFollowButtonClick(button, user) {
+  const userId = user.id || user.userid;
+  button.disabled = true;
+
+  try {
+    const newStatus = await toggleFollowStatus(userId);
+
+    if (newStatus !== null) {
+      user.isfollowed = newStatus;
+
+      updateFollowingCount(newStatus);
+      updateAllUserButtons(userId, user.isfollowed, user.isfollowing);
+    } else {
+      showError("Failed to update follow status. Please try again.");
     }
-    
-    container.appendChild(item);
+  } catch (error) {
+    console.error("Error toggling follow status:", error);
+    showError("An error occurred. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+/**
+ * Updates all buttons for a specific user across the modal
+ * @param {string} userId - User ID to update buttons for
+ * @param {boolean} isfollowed - Whether current user follows this user
+ * @param {boolean} isfollowing - Whether this user follows current user
+ */
+function updateAllUserButtons(userId, isfollowed, isfollowing) {
+  const buttons = document.querySelectorAll(`.follow-button[data-userid="${userId}"]`);
+  buttons.forEach(btn => {
+    updateFollowButtonState(btn, isfollowed, isfollowing);
   });
 }
 
