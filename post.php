@@ -60,7 +60,7 @@ include 'host.php';
             <div class="site-main-nonuser-inner">
                 <div class="view-only-mode">
 
-                <div class="site-logo"><img class="logo" src="<?= $baseUrl ?>/svg/peerLogoWhite.svg" alt="Peer Network"></div>
+                <div class="site-logo"><img class="logo" src="<?= $baseUrl ?>/svg/PeerLogoWhite.svg" alt="Peer Network"></div>
                     
                         <div class="view-only-mode-heading">
                             <svg xmlns="http://www.w3.org/2000/svg" width="59" height="40" viewBox="0 0 59 40" fill="none">

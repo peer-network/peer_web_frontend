@@ -72,9 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
       Peers2.innerText= userprofile.affectedRows.amountfriends;
     }
 
+
     // Check if bioPath is valid
     if (bioPath2 && biography2) {
       const fullPath2 = tempMedia(userprofile.affectedRows.biography);
+
 
       fetch(fullPath2, { cache: "no-store" })
         .then(response => {

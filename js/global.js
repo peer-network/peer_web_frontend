@@ -3,8 +3,16 @@ let likeCost = 0.3,
   dislikeCost = 0.5,
   commentCost = 0.05,
   postCost = 2;
-const baseUrl = `${location.protocol}//${location.host}/`;
 
+
+let baseUrl;
+
+if (location.hostname === "localhost") {
+  baseUrl = `${location.origin}${location.pathname.split('/')[1] ? '/' + location.pathname.split('/')[1] + '/' : '/'}`;
+} else {
+  baseUrl = `${location.origin}/`;
+}
+//console.log(baseUrl);
 // below variable used in wallet module
 // need to declare in global scope
 let storedUserInfo, balance = null;
@@ -415,7 +423,7 @@ function postdetail(objekt, CurrentUserID) {
 
   const postContainer = document.getElementById("viewpost-container");
   const shareLinkBox = document.getElementById("share-link-box");
-  const shareUrl = window.location.origin + "/post/" + objekt.id;
+  const shareUrl = baseUrl + "post/" + objekt.id;
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -449,6 +457,29 @@ function postdetail(objekt, CurrentUserID) {
 
   const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
   shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
+
+
+ let shareAnchor = postContainer.querySelector(".sharelinks a.share");
+  // remove old listeners - > element clone 
+  const newshareAnchor = shareAnchor.cloneNode(true);
+  shareAnchor.parentNode.replaceChild(newshareAnchor, shareAnchor);
+  shareAnchor = newshareAnchor;
+
+
+  shareAnchor.addEventListener("click", (e) => {
+    e.preventDefault();
+      const sharebox=document.getElementById('share-link-box');
+      sharebox.classList.add('active');
+   
+  });
+  const shareClose=document.getElementById('closeSharebox');
+  shareClose.addEventListener("click", (e) => {
+    e.preventDefault();
+      const sharebox=document.getElementById('share-link-box');
+      sharebox.classList.remove('active');
+   
+  });
+  
 
   let donwloadAnchor = postContainer.querySelector(".more a.download");
   // remove old listeners - > element clone 
@@ -738,6 +769,37 @@ function postdetail(objekt, CurrentUserID) {
         updateSlider(index);
       });
     });
+    // Swipe logic
+      let startX = 0;
+      let endX = 0;
+
+      sliderTrack.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchmove", (e) => {
+        endX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchend", () => {
+        const diff = startX - endX;
+        const threshold = 50;
+
+        if (Math.abs(diff) > threshold) {
+          const totalSlides = sliderTrack.children.length;
+
+          if (diff > 0) {
+            currentIndex = (currentIndex + 1) % totalSlides; // Next
+          } else {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+          }
+
+          updateSlider(currentIndex);
+        }
+
+        startX = 0;
+        endX = 0;
+      });
 
   } else if (objekt.contenttype === "text") {
     if (containerleft && post_contentright) {
@@ -841,7 +903,16 @@ function postdetail(objekt, CurrentUserID) {
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
-      let currentIndex = 0;
+     
+
+      imageSrcArray.push(src);
+      // Open modal on click
+      zoomElement.addEventListener("click", () => {
+        openSliderModal(imageSrcArray, index);
+      });
+    });
+
+     let currentIndex = 0;
 
       function updateSlider(index) {
         currentIndex = index;
@@ -867,12 +938,40 @@ function postdetail(objekt, CurrentUserID) {
         });
       });
 
-      imageSrcArray.push(src);
-      // Open modal on click
-      zoomElement.addEventListener("click", () => {
-        openSliderModal(imageSrcArray, index);
+       
+
+      // Swipe logic
+      let startX = 0;
+      let endX = 0;
+
+      sliderTrack.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
       });
-    });
+
+      sliderTrack.addEventListener("touchmove", (e) => {
+        endX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchend", () => {
+        const diff = startX - endX;
+        const threshold = 50;
+
+        if (Math.abs(diff) > threshold) {
+          const totalSlides = sliderTrack.children.length;
+
+          if (diff > 0) {
+            currentIndex = (currentIndex + 1) % totalSlides; // Next
+          } else {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+          }
+
+          updateSlider(currentIndex);
+        }
+
+        startX = 0;
+        endX = 0;
+      });
+
   }
 
   /*const title = document.getElementById("comment-title");
