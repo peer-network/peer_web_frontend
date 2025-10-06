@@ -881,6 +881,8 @@ async function postsLaden(postbyUserID=null) {
     { 
       no_post_found.classList.add("active");
       post_loader.classList.add("hideloader");
+    }else if(posts.data.listPosts.counter<20){
+      post_loader.classList.add("hideloader");
     }else{
       no_post_found.classList.remove("active");
       post_loader.classList.remove("hideloader");
