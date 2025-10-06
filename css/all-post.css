@@ -225,13 +225,13 @@ line-height: 40px;
   line-height: 34px;
   padding: 0 16px;
 
-  background-color: transparent;
-  border-color: var(--white);
+  /* background-color: transparent;
+  border-color: var(--white); */
 }
-.card-header-right .follow-button.following {
+/* .card-header-right .follow-button.following {
  background-color:var(--button-hover);
 	border-color: var(--button-hover);
-}
+} */
 .card  .post-userImg {
 	
 	
