@@ -237,8 +237,8 @@
 		width: 250px;
 		right: -16px;
 		border-radius: 30px;
-		padding: 80px 20px 20px;
-		top: -30px;
+		padding: 50px 20px 20px;
+		top: -20px;
 	}
 	.site_layout_nonuser .viewpost .postview_footer .more a.morebtn .textval {
 		display: none;
@@ -269,7 +269,7 @@
 		padding: 0 20px;
 		justify-content: center;
 		position: absolute;
-  		bottom: 15px;
+  		bottom: 0;
 	}
 
 	.site_layout_nonuser .viewpost .post_gallery.audio .audio-item {
@@ -279,7 +279,13 @@
 		height: 80px;
 	}
 	.site_layout_nonuser .viewpost .postview_footer .more .share-post-box {
-		bottom: -13px;
+		bottom: auto;
 		gap: 30px;
+		top: -20px;
+    	right: -15px;
+	}
+	.site_layout_nonuser .postview_footer .more .share-post-box .btClose {
+		top: 20px;
+		right: 20px;
 	}
 }
