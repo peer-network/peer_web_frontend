@@ -769,6 +769,37 @@ function postdetail(objekt, CurrentUserID) {
         updateSlider(index);
       });
     });
+    // Swipe logic
+      let startX = 0;
+      let endX = 0;
+
+      sliderTrack.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchmove", (e) => {
+        endX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchend", () => {
+        const diff = startX - endX;
+        const threshold = 50;
+
+        if (Math.abs(diff) > threshold) {
+          const totalSlides = sliderTrack.children.length;
+
+          if (diff > 0) {
+            currentIndex = (currentIndex + 1) % totalSlides; // Next
+          } else {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+          }
+
+          updateSlider(currentIndex);
+        }
+
+        startX = 0;
+        endX = 0;
+      });
 
   } else if (objekt.contenttype === "text") {
     if (containerleft && post_contentright) {
@@ -910,36 +941,36 @@ function postdetail(objekt, CurrentUserID) {
        
 
       // Swipe logic
-let startX = 0;
-let endX = 0;
+      let startX = 0;
+      let endX = 0;
 
-sliderTrack.addEventListener("touchstart", (e) => {
-  startX = e.touches[0].clientX;
-});
+      sliderTrack.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
 
-sliderTrack.addEventListener("touchmove", (e) => {
-  endX = e.touches[0].clientX;
-});
+      sliderTrack.addEventListener("touchmove", (e) => {
+        endX = e.touches[0].clientX;
+      });
 
-sliderTrack.addEventListener("touchend", () => {
-  const diff = startX - endX;
-  const threshold = 50;
+      sliderTrack.addEventListener("touchend", () => {
+        const diff = startX - endX;
+        const threshold = 50;
 
-  if (Math.abs(diff) > threshold) {
-    const totalSlides = sliderTrack.children.length;
+        if (Math.abs(diff) > threshold) {
+          const totalSlides = sliderTrack.children.length;
 
-    if (diff > 0) {
-      currentIndex = (currentIndex + 1) % totalSlides; // Next
-    } else {
-      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
-    }
+          if (diff > 0) {
+            currentIndex = (currentIndex + 1) % totalSlides; // Next
+          } else {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+          }
 
-    updateSlider(currentIndex);
-  }
+          updateSlider(currentIndex);
+        }
 
-  startX = 0;
-  endX = 0;
-});
+        startX = 0;
+        endX = 0;
+      });
 
   }
 
