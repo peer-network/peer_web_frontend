@@ -260,17 +260,8 @@
   height: 2.5rem;
   font-size: 1rem;
   align-items: center;
-  background-color:transparent;
-	border-color: var(--white);
-	color: var(--white);
   width: 20%;
   justify-content: center;
-}
-
-.modalOverlay .follow-button:hover {
-  background-color:var(--white);
-	border-color: var(--white);
-	color: var(--black);
 }
 
 .modalOverlay .modal-body {
