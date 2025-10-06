@@ -1,21 +1,21 @@
 <div class="post-search-filters">
     <div class="search-group" id="searchGroup">
         <div class="search-box">
-            <input name="searchUser" id="searchUser" type="text" placeholder="@username" />
+            <input name="searchUser" id="searchUser" type="text" placeholder="@username" minlength="3" maxlength="23" />
             <div class="dropdown" id="userDropdown"></div>
         </div>
 
         <div class="divider"></div>
 
         <div class="search-box">
-            <input name="searchTitle" id="searchTitle" type="text" placeholder="Title" />
+            <input name="searchTitle" id="searchTitle" type="text" placeholder="Title" minlength="2" maxlength="63" />
             <div class="dropdown none drop1" id="titleDropdown"></div>
         </div>
 
         <div class="divider"></div>
 
         <div class="search-box">
-            <input name="searchTag" id="searchTag" type="text" placeholder="#hastags" />
+            <input name="searchTag" id="searchTag" type="text" placeholder="#hastags" minlength="2" maxlength="53" />
             <div class="dropdown drop2" id="tagDropdown"></div>
         </div>
 

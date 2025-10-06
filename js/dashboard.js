@@ -55,7 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const titleInput = document.getElementById("searchTitle");
   if (titleInput) {
-    titleInput.addEventListener("input", handleSearch);
+    titleInput.addEventListener("input", validateTitle);
+  }
+
+
+  function validateTitle() {
+    const searchTitle = titleInput.value.trim();
+     if (searchTitle.length >= 2 && searchTitle.length <= 63) {
+      handleSearch();
+    }
   }
 
   const lupe = document.querySelector(".lupe");
@@ -198,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleTagSearch() {
       const parentBox = tagInput.closest(".search-box");
-      const regex = /^[a-zA-Z0-9-]+$/;
       if (parentBox) {
         parentBox.classList.add("active");
       }
@@ -208,24 +215,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (query.startsWith("#")) {
         query = query.slice(1);
       }
+      
       // if (query.length > 0) {
       //   searchTags(query);
-      // }else{
-
-      //   //handleSearch();
       // }
-
+      
+      // else{
+        //handleSearch();
+      // }
+      
+      //implement validations
+    
+      const dropdown = document.getElementById("tagDropdown");
+      dropdown.innerHTML = "";
+      dropdown.classList.add("active");
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
       if (query.length < 2 || query.length > 53 || !/^[a-zA-Z]+$/.test(query)) {
-        const dropdown = document.getElementById("userDropdown");
-        dropdown.innerHTML = "";
-        dropdown.classList.add("active");
-        const item = document.createElement("div");
-        item.className = "dropdown-item";
-        item.innerHTML = `Tag must be 2-53 chars with letters, numbers or underscores.`;
-        dropdown.appendChild(item);
+         
+          item.innerHTML = `Tag must be 2-53 chars with letters only.`; // matches regex
+          console.log('i m in if');
       } else {
-        searchTags(query);
+          searchTags(query);
       }
+
+      dropdown.appendChild(item);
+
     }
   }
 
