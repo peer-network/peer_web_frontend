@@ -1,6 +1,6 @@
 
 // my part *nav tabs*
-const tabs = document.querySelectorAll(".setting-menu ul li");
+const tabs = document.querySelectorAll(".setting-menu ul li:not(.not-menu-item)");
 const panels = document.querySelectorAll(".setting-content");
 tabs.forEach(tab => {
   tab.addEventListener('click', function (e) {

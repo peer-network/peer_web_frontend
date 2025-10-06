@@ -43,12 +43,26 @@
 	border-radius: 50px;
 	transition: all 0.3s ease-in-out;
 }
-.setting-layout .setting-menu ul li a:hover,
-.setting-layout .setting-menu ul li.active a {
+.setting-layout .setting-menu ul li a.red-btn{
+	background-color: transparent;
+  
+  color: var(--red-accent, #FF3B3B);
+  text-align: center;
+  justify-content: center;
+  border: 1px solid var(--red-accent, #FF3B3B);
+
+}
+.setting-layout .setting-menu ul li:not(.not-menu-item) a:hover,
+.setting-layout .setting-menu ul li.active:not(.not-menu-item) a {
 	background-color: var(--bg-filter);
 }
+.setting-layout .setting-menu ul li a.red-btn:hover{
+	background-color: var(--red-accent, #FF3B3B);
+	color: #fff;
+	border-color: var(--red-accent, #FF3B3B);
+}
 
-.setting-layout .setting-menu ul li.active a::after {
+.setting-layout .setting-menu ul li.active:not(.not-menu-item) a::after {
 	content: "";
 	display: inline-block;
 	background-image: url(../svgnew/angle-small-right.svg);
