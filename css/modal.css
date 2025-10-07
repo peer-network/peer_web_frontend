@@ -79,22 +79,20 @@
   width: 10px;
 }
 
-.interactionsModal .tab-btn.active .fi-rr-heart::before {
-  content: "\e9a1";
-  font-family: uicons-solid-rounded !important;
+.interactionsModal .tab-btn.active .peer-icon-like::before {
+  content: "\e81e";
+  
 }
 
-.interactionsModal .tab-btn.active .fi-rr-heart-crack::before {
-  content: "\e9a5";
-  font-family: uicons-solid-rounded !important;
+.interactionsModal .tab-btn.active .peer-icon-dislike::before {
+  content: "\e824";
+  
 }
 
-.interactionsModal .tab-btn i {
-  margin-top: 7px;
-}
 
-.interactionsModal .tab-btn.active .fi-rr-heart,
-.interactionsModal .tab-btn.active .fi-rr-heart-crack {
+
+.interactionsModal .tab-btn.active .peer-icon-like,
+.interactionsModal .tab-btn.active .peer-icon-dislike {
   color: var(--red-accent, #FF3B3B);
 }
 
