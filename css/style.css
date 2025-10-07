@@ -798,6 +798,7 @@ footer {grid-area: footer;}
 	background-color: var(--bg-filter);
 	overflow: hidden;
 	transition: all 0.3s linear;
+	max-width: 100%;
 }
 
 .widget .collapse-filters {
@@ -852,6 +853,7 @@ footer {grid-area: footer;}
 	margin-top: auto;
 	margin-bottom: 0;
 	transition: all 0.3s linear;
+	max-width: 100%;
 }
 
 .collapsed .widget .filter-section .filter-section-header {

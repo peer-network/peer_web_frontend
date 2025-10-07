@@ -1247,10 +1247,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // }
   /******************************************************************** */
 
-  descEl.addEventListener("keyup", (e) => {
+  descEl.addEventListener("input", (e) => {
     setupCharCounter(e.target);
   });
-  titleEl.addEventListener("keyup", (e) => {
+  titleEl.addEventListener("input", (e) => {
     setupCharCounter(e.target);
   });
 
@@ -1264,6 +1264,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     char_limit = char_limit * 1;
     char_count.textContent = text.length;
+
+    if (El.tagName === 'TEXTAREA') {
+        El.style.height = 'auto';
+        const newHeight = Math.min(Math.max(El.scrollHeight, 120), 500);
+        El.style.height = newHeight + 'px';
+    }
+
     if (text.length > char_limit) {
       Error.textContent = "Char Maximum length exceeded!";
       //text = text.substr(0, char_limit);

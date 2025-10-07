@@ -316,6 +316,9 @@
   word-break: break-word;
   /*overflow-y: auto;*/
 }
+/* .viewpost .viewpost-left .post_content .post_text {
+	overflow-y: auto;
+} */
 .viewpost .post_content .hashtags {
   color: #0069FF;
   margin-top: 20px;
