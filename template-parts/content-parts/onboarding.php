@@ -56,18 +56,14 @@
                     <p class="md_font_size txt-color-gray">Every interaction earns you Gems, your path to Peer Tokens.</p>
                     <div class="onboarding-footer-buttons">
                         <button class="onboarding-close-button btn-transparent ">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="31" height="30" viewBox="0 0 31 30" fill="none">
-                                <path d="M27.2842 0.857865L15.4991 12.643L3.714 0.857865C3.40144 0.545304 2.97752 0.369709 2.53549 0.36971C2.09346 0.36971 1.66954 0.545305 1.35698 0.857865C1.04442 1.17043 0.868823 1.59435 0.868824 2.03638C0.868824 2.4784 1.04442 2.90233 1.35698 3.21489L13.1421 15L1.35698 26.7851C1.04442 27.0977 0.868824 27.5216 0.868824 27.9636C0.868823 28.4057 1.04442 28.8296 1.35698 29.1421C1.66954 29.4547 2.09346 29.6303 2.53549 29.6303C2.97752 29.6303 3.40144 29.4547 3.714 29.1421L15.4991 17.357L27.2842 29.1421C27.5968 29.4547 28.0207 29.6303 28.4627 29.6303C28.9048 29.6303 29.3287 29.4547 29.6412 29.1421C29.9538 28.8296 30.1294 28.4057 30.1294 27.9636C30.1294 27.5216 29.9538 27.0977 29.6412 26.7851L17.8561 15L29.6412 3.21489C29.9538 2.90233 30.1294 2.4784 30.1294 2.03638C30.1294 1.59435 29.9538 1.17042 29.6412 0.857865C29.3287 0.545304 28.9048 0.369708 28.4627 0.36971C28.0207 0.36971 27.5968 0.545304 27.2842 0.857865Z" fill="white"/>
-                            </svg> 
+                            <i class="peer-icon peer-icon-cancel"></i> 
                             Close
                         </button>
                         <div class="onboarding-slide-buttons">
                            
                             <a class="next-btn" href="#">
                                 <span>Next</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L42 22M2 22L42 22M22 2L42 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                <i class="peer-icon peer-icon-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -169,15 +165,11 @@
                         <div class="onboarding-slide-buttons">
                             <a class=" prev-btn" href="#">
                                 <span>Previous</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L2 22M42 22L2 22M22 2L2 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                               <i class="peer-icon peer-icon-arrow-left"></i>
                              </a>
                             <a class="next-btn" href="#">
                                 <span>Next</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L42 22M2 22L42 22M22 2L42 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                <i class="peer-icon peer-icon-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -258,15 +250,11 @@
                         <div class="onboarding-slide-buttons">
                             <a class=" prev-btn" href="#">
                                 <span>Previous</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L2 22M42 22L2 22M22 2L2 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                <i class="peer-icon peer-icon-arrow-left"></i>
                              </a>
                             <a class="next-btn" href="#">
                                 <span>Next</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L42 22M2 22L42 22M22 2L42 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                <i class="peer-icon peer-icon-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -297,15 +285,11 @@
                         <div class="onboarding-slide-buttons">
                             <a class=" prev-btn" href="#">
                                 <span>Previous</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L2 22M42 22L2 22M22 2L2 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                <i class="peer-icon peer-icon-arrow-left"></i>
                              </a>
                             <a class="next-btn" href="#">
                                 <span>Next</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                    <path d="M22 42L42 22M2 22L42 22M22 2L42 22" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                <i class="peer-icon peer-icon-arrow-right"></i>
                             </a>
                         </div>
                     </div>

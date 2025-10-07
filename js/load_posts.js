@@ -771,7 +771,7 @@ async function postsLaden(postbyUserID=null) {
       viewContainer.classList.add("post-view");
 
        const viewIcon = document.createElement("i");
-       viewIcon.classList.add("fi","fi-rr-eye");
+       viewIcon.classList.add("peer-icon","peer-icon-eye-open");
        viewContainer.appendChild(viewIcon);
 
 
@@ -786,7 +786,7 @@ async function postsLaden(postbyUserID=null) {
       likeContainer.classList.add("post-like");
 
       const likeIcon = document.createElement("i");
-      likeIcon.classList.add("fi","fi-rr-heart");
+      likeIcon.classList.add("peer-icon","peer-icon-like");
       likeContainer.appendChild(likeIcon);
       
       
@@ -818,7 +818,7 @@ async function postsLaden(postbyUserID=null) {
       const dislikeContainer = document.createElement("div");
       dislikeContainer.classList.add("post-dislike");
       const dislikeIcon = document.createElement("i");
-      dislikeIcon.classList.add("fi","fi-rr-heart-crack");
+      dislikeIcon.classList.add("peer-icon","peer-icon-dislike");
       dislikeContainer.appendChild(dislikeIcon);
 
       if (objekt.isdisliked) {
@@ -847,7 +847,7 @@ async function postsLaden(postbyUserID=null) {
       const commentContainer = document.createElement("div");
       commentContainer.classList.add("post-comments");
       const commentIcon = document.createElement("i");
-      commentIcon.classList.add("fi","fi-rr-comment-dots");
+      commentIcon.classList.add("peer-icon","peer-icon-comment-alt");
       commentContainer.appendChild(commentIcon);
 
       
@@ -876,7 +876,7 @@ async function postsLaden(postbyUserID=null) {
 
      const post_loader = document.getElementById("post_loader");
     const no_post_found = document.getElementById("no_post_found");
-    console.log(posts.data.listPosts.counter +"---"+posts.data.listPosts.affectedRows.length);
+    //console.log(posts.data.listPosts.counter +"---"+posts.data.listPosts.affectedRows.length);
     if(postoffset==0 && posts.data.listPosts.affectedRows.length==0) // no  post found 
     { 
       no_post_found.classList.add("active");

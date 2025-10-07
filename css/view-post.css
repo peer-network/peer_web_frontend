@@ -538,14 +538,14 @@
   
 }
 .viewpost .social div.post-like.active i::before {
-	content: "\e9a1";
-	font-family: uicons-solid-rounded !important;
 	
-  
+	content: "\e81e";
+	font-family: "peer-network";
+
 }
 .viewpost .social div.post-dislike.active i::before {
-	content: "\e9a5";
-	font-family: uicons-solid-rounded !important;
+	content: "\e824";
+	font-family: "peer-network";
 
 }
 
@@ -1084,8 +1084,8 @@
   
 }
 .comment_list .comment_item  .comment_like.active i::before {
-	content: "\e9a1";
-	font-family: uicons-solid-rounded !important;
+	content: "\e81e";
+	
 }
 
 .comment_list .comment_item .comment_body {
