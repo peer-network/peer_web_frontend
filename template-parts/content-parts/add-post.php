@@ -229,7 +229,7 @@
                 </div>
                 <div class="col-right input-wrapper">
                     <div class="textarea-wrapper">
-                        <textarea id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
+                        <textarea class="text_descriptionNotes" id="descriptionNotes" rows="8" placeholder="What’s new?" name="text-input"
                             maxlength=""></textarea>
                         <span id="desc_limit_box" class="char-counter md_font_size" data-target="descriptionNotes"><span class="char_count">0</span>/<span class="char_limit">20000</span></span>
                     </div>

@@ -1241,13 +1241,28 @@
 
 
 .resettable-form .form-row .col-right .textarea-wrapper {
-
   position: relative;
-
-  max-height: 250px;
-
+  /* max-height: 250px; */
   display: flex;
+  padding: 2.5rem;
+  background: var(--bg-filter);
+  border-radius: 40px;
+  margin: 0;
+  resize: vertical;
+  overflow-y: auto;
+}
 
+.text_descriptionNotes {
+  padding: 0px;
+  border-radius: 0px; 
+  min-height: 120px;
+  max-height: 500px;
+  box-sizing: border-box;
+}
+
+#desc_limit_box {
+  bottom: 12px;
+  z-index: 1;
 }
 
 
