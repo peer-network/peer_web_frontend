@@ -34,8 +34,8 @@
                     How Peer Works
                 </a>
             </li>
-            <li class="menu-item">
-                <a class="white_border" href="#">
+            <li class="menu-item <?= ($currentPage === 'referralBoard.php') ? 'active' : '' ?>">
+                <a class="white_border" href="referralBoard.php">
                     <img class="icon" src="svg/invite-friend-icon.svg" alt="network" />
                     Invite a friend
                 </a>
