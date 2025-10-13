@@ -257,7 +257,7 @@ include 'host.php';
                                         >
                                         <span class="checkbox-label medium_font">
                                             I agree to the 
-                                            <a href="https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724" target="_blank">Privacy Policy.</a>
+                                            <a href="https://peerapp.de/privacy.html" target="_blank">Privacy Policy.</a>
                                         </span>
                                     </label>
                                 </div>
@@ -272,7 +272,7 @@ include 'host.php';
                                             aria-describedby="checkboxValidation"
                                         >
                                         <span class="checkbox-label medium_font">
-                                           I agree to the <a href="#">End User License Agreement (EULA)</a>.
+                                           I agree to the <a href="https://peerapp.de/EULA.html">End User License Agreement (EULA)</a>.
                                         </span>
                                     </label>
                                 </div>
