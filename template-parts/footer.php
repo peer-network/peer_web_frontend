@@ -1,6 +1,6 @@
 <div id="feebackPopup" class="modal-overlay none">
     <div class="feeback_popup_container">
-        <span class="close xl_font_size" >
+        <span class="close xl_font_size" role="button" tabindex="0" aria-label="Close feedback popup">
             <i class="peer-icon peer-icon-cancel"></i>
         </span>
         <img src="<?= $baseUrl ?>/svg/PeerLogoWhite.svg" alt="Peer logo">
