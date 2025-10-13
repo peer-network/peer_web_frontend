@@ -196,7 +196,14 @@ include 'host.php';
                                 <div class="validation-message medium_font" id="passwordValidation" role="alert" aria-live="polite"></div>
                                 
                                 <!-- Password Strength Indicator -->
-                                <div class="password-strength" id="passwordStrength">
+                                <div class="password-strength none" id="passwordStrength">
+                                    <div class="strength-labels medium_font">
+                                        <span class="strength-text very-weak none">Very weak</span>
+                                        <span class="strength-text weak none">Weak</span>
+                                        <span class="strength-text improvement none">Needs improvement</span>
+                                        <span class="strength-text good none">Good</span>
+                                        <span class="strength-text excellent none">Excellent</span> 
+                                    </div>
                                     <div class="strength-meter">
                                         <div class="strength-fill" id="strengthFill">
                                             <span class="strength-segment segment-weak"></span>
@@ -204,8 +211,6 @@ include 'host.php';
                                             <span class="strength-segment segment-medium"></span>
                                             <span class="strength-segment segment-strong"></span>
                                             <span class="strength-segment segment-excellent"></span>
-                                            
-
                                         </div>
                                     </div>
                                     <ul class="strength-requirements medium_font" role="list" aria-label="Password requirements">
