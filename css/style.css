@@ -1471,6 +1471,19 @@ footer {grid-area: footer;}
 	top: 3rem;
 	cursor: pointer;
 }
+/* written by luqman this class for labeling and to avoid button default styling */
+.feeback_popup_container .btn {
+	background-color: #262626;
+	line-height: 0;
+	padding: 0;
+}
+
+.feeback_popup_container .btn:hover {
+	background-color: #262626;
+	border-color: #262626;
+}
+/* End */
+
 .feeback_popup_container img {
 	width: 20rem;
 }
