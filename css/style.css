@@ -1165,6 +1165,11 @@ footer {grid-area: footer;}
 	filter: drop-shadow(0 0 0.3rem var(--button-active));
 	font-weight:bold;
 }
+.widget .referralPage.menu-item.active a{
+  border: none;
+  filter: none;
+  color: var(--black);
+  background-color: var(--white);
 
 .widget ul.menu li a.white_border:hover,
 .widget ul.menu li.active a.white_border {
