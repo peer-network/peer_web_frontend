@@ -1,7 +1,8 @@
 #!/bin/sh
-echo "Running Gitleaks pre-commit scan on staged changes (Android frontend)..."
+echo "Running Gitleaks pre-commit scan on staged changes (Web frontend)..."
 
 mkdir -p .gitleaks_out
+touch .gitleaks_out/gitleaks-precommit.json
 
 # Prefer local gitleaks if available, fallback to Docker
 if command -v gitleaks >/dev/null 2>&1; then

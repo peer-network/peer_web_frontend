@@ -6,6 +6,11 @@ on:
       - main
       - development
 
+  push:
+    branches:
+      - main
+      - development
+
 jobs:
   check_branch_sync:
     name: Check if PR Branch is Behind Base
