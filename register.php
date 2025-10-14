@@ -198,11 +198,11 @@ include 'host.php';
                                 <!-- Password Strength Indicator -->
                                 <div class="password-strength none" id="passwordStrength">
                                     <div class="strength-labels medium_font">
-                                        <span class="strength-text very-weak none">Very weak</span>
-                                        <span class="strength-text weak none">Weak</span>
-                                        <span class="strength-text improvement none">Needs improvement</span>
-                                        <span class="strength-text good none">Good</span>
-                                        <span class="strength-text excellent none">Excellent</span> 
+                                        <span class="strength-text very-weak">Very weak</span>
+                                        <span class="strength-text weak">Weak</span>
+                                        <span class="strength-text improvement">Needs improvement</span>
+                                        <span class="strength-text good">Good</span>
+                                        <span class="strength-text excellent">Excellent</span> 
                                     </div>
                                     <div class="strength-meter">
                                         <div class="strength-fill" id="strengthFill">
