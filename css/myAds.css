@@ -1,0 +1,23 @@
+.myAds_header {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 75px;
+  gap: 30px;
+}
+
+.myAds_header .myAds_interactions .interactions_box {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.myAds_header .header_box {
+    background-color: var(--bg-filter);
+    border-radius: 20px;
+    padding: 15px;
+    max-height: 304px;
+}
+
+.myAds_earnings, .myAds_spendings, .myAds_interactions {
+  width: 100%;
+}
