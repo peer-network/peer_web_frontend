@@ -13,7 +13,7 @@ checkAuth("unauthorized");
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wallet</title>
   <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
-    <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
+  <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
   <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
 
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
