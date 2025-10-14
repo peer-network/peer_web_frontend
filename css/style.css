@@ -62,7 +62,9 @@ html {
   box-sizing: border-box;
 }
 
-
+.peer-icon-eye-open {
+	font-size: 126%;
+}
 hr {
   border: 0;
   height: 1px;
@@ -1117,6 +1119,7 @@ footer {grid-area: footer;}
 	color: var(--text-color);
 }
 
+
 .white_border {
   border: 2px solid #fff !important;
 }
@@ -1126,6 +1129,13 @@ footer {grid-area: footer;}
 	width: 1.3rem;
 	height: auto;
 	margin-right: 10px;
+}
+.widget ul.menu li a .peer-icon {
+	font-size: 119%;
+	margin-right: 1rem;
+}
+.widget ul.menu li a .peer-icon.filled {
+	display: none;
 }
 
 
@@ -1155,6 +1165,23 @@ footer {grid-area: footer;}
 	filter: drop-shadow(0 0 0.3rem var(--button-active));
 	font-weight:bold;
 }
+
+.widget ul.menu li a.white_border:hover,
+.widget ul.menu li.active a.white_border {
+	background-color: #fff;
+	color: var(--black);
+	border: 2px solid #fff !important;
+	filter: none;
+}
+
+.widget ul.menu li a:hover .peer-icon,
+.widget ul.menu li.active a .peer-icon{	
+	display: none;
+}
+.widget ul.menu li a:hover .peer-icon.filled,
+.widget ul.menu li.active a .peer-icon.filled{	
+	display: block;
+}
 /*-----------End Menu Widget-------------*/
 
 /*-----------Daily Action Widget-------------*/
@@ -1164,7 +1191,7 @@ footer {grid-area: footer;}
   	justify-content: space-between;
 	background-color: var(--background-color);
 	border-radius: 100px;
-	padding: 0.8rem;
+	padding: 1.1rem 1.5rem;
 }
 
 .widget-margin-bottom {
@@ -1177,7 +1204,7 @@ footer {grid-area: footer;}
 
 .widget-daily-action .progress-icons .icon {
   width: 20px;
-  height: 20px;
+  height: auto;
   stroke: white;
   fill: transparent;
   transition: fill 0.3s ease;
@@ -1619,6 +1646,19 @@ footer {grid-area: footer;}
 	top: 3rem;
 	cursor: pointer;
 }
+/* written by luqman this class for labeling and to avoid button default styling */
+.feeback_popup_container .btn {
+	background-color: #262626;
+	line-height: 0;
+	padding: 0;
+}
+
+.feeback_popup_container .btn:hover {
+	background-color: #262626;
+	border-color: #262626;
+}
+/* End */
+
 .feeback_popup_container img {
 	width: 20rem;
 }
@@ -1857,6 +1897,9 @@ footer {grid-area: footer;}
 	display: flex;
 	text-decoration: none;
 	color: var(--white,#fff);
+}
+.onboarding-slide-buttons a .peer-icon {
+	font-size: 140%;
 }
 .onboarding-slide-buttons a span {
 	display: none;
@@ -2295,6 +2338,11 @@ footer {grid-area: footer;}
 
 	.referralBoard_body .referral_tabs::before {
 		border-radius: 150px;
+	.widget-daily-action .progress-icons .icon {
+  		width:30px;
+	}
+	.widget-daily-action .limit-container {
+		padding: 1.1rem 1.5rem;
 	}
 	
 }

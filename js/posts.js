@@ -321,12 +321,12 @@
     // build tabs dynamically
     let tabsHTML = "";
     if (startType === "COMMENTLIKE") {
-      tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="fi fi-rr-heart"></i><span class="count">0</span></div>`;
+      tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="peer-icon peer-icon-like"></i><span class="count">0</span></div>`;
     } else {
       tabsHTML = `
-        <div class="tab-btn" data-type="LIKE">Likes <i class="fi fi-rr-heart"></i><span class="count">0</span></div>
-        <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="fi fi-rr-heart-crack"></i><span class="count">0</span></div>
-        <div class="tab-btn" data-type="VIEW">Views <i class="fi fi-rr-eye"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="LIKE">Likes <i class="peer-icon peer-icon-like"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="peer-icon peer-icon-dislike"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="VIEW">Views <i class="peer-icon peer-icon-eye-open"></i><span class="count">0</span></div>
       `;
     }
 

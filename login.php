@@ -30,14 +30,10 @@ if (isset($_GET['message'])) {
     <link rel="stylesheet" href="css/login-register.css?<?php echo filemtime('css/login-register.css'); ?>" media="all" rel="preload">
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/login/login.js?<?php echo filemtime('js/login/login.js'); ?>" defer></script>
-   
-   
-   
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
     ?>
-    
 </head>
 
 <body>
@@ -176,7 +172,7 @@ if (isset($_GET['message'])) {
 
                 </div>
                 <div class="footer_area medium_font">
-                    <a href="https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724" target="_blank">Privacy Policy.</a>
+                    <a href="https://peerapp.de/privacy.html" target="_blank">Privacy Policy.</a>
                    <p class="version">Version 1.8.1</p>
                 </div>
             </div>

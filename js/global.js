@@ -1498,7 +1498,7 @@ function commentToDom(c, append = true) {
   likeContainer.classList.add("comment_like", "md_font_size");
 
   const likeIcon = document.createElement("i");
-  likeIcon.classList.add("fi", "fi-rr-heart");
+  likeIcon.classList.add("peer-icon", "peer-icon-like");
   likeContainer.appendChild(likeIcon);
 
   const spanLike = document.createElement("span");

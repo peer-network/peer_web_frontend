@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'peer-network';
-  src: url('../font/peer-network.eot?69497161');
-  src: url('../font/peer-network.eot?69497161#iefix') format('embedded-opentype'),
-       url('../font/peer-network.woff2?69497161') format('woff2'),
-       url('../font/peer-network.woff?69497161') format('woff'),
-       url('../font/peer-network.ttf?69497161') format('truetype'),
-       url('../font/peer-network.svg?69497161#peer-network') format('svg');
+  src: url('../font/peer-network.eot?7965267');
+  src: url('../font/peer-network.eot?7965267#iefix') format('embedded-opentype'),
+       url('../font/peer-network.woff2?7965267') format('woff2'),
+       url('../font/peer-network.woff?7965267') format('woff'),
+       url('../font/peer-network.ttf?7965267') format('truetype'),
+       url('../font/peer-network.svg?7965267#peer-network') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'peer-network';
-    src: url('../font/peer-network.svg?69497161#peer-network') format('svg');
+    src: url('../font/peer-network.svg?7965267#peer-network') format('svg');
   }
 }
 */
@@ -27,7 +27,7 @@
 
   display: inline-block;
   text-decoration: inherit;
-  width: 1em;
+  width: auto;
   margin-right: 0;
   text-align: center;
   /* opacity: .8; */
@@ -37,11 +37,11 @@
   text-transform: none;
 
   /* fix buttons height, for twitter bootstrap */
-  line-height: 1;
+  line-height: 1em;
 
   /* Animation center compensation - margins should be symmetric */
   /* remove if not needed */
-  margin-left: .0;
+  margin-left: 0;
 
   /* you can be more comfortable with increased icons size */
   /* font-size: 120%; */
@@ -55,10 +55,13 @@
 }
 
 .peer-icon-angle-small-right:before { content: '\e800'; } /* '' */
+.peer-icon-wallet-filled:before { content: '\e801'; } /* '' */
 .peer-icon-comment-fill:before { content: '\e802'; } /* '' */
 .peer-icon-play-btn:before { content: '\e803'; } /* '' */
 .peer-icon-user:before { content: '\e804'; } /* '' */
 .peer-icon-eighteen-plus:before { content: '\e805'; } /* '' */
+.peer-icon-wallet:before { content: '\e806'; } /* '' */
+.peer-icon-setting:before { content: '\e807'; } /* '' */
 .peer-icon-eye-open:before { content: '\e808'; } /* '' */
 .peer-icon-eye-close:before { content: '\e809'; } /* '' */
 .peer-icon-tick-circle:before { content: '\e80a'; } /* '' */
@@ -74,6 +77,9 @@
 .peer-icon-exclamation-sign:before { content: '\e814'; } /* '' */
 .peer-icon-home:before { content: '\e815'; } /* '' */
 .peer-icon-filter:before { content: '\e816'; } /* '' */
+.peer-icon-setting-filled:before { content: '\e817'; } /* '' */
+.peer-icon-help-filled:before { content: '\e818'; } /* '' */
+.peer-icon-help:before { content: '\e819'; } /* '' */
 .peer-icon-sort:before { content: '\e81a'; } /* '' */
 .peer-icon-collapse:before { content: '\e81b'; } /* '' */
 .peer-icon-like:before { content: '\e81c'; } /* '' */
@@ -82,11 +88,13 @@
 .peer-icon-share:before { content: '\e81f'; } /* '' */
 .peer-icon-save-fill:before { content: '\e820'; } /* '' */
 .peer-icon-text:before { content: '\e821'; } /* '' */
+.peer-icon-newpost-filled:before { content: '\e822'; } /* '' */
 .peer-icon-play-alt:before { content: '\e823'; } /* '' */
 .peer-icon-dislike-fill:before { content: '\e824'; } /* '' */
 .peer-icon-comment-alt:before { content: '\e825'; } /* '' */
 .peer-icon-comment-dot:before { content: '\e826'; } /* '' */
 .peer-icon-audio:before { content: '\e827'; } /* '' */
+.peer-icon-newpost:before { content: '\e828'; } /* '' */
 .peer-icon-camera:before { content: '\e829'; } /* '' */
 .peer-icon-content:before { content: '\e82a'; } /* '' */
 .peer-icon-most:before { content: '\e82b'; } /* '' */

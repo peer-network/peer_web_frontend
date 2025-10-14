@@ -6,3 +6,4 @@ video-editor/
 *.html
 *.tmp
 error.txt
+.gitleaks_out/
