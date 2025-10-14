@@ -8,19 +8,19 @@
                 <div class="postview_footer">
                     <div class="social md_font_size">
                         <div class="post-view txt-color-gray">
-                            <i class="fi fi-rr-eye"></i>   
+                            <i class="peer-icon peer-icon-eye-open"></i>   
                             <span>0</span>
                         </div>
                         <div class="post-like">
-                            <i class="fi fi-rr-heart"></i>    
+                            <i class="peer-icon peer-icon-like"></i>    
                             <span>0</span>
                         </div>
                         <div class="post-dislike">
-                            <i class="fi fi-rr-heart-crack"></i>    
+                            <i class="peer-icon peer-icon-dislike"></i>    
                             <span>0</span>
                         </div>
                         <div class="post-comments">
-                            <i class="fi fi-rr-comment-dots"></i>    
+                            <i class="peer-icon peer-icon-comment-alt"></i>    
                             <span>0</span>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                 <div class="comments-container">
                     <div class="comments-header">
                         <h3 class="cmt_head xxl_font_size">Comments</h3>
-                        <span class="comment_total md_font_size"><i class="fi fi-sr-comment-dots"></i> <span class="comment_count">0</span></span>
+                        <span class="comment_total md_font_size"><i class="peer-icon peer-icon-comment-dot"></i> <span class="comment_count">0</span></span>
                         <span class="cmt-scroll none">Comment Scroll</span>
                     </div>
                     <span class="comment-txt blur"> No comments yet. Be the first to comment! </span>
@@ -284,24 +284,24 @@
                     </div>
                     <div class="post-content">
                         <h3 class="post-title md_font_size bold">asdasdas <span class="timeAgo">NaN y</span></h3>
-                        <div class="post-text">dasdasdasasdasdasd</div>
+                        <div class="post-text"></div>
                         <div class="hashtags"></div>
                     </div>
                     <div class="social md_font_size">
                         <div class="post-view">
-                            <i class="fi fi-rr-eye"></i>
+                            <i class="peer-icon peer-icon-eye-open"></i>
                             <span>1</span>
                         </div>
                         <div class="post-like">
-                            <i class="fi fi-rr-heart"></i>
+                            <i class="peer-icon peer-icon-like"></i>
                             <span>0</span>
                         </div>
                         <div class="post-dislike">
-                            <i class="fi fi-rr-heart-crack"></i>
+                            <i class="peer-icon peer-icon-dislike"></i>
                             <span>0</span>
                         </div>
                         <div class="post-comments">
-                            <i class="fi fi-rr-comment-dots"></i>
+                            <i class="peer-icon peer-icon-comment-alt"></i>
                             <span>0</span>
                         </div>
                     </div>
@@ -332,19 +332,19 @@
                     </div>
                     <div class="social md_font_size">
                         <div class="post-view">
-                            <i class="fi fi-rr-eye"></i>
+                            <i class="peer-icon peer-icon-eye-open"></i>
                             <span>1</span>
                         </div>
                         <div class="post-like">
-                            <i class="fi fi-rr-heart"></i>
+                            <i class="peer-icon peer-icon-like"></i>
                             <span>0</span>
                         </div>
                         <div class="post-dislike">
-                            <i class="fi fi-rr-heart-crack"></i>
+                            <i class="peer-icon peer-icon-dislike"></i>
                             <span>0</span>
                         </div>
                         <div class="post-comments">
-                            <i class="fi fi-rr-comment-dots"></i>
+                            <i class="peer-icon peer-icon-comment-alt"></i>
                             <span>0</span>
                         </div>
                     </div>
@@ -375,19 +375,19 @@
                     </div>
                     <div class="social md_font_size">
                         <div class="post-view">
-                            <i class="fi fi-rr-eye"></i>
+                            <i class="peer-icon peer-icon-eye-open"></i>
                             <span>1</span>
                         </div>
                         <div class="post-like">
-                            <i class="fi fi-rr-heart"></i>
+                            <i class="peer-icon peer-icon-like"></i>
                             <span>0</span>
                         </div>
                         <div class="post-dislike">
-                            <i class="fi fi-rr-heart-crack"></i>
+                            <i class="peer-icon peer-icon-dislike"></i>
                             <span>0</span>
                         </div>
                         <div class="post-comments">
-                            <i class="fi fi-rr-comment-dots"></i>
+                            <i class="peer-icon peer-icon-comment-alt"></i>
                             <span>0</span>
                         </div>
                     </div>
@@ -418,19 +418,19 @@
                     </div>
                     <div class="social md_font_size">
                         <div class="post-view">
-                            <i class="fi fi-rr-eye"></i>
+                            <i class="peer-icon peer-icon-eye-open"></i>
                             <span>1</span>
                         </div>
                         <div class="post-like">
-                            <i class="fi fi-rr-heart"></i>
+                            <i class="peer-icon peer-icon-like"></i>
                             <span>0</span>
                         </div>
                         <div class="post-dislike">
-                            <i class="fi fi-rr-heart-crack"></i>
+                            <i class="peer-icon peer-icon-dislike"></i>
                             <span>0</span>
                         </div>
                         <div class="post-comments">
-                            <i class="fi fi-rr-comment-dots"></i>
+                            <i class="peer-icon peer-icon-comment-alt"></i>
                             <span>0</span>
                         </div>
                     </div>
