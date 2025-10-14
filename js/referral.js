@@ -4,6 +4,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /**
+   * Detect environment and set baseUrl accordingly
+   */
+  const baseUrl = `${window.location.protocol}//${window.location.host}/`;
+
+  /**
    * Fetch referral link from GraphQL API
    */
   async function fetchReferralLink() {
@@ -46,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (referralInfo && referralInfo.status === 'success' && referralInfo.referralLink) {
           if (linkElement) {
-            linkElement.textContent = referralInfo.referralLink;
+            const finalLink = referralInfo.referralLink.replace(/^(https?:\/\/)[^/]+\//, baseUrl);
+            linkElement.textContent = finalLink;
           }
         } else {
           if (linkElement) {
