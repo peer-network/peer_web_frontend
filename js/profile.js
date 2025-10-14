@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const boostPostDescription = document.querySelector(".boost_post_description");
   const listPosts = document.querySelector(".list_all_post");
   const modal = document.getElementById('boostModal');
+  const adsStats = document.querySelector('.ads_container_wrap');
   let currentStep = 1;
 
   // ----------------- Show Step Function -----------------
@@ -319,6 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
       listPosts.classList.add("boostActive");
       cancelBtn.classList.remove("none");
       boostPostDescription.classList.remove("none");
+      adsStats.classList.add('none');
 
       attachWrapperListeners();
     });
@@ -330,7 +332,29 @@ document.addEventListener("DOMContentLoaded", () => {
       listPosts.classList.remove("boostActive");
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
+      adsStats.classList.remove('none');
     });
   }
+
+  // ----------------- Dropdown trigger for boost/Ads buttons -----------------
+
+  const container = document.querySelector('.boost_adsStats_container');
+  const dropdownWrapper = document.querySelector('.boost_dropdown_wrapper');
+  
+  container.addEventListener('click', function() {
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', !expanded);
+    dropdownWrapper.classList.toggle('open', !expanded);
+    dropdownWrapper.hidden = expanded;
+  });
+  
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.boost_adsStats_container') &&
+      !e.target.closest('.boost_dropdown_wrapper')) {
+      container.setAttribute('aria-expanded', 'false');
+      dropdownWrapper.classList.remove('open');
+      dropdownWrapper.hidden = true;
+    }
+  });
 
 });
