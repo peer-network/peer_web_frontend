@@ -26,3 +26,12 @@ regexes = [
   '''^public/.*''',
   '''^\.env.*$'''
 ]
+
+[allowlist]
+description = "Ignore common DOM and React expressions flagged by entropy rule"
+regexes = [
+  '''passwordStrengthDiv\.classList\.toggle''',
+  '''classList\.toggle''',
+  '''\.addEventListener''',
+  '''\.removeEventListener'''
+]
