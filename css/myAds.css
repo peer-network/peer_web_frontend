@@ -13,11 +13,46 @@
 
 .myAds_header .header_box {
     background-color: var(--bg-filter);
-    border-radius: 20px;
-    padding: 15px;
-    max-height: 304px;
+    border-radius: 25px;
+    padding: 20px;
+    display: flex;
+    max-height: 150px;
+    height: 100%;
+}
+
+.myAds_header .header_box span {
+  margin: 0;
+}
+
+.earnings_box.header_box,
+.spendings_box.header_box {
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .myAds_earnings, .myAds_spendings, .myAds_interactions {
   width: 100%;
+}
+
+.ads_gems_count img,
+.ads_tokens_count img {
+  width: 30px;
+}
+
+.ads_gems_count,
+.ads_tokens_count {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.myAds_interactions .interactions_box .likes,
+.myAds_interactions .interactions_box .dislikes,
+.myAds_interactions .interactions_box .comments,
+.myAds_interactions .interactions_box .views,
+.myAds_interactions .interactions_box .reports {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
