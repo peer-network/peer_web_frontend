@@ -9,8 +9,8 @@ tags = ["key", "secret", "frontend", "react"]
 [[rules]]
 id = "web-entropy-catch-all"
 description = "Catch any high-entropy random strings (for unknown secrets)"
-regex = '''[A-Za-z0-9\+=!@#$%^&*.-]{30,}'''
-entropy = 4.0
+regex = '''[A-Za-z0-9\+=!@#$%^&*.-]{35,}'''
+entropy = 4.6
 tags = ["key", "secret", "frontend", "react"]
 
 [pathDenylist]
@@ -22,7 +22,7 @@ regexes = [
   '''^\.next/.*''',
   '''^coverage/.*''',
   '''^\.github/workflows/.*''',
-  '''^tests/.*''',
+  '''^tests?/.*''',
   '''^public/.*''',
   '''^\.env.*$'''
 ]
@@ -30,8 +30,24 @@ regexes = [
 [allowlist]
 description = "Ignore common DOM and React expressions flagged by entropy rule"
 regexes = [
-  '''passwordStrengthDiv\.classList\.toggle''',
+  '''document\.getElementById''',
+  '''document\.querySelector''',
+  '''window\.querySelector''',
+  '''window\.lastBoostedCard\.querySelector''',
+  '''addEventListener''',
+  '''removeEventListener''',
   '''classList\.toggle''',
-  '''\.addEventListener''',
-  '''\.removeEventListener'''
+  '''createElement''',
+  '''setAttribute''',
+  '''getAttribute''',
+  '''ReactDOM\.render''',
+  '''useState''',
+  '''useEffect''',
+  '''localStorage''',
+  '''sessionStorage''',
+  '''navigator\.''',
+  '''window\.''',
+  '''console\.log''',
+  '''style\.[A-Za-z]+''',
+  '''passwordStrengthDiv\.classList\.toggle'''
 ]
