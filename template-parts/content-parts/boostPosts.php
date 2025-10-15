@@ -103,5 +103,4 @@
         <div class="button btn-blue goToPost-btn bold">Go to post</div>
       </div>
     </div>
-
 </div>
