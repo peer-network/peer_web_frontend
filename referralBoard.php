@@ -22,8 +22,7 @@ checkAuth("unauthorized");
         href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
 
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
-     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
-    <link rel="stylesheet" href="css/myAds.css?<?php echo filemtime('css/myAds.css'); ?>" />
+    <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>

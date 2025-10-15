@@ -8,28 +8,28 @@ checkAuth("unauthorized");
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Peer Network - My Ads</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
+    <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
     <link rel='stylesheet'
         href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <link rel='stylesheet'
         href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <link rel='stylesheet'
         href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
-    <link rel="stylesheet" href="css/myAds.css?<?php echo filemtime('css/myAds.css'); ?>" />
-    <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
 
-  <!-- <script src="sw_instal.min.js" async></script> -->
-  <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-  <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
-  <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
-  <?php
+    <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
+     <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
+    <link rel="stylesheet" href="css/myAds.css?<?php echo filemtime('css/myAds.css'); ?>" />
+
+    <!-- <script src="sw_instal.min.js" async></script> -->
+    <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
+    <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
+    <script src="js/ads/adsHistory/myAds.js?<?php echo filemtime('js/ads/adsHistory/myAds.js'); ?>" defer></script>
+    <?php
       $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
       include 'meta.min.php';
       ?>
@@ -58,19 +58,19 @@ checkAuth("unauthorized");
           <h2>Earnings</h2>
           <div class="earnings_box header_box">
             <p>Gems</p>
-            <div>
-              <img src="" alt="">
-              <span>25566</span>
+            <div class="ads_gems_count">
+              <img src="svg/logo_sw.svg" alt="">
+              <span class="bold xxl_font_size">25566</span>
             </div>
           </div>
         </div>
         <div class="myAds_spendings">
           <h2>Spendings</h2>
           <div class="spendings_box header_box">
-            <p>Gems</p>
-            <div>
-              <img src="" alt="">
-              <span>25566</span>
+            <p>Tokens</p>
+            <div class="ads_tokens_count">
+              <img src="svg/logo_sw.svg" alt="">
+              <span class="bold xxl_font_size">2500</span>
             </div>
           </div>
         </div>
@@ -78,33 +78,33 @@ checkAuth("unauthorized");
           <h2>Interactions</h2>
           <div class="interactions_box header_box">
             <div class="likes">
-              <img src="" alt="">
+              <i class="peer-icon peer-icon-like"></i>
               <p>Likes</p>
-              <span>300K</span>
+              <span class="bold xxl_font_size">300K</span>
             </div>
             <div class="vr"></div>
             <div class="dislikes">
-              <img src="" alt="">
+              <i class="peer-icon peer-icon-dislike"></i>
               <p>Dislikes</p>
-              <span>1K</span>
+              <span class="bold xxl_font_size">1K</span>
             </div>
             <div class="vr"></div>
             <div class="comments">
-              <img src="" alt="">
+              <i class="peer-icon peer-icon-comment-alt"></i>
               <p>Comments</p>
-              <span>20K</span>
+              <span class="bold xxl_font_size">20K</span>
             </div>
             <div class="vr"></div>
             <div class="views">
-              <img src="" alt="">
+              <img src="svg/peer-icon-eye-open-large.svg" alt="">
               <p>Views</p>
-              <span>566K</span>
+              <span class="bold xxl_font_size">566K</span>
             </div>
             <div class="vr"></div>
             <div class="reports">
-              <img src="" alt="">
+              <img src="svg/peer-icon-reports.svg" alt="">
               <p>Reports</p>
-              <span>219</span>
+              <span class="bold xxl_font_size">219</span>
             </div>
           </div>
         </div>
