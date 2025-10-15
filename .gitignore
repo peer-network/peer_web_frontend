@@ -7,3 +7,4 @@ video-editor/
 *.tmp
 error.txt
 .gitleaks_out/
+.DS_Store
