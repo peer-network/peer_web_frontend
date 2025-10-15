@@ -80,7 +80,7 @@ checkAuth("unauthorized");
           <div class="button boost_adsStats_container" role="button" aria-expanded="false" aria-controls="boostDropdown" tabindex="0">Ads</div>
           <div class="boost_dropdown_wrapper" hidden>
             <div class="button btn-blue promote_posts">Boost post</div>
-            <a href="myAds.php" class="button btn-white">My Ads</a>
+            <a href="myAds.php" class="button my_ads_button btn-white">My Ads</a>
           </div>
         </div>
         <div class="button btn-white promote_posts_cancel none">Cancel</div>

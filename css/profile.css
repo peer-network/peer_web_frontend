@@ -24,6 +24,13 @@
 .profile_edit_box .button.promote_posts::before {
     background-image: url(../svg/boost-post.svg);
 }
+.profile_edit_box .button.my_ads_button::before {
+    background-image: url(../svg/myads.svg);
+}
+.button.my_ads_button.btn-white {
+  align-items: center;
+  display: flex;
+}
 .profile_edit_box .button.promote_posts_cancel {
     padding: 0 70px;
 }
@@ -32,6 +39,9 @@
     background: none !important;
 }
 .profile_edit_box .button.promote_posts:hover::before {
+  filter: invert(1);
+}
+.profile_edit_box .button.my_ads_button:hover::before {
   filter: invert(1);
 }
 .profile_edit_box .button.edit-profile:hover::before {
