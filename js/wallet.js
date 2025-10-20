@@ -551,7 +551,8 @@ function renderCheckoutScreen(user, amount) {
   const closeBtn = document.createElement("button");
   closeBtn.className = "close-transfer btn-white";
   closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = closeTransferModal;
+  // closeBtn.onclick = closeTransferModal;
+  closeBtn.onclick = closeModal;
   header.append(h2, closeBtn);
 
   // Recipient
@@ -921,18 +922,15 @@ function getCommissionBreakdown(transferAmount) {
   };
 }
 
-function closeTransferModal() {
+function closeModal() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.classList.add("hidden");
   dropdown.classList.remove("modal-mode");
-
   const backdrop = document.querySelector(".transfer-backdrop");
-  if (backdrop) backdrop.remove();
-}
-
-function closeModal() {
+  if (backdrop) backdrop.remove();  
+  //addition
   document.querySelectorAll(".modal-container").forEach(modal => {
     modal.classList.remove("modal-show");
     modal.classList.remove("modal-hide");
-  });
+});
 }

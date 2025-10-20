@@ -2934,3 +2934,44 @@ footer {
 		font-weight: 400;
 	}
 }
+
+
+
+/* Temporary posted here the code from profile.css, the style was needed in dashboard */
+.pinedbtn {
+  margin-top: auto;
+}
+
+.boostModal .pinedbtn .button,
+.post-inhalt .pinedbtn .button,
+.postview_footer .pinedbtn .button {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 40px;
+  font-size: 18px;
+  border: none;
+  padding: 0 15px;
+  justify-content: space-between;
+  max-width: 300px;
+}
+
+.postview_footer .pinedbtn .button {
+  gap: 20px;
+}
+
+.boostModal .pinedbtn .button img,
+.post-inhalt .pinedbtn .button img,
+.postview_footer .pinedbtn .button img {
+  width: 20px;
+}
+
+.pinedbtn .button.btn-blue:hover {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
+  color: var(--white);
+}
+.pinedbtn .button span.ad_username {
+	
+	font-style: italic;
+}
