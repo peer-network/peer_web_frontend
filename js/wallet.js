@@ -6,8 +6,9 @@ let hasMoreUsers = true;
 // Initialization
 function initAppData() {
   nextMint();
-  dailyWin();
-  dailyPays();
+  resetTransactionHistoryList();
+  // getTransactionHistory();
+  // dailyPays();
 }
 
 window.addEventListener('DOMContentLoaded', initAppData);
@@ -44,178 +45,414 @@ function getNext0930() {
   return next0930;
 }
 
-async function dailyWin() {
-  const accessToken = getCookie("authToken");
+// Holt die Transaktionshistorie und rendert sie in #history-container
+// async function getTransactionHistory() {
+//   const accessToken = getCookie("authToken");
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
+
+//   // Neue GraphQL-Query (ohne Variablen)
+//   const graphql = JSON.stringify({
+//     query: `query GetTransactionHistory {
+//       getTransactionHistory {
+//         status
+//         ResponseCode
+//         affectedRows {
+//           transactionid
+//           operationid
+//           transactiontype
+//           senderid
+//           recipientid
+//           tokenamount
+//           transferaction
+//           message
+//           createdat
+//         }
+//       }
+//     }`,
+//   });
+
+//   const requestOptions = {
+//     method: "POST",
+//     headers,
+//     body: graphql,
+//     redirect: "follow",
+//   };
+
+//   // optionale Hilfsfunktion für die Typanzeige
+//   const actionLabel = (entry) => {
+//     // Falls deine API numerische Codes liefert, hier mappen.
+//     // Vorher wurde entry.action genutzt; nun gibt es transferaction/transactiontype.
+//     const a = Number(entry.transferaction ?? entry.transactiontype);
+//     switch (a) {
+//       case 2:  return "Like";
+//       case 4:  return "Comment";
+//       case 5:  return "Post create";
+//       case 18: return "Token Transfer";
+//       default:
+//         // Fallback: zeige vorhandene Strings oder "unknown"
+//         return (
+//           (typeof entry.transferaction === "string" && entry.transferaction) ||
+//           (typeof entry.transactiontype === "string" && entry.transactiontype) ||
+//           "unknown"
+//         );
+//     }
+//   };
+
+//   try {
+//     const response = await fetch(GraphGL, requestOptions);
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+//     const result = await response.json();
+//     if (result.errors) throw new Error(result.errors[0].message);
+
+//     const rows = result?.data?.getTransactionHistory?.affectedRows ?? [];
+
+//     // Neu: nach Datum absteigend sortieren (wie zuvor)
+//     const sortedDescending = rows
+//       .slice()
+//       .sort(
+//         (a, b) =>
+//           new Date(b.createdat).getTime() - new Date(a.createdat).getTime()
+//       );
+
+//     const container = document.getElementById("history-container");
+//     // if (container) container.innerHTML = ""; // optional: vorher leeren
+
+//     sortedDescending.forEach((entry) => {
+//       const historyItem = document.createElement("div");
+//       historyItem.className = "history-item";
+
+//       const typeDiv = document.createElement("div");
+//       typeDiv.className = "type";
+//       typeDiv.textContent = actionLabel(entry);
+
+//       const dateDiv = document.createElement("div");
+//       dateDiv.className = "date";
+//       dateDiv.textContent = adjustForDSTAndFormat(entry.createdat);
+
+//       const centerDiv = document.createElement("div");
+//       centerDiv.className = "center";
+
+//       const amountSpan = document.createElement("span");
+//       amountSpan.className = "amount";
+//       // Neue Feldbezeichnung: tokenamount (vormals numbers)
+//       const amount =
+//         typeof entry.tokenamount === "number"
+//           ? entry.tokenamount
+//           : Number(String(entry.tokenamount).replace(",", "."));
+//       amountSpan.textContent = String(amount).replace(/,/g, ".");
+
+//       const logoImg = document.createElement("img");
+//       logoImg.src = "svg/logo_sw.svg";
+//       logoImg.alt = "";
+
+//       centerDiv.appendChild(amountSpan);
+//       centerDiv.appendChild(logoImg);
+
+//       historyItem.appendChild(typeDiv);
+//       historyItem.appendChild(dateDiv);
+//       historyItem.appendChild(centerDiv);
+
+//       document.getElementById("history-container")?.appendChild(historyItem);
+//     });
+
+//     // Korrigierter Return-Wert passend zur neuen Query
+//     return result.data.getTransactionHistory;
+//   } catch (error) {
+//     console.error("Error:", error?.message || error);
+//     throw error;
+//   }
+// }
+
+// ====== Globale Steuerung ======
+const LIMIT = 20;
+let txOffset = 0;        // globaler Offset
+let txLoading = false;   // verhindert parallele Loads
+let txHasMore = true;    // stoppt Observer, wenn nichts mehr da ist
+const seenTxIds = new Set(); // Duplikat-Schutz
+
+// Stelle sicher, dass der Container & Sentinel existieren
+const historyContainer = document.getElementById("history-container");
+let historySentinel = document.getElementById("history-sentinel");
+if (!historySentinel) {
+  historySentinel = document.createElement("div");
+  historySentinel.id = "history-sentinel";
+  historySentinel.style.height = "1px";
+  historySentinel.style.width = "100%";
+  historySentinel.style.pointerEvents = "none";
+  historySentinel.innerHTML = '<!-- sentinel -->';
+  historyContainer?.appendChild(historySentinel);
+}
+
+// ====== Hilfsfunktionen ======
+const actionLabel = (entry) => {
+  // const a = Number(entry.transferaction ?? entry.transactiontype);
+  switch (entry.transferaction) {
+    case "BURN_FEE":  return "Burn fee";
+    case "PEER_FEE":  return "Peer fee";
+    case "POOL_FEE":  return "Pool fee";
+    case "CREDIT":    return "Fucking Backend";
+    default:
+      return (
+        (typeof entry.transferaction === "string" && entry.transferaction) ||
+        (typeof entry.transactiontype === "string" && entry.transactiontype) ||
+        "unknown"
+      );
+  }
+};
+
+function renderRows(rows) {
+  rows.forEach((entry) => {
+    // Duplikate vermeiden (z. B. bei schnellem mehrfachen Triggern)
+    if (entry.transactionid && seenTxIds.has(entry.transactionid)) return;
+    if (entry.transactionid) seenTxIds.add(entry.transactionid);
+
+    const historyItem = document.createElement("div");
+    historyItem.className = "history-item";
+
+    const typeDiv = document.createElement("div");
+    typeDiv.className = "type";
+    typeDiv.textContent = actionLabel(entry);
+
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "date";
+    dateDiv.textContent = adjustForDSTAndFormat(entry.createdat);
+
+    const centerDiv = document.createElement("div");
+    centerDiv.className = "center";
+
+    const amountSpan = document.createElement("span");
+    amountSpan.className = "amount";
+    const amount =
+      typeof entry.tokenamount === "number"
+        ? entry.tokenamount
+        : Number(String(entry.tokenamount).replace(",", "."));
+    amountSpan.textContent = String(amount).replace(/,/g, ".");
+
+    const logoImg = document.createElement("img");
+    logoImg.src = "svg/logo_sw.svg";
+    logoImg.alt = "";
+
+    centerDiv.appendChild(amountSpan);
+    centerDiv.appendChild(logoImg);
+
+    historyItem.appendChild(typeDiv);
+    historyItem.appendChild(dateDiv);
+    historyItem.appendChild(centerDiv);
+
+    historyContainer?.insertBefore(historyItem, historySentinel);
   });
+}
 
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query ListWinLogs {
-      listWinLogs(day: D0) {
-        affectedRows {
-            from
-            token
-            userid
-            postid
-            action
-            numbers
-            createdat
-        }
-        status
-        counter
-        ResponseCode
-    }
-}`,
-  });
-
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
+// ====== Core-Loader (lädt 20, nutzt globalen Offset) ======
+async function loadMoreTransactionHistory() {
+  if (txLoading || !txHasMore) return;
+  txLoading = true;
 
   try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
-
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    const sortedDescending = result.data.listWinLogs.affectedRows.slice().sort((a, b) => new Date(b.createdat).getTime() - new Date(a.createdat).getTime());
-    sortedDescending.forEach((entry) => {
-      const historyItem = document.createElement("div");
-      historyItem.className = "history-item";
-
-      const typeDiv = document.createElement("div");
-      typeDiv.className = "type";
-      typeDiv.textContent = entry.action == 2 ? "Like" : entry.action == 5 ? "Post create" : entry.action == 4 ? "Comment" : entry.action == 18 ? "Token Transfer" : "unknown";
-
-      const dateDiv = document.createElement("div");
-      dateDiv.className = "date";
-      dateDiv.textContent = adjustForDSTAndFormat(entry.createdat); // Formatieren des Datums
-
-      const centerDiv = document.createElement("div");
-      centerDiv.className = "center";
-
-      const amountSpan = document.createElement("span");
-      amountSpan.className = "amount";
-      amountSpan.textContent = entry.numbers.toString().replace(/,/g, ".");
-
-      const logoImg = document.createElement("img");
-      logoImg.src = "svg/logo_sw.svg";
-      logoImg.alt = "";
-
-      centerDiv.appendChild(amountSpan);
-      centerDiv.appendChild(logoImg);
-
-      historyItem.appendChild(typeDiv);
-      historyItem.appendChild(dateDiv);
-      historyItem.appendChild(centerDiv);
-
-      // Füge das Element z. B. zu einem Container im DOM hinzu
-      document.getElementById("history-container").appendChild(historyItem);
+    const accessToken = getCookie("authToken");
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     });
 
-    return result.data.fetchwinslog;
+    const graphql = JSON.stringify({
+      query: `query GetTransactionHistory {
+        getTransactionHistory(limit: ${LIMIT}, offset: ${txOffset}, sort: NEWEST) {
+          status
+          ResponseCode
+          affectedRows {
+            transactionid
+            operationid
+            transactiontype
+            senderid
+            recipientid
+            tokenamount
+            transferaction
+            message
+            createdat
+          }
+        }
+      }`,
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers,
+      body: graphql,
+      redirect: "follow",
+    };
+
+    const response = await fetch(GraphGL, requestOptions);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+    const result = await response.json();
+    if (result.errors) throw new Error(result.errors[0].message);
+
+    const rows = result?.data?.getTransactionHistory?.affectedRows ?? [];
+
+    // Server liefert bereits NEWEST. Wenn du magst, kannst du hier noch fallback-sortieren.
+    renderRows(rows);
+
+    // Offset erhöhen um tatsächlich geladene Anzahl
+    txOffset += rows.length;
+
+    // Wenn weniger als LIMIT kamen -> keine weiteren Daten
+    if (rows.length < LIMIT) {
+      txHasMore = false;
+      // Observer kann abgehängt werden
+      if (infiniteObserver && historySentinel) {
+        infiniteObserver.unobserve(historySentinel);
+      }
+    }
   } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
+    console.error("Error:", error?.message || error);
+  } finally {
+    txLoading = false;
   }
 }
 
-async function dailyPays() {
-  const accessToken = getCookie("authToken");
+// ====== IntersectionObserver für Infinite Scroll ======
+let infiniteObserver = null;
 
-  // Create headers
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  });
+function initHistoryInfiniteScroll() {
+  if (!historyContainer || !historySentinel) return;
 
-  // Define the GraphQL mutation with variables
-  const graphql = JSON.stringify({
-    query: `query ListPaymentLogs {
-      listPaymentLogs(day: D0) {
-        status
-        counter
-        ResponseCode
-        affectedRows {
-            from
-            token
-            userid
-            postid
-            action
-            numbers
-            createdat
+  // Falls schon vorhanden, erst abklemmen
+  if (infiniteObserver) {
+    try { infiniteObserver.unobserve(historySentinel); } catch {}
+    infiniteObserver.disconnect();
+  }
+
+  infiniteObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          // Sentinel sichtbar -> weitere 20 nachladen
+          loadMoreTransactionHistory();
         }
       }
-    }`,
-  });
+    },
+    {
+      root: historyContainer, // Container scrollt (falls der Container scrollable ist)
+      rootMargin: "0px 0px 200px 0px", // früher laden, bevor ganz unten
+      threshold: 0.01,
+    }
+  );
 
-  // Define request options
-  const requestOptions = {
-    method: "POST",
-    headers: headers,
-    body: graphql,
-    redirect: "follow",
-  };
-
-  try {
-    // Send the request and handle the response
-    const response = await fetch(GraphGL, requestOptions);
-    const result = await response.json();
-
-    // Check for errors in response
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    if (result.errors) throw new Error(result.errors[0].message);
-    result.data.listPaymentLogs.affectedRows.forEach((entry) => {
-      const historyItem = document.createElement("div");
-      historyItem.className = "history-item";
-
-      const typeDiv = document.createElement("div");
-      typeDiv.className = "type";
-      typeDiv.textContent = "Withdraw";
-
-      const dateDiv = document.createElement("div");
-      dateDiv.className = "date";
-      dateDiv.textContent = "3 Feb 00:00";
-
-      const centerDiv = document.createElement("div");
-      centerDiv.className = "center";
-
-      const amountSpan = document.createElement("span");
-      amountSpan.className = "amount";
-      amountSpan.textContent = "-1234";
-
-      const logoImg = document.createElement("img");
-      logoImg.src = "svg/logo_sw.svg";
-      logoImg.alt = "";
-
-      centerDiv.appendChild(amountSpan);
-      centerDiv.appendChild(logoImg);
-
-      historyItem.appendChild(typeDiv);
-      historyItem.appendChild(dateDiv);
-      historyItem.appendChild(centerDiv);
-
-      // Füge das Element z. B. zu einem Container im DOM hinzu
-      document.getElementById("history-container").appendChild(historyItem);
-    });
-
-    return result.data.listPaymentLogs;
-  } catch (error) {
-    console.error("Error:", error.message);
-    throw error;
-  }
+  infiniteObserver.observe(historySentinel);
 }
+
+// ====== Reset-Funktion (z. B. beim Tab-Wechsel/Refresh) ======
+function resetTransactionHistoryList() {
+  txOffset = 0;
+  txHasMore = true;
+  txLoading = false;
+  seenTxIds.clear();
+
+  if (historyContainer) {
+    // alles außer Sentinel entfernen
+    Array.from(historyContainer.children).forEach((child) => {
+      if (child.id !== "history-sentinel") child.remove();
+    });
+  }
+  initHistoryInfiniteScroll();
+  // erste Ladung sofort holen
+  loadMoreTransactionHistory();
+}
+
+// ====== Startpunkt aufrufen, wenn die Seite/der Tab bereit ist ======
+
+
+// async function dailyPays() {
+//   const accessToken = getCookie("authToken");
+
+//   // Create headers
+//   const headers = new Headers({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
+
+//   // Define the GraphQL mutation with variables
+//   const graphql = JSON.stringify({
+//     query: `query ListPaymentLogs {
+//       listPaymentLogs(day: D0) {
+//         status
+//         counter
+//         ResponseCode
+//         affectedRows {
+//             from
+//             token
+//             userid
+//             postid
+//             action
+//             numbers
+//             createdat
+//         }
+//       }
+//     }`,
+//   });
+
+//   // Define request options
+//   const requestOptions = {
+//     method: "POST",
+//     headers: headers,
+//     body: graphql,
+//     redirect: "follow",
+//   };
+
+//   try {
+//     // Send the request and handle the response
+//     const response = await fetch(GraphGL, requestOptions);
+//     const result = await response.json();
+
+//     // Check for errors in response
+//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//     if (result.errors) throw new Error(result.errors[0].message);
+//     result.data.listPaymentLogs.affectedRows.forEach((entry) => {
+//       const historyItem = document.createElement("div");
+//       historyItem.className = "history-item";
+
+//       const typeDiv = document.createElement("div");
+//       typeDiv.className = "type";
+//       typeDiv.textContent = "Withdraw";
+
+//       const dateDiv = document.createElement("div");
+//       dateDiv.className = "date";
+//       dateDiv.textContent = "3 Feb 00:00";
+
+//       const centerDiv = document.createElement("div");
+//       centerDiv.className = "center";
+
+//       const amountSpan = document.createElement("span");
+//       amountSpan.className = "amount";
+//       amountSpan.textContent = "-1234";
+
+//       const logoImg = document.createElement("img");
+//       logoImg.src = "svg/logo_sw.svg";
+//       logoImg.alt = "";
+
+//       centerDiv.appendChild(amountSpan);
+//       centerDiv.appendChild(logoImg);
+
+//       historyItem.appendChild(typeDiv);
+//       historyItem.appendChild(dateDiv);
+//       historyItem.appendChild(centerDiv);
+
+//       // Füge das Element z. B. zu einem Container im DOM hinzu
+//       document.getElementById("history-container").appendChild(historyItem);
+//     });
+
+//     return result.data.listPaymentLogs;
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//     throw error;
+//   }
+// }
 
 document.getElementById("openTransferDropdown").addEventListener("click", async () => {
   renderUsers()
@@ -551,7 +788,8 @@ function renderCheckoutScreen(user, amount) {
   const closeBtn = document.createElement("button");
   closeBtn.className = "close-transfer btn-white";
   closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = closeTransferModal;
+  // closeBtn.onclick = closeTransferModal;
+  closeBtn.onclick = closeModal;
   header.append(h2, closeBtn);
 
   // Recipient
@@ -921,18 +1159,15 @@ function getCommissionBreakdown(transferAmount) {
   };
 }
 
-function closeTransferModal() {
+function closeModal() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.classList.add("hidden");
   dropdown.classList.remove("modal-mode");
-
   const backdrop = document.querySelector(".transfer-backdrop");
-  if (backdrop) backdrop.remove();
-}
-
-function closeModal() {
+  if (backdrop) backdrop.remove();  
+  //addition
   document.querySelectorAll(".modal-container").forEach(modal => {
     modal.classList.remove("modal-show");
     modal.classList.remove("modal-hide");
-  });
+});
 }

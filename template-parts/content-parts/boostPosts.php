@@ -87,7 +87,7 @@
       </div>
       <div class="modal-footer">
         <div class="button btn-transparent back-btn"><img src="" alt="">Back</div>
-        <div class="button btn-blue next-btn bold">Pay</div>
+        <div class="button btn-blue next-btn bold" id="advertisePost">Pay</div>
       </div>
     </div>
 

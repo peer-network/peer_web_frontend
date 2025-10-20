@@ -385,11 +385,8 @@ function appendPost(json) {
   const letztesDiv = parentElement.lastElementChild;
 }
 
-
 //let manualLoad = false;
 let postoffset = 0;
-
-
 async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
     // if (postoffset === undefined) {
@@ -431,19 +428,20 @@ async function postsLaden(postbyUserID=null) {
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
     let  posts;
-    if (postbyUserID!=null){
+     if (postbyUserID!=null){
         posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
     } else{
       posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
     }
-	
+
     //console.log(postoffset);
     //const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
     // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-    posts.data.listPosts.affectedRows.forEach((objekt,i) => {
+    posts.listPosts.affectedRows.forEach((objekt,i) => {
+      
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
@@ -454,7 +452,7 @@ async function postsLaden(postbyUserID=null) {
       // card.setAttribute("tags", objekt.tags.join(","));
       // <div class="post"> erstellen und Bild hinzufügen
       //console.log(objekt.id);
-
+  
       let postDiv;
       let img;
       postDiv = document.createElement("div");
@@ -591,7 +589,7 @@ async function postsLaden(postbyUserID=null) {
             span.addEventListener("click", (event) => {
                event.stopPropagation();
                 event.preventDefault();
-                 current = index; // ✅ Update current index to clicked
+                 current = index; // Update current index to clicked
               const images = postDiv.querySelectorAll("img");
               const indicators = divmulti_img_indicator.querySelectorAll("span");
 
@@ -869,19 +867,22 @@ async function postsLaden(postbyUserID=null) {
       });
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
+      if (objekt.isAd) {
+        insertPinnedBtn(card, objekt.user.username, "profile", calctimeAgo(objekt.startdate));
+      }
     });
-    // console.log(posts.data.listPosts.affectedRows.length);
-    postoffset += posts.data.listPosts.affectedRows.length;
+    // console.log(posts.listPosts.affectedRows.length);
+    postoffset += posts.listPosts.affectedRows.length;
     // console.log("postoffset ", postoffset)
 
      const post_loader = document.getElementById("post_loader");
     const no_post_found = document.getElementById("no_post_found");
-    //console.log(posts.data.listPosts.counter +"---"+posts.data.listPosts.affectedRows.length);
-    if(postoffset==0 && posts.data.listPosts.affectedRows.length==0) // no  post found 
+    //console.log(posts.listPosts.counter +"---"+posts.listPosts.affectedRows.length);
+    if(postoffset==0 && posts.listPosts.affectedRows.length==0) // no  post found 
     { 
       no_post_found.classList.add("active");
       post_loader.classList.add("hideloader");
-    }else if(posts.data.listPosts.counter<20){
+    }else if(posts.listPosts.counter<20){
       post_loader.classList.add("hideloader");
     }else{
       no_post_found.classList.remove("active");

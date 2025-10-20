@@ -54,7 +54,7 @@ checkAuth("unauthorized");
       </div>
     </aside>
 
-    <main class="site-main site-main-wallet">
+    <main id="main" class="site-main site-main-wallet">
 
       <?php require_once ('./template-parts/wallet/walletTokenTransfer.php'); ?>
 
@@ -80,13 +80,14 @@ checkAuth("unauthorized");
         </div>
       </div>
       <div id="wallet-transaction">
-        <h2>List of transactions</h2>
-        <div id="history-container" class="history-container">
-          <div class="history-header">
+        <h2>List of transactions</h2><div class="history-header">
             <span class="type">Type</span>
             <span class="date">Date</span>
             <span class="amount">Amount</span>
           </div>
+        <div id="history-container" class="history-container">
+          
+          <!-- <div id="history-sentinel" class="history-sentinel"></div> -->
         </div>
       </div>
     </main>
