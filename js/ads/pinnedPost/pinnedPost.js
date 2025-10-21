@@ -24,13 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------- Boost Card Click -----------------
   function boostCardClick(card) {
     window.lastBoostedCard = card;
-
     const previewBoostedPost = document.getElementById("preview_boostedPost");
     if (previewBoostedPost) {
       previewBoostedPost.innerHTML = "";
 
       const clonedCard = card.cloneNode(true);
-      console.log('clonedCard ', clonedCard);
       clonedCard.querySelectorAll("*").forEach(el => {
         el.replaceWith(el.cloneNode(true));
       });
@@ -50,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       previewBoostedPost.appendChild(clonedCard);
     }
+ 
     modal.classList.remove('none');
     showStep(1);
   }
@@ -59,66 +58,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ----------------- Insert Pinned Button in Opened Post -----------------
-  function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
-    const viewpost = document.querySelector(".viewpost");
-    if (!viewpost) return;
+  // function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
+  //   const viewpost = document.querySelector(".viewpost");
+  //   if (!viewpost) return;
 
-    const pinnedBtn = document.createElement("div");
-    pinnedBtn.classList.add("pinedbtn");
-    pinnedBtn.innerHTML = `
-      <a class="button btn-blue">
-        <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold">@${username}</span>
-        <span class="ad_duration txt-color-gray">23h</span>
-      </a>
-    `;
+  //   const pinnedBtn = document.createElement("div");
+  //   pinnedBtn.classList.add("pinedbtn");
+  //   pinnedBtn.innerHTML = `
+  //     <a class="button btn-blue">
+  //       <img src="svg/pin.svg" alt="pin">
+  //       <span class="ad_username bold">@${username}</span>
+  //       <span class="ad_duration txt-color-gray">23h</span>
+  //     </a>
+  //   `;
 
-    const footer = viewpost.querySelector(".postview_footer");
-    const comments = viewpost.querySelector(".post-comments");
-    const postInhalt = card.querySelector(".post-inhalt");
-    const social = card.querySelector(".social");
+  //   const footer = viewpost.querySelector(".postview_footer");
+  //   const comments = viewpost.querySelector(".post-comments");
+  //   const postInhalt = card.querySelector(".post-inhalt");
+  //   const social = card.querySelector(".social");
 
-    if (!footer || footer.querySelector(".pinedbtn")) return;
+  //   if (!footer || footer.querySelector(".pinedbtn")) return;
 
-    if (mode === "post") {
-      if (footer && comments) {
-        comments.insertAdjacentElement("afterend", pinnedBtn);
-      }
-    }
+  //   if (mode === "post") {
+  //     if (footer && comments) {
+  //       comments.insertAdjacentElement("afterend", pinnedBtn);
+  //     }
+  //   }
 
-    if (mode === "profile") {
-      if (postInhalt && social) {
-        postInhalt.insertBefore(pinnedBtn, social);
-      }
-    }
-  }
+  //   if (mode === "profile") {
+  //     if (postInhalt && social) {
+  //       postInhalt.insertBefore(pinnedBtn, social);
+  //     }
+  //   }
+  // }
 
   // ----------------- Mark Card as Boosted -----------------
-  function markCardAsBoosted(card) {
-    card.classList.add("boosted");
+  // function markCardAsBoosted(card) {
+  //   console.log('inside markCardAsBoosted')
+  //   card.classList.add("boosted");
 
-    // Wrap card content in front/back container if not already wrapped
-    if (!card.querySelector(".post-card-inner")) {
-      const inner = document.createElement("div");
-      inner.classList.add("post-card-inner");
+  //   // Wrap card content in front/back container if not already wrapped
+  //   if (!card.querySelector(".post-card-inner")) {
+  //     const inner = document.createElement("div");
+  //     inner.classList.add("post-card-inner");
 
-      const front = document.createElement("div");
-      front.classList.add("post-card-front");
-      front.append(...Array.from(card.childNodes));
+  //     const front = document.createElement("div");
+  //     front.classList.add("post-card-front");
+  //     front.append(...Array.from(card.childNodes));
 
-      const back = document.createElement("div");
-      back.classList.add("post-card-back", "bold", "xl_font_size");
-      back.textContent = "This Post has already been boosted";
+  //     const back = document.createElement("div");
+  //     back.classList.add("post-card-back", "bold", "xl_font_size");
+  //     back.textContent = "This Post has already been boosted";
 
-      inner.appendChild(front);
-      inner.appendChild(back);
-      card.appendChild(inner);
-    }
-  }
+  //     inner.appendChild(front);
+  //     inner.appendChild(back);
+  //     card.appendChild(inner);
+  //   }
+  // }
 
   // ----------------- Modal Buttons -----------------
   modal.addEventListener('click', function (e) {
-    console.log('currentStep ', currentStep);
     if (e.target.classList.contains('next-btn')) {
       showStep(currentStep + 1);
     }
@@ -141,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
 
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
-        markCardAsBoosted(window.lastBoostedCard);
+        // markCardAsBoosted(window.lastBoostedCard);
       }
     }
 
@@ -157,10 +156,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
 
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
-        markCardAsBoosted(window.lastBoostedCard);
+        // markCardAsBoosted(window.lastBoostedCard);
 
         window.lastBoostedCard.click();
-        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post");
+        // insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
       }
     }
 
@@ -169,10 +168,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  function hideAdCards() {
+    const cards = listPosts.querySelectorAll(".card");
+      cards.forEach((card, i) => {
+        const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
+        if (isAd) card.classList.add('none');
+    });
+  }
+
+  function showAdCards() {
+    const cards = listPosts.querySelectorAll(".card");
+    cards.forEach((card, i) => {
+      const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
+      if (isAd) card.classList.remove('none');
+    });
+  }
+
   function attachWrapperListeners() {
     const cards = listPosts.querySelectorAll(".card");
-
-    cards.forEach(card => {
+    cards.forEach((card, i) => {
       if (!card.dataset.listenersAdded) {
         card.addEventListener(
           "click",
@@ -181,12 +195,12 @@ document.addEventListener("DOMContentLoaded", () => {
               e.stopImmediatePropagation();
               postid = this.id;
               if (card.classList.contains("boosted")) {
-                markCardAsBoosted(card);
-                card.classList.add("flipped");
+                // markCardAsBoosted(card);
+                // card.classList.add("flipped");
 
-                setTimeout(() => {
-                  card.classList.remove("flipped");
-                }, 2000);
+                // setTimeout(() => {
+                //   card.classList.remove("flipped");
+                // }, 2000);
               } else {
                 boostCardClick(card);
               }
@@ -211,6 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
       adsStats.classList.add('none');
 
       attachWrapperListeners();
+      hideAdCards();
     });
   }
 
@@ -221,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
       adsStats.classList.remove('none');
+      showAdCards();
     });
   }
 
@@ -308,6 +324,14 @@ document.addEventListener("DOMContentLoaded", () => {
       parentElement.querySelectorAll(`.card#${postid}`).forEach((el, index) => {
         if (index > 0) el.remove();
       });
+    }
+  }
+
+  window.clearAdBtnBox = function () {
+    const cardPopup = document.getElementById('cardClicked');
+    const adBtn = cardPopup.querySelector('.pinedbtn');
+    if (adBtn) {
+      adBtn.remove()
     }
   }
 });

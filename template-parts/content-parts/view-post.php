@@ -22,6 +22,13 @@
                         <i class="peer-icon peer-icon-comment-alt"></i>    
                         <span>0</span>
                     </div>
+                    <!--<div class="pinedbtn">
+            <a class="button btn-blue">
+                <img src="svg/pin.svg" alt="pin">
+                <span class="ad_username bold">@Luqman_TA</span>
+                <span class="ad_duration txt-color-gray">19h</span>
+            </a>
+    </div>-->
                 </div>
                 <div class="more md_font_size">
                     <ul>
