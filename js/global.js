@@ -2432,8 +2432,7 @@ scheduleSilentRefresh(accessToken, refreshToken);
   // ----------------- Insert Pinned Button -----------------
   window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
     if (!card) return;
-    if (card.querySelector(".pinedbtn")) return;
-
+    if (card.querySelector(".pinedbtn") && mode != 'post') return;
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
     pinnedBtn.innerHTML = `
@@ -2455,7 +2454,7 @@ scheduleSilentRefresh(accessToken, refreshToken);
         postInhalt.insertBefore(pinnedBtn, social);
       }
     }
-
+    
     if (mode === "post") {
       if (footer && comments && !footer.querySelector(".pinedbtn")) {
         comments.insertAdjacentElement("afterend", pinnedBtn);

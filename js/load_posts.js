@@ -3,24 +3,14 @@
 
 document.addEventListener("DOMContentLoaded",  () => {
   restoreFilterSettings();
-
-
     const postID = getPostIdFromURL(); // define in global.js
     if (postID) {
-
-      setTimeout(async () => {
-        
+      setTimeout(async () => { 
          const objekt = await fetchPostByID(postID);
          if (objekt) {
-            
             postClicked(objekt[0]);
-            
         }
-      
-      }, 100);
-      
-          
-        
+      }, 100);   
     }
 
   const everything = document.getElementById("everything");
@@ -34,11 +24,10 @@ document.addEventListener("DOMContentLoaded",  () => {
   if (closePost) {
     closePost.addEventListener("click", () => {
       togglePopup("cardClicked");
+      clearAdBtnBox();
       cancelTimeout();
     });
   }
-
-
   const addComment = document.getElementById("addComment");
   if (addComment) {
     addComment.addEventListener("click", (event) => {
@@ -387,6 +376,7 @@ function appendPost(json) {
 
 //let manualLoad = false;
 let postoffset = 0;
+let  POSTS;
 async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
     // if (postoffset === undefined) {
@@ -427,11 +417,11 @@ async function postsLaden(postbyUserID=null) {
       tagInput = normalWords.join(" ");
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
-    let  posts;
-     if (postbyUserID!=null){
-        posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
+
+    if (postbyUserID!=null){
+      POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
     } else{
-      posts = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
+      POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
     }
 
     //console.log(postoffset);
@@ -440,7 +430,7 @@ async function postsLaden(postbyUserID=null) {
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-    posts.listPosts.affectedRows.forEach((objekt,i) => {
+    POSTS.listPosts.affectedRows.forEach((objekt,i) => {
       
       // Haupt-<section> erstellen
       const card = document.createElement("section");
@@ -642,7 +632,8 @@ async function postsLaden(postbyUserID=null) {
           
         }
         let i=0;
-        for (const item of array) { i++;
+        for (const item of array) { 
+          i++;
           img = document.createElement("img");
           img.classList.add("image"+i);
           if (i === 1) {
@@ -872,17 +863,17 @@ async function postsLaden(postbyUserID=null) {
       }
     });
     // console.log(posts.listPosts.affectedRows.length);
-    postoffset += posts.listPosts.affectedRows.length;
+    postoffset += POSTS.listPosts.affectedRows.length;
     // console.log("postoffset ", postoffset)
 
      const post_loader = document.getElementById("post_loader");
     const no_post_found = document.getElementById("no_post_found");
     //console.log(posts.listPosts.counter +"---"+posts.listPosts.affectedRows.length);
-    if(postoffset==0 && posts.listPosts.affectedRows.length==0) // no  post found 
+    if(postoffset==0 && POSTS.listPosts.affectedRows.length==0) // no  post found 
     { 
       no_post_found.classList.add("active");
       post_loader.classList.add("hideloader");
-    }else if(posts.listPosts.counter<20){
+    }else if(POSTS.listPosts.counter<20){
       post_loader.classList.add("hideloader");
     }else{
       no_post_found.classList.remove("active");
@@ -1019,8 +1010,6 @@ function like_dislike_post(objekt, action, el) {
 }
 
 function reportPost(objekt, el) {
-  
-
     // Check nearest parent with .card OR .viewpost
     const parentel = el.closest(".viewpost");
     const postCardId = document.getElementById(objekt.id);
@@ -1034,32 +1023,21 @@ function reportPost(objekt, el) {
       }, 3000);
     }
   
-  
-
   reportPostAPIcall(objekt.id).then((success) => {
     if (success) {
       togglePopup("cardClicked");
       cancelTimeout();
-
       // Add animation class
-
       postCardId.classList.add("card_reported");
-     
+      const reported_div = document.createElement("div");
+      reported_div.classList.add("reported");
+      reported_div.innerHTML = `
+        <img src="svg/Union.svg" alt="reported">
+        <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
+      `;
 
-      
-        const reported_div = document.createElement("div");
-
-       reported_div.classList.add("reported");
-        reported_div.innerHTML = `
-          <img src="svg/Union.svg" alt="reported">
-          <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
-        `;
-
-        // Step 4: Ab reported_div ko parent div ke andar append karo
-        postCardId.appendChild(reported_div);
-
-
-
+      // Step 4: Ab reported_div ko parent div ke andar append karo
+      postCardId.appendChild(reported_div);
     }
   });
 }
@@ -1086,6 +1064,10 @@ async function postClicked(objekt) {
   document.getElementById("cardClicked").setAttribute("content", objekt.contenttype);
 
   postdetail(objekt, UserID); //this funtion  define in global.js and used for guest post as well.
+  if (objekt.isAd) {
+    const cardEl = document.getElementById(`${objekt.id}`);
+    insertPinnedBtn(cardEl, objekt.user.username, "post", calctimeAgo(objekt.startdate));
+  }
 }
 
 
