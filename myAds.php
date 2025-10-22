@@ -49,67 +49,80 @@ checkAuth("unauthorized");
                 <?php require_once('./template-parts/sidebars/widget-sort-filter.php'); ?>
             </div>
             <?php require_once('./template-parts/sidebars/widget-collapse-button.php'); ?>
+            <?php require_once ('./template-parts/sidebars/widget-back-button.php'); ?>
         </div>
     </aside>
     <main class="site-main site-main-myAds">
       <h1 class="myAds_h1">My Ads</h1>
       <div id="myAds_header" class="myAds_header">
         <div class="myAds_earnings">
-          <h2>Earnings</h2>
+          <h1>Earnings</h1>
           <div class="earnings_box header_box">
             <p>Gems</p>
             <div class="ads_gems_count">
-              <img src="svg/logo_sw.svg" alt="">
-              <span class="bold xxl_font_size">25566</span>
+              <img src="svg/peer-icon-gems.svg" alt="">
+              <span id="myAdsGemsEarned" class="bold xxl_font_size">0</span>
             </div>
           </div>
         </div>
         <div class="myAds_spendings">
-          <h2>Spendings</h2>
+          <h1>Spendings</h1>
           <div class="spendings_box header_box">
             <p>Tokens</p>
             <div class="ads_tokens_count">
               <img src="svg/logo_sw.svg" alt="">
-              <span class="bold xxl_font_size">2500</span>
+              <span id="myAdsTokensSpent" class="bold xxl_font_size">0</span>
             </div>
           </div>
         </div>
         <div class="myAds_interactions">
-          <h2>Interactions</h2>
+          <h1>Interactions</h1>
           <div class="interactions_box header_box">
             <div class="likes">
               <i class="peer-icon peer-icon-like"></i>
               <p>Likes</p>
-              <span class="bold xxl_font_size">300K</span>
+              <span id="myAdsLikes" class="bold xxl_font_size">0</span>
             </div>
             <div class="vr"></div>
             <div class="dislikes">
               <i class="peer-icon peer-icon-dislike"></i>
               <p>Dislikes</p>
-              <span class="bold xxl_font_size">1K</span>
+              <span id="myAdsDislikes" class="bold xxl_font_size">0</span>
             </div>
             <div class="vr"></div>
             <div class="comments">
               <i class="peer-icon peer-icon-comment-alt"></i>
               <p>Comments</p>
-              <span class="bold xxl_font_size">20K</span>
+              <span id="myAdsComments" class="bold xxl_font_size">0</span>
             </div>
             <div class="vr"></div>
             <div class="views">
-              <img src="svg/peer-icon-eye-open-large.svg" alt="">
+              <i class="peer-icon peer-icon-eye-open"></i>
               <p>Views</p>
-              <span class="bold xxl_font_size">566K</span>
+              <span id="myAdsViews" class="bold xxl_font_size">0</span>
             </div>
             <div class="vr"></div>
             <div class="reports">
-              <img src="svg/peer-icon-reports.svg" alt="">
+              <i class="peer-icon peer-icon-warning"></i>
               <p>Reports</p>
-              <span class="bold xxl_font_size">219</span>
+              <span id="myAdsReports" class="bold xxl_font_size">0</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="myAds_main"></div>
+      <div class="myAds_main">
+        <div class="top">
+          <h1 class="myAds_h1">All advertisements</h1>
+          <span>Total: <em id="myAdsTotalCount">0</em></span>
+        </div>
+        <div class="myAds_lists"></div>
+        <!-- Hidden expandable section for the advertisement listing -->
+          <!-- <div class="ad_dropdown none">
+            <div class="ad_dropdown_content">
+              <p>More details about this ad will appear here...</p>
+            </div>
+          </div> -->
+      </div>
     </main>
     <aside class="right-sidebar right-sidebar-profile"> 
       <div class="inner-scroll">
