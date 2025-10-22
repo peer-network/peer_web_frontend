@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return num.toString();
   }
 
-
   // Function to format date
   function formatDate(dateInput) {
     let date;
@@ -146,7 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <span class="detail_value">${startDate} <em> ${startTime} </em> </span>
                     </div>
                     <div class="detail_item">
-                        <span class="detail_title">Start date</span>
+                        <span class="detail_title">End date</span>
                         <span class="detail_value">${endDate} <em> ${endTime} </em> </span>
                     </div>
                     <div class="detail_item">
@@ -170,7 +169,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
     listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
 
-
     const imgElement = listItem.querySelector("img");
     imgElement.onerror = () => {
       imgElement.src = "svg/noname.svg";
@@ -193,54 +191,68 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // --- Countdown logic ---
-      const timerEl = listItem.querySelector('.ad_timer_count');
-      if (!timerEl) return;
+    const timerEl = listItem.querySelector('.ad_timer_count');
+    if (!timerEl) return;
 
-      const cleanedEnd = ad.timeframeEnd.replace(/\.\d+$/, '') + 'Z';
-      const endTimer = new Date(cleanedEnd).getTime();
-      let timerInterval; 
+    const cleanedEnd = ad.timeframeEnd.replace(/\.\d+$/, '') + 'Z';
+    const endTimer = new Date(cleanedEnd).getTime();
+    let timerInterval; 
 
-      const updateTimer = () => {
-        const now = new Date().getTime();
-        const remaining = endTimer - now;
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const remaining = endTimer - now;
 
-        if (active) {
-            timerEl.classList.add('active');
-        }
+      if (active) {
+          timerEl.classList.add('active');
+      }
 
-        if (remaining <= 0) {
-          clearInterval(timerInterval);
-          timerEl.textContent = '00 : 00 : 00';
-          timerEl.classList.remove('warning');
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        timerEl.textContent = '00 : 00 : 00';
+        timerEl.classList.remove('warning');
+        timerEl.classList.remove('active');
+        timerEl.classList.add('ended');
+        listItem.classList.remove('active');
+        listItem.classList.add('ended');
+        return;
+      }
+
+      if (remaining <= 60 * 60 * 1000) {
           timerEl.classList.remove('active');
-          timerEl.classList.add('ended');
-          listItem.classList.remove('active');
-          listItem.classList.add('ended');
-          return;
-        }
+          timerEl.classList.add('warning');
+      } 
 
-        if (remaining <= 60 * 60 * 1000) {
-            timerEl.classList.remove('active');
-            timerEl.classList.add('warning');
-        } 
+      const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+      const seconds = Math.floor((remaining / 1000) % 60);
 
-        const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((remaining / (1000 * 60)) % 60);
-        const seconds = Math.floor((remaining / 1000) % 60);
+      const formatted = `${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
+      timerEl.textContent = formatted;
+    };
 
-        const formatted = `${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
-        timerEl.textContent = formatted;
-
-      };
-
-      updateTimer();
-      timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
 
     return listItem;
   }
 
+  function showContent() {
+    const mainContainer = document.querySelector('.site-main-myAds');
+
+    mainContainer.classList.add('loaded');
+    
+    const listItems = document.querySelectorAll('.myAds_list_item');
+    listItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add('loaded');
+      }, index * 100);
+    });
+  }
+
   async function loadAdvertisementHistory() {
     const accessToken = getCookie("authToken");
+    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    const userId = payload.uid;
 
     const headers = new Headers({
       "Content-Type": "application/json",
@@ -249,7 +261,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const graphql = JSON.stringify({
       query: `query AdvertisementHistory {
-        advertisementHistory(offset: 0, limit: 20) {
+        advertisementHistory(offset: 0, limit: 20, filter: { userId: "${userId}" }, sort: NEWEST) {
           status
           ResponseCode
           affectedRows {
@@ -310,28 +322,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (result.data && result.data.advertisementHistory) {
         const stats = result.data.advertisementHistory.affectedRows.stats;
-
-        document.getElementById('myAdsGemsEarned').textContent = formatNumber(stats.gemsEarned);
-        document.getElementById('myAdsTokensSpent').textContent = formatNumber(stats.tokenSpent);
-        document.getElementById('myAdsLikes').textContent = formatNumber(stats.amountLikes);
-        document.getElementById('myAdsDislikes').textContent = formatNumber(stats.amountDislikes);
-        document.getElementById('myAdsComments').textContent = formatNumber(stats.amountComments);
-        document.getElementById('myAdsViews').textContent = formatNumber(stats.amountViews);
-        document.getElementById('myAdsReports').textContent = formatNumber(stats.amountReports);
-        document.getElementById('myAdsTotalCount').textContent = stats.amountAds;
-
         const advertisements = result.data.advertisementHistory.affectedRows.advertisements;
-        const myAdsListsContainer = document.querySelector('.myAds_lists');
+        const myADs = document.querySelector('.site-main-myAds');
         
         if (advertisements && advertisements.length > 0) {
+          document.getElementById('myAdsGemsEarned').textContent = formatNumber(stats.gemsEarned);
+          document.getElementById('myAdsTokensSpent').textContent = formatNumber(stats.tokenSpent);
+          document.getElementById('myAdsLikes').textContent = formatNumber(stats.amountLikes);
+          document.getElementById('myAdsDislikes').textContent = formatNumber(stats.amountDislikes);
+          document.getElementById('myAdsComments').textContent = formatNumber(stats.amountComments);
+          document.getElementById('myAdsViews').textContent = formatNumber(stats.amountViews);
+          document.getElementById('myAdsReports').textContent = formatNumber(stats.amountReports);
+          document.getElementById('myAdsTotalCount').textContent = stats.amountAds;
+
+          const myAdsListsContainer = document.querySelector('.myAds_lists');
           myAdsListsContainer.innerHTML = '';
           
           advertisements.forEach(ad => {
             const adElement = createAdListing(ad);
             myAdsListsContainer.appendChild(adElement);
           });
+
+          showContent();
         } else {
-          myAdsListsContainer.innerHTML = '<p class="no_ads">No advertisements found.</p>';
+          myADs.innerHTML = `
+            <h1 class="myAds_h1">My Ads</h1>
+            <div class="myAds_main">
+              <h1 class="myAds_h1">All advertisements</h1>
+              <div class="myAds_lists">
+                <div class="empty_state_container">
+                    <p class="empty_state_message">You haven't promoted any posts yet. Start your first promotion to see statistics</p>
+                    <a href="profile.php" class="button btn-white">Take me to my posts</a>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          myADs.classList.add('loaded');
         }
       }
     } catch (error) {

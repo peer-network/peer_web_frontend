@@ -2,7 +2,80 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
+
+.site-main-myAds.loaded {
+  opacity: 1;
+}
+
+/* Hide header and main sections initially */
+#myAds_header,
+.myAds_main {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.site-main-myAds.loaded #myAds_header,
+.site-main-myAds.loaded .myAds_main {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.site-main-myAds.loaded .myAds_main h1 {
+  color: var(--white-opacity-50);
+}
+
+/* List items stagger animation */
+.myAds_list_item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.myAds_list_item.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Empty state styling */
+
+.empty_state_container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  gap: 20px;
+}
+
+.empty_state_message {
+  color: var(--white-opacity-50);
+}
+
+.empty_state_container .button.btn-white {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.empty_state_container .button.btn-white::after {
+  content: "";
+  display: inline-block;
+  background-image: url(../svg/ads-arrow-right.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 15px;
+}
+
+.empty_state_container .button.btn-white:hover::after {
+  filter: brightness(0) invert(1);
+}
+
 
 .myAds_header {
   display: flex;
@@ -486,6 +559,11 @@
 
   .ad_timer_count {
     font-size: 21px;
+  }
+
+  .empty_state_container .button.btn-white::after {
+    width: 30px;
+    height: 30px;
   }
 
 }
