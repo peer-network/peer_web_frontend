@@ -8,7 +8,6 @@ video-editor/*
 *.tmp
 error.txt
 .DS_Store
-.github
 sw_instal.js
 sw_instal.min.js
 sw-db.js
