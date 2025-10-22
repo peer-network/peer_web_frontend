@@ -58,39 +58,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ----------------- Insert Pinned Button in Opened Post -----------------
-  // function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
-  //   const viewpost = document.querySelector(".viewpost");
-  //   if (!viewpost) return;
+  function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
+    const viewpost = document.querySelector(".viewpost");
+    if (!viewpost) return;
 
-  //   const pinnedBtn = document.createElement("div");
-  //   pinnedBtn.classList.add("pinedbtn");
-  //   pinnedBtn.innerHTML = `
-  //     <a class="button btn-blue">
-  //       <img src="svg/pin.svg" alt="pin">
-  //       <span class="ad_username bold">@${username}</span>
-  //       <span class="ad_duration txt-color-gray">23h</span>
-  //     </a>
-  //   `;
+    const pinnedBtn = document.createElement("div");
+    pinnedBtn.classList.add("pinedbtn");
+    pinnedBtn.innerHTML = `
+      <a class="button btn-blue">
+        <img src="svg/pin.svg" alt="pin">
+        <span class="ad_username bold">@${username}</span>
+        <span class="ad_duration txt-color-gray">23h</span>
+      </a>
+    `;
 
-  //   const footer = viewpost.querySelector(".postview_footer");
-  //   const comments = viewpost.querySelector(".post-comments");
-  //   const postInhalt = card.querySelector(".post-inhalt");
-  //   const social = card.querySelector(".social");
+    const footer = viewpost.querySelector(".postview_footer");
+    const comments = viewpost.querySelector(".post-comments");
+    const postInhalt = card.querySelector(".post-inhalt");
+    const social = card.querySelector(".social");
 
-  //   if (!footer || footer.querySelector(".pinedbtn")) return;
+    if (!footer || footer.querySelector(".pinedbtn")) return;
 
-  //   if (mode === "post") {
-  //     if (footer && comments) {
-  //       comments.insertAdjacentElement("afterend", pinnedBtn);
-  //     }
-  //   }
+    if (mode === "post") {
+      if (footer && comments) {
+        comments.insertAdjacentElement("afterend", pinnedBtn);
+      }
+    }
 
-  //   if (mode === "profile") {
-  //     if (postInhalt && social) {
-  //       postInhalt.insertBefore(pinnedBtn, social);
-  //     }
-  //   }
-  // }
+    if (mode === "profile") {
+      if (postInhalt && social) {
+        postInhalt.insertBefore(pinnedBtn, social);
+      }
+    }
+  }
 
   // ----------------- Mark Card as Boosted -----------------
   // function markCardAsBoosted(card) {
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // markCardAsBoosted(window.lastBoostedCard);
 
         window.lastBoostedCard.click();
-        // insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
+        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
       }
     }
 
@@ -185,38 +185,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // function attachWrapperListeners() {
-  //   const cards = listPosts.querySelectorAll(".card");
-  //   cards.forEach((card, i) => {
-  //     if (!card.dataset.listenersAdded) {
-  //       card.addEventListener(
-  //         "click",
-  //         function (e) {
-  //           if (listPosts.classList.contains("boostActive")) {
-  //             e.stopImmediatePropagation();
-  //             postid = this.id;
-  //             if (!card.classList.contains("boosted")) boostCardClick(card);
+  function attachWrapperListeners() {
+    const cards = listPosts.querySelectorAll(".card");
+    cards.forEach((card, i) => {
+      if (!card.dataset.listenersAdded) {
+        card.addEventListener(
+          "click",
+          function (e) {
+            if (listPosts.classList.contains("boostActive")) {
+              e.stopImmediatePropagation();
+              postid = this.id;
+              if (!card.classList.contains("boosted")) boostCardClick(card);
 
-  //             // if (card.classList.contains("boosted")) {
-  //               // markCardAsBoosted(card);
-  //               // card.classList.add("flipped");
+              // if (card.classList.contains("boosted")) {
+                // markCardAsBoosted(card);
+                // card.classList.add("flipped");
 
-  //               // setTimeout(() => {
-  //               //   card.classList.remove("flipped");
-  //               // }, 2000);
-  //             // } else {
-  //             //   boostCardClick(card);
-  //             // }
+                // setTimeout(() => {
+                //   card.classList.remove("flipped");
+                // }, 2000);
+              // } else {
+              //   boostCardClick(card);
+              // }
             
-  //           }
-  //         }, {
-  //           capture: true
-  //         }
-  //       );
-  //       card.dataset.listenersAdded = true;
-  //     }
-  //   });
-  // }
+            }
+          }, {
+            capture: true
+          }
+        );
+        card.dataset.listenersAdded = true;
+      }
+    });
+  }
 
   // ----------------- Promote / Cancel Buttons -----------------
   if (promoteBtn) {
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
       boostPostDescription.classList.remove("none");
       adsStats.classList.add('none');
 
-      // attachWrapperListeners();
+      attachWrapperListeners();
       hideAdCards();
     });
   }
