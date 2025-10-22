@@ -178,42 +178,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showAdCards() {
     const cards = listPosts.querySelectorAll(".card");
+    console.log('POSTS ', POSTS)
     cards.forEach((card, i) => {
       const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
       if (isAd) card.classList.remove('none');
     });
   }
 
-  function attachWrapperListeners() {
-    const cards = listPosts.querySelectorAll(".card");
-    cards.forEach((card, i) => {
-      if (!card.dataset.listenersAdded) {
-        card.addEventListener(
-          "click",
-          function (e) {
-            if (listPosts.classList.contains("boostActive")) {
-              e.stopImmediatePropagation();
-              postid = this.id;
-              if (card.classList.contains("boosted")) {
-                // markCardAsBoosted(card);
-                // card.classList.add("flipped");
+  // function attachWrapperListeners() {
+  //   const cards = listPosts.querySelectorAll(".card");
+  //   cards.forEach((card, i) => {
+  //     if (!card.dataset.listenersAdded) {
+  //       card.addEventListener(
+  //         "click",
+  //         function (e) {
+  //           if (listPosts.classList.contains("boostActive")) {
+  //             e.stopImmediatePropagation();
+  //             postid = this.id;
+  //             if (!card.classList.contains("boosted")) boostCardClick(card);
 
-                // setTimeout(() => {
-                //   card.classList.remove("flipped");
-                // }, 2000);
-              } else {
-                boostCardClick(card);
-              }
-            }
-          }, {
-            capture: true
-          }
-        );
-        card.dataset.listenersAdded = true;
-      }
-    });
-  }
+  //             // if (card.classList.contains("boosted")) {
+  //               // markCardAsBoosted(card);
+  //               // card.classList.add("flipped");
 
+  //               // setTimeout(() => {
+  //               //   card.classList.remove("flipped");
+  //               // }, 2000);
+  //             // } else {
+  //             //   boostCardClick(card);
+  //             // }
+            
+  //           }
+  //         }, {
+  //           capture: true
+  //         }
+  //       );
+  //       card.dataset.listenersAdded = true;
+  //     }
+  //   });
+  // }
 
   // ----------------- Promote / Cancel Buttons -----------------
   if (promoteBtn) {
@@ -224,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
       boostPostDescription.classList.remove("none");
       adsStats.classList.add('none');
 
-      attachWrapperListeners();
+      // attachWrapperListeners();
       hideAdCards();
     });
   }
