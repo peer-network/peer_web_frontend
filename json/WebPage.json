@@ -1,0 +1,49 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://peerapp.de/#website",
+      "url": "https://peerapp.de/",
+      "name": "Peernetwork",
+      "description": "Socialmedia Platform",
+      "publisher": {
+        "@id": "https://peerapp.de/#Peer"
+      },
+      "image": {
+        "@id": "https://peerapp.de/#logo"
+      },
+      "inLanguage": "de-DE"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://peerapp.de/#webpage",
+      "url": "https://peerapp.de/",
+      "name": "Peernetwork",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://peerapp.de/#website"
+      },
+      "about": {
+        "@type": "Organization",
+        "@id": "https://peerapp.de/#Peer"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "@id": "https://peerapp.de/#logo"
+      },
+      "datePublished": "2021-04-01T08:35:59+00:00",
+      "dateModified": "<?php echo $modified; ?>",
+      "description": "Peernetwork Social Media",
+      "inLanguage": "de-DE",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": [
+            "https://peerapp.de"
+          ]
+        }
+      ]
+    }
+  ]
+}

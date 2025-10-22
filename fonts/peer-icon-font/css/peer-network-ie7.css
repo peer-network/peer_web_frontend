@@ -1,0 +1,85 @@
+[class^="peer-icon-"], [class*=" peer-icon-"] {
+  font-family: 'peer-network';
+  font-style: normal;
+  font-weight: normal;
+
+  /* fix buttons height */
+  line-height: 1em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+}
+
+.peer-icon-angle-small-right { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe800;&nbsp;'); }
+.peer-icon-wallet-filled { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe801;&nbsp;'); }
+.peer-icon-comment-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe802;&nbsp;'); }
+.peer-icon-play-btn { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe803;&nbsp;'); }
+.peer-icon-user { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe804;&nbsp;'); }
+.peer-icon-eighteen-plus { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe805;&nbsp;'); }
+.peer-icon-wallet { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe806;&nbsp;'); }
+.peer-icon-setting { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe807;&nbsp;'); }
+.peer-icon-eye-open { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe808;&nbsp;'); }
+.peer-icon-eye-close { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe809;&nbsp;'); }
+.peer-icon-tick-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80a;&nbsp;'); }
+.peer-icon-lock { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80b;&nbsp;'); }
+.peer-icon-envelope { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80c;&nbsp;'); }
+.peer-icon-warning { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80d;&nbsp;'); }
+.peer-icon-referral { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80e;&nbsp;'); }
+.peer-icon-copy-alt { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80f;&nbsp;'); }
+.peer-icon-cross-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe810;&nbsp;'); }
+.peer-icon-email-password { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe811;&nbsp;'); }
+.peer-icon-refresh { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe812;&nbsp;'); }
+.peer-icon-good-tick-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe813;&nbsp;'); }
+.peer-icon-exclamation-sign { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe814;&nbsp;'); }
+.peer-icon-home { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe815;&nbsp;'); }
+.peer-icon-filter { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe816;&nbsp;'); }
+.peer-icon-setting-filled { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe817;&nbsp;'); }
+.peer-icon-help-filled { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe818;&nbsp;'); }
+.peer-icon-help { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe819;&nbsp;'); }
+.peer-icon-sort { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81a;&nbsp;'); }
+.peer-icon-collapse { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81b;&nbsp;'); }
+.peer-icon-like { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81c;&nbsp;'); }
+.peer-icon-dislike { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81d;&nbsp;'); }
+.peer-icon-like-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81e;&nbsp;'); }
+.peer-icon-share { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81f;&nbsp;'); }
+.peer-icon-save-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe820;&nbsp;'); }
+.peer-icon-text { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe821;&nbsp;'); }
+.peer-icon-newpost-filled { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe822;&nbsp;'); }
+.peer-icon-play-alt { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe823;&nbsp;'); }
+.peer-icon-dislike-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe824;&nbsp;'); }
+.peer-icon-comment-alt { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe825;&nbsp;'); }
+.peer-icon-comment-dot { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe826;&nbsp;'); }
+.peer-icon-audio { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe827;&nbsp;'); }
+.peer-icon-newpost { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe828;&nbsp;'); }
+.peer-icon-camera { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe829;&nbsp;'); }
+.peer-icon-content { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe82a;&nbsp;'); }
+.peer-icon-most { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe82b;&nbsp;'); }
+.peer-icon-multi-user { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe82c;&nbsp;'); }
+.peer-icon-time { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe82d;&nbsp;'); }
+.peer-icon-angle-small-down { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe82e;&nbsp;'); }
+.peer-icon-angle-small-up { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe82f;&nbsp;'); }
+.peer-icon-edit-pencil { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe830;&nbsp;'); }
+.peer-icon-plus { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe831;&nbsp;'); }
+.peer-icon-cancel { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe832;&nbsp;'); }
+.peer-icon-arrow-left-bold { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe833;&nbsp;'); }
+.peer-icon-arrow-down-bold { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe834;&nbsp;'); }
+.peer-icon-arrow-up-bold { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe835;&nbsp;'); }
+.peer-icon-arrow-right-bold { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe836;&nbsp;'); }
+.peer-icon-megaphone { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe837;&nbsp;'); }
+.peer-icon-megaphone-alt { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe838;&nbsp;'); }
+.peer-icon-pinpost { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe839;&nbsp;'); }
+.peer-icon-arrow-right { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe83a;&nbsp;'); }
+.peer-icon-arrow-left { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe83b;&nbsp;'); }
+.peer-icon-arrow-down { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe83c;&nbsp;'); }
+.peer-icon-arrow-up { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe83d;&nbsp;'); }
+.peer-icon-exit { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe83e;&nbsp;'); }
+.peer-icon-refresh-alt { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe83f;&nbsp;'); }
+.peer-icon-share-link { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe840;&nbsp;'); }
+.peer-icon-analysis { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe841;&nbsp;'); }
+.peer-icon-download { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe842;&nbsp;'); }
+.peer-icon-add-circle { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe843;&nbsp;'); }
+.peer-icon-ad { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe844;&nbsp;'); }
+.peer-icon-save-disk { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe845;&nbsp;'); }
+.peer-icon-btc { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe846;&nbsp;'); }
+.peer-icon-paste { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe847;&nbsp;'); }
+.peer-icon-home-alt { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe848;&nbsp;'); }
