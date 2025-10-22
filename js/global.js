@@ -2429,6 +2429,19 @@ function eraseCookie(name) {
 
 scheduleSilentRefresh(accessToken, refreshToken);
 
+// Back button functionality
+const backBtn = document.querySelector(".general_backBtn");
+if (backBtn) {
+  backBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (document.referrer) {
+          window.location.href = document.referrer;
+      } else {
+          window.history.back();
+      }
+  });
+}
+
   // ----------------- Insert Pinned Button -----------------
   window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
     if (!card) return;

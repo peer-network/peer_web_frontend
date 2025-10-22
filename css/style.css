@@ -280,6 +280,28 @@ html input[disabled] {
 	cursor: default;
 }
 
+.widget.widget-back-button {
+  margin-bottom: 0;
+  max-width: 100%;
+  transition: all 0.3s linear;
+}
+
+.general_backBtn::before {
+  content: "";
+  display: inline-block;
+  background-image: url(../svg/back-arrow.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 15px;
+}
+
+.general_backBtn:hover::before {
+  filter: brightness(0) invert(0);
+}
+
 .txt-color-white {
 	color: var(--white, #fff);
 }

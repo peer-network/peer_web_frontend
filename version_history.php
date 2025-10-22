@@ -43,9 +43,7 @@ checkAuth("unauthorized");
                 <!-- Load sidebar widgets -->
                 <?php //require_once ('./template-parts/sidebars/widget-filter.php'); ?>
                 <?php //require_once ('./template-parts/sidebars/widget-daily-action.php'); ?>
-                <div id="version_history_backBtn" class="version_history_backBtn">
-                    <a href="#" class="button btn-transparent">Back</a>
-                </div>
+                <?php require_once ('./template-parts/sidebars/widget-back-button.php'); ?>
             </div>
           </aside>
         

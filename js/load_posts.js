@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded",  () => {
 
   function initCollapseViewToggle() {
     const collapseBtn = document.querySelector(".collapse-filters");
-    const collapsibleBtns = document.querySelectorAll('button[aria-controls="content-options"], ' + 'button[aria-controls="feed-options"], ' + 'button[aria-controls="time-options"], ' + 'button[aria-controls="sort-options"]');
+    const collapsibleBtns = document.querySelectorAll('button[aria-controls="content-options"], ' + 'button[aria-controls="feed-options"], ' + 'button[aria-controls="time-options"], ' + 'button[aria-controls="sort-options"], ' + 'button[aria-controls="general-backbtn"]');
     if (collapseBtn) {
       const siteLayout = document.querySelector(".site_layout");
       let isCollapsed = false;
