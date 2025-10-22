@@ -7,7 +7,7 @@ video-editor/*
 *.html
 *.tmp
 error.txt
-
+.DS_Store
 setup-hooks.sh
 gitleaks.toml
 Readme_gitleaks.md
