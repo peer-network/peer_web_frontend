@@ -134,7 +134,7 @@ include 'host.php';
                     </div>
 
                      <!-- Step 3: New password Form -->
-                    <div class="form-step" id="newpasswordStep" data-step="2">
+                    <div class="form-step" id="newpasswordStep" data-step="3">
                         <div class="step-header">
                             <h2 class="x_large_font">Enter new password</h2>
                             
