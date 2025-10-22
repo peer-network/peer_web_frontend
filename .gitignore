@@ -9,11 +9,6 @@ video-editor/*
 error.txt
 .DS_Store
 .github
-setup-hooks.sh
-gitleaks.toml
-.githooks
-Readme_gitleaks.md
-setup-hooks.sh
 sw_instal.js
 sw_instal.min.js
 sw-db.js
