@@ -653,7 +653,7 @@ class AccessibleRegistrationForm {
         }, 3000);
     }
     async verifyReferralCode(referralString) {
-        const accessToken = getCookie("authToken");
+        // const accessToken = getCookie("authToken");
 
         /*const isValid = this.validators.referralCode.regex.test(referralString);
              
@@ -664,7 +664,7 @@ class AccessibleRegistrationForm {
 
         const headers = new Headers({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            // Authorization: `Bearer ${accessToken}`,
         });
 
         const graphql = JSON.stringify({
