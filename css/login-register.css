@@ -11,6 +11,7 @@
     --Red-Accent: #FF3B3B;
     --Green-Accent: #AAFF67;
     --Dark-Inactive: #323232;
+    --bg-filter: hsla(0, 0%, 19%, 1);
 
     --gradient1: hsl(195, 100%, 55%);
     --gradient2: hsl(220, 72%, 56%);
@@ -317,9 +318,9 @@ label {
     display: flex;
     align-items: center;
     padding: 0 50px;
-    border: 2px solid var(--White-primary);
+    border: 2px solid var(--bg-filter);
     border-radius: 75px;
-    background: var(--White-primary, #FFF);
+    background: var(--bg-filter);
     transition: all 0.3s ease;
 }
 
@@ -422,12 +423,12 @@ input[type="password"] {
     background: transparent;
     font-size: inherit;
     line-height: 110px;
-    color: var(--Black);
+    color: var(--White-primary);
     outline: none;
 }
 
 input::placeholder {
-    color: var(--Dark-gray);
+    color: var(--White-secondary);
 }
 
 .already_register {
@@ -608,7 +609,7 @@ a.back-btn {
 .btn-primary {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), var(--Blue, #0069FF);
     border: 0;
-    color: var(--White-primary);
+    color: var(--White-secondary);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -652,11 +653,11 @@ a.back-btn {
 
 
 .referral-code-display {
-    background: var(--White-primary);
+    background: var(--bg-filter);
     padding: 0 50px;
     border-radius: 75px;
     display: flex;
-    color: var(--Black);
+    color: var(--White-secondary);
     font-weight: 400;
     align-items: center;
     gap: 20px;
@@ -799,7 +800,7 @@ a.back-btn {
 .footer_area a {
     color: var(--White-primary);
     text-decoration: underline;
-
+    opacity: 0;
 }
 
 .footer_area a:hover {
