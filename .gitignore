@@ -8,11 +8,9 @@ video-editor/*
 *.tmp
 error.txt
 .DS_Store
-setup-hooks.sh
-gitleaks.toml
-Readme_gitleaks.md
-setup-hooks.sh
+.github
 sw_instal.js
+sw_instal.min.js
 sw-db.js
 sw.js
 sw.min.js
