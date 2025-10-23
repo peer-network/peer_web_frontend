@@ -2994,6 +2994,9 @@ footer {
   color: var(--white);
 }
 .pinedbtn .button span.ad_username {
-	
-	font-style: italic;
+  font-style: italic;
 }
+
+.error {
+  color: var(--red-accent, #FF3B3B);
+};

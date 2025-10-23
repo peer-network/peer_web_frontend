@@ -320,6 +320,8 @@ async function currentliquidity(targetId = "token") {
     if (moneyEl) {
       moneyEl.innerText = formatted;
     }
+
+    return token;
   }
 }
 
