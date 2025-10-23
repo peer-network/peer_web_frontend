@@ -43,7 +43,7 @@
     <form class="filterContainer">
         
         <!-- Feed Filter -->
-        <section class="filter-section">
+        <section class="filter-section none">
             <button type="button" class="feed filter-toggle filter-section-header" aria-expanded="false" aria-controls="feed-options">
                 <img src="svg/feed-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">
@@ -65,18 +65,17 @@
                         <input type="radio" name="feed" value="following">
                         <span>Following</span>
                     </label>
-                    <label class="filter-btn">
+                    <!--<label class="filter-btn">
                         <input type="radio" name="feed" value="peers">
                         <span class="peers">peers</span>
-                    </label>
+                    </label>-->
                 </div>
             </div>
         </section>
     </form>
     <form class="filterContainer">
-
         <!-- Time Filter -->
-        <section class="filter-section">
+        <section class="filter-section none">
             <button type="button" class="time filter-toggle filter-section-header" aria-expanded="false" aria-controls="time-options">
                 <img src="svg/time-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">

@@ -3,8 +3,16 @@ let likeCost = 0.3,
   dislikeCost = 0.5,
   commentCost = 0.05,
   postCost = 2;
-const baseUrl = `${location.protocol}//${location.host}/`;
 
+
+let baseUrl;
+
+if (location.hostname === "localhost") {
+  baseUrl = `${location.origin}${location.pathname.split('/')[1] ? '/' + location.pathname.split('/')[1] + '/' : '/'}`;
+} else {
+  baseUrl = `${location.origin}/`;
+}
+//console.log(baseUrl);
 // below variable used in wallet module
 // need to declare in global scope
 let storedUserInfo, balance = null;
@@ -312,6 +320,8 @@ async function currentliquidity(targetId = "token") {
     if (moneyEl) {
       moneyEl.innerText = formatted;
     }
+
+    return token;
   }
 }
 
@@ -415,7 +425,7 @@ function postdetail(objekt, CurrentUserID) {
 
   const postContainer = document.getElementById("viewpost-container");
   const shareLinkBox = document.getElementById("share-link-box");
-  const shareUrl = window.location.origin + "/post/" + objekt.id;
+  const shareUrl = baseUrl + "post/" + objekt.id;
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -449,6 +459,29 @@ function postdetail(objekt, CurrentUserID) {
 
   const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
   shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
+
+
+ let shareAnchor = postContainer.querySelector(".sharelinks a.share");
+  // remove old listeners - > element clone 
+  const newshareAnchor = shareAnchor.cloneNode(true);
+  shareAnchor.parentNode.replaceChild(newshareAnchor, shareAnchor);
+  shareAnchor = newshareAnchor;
+
+
+  shareAnchor.addEventListener("click", (e) => {
+    e.preventDefault();
+      const sharebox=document.getElementById('share-link-box');
+      sharebox.classList.add('active');
+   
+  });
+  const shareClose=document.getElementById('closeSharebox');
+  shareClose.addEventListener("click", (e) => {
+    e.preventDefault();
+      const sharebox=document.getElementById('share-link-box');
+      sharebox.classList.remove('active');
+   
+  });
+  
 
   let donwloadAnchor = postContainer.querySelector(".more a.download");
   // remove old listeners - > element clone 
@@ -522,6 +555,9 @@ function postdetail(objekt, CurrentUserID) {
 
   const post_userImg = postContainer.querySelector(".post-userImg");
   post_userImg.src = user_img_src;
+  post_userImg.onerror = function () {
+    this.src = `${baseUrl}svg/noname.svg`;
+  };
 
   const followButton = renderFollowButton(objekt, UserID);
 
@@ -735,6 +771,37 @@ function postdetail(objekt, CurrentUserID) {
         updateSlider(index);
       });
     });
+    // Swipe logic
+      let startX = 0;
+      let endX = 0;
+
+      sliderTrack.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchmove", (e) => {
+        endX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchend", () => {
+        const diff = startX - endX;
+        const threshold = 50;
+
+        if (Math.abs(diff) > threshold) {
+          const totalSlides = sliderTrack.children.length;
+
+          if (diff > 0) {
+            currentIndex = (currentIndex + 1) % totalSlides; // Next
+          } else {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+          }
+
+          updateSlider(currentIndex);
+        }
+
+        startX = 0;
+        endX = 0;
+      });
 
   } else if (objekt.contenttype === "text") {
     if (containerleft && post_contentright) {
@@ -838,7 +905,16 @@ function postdetail(objekt, CurrentUserID) {
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
-      let currentIndex = 0;
+     
+
+      imageSrcArray.push(src);
+      // Open modal on click
+      zoomElement.addEventListener("click", () => {
+        openSliderModal(imageSrcArray, index);
+      });
+    });
+
+     let currentIndex = 0;
 
       function updateSlider(index) {
         currentIndex = index;
@@ -864,12 +940,40 @@ function postdetail(objekt, CurrentUserID) {
         });
       });
 
-      imageSrcArray.push(src);
-      // Open modal on click
-      zoomElement.addEventListener("click", () => {
-        openSliderModal(imageSrcArray, index);
+       
+
+      // Swipe logic
+      let startX = 0;
+      let endX = 0;
+
+      sliderTrack.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
       });
-    });
+
+      sliderTrack.addEventListener("touchmove", (e) => {
+        endX = e.touches[0].clientX;
+      });
+
+      sliderTrack.addEventListener("touchend", () => {
+        const diff = startX - endX;
+        const threshold = 50;
+
+        if (Math.abs(diff) > threshold) {
+          const totalSlides = sliderTrack.children.length;
+
+          if (diff > 0) {
+            currentIndex = (currentIndex + 1) % totalSlides; // Next
+          } else {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
+          }
+
+          updateSlider(currentIndex);
+        }
+
+        startX = 0;
+        endX = 0;
+      });
+
   }
 
   /*const title = document.getElementById("comment-title");
@@ -1075,57 +1179,110 @@ function forceDownload(url) {
 
 }
 
+// ============================================
+// GLOBAL.JS - Follow Button Renderer
+// ============================================
+
+/**
+ * Renders a follow button for a single post/profile
+ * @param {Object} objekt - Object containing user data
+ * @param {string|null} currentUserId - Current logged-in user's ID
+ * @returns {HTMLButtonElement|null} Follow button element or null
+ */
 function renderFollowButton(objekt, currentUserId) {
-  if (objekt.user.id === currentUserId || currentUserId == null) return null;
+  if (!objekt?.user?.id || objekt.user.id === currentUserId || !currentUserId) {
+    return null;
+  }
 
   const followButton = document.createElement("button");
   followButton.classList.add("follow-button");
+  followButton.dataset.userid = objekt.user.id;
 
-  const followerCountSpan = document.getElementById("following");
+  updateFollowButtonState(followButton, objekt.user.isfollowed, objekt.user.isfollowing);
 
-  // Check for peer status initially
-  if (objekt.user.isfollowed && objekt.user.isfollowing) {
-    followButton.classList.add("following");
-    followButton.textContent = "Peer";
-  } else if (objekt.user.isfollowed) {
-    followButton.classList.add("following");
-    followButton.textContent = "Following";
-  } else {
-    followButton.textContent = "Follow +";
-  }
-
-  followButton.addEventListener("click", async function (event) {
+  followButton.addEventListener("click", async (event) => {
     event.stopPropagation();
     event.preventDefault();
+    
+    await handleFollowButtonClick(followButton, objekt.user);
+  });
 
-    const newStatus = await toggleFollowStatus(objekt.user.id);
+  return followButton;
+}
+
+/**
+ * Updates follow button visual state
+ * @param {HTMLButtonElement} button - Button element to update
+ * @param {boolean} isfollowed - Whether current user follows this user
+ * @param {boolean} isfollowing - Whether this user follows current user
+ */
+function updateFollowButtonState(button, isfollowed, isfollowing) {
+  button.classList.remove("Peer", "btn-blue", "following", "btn-white", "follow", "btn-transparent");
+
+  if (isfollowed && isfollowing) {
+    button.classList.add("Peer", "btn-blue");
+    button.textContent = "Peer";
+    button.setAttribute("aria-label", "Mutual followers");
+  } else if (isfollowed) {
+    button.classList.add("following", "btn-white");
+    button.textContent = "Following";
+    button.setAttribute("aria-label", "You follow this user");
+  } else {
+    button.classList.add("follow", "btn-transparent");
+    button.textContent = "Follow +";
+    button.setAttribute("aria-label", "Follow this user");
+  }
+}
+
+/**
+ * Handles follow button click
+ * @param {HTMLButtonElement} button - Button that was clicked
+ * @param {Object} user - User object
+ */
+async function handleFollowButtonClick(button, user) {
+  button.disabled = true;
+
+  try {
+    const newStatus = await toggleFollowStatus(user.id);
 
     if (newStatus !== null) {
-      objekt.user.isfollowed = newStatus;
-
-      const isfollowed = objekt.user.isfollowed;
-      const isfollowing = objekt.user.isfollowing;
-
-      if (followerCountSpan) {
-        let count = parseInt(followerCountSpan.textContent, 10) || 0;
-        count = newStatus ? count + 1 : Math.max(0, count - 1);
-        followerCountSpan.textContent = count;
-      }
-
-      followButton.classList.toggle("following", isfollowed);
-
-      if (isfollowed && isfollowing) {
-        followButton.textContent = "Peer";
-      } else if (isfollowed) {
-        followButton.textContent = "Following";
-      } else {
-        followButton.textContent = "Follow +";
-      }
+      user.isfollowed = newStatus;
+      updateFollowButtonState(button, user.isfollowed, user.isfollowing);
+      updateFollowingCount(newStatus);
     } else {
-      alert("Failed to update follow status. Please try again.");
+      showError("Failed to update follow status. Please try again.");
     }
-  });
-  return followButton;
+  } catch (error) {
+    console.error("Error toggling follow status:", error);
+    showError("An error occurred. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+/**
+ * Updates the following count in the UI
+ * @param {boolean} isFollowing - Whether user is now being followed
+ */
+function updateFollowingCount(isFollowing) {
+  const followerCountSpan = document.getElementById("following");
+  if (!followerCountSpan) return;
+
+  let count = parseInt(followerCountSpan.textContent, 10) || 0;
+  count = isFollowing ? count + 1 : Math.max(0, count - 1);
+  followerCountSpan.textContent = count;
+}
+
+/**
+ * Shows error message (replace with your error notification system)
+ * @param {string} message - Error message to display
+ */
+function showError(message) {
+  if (typeof Merror === "function") {
+    Merror(message);
+  } else {
+    alert(message);
+  }
 }
 
 function redirectToProfile(userProfileID) {
@@ -1246,15 +1403,16 @@ function commentToDom(c, append = true) {
   img.classList.add("profile-picture");
   img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
   img.alt = "user image";
-  // img.onerror = function () {
-  //   // this.src = "svg/noname.svg";
-  // };
+  img.onerror = function () {
+    this.src = `${baseUrl}svg/noname.svg`;
+  };
 
   img.addEventListener("click", function handledisLikeClick(event) {
     event.stopPropagation();
     event.preventDefault();
     if (userID && userID !== "") {
-      redirectToProfile(c, this);
+      // redirectToProfile(c, this);
+      redirectToProfile(c.userid);
     }
   });
 
@@ -1315,12 +1473,12 @@ function commentToDom(c, append = true) {
       this.classList.add('none')
       hideReply.classList.remove("none");
       
-      fetchChildComments(c.commentid).then((result) => {
-        if (!result) return;
-        result.slice().forEach(function (c2) {
-          commentToDom(c2, true);
-        });
-      });
+      // fetchChildComments(c.commentid).then((result) => {
+      //   if (!result) return;
+      //   result.slice().forEach(function (c2) {
+      //     commentToDom(c2, true);
+      //   });
+      // });
     });
 
 
@@ -1342,7 +1500,7 @@ function commentToDom(c, append = true) {
   likeContainer.classList.add("comment_like", "md_font_size");
 
   const likeIcon = document.createElement("i");
-  likeIcon.classList.add("fi", "fi-rr-heart");
+  likeIcon.classList.add("peer-icon", "peer-icon-like");
   likeContainer.appendChild(likeIcon);
 
   const spanLike = document.createElement("span");
@@ -1698,88 +1856,136 @@ async function getUserInfo() {
 
 // function to render users in the modal
 // used in list_follow.js and posts.js for rendering followers and following lists
+// ============================================
+// GLOBAL.JS - User List Renderer
+// ============================================
+
+/**
+ * Renders a list of users in a container
+ * @param {Array} users - Array of user objects
+ * @param {HTMLElement} container - Container element to render users into
+ */
 function renderUsers(users, container) {
   container.innerHTML = "";
-  const avatar = "https://media.getpeer.eu";
   const currentUserId = getCookie("userID");
 
+  if (!users || users.length === 0) {
+    container.innerHTML = "<p>No users found.</p>";
+    return;
+  }
+
   users.forEach(user => {
-    const item = document.createElement("div");
-    item.className = "dropdown-item clickable-user";
-    item.innerHTML = `
-      <div class="profilStats">
-        <img src="${avatar}/${user.img}" alt="${user.username}" />
-        <div class="user_info">
-          <span class="user_name">${user.username}</span>  <span class="user_slug">#${user.slug}</span>
-        </div>
+    const userItem = createUserItem(user, currentUserId);
+    container.appendChild(userItem);
+  });
+}
+
+/**
+ * Creates a single user item element
+ * @param {Object} user - User data object
+ * @param {string} currentUserId - Current logged-in user's ID
+ * @returns {HTMLElement} User item element
+ */
+function createUserItem(user, currentUserId) {
+  const userId = user.id || user.userid;
+  const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
+
+  const item = document.createElement("div");
+  item.className = "dropdown-item clickable-user";
+  item.innerHTML = `
+    <div class="profilStats">
+      <img src="${userimg}" alt="${user.username || 'User'}" />
+      <div class="user_info">
+        <span class="user_name">${user.username || 'Unknown'}</span>
+        <span class="user_slug">#${user.slug || 'unknown'}</span>
       </div>
-    `;
+    </div>
+  `;
 
-    item.querySelector("img").onerror = () => {
-      item.querySelector("img").src = "svg/noname.svg";
-    };
+  const imgElement = item.querySelector("img");
+  imgElement.onerror = () => {
+    imgElement.src = "svg/noname.svg";
+  };
 
-    item.addEventListener("click", () => {
-      window.location.href = `view-profile.php?user=${user.id || user.userid}`;
-    });
+  item.addEventListener("click", () => {
+    window.location.href = `view-profile.php?user=${userId}`;
+  });
 
-    if ((user.id || user.userid) !== currentUserId) {
-      const followButton = document.createElement("button");
-      followButton.classList.add("follow-button");
-      followButton.dataset.userid = user.id || user.userid;
+  // Add follow button if not viewing own profile
+  if (userId !== currentUserId) {
+    const followButton = createModalFollowButton(user, currentUserId);
+    item.appendChild(followButton);
+  }
 
-      if (user.isfollowed && user.isfollowing) {
-        followButton.textContent = "Peer";
-        followButton.classList.add("following", "peer");
-      } else if (user.isfollowed) {
-        followButton.textContent = "Following";
-        followButton.classList.add("following", "just-following");
-      } else {
-        followButton.textContent = "Follow +";
-      }
+  return item;
+}
 
-      followButton.addEventListener("click", async (event) => {
-        event.stopPropagation();
-        event.preventDefault();
+/**
+ * Creates a follow button for modal user lists
+ * @param {Object} user - User data object
+ * @param {string} currentUserId - Current logged-in user's ID
+ * @returns {HTMLButtonElement} Follow button element
+ */
+function createModalFollowButton(user, currentUserId) {
+  const userId = user.id || user.userid;
+  const followButton = document.createElement("button");
+  followButton.classList.add("follow-button");
+  followButton.dataset.userid = userId;
 
-        const targetUserId = user.id || user.userid;
-        const newStatus = await toggleFollowStatus(user.id || user.userid);
+  // Determine follow status - use isfollowed/isfollowing consistently
+  const youFollowThem = user.isfollowed ?? false;
+  const theyFollowYou = user.isfollowing ?? false;
 
-        if (newStatus !== null) {
-          user.isfollowed = newStatus;
+  updateFollowButtonState(followButton, youFollowThem, theyFollowYou);
 
-          const followerCountSpan = document.getElementById("following");
-          if (followerCountSpan) {
-            let count = parseInt(followerCountSpan.textContent, 10) || 0;
-            count = newStatus ? count + 1 : Math.max(0, count - 1);
-            followerCountSpan.textContent = count;
-          }
+  followButton.addEventListener("click", async (event) => {
+    event.stopPropagation();
+    event.preventDefault();
 
-          document.querySelectorAll(`.follow-button[data-userid="${targetUserId}"]`).forEach(btn => {
-            btn.classList.toggle("following", newStatus);
+    await handleModalFollowButtonClick(followButton, user);
+  });
 
-            if (newStatus && user.isfollowing) {
-              btn.textContent = "Peer";
-              btn.classList.add("peer");
-              btn.classList.remove("just-following");
-            } else if (newStatus) {
-              btn.textContent = "Following";
-              btn.classList.add("just-following");
-              btn.classList.remove("peer");
-            } else {
-              btn.textContent = "Follow +";
-              btn.classList.remove("following", "just-following", "peer");
-            }
-          });
-        } else {
-          Merror("Failed to update follow status. Please try again.");
-        }
-      });
+  return followButton;
+}
 
-      item.appendChild(followButton);
+/**
+ * Handles follow button click in modal
+ * @param {HTMLButtonElement} button - Button that was clicked
+ * @param {Object} user - User object
+ */
+async function handleModalFollowButtonClick(button, user) {
+  const userId = user.id || user.userid;
+  button.disabled = true;
+
+  try {
+    const newStatus = await toggleFollowStatus(userId);
+
+    if (newStatus !== null) {
+      user.isfollowed = newStatus;
+
+      updateFollowingCount(newStatus);
+      updateAllUserButtons(userId, user.isfollowed, user.isfollowing);
+    } else {
+      showError("Failed to update follow status. Please try again.");
     }
+  } catch (error) {
+    console.error("Error toggling follow status:", error);
+    showError("An error occurred. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+}
 
-    container.appendChild(item);
+/**
+ * Updates all buttons for a specific user across the modal
+ * @param {string} userId - User ID to update buttons for
+ * @param {boolean} isfollowed - Whether current user follows this user
+ * @param {boolean} isfollowing - Whether this user follows current user
+ */
+function updateAllUserButtons(userId, isfollowed, isfollowing) {
+  const buttons = document.querySelectorAll(`.follow-button[data-userid="${userId}"]`);
+  buttons.forEach(btn => {
+    updateFollowButtonState(btn, isfollowed, isfollowing);
   });
 }
 
@@ -2224,3 +2430,49 @@ function eraseCookie(name) {
 }
 
 scheduleSilentRefresh(accessToken, refreshToken);
+
+// Back button functionality
+const backBtn = document.querySelector(".general_backBtn");
+if (backBtn) {
+  backBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (document.referrer) {
+          window.location.href = document.referrer;
+      } else {
+          window.history.back();
+      }
+  });
+}
+
+  // ----------------- Insert Pinned Button -----------------
+  window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
+    if (!card) return;
+    if (card.querySelector(".pinedbtn") && mode != 'post') return;
+    const pinnedBtn = document.createElement("div");
+    pinnedBtn.classList.add("pinedbtn");
+    pinnedBtn.innerHTML = `
+      <a class="button btn-blue">
+        <img src="svg/pin.svg" alt="pin">
+        <span class="ad_username bold">@${username}</span>
+        <span class="ad_duration txt-color-gray">${time}</span>
+      </a>
+    `;
+
+    const postInhalt = card.querySelector(".post-inhalt");
+    const social = card.querySelector(".social");
+    const viewpost = document.querySelector(".viewpost");
+    const footer = viewpost ?.querySelector(".postview_footer");
+    const comments = viewpost ?.querySelector(".post-comments");
+
+    if (mode === "profile") {
+      if (postInhalt && social) {
+        postInhalt.insertBefore(pinnedBtn, social);
+      }
+    }
+    
+    if (mode === "post") {
+      if (footer && comments && !footer.querySelector(".pinedbtn")) {
+        comments.insertAdjacentElement("afterend", pinnedBtn);
+      }
+    }
+  }

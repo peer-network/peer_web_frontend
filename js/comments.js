@@ -62,14 +62,13 @@ document.querySelector("#comments").addEventListener("scroll",async function () 
     .slice()
     .reverse()
     .forEach(function (c) {
-      //console.log(c);
       commentToDom(c);
-      fetchChildComments(c.commentid).then((result) => {
-        if (!result) return;
-        result.slice().forEach(function (c2) {
-          commentToDom(c2, true);
-        });
-      });
+      // fetchChildComments(c.commentid).then((result) => {
+      //   if (!result) return;
+      //   result.slice().forEach(function (c2) {
+      //     commentToDom(c2, true);
+      //   });
+      // });
     });
     // const query= `query ListChildComments2 {
     //     listChildComments(

@@ -4,7 +4,8 @@
     <ul class="menu">
       <li class="menu-item <?= ($currentPage === 'newpost.php') ? 'active' : '' ?>">
         <a id="btAddPost" href="newpost.php">
-          <img class="icon" src="svg/newpost.svg" alt="add post" />
+          <i class="peer-icon peer-icon-newpost"></i>
+          <i class="filled peer-icon peer-icon-newpost-filled"></i>
           New post
         </a>
       </li>

@@ -225,13 +225,13 @@ line-height: 40px;
   line-height: 34px;
   padding: 0 16px;
 
-  background-color: transparent;
-  border-color: var(--white);
+  /* background-color: transparent;
+  border-color: var(--white); */
 }
-.card-header-right .follow-button.following {
+/* .card-header-right .follow-button.following {
  background-color:var(--button-hover);
 	border-color: var(--button-hover);
-}
+} */
 .card  .post-userImg {
 	
 	
@@ -290,14 +290,14 @@ line-height: 40px;
   
 }
 .card .social div.post-like.active i::before {
-	content: "\e9a1";
-	font-family: uicons-solid-rounded !important;
+	content: "\e81e";
+	
 	
   
 }
 .card .social div.post-dislike.active i::before {
-	content: "\e9a5";
-	font-family: uicons-solid-rounded !important;
+	content: "\e824";
+	
 
 }
 

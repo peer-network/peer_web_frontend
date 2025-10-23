@@ -110,7 +110,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 98%;
   padding: 0.5rem 1rem;
 }
 .history-item {
@@ -123,6 +123,17 @@
   width: 1rem;
   height: auto;
   display: inline-block;
+}
+.history-item div {
+  min-width: 6em;  
+  text-align: left;
+}
+.history-item div:last-child {
+  text-align: right;
+}
+#history-container {
+	height: 70vh;
+	overflow: auto;
 }
 .kurs {
   display: flex;
@@ -186,6 +197,7 @@
   background-size: 190%;
   background-position: -29rem -7rem;
   padding: 2rem;
+  background-attachment: fixed;
 }
 
 /* wallet-to-wallet transfer */
@@ -225,7 +237,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 155px;
+  max-height: 400px;
+  min-height: 400px;
   overflow: auto;
 }
 

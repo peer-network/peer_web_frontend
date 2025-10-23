@@ -24,6 +24,9 @@
 .profile_edit_box .button.promote_posts::before {
     background-image: url(../svg/boost-post.svg);
 }
+.profile_edit_box .button.myAds_button::before {
+    background-image: url(../svg/myAds.svg);
+}
 .profile_edit_box .button.promote_posts_cancel {
     padding: 0 70px;
 }
@@ -32,6 +35,9 @@
     background: none !important;
 }
 .profile_edit_box .button.promote_posts:hover::before {
+  filter: invert(1);
+}
+.profile_edit_box .button.myAds_button:hover::before {
   filter: invert(1);
 }
 .profile_edit_box .button.edit-profile:hover::before {
@@ -50,7 +56,9 @@
 #profil-container.profile_header {
 	display: flex;
 	align-items: flex-start;
-	
+	position: relative;
+  height: 100%;
+  max-height: 180px;
 	gap: 0;
   flex-direction: row;
 }
@@ -63,6 +71,81 @@
 .profile_header .profile_edit_box .btn-white,
 .profile_header .profile_edit_box .btn-blue {
   margin-bottom: 10px;
+}
+
+.profile_header .profile_edit_box .promote_posts {
+  margin-top: 10px;
+}
+
+.profile_header .profile_edit_box .boost_adsStats_container {
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 0 !important; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.button.boost_adsStats_container:hover {
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.profile_header .profile_edit_box .boost_adsStats_container::before {
+  content: none;
+  display: none;
+}
+
+.profile_header .profile_edit_box .boost_adsStats_container::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--white);
+  border-bottom: 2px solid var(--white);
+  transform: rotate(45deg) translateY(-3px);
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.boost_adsStats_container[aria-expanded="true"]::after {
+  transform: rotate(-135deg) translateY(2px) !important;
+}
+
+.profile_header .profile_edit_box  .ads_container_wrap {
+  background: var(--bg-filter);
+  border-radius: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+.profile_header .profile_edit_box .boost_dropdown_wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding: 0 20px;
+}
+
+.profile_header .profile_edit_box .boost_dropdown_wrapper.open {
+  max-height: 500px; 
+}
+
+.profile_header .profile_edit_box .boost_dropdown_wrapper .button {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.profile_header .profile_edit_box .boost_dropdown_wrapper.open .button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.profile_header .profile_edit_box .boost_dropdown_wrapper.open .button:nth-child(2) {
+  transition-delay: 0.1s;
 }
 
 .profile_header .profile_picture {
@@ -260,17 +343,8 @@
   height: 2.5rem;
   font-size: 1rem;
   align-items: center;
-  background-color:transparent;
-	border-color: var(--white);
-	color: var(--white);
   width: 20%;
   justify-content: center;
-}
-
-.modalOverlay .follow-button:hover {
-  background-color:var(--white);
-	border-color: var(--white);
-	color: var(--black);
 }
 
 .modalOverlay .modal-body {
@@ -671,8 +745,18 @@
 
 
 
+@media screen and (min-width: 2000px) {
+  .profile_header .profile_edit_box  .ads_container_wrap {
+    border-radius: 40px;
+  }
+}
+
 
 @media screen and (min-width: 3000px) {
+
+  #profil-container.profile_header {
+    max-height: 280px;
+  }
 
   .modalOverlay .modal-content {
     width: min(90rem, 100vw);
@@ -815,6 +899,15 @@
   }
   .boostModal .pricing_breakdown .boostPost_left img {
     width: 96px;
+  }
+
+  .profile_header .profile_edit_box .ads_container_wrap {
+    border-radius: 70px;
+  }
+
+  .profile_header .profile_edit_box .boost_adsStats_container::after {
+    width: 20px;
+    height: 20px;
   }
 
 }

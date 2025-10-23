@@ -4,7 +4,8 @@
         <ul class="menu">
             <li class="menu-item <?= ($currentPage === 'dashboard.php') ? 'active' : '' ?>">
                 <a href="dashboard.php">
-                    <img class="icon" src="svg/Home.svg" alt="dashboard" />
+                    <i class="peer-icon peer-icon-home-alt"></i>
+                    <i class="filled peer-icon peer-icon-home"></i>
                     Dashboard
                 </a>
             </li>
@@ -17,26 +18,31 @@
             </li>
             <li class="menu-item <?= ($currentPage === 'wallet.php') ? 'active' : '' ?>">
                 <a href="wallet.php">
-                    <img class="icon" src="svg/wallets.svg" alt="wallet" />
+                    <i class="peer-icon peer-icon-wallet"></i>
+                    <i class="filled peer-icon peer-icon-wallet-filled"></i>
                     Wallet
                 </a>
             </li>
             <li
                 class="menu-item <?= ($currentPage === 'setting.php' ||  $currentPage === 'profileSettings.php') ? 'active' : '' ?>">
                 <a href="profileSettings.php">
-                    <img class="icon icon-group " src="svg/icon-group.svg" alt="settings" />
+                     <i class="peer-icon peer-icon-setting"></i>
+                     <i class="filled peer-icon peer-icon-setting-filled"></i>
                     Settings
                 </a>
             </li>
             <li class="menu-item">
                 <a id="open-onboarding" href="#">
-                    <img class="icon" src="svg/qmark.svg" alt="network" />
+                     <i class="peer-icon peer-icon-help"></i>
+                     <i class="filled peer-icon peer-icon-help-filled"></i>
                     How Peer Works
                 </a>
             </li>
-            <li class="menu-item">
-                <a class="white_border" href="#">
-                    <img class="icon" src="svg/invite-friend-icon.svg" alt="network" />
+            <li class="menu-item referralPage <?= ($currentPage === 'referralBoard.php') ? 'active' : '' ?>">
+                <a class="white_border" href="referralBoard.php">
+                    <i class="peer-icon peer-icon-referral"></i>
+                     <i class="filled peer-icon peer-icon-referral"></i>
+
                     Invite a friend
                 </a>
             </li>

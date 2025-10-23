@@ -316,6 +316,9 @@
   word-break: break-word;
   /*overflow-y: auto;*/
 }
+/* .viewpost .viewpost-left .post_content .post_text {
+	overflow-y: auto;
+} */
 .viewpost .post_content .hashtags {
   color: #0069FF;
   margin-top: 20px;
@@ -393,9 +396,9 @@
 }
 .viewpost .postview_footer .more .share-post-box {
 	position: absolute;
-	bottom: -7px;
+	bottom: 0px;
 	width: 600px;
-	right: -0px;
+	right: -42px;
 	border-radius: 50px;
 	background: var(--dark-inactive, #323232);
 	box-shadow: 0px 4px 50px 0px rgba(0, 0, 0, 0.50);
@@ -409,8 +412,11 @@
 	visibility: hidden;
 	z-index: 1;
 }
+.site_layout_nonuser .postview_footer .more .share-post-box .btClose {
+	display: flex;
+}
 
-.viewpost .postview_footer .more:hover ul.sublist li.sharelinks:hover .share-post-box {
+.viewpost .postview_footer .more .share-post-box.active {
   
     opacity:1;
     visibility: visible;
@@ -535,14 +541,14 @@
   
 }
 .viewpost .social div.post-like.active i::before {
-	content: "\e9a1";
-	font-family: uicons-solid-rounded !important;
 	
-  
+	content: "\e81e";
+	font-family: "peer-network";
+
 }
 .viewpost .social div.post-dislike.active i::before {
-	content: "\e9a5";
-	font-family: uicons-solid-rounded !important;
+	content: "\e824";
+	font-family: "peer-network";
 
 }
 
@@ -1081,8 +1087,8 @@
   
 }
 .comment_list .comment_item  .comment_like.active i::before {
-	content: "\e9a1";
-	font-family: uicons-solid-rounded !important;
+	content: "\e81e";
+	
 }
 
 .comment_list .comment_item .comment_body {
@@ -1348,7 +1354,7 @@ button:not(:disabled):hover.switch-btn {
 	}
 	.viewpost .postview_footer .more .share-post-box {
 		width: 800px;
-		right: 0px;
+		right: -42px;
 		
 	}
 	.share-post-apps .app-icon {
@@ -1598,5 +1604,9 @@ button:not(:disabled):hover.switch-btn {
 		
 		width: 100%;
 		border-radius: 10px;
+	}
+	.button.nav-button.prev_button, .button.nav-button.next_button {
+	
+		display: none;
 	}
 }

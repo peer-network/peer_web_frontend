@@ -43,12 +43,26 @@
 	border-radius: 50px;
 	transition: all 0.3s ease-in-out;
 }
-.setting-layout .setting-menu ul li a:hover,
-.setting-layout .setting-menu ul li.active a {
+.setting-layout .setting-menu ul li a.red-btn{
+	background-color: transparent;
+  
+  color: var(--red-accent, #FF3B3B);
+  text-align: center;
+  justify-content: center;
+  border: 1px solid var(--red-accent, #FF3B3B);
+
+}
+.setting-layout .setting-menu ul li:not(.not-menu-item) a:hover,
+.setting-layout .setting-menu ul li.active:not(.not-menu-item) a {
 	background-color: var(--bg-filter);
 }
+.setting-layout .setting-menu ul li a.red-btn:hover{
+	background-color: var(--red-accent, #FF3B3B);
+	color: #fff;
+	border-color: var(--red-accent, #FF3B3B);
+}
 
-.setting-layout .setting-menu ul li.active a::after {
+.setting-layout .setting-menu ul li.active:not(.not-menu-item) a::after {
 	content: "";
 	display: inline-block;
 	background-image: url(../svgnew/angle-small-right.svg);
@@ -59,6 +73,77 @@
 	vertical-align: middle;
 	
 }
+
+
+/* ---------------Version History Edits----------------- */
+
+.general_backBtn {
+  position: fixed;
+  bottom: 30px;
+}
+
+.general_backBtn a {
+	display: flex;
+	align-items: center;
+}
+
+.left_versionHistory a.active, 
+.left_versionHistory a:hover {
+  background-color: var(--bg-filter);
+}
+
+.left_versionHistory a.active::after {
+  content: "";
+  display: inline-block;
+  background-image: url(../svgnew/angle-small-right.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+.left_versionHistory a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff !important;
+  text-decoration: none;
+  padding: 0 30px;
+  line-height: 80px;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  margin: 0 0 20px 0;
+}
+
+.right_versionHistory .releaseVersion_content {
+  margin-top: 45px;
+}
+
+.releaseVersion_header {
+  display: flex;
+  align-items: first baseline;
+  justify-content: space-between;
+}
+
+.releaseVersion_header span {
+  color: var(--white-opacity-50);
+}
+
+.right_versionHistory .releaseVersion_btns {
+  margin-top: auto;
+  display: flex;
+  gap: 20px;
+}
+
+.releaseVersion_btns .button.btn-transparent.Versionbtn-link {
+  width: 100%;
+  margin-top: 60px;
+}
+
+
+
 @media screen and (min-width: 2000px) {
 
 	.setting-layout .setting-menu ul li a {
@@ -71,6 +156,14 @@
 		width: 40px;
 		height: 40px;
 	
+	}
+	.left_versionHistory a {
+		line-height: 100px;
+		padding: 0 40px;
+	}
+	.left_versionHistory a.active::after {
+		width: 40px;
+		height: 40px;
 	}
 }
 
@@ -86,6 +179,15 @@
 		width: 54px;
 		height: 54px;
 	
+	}
+	.left_versionHistory a {
+		padding: 0 50px;
+		line-height: 150px;
+		border-radius: 100px;
+	}
+	.left_versionHistory a.active::after {
+		width: 54px;
+		height: 54px;
 	}
 
 }

@@ -3,120 +3,359 @@
   const dislike = 3;
   const comment = 1;
 
+  //
+  let isFetchAd = true;
+
+  //   async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
+
+  //     const accessToken = getCookie("authToken");
+
+  //     // LocalStorage -> userData :: setting in getUserInfo() -> global.js
+  //    const savedUserData = localStorage.getItem("userData");
+  //    let severityLevel = null;
+
+  //    if (savedUserData) {
+  //      const parsedData = JSON.parse(savedUserData);
+  //      severityLevel = parsedData.userPreferences?.contentFilteringSeverityLevel || null;
+  //    }
+
+  //     // Create headers
+  //     const headers = new Headers({
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${accessToken}`,
+  //     });
+  //     if (typeof title === "string") {
+  //       title = sanitizeString(title);
+  //     } else {
+  //       title = "";
+  //     }
+  //     // tag = sanitizeString(tag);
+  //     // tag = typeof tag === "string" ? sanitizeString(tag) : "";
+  //     if (!sortby) sortby = "NEWEST";
+  //     let postsList = `query ListPosts {
+  //       listPosts(
+  //         sortBy: ${sortby},
+  //         limit: ${limit},
+  //         offset: ${offset},
+  //         filterBy: [${filterBy}]
+  //         ${severityLevel ? `, contentFilterBy: ${severityLevel}` : ""}`;
+
+  //     postsList += tag && tag.length >= 2 ? `, tag: "${tag}"` : "";
+  //     postsList += title && title.length >= 1 ? `, title: "${title}"` : "";
+  //     postsList += userID !== null ? `, userid: "${userID}"` : "";
+  //     postsList += `) {
+  //           status
+  //           ResponseCode
+  //           counter
+  //           affectedRows {
+  //               id
+  //               contenttype
+  //               title
+  //               media
+  //               cover
+  //               mediadescription
+  //               createdat
+  //               amountlikes
+  //               amountviews
+  //               amountcomments
+  //               amountdislikes
+  //               amounttrending
+  //               isliked
+  //               isviewed
+  //               isreported
+  //               isdisliked
+  //               issaved
+  //               tags
+  //               user {
+  //                   id
+  //                   username
+  //                   slug
+  //                   img
+  //                   isfollowed
+  //                   isfollowing
+  //               }
+  //               comments {
+  //                   commentid
+  //                   userid
+  //                   postid
+  //                   parentid
+  //                   content
+  //                   amountlikes
+  //                   amountreplies
+  //                   isliked
+  //                   createdat
+  //                   user {
+  //                       id
+  //                       username
+  //                       slug
+  //                       img
+  //                       isfollowed
+  //                       isfollowing
+  //                   }
+  //               }
+  //           }
+  //       }
+  //   }
+  //   `;
+  //     //console.log(postsList);
+  //     var graphql = JSON.stringify({
+  //       query: postsList,
+  //       variables: {},
+  //     });
+
+  //     var requestOptions = {
+  //       method: "POST",
+  //       headers: headers,
+  //       body: graphql,
+  //       redirect: "follow",
+  //     };
+
+  //     return fetch(GraphGL, requestOptions)
+  //       .then((response) => response.json())
+  //       .then((result) => {
+  //         console.log('result ', result)
+  //         return result;
+  //       })
+  //       .catch((error) => {
+  //         Merror("error", error);
+  //         throw error;
+  //       });
+  //   }
+
+  // getPosts function are modified
+
   async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
-
     const accessToken = getCookie("authToken");
+    const headers = getHeaders(accessToken);
 
-    // LocalStorage -> userData :: setting in getUserInfo() -> global.js
-    const savedUserData = localStorage.getItem("userData");
-    let severityLevel = null;
-    if (savedUserData) {
-      const parsedData = JSON.parse(savedUserData);
-      severityLevel = parsedData.userPreferences?.contentFilteringSeverityLevel || null;
+    // Fetch advertisement posts
+    const adsQuery = await getAdvertisementPosts(userID, offset, limit);
+    let result = await fetchGraphQL(adsQuery, headers);
+    if (result.listAdvertisementPosts.status == "error") {
+      throw new Error(userfriendlymsg(result.listAdvertisementPosts.ResponseCode));
+      // return false;
     }
 
-    // Create headers
-    const headers = new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    });
-    if (typeof title === "string") {
-      title = sanitizeString(title);
-    } else {
-      title = "";
+    // If ads are less than limit, fetch normal posts
+    const adsCount = result.listAdvertisementPosts ?.affectedRows ?.length || 0;
+    if (adsCount < limit) {
+      // const remainingLimit = limit - adsCount;
+      const savedUserData = localStorage.getItem("userData");
+      let severityLevel = null;
+
+      if (savedUserData) {
+        const parsedData = JSON.parse(savedUserData);
+        severityLevel = parsedData.userPreferences ?.contentFilteringSeverityLevel || null;
+      }
+
+      const listQuery = await getListPosts(offset, limit, filterBy, title, tag, sortby, userID, severityLevel);
+      const postsResult = await fetchGraphQL(listQuery, headers);
+      // Merge ads and normal posts
+      const mergedRows = [
+            ...(result.listAdvertisementPosts?.affectedRows.map(a => ({ ...a.post, startdate: a.advertisement.startdate, isAd: true })) || []),
+            ...(postsResult.listPosts?.affectedRows.map(p => ({ ...p, isAd: false })) || [])];
+      return {
+        listPosts: {
+          status: "success",
+          ResponseCode: "11501",
+          counter: mergedRows.length,
+          affectedRows: mergedRows
+        }
+      };
     }
-    // tag = sanitizeString(tag);
-    // tag = typeof tag === "string" ? sanitizeString(tag) : "";
-    if (!sortby) sortby = "NEWEST";
-    let postsList = `query ListPosts {
+
+    // If ads greater than limit then return only ads (flagged)
+    const adRows = result.listAdvertisementPosts ?.affectedRows.map(a => ({...a.post, isAd: true })) || [];
+    return {
+      listPosts: {
+        status: "success",
+        ResponseCode: "11501",
+        counter: adRows.length,
+        affectedRows: adRows
+      }
+    };
+  }
+
+  async function getAdvertisementPosts(userID, offset, limit) {
+    const query = `query ListAdvertisementPosts {
+    listAdvertisementPosts(${userID !== null ? `, userid: "${userID}"` : ""}, offset: ${offset}, limit: ${limit}) {
+        status
+        ResponseCode
+        counter
+        affectedRows {
+            post {
+                id
+                contenttype
+                title
+                media
+                cover
+                mediadescription
+                createdat
+                amountlikes
+                amountviews
+                amountcomments
+                amountdislikes
+                amounttrending
+                isliked
+                isviewed
+                isreported
+                isdisliked
+                issaved
+                tags
+                url
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                    isfriend
+                }
+                comments {
+                    commentid
+                    userid
+                    postid
+                    parentid
+                    content
+                    createdat
+                    amountlikes
+                    amountreplies
+                    isliked
+                    user {
+                        id
+                        username
+                        slug
+                        img
+                        isfollowed
+                        isfollowing
+                        isfriend
+                    }
+                }
+            }
+            advertisement {
+                advertisementid
+                postid
+                advertisementtype
+                startdate
+                enddate
+                createdat
+                user {
+                    id
+                    username
+                    slug
+                    img
+                    isfollowed
+                    isfollowing
+                    isfriend
+                }
+            }
+        }
+    }
+}
+`;
+
+    return query;
+  }
+
+  // === Helper 1: Build GraphQL query
+  function getListPosts(offset, limit, filterBy, title, tag, sortby, userID, severityLevel) {
+    let query = `
+    query ListPosts {
       listPosts(
         sortBy: ${sortby},
         limit: ${limit},
         offset: ${offset},
         filterBy: [${filterBy}]
-        ${severityLevel ? `, contentFilterBy: ${severityLevel}` : ""}`;
-
-    postsList += tag && tag.length >= 2 ? `, tag: "${tag}"` : "";
-    postsList += title && title.length >= 1 ? `, title: "${title}"` : "";
-    postsList += userID !== null ? `, userid: "${userID}"` : "";
-    postsList += `) {
-          status
-          ResponseCode
-          counter
+        ${severityLevel ? `, contentFilterBy: ${severityLevel}` : ""}
+        ${tag && tag.length >= 2 ? `, tag: "${tag}"` : ""}
+        ${title && title.length >= 1 ? `, title: "${title}"` : ""}
+        ${userID !== null ? `, userid: "${userID}"` : ""}
+      ) {
+        status
+        ResponseCode
+        counter
           affectedRows {
-              id
-              contenttype
-              title
-              media
-              cover
-              mediadescription
-              createdat
-              amountlikes
-              amountviews
-              amountcomments
-              amountdislikes
-              amounttrending
-              isliked
-              isviewed
-              isreported
-              isdisliked
-              issaved
-              tags
-              user {
-                  id
-                  username
-                  slug
-                  img
-                  isfollowed
-                  isfollowing
-              }
-              comments {
-                  commentid
-                  userid
-                  postid
-                  parentid
-                  content
-                  amountlikes
-                  amountreplies
-                  isliked
-                  createdat
-                  user {
-                      id
-                      username
-                      slug
-                      img
-                      isfollowed
-                      isfollowing
-                  }
-              }
-          }
+                 id
+                 contenttype
+                 title
+                 media
+                 cover
+                mediadescription
+                createdat
+                 amountlikes
+                 amountviews
+                 amountcomments
+                 amountdislikes
+                 amounttrending
+                 isliked
+                 isviewed
+                 isreported
+                 isdisliked
+                 issaved
+                 tags
+                 user {
+                     id
+                     username
+                     slug
+                     img
+                     isfollowed
+                     isfollowing
+                 }
+             comments {
+                   commentid
+                     userid
+                     postid
+                    parentid
+                    content
+                     amountlikes
+                     amountreplies
+                     isliked
+                     createdat
+                     user {
+                         id
+                         username
+                         slug
+                         img
+                       isfollowed
+                         isfollowing
+                    }
+                 }
+             }
       }
-  }
+    }
   `;
-    //console.log(postsList);
-    var graphql = JSON.stringify({
-      query: postsList,
-      variables: {},
+    return query;
+  }
+
+  // === Helper 2: Build headers ===
+  function getHeaders(accessToken) {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    }
+  }
+
+  // === Helper 3: Fetch GraphQL ===
+  async function fetchGraphQL(query, headers) {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query
+      }),
+      // redirect: "follow",
     });
 
-    var requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: graphql,
-      redirect: "follow",
-    };
-
-    return fetch(GraphGL, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        return result;
-      })
-      .catch((error) => {
-        Merror("error", error);
-        throw error;
-      });
+    const result = await response.json();
+    if (result.errors) {
+      // console.error("GraphQL error:", result.errors);
+      throw new Error(result.errors[0].message);
+    }
+    return result.data;
   }
-  
+  // End 
+
   async function viewPost(postid) {
     const accessToken = getCookie("authToken");
     // Create headers
@@ -269,11 +508,10 @@
 
     const accessToken = getCookie("authToken");
     const cancel = 0;
-      const answer = await confirm("Report Post", `Are you sure you want to report this post?`, (dontShowOption = false));
-      if (answer === null || answer.button === cancel) {
-        return false;
-      }
-
+    const answer = await confirm("Report Post", `Are you sure you want to report this post?`, (dontShowOption = false));
+    if (answer === null || answer.button === cancel) {
+      return false;
+    }
 
     // Create headers
     const headers = new Headers({
@@ -322,12 +560,12 @@
     // build tabs dynamically
     let tabsHTML = "";
     if (startType === "COMMENTLIKE") {
-      tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="fi fi-rr-heart"></i><span class="count">0</span></div>`;
+      tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="peer-icon peer-icon-like"></i><span class="count">0</span></div>`;
     } else {
       tabsHTML = `
-        <div class="tab-btn" data-type="LIKE">Likes <i class="fi fi-rr-heart"></i><span class="count">0</span></div>
-        <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="fi fi-rr-heart-crack"></i><span class="count">0</span></div>
-        <div class="tab-btn" data-type="VIEW">Views <i class="fi fi-rr-eye"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="LIKE">Likes <i class="peer-icon peer-icon-like"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="peer-icon peer-icon-dislike"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="VIEW">Views <i class="peer-icon peer-icon-eye-open"></i><span class="count">0</span></div>
       `;
     }
 
@@ -346,9 +584,15 @@
     showModal();
 
     async function getPostInteractions(type = "VIEW") {
+      const limit = 20;
+      const offset = 0;
       const query = `
         query PostInteractions {
-          postInteractions(postOrCommentId: "${postid}", getOnly: ${type}) {
+          postInteractions(
+          postOrCommentId: "${postid}", 
+          getOnly: ${type},
+          limit: ${limit},
+          offset: ${offset}) {
             status
             ResponseCode
             affectedRows {
@@ -772,11 +1016,11 @@
     const fileArray = Array.isArray(files) ? files : [files];
     for (const file of fileArray) form.append("file[]", file, file.name);
 
-      const config = getHostConfig();
+    const config = getHostConfig();
     //console.log('Domain:', config.domain);
     //console.log('Server:', config.server);
 
-    const uploadUrl = "https://"+config.domain+"/upload-post";
+    const uploadUrl = "https://" + config.domain + "/upload-post";
     //console.log("uploadUrl: ",uploadUrl);
     const res = await fetch(uploadUrl, {
       method: "POST",
@@ -800,7 +1044,7 @@
     cover,
     tags
   }) {
-    
+
     const modalProcess = document.getElementById('processing_modal');
     if (!(await LiquiudityCheck(postCost, "Create Post", post))) {
       return false;
@@ -812,9 +1056,9 @@
     if (!accessToken) {
       throw new Error("Auth token is missing or invalid.");
     }
-   
+
     try {
-      
+
       var eligibilitytToken = await checkEligibility();
     } catch (err) {
       //console.error("Eligibility check failed:", err);
@@ -826,8 +1070,8 @@
 
     try {
       modalProcess.showModal();
-      
-      uploadedFiles= await uploadFiles(eligibilitytToken, uploadedFiles);
+
+      uploadedFiles = await uploadFiles(eligibilitytToken, uploadedFiles);
     } catch (err) {
       console.error("File upload failed:", err);
       Merror("File upload failed:", err);
@@ -886,7 +1130,7 @@
       tags
     };
 
-    
+
 
     const headers = {
       "Content-Type": "application/json",

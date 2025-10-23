@@ -79,22 +79,20 @@
   width: 10px;
 }
 
-.interactionsModal .tab-btn.active .fi-rr-heart::before {
-  content: "\e9a1";
-  font-family: uicons-solid-rounded !important;
+.interactionsModal .tab-btn.active .peer-icon-like::before {
+  content: "\e81e";
+  
 }
 
-.interactionsModal .tab-btn.active .fi-rr-heart-crack::before {
-  content: "\e9a5";
-  font-family: uicons-solid-rounded !important;
+.interactionsModal .tab-btn.active .peer-icon-dislike::before {
+  content: "\e824";
+  
 }
 
-.interactionsModal .tab-btn i {
-  margin-top: 7px;
-}
 
-.interactionsModal .tab-btn.active .fi-rr-heart,
-.interactionsModal .tab-btn.active .fi-rr-heart-crack {
+
+.interactionsModal .tab-btn.active .peer-icon-like,
+.interactionsModal .tab-btn.active .peer-icon-dislike {
   color: var(--red-accent, #FF3B3B);
 }
 
@@ -152,9 +150,6 @@
   height: 2.5rem;
   font-size: 1rem;
   align-items: center;
-  background-color:transparent;
-	border-color: var(--white);
-	color: var(--white);
   width: 20%;
   justify-content: center;
 }
@@ -226,7 +221,7 @@
 }
 /* Typen */
 .modal-content.info {
-  background-color: #e2e2e2;
+  /* background-color: #e2e2e2; */
   color: #1d1d1d;
 }
 
@@ -422,7 +417,8 @@
   height: auto;
 }
 .logOut-pop p{
-  margin-bottom: 40px;
+  margin-bottom: 50px;
+  color: var(--red-accent);
 }
 .button-row {
   display: flex;
@@ -542,6 +538,8 @@
   .logOut-pop {
     border-radius: 100px;
     padding: 80px;
+    width: 100%;
+    max-width: 1350px;
   }
   .logOut-pop img{
    width: 186px;

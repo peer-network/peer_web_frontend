@@ -32,22 +32,7 @@
          <a id="changeEmailbtn" href="#" class="button change-email-btn btn-transparent">Change
            e-mail</a>
        </div>
-       <div class="logout-deactivate-buttons">
-         <a href="#" id="logOut" class="button logout-btn full-width-btn btn-red-transparent">Log
-           Out</a>
-         <div id="modalOverlay" class="modal-overlay none">
-           <div class="logOut-pop" id="logOutPop">
-             <img src="svg/error.svg" alt="logout">
-             <p class="xl_font_size">Are you sure you want to log out?</p>
-             <div class="button-row">
-               <button id="cancelLogoutBtn" class="btn-transparent">Cancel</button>
-               <button id="confirmLogoutBtn" class="btn-blue">Yes</button>
-             </div>
-           </div>
-         </div>
-         <!--<a href="#" id="deactivateProfile" class="button change-pass-btn full-width-btn btn-red-transparent">Deactivate
-           profile</a>-->
-       </div>
+       
      </div>
      <div id="imageModal" class="modal">
        <div class="modal-content">

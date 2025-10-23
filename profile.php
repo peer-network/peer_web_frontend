@@ -11,9 +11,9 @@ checkAuth("unauthorized");
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Peer Network - Profile</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
+ <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
+
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>	
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
@@ -33,6 +33,7 @@ checkAuth("unauthorized");
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
 <script src="js/list_follow.js?<?php echo filemtime('js/list_follow.js'); ?>" defer></script>
 <script src="js/profile.js?<?php echo filemtime('js/profile.js'); ?>" defer></script>
+<script src="js/ads/pinnedPost/pinnedPost.js?<?php echo filemtime('js/ads/pinnedPost/pinnedPost.js') ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
@@ -76,7 +77,13 @@ checkAuth("unauthorized");
       </div>
       <div class="profile_edit_box">
         <a class="button btn-white edit-profile" href="profileSettings.php">Edit</a>
-        <!--<div class="button btn-blue promote_posts">Boost post</div>-->
+        <div class="ads_container_wrap">
+          <div class="button boost_adsStats_container" role="button" aria-expanded="false" aria-controls="boostDropdown" tabindex="0">Ads</div>
+          <div class="boost_dropdown_wrapper" hidden>
+            <div class="button btn-blue promote_posts">Boost post</div>
+            <a href="myAds.php" class="button btn-white myAds_button">My Ads</a>
+          </div>
+        </div>
         <div class="button btn-white promote_posts_cancel none">Cancel</div>
       </div>
     </div>
