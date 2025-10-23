@@ -379,7 +379,7 @@
                 try {
                     const isValid = await this.verifycodeRequest(verifycode);
                    
-                    if (!isValid) {
+                    if (isValid) {
                         this.formData.token = verifycode;
                         this.goToStep(3);          
                         this.announceStep('Code verfied enter new password');

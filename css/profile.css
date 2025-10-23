@@ -24,6 +24,9 @@
 .profile_edit_box .button.promote_posts::before {
     background-image: url(../svg/boost-post.svg);
 }
+.profile_edit_box .button.myAds_button::before {
+    background-image: url(../svg/myAds.svg);
+}
 .profile_edit_box .button.promote_posts_cancel {
     padding: 0 70px;
 }
@@ -32,6 +35,9 @@
     background: none !important;
 }
 .profile_edit_box .button.promote_posts:hover::before {
+  filter: invert(1);
+}
+.profile_edit_box .button.myAds_button:hover::before {
   filter: invert(1);
 }
 .profile_edit_box .button.edit-profile:hover::before {
