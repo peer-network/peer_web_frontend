@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----------------- Show Step Function -----------------
   function showStep(step) {
+    console.log('i reached hre')
     document.querySelectorAll('.modal-step').forEach(el => {
       el.classList.remove('active');
     });
@@ -118,6 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----------------- Modal Buttons -----------------
   modal.addEventListener('click', function (e) {
+    if (e.target.classList.contains('not-enough-balance')) {
+      showStep(currentStep);
+      return
+    }
     if (e.target.classList.contains('next-btn')) {
       showStep(currentStep + 1);
     }
@@ -268,6 +273,23 @@ document.addEventListener("DOMContentLoaded", () => {
   advertisePost.addEventListener('click', advertisePostPinned);
 
   async function advertisePostPinned() {
+
+
+    ADPOSTPRICE = 2000;
+    const currentBalance = await getLiquiudity();
+
+    if (currentBalance < ADPOSTPRICE) {
+      const advertisePostEl = document.getElementById('advertisePost');
+      advertisePostEl.innerText = 'Go to profile';
+      advertisePostEl.classList.add('goToProfile-btn');
+      advertisePostEl.classList.add('not-enough-balance');
+      advertisePostEl.classList.remove('next-btn');
+
+      const adMessageEl = document.querySelector('.ad_message');
+      adMessageEl.innerText = 'You don’t have enough Peer Tokens to start this promotion.';
+      return false;
+    }
+
     const accessToken = getCookie("authToken");
     // Create headers
     const headers = new Headers({
