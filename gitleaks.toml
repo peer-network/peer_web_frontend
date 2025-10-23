@@ -42,5 +42,7 @@ regexes = [
   '''window\.''',
   '''console\.log''',
   '''style\.[A-Za-z]+''',
-  '''passwordStrengthDiv\.classList\.toggle'''
+  '''passwordStrengthDiv\.classList\.toggle''',
+  '''AKIAAwABBAkAAABqALUA''',
+  '''aKIAYNcRFbrKYzmZ6cmx'''
 ]
