@@ -761,6 +761,7 @@ class AccessibleRegistrationForm {
             // Erfolgreiche Registrierung
             if (result.data.register.status === "success") {
                 this.verifyUser2(result.data.register.userid);
+                sessionStorage.setItem('newUserEmail', formData.email);
                 this.showToast("Registration successfully. " + userfriendlymsg(result.data.register.ResponseCode), 'success');
                 return true;
             } else {

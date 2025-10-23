@@ -363,6 +363,20 @@
 
   // Initialize the form when DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      
+      const savedEmail = sessionStorage.getItem('newUserEmail');
+      
+      if (savedEmail && emailInput) {
+          emailInput.value = savedEmail;
+          
+          sessionStorage.removeItem('newUserEmail');
+          
+          if (passwordInput) {
+              passwordInput.focus();
+          }
+      }
       autoLogin();
       new AccessibleLoginForm();
   });

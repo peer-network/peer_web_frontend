@@ -1610,6 +1610,11 @@ footer {
 	gap: 10px;
 }
 
+.referralBoard_body .ref_user_info .user_slug {
+  color: var(--white-opacity-50);
+  font-size: 16px;
+}
+
 .referralBoard_body .user_avatar {
 	width: 2.5rem;
 	height: 2.5rem;
@@ -2665,6 +2670,15 @@ footer {
 		padding: 30px 60px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 	}
+
+	.referralBoard_body .ref_user_info .user_slug {
+		font-size: 24px;
+	}
+
+	.referralBoard_body .user_avatar {
+		width: 3.5rem;
+		height: 3.5rem;
+	} 
 
 	.referralBoard_header .referral_link_container img {
 		width: 50px;
