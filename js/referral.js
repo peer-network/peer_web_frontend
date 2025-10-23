@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             referralData.invitedBy = [];
         } else if (Array.isArray(affectedRows.invitedBy)) {
             referralData.invitedBy = affectedRows.invitedBy;
-        } else if (affectedRows.invitedBy) {
+        } else if (affectedRows.invitedBy && affectedRows.invitedBy.id && affectedRows.invitedBy.id !== "") {
             referralData.invitedBy = [affectedRows.invitedBy];
         } else {
             referralData.invitedBy = [];
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             referralData.iInvited = [];
         } else if (Array.isArray(affectedRows.iInvited)) {
             referralData.iInvited = affectedRows.iInvited;
-        } else if (affectedRows.iInvited) {
+        } else if (affectedRows.iInvited && affectedRows.iInvited.id && affectedRows.iInvited.id !== "") {
             referralData.iInvited = [affectedRows.iInvited];
         } else {
             referralData.iInvited = [];
