@@ -8,12 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById('boostModal');
   const adsStats = document.querySelector('.ads_container_wrap');
   const advertisePost = document.getElementById('advertisePost');
+  const ADPOSTPRICE = 2000;
   let currentStep = 1;
-  let postid = null;
+  let postid, BALANCE, currentAdTime = null;
 
   // ----------------- Show Step Function -----------------
   function showStep(step) {
-    console.log('i reached hre')
+    if (step == 2 && BALANCE < ADPOSTPRICE) {
+      checkAdPostElg();
+    } 
     document.querySelectorAll('.modal-step').forEach(el => {
       el.classList.remove('active');
     });
@@ -53,23 +56,22 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.remove('none');
     showStep(1);
   }
-
-  showStep(3);
-  currentliquidity("token_balance");
-
+  
+  (async () => {
+    BALANCE = await currentliquidity("token_balance");
+  })();
 
   // ----------------- Insert Pinned Button in Opened Post -----------------
   function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
     const viewpost = document.querySelector(".viewpost");
     if (!viewpost) return;
-
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
     pinnedBtn.innerHTML = `
       <a class="button btn-blue">
         <img src="svg/pin.svg" alt="pin">
         <span class="ad_username bold">@${username}</span>
-        <span class="ad_duration txt-color-gray">23h</span>
+        <span class="ad_duration txt-color-gray">${currentAdTime}</span>
       </a>
     `;
 
@@ -119,10 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----------------- Modal Buttons -----------------
   modal.addEventListener('click', function (e) {
-    if (e.target.classList.contains('not-enough-balance')) {
-      showStep(currentStep);
-      return
-    }
     if (e.target.classList.contains('next-btn')) {
       showStep(currentStep + 1);
     }
@@ -132,42 +130,34 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.classList.contains('close-btn')) {
       modal.classList.add('none');
     }
-
     if (e.target.classList.contains('goToProfile-btn')) {
       profileBox.classList.remove('boostActive');
       listPosts.classList.remove('boostActive');
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
       modal.classList.add('none');
-
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
         // markCardAsBoosted(window.lastBoostedCard);
       }
     }
-
     if (e.target.classList.contains('goToPost-btn')) {
       profileBox.classList.remove('boostActive');
       listPosts.classList.remove('boostActive');
       modal.classList.add('none');
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
-
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-
         insertPinnedBtn(window.lastBoostedCard, username, "profile");
         // markCardAsBoosted(window.lastBoostedCard);
-
         window.lastBoostedCard.click();
         insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
       }
     }
-
     if (e.target === modal) {
       modal.classList.add('none');
     }
@@ -272,24 +262,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // Api call for AdvertisePostPinned endpoint
   advertisePost.addEventListener('click', advertisePostPinned);
 
-  async function advertisePostPinned() {
-
-
-    ADPOSTPRICE = 2000;
-    const currentBalance = await getLiquiudity();
-
-    if (currentBalance < ADPOSTPRICE) {
-      const advertisePostEl = document.getElementById('advertisePost');
-      advertisePostEl.innerText = 'Go to profile';
-      advertisePostEl.classList.add('goToProfile-btn');
-      advertisePostEl.classList.add('not-enough-balance');
-      advertisePostEl.classList.remove('next-btn');
+  async function checkAdPostElg() {
+      
+    // BALANCE = await currentliquidity('token_balance');
+    if (BALANCE < ADPOSTPRICE) {
+      advertisePost.innerText = 'Go to profile';
+      advertisePost.classList.add('goToProfile-btn');
+      advertisePost.classList.add('not-enough-balance');
+      advertisePost.classList.remove('next-btn');
 
       const adMessageEl = document.querySelector('.ad_message');
+      adMessageEl.classList.add('error');
       adMessageEl.innerText = 'You don’t have enough Peer Tokens to start this promotion.';
-      return false;
+      // showStep(3)
+      // return false;
     }
+  }
 
+  async function advertisePostPinned() {
     const accessToken = getCookie("authToken");
     // Create headers
     const headers = new Headers({
@@ -331,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.status === "error") {
         throw new Error(userfriendlymsg(data.ResponseCode));
       }
-      shiftPostToTop();
+      shiftPostToTop(data);
       return true;
     } catch {
       console.error("AdvertisePostPinned failed");
@@ -339,9 +329,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function shiftPostToTop() {
+  function shiftPostToTop(data) {
     const parentElement = document.getElementById("allpost");
     const cardEl = document.getElementById(`${postid}`);
+    currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);
     if (parentElement && cardEl) {
       // move card to top
       parentElement.prepend(cardEl);
