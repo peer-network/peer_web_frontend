@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (postInhalt && social) {
         const pinnedBtn = document.createElement("div");
         pinnedBtn.classList.add("pinedbtn");
-        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">0 sec</span></a>`;
+        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span></a>`;
         postInhalt.insertBefore(pinnedBtn, social);
       }
 

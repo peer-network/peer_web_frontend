@@ -2447,8 +2447,6 @@ if (backBtn) {
   // ----------------- Insert Pinned Button -----------------
   window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
     if (!card) return;
-    console.log('i am here in insertPinnedBtn ', time)
-    
     if (card.querySelector(".pinedbtn") && mode != 'post') return;
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
