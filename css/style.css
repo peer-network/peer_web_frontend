@@ -2987,8 +2987,10 @@ footer {
   line-height: 40px;
   font-size: 18px;
   border: none;
-  padding: 0 15px;
-  justify-content: space-between;
+  /* padding: 0 15px;  removed temporary */
+  /* justify-content: space-between; change to flex-start */
+	justify-content: flex-start;
+	gap: 15px;
   max-width: 300px;
 }
 

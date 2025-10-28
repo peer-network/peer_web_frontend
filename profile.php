@@ -77,7 +77,7 @@ checkAuth("unauthorized");
       </div>
       <div class="profile_edit_box">
         <a class="button btn-white edit-profile" href="profileSettings.php">Edit</a>
-        <div class="ads_container_wrap none">
+        <div class="ads_container_wrap">
           <div class="button boost_adsStats_container" role="button" aria-expanded="false" aria-controls="boostDropdown" tabindex="0">Ads</div>
           <div class="boost_dropdown_wrapper" hidden>
             <div class="button btn-blue promote_posts">Boost post</div>

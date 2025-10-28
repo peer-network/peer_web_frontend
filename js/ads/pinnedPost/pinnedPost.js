@@ -131,10 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.classList.add('none');
     }
     if (e.target.classList.contains('goToProfile-btn')) {
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
+      // profileBox.classList.remove('boostActive');
+      // listPosts.classList.remove('boostActive');
+      // cancelBtn.classList.add("none");
+      // boostPostDescription.classList.add("none");
       modal.classList.add('none');
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
@@ -144,11 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     if (e.target.classList.contains('goToPost-btn')) {
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
+      // profileBox.classList.remove('boostActive');
+      // listPosts.classList.remove('boostActive');
       modal.classList.add('none');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
+      // cancelBtn.classList.add("none");
+      // boostPostDescription.classList.add("none");
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
@@ -263,13 +263,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Api call for AdvertisePostPinned endpoint
   advertisePost.addEventListener('click', advertisePostPinned);
 
-  async function checkAdPostElg() {
-      
+  async function checkAdPostElg() {  
     // BALANCE = await currentliquidity('token_balance');
     if (BALANCE < ADPOSTPRICE) {
       advertisePost.innerText = 'Go to profile';
       advertisePost.classList.add('goToProfile-btn');
-      advertisePost.classList.add('not-enough-balance');
+      // advertisePost.classList.add('not-enough-balance');
       advertisePost.classList.remove('next-btn');
 
       const adMessageEl = document.querySelector('.ad_message');
@@ -323,11 +322,13 @@ document.addEventListener("DOMContentLoaded", () => {
       //   throw new Error(userfriendlymsg(data.ResponseCode));
       // }
       // shiftPostToTop(data);
-      return true;
+      // return true;
     } catch {
       console.error("AdvertisePostPinned failed");
-      return false;
+      // return false;
     }
+
+    return
   }
 
   function shiftPostToTop(data) {
