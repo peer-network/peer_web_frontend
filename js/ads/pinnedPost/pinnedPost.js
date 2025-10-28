@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (postInhalt && social) {
         const pinnedBtn = document.createElement("div");
         pinnedBtn.classList.add("pinedbtn");
-        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">00:00</span></a>`;
+        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">0 sec</span></a>`;
         postInhalt.insertBefore(pinnedBtn, social);
       }
 
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile");
+        insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
         // markCardAsBoosted(window.lastBoostedCard);
       }
     }
@@ -152,10 +152,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile");
+        insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
         // markCardAsBoosted(window.lastBoostedCard);
         window.lastBoostedCard.click();
-        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
+        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post", currentAdTime); // the called function was already commented out
       }
     }
     if (e.target === modal) {
@@ -229,6 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
+      console.log('cancel button event triggered')
       profileBox.classList.remove("boostActive");
       listPosts.classList.remove("boostActive");
       cancelBtn.classList.add("none");
@@ -314,14 +315,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const query = await fetch(GraphGL, requestOptions);
-      const result = await query.json();
-      const data = result.data?.advertisePostPinned;
-      if (!data) throw new Error("Invalid response structure");
-      if (data.status === "error") {
-        throw new Error(userfriendlymsg(data.ResponseCode));
-      }
-      shiftPostToTop(data);
+      // const query = await fetch(GraphGL, requestOptions);
+      // const result = await query.json();
+      // const data = result.data?.advertisePostPinned;
+      // if (!data) throw new Error("Invalid response structure");
+      // if (data.status === "error") {
+      //   throw new Error(userfriendlymsg(data.ResponseCode));
+      // }
+      // shiftPostToTop(data);
       return true;
     } catch {
       console.error("AdvertisePostPinned failed");
@@ -334,9 +335,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const cardEl = document.getElementById(`${postid}`);
     currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);
     if (parentElement && cardEl) {
-      // move card to top
+      // append card to top
       parentElement.prepend(cardEl);
-      // remove duplicate cards with the same ID (after the first one)
+      // remove duplicate cards
       parentElement.querySelectorAll(`.card#${postid}`).forEach((el, index) => {
         if (index > 0) el.remove();
       });
