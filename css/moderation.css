@@ -1,0 +1,83 @@
+.site-main-admin {
+  padding: 50px 50px 0 50px;
+}
+
+.site-main-admin .admin_h1 {
+  margin: 0 0 60px 0;
+}
+
+.moderation_site_layout {
+  grid-template-areas:
+    "header header" 
+    "left   main   " 
+    "footer footer ";
+  grid-template-columns: 350px 1fr;
+  grid-template-rows: auto 1fr;
+  transition: grid-template-columns 0.3s ease-in-out;
+}
+
+.adminID {
+  padding: 0 35px;
+  background: var(--bg-filter);
+  line-height: 80px;
+  border-radius: 50px;
+}
+
+.leftContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.button.btn-red-transparent.back_toUserBtn {
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  line-height: 80px;
+}
+
+.button.btn-red-transparent.back_toUserBtn img {
+  width: 25px;
+}
+
+.button.btn-red-transparent.back_toUserBtn:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.admin_header {
+  display: flex;
+  gap: 20px;
+}
+
+.admin_box {
+  background-color: var(--bg-filter);
+  border-radius: 25px;
+  padding: 20px;
+  display: flex;
+  max-height: 200px;
+  height: 100%;
+  flex-direction: column;
+  width: 100%;
+  gap: 30px;
+}
+
+.admin_box_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin_box_top img {
+  width: 20px;
+}
+
+.admin_box_bottom {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin_box_bottom p{
+  color: var(--white-opacity-50);
+  font-size: 16px;
+}
