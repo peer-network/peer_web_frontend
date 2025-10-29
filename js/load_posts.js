@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded",  () => {
     closePost.addEventListener("click", () => {
       togglePopup("cardClicked");
       clearAdBtnBox();
+      // activateAgainPinnedPostMode();
       cancelTimeout();
     });
   }

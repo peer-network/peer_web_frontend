@@ -135,7 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // listPosts.classList.remove('boostActive');
       // cancelBtn.classList.add("none");
       // boostPostDescription.classList.add("none");
-      modal.classList.add('none');
+      // adsStats.classList.remove('none');
+      // modal.classList.add('none');
+      cancelBtn.click();
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
@@ -146,9 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.classList.contains('goToPost-btn')) {
       // profileBox.classList.remove('boostActive');
       // listPosts.classList.remove('boostActive');
-      modal.classList.add('none');
       // cancelBtn.classList.add("none");
       // boostPostDescription.classList.add("none");
+      // adsStats.classList.remove('none');
+      cancelBtn.click()
+      modal.classList.add('none');
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
@@ -173,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showAdCards() {
     const cards = listPosts.querySelectorAll(".card");
-    console.log('POSTS ', POSTS)
     cards.forEach((card, i) => {
       const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
       if (isAd) card.classList.remove('none');
@@ -190,7 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listPosts.classList.contains("boostActive")) {
               e.stopImmediatePropagation();
               postid = this.id;
-              if (!card.classList.contains("boosted")) boostCardClick(card);
+              // if (!card.classList.contains("boosted")) 
+              boostCardClick(card);
 
               // if (card.classList.contains("boosted")) {
                 // markCardAsBoosted(card);
@@ -351,5 +355,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (adBtn) {
       adBtn.remove()
     }
+  }
+
+  window.activateAgainPinnedPostMode = function () {
+    if (profileBox.classList.contains('boostActive')){
+    profileBox.classList.add('boostActive');
+      listPosts.classList.add('boostActive');
+      // cancelBtn.classList.remove("none");
+      boostPostDescription.classList.remove("none");
+      // modal.classList.add('none');
+    }
+
   }
 });
