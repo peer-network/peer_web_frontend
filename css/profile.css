@@ -503,7 +503,7 @@
   background-color: var(--bg-filter);
 }
 
-.pinedbtn {
+/* .pinedbtn {
   margin-top: auto;
 }
 
@@ -539,7 +539,7 @@
 .pinedbtn .button span.ad_username {
 	
 	font-style: italic;
-}
+} */
 
 
 .preview_boostedPost.card .post .shadow,
