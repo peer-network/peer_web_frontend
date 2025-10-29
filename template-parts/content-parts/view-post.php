@@ -36,9 +36,7 @@
                         <ul class="sublist">
                             <li><a href="#" class="reportpost"><i class="fi fi-rr-triangle-warning"></i> Report post</a></li>
                             <li><a href="#" class="download"><i class="fi fi-rr-down-to-line"></i> Download</a></li>
-                            <li class="sharelinks"><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a>
-                               
-                            </li>
+                            <li class="sharelinks"><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a></li>
                             <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
                         </ul>
                         

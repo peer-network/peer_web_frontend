@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function showStep(step) {
     if (step == 2 && BALANCE < ADPOSTPRICE) {
       checkAdPostElg();
-    } 
+    }
     document.querySelectorAll('.modal-step').forEach(el => {
       el.classList.remove('active');
     });
@@ -52,11 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       previewBoostedPost.appendChild(clonedCard);
     }
- 
+
     modal.classList.remove('none');
     showStep(1);
   }
-  
+
   (async () => {
     BALANCE = await currentliquidity("token_balance");
   })();
@@ -169,16 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function hideAdCards() {
     const cards = listPosts.querySelectorAll(".card");
-      cards.forEach((card, i) => {
-        const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
-        if (isAd) card.classList.add('none');
+    cards.forEach((card, i) => {
+      const isAd = POSTS.listPosts.affectedRows[i] ?.isAd;
+      if (isAd) card.classList.add('none');
     });
   }
 
   function showAdCards() {
     const cards = listPosts.querySelectorAll(".card");
     cards.forEach((card, i) => {
-      const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
+      const isAd = POSTS.listPosts.affectedRows[i] ?.isAd;
       if (isAd) card.classList.remove('none');
     });
   }
@@ -195,18 +195,16 @@ document.addEventListener("DOMContentLoaded", () => {
               postid = this.id;
               // if (!card.classList.contains("boosted")) 
               boostCardClick(card);
-
               // if (card.classList.contains("boosted")) {
-                // markCardAsBoosted(card);
-                // card.classList.add("flipped");
+              // markCardAsBoosted(card);
+              // card.classList.add("flipped");
 
-                // setTimeout(() => {
-                //   card.classList.remove("flipped");
-                // }, 2000);
+              // setTimeout(() => {
+              //   card.classList.remove("flipped");
+              // }, 2000);
               // } else {
               //   boostCardClick(card);
               // }
-            
             }
           }, {
             capture: true
@@ -267,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Api call for AdvertisePostPinned endpoint
   advertisePost.addEventListener('click', advertisePostPinned);
 
-  async function checkAdPostElg() {  
+  async function checkAdPostElg() {
     // BALANCE = await currentliquidity('token_balance');
     if (BALANCE < ADPOSTPRICE) {
       advertisePost.innerText = 'Go to profile';
@@ -318,27 +316,40 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      // const query = await fetch(GraphGL, requestOptions);
-      // const result = await query.json();
-      // const data = result.data?.advertisePostPinned;
+      const query = await fetch(GraphGL, requestOptions);
+      const result = await query.json();
+      const data = result.data ?.advertisePostPinned;
       // if (!data) throw new Error("Invalid response structure");
-      // if (data.status === "error") {
-      //   throw new Error(userfriendlymsg(data.ResponseCode));
-      // }
-      // shiftPostToTop(data);
+      if (data.status === "error") {
+        throw new Error(userfriendlymsg(data.ResponseCode));
+      }
+      shiftPostToTop(data);
       // return true;
     } catch {
       console.error("AdvertisePostPinned failed");
       // return false;
     }
 
-    return
+    // return
   }
 
   function shiftPostToTop(data) {
     const parentElement = document.getElementById("allpost");
     const cardEl = document.getElementById(`${postid}`);
-    currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);
+    const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
+    currentAdTime = calctimeAgo(data.affectedRows[0] ?.createdAt);  
+    adPostCreatedAtTime.textContent =
+      new Date(data.affectedRows[0] ?.createdAt.replace(" ", "T"))
+      .toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      })
+      .replace(",", " at");
+
     if (parentElement && cardEl) {
       // append card to top
       parentElement.prepend(cardEl);
@@ -358,8 +369,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.activateAgainPinnedPostMode = function () {
-    if (profileBox.classList.contains('boostActive')){
-    profileBox.classList.add('boostActive');
+    if (profileBox.classList.contains('boostActive')) {
+      profileBox.classList.add('boostActive');
       listPosts.classList.add('boostActive');
       // cancelBtn.classList.remove("none");
       boostPostDescription.classList.remove("none");
