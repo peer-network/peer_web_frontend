@@ -136,12 +136,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // cancelBtn.classList.add("none");
       // boostPostDescription.classList.add("none");
       // adsStats.classList.remove('none');
-      // modal.classList.add('none');
+      modal.classList.add('none');
       cancelBtn.click();
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
+        window.insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
+        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post");
         // markCardAsBoosted(window.lastBoostedCard);
       }
     }
@@ -151,15 +152,15 @@ document.addEventListener("DOMContentLoaded", () => {
       // cancelBtn.classList.add("none");
       // boostPostDescription.classList.add("none");
       // adsStats.classList.remove('none');
-      cancelBtn.click()
       modal.classList.add('none');
+      cancelBtn.click()
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
+        window.insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
         // markCardAsBoosted(window.lastBoostedCard);
+        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
         window.lastBoostedCard.click();
-        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post", currentAdTime); // the called function was already commented out
       }
     }
     if (e.target === modal) {
@@ -237,6 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
       adsStats.classList.remove('none');
+      attachWrapperListeners();
       showAdCards();
     });
   }
@@ -329,7 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("AdvertisePostPinned failed");
       // return false;
     }
-
     // return
   }
 
@@ -339,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
     currentAdTime = calctimeAgo(data.affectedRows[0] ?.createdAt);  
     adPostCreatedAtTime.textContent =
-      new Date(data.affectedRows[0] ?.createdAt.replace(" ", "T"))
+      new Date(data.affectedRows[0] ?.timeframeEnd.replace(" ", "T"))
       .toLocaleString("en-US", {
         month: "short",
         day: "numeric",
@@ -366,16 +367,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (adBtn) {
       adBtn.remove()
     }
-  }
-
-  window.activateAgainPinnedPostMode = function () {
-    if (profileBox.classList.contains('boostActive')) {
-      profileBox.classList.add('boostActive');
-      listPosts.classList.add('boostActive');
-      // cancelBtn.classList.remove("none");
-      boostPostDescription.classList.remove("none");
-      // modal.classList.add('none');
-    }
-
   }
 });
