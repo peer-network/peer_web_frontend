@@ -96,7 +96,7 @@
       <div class="modal-body">
         <img src="svg/confirmIcon.svg" alt="Confirmed">
         <h2 class="xxl_font_size">Your post promotion has started.</h2>
-        <p class="md_font_size">Your post is now pinned and will expire on <br><span class="bold">Jun 25, 2025 at 14:30 </span> (24 hours from now)</p>
+        <p class="md_font_size">Your post is now pinned and will expire on <br><span class="bold" id="adPostCreatedAtTime">Jun 25, 2025 at 14:30 </span> (24 hours from now)</p>
        </div>
       <div class="modal-footer">
         <div class="button btn-transparent goToProfile-btn">Go to profile</div>
