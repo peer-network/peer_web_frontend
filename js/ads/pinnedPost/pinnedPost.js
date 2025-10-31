@@ -195,6 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
               e.stopImmediatePropagation();
               postid = this.id;
               // if (!card.classList.contains("boosted")) 
+              if (currentStep == 1) 
               boostCardClick(card);
               // if (card.classList.contains("boosted")) {
               // markCardAsBoosted(card);
@@ -314,42 +315,42 @@ document.addEventListener("DOMContentLoaded", () => {
     var requestOptions = {
       method: "POST",
       headers: headers,
-      body: graphql,
+      body: graphql
     };
-
+    shiftPostToTop();
     try {
-      const query = await fetch(GraphGL, requestOptions);
-      const result = await query.json();
-      const data = result.data ?.advertisePostPinned;
+      // const query = await fetch(GraphGL, requestOptions);
+      // const result = await query.json();
+      // const data = result.data ?.advertisePostPinned;
+      // console.log("AdvertisePostPinned response:", data);
       // if (!data) throw new Error("Invalid response structure");
-      if (data.status === "error") {
-        throw new Error(userfriendlymsg(data.ResponseCode));
-      }
-      shiftPostToTop(data);
-      // return true;
+      // if (data?.status == "error") throw new Error(userfriendlymsg(data?.ResponseCode));
+      // shift the card to top
+        // console.log("About to call shiftPostToTop");
+        // shiftPostToTop(data);
+        // console.log("shiftPostToTop executed successfully");
     } catch {
       console.error("AdvertisePostPinned failed");
-      // return false;
     }
-    // return
   }
 
-  function shiftPostToTop(data) {
+  function shiftPostToTop(data = null) {
     const parentElement = document.getElementById("allpost");
     const cardEl = document.getElementById(`${postid}`);
-    const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
-    currentAdTime = calctimeAgo(data.affectedRows[0] ?.createdAt);  
-    adPostCreatedAtTime.textContent =
-      new Date(data.affectedRows[0] ?.timeframeEnd.replace(" ", "T"))
-      .toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      })
-      .replace(",", " at");
+    cardEl.addEventListener('click', handleCardClick);
+    // const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
+    // currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);  
+    // adPostCreatedAtTime.textContent =
+    //   new Date(data.affectedRows[0] ?.timeframeEnd.replace(" ", "T"))
+    //   .toLocaleString("en-US", {
+    //     month: "short",
+    //     day: "numeric",
+    //     year: "numeric",
+    //     hour: "2-digit",
+    //     minute: "2-digit",
+    //     hour12: false
+    //   })
+    //   .replace(",", " at");
 
     if (parentElement && cardEl) {
       // append card to top
