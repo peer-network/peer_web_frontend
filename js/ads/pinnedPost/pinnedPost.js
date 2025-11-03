@@ -12,11 +12,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentStep = 1;
   let postid, BALANCE, currentAdTime = null;
 
+  // self called function
+  (async () => {
+    BALANCE = await currentliquidity("token_balance");
+
+  })();
+
+  // enable 
+
   // ----------------- Show Step Function -----------------
   function showStep(step) {
     if (step == 2 && BALANCE < ADPOSTPRICE) {
       checkAdPostElg();
-    } 
+    }
     document.querySelectorAll('.modal-step').forEach(el => {
       el.classList.remove('active');
     });
@@ -46,21 +54,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (postInhalt && social) {
         const pinnedBtn = document.createElement("div");
         pinnedBtn.classList.add("pinedbtn");
-        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">00:00</span></a>`;
+        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span></a>`;
         postInhalt.insertBefore(pinnedBtn, social);
       }
 
       previewBoostedPost.appendChild(clonedCard);
     }
- 
+
     modal.classList.remove('none');
     showStep(1);
   }
-  
-  (async () => {
-    BALANCE = await currentliquidity("token_balance");
-  })();
-
   // ----------------- Insert Pinned Button in Opened Post -----------------
   function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
     const viewpost = document.querySelector(".viewpost");
@@ -131,31 +134,36 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.classList.add('none');
     }
     if (e.target.classList.contains('goToProfile-btn')) {
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
+      // profileBox.classList.remove('boostActive');
+      // listPosts.classList.remove('boostActive');
+      // cancelBtn.classList.add("none");
+      // boostPostDescription.classList.add("none");
+      // adsStats.classList.remove('none');
       modal.classList.add('none');
+      cancelBtn.click();
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile");
+        window.insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
+        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post");
         // markCardAsBoosted(window.lastBoostedCard);
       }
     }
     if (e.target.classList.contains('goToPost-btn')) {
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
+      // profileBox.classList.remove('boostActive');
+      // listPosts.classList.remove('boostActive');
+      // cancelBtn.classList.add("none");
+      // boostPostDescription.classList.add("none");
+      // adsStats.classList.remove('none');
       modal.classList.add('none');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
+      cancelBtn.click()
       if (window.lastBoostedCard) {
         const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile");
+        window.insertPinnedBtn(window.lastBoostedCard, username, "profile", currentAdTime);
         // markCardAsBoosted(window.lastBoostedCard);
-        window.lastBoostedCard.click();
         insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
+        window.lastBoostedCard.click();
       }
     }
     if (e.target === modal) {
@@ -165,17 +173,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function hideAdCards() {
     const cards = listPosts.querySelectorAll(".card");
-      cards.forEach((card, i) => {
-        const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
-        if (isAd) card.classList.add('none');
+    cards.forEach((card, i) => {
+      const isAd = POSTS.listPosts.affectedRows[i] ?.isAd;
+      if (isAd) card.classList.add('none');
     });
   }
 
   function showAdCards() {
     const cards = listPosts.querySelectorAll(".card");
-    console.log('POSTS ', POSTS)
     cards.forEach((card, i) => {
-      const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
+      const isAd = POSTS.listPosts.affectedRows[i] ?.isAd;
       if (isAd) card.classList.remove('none');
     });
   }
@@ -190,19 +197,19 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listPosts.classList.contains("boostActive")) {
               e.stopImmediatePropagation();
               postid = this.id;
-              if (!card.classList.contains("boosted")) boostCardClick(card);
-
+              // if (!card.classList.contains("boosted")) 
+              if (currentStep == 1) 
+              boostCardClick(card);
               // if (card.classList.contains("boosted")) {
-                // markCardAsBoosted(card);
-                // card.classList.add("flipped");
+              // markCardAsBoosted(card);
+              // card.classList.add("flipped");
 
-                // setTimeout(() => {
-                //   card.classList.remove("flipped");
-                // }, 2000);
+              // setTimeout(() => {
+              //   card.classList.remove("flipped");
+              // }, 2000);
               // } else {
               //   boostCardClick(card);
               // }
-            
             }
           }, {
             capture: true
@@ -229,11 +236,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
+      console.log('cancel button event triggered')
       profileBox.classList.remove("boostActive");
       listPosts.classList.remove("boostActive");
       cancelBtn.classList.add("none");
       boostPostDescription.classList.add("none");
       adsStats.classList.remove('none');
+      attachWrapperListeners();
       showAdCards();
     });
   }
@@ -263,12 +272,11 @@ document.addEventListener("DOMContentLoaded", () => {
   advertisePost.addEventListener('click', advertisePostPinned);
 
   async function checkAdPostElg() {
-      
     // BALANCE = await currentliquidity('token_balance');
     if (BALANCE < ADPOSTPRICE) {
       advertisePost.innerText = 'Go to profile';
       advertisePost.classList.add('goToProfile-btn');
-      advertisePost.classList.add('not-enough-balance');
+      // advertisePost.classList.add('not-enough-balance');
       advertisePost.classList.remove('next-btn');
 
       const adMessageEl = document.querySelector('.ad_message');
@@ -310,33 +318,47 @@ document.addEventListener("DOMContentLoaded", () => {
     var requestOptions = {
       method: "POST",
       headers: headers,
-      body: graphql,
+      body: graphql
     };
-
+    shiftPostToTop();
     try {
-      const query = await fetch(GraphGL, requestOptions);
-      const result = await query.json();
-      const data = result.data?.advertisePostPinned;
-      if (!data) throw new Error("Invalid response structure");
-      if (data.status === "error") {
-        throw new Error(userfriendlymsg(data.ResponseCode));
-      }
-      shiftPostToTop(data);
-      return true;
+      // const query = await fetch(GraphGL, requestOptions);
+      // const result = await query.json();
+      // const data = result.data ?.advertisePostPinned;
+      // console.log("AdvertisePostPinned response:", data);
+      // if (!data) throw new Error("Invalid response structure");
+      // if (data?.status == "error") throw new Error(userfriendlymsg(data?.ResponseCode));
+      // shift the card to top
+        // console.log("About to call shiftPostToTop");
+        // shiftPostToTop(data);
+        // console.log("shiftPostToTop executed successfully");
     } catch {
       console.error("AdvertisePostPinned failed");
-      return false;
     }
   }
 
-  function shiftPostToTop(data) {
+  function shiftPostToTop(data = null) {
     const parentElement = document.getElementById("allpost");
     const cardEl = document.getElementById(`${postid}`);
-    currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);
+    cardEl.addEventListener('click', handleCardClick);
+    // const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
+    // currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);  
+    // adPostCreatedAtTime.textContent =
+    //   new Date(data.affectedRows[0] ?.timeframeEnd.replace(" ", "T"))
+    //   .toLocaleString("en-US", {
+    //     month: "short",
+    //     day: "numeric",
+    //     year: "numeric",
+    //     hour: "2-digit",
+    //     minute: "2-digit",
+    //     hour12: false
+    //   })
+    //   .replace(",", " at");
+
     if (parentElement && cardEl) {
-      // move card to top
+      // append card to top
       parentElement.prepend(cardEl);
-      // remove duplicate cards with the same ID (after the first one)
+      // remove duplicate cards
       parentElement.querySelectorAll(`.card#${postid}`).forEach((el, index) => {
         if (index > 0) el.remove();
       });
