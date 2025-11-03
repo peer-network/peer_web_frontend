@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded",  () => {
   if (closePost) {
     closePost.addEventListener("click", () => {
       togglePopup("cardClicked");
-      clearAdBtnBox();
+      window.clearAdBtnBox();
       cancelTimeout();
     });
   }
@@ -1069,8 +1069,6 @@ async function postClicked(objekt) {
     insertPinnedBtn(cardEl, objekt.user.username, "post", calctimeAgo(objekt.startdate));
   }
 }
-
-
 
 function deleteFilter() {
   localStorage.removeItem("filterSettings");

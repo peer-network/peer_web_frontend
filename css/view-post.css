@@ -394,6 +394,12 @@
  
  
 }
+.viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
+	display: none;
+}
+#profile .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
+	display: block;
+}
 .viewpost .postview_footer .more .share-post-box {
 	position: absolute;
 	bottom: 0px;
