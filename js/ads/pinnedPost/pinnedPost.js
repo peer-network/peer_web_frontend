@@ -318,14 +318,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const query = await fetch(GraphGL, requestOptions);
-      const result = await query.json();
-      const data = result.data ?.advertisePostPinned;
+      // const query = await fetch(GraphGL, requestOptions);
+      // const result = await query.json();
+      // const data = result.data ?.advertisePostPinned;
       // if (!data) throw new Error("Invalid response structure");
-      if (data.status === "error") {
-        throw new Error(userfriendlymsg(data.ResponseCode));
-      }
-      shiftPostToTop(data);
+      // if (data.status === "error") {
+      //   throw new Error(userfriendlymsg(data.ResponseCode));
+      // }
+      // shiftPostToTop(data);
       // return true;
     } catch {
       console.error("AdvertisePostPinned failed");
