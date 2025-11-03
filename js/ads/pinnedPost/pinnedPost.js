@@ -326,13 +326,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const query = await fetch(GraphGL, requestOptions);
       const result = await query.json();
       const data = result.data ?.advertisePostPinned;
-      console.log("AdvertisePostPinned response:", data);
       // if (!data) throw new Error("Invalid response structure");
       if (data?.status == "error") throw new Error(userfriendlymsg(data?.ResponseCode));
      // shift the card to top
-        console.log("About to call shiftPostToTop");
-        shiftPostToTop(data);
-        console.log("shiftPostToTop executed successfully");
+      shiftPostToTop(data);
     } catch {
       console.error("AdvertisePostPinned failed");
     }
