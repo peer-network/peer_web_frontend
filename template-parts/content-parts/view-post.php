@@ -38,8 +38,8 @@
                             <li><a href="#" class="download"><i class="fi fi-rr-down-to-line"></i> Download</a></li>
                             <li class="sharelinks"><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a></li>
                             <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
+                            <li id="boostPostFromPopup"><a href="#"><img src="svg/boost-post-icon.svg" alt="Boost" />Boost Post</a></li>
                         </ul>
-                        
                     </ul>
 
                      <div id="share-link-box" class="share-post-box">

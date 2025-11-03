@@ -534,9 +534,10 @@ class AccessibleRegistrationForm {
 
     goToStep(stepNumber) {
         this.currentStep = stepNumber;
+        //console.log(stepNumber);
         this.showStep(this.getStepId(stepNumber));
 
-        this.updateBackButton(stepNumber > 1);
+        this.updateBackButton(stepNumber >= 1);
         if (stepNumber > 2)
             this.updateBackButton(false);
 
