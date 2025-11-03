@@ -12,6 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentStep = 1;
   let postid, BALANCE, currentAdTime = null;
 
+  // self called function
+  (async () => {
+    BALANCE = await currentliquidity("token_balance");
+
+  })();
+
+  // enable 
+
   // ----------------- Show Step Function -----------------
   function showStep(step) {
     if (step == 2 && BALANCE < ADPOSTPRICE) {
@@ -56,11 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.remove('none');
     showStep(1);
   }
-
-  (async () => {
-    BALANCE = await currentliquidity("token_balance");
-  })();
-
   // ----------------- Insert Pinned Button in Opened Post -----------------
   function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
     const viewpost = document.querySelector(".viewpost");
