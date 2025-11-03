@@ -2,7 +2,14 @@
 public/
 test/
 tests/
-video-editor/
+video-editor/*
+.gitleaks_out/*
 *.html
 *.tmp
 error.txt
+.DS_Store
+sw_instal.js
+sw_instal.min.js
+sw-db.js
+sw.js
+sw.min.js

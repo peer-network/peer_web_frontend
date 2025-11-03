@@ -196,7 +196,14 @@ include 'host.php';
                                 <div class="validation-message medium_font" id="passwordValidation" role="alert" aria-live="polite"></div>
                                 
                                 <!-- Password Strength Indicator -->
-                                <div class="password-strength" id="passwordStrength">
+                                <div class="password-strength none" id="passwordStrength">
+                                    <div class="strength-labels medium_font">
+                                        <span class="strength-text very-weak">Very weak</span>
+                                        <span class="strength-text weak">Weak</span>
+                                        <span class="strength-text improvement">Needs improvement</span>
+                                        <span class="strength-text good">Good</span>
+                                        <span class="strength-text excellent">Excellent</span> 
+                                    </div>
                                     <div class="strength-meter">
                                         <div class="strength-fill" id="strengthFill">
                                             <span class="strength-segment segment-weak"></span>
@@ -204,8 +211,6 @@ include 'host.php';
                                             <span class="strength-segment segment-medium"></span>
                                             <span class="strength-segment segment-strong"></span>
                                             <span class="strength-segment segment-excellent"></span>
-                                            
-
                                         </div>
                                     </div>
                                     <ul class="strength-requirements medium_font" role="list" aria-label="Password requirements">
@@ -257,7 +262,7 @@ include 'host.php';
                                         >
                                         <span class="checkbox-label medium_font">
                                             I agree to the 
-                                            <a href="https://www.freeprivacypolicy.com/live/02865c3a-79db-4baf-9ca1-7d91e2cf1724" target="_blank">Privacy Policy.</a>
+                                            <a href="https://peerapp.de/privacy.html" target="_blank">Privacy Policy.</a>
                                         </span>
                                     </label>
                                 </div>
@@ -272,7 +277,7 @@ include 'host.php';
                                             aria-describedby="checkboxValidation"
                                         >
                                         <span class="checkbox-label medium_font">
-                                           I agree to the <a href="#">End User License Agreement (EULA)</a>.
+                                           I agree to the <a href="https://peerapp.de/EULA.html">End User License Agreement (EULA)</a>.
                                         </span>
                                     </label>
                                 </div>

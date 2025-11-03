@@ -38,10 +38,11 @@
                     How Peer Works
                 </a>
             </li>
-            <li class="menu-item">
-                <a class="white_border" href="#">
+            <li class="menu-item referralPage <?= ($currentPage === 'referralBoard.php') ? 'active' : '' ?>">
+                <a class="white_border" href="referralBoard.php">
                     <i class="peer-icon peer-icon-referral"></i>
                      <i class="filled peer-icon peer-icon-referral"></i>
+
                     Invite a friend
                 </a>
             </li>

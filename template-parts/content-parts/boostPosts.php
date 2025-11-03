@@ -66,20 +66,20 @@
           <div class="boostPost_right">
               <p class="xl_font_size">Token distribution</p>
               <div class="token_distribution">
-                  <span class="total_cost">96% Burn pccount </span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">1 536 </span>
+                  <span class="total_cost">2% retained by the platform</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">40</span>
               </div>
-              <div class="token_distribution">
+              <div class="token_distribution none">
                   <span class="total_cost bold">1% <em>@wosk_kolloin</em></span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
               </div>
               <div class="token_distribution">
-                  <span class="total_cost">1% Liquidity pool</span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
+                  <span class="total_cost">1% is allocated to a liquidity pool</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">20 </span>
               </div>
               <div class="token_distribution">
-                  <span class="total_cost">2% Peer bank</span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">32 </span>
+                  <span class="total_cost">1% is burned, ensuring deflation</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">20 </span>
               </div>
           </div>
         </div>
@@ -87,7 +87,7 @@
       </div>
       <div class="modal-footer">
         <div class="button btn-transparent back-btn"><img src="" alt="">Back</div>
-        <div class="button btn-blue next-btn bold">Pay</div>
+        <div class="button btn-blue next-btn bold" id="advertisePost">Pay</div>
       </div>
     </div>
 
@@ -96,12 +96,11 @@
       <div class="modal-body">
         <img src="svg/confirmIcon.svg" alt="Confirmed">
         <h2 class="xxl_font_size">Your post promotion has started.</h2>
-        <p class="md_font_size">Your post is now pinned and will expire on <br><span class="bold">Jun 25, 2025 at 14:30 </span> (24 hours from now)</p>
+        <p class="md_font_size">Your post is now pinned and will expire on <br><span class="bold" id="adPostCreatedAtTime">Jun 25, 2025 at 14:30 </span> (24 hours from now)</p>
        </div>
       <div class="modal-footer">
         <div class="button btn-transparent goToProfile-btn">Go to profile</div>
         <div class="button btn-blue goToPost-btn bold">Go to post</div>
       </div>
     </div>
-
 </div>

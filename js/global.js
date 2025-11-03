@@ -320,6 +320,8 @@ async function currentliquidity(targetId = "token") {
     if (moneyEl) {
       moneyEl.innerText = formatted;
     }
+
+    return token;
   }
 }
 
@@ -2428,3 +2430,49 @@ function eraseCookie(name) {
 }
 
 scheduleSilentRefresh(accessToken, refreshToken);
+
+// Back button functionality
+const backBtn = document.querySelector(".general_backBtn");
+if (backBtn) {
+  backBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (document.referrer) {
+          window.location.href = document.referrer;
+      } else {
+          window.history.back();
+      }
+  });
+}
+
+  // ----------------- Insert Pinned Button -----------------
+  window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
+    if (!card) return;
+    if (card.querySelector(".pinedbtn") && mode != 'post') return;
+    const pinnedBtn = document.createElement("div");
+    pinnedBtn.classList.add("pinedbtn");
+    pinnedBtn.innerHTML = `
+      <a class="button btn-blue">
+        <img src="svg/pin.svg" alt="pin">
+        <span class="ad_username bold">@${username}</span>
+        <span class="ad_duration txt-color-gray">${time}</span>
+      </a>
+    `;
+
+    const postInhalt = card.querySelector(".post-inhalt");
+    const social = card.querySelector(".social");
+    const viewpost = document.querySelector(".viewpost");
+    const footer = viewpost ?.querySelector(".postview_footer");
+    const comments = viewpost ?.querySelector(".post-comments");
+
+    if (mode === "profile") {
+      if (postInhalt && social) {
+        postInhalt.insertBefore(pinnedBtn, social);
+      }
+    }
+    
+    if (mode === "post") {
+      if (footer && comments && !footer.querySelector(".pinedbtn")) {
+        comments.insertAdjacentElement("afterend", pinnedBtn);
+      }
+    }
+  }

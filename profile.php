@@ -33,6 +33,7 @@ checkAuth("unauthorized");
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
 <script src="js/list_follow.js?<?php echo filemtime('js/list_follow.js'); ?>" defer></script>
 <script src="js/profile.js?<?php echo filemtime('js/profile.js'); ?>" defer></script>
+<script src="js/ads/pinnedPost/pinnedPost.js?<?php echo filemtime('js/ads/pinnedPost/pinnedPost.js') ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
@@ -76,7 +77,13 @@ checkAuth("unauthorized");
       </div>
       <div class="profile_edit_box">
         <a class="button btn-white edit-profile" href="profileSettings.php">Edit</a>
-        <!--<div class="button btn-blue promote_posts">Boost post</div>-->
+        <div class="ads_container_wrap">
+          <div class="button boost_adsStats_container" role="button" aria-expanded="false" aria-controls="boostDropdown" tabindex="0">Ads</div>
+          <div class="boost_dropdown_wrapper" hidden>
+            <div class="button btn-blue promote_posts">Boost post</div>
+            <a href="myAds.php" class="button btn-white myAds_button">My Ads</a>
+          </div>
+        </div>
         <div class="button btn-white promote_posts_cancel none">Cancel</div>
       </div>
     </div>

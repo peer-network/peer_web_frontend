@@ -60,16 +60,5 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // Back button functionality
-    const backBtn = document.querySelector(".version_history_backBtn a");
-    backBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        if (document.referrer) {
-            window.location.href = document.referrer;
-        } else {
-            window.history.back();
-        }
-    });
-
     loadVersionHistory();
 });

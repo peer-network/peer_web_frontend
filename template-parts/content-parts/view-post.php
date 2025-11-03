@@ -22,6 +22,13 @@
                         <i class="peer-icon peer-icon-comment-alt"></i>    
                         <span>0</span>
                     </div>
+                    <!--<div class="pinedbtn">
+            <a class="button btn-blue">
+                <img src="svg/pin.svg" alt="pin">
+                <span class="ad_username bold">@Luqman_TA</span>
+                <span class="ad_duration txt-color-gray">19h</span>
+            </a>
+    </div>-->
                 </div>
                 <div class="more md_font_size">
                     <ul>
@@ -29,12 +36,10 @@
                         <ul class="sublist">
                             <li><a href="#" class="reportpost"><i class="fi fi-rr-triangle-warning"></i> Report post</a></li>
                             <li><a href="#" class="download"><i class="fi fi-rr-down-to-line"></i> Download</a></li>
-                            <li class="sharelinks"><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a>
-                               
-                            </li>
+                            <li class="sharelinks"><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a></li>
                             <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
+                            <li id="boostPostFromPopup"><a href="#"><img src="svg/boost-post-icon.svg" alt="Boost" />Boost Post</a></li>
                         </ul>
-                        
                     </ul>
 
                      <div id="share-link-box" class="share-post-box">
