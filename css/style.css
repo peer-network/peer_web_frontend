@@ -2985,13 +2985,12 @@ footer {
   align-items: center;
   margin: 0;
   line-height: 40px;
-  font-size: 18px;
+  font-size: 14px;
   border: none;
-  /* padding: 0 15px;  removed temporary */
-  /* justify-content: space-between; change to flex-start */
-	justify-content: flex-start;
-	gap: 15px;
+  justify-content: space-evenly;
+  gap: 10px;
   max-width: 300px;
+  padding: 0 15px;
 }
 
 .postview_footer .pinedbtn .button {

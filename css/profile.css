@@ -749,6 +749,13 @@
   .profile_header .profile_edit_box  .ads_container_wrap {
     border-radius: 40px;
   }
+
+  .boostModal .pinedbtn .button,
+	.post-inhalt .pinedbtn .button,
+	.postview_footer .pinedbtn .button {
+		font-size: 18px !important;
+		line-height: 60px !important;
+	}
 }
 
 
@@ -848,7 +855,7 @@
   .post-inhalt .pinedbtn .button,
   .postview_footer .pinedbtn .button {
     padding: 18px 25px ;
-    font-size: 35px ;
+    font-size: 25px !important; ;
     max-width: 440px;
   }
 
