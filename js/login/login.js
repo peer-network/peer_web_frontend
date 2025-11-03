@@ -333,8 +333,8 @@
                 }
                 this.showToast("Login successfully. " + userfriendlymsg(result.data.login.ResponseCode), 'success');
                 //scheduleSilentRefresh(result.data.login.accessToken, result.data.login.refreshToken);
-                window.location.href = "dashboard.php";
-                  
+                fetchEndpoints(); 
+                // window.location.href = "dashboard.php"; 
                 return true;
               }else {
                   if (result.data.login.ResponseCode === "30801") { 

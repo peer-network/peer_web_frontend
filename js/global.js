@@ -1176,7 +1176,6 @@ function postdetail(objekt, CurrentUserID) {
 function forceDownload(url) {
   const baseUrl = `${location.protocol}//${location.host}/`;
   window.location.href = baseUrl + "download.php?file=" + encodeURIComponent(url);
-
 }
 
 // ============================================

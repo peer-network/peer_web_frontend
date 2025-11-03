@@ -245,7 +245,7 @@ include 'host.php';
                     </div>
                 </div>
                 <div class="footer_area medium_font">
-                   <p class="version">Version 1.8.1</p>
+                   <p class="version version-number">Version 1.8.1</p>
                 </div>
             </div>
         </div>
