@@ -9,18 +9,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const adsStats = document.querySelector('.ads_container_wrap');
   const advertisePost = document.getElementById('advertisePost');
   
-  // Constants
   const ADPOSTPRICE = 200;
   
-  // State
   let currentStep = 1;
   let postid = null;
   let BALANCE = 0;
   let selectedCard = null;
   let adEndTime = null;
-  let isFromPopup = false; // Track if boost was initiated from popup
+  let isFromPopup = false; 
 
-  // Initialize balance
   (async () => {
     BALANCE = await currentliquidity("token_balance");
   })();
@@ -34,7 +31,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ----------------- Show Step Function -----------------
   function showStep(step) {
-    // Check balance when showing step 3 (payment step)
     if (step === 3) {
       checkAdPostEligibility();
     }
@@ -53,23 +49,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const adMessageEl = document.querySelector('.ad_message');
     
     if (BALANCE < ADPOSTPRICE) {
-      // Change Pay button to Go to Profile
       advertisePost.innerText = 'Go to profile';
       advertisePost.classList.remove('next-btn');
       advertisePost.classList.add('goToProfile-btn');
       
-      // Update message
       if (adMessageEl) {
         adMessageEl.classList.add('error');
         adMessageEl.innerText = "You don't have enough Peer Tokens to start this promotion.";
       }
     } else {
-      // Ensure button is in normal state
       advertisePost.innerText = 'Pay';
       advertisePost.classList.add('next-btn');
       advertisePost.classList.remove('goToProfile-btn');
       
-      // Show normal message
       if (adMessageEl) {
         adMessageEl.classList.remove('error');
         adMessageEl.innerText = "All set! Your ad is ready to go - click 'Pay' to launch your ad.";
@@ -91,7 +83,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         el.replaceWith(el.cloneNode(true));
       });
       
-      // Add preview pinned button
       const usernameEl = clonedCard.querySelector(".post-userName");
       const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
       
@@ -119,7 +110,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ----------------- Insert Pinned Button -----------------
   function insertPinnedButton(card, username, mode = "profile") {
-    // Only add pinned button if post is actually boosted
     if (!isPostBoosted(card.id)) return;
     
     const pinnedBtn = document.createElement("div");
@@ -194,7 +184,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         throw new Error(data?.ResponseCode ? userfriendlymsg(data.ResponseCode) : "Failed to boost post");
       }
       
-      // Success - update POSTS data to mark as boosted
       if (POSTS?.listPosts?.affectedRows) {
         const postIndex = POSTS.listPosts.affectedRows.findIndex(p => p.id === postid);
         if (postIndex !== -1) {
@@ -202,13 +191,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
       
-      // Update UI
       adEndTime = data.affectedRows[0]?.timeframeEnd;
       shiftPostToTop(data);
       updateStep4Display(data);
       showStep(4);
       
-      // Update balance
       BALANCE = await currentliquidity("token_balance");
       
     } catch (error) {
@@ -225,7 +212,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (parentElement && cardEl) {
       parentElement.prepend(cardEl);
       
-      // Remove duplicate cards
       const allCards = parentElement.querySelectorAll('.card');
       allCards.forEach((el) => {
         if (el.id === postid && el !== cardEl) {
@@ -280,7 +266,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (listPosts.classList.contains("boostActive")) {
             e.stopImmediatePropagation();
             
-            // Don't allow boosting already boosted posts
             if (!isPostBoosted(card.id)) {
               selectCardForBoosting(card);
             }
@@ -296,7 +281,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   modal.addEventListener('click', function (e) {
     if (e.target.classList.contains('next-btn')) {
       if (currentStep === 3) {
-        // Pay button clicked - make API call
         advertisePostPinned();
       } else {
         showStep(currentStep + 1);
@@ -309,7 +293,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     if (e.target.classList.contains('close-btn')) {
       modal.classList.add('none');
-      // Only re-open post if boost was initiated from popup
       if (isFromPopup && selectedCard) {
         setTimeout(() => {
           selectedCard.click();
@@ -323,7 +306,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       modal.classList.add('none');
       deactivateBoostMode();
       
-      // Add pinned button to the boosted card
       if (selectedCard && isPostBoosted(selectedCard.id)) {
         const usernameEl = selectedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
@@ -338,16 +320,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       modal.classList.add('none');
       deactivateBoostMode();
       
-      // Add pinned button and open the post
       if (selectedCard && isPostBoosted(selectedCard.id)) {
         const usernameEl = selectedCard.querySelector(".post-userName");
         const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
         
-        // Add pinned button to both views
         insertPinnedButton(selectedCard, username, "profile");
         insertPinnedButton(selectedCard, username, "post");
         
-        // Open the post
         selectedCard.click();
       }
       
@@ -356,7 +335,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     if (e.target === modal) {
       modal.classList.add('none');
-      // Only re-open post if boost was initiated from popup
       if (isFromPopup && selectedCard) {
         setTimeout(() => {
           selectedCard.click();
@@ -371,9 +349,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentStep = 1;
     selectedCard = null;
     postid = null;
-    isFromPopup = false; // Reset the popup flag
+    isFromPopup = false;
     
-    // Reset pay button to default state
     advertisePost.innerText = 'Pay';
     advertisePost.classList.add('next-btn');
     advertisePost.classList.remove('goToProfile-btn');
@@ -437,25 +414,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         dropdownWrapper.hidden = true;
       }
     });
-
-    var requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: graphql
-    };
-   
-   // shiftPostToTop();
-    try {
-      const query = await fetch(GraphGL, requestOptions);
-      const result = await query.json();
-      const data = result.data ?.advertisePostPinned;
-      // if (!data) throw new Error("Invalid response structure");
-      if (data?.status == "error") throw new Error(userfriendlymsg(data?.ResponseCode));
-     // shift the card to top
-      shiftPostToTop(data);
-    } catch {
-      console.error("AdvertisePostPinned failed");
-    }
   }
 
   // ----------------- Initialize Pinned Buttons on Load -----------------
@@ -470,7 +428,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Call on page load to show pinned buttons for already boosted posts
   if (POSTS?.listPosts?.affectedRows) {
     initializePinnedButtons();
   }
@@ -482,38 +439,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     boostPostFromPopup.addEventListener('click', function(e) {
       e.preventDefault();
       
-      // Only allow boosting from profile page
       const isProfilePage = document.querySelector('.profile_header') !== null;
       if (!isProfilePage) {
         alert("You can only boost posts from your profile page.");
         return;
       }
       
-      // Find the current post card from the actual post list (not the viewpost)
       const viewpost = document.querySelector('.viewpost');
-      if (!viewpost) return;
-      
-      // Get the post ID from the viewpost element
-      const postIdFromView = viewpost.dataset.postid || viewpost.id;
-      if (!postIdFromView) return;
-      
-      // Find the corresponding ORIGINAL card in the post list (the actual card, not the preview)
-      const card = listPosts.querySelector(`.card[id="${postIdFromView}"]`);
-      if (!card) {
-        alert("Could not find the original post card.");
+      if (!viewpost) {
         return;
       }
       
-      // Don't allow boosting already boosted posts
+      const postIdFromView = viewpost.getAttribute('postid') || viewpost.dataset.postid || viewpost.id;
+      if (!postIdFromView) {
+        return;
+      }
+      
+      let card = listPosts.querySelector(`.card[id="${postIdFromView}"]`);
+      
+      if (!card) {
+        card = document.getElementById(postIdFromView);
+        
+        if (!card) {
+          alert("Could not find the original post card.");
+          return;
+        }
+      }
+      
       if (isPostBoosted(card.id)) {
         alert("This post is already boosted.");
         return;
       }
       
-      // Mark that this boost was initiated from popup
       isFromPopup = true;
-      
-      // Select the ORIGINAL card and go straight to step 1
       selectCardForBoosting(card);
     });
   }
