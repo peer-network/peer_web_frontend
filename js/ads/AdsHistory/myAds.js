@@ -45,6 +45,69 @@ document.addEventListener("DOMContentLoaded", async () => {
     return now < endTime;
   }
 
+  // Function to get the appropriate post image based on content type
+  function getPostImage(post) {
+    if (!post) return "";
+
+    const contentType = post.contenttype?.toUpperCase();
+
+    try {
+      // 🔹 For IMAGE, VIDEO, AUDIO → use cover if available
+      if (['IMAGE', 'VIDEO', 'AUDIO'].includes(contentType)) {
+        if (post.cover) {
+          const coverArray = JSON.parse(post.cover);
+          const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/');
+          if (coverPath) {
+            return `https://media.getpeer.eu${coverPath}`;
+          }
+        }
+        // fallback to media if no cover
+        if (post.media) {
+          const mediaArray = JSON.parse(post.media);
+          const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/');
+          if (mediaPath) {
+            return `https://media.getpeer.eu${mediaPath}`;
+          }
+        }
+      }
+
+      // 🔹 For TEXT → use media path (e.g., .txt file)
+      if (contentType === 'TEXT' && post.media) {
+        const mediaArray = JSON.parse(post.media);
+        const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/');
+        if (mediaPath) {
+          return `https://media.getpeer.eu${mediaPath}`;
+        }
+      }
+    } catch (e) {
+      console.error("Error parsing media or cover:", e);
+    }
+
+    // 🔹 Fallback: return blank
+    return "";
+  }
+
+
+  // Function to get content type icon class
+  function getContentTypeIcon(contentType) {
+    if (!contentType) return "";
+    
+    const type = contentType.toUpperCase();
+    
+    switch(type) {
+      case 'TEXT':
+        return 'content-icon-text';
+      case 'IMAGE':
+        return 'content-icon-image';
+      case 'VIDEO':
+        return 'content-icon-video';
+      case 'AUDIO':
+        return 'content-icon-audio';
+      default:
+        return '';
+    }
+  }
+
   // Function to create ad listing HTML
   function createAdListing(ad) {
     const active = isActive(ad.timeframeEnd);
@@ -55,18 +118,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     const startTime = formatTime(ad.timeframeStart);
     const endTime = formatTime(ad.timeframeEnd);
 
-    const userId = ad.user?.id || ad.user?.userid;
-    const userimg = ad.user?.img ? tempMedia(ad.user.img.replace("media/", "")) : "svg/noname.svg";
+    // const userId = ad.user?.id || ad.user?.userid;
+    // const userimg = ad.user?.img ? tempMedia(ad.user.img.replace("media/", "")) : "svg/noname.svg";
+    const postImage = getPostImage(ad.post);
+    const contentTypeIcon = getContentTypeIcon(ad.post?.contenttype);
     const postTitle = ad.post?.title || `Advertisement #${ad.id}`;
     const isPinned = ad.type === 'PINNED';
     const postDescription = ad.post?.mediadescription || '.....';
+    const isTextPost = ad.post?.contenttype?.toUpperCase() === 'TEXT';
+    
     const listItem = document.createElement('div');
     listItem.className = `myAds_list_item ${statusClass}${isPinned ? ' PINNED' : ''}`;
     listItem.innerHTML = `
       <div class="ad_main_info">
         <div class="ad_info">
             <div class="ad_avatar">
-            <img src="${userimg}" alt="User ${userId || ''}" class="user_avatar" />
+            ${isTextPost ? `
+              <div class="post_image_placeholder ${contentTypeIcon}">
+                <img src="svg/content-type-text.svg" alt="Text post" class="content_type_icon" />
+              </div>
+            ` : `
+              <img src="${postImage}" alt="Post image" class="post_image" />
+              ${contentTypeIcon ? `<div class="content_type_badge ${contentTypeIcon}">
+                <img src="svg/content-type-${ad.post.contenttype.toLowerCase()}.svg" alt="${ad.post.contenttype}" class="content_type_icon" />
+              </div>` : ''}
+            `}
             ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
             </div>
             <div class="ad_details">
@@ -169,69 +245,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
     listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
 
-    const imgElement = listItem.querySelector("img");
-    imgElement.onerror = () => {
-      imgElement.src = "svg/noname.svg";
-    };
+    // Error handling for post image (not text posts)
+    if (!isTextPost) {
+      const imgElement = listItem.querySelector(".post_image");
+      // if (imgElement) {
+      //   imgElement.onerror = () => {
+      //     imgElement.src = "svg/noname.svg";
+      //   };
+      // }
+    }
 
     listItem.addEventListener("click", () => {
       const adDropdown = listItem.querySelector('.ad_dropdown');
-      // const timerEl = listItem.querySelector('.ad_timer_count');
       const adFrameBox = listItem.querySelector('.ad_timeframe_box');
       adDropdown.classList.toggle('open');
         if (adDropdown.classList.contains('open')) {
-            // timerEl.classList.remove("none");
-            // timerEl.classList.add("show");
             adFrameBox.classList.add("hidden");
         } else {
-            // timerEl.classList.remove("show");
-            // timerEl.classList.add("none");
             adFrameBox.classList.remove("hidden");
         }
     });
-
-    // --- Countdown logic ---
-    // const timerEl = listItem.querySelector('.ad_timer_count');
-    // if (!timerEl) return;
-
-    // const cleanedEnd = ad.timeframeEnd.replace(/\.\d+$/, '') + 'Z';
-    // const endTimer = new Date(cleanedEnd).getTime();
-    // let timerInterval; 
-
-    // const updateTimer = () => {
-    //   const now = new Date().getTime();
-    //   const remaining = endTimer - now;
-
-    //   if (active) {
-    //       timerEl.classList.add('active');
-    //   }
-
-    //   if (remaining <= 0) {
-    //     clearInterval(timerInterval);
-    //     timerEl.textContent = '00 : 00 : 00';
-    //     timerEl.classList.remove('warning');
-    //     timerEl.classList.remove('active');
-    //     timerEl.classList.add('ended');
-    //     listItem.classList.remove('active');
-    //     listItem.classList.add('ended');
-    //     return;
-    //   }
-
-    //   if (remaining <= 60 * 60 * 1000) {
-    //       timerEl.classList.remove('active');
-    //       timerEl.classList.add('warning');
-    //   } 
-
-    //   const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
-    //   const minutes = Math.floor((remaining / (1000 * 60)) % 60);
-    //   const seconds = Math.floor((remaining / 1000) % 60);
-
-    //   const formatted = `${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
-    //   timerEl.textContent = formatted;
-    // };
-
-    // updateTimer();
-    // timerInterval = setInterval(updateTimer, 1000);
 
     return listItem;
   }
@@ -294,6 +327,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 id
                 contenttype
                 title
+                media
+                cover
                 mediadescription
               }
               user {

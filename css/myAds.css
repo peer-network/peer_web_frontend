@@ -357,6 +357,11 @@
   position: relative;
 }
 
+.post_image {
+  width: 90px;
+  height: 90px;
+}
+
 .pin_badge {
   position: absolute;
   bottom: 0;

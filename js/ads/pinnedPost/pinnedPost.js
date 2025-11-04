@@ -293,11 +293,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (e.target.classList.contains('close-btn')) {
       modal.classList.add('none');
-      if (isFromPopup && selectedCard) {
-        setTimeout(() => {
-          selectedCard.click();
-        }, 100);
-      }
+      // const cardToClick = isFromPopup && selectedCard ? selectedCard : null;
+      // if (cardToClick) {
+      //   // setTimeout(() => {
+      //     cardToClick.click();
+      //   // }, 100);
+      // }
       resetModalState();
     }
     
