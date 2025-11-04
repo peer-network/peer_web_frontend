@@ -176,62 +176,62 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     listItem.addEventListener("click", () => {
       const adDropdown = listItem.querySelector('.ad_dropdown');
-      const timerEl = listItem.querySelector('.ad_timer_count');
+      // const timerEl = listItem.querySelector('.ad_timer_count');
       const adFrameBox = listItem.querySelector('.ad_timeframe_box');
       adDropdown.classList.toggle('open');
         if (adDropdown.classList.contains('open')) {
-            timerEl.classList.remove("none");
-            timerEl.classList.add("show");
+            // timerEl.classList.remove("none");
+            // timerEl.classList.add("show");
             adFrameBox.classList.add("hidden");
         } else {
-            timerEl.classList.remove("show");
-            timerEl.classList.add("none");
+            // timerEl.classList.remove("show");
+            // timerEl.classList.add("none");
             adFrameBox.classList.remove("hidden");
         }
     });
 
     // --- Countdown logic ---
-    const timerEl = listItem.querySelector('.ad_timer_count');
-    if (!timerEl) return;
+    // const timerEl = listItem.querySelector('.ad_timer_count');
+    // if (!timerEl) return;
 
-    const cleanedEnd = ad.timeframeEnd.replace(/\.\d+$/, '') + 'Z';
-    const endTimer = new Date(cleanedEnd).getTime();
-    let timerInterval; 
+    // const cleanedEnd = ad.timeframeEnd.replace(/\.\d+$/, '') + 'Z';
+    // const endTimer = new Date(cleanedEnd).getTime();
+    // let timerInterval; 
 
-    const updateTimer = () => {
-      const now = new Date().getTime();
-      const remaining = endTimer - now;
+    // const updateTimer = () => {
+    //   const now = new Date().getTime();
+    //   const remaining = endTimer - now;
 
-      if (active) {
-          timerEl.classList.add('active');
-      }
+    //   if (active) {
+    //       timerEl.classList.add('active');
+    //   }
 
-      if (remaining <= 0) {
-        clearInterval(timerInterval);
-        timerEl.textContent = '00 : 00 : 00';
-        timerEl.classList.remove('warning');
-        timerEl.classList.remove('active');
-        timerEl.classList.add('ended');
-        listItem.classList.remove('active');
-        listItem.classList.add('ended');
-        return;
-      }
+    //   if (remaining <= 0) {
+    //     clearInterval(timerInterval);
+    //     timerEl.textContent = '00 : 00 : 00';
+    //     timerEl.classList.remove('warning');
+    //     timerEl.classList.remove('active');
+    //     timerEl.classList.add('ended');
+    //     listItem.classList.remove('active');
+    //     listItem.classList.add('ended');
+    //     return;
+    //   }
 
-      if (remaining <= 60 * 60 * 1000) {
-          timerEl.classList.remove('active');
-          timerEl.classList.add('warning');
-      } 
+    //   if (remaining <= 60 * 60 * 1000) {
+    //       timerEl.classList.remove('active');
+    //       timerEl.classList.add('warning');
+    //   } 
 
-      const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((remaining / (1000 * 60)) % 60);
-      const seconds = Math.floor((remaining / 1000) % 60);
+    //   const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+    //   const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+    //   const seconds = Math.floor((remaining / 1000) % 60);
 
-      const formatted = `${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
-      timerEl.textContent = formatted;
-    };
+    //   const formatted = `${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
+    //   timerEl.textContent = formatted;
+    // };
 
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
+    // updateTimer();
+    // timerInterval = setInterval(updateTimer, 1000);
 
     return listItem;
   }
