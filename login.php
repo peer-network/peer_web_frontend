@@ -174,7 +174,7 @@ if (isset($_GET['message'])) {
                 </div>
                 <div class="footer_area medium_font">
                     <a href="https://peerapp.de/privacy.html" target="_blank">Privacy Policy.</a>
-                   <p class="version-number version">Version 1.8.1</p>
+                    <p class="version-number version"></p>
                 </div>
             </div>
         </div>

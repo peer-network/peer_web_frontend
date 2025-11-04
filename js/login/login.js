@@ -333,8 +333,7 @@
                 }
                 this.showToast("Login successfully. " + userfriendlymsg(result.data.login.ResponseCode), 'success');
                 //scheduleSilentRefresh(result.data.login.accessToken, result.data.login.refreshToken);
-                fetchEndpoints(); 
-                // window.location.href = "dashboard.php"; 
+                window.location.href = "dashboard.php"; 
                 return true;
               }else {
                   if (result.data.login.ResponseCode === "30801") { 
@@ -353,10 +352,7 @@
           } catch (error) {
               // Fehlerbehandlung bei Netzwerkfehlern oder anderen Problemen
               console.error("An Error occured:", error);
-          }
-
-
-        
+          } 
       }
       
   }
@@ -378,6 +374,7 @@
           }
       }
       autoLogin();
+      fetchEndpoints();
       new AccessibleLoginForm();
   });
   // Additional utility for cookie handling (keeping your original function)

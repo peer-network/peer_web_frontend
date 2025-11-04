@@ -5,6 +5,6 @@
 	</a>
     <!-- this is the new version -->
 	<a href="version_history.php" class="widget-inner widget-version">
-		<p class='version-number'>Version 1.8.1</p>
+		<p class='version-number'></p>
 	</a>
 </div>

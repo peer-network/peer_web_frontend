@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
     updateOnlineStatus();
-    
+    fetchEndpoints();
   }
 });
 
