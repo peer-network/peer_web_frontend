@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let adEndTime = null;
   let isFromPopup = false; 
 
-  // Initialize balance
   (async () => {
     BALANCE = await currentliquidity("token_balance");
   })();
@@ -350,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentStep = 1;
     selectedCard = null;
     postid = null;
-    isFromPopup = false; 
+    isFromPopup = false;
     
     advertisePost.innerText = 'Pay';
     advertisePost.classList.add('next-btn');
@@ -415,25 +414,6 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdownWrapper.hidden = true;
       }
     });
-
-    var requestOptions = {
-      method: "POST",
-      headers: headers,
-      body: graphql
-    };
-   
-   // shiftPostToTop();
-    try {
-      const query = await fetch(GraphGL, requestOptions);
-      const result = await query.json();
-      const data = result.data ?.advertisePostPinned;
-      // if (!data) throw new Error("Invalid response structure");
-      if (data?.status == "error") throw new Error(userfriendlymsg(data?.ResponseCode));
-     // shift the card to top
-      shiftPostToTop(data);
-    } catch {
-      console.error("AdvertisePostPinned failed");
-    }
   }
 
   // ----------------- Initialize Pinned Buttons on Load -----------------
@@ -454,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ----------------- Boost Post From Popup -----------------
   const boostPostFromPopup = document.getElementById('boostPostFromPopup');
-
+  
   if (boostPostFromPopup) {
     boostPostFromPopup.addEventListener('click', function(e) {
       e.preventDefault();
