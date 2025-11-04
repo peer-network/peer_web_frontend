@@ -28,6 +28,7 @@ checkAuth("unauthorized");
 <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
 <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
 <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
+<script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
 <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
 <script src="js/comments.js?<?php echo filemtime('js/comments.js'); ?>" defer></script>
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>

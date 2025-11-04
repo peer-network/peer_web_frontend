@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
     updateOnlineStatus();
-    
+    fetchEndpoints();
   }
 });
 
@@ -1176,7 +1176,6 @@ function postdetail(objekt, CurrentUserID) {
 function forceDownload(url) {
   const baseUrl = `${location.protocol}//${location.host}/`;
   window.location.href = baseUrl + "download.php?file=" + encodeURIComponent(url);
-
 }
 
 // ============================================
