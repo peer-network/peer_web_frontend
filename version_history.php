@@ -21,10 +21,9 @@ checkAuth("unauthorized");
 	
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/version_history.js?<?php echo filemtime('js/version_history.js'); ?>" defer></script>
-
-	
 	<?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
     include 'meta.min.php';
