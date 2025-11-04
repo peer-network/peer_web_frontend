@@ -271,7 +271,7 @@ line-height: 40px;
 	flex-direction: row;
 	align-items: center;
 	width: 100%;
-	margin-top: auto;
+	/* margin-top: auto; */
 	gap: 5%;
 }
 .card .social div {

@@ -2479,7 +2479,7 @@ footer {
 		min-width: 300px;
 
 		font-size: 35px;
-		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem) !important;
 	}
 
 	.xxxl_font_size {
@@ -2694,6 +2694,20 @@ footer {
 
 	.widget-daily-action .limit-container {
 		padding: 1.1rem 1.5rem;
+	}
+
+	.boostModal .pinedbtn .button,
+	.post-inhalt .pinedbtn .button,
+	.postview_footer .pinedbtn .button {
+		line-height: 80px !important;
+		padding: 0 30px !important;
+		max-width: 500px !important;
+	}
+
+	.boostModal .pinedbtn .button img,
+	.post-inhalt .pinedbtn .button img,
+	.postview_footer .pinedbtn .button img {
+		width: 35px !important;
 	}
 
 }
@@ -2981,16 +2995,18 @@ footer {
 .boostModal .pinedbtn .button,
 .post-inhalt .pinedbtn .button,
 .postview_footer .pinedbtn .button {
+  background-color: #547098 !important;
   display: flex;
   align-items: center;
   margin: 0;
   line-height: 40px;
-  font-size: 14px;
   border: none;
-  justify-content: space-evenly;
-  gap: 10px;
+  justify-content: flex-start;
+  font-size: 16px;
+  gap: 15px;
   max-width: 300px;
   padding: 0 15px;
+  width: fit-content;
 }
 
 .postview_footer .pinedbtn .button {

@@ -38,7 +38,7 @@
             <p class="md_font_size total_cost_head">Pricing:</p>
             <div class="adDurationInfos">
                 <span class="total_cost txt-color-gray">Total cost</span>
-                <span class="bold price xl_font_size"><span class="total_cost">2 000</span> <img src="svg/logo_sw.svg" alt="peer logo"></span>
+                <span class="bold price xl_font_size"><span class="total_cost">200</span> <img src="svg/logo_sw.svg" alt="peer logo"></span>
             </div>
         </div>
       </div>
@@ -59,7 +59,7 @@
         <div class="pricing_breakdown">
           <div class="boostPost_left">
               <p class="xl_font_size">Payable tokens for ad</p>
-              <span class="bold xxxl_font_size price">2 000 <img src="svg/logo_sw.svg" alt="peer logo"></span>
+              <span class="bold xxxl_font_size price">200 <img src="svg/logo_sw.svg" alt="peer logo"></span>
           </div>
           <!-- Vertical Divider -->
           <div class="vr"></div>

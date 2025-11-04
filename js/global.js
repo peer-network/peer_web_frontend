@@ -2475,3 +2475,18 @@ if (backBtn) {
       }
     }
   }
+
+  window.clearAdBtnBox = function () {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', window.clearAdBtnBox);
+      return;
+    }
+    
+    const cardPopup = document.getElementById('cardClicked');
+    if (!cardPopup) return;
+    
+    const adBtn = cardPopup.querySelector('.pinedbtn');
+    if (adBtn) {
+      adBtn.remove();
+    }
+  };
