@@ -415,6 +415,25 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdownWrapper.hidden = true;
       }
     });
+
+    var requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: graphql
+    };
+   
+   // shiftPostToTop();
+    try {
+      const query = await fetch(GraphGL, requestOptions);
+      const result = await query.json();
+      const data = result.data ?.advertisePostPinned;
+      // if (!data) throw new Error("Invalid response structure");
+      if (data?.status == "error") throw new Error(userfriendlymsg(data?.ResponseCode));
+     // shift the card to top
+      shiftPostToTop(data);
+    } catch {
+      console.error("AdvertisePostPinned failed");
+    }
   }
 
   // ----------------- Initialize Pinned Buttons on Load -----------------

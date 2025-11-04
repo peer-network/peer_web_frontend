@@ -22,6 +22,7 @@ class AccessibleRegistrationForm {
         this.handleURLParams();
         // Announce current step to screen readers
         this.announceStep();
+        fetchEndpoints();
     }
 
     setupEventListeners() {

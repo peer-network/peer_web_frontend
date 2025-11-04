@@ -395,10 +395,11 @@
  
  
 }
-.viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
+.viewpost .postview_footer .more ul.sublist li#boostPostFromPopup,
+.view-profile .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
 	display: none;
 }
-#profile .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
+#profile.site_layout:not(.view-profile) .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
 	display: block;
 }
 .viewpost .postview_footer .more .share-post-box {
