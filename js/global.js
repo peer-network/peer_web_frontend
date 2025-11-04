@@ -2444,7 +2444,7 @@ if (backBtn) {
 }
 
   // ----------------- Insert Pinned Button -----------------
-  window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
+  window.insertPinnedBtn = function(card, username, mode = "profile") {
     if (!card) return;
     if (card.querySelector(".pinedbtn") && mode != 'post') return;
     const pinnedBtn = document.createElement("div");
@@ -2453,7 +2453,6 @@ if (backBtn) {
       <a class="button btn-blue">
         <img src="svg/pin.svg" alt="pin">
         <span class="ad_username bold">@${username}</span>
-        <span class="ad_duration txt-color-gray">${time}</span>
       </a>
     `;
 
@@ -2475,3 +2474,18 @@ if (backBtn) {
       }
     }
   }
+
+  window.clearAdBtnBox = function () {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', window.clearAdBtnBox);
+      return;
+    }
+    
+    const cardPopup = document.getElementById('cardClicked');
+    if (!cardPopup) return;
+    
+    const adBtn = cardPopup.querySelector('.pinedbtn');
+    if (adBtn) {
+      adBtn.remove();
+    }
+  };
