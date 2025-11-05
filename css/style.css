@@ -3011,6 +3011,10 @@ footer {
 }
 .pinedbtn .button span.ad_username {
   font-style: italic;
+  width: 10ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .error {
