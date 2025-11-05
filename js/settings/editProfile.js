@@ -14,7 +14,6 @@ function toggle_profile_blocks(activeId) {
     activeElement.classList.add('active');
     backProfileBtn.classList.remove('hide');
     mainbackProfileBtn.classList.add('hide');
-
   }
 }
 
@@ -25,10 +24,7 @@ function toggle_profile_blocks(activeId) {
 function updateSubmitButtonState(form, btn) {
   const inputs = Array.from(form.querySelectorAll('input[required]'));
   const allFilled = inputs.every(i => i.value.trim().length > 0);
-  // console.log(inputs)
-
   btn.disabled = !allFilled;
-  // console.log('allFilled ', allFilled)
   btn.classList.toggle('btn-blue', allFilled);
 }
 
@@ -36,23 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // find every form you want to auto-enable
   document.querySelectorAll('.form-container').forEach(form => {
     const submitBtn = form.querySelector('button[type="submit"], button');
-    
     // initial state
     updateSubmitButtonState(form, submitBtn);
-    
-    // console.log(document.getElementById('confirm_password'))
-
-    // setTimeout(() => {
-    //   document.getElementById('confirm_password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
-    //   document.getElementById('password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
-    // }, 3000);
-    
-    
     // re-check on every input change
-    form.querySelectorAll('input[required]').forEach(input => {
-      console.log(input)
-      input.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn))
-    });
+    form.querySelectorAll('input[required]').forEach(input => input.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn)));
   });
 
   getUser().then(profile2 => {
@@ -242,7 +225,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("changepasswordForm").addEventListener("submit", async function (event) {
-    console.log('i am her')
     event.preventDefault();
     const expassword = document.getElementById("old_password").value.trim();
     const newpassword = document.getElementById("password").value.trim();
@@ -280,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //  disable button while we wait
     submitButton.disabled = true;
-    
+
     try {
       const result = await sendUpdatePassword(newpassword, expassword);
       const {
@@ -295,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         msgElem.classList.add("success");
         msgElem.classList.remove('notvalid')
-        document.getElementById('passwordStrength')?.classList.add('none');
+        document.getElementById('passwordStrength') ?.classList.add('none');
       } else {
         msgElem.classList.add("error");
       }
@@ -555,7 +537,7 @@ async function sendUpdateBio(biography) {
         }
       }`;
   try {
-    
+
     const response = await fetch(GraphGL, {
       method: "POST",
       headers: headers,
@@ -612,11 +594,7 @@ function clearCacheAndSession() {
 }
 
 function displayValidationMessage(message, elementId) {
-  console.log('message ', message);
-  console.log('elementId ', elementId);
-  
   const element = document.getElementById(elementId);
-  
   if (element) {
     element.classList.remove("error", "success", "notvalid");
     element.classList.add("notvalid");
