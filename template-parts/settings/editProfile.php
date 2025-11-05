@@ -77,12 +77,12 @@
        <form id="changepasswordForm" class="form-container">
          <div class="profile-fields">
            <div class="input-field">
-             <input type="password" id="old_password" name="old_password" class="input-text"
+              <img class="password-icon" src="svg/lock1.svg" alt="">
+             <input type="password" id="old_password" name="old_password" class="input-text test"
                placeholder="Enter old password" required="">
            </div>
            <!-- Password Component -->
-           <div class="password-component" data-show-strength="true" data-show-message="false" data-name="password">
-           </div>
+           <div class="password-component" data-show-strength="true" data-show-message="false" data-name="password"></div>
            <!-- Confirm Password Component -->
            <div class="confirm-password-component" data-name="confirm_password"></div>
          </div>

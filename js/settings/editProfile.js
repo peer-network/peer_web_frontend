@@ -25,8 +25,10 @@ function toggle_profile_blocks(activeId) {
 function updateSubmitButtonState(form, btn) {
   const inputs = Array.from(form.querySelectorAll('input[required]'));
   const allFilled = inputs.every(i => i.value.trim().length > 0);
+  console.log(inputs)
 
   btn.disabled = !allFilled;
+  // console.log('allFilled ', allFilled)
   btn.classList.toggle('btn-blue', allFilled);
 }
 
@@ -34,13 +36,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // find every form you want to auto-enable
   document.querySelectorAll('.form-container').forEach(form => {
     const submitBtn = form.querySelector('button[type="submit"], button');
+    
     // initial state
     updateSubmitButtonState(form, submitBtn);
+    
+    // console.log(document.getElementById('confirm_password'))
 
+    setTimeout(() => {
+       document.getElementById('confirm_password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
+    document.getElementById('password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
+    }, 3000)
+    
+    
     // re-check on every input change
-    form.querySelectorAll('input[required]').forEach(input =>
-      input.addEventListener('input', () => updateSubmitButtonState(form, submitBtn))
-    );
+    form.querySelectorAll('input[required]').forEach(input => {
+      input.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn))
+    });
   });
 
   getUser().then(profile2 => {
@@ -594,4 +605,12 @@ function clearCacheAndSession() {
   });
   // Redirect to login
   window.location.href = "login.php";
+}
+
+function displayValidationMessage(message) {
+    let element;
+    // Display error message in the UI (instead of using alert)
+    element = document.getElementById("validationMessage");
+    element.classList.add("notvalid");
+    element.innerText = message;
 }

@@ -168,7 +168,7 @@ checkAuth("unauthorized");
                             <form id="changepasswordForm" class="form-container">
                                 <div class="profile-fields">
                                     <div class="input-field">
-                                    <input type="password" id="old_password" name="old_password" class="input-text" placeholder="Enter old password" required="" >
+                                        <input type="password" id="old_password" name="old_password" class="input-text" placeholder="Enter old password" required="" >
                                     </div>
                                     <!-- Password Component -->
                                     <div class="password-component" data-show-strength="true" data-show-message="false" data-name="password"></div>
