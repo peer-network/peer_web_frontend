@@ -25,7 +25,7 @@ function toggle_profile_blocks(activeId) {
 function updateSubmitButtonState(form, btn) {
   const inputs = Array.from(form.querySelectorAll('input[required]'));
   const allFilled = inputs.every(i => i.value.trim().length > 0);
-  console.log(inputs)
+  // console.log(inputs)
 
   btn.disabled = !allFilled;
   // console.log('allFilled ', allFilled)
@@ -42,14 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // console.log(document.getElementById('confirm_password'))
 
-    setTimeout(() => {
-       document.getElementById('confirm_password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
-    document.getElementById('password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
-    }, 3000)
+    // setTimeout(() => {
+    //   document.getElementById('confirm_password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
+    //   document.getElementById('password') ?.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn));
+    // }, 3000);
     
     
     // re-check on every input change
     form.querySelectorAll('input[required]').forEach(input => {
+      console.log(input)
       input.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn))
     });
   });
@@ -241,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("changepasswordForm").addEventListener("submit", async function (event) {
+    console.log('i am her')
     event.preventDefault();
     const expassword = document.getElementById("old_password").value.trim();
     const newpassword = document.getElementById("password").value.trim();
@@ -278,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //  disable button while we wait
     submitButton.disabled = true;
-
+    
     try {
       const result = await sendUpdatePassword(newpassword, expassword);
       const {
@@ -292,6 +294,8 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById(id).value = ""
         );
         msgElem.classList.add("success");
+        msgElem.classList.remove('notvalid')
+        document.getElementById('passwordStrength')?.classList.add('none');
       } else {
         msgElem.classList.add("error");
       }
@@ -607,10 +611,17 @@ function clearCacheAndSession() {
   window.location.href = "login.php";
 }
 
-function displayValidationMessage(message) {
-    let element;
-    // Display error message in the UI (instead of using alert)
-    element = document.getElementById("validationMessage");
+function displayValidationMessage(message, elementId) {
+  console.log('message ', message);
+  console.log('elementId ', elementId);
+  
+  const element = document.getElementById(elementId);
+  
+  if (element) {
+    element.classList.remove("error", "success", "notvalid");
     element.classList.add("notvalid");
     element.innerText = message;
+  } else {
+    console.error(`Element with ID "${elementId}" not found!`);
+  }
 }

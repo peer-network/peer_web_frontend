@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const mountPoint = document.querySelector('.confirm-password-component');
-  const nameAttr = mountPoint?.dataset?.name || 'confirm_password';
+  // const mountPoint = document.querySelector('.confirm-password-component');
+  // const nameAttr = mountPoint?.dataset?.name || 'confirm_password';
 
-  fetch('template-parts/passwords/confirmPassword.php')
-    .then(res => res.text())
-    .then(html => {
-      mountPoint.innerHTML = html;
+  // fetch('template-parts/passwords/confirmPassword.php')
+  //   .then(res => res.text())
+  //   .then(html => {
+  //     mountPoint.innerHTML = html;
 
       // Add validation logic
       const confirmPassword = document.getElementById("confirm_password");
@@ -41,5 +41,5 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmPassword.type = isVisible ? "password" : "text";
         toggleConfirm.src = isVisible ? "svg/seePass.png" : "svg/hidePass.png";
       });
-    });
+    // });
 });
