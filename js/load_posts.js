@@ -859,6 +859,7 @@ async function postsLaden(postbyUserID=null) {
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
       if (objekt.isAd) {
+        card.classList.add("PINNED");
         insertPinnedBtn(card, objekt.user.username, "profile");
       }
     });
@@ -1066,6 +1067,7 @@ async function postClicked(objekt) {
   postdetail(objekt, UserID); //this funtion  define in global.js and used for guest post as well.
   if (objekt.isAd) {
     const cardEl = document.getElementById(`${objekt.id}`);
+    cardEl.classList.add("PINNED");
     insertPinnedBtn(cardEl, objekt.user.username, "post");
   }
 }

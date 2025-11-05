@@ -48,45 +48,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Function to get the appropriate post image based on content type
   function getPostImage(post) {
     if (!post) return "";
-
+    
     const contentType = post.contenttype?.toUpperCase();
 
-    try {
-      // 🔹 For IMAGE, VIDEO, AUDIO → use cover if available
-      if (['IMAGE', 'VIDEO', 'AUDIO'].includes(contentType)) {
-        if (post.cover) {
+    // For IMAGE, VIDEO, AUDIO - use cover if available, fallback to media
+    if (contentType === 'IMAGE' || contentType === 'VIDEO' || contentType === 'AUDIO') {
+      // Try to use cover first
+      if (post.cover) {
+        try {
+          // Parse the cover JSON string
           const coverArray = JSON.parse(post.cover);
-          const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/');
+          const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/'); // fix escaped slashes
           if (coverPath) {
             return `https://media.getpeer.eu${coverPath}`;
           }
+        } catch (e) {
+          console.error("Error parsing post cover:", e);
         }
-        // fallback to media if no cover
-        if (post.media) {
+      }
+      
+      // Fallback to media if no cover
+      if (post.media) {
+        try {
+          // Parse the media JSON string
           const mediaArray = JSON.parse(post.media);
-          const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/');
+          const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/'); // fix escaped slashes
           if (mediaPath) {
             return `https://media.getpeer.eu${mediaPath}`;
           }
+        } catch (e) {
+          console.error("Error parsing post media:", e);
         }
       }
-
-      // 🔹 For TEXT → use media path (e.g., .txt file)
-      if (contentType === 'TEXT' && post.media) {
-        const mediaArray = JSON.parse(post.media);
-        const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/');
-        if (mediaPath) {
-          return `https://media.getpeer.eu${mediaPath}`;
-        }
-      }
-    } catch (e) {
-      console.error("Error parsing media or cover:", e);
     }
 
-    // 🔹 Fallback: return blank
+    // For TEXT - return blank
     return "";
   }
-
 
   // Function to get content type icon class
   function getContentTypeIcon(contentType) {
@@ -96,13 +94,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     switch(type) {
       case 'TEXT':
-        return 'content-icon-text';
+        return 'peer-icon-text';
       case 'IMAGE':
-        return 'content-icon-image';
+        return 'peer-icon-camera';
       case 'VIDEO':
-        return 'content-icon-video';
+        return 'peer-icon-play-btn';
       case 'AUDIO':
-        return 'content-icon-audio';
+        return 'peer-icon-audio';
       default:
         return '';
     }
@@ -133,17 +131,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="ad_main_info">
         <div class="ad_info">
             <div class="ad_avatar">
-            ${isTextPost ? `
-              <div class="post_image_placeholder ${contentTypeIcon}">
-                <img src="svg/content-type-text.svg" alt="Text post" class="content_type_icon" />
-              </div>
-            ` : `
-              <img src="${postImage}" alt="Post image" class="post_image" />
-              ${contentTypeIcon ? `<div class="content_type_badge ${contentTypeIcon}">
-                <img src="svg/content-type-${ad.post.contenttype.toLowerCase()}.svg" alt="${ad.post.contenttype}" class="content_type_icon" />
-              </div>` : ''}
-            `}
-            ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
+              ${isTextPost ? `
+                <div class="post_image_placeholder"></div>
+                <i class="peer-icon ${contentTypeIcon}"></i>
+              ` : `
+                <img src="${postImage}" alt="Post image" class="post_image" />
+                ${contentTypeIcon ? `<i class="peer-icon ${contentTypeIcon}"></i>` : ''}
+              `}
+              ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
             </div>
             <div class="ad_details">
             <h3 class="ad_title">${postTitle}</h3>
