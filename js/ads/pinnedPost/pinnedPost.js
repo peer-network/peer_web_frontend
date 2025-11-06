@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // DOM Elements
   const promoteBtn = document.querySelector(".promote_posts");
   const cancelBtn = document.querySelector(".promote_posts_cancel");

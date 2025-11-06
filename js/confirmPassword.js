@@ -1,20 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const mountPoint = document.querySelector('.confirm-password-component');
-  const nameAttr = mountPoint?.dataset?.name || 'confirm_password';
+  // const mountPoint = document.querySelector('.confirm-password-component');
+  // const nameAttr = mountPoint?.dataset?.name || 'confirm_password';
 
-  fetch('template-parts/passwords/confirmPassword.php')
-    .then(res => res.text())
-    .then(html => {
-      mountPoint.innerHTML = html;
+  // fetch('template-parts/passwords/confirmPassword.php')
+  //   .then(res => res.text())
+  //   .then(html => {
+  //     mountPoint.innerHTML = html;
 
       // Add validation logic
       const confirmPassword = document.getElementById("confirm_password");
       const toggleConfirm = document.getElementById("toggleConfirmPassword");
       const validationMessage = document.getElementById("confirmValidationMessage");
-      const passwordField = document.getElementById("password"); 
-      
-
-      const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+      // const passwordField = document.getElementById("password"); 
+      // const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
       confirmPassword.addEventListener("input", () => {
         validationMessage.innerText = "";
@@ -26,16 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
           toggleConfirm.classList.add("none");
         }
 
-        if (
-          passwordRegex.test(confirmPassword.value) &&
-          confirmPassword.value === passwordField?.value
-        ) {
+        // if ( // I:(Luqman) have commented out the 'if check' becuase the body was already commented out
+        //   passwordRegex.test(confirmPassword.value) &&
+        //   confirmPassword.value === passwordField?.value
+        // ) {
           // confirmPassword.parentElement.classList.add("valid");
           // confirmPassword.parentElement.classList.remove("invalid");
-        } else {
+        // } else {
           // confirmPassword.parentElement.classList.add("invalid");
           // confirmPassword.parentElement.classList.remove("valid");
-        }
+        // }
       });
 
       toggleConfirm.addEventListener("click", () => {
@@ -43,5 +41,5 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmPassword.type = isVisible ? "password" : "text";
         toggleConfirm.src = isVisible ? "svg/seePass.png" : "svg/hidePass.png";
       });
-    });
+    // });
 });

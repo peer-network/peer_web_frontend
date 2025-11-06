@@ -14,7 +14,6 @@ function toggle_profile_blocks(activeId) {
     activeElement.classList.add('active');
     backProfileBtn.classList.remove('hide');
     mainbackProfileBtn.classList.add('hide');
-
   }
 }
 
@@ -25,7 +24,6 @@ function toggle_profile_blocks(activeId) {
 function updateSubmitButtonState(form, btn) {
   const inputs = Array.from(form.querySelectorAll('input[required]'));
   const allFilled = inputs.every(i => i.value.trim().length > 0);
-
   btn.disabled = !allFilled;
   btn.classList.toggle('btn-blue', allFilled);
 }
@@ -36,11 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = form.querySelector('button[type="submit"], button');
     // initial state
     updateSubmitButtonState(form, submitBtn);
-
     // re-check on every input change
-    form.querySelectorAll('input[required]').forEach(input =>
-      input.addEventListener('input', () => updateSubmitButtonState(form, submitBtn))
-    );
+    form.querySelectorAll('input[required]').forEach(input => input.addEventListener('keyup', () => updateSubmitButtonState(form, submitBtn)));
   });
 
   getUser().then(profile2 => {
@@ -281,6 +276,8 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById(id).value = ""
         );
         msgElem.classList.add("success");
+        msgElem.classList.remove('notvalid')
+        document.getElementById('passwordStrength') ?.classList.add('none');
       } else {
         msgElem.classList.add("error");
       }
@@ -540,7 +537,7 @@ async function sendUpdateBio(biography) {
         }
       }`;
   try {
-    
+
     const response = await fetch(GraphGL, {
       method: "POST",
       headers: headers,
@@ -594,4 +591,15 @@ function clearCacheAndSession() {
   });
   // Redirect to login
   window.location.href = "login.php";
+}
+
+function displayValidationMessage(message, elementId) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.classList.remove("error", "success", "notvalid");
+    element.classList.add("notvalid");
+    element.innerText = message;
+  } else {
+    console.error(`Element with ID "${elementId}" not found!`);
+  }
 }
