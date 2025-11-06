@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  let limit = 20; 
+  let offset = 0;
+  let isLoading = false;
+  let hasMore = true;
   
   // Function to format large numbers (e.g., 300000 -> 300K)
   function formatNumber(num) {
@@ -51,14 +55,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     const contentType = post.contenttype?.toUpperCase();
 
-    // For IMAGE, VIDEO, AUDIO - use cover if available, fallback to media
     if (contentType === 'IMAGE' || contentType === 'VIDEO' || contentType === 'AUDIO') {
-      // Try to use cover first
       if (post.cover) {
         try {
-          // Parse the cover JSON string
           const coverArray = JSON.parse(post.cover);
-          const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/'); // fix escaped slashes
+          const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/'); 
           if (coverPath) {
             return `https://media.getpeer.eu${coverPath}`;
           }
@@ -66,13 +67,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.error("Error parsing post cover:", e);
         }
       }
+
+      if (contentType === "AUDIO") {
+        return "/img/audio-bg.png";
+      }
       
-      // Fallback to media if no cover
       if (post.media) {
         try {
-          // Parse the media JSON string
           const mediaArray = JSON.parse(post.media);
-          const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/'); // fix escaped slashes
+          const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/'); 
           if (mediaPath) {
             return `https://media.getpeer.eu${mediaPath}`;
           }
@@ -116,8 +119,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const startTime = formatTime(ad.timeframeStart);
     const endTime = formatTime(ad.timeframeEnd);
 
-    // const userId = ad.user?.id || ad.user?.userid;
-    // const userimg = ad.user?.img ? tempMedia(ad.user.img.replace("media/", "")) : "svg/noname.svg";
     const postImage = getPostImage(ad.post);
     const contentTypeIcon = getContentTypeIcon(ad.post?.contenttype);
     const postTitle = ad.post?.title || `Advertisement #${ad.id}`;
@@ -240,16 +241,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
     listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
 
-    // Error handling for post image (not text posts)
-    if (!isTextPost) {
-      const imgElement = listItem.querySelector(".post_image");
-      // if (imgElement) {
-      //   imgElement.onerror = () => {
-      //     imgElement.src = "svg/noname.svg";
-      //   };
-      // }
-    }
-
     listItem.addEventListener("click", () => {
       const adDropdown = listItem.querySelector('.ad_dropdown');
       const adFrameBox = listItem.querySelector('.ad_timeframe_box');
@@ -266,10 +257,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function showContent() {
     const mainContainer = document.querySelector('.site-main-myAds');
-
     mainContainer.classList.add('loaded');
     
-    const listItems = document.querySelectorAll('.myAds_list_item');
+    const listItems = document.querySelectorAll('.myAds_list_item:not(.loaded)');
     listItems.forEach((item, index) => {
       setTimeout(() => {
         item.classList.add('loaded');
@@ -277,7 +267,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  async function loadAdvertisementHistory() {
+  async function loadAdvertisementHistory(isLoadMore = false) {
+    if (isLoading || !hasMore) return;
+    
+    isLoading = true;
+    
+    // Show loading indicator if it exists
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+      loadingIndicator.style.display = 'block';
+    }
+    
     const accessToken = getCookie("authToken");
     const payload = JSON.parse(atob(accessToken.split('.')[1]));
     const userId = payload.uid;
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const graphql = JSON.stringify({
       query: `query AdvertisementHistory {
-        advertisementHistory(offset: 0, limit: 20, filter: { userId: "${userId}" }, sort: NEWEST) {
+        advertisementHistory(filter: { userId: "${userId}" }, limit: ${limit}, offset: ${offset}, sort: NEWEST) {
           status
           ResponseCode
           affectedRows {
@@ -356,25 +356,89 @@ document.addEventListener("DOMContentLoaded", async () => {
         const myADs = document.querySelector('.site-main-myAds');
         
         if (advertisements && advertisements.length > 0) {
-          document.getElementById('myAdsGemsEarned').textContent = formatNumber(stats.gemsEarned);
-          document.getElementById('myAdsTokensSpent').textContent = formatNumber(stats.tokenSpent);
-          document.getElementById('myAdsLikes').textContent = formatNumber(stats.amountLikes);
-          document.getElementById('myAdsDislikes').textContent = formatNumber(stats.amountDislikes);
-          document.getElementById('myAdsComments').textContent = formatNumber(stats.amountComments);
-          document.getElementById('myAdsViews').textContent = formatNumber(stats.amountViews);
-          document.getElementById('myAdsReports').textContent = formatNumber(stats.amountReports);
-          document.getElementById('myAdsTotalCount').textContent = stats.amountAds;
+          if (!isLoadMore) {
+            document.getElementById('myAdsGemsEarned').textContent = formatNumber(stats.gemsEarned);
+            document.getElementById('myAdsTokensSpent').textContent = formatNumber(stats.tokenSpent);
+            document.getElementById('myAdsLikes').textContent = formatNumber(stats.amountLikes);
+            document.getElementById('myAdsDislikes').textContent = formatNumber(stats.amountDislikes);
+            document.getElementById('myAdsComments').textContent = formatNumber(stats.amountComments);
+            document.getElementById('myAdsViews').textContent = formatNumber(stats.amountViews);
+            document.getElementById('myAdsReports').textContent = formatNumber(stats.amountReports);
+            document.getElementById('myAdsTotalCount').textContent = stats.amountAds;
+          }
 
           const myAdsListsContainer = document.querySelector('.myAds_lists');
-          myAdsListsContainer.innerHTML = '';
+          
+          // Get references to sentinel and loading indicator (if they exist)
+          const sentinel = document.getElementById('sentinel');
+          const loadingIndicator = document.getElementById('loadingIndicator');
+          
+          advertisements.sort((a, b) => {
+            const aActive = isActive(a.timeframeEnd);
+            const bActive = isActive(b.timeframeEnd);
+            
+            if (aActive && !bActive) return -1;
+            if (!aActive && bActive) return 1;
+            
+            return 0;
+          });
           
           advertisements.forEach(ad => {
             const adElement = createAdListing(ad);
-            myAdsListsContainer.appendChild(adElement);
+            const adActive = isActive(ad.timeframeEnd);
+            
+            if (adActive) {
+              const existingAds = Array.from(myAdsListsContainer.querySelectorAll('.myAds_list_item'));
+              const firstEndedIndex = existingAds.findIndex(item => item.classList.contains('ended'));
+              
+              if (firstEndedIndex !== -1) {
+                myAdsListsContainer.insertBefore(adElement, existingAds[firstEndedIndex]);
+              } else if (sentinel) {
+                myAdsListsContainer.insertBefore(adElement, sentinel);
+              } else {
+                myAdsListsContainer.appendChild(adElement);
+              }
+            } else {
+              if (sentinel) {
+                myAdsListsContainer.insertBefore(adElement, sentinel);
+              } else {
+                myAdsListsContainer.appendChild(adElement);
+              }
+            }
           });
 
+          offset += advertisements.length;
+          
+          if (advertisements.length < limit || offset >= stats.amountAds) {
+            hasMore = false;
+            if (sentinel) {
+              sentinel.remove();
+            }
+            if (loadingIndicator) {
+              loadingIndicator.remove();
+            }
+          }
+
           showContent();
-        } else {
+          
+          if (!isLoadMore && hasMore && !document.getElementById('sentinel')) {
+            const sentinel = document.createElement('div');
+            sentinel.id = 'sentinel';
+            sentinel.style.height = '1px';
+            sentinel.style.marginTop = '20px';
+            myAdsListsContainer.appendChild(sentinel); 
+            
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingIndicator';
+            loadingDiv.style.textAlign = 'center';
+            loadingDiv.style.padding = '20px';
+            loadingDiv.style.display = 'none';
+            loadingDiv.innerHTML = '<p>Loading more ads...</p>';
+            myAdsListsContainer.appendChild(loadingDiv); 
+            
+            setupIntersectionObserver();
+          }
+        } else if (!isLoadMore) {
           myADs.innerHTML = `
             <h1 class="myAds_h1">My Ads</h1>
             <div class="myAds_main">
@@ -389,11 +453,40 @@ document.addEventListener("DOMContentLoaded", async () => {
           `;
           
           myADs.classList.add('loaded');
+          hasMore = false;
         }
       }
     } catch (error) {
       console.error('Error fetching advertisement history:', error);
+    } finally {
+      isLoading = false;
+      
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+      }
     }
+  }
+
+  function setupIntersectionObserver() {
+    const sentinel = document.getElementById('sentinel');
+    const myAdsListsContainer = document.querySelector('.myAds_lists');
+    
+    if (!sentinel || !myAdsListsContainer) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading && hasMore) {
+          loadAdvertisementHistory(true);
+        }
+      });
+    }, {
+      root: myAdsListsContainer, 
+      rootMargin: '100px', 
+      threshold: 0 
+    });
+    
+    observer.observe(sentinel);
   }
 
   await loadAdvertisementHistory();
