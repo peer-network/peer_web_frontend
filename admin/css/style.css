@@ -212,7 +212,6 @@ h1 {
 
 
 
-
 .xl_font_size {
 	font-size: 35px;
 	
@@ -383,7 +382,7 @@ input[type="submit"] {
 	padding: 24px 50px;
 	position: relative;
 	cursor: pointer;
-
+	text-shadow: none;
 	-webkit-transition: all 0.2s linear;
 	-moz-transition: all 0.2s linear;
 	-o-transition: all 0.2s linear;
@@ -633,6 +632,9 @@ textarea {
 	resize: none;
 	width: 100%;
 }
+.none{
+	display: none !important;
+}
 
 /*--------------------------------------------------------------
 # Fancy Scroll bar
@@ -772,12 +774,29 @@ header.site-header .loggedin span{
 main.site-main {
 	grid-area: main;
 	padding: 80px;
+	position: relative;
+	overflow: hidden;
 	
+}
+
+main.site-main  .svg_bg{
+	position: absolute;
+	left: -18vh;
+	bottom: 0;
+}
+main.site-main  .svg_bg svg{
+	fill: rgba(119, 175, 255, 0.07);
+	filter: blur(339.54998779296875px);
+	width: 115vh;
+	height: 68vh;
+	flex-shrink: 0;
 }
 
 footer {
 	grid-area: footer;
 }
+
+
 
 
 /*--------------------------------------------------------------
@@ -923,7 +942,9 @@ footer {
 	display: flex;
 	margin-bottom: 100px;
 	gap: 50px;
+
 }
+
 .main_stats .stat_box{
 	display: flex;
 	padding: 46px;
@@ -1486,6 +1507,231 @@ footer {
 }
 
 /*----------------Content.PHP-----------------------------*/
+.content_box {
+	display: grid;
+	grid-template-columns: 56% 40%;
+	box-sizing: border-box;
+	justify-content: space-between;
+	margin-top: 230px;
+	position: relative;
+  	z-index: 1;
+}
+/*----Left------*/
+	.content_box_left {
+		display: flex;
+		flex-direction: column;
+		gap: 50px;
+	}
+	/*----Content Type Post------*/
+		.content_type_post {
+			display: flex;
+			flex-direction: column;
+			gap: 50px;
+		}
+
+		.content_type_post .profile_post {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			align-self: stretch;
+			width: 100%;
+		}
+		.content_type_post .profile_post .fullpost_link .button {
+			margin: 0;
+		}
+		.content_type_post .profile_post  .profile {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			
+		}
+		.content_type_post .profile_post  .profile .profile_image {
+			display: block;
+			border-radius: 100px;
+			overflow: hidden;
+			width: 150px;
+			aspect-ratio: 1;
+			position: relative;
+			background: var(--black-dark,#252525);
+		}
+		.content_type_post .profile_post  .profile .profile_image img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.content_type_post .profile_post  .profile .profile_detail {
+			flex: 1;
+		}
+
+		.content_type_post .profile_post .profile .profile_detail span {
+			display: block;
+			margin-bottom: 6px;
+		}
+
+		.content_type_post .post_detail {
+			display: flex;
+			flex-direction: column;
+			gap: 37px;
+		}
+
+		.content_type_post .post_detail .post_title {
+			padding-right: 150px;
+			position: relative;
+		}
+		.content_type_post .post_detail .post_title h2 {
+			margin-bottom: 0;
+		}
+		.content_type_post .post_detail .post_title  span.timeagao {
+			position: absolute;
+			right: 14px;
+			bottom: 5px;
+		}
+		.content_type_post .post_detail .hashtags span {
+			padding-right: 12px;
+			display: inline-block;
+			padding-bottom: 7px;
+		}
+	/*----End: Content Type Post------*/
+
+	/*----Content Type Profile------*/
+		.content_type_profile {
+			display: flex;
+			flex-direction: column;
+			gap: 50px;
+		}
+		.content_type_profile  .profile {
+			display: flex;
+			align-items: start;
+			gap: 20px;
+			
+		}
+		.content_type_profile  .profile .profile_image {
+			display: block;
+			border-radius: 100px;
+			overflow: hidden;
+			width: 200px;
+			aspect-ratio: 1;
+			position: relative;
+			background: var(--black-dark,#252525);
+		}
+		.content_type_profile .profile .profile_image img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.content_type_profile .profile .profile_detail {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			gap: 30px;
+		}
+
+		.content_type_profile .profile .profile_stats {
+			display: flex;
+			gap: 20px;
+		}
+		.content_type_profile .profile .profile_stats em {
+			font-style: normal;
+			color: var(--white,#fff);
+		}
+		.content_type_profile .profile_link a {
+			display: block;
+		}
+
+	/*----End: Content Type Profile------*/
+
+	/*----End: Content Type Comment------*/
+		.content_type_comment {
+			display: flex;
+			flex-direction: column;
+			gap: 50px;
+			position: relative;
+			padding-left: 70px;
+		}
+		.content_type_comment::before {
+			content: "";
+			height: 69%;
+			width: 50px;
+			border-left: 3px solid;
+			border-top: 3px solid;
+			border-radius: 25px 0 0 0;
+			position: absolute;
+			left: 0;
+			top: 35px;
+		}
+		.content_type_comment::after {
+			content: "";
+			height: 19px;
+			width: 1px;
+			border-radius: 100px;
+			border-left: 19px solid;
+			position: absolute;
+			left: -7px;
+			top: 69%;
+			aspect-ratio: 1;
+			margin-top: 35px;
+		}
+		.content_type_comment > h2 {
+			display: flex;
+			gap: 20px;
+			align-items: center;
+		}
+		.content_type_comment .comment_item {
+			display: flex;
+			gap: 40px;
+			margin-bottom: 30px;
+			align-items: flex-start;
+		}
+		.content_type_comment .comment_item .comment_body {
+			flex: 1;
+		}
+		.content_type_comment .comment_item .comment_body .commenter_info {
+			margin-bottom: 20px;
+		}
+
+		.content_type_comment .comment_item .commenter-pic {
+			display: block;
+			border-radius: 100px;
+			overflow: hidden;
+			width: 130px;
+			aspect-ratio: 1;
+			position: relative;
+			background: var(--black-dark,#252525);
+		}
+		.content_type_comment .comment_item  .commenter-pic img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.content_type_comment .comment_item .timeagao {
+			padding-left: 40px;
+			position: relative;
+		}
+		.content_type_comment .comment_item .timeagao::before {
+			content: "";
+			border: 5px solid;
+			border-radius: 100%;
+			position: absolute;
+			left: 11px;
+			top: 20px;
+		}
+		.content_type_comment .comment_item .comment_like {
+			display: flex;
+			gap: 10px;
+			flex-direction: column;
+			text-align: center;
+			cursor: pointer;
+		}
+	/*----End: Content Type Comment------*/
+
+/*---End : Left------*/
+
+/*----Right------*/
 
 .content_box_right {
 	display: flex;
@@ -1499,6 +1745,8 @@ footer {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	border-radius: 70px;
+	background: var(--black-dark, #252525);
 }
 .conten_status span.review {
 	border-radius: 40px;
@@ -1571,8 +1819,10 @@ footer {
 }
 .action_buttons {
 	display: flex;
+	align-items: flex-start;
 	flex-wrap: wrap;
-	justify-content: space-between;
+	gap: 20px;
+	align-self: stretch;
 }
 .action_buttons .button {
 	width: 49%;
@@ -1583,3 +1833,89 @@ footer {
 .action_buttons .button.btn-blue {
 	width: 100%;
 }
+
+.action_box {
+	border-radius: 70px;
+	border: 2px solid;
+	display: flex;
+	padding: 40px;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+	flex: 1 0 0;
+	align-self: stretch;
+	gap: 30px;
+}
+.action_box .action_info{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	align-self: stretch;
+}
+.action_box.action_restore{
+	border-color: var(--blue, #0069FF);
+	background-color: var(--blue, #0069FF);
+}
+.action_box.action_illegal{
+	border-color: var(--red-accent,#FF3B3B);
+}
+
+.moderated_by_box{
+	display: flex;
+	padding: 50px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 50px;
+	align-self: stretch;
+	border-radius: 70px;
+	background: var(--black-dark, #252525);
+}
+.moderated_by_box .moderated_info{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	align-self: stretch;
+
+}
+
+.moderated_by_box .moderated_info .profile {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	
+}
+.moderated_by_box .moderated_info .profile .profile_image {
+	display: block;
+	border-radius: 100px;
+	overflow: hidden;
+	width: 110px;
+	aspect-ratio: 1;
+	position: relative;
+	background: var(--black-dark,#252525);
+}
+.moderated_by_box .moderated_info .profile .profile_image img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.moderated_by_box .moderated_info .profile .profile_detail {
+	flex: 1;
+}
+
+.moderated_by_box .moderated_info .profile .profile_detail span {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.moderated_by_box .moderated_action{
+	display: flex;
+	padding: 10px 30px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	align-self: stretch;
+}
+/*----------------End Content.PHP-----------------------------*/
