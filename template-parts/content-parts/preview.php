@@ -39,7 +39,6 @@
                 
             </div>
             <div class="viewpost-right">
-
                 <div class="profile-header">
                     <div class="profile-header-left">
                         <img id="profilbild" class="profilbild post-userImg profile-picture"  src="">
@@ -70,7 +69,7 @@
                     <span class="comment-txt blur"> No comments yet. Be the first to comment! </span>
                     <!-- <div  class="comment_list">
                         <div id="comments" class="inner"> 
-                            <!-- <div class="comment_item"> 
+                            <!--<div class="comment_item"> 
                                 <div class="commenter-pic ">
                                     <img class="profile-picture" src="https://media.getpeer.eu/profile/b6085cd0-ccc9-449a-9e5d-fa4784280ba2.jpeg">
                                 </div>
