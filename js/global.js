@@ -1445,6 +1445,9 @@ function commentToDom(c, append = true) {
   // Report Comment Span
   const reportCommentDiv = document.createElement('span')
   reportCommentDiv.classList.add('dots')
+  reportCommentDiv.addEventListener('click', function() {
+    /////// popup confirmation event
+  })
 
   // Reply container
   const replyBtn = document.createElement("span");
