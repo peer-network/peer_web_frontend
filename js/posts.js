@@ -508,7 +508,7 @@
 
     const accessToken = getCookie("authToken");
     const cancel = 0;
-    const answer = await confirm("Report Post", `Are you sure you want to report this post?`, (dontShowOption = false));
+    const answer = await warnig("Are you sure you want to report this post?", ``, (dontShowOption = false),`<i class="peer-icon peer-icon-warning red-text"></i>`);
     if (answer === null || answer.button === cancel) {
       return false;
     }
