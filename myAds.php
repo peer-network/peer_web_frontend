@@ -26,6 +26,7 @@ checkAuth("unauthorized");
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
     <script src="./js/ads/adsHistory/myAds.js?<?php echo filemtime('./js/ads/adsHistory/myAds.js'); ?>" defer></script>

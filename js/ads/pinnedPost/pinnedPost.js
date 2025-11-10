@@ -1,35 +1,38 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // DOM Elements
-  const promoteBtn = document.querySelector(".promote_posts");
-  const cancelBtn = document.querySelector(".promote_posts_cancel");
-  const profileBox = document.querySelector(".profile_header");
-  const boostPostDescription = document.querySelector(".boost_post_description");
-  const listPosts = document.querySelector(".list_all_post");
-  const modal = document.getElementById('boostModal');
-  const adsStats = document.querySelector('.ads_container_wrap');
-  const advertisePost = document.getElementById('advertisePost');
-  
-  const ADPOSTPRICE = 200;
-  
-  let currentStep = 1;
-  let postid = null;
-  let BALANCE = 0;
-  let selectedCard = null;
-  let adEndTime = null;
-  let isFromPopup = false; 
+document.addEventListener("DOMContentLoaded", () => {
+  const DOM = {
+    promoteBtn: document.querySelector(".promote_posts"),
+    cancelBtn: document.querySelector(".promote_posts_cancel"),
+    profileBox: document.querySelector(".profile_header"),
+    boostPostDescription: document.querySelector(".boost_post_description"),
+    listPosts: document.querySelector(".list_all_post"),
+    modal: document.getElementById('boostModal'),
+    adsStats: document.querySelector('.ads_container_wrap'),
+    advertisePost: document.getElementById('advertisePost'),
+    boostPostFromPopup: document.getElementById('boostPostFromPopup'),
+    dropdownContainer: document.querySelector('.boost_adsStats_container'),
+    dropdownWrapper: document.querySelector('.boost_dropdown_wrapper')
+  };
+
+  const STATE = {
+    ADPOSTPRICE: 200,
+    currentStep: 1,
+    postid: null,
+    BALANCE: 0,
+    selectedCard: null,
+    adEndTime: null,
+    isFromPopup: false
+  };
 
   (async () => {
-    BALANCE = await currentliquidity("token_balance");
+    STATE.BALANCE = await currentliquidity("token_balance");
   })();
 
-  // ----------------- Check if Post is Boosted -----------------
   function isPostBoosted(postId) {
     if (!POSTS?.listPosts?.affectedRows) return false;
     const post = POSTS.listPosts.affectedRows.find(p => p.id === postId);
     return post?.isAd === true;
   }
 
-  // ----------------- Show Step Function -----------------
   function showStep(step) {
     if (step === 3) {
       checkAdPostEligibility();
@@ -41,77 +44,56 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     const stepEl = document.querySelector(`.modal-step[data-step="${step}"]`);
     if (stepEl) stepEl.classList.add('active');
-    currentStep = step;
+    STATE.currentStep = step;
   }
 
-  // ----------------- Check Balance Eligibility -----------------
   function checkAdPostEligibility() {
     const adMessageEl = document.querySelector('.ad_message');
+    const hasEnoughBalance = STATE.BALANCE >= STATE.ADPOSTPRICE;
     
-    if (BALANCE < ADPOSTPRICE) {
-      advertisePost.innerText = 'Go to profile';
-      advertisePost.classList.remove('next-btn');
-      advertisePost.classList.add('goToProfile-btn');
-      
-      if (adMessageEl) {
-        adMessageEl.classList.add('error');
-        adMessageEl.innerText = "You don't have enough Peer Tokens to start this promotion.";
-      }
-    } else {
-      advertisePost.innerText = 'Pay';
-      advertisePost.classList.add('next-btn');
-      advertisePost.classList.remove('goToProfile-btn');
-      
-      if (adMessageEl) {
-        adMessageEl.classList.remove('error');
-        adMessageEl.innerText = "All set! Your ad is ready to go - click 'Pay' to launch your ad.";
-      }
+    DOM.advertisePost.innerText = hasEnoughBalance ? 'Pay' : 'Go to profile';
+    DOM.advertisePost.classList.toggle('next-btn', hasEnoughBalance);
+    DOM.advertisePost.classList.toggle('goToProfile-btn', !hasEnoughBalance);
+    
+    if (adMessageEl) {
+      adMessageEl.classList.toggle('error', !hasEnoughBalance);
+      adMessageEl.innerText = hasEnoughBalance 
+        ? "All set! Your ad is ready to go - click 'Pay' to launch your ad."
+        : "You don't have enough Peer Tokens to start this promotion.";
     }
   }
 
-  // ----------------- Boost Card Selection -----------------
   function selectCardForBoosting(card) {
-    selectedCard = card;
-    postid = card.id;
+    STATE.selectedCard = card;
+    STATE.postid = card.id;
     
     const previewBoostedPost = document.getElementById("preview_boostedPost");
-    if (previewBoostedPost) {
-      previewBoostedPost.innerHTML = "";
-      
-      const clonedCard = card.cloneNode(true);
-      clonedCard.querySelectorAll("*").forEach(el => {
-        el.replaceWith(el.cloneNode(true));
-      });
-      
-      const usernameEl = clonedCard.querySelector(".post-userName");
-      const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-      
-      const postInhalt = clonedCard.querySelector(".post-inhalt");
-      const social = clonedCard.querySelector(".social");
-      
-      if (postInhalt && social) {
-        const pinnedBtn = document.createElement("div");
-        pinnedBtn.classList.add("pinedbtn");
-        pinnedBtn.innerHTML = `
-          <a class="button btn-blue">
-            <img src="svg/pin.svg" alt="pin">
-            <span class="ad_username bold">@${username}</span>
-          </a>
-        `;
-        postInhalt.insertBefore(pinnedBtn, social);
-      }
-      
-      previewBoostedPost.appendChild(clonedCard);
+    if (!previewBoostedPost) return;
+    
+    previewBoostedPost.innerHTML = "";
+    
+    const clonedCard = card.cloneNode(true);
+    clonedCard.querySelectorAll("*").forEach(el => {
+      el.replaceWith(el.cloneNode(true));
+    });
+    
+    const usernameEl = clonedCard.querySelector(".post-userName");
+    const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+    
+    const postInhalt = clonedCard.querySelector(".post-inhalt");
+    const social = clonedCard.querySelector(".social");
+    
+    if (postInhalt && social) {
+      const pinnedBtn = createPinnedButton(username);
+      postInhalt.insertBefore(pinnedBtn, social);
     }
     
-    modal.classList.remove('none');
+    previewBoostedPost.appendChild(clonedCard);
+    DOM.modal.classList.remove('none');
     showStep(1);
   }
 
-  // ----------------- Insert Pinned Button -----------------
-  function insertPinnedButton(card, username, mode = "profile") {
-    if (!isPostBoosted(card.id)) return;
-    
+  function createPinnedButton(username) {
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
     pinnedBtn.innerHTML = `
@@ -120,6 +102,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         <span class="ad_username bold">@${username}</span>
       </a>
     `;
+    return pinnedBtn;
+  }
+
+  function insertPinnedButton(card, username, mode = "profile") {
+    const postId = card.id || card.getAttribute('id');
+    if (!isPostBoosted(postId)) return;
+
+    card.classList.add("PINNED");
+    const pinnedBtn = createPinnedButton(username);
 
     if (mode === "profile") {
       const postInhalt = card.querySelector(".post-inhalt");
@@ -128,8 +119,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (postInhalt && social && !postInhalt.querySelector(".pinedbtn")) {
         postInhalt.insertBefore(pinnedBtn, social);
       }
-    } else if (mode === "post") {
-      const viewpost = document.querySelector(".viewpost");
+    }
+    
+    if (mode === "post") {
+      const viewpost = document.getElementById("cardClicked");
       if (!viewpost) return;
       
       const footer = viewpost.querySelector(".postview_footer");
@@ -141,7 +134,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ----------------- API Call: Advertise Post -----------------
   async function advertisePostPinned() {
     const accessToken = getCookie("authToken");
     
@@ -152,7 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const graphql = JSON.stringify({
       query: `mutation AdvertisePostPinned {
-          advertisePostPinned(postid: "${postid}", advertisePlan: PINNED) {
+          advertisePostPinned(postid: "${STATE.postid}", advertisePlan: PINNED) {
               status
               ResponseCode
               affectedRows {
@@ -184,19 +176,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         throw new Error(data?.ResponseCode ? userfriendlymsg(data.ResponseCode) : "Failed to boost post");
       }
       
-      if (POSTS?.listPosts?.affectedRows) {
-        const postIndex = POSTS.listPosts.affectedRows.findIndex(p => p.id === postid);
-        if (postIndex !== -1) {
-          POSTS.listPosts.affectedRows[postIndex].isAd = true;
-        }
+      updatePostData(data);
+      
+      if (STATE.isFromPopup) {
+        await closeViewpostModal();
       }
       
-      adEndTime = data.affectedRows[0]?.timeframeEnd;
-      shiftPostToTop(data);
+      shiftPostToTop();
+      addPinnedButtonToShiftedPost();
       updateStep4Display(data);
       showStep(4);
       
-      BALANCE = await currentliquidity("token_balance");
+      STATE.BALANCE = await currentliquidity("token_balance");
       
     } catch (error) {
       console.error("AdvertisePostPinned failed:", error);
@@ -204,156 +195,254 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ----------------- Shift Post to Top -----------------
-  function shiftPostToTop(data) {
-    const parentElement = document.getElementById("allpost");
-    const cardEl = document.getElementById(postid);
-    
-    if (parentElement && cardEl) {
-      parentElement.prepend(cardEl);
-      
-      const allCards = parentElement.querySelectorAll('.card');
-      allCards.forEach((el) => {
-        if (el.id === postid && el !== cardEl) {
-          el.remove();
-        }
-      });
+  function updatePostData(data) {
+    if (POSTS?.listPosts?.affectedRows) {
+      const postIndex = POSTS.listPosts.affectedRows.findIndex(p => p.id === STATE.postid);
+      if (postIndex !== -1) {
+        POSTS.listPosts.affectedRows[postIndex].isAd = true;
+      }
+    }
+    STATE.adEndTime = data.affectedRows[0]?.timeframeEnd;
+  }
+
+  async function closeViewpostModal() {
+    const viewpost = document.querySelector('.viewpost');
+    if (viewpost) {
+      const closeBtn = viewpost.querySelector('.btClose');
+      if (closeBtn) {
+        closeBtn.click();
+      }
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
   }
 
-  // ----------------- Update Step 4 Display -----------------
+  function shiftPostToTop() {
+    const parentElement = document.getElementById("allpost");
+    const cardEl = document.getElementById(STATE.postid);
+    
+    if (!parentElement || !cardEl) return;
+    
+    cardEl.classList.add("PINNED");
+    parentElement.prepend(cardEl);
+    
+    const allCards = parentElement.querySelectorAll('.card');
+    allCards.forEach((el) => {
+      if (el.id === STATE.postid && el !== cardEl) {
+        el.remove();
+      }
+    });
+  }
+
+  function addPinnedButtonToShiftedPost() {
+    const shiftedCard = document.getElementById(STATE.postid);
+    if (!shiftedCard) return;
+    
+    const usernameEl = shiftedCard.querySelector(".post-userName");
+    const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+    insertPinnedButton(shiftedCard, username, "profile");
+  }
+
   function updateStep4Display(data) {
     const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
     
-    if (adPostCreatedAtTime && data.affectedRows[0]?.timeframeEnd) {
-      const endDate = new Date(data.affectedRows[0].timeframeEnd.replace(" ", "T"));
-      adPostCreatedAtTime.textContent = endDate.toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      }).replace(",", " at");
-    }
+    if (!adPostCreatedAtTime || !data.affectedRows[0]?.timeframeEnd) return;
+    
+    const endDate = new Date(data.affectedRows[0].timeframeEnd.replace(" ", "T"));
+    adPostCreatedAtTime.textContent = endDate.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).replace(",", " at");
   }
 
-  // ----------------- Filter Boosted Cards -----------------
   function hideBoostedCards() {
-    const cards = listPosts.querySelectorAll(".card");
-    cards.forEach(card => {
-      if (isPostBoosted(card.id)) {
-        card.classList.add('none');
-      }
-    });
+    const cards = DOM.listPosts.querySelectorAll(".card.PINNED");
+    cards.forEach(card => card.classList.add('none'));
   }
 
   function showBoostedCards() {
-    const cards = listPosts.querySelectorAll(".card");
-    cards.forEach(card => {
-      if (isPostBoosted(card.id)) {
-        card.classList.remove('none');
-      }
-    });
+    const cards = DOM.listPosts.querySelectorAll(".card.PINNED");
+    cards.forEach(card => card.classList.remove('none'));
   }
 
-  // ----------------- Attach Card Click Listeners -----------------
   function attachCardListeners() {
-    const cards = listPosts.querySelectorAll(".card");
+    const cards = DOM.listPosts.querySelectorAll(".card");
     cards.forEach(card => {
-      if (!card.dataset.boostListenerAdded) {
-        card.addEventListener("click", function (e) {
-          if (listPosts.classList.contains("boostActive")) {
-            e.stopImmediatePropagation();
-            
-            if (!isPostBoosted(card.id)) {
-              selectCardForBoosting(card);
-            }
+      if (card.dataset.boostListenerAdded) return;
+      
+      card.addEventListener("click", function (e) {
+        if (DOM.listPosts.classList.contains("boostActive")) {
+          e.stopImmediatePropagation();
+          
+          if (!isPostBoosted(card.id)) {
+            selectCardForBoosting(card);
           }
-        }, { capture: true });
-        
-        card.dataset.boostListenerAdded = true;
+        }
+      }, { capture: true });
+      
+      card.dataset.boostListenerAdded = true;
+    });
+  }
+
+  function setupModalEventListeners() {
+    DOM.modal.addEventListener('click', function (e) {
+      if (e.target.classList.contains('next-btn')) {
+        handleNextButton();
+      }
+      
+      if (e.target.classList.contains('back-btn')) {
+        handleBackButton();
+      }
+      
+      if (e.target.classList.contains('close-btn')) {
+        handleCloseButton();
+      }
+      
+      if (e.target.classList.contains('goToProfile-btn')) {
+        handleGoToProfileButton(e);
+      }
+      
+      if (e.target.classList.contains('goToPost-btn')) {
+        handleGoToPostButton();
       }
     });
   }
 
-  // ----------------- Modal Event Handlers -----------------
-  modal.addEventListener('click', function (e) {
-    if (e.target.classList.contains('next-btn')) {
-      if (currentStep === 3) {
-        advertisePostPinned();
-      } else {
-        showStep(currentStep + 1);
-      }
+  function handleNextButton() {
+    if (STATE.currentStep === 3) {
+      advertisePostPinned();
+    } else {
+      showStep(STATE.currentStep + 1);
     }
-    
-    if (e.target.classList.contains('back-btn')) {
-      if (currentStep > 1) showStep(currentStep - 1);
-    }
-    
-    if (e.target.classList.contains('close-btn')) {
-      modal.classList.add('none');
-      if (isFromPopup && selectedCard) {
-        setTimeout(() => {
-          selectedCard.click();
-        }, 100);
-      }
-      resetModalState();
-    }
-    
-    // ========== STEP 4: Go to Profile Button ==========
-    if (e.target.classList.contains('goToProfile-btn')) {
-      modal.classList.add('none');
-      deactivateBoostMode();
-      
-      if (selectedCard && isPostBoosted(selectedCard.id)) {
-        const usernameEl = selectedCard.querySelector(".post-userName");
-        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedButton(selectedCard, username, "profile");
-      }
-      
-      resetModalState();
-    }
-    
-    // ========== STEP 4: Go to Post Button ==========
-    if (e.target.classList.contains('goToPost-btn')) {
-      modal.classList.add('none');
-      deactivateBoostMode();
-      
-      if (selectedCard && isPostBoosted(selectedCard.id)) {
-        const usernameEl = selectedCard.querySelector(".post-userName");
-        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        
-        insertPinnedButton(selectedCard, username, "profile");
-        insertPinnedButton(selectedCard, username, "post");
-        
-        selectedCard.click();
-      }
-      
-      resetModalState();
-    }
-    
-    if (e.target === modal) {
-      modal.classList.add('none');
-      if (isFromPopup && selectedCard) {
-        setTimeout(() => {
-          selectedCard.click();
-        }, 100);
-      }
-      resetModalState();
-    }
-  });
+  }
 
-  // ----------------- Reset Modal State -----------------
-  function resetModalState() {
-    currentStep = 1;
-    selectedCard = null;
-    postid = null;
-    isFromPopup = false;
+  function handleBackButton() {
+    if (STATE.currentStep > 1) {
+      showStep(STATE.currentStep - 1);
+    }
+  }
+
+  function handleCloseButton() {
+    DOM.modal.classList.add('none');
+    resetModalState();
+  }
+
+  function handleGoToProfileButton(e) {
+    e.stopPropagation();
+    setTimeout(() => {
+      window.location.reload();
+    }, 0);
+  }
+
+  function handleGoToPostButton() {
+    DOM.modal.classList.add('none');
+    deactivateBoostMode();
     
-    advertisePost.innerText = 'Pay';
-    advertisePost.classList.add('next-btn');
-    advertisePost.classList.remove('goToProfile-btn');
+    if (!STATE.selectedCard || !isPostBoosted(STATE.selectedCard.id)) {
+      resetModalState();
+      return;
+    }
+    
+    const usernameEl = STATE.selectedCard.querySelector(".post-userName");
+    const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+    const cardToClick = getCardToClick();
+    
+    if (cardToClick) {
+      cardToClick.click();
+      setupPostViewHandlers(cardToClick, username);
+    }
+    
+    resetModalState();
+  }
+
+  function getCardToClick() {
+    if (!STATE.isFromPopup) {
+      return STATE.selectedCard;
+    }
+    
+    const viewpost = document.querySelector('.viewpost');
+    const postIdFromView = viewpost?.getAttribute('postid') || viewpost?.dataset.postid || viewpost?.id;
+    
+    if (postIdFromView) {
+      const popupCard = document.getElementById(postIdFromView);
+      if (popupCard) {
+        return popupCard;
+      }
+    }
+    
+    return STATE.selectedCard;
+  }
+
+  function setupPostViewHandlers(card, username) {
+    setTimeout(() => {
+      insertPinnedButton(card, username, "post");
+      
+      const viewpost = document.querySelector(".viewpost");
+      if (!viewpost) return;
+      
+      setupViewpostObserver(viewpost);
+      setupCloseButtonHandler(viewpost);
+    }, 150);
+  }
+
+  function setupViewpostObserver(viewpost) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const target = mutation.target;
+          if (target.classList.contains('none') || target.style.display === 'none') {
+            window.location.reload();
+          }
+        }
+        
+        if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+          mutation.removedNodes.forEach((node) => {
+            if (node === viewpost || node.contains?.(viewpost)) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    });
+    
+    observer.observe(viewpost, { 
+      attributes: true, 
+      attributeFilter: ['class', 'style']
+    });
+    
+    observer.observe(viewpost.parentElement, { 
+      childList: true 
+    });
+  }
+
+  function setupCloseButtonHandler(viewpost) {
+    const closePostBtn = viewpost.querySelector(".btClose");
+    if (!closePostBtn) return;
+    
+    closePostBtn.onclick = null;
+    
+    const newCloseBtn = closePostBtn.cloneNode(true);
+    closePostBtn.parentNode.replaceChild(newCloseBtn, closePostBtn);
+    
+    newCloseBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.reload();
+    }, { capture: true });
+  }
+
+  function resetModalState() {
+    STATE.currentStep = 1;
+    STATE.selectedCard = null;
+    STATE.postid = null;
+    STATE.isFromPopup = false;
+    
+    DOM.advertisePost.innerText = 'Pay';
+    DOM.advertisePost.classList.add('next-btn');
+    DOM.advertisePost.classList.remove('goToProfile-btn');
     
     const adMessageEl = document.querySelector('.ad_message');
     if (adMessageEl) {
@@ -362,81 +451,74 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ----------------- Activate Boost Mode -----------------
   function activateBoostMode() {
-    profileBox.classList.add("boostActive");
-    listPosts.classList.add("boostActive");
-    cancelBtn.classList.remove("none");
-    boostPostDescription.classList.remove("none");
-    adsStats.classList.add('none');
+    DOM.profileBox.classList.add("boostActive");
+    DOM.listPosts.classList.add("boostActive");
+    DOM.cancelBtn.classList.remove("none");
+    DOM.boostPostDescription.classList.remove("none");
+    DOM.adsStats.classList.add('none');
     
     attachCardListeners();
     hideBoostedCards();
   }
 
-  // ----------------- Deactivate Boost Mode -----------------
   function deactivateBoostMode() {
-    profileBox.classList.remove("boostActive");
-    listPosts.classList.remove("boostActive");
-    cancelBtn.classList.add("none");
-    boostPostDescription.classList.add("none");
-    adsStats.classList.remove('none');
+    DOM.profileBox.classList.remove("boostActive");
+    DOM.listPosts.classList.remove("boostActive");
+    DOM.cancelBtn.classList.add("none");
+    DOM.boostPostDescription.classList.add("none");
+    DOM.adsStats.classList.remove('none');
     
     showBoostedCards();
   }
 
-  // ----------------- Promote / Cancel Button Handlers -----------------
-  if (promoteBtn) {
-    promoteBtn.addEventListener("click", activateBoostMode);
+  function setupPromoteButtons() {
+    if (DOM.promoteBtn) {
+      DOM.promoteBtn.addEventListener("click", activateBoostMode);
+    }
+
+    if (DOM.cancelBtn) {
+      DOM.cancelBtn.addEventListener("click", deactivateBoostMode);
+    }
   }
 
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", deactivateBoostMode);
-  }
-
-  // ----------------- Dropdown Toggle -----------------
-  const container = document.querySelector('.boost_adsStats_container');
-  const dropdownWrapper = document.querySelector('.boost_dropdown_wrapper');
-
-  if (container && dropdownWrapper) {
-    container.addEventListener('click', function () {
+  function setupDropdownToggle() {
+    if (!DOM.dropdownContainer || !DOM.dropdownWrapper) return;
+    
+    DOM.dropdownContainer.addEventListener('click', function () {
       const expanded = this.getAttribute('aria-expanded') === 'true';
       this.setAttribute('aria-expanded', !expanded);
-      dropdownWrapper.classList.toggle('open', !expanded);
-      dropdownWrapper.hidden = expanded;
+      DOM.dropdownWrapper.classList.toggle('open', !expanded);
+      DOM.dropdownWrapper.hidden = expanded;
     });
 
     document.addEventListener('click', function (e) {
       if (!e.target.closest('.boost_adsStats_container') && 
           !e.target.closest('.boost_dropdown_wrapper')) {
-        container.setAttribute('aria-expanded', 'false');
-        dropdownWrapper.classList.remove('open');
-        dropdownWrapper.hidden = true;
+        DOM.dropdownContainer.setAttribute('aria-expanded', 'false');
+        DOM.dropdownWrapper.classList.remove('open');
+        DOM.dropdownWrapper.hidden = true;
       }
     });
   }
 
-  // ----------------- Initialize Pinned Buttons on Load -----------------
   function initializePinnedButtons() {
-    const cards = listPosts.querySelectorAll(".card");
+    const cards = DOM.listPosts.querySelectorAll(".card");
     cards.forEach(card => {
-      if (isPostBoosted(card.id)) {
-        const usernameEl = card.querySelector(".post-userName");
-        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedButton(card, username, "profile");
-      }
+      const postId = card.id || card.getAttribute('id');
+      if (!isPostBoosted(postId)) return;
+      
+      card.classList.add("PINNED");
+      const usernameEl = card.querySelector(".post-userName");
+      const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+      insertPinnedButton(card, username, "profile");
     });
   }
 
-  if (POSTS?.listPosts?.affectedRows) {
-    initializePinnedButtons();
-  }
-
-  // ----------------- Boost Post From Popup -----------------
-  const boostPostFromPopup = document.getElementById('boostPostFromPopup');
-  
-  if (boostPostFromPopup) {
-    boostPostFromPopup.addEventListener('click', function(e) {
+  function setupBoostFromPopup() {
+    if (!DOM.boostPostFromPopup) return;
+    
+    DOM.boostPostFromPopup.addEventListener('click', function(e) {
       e.preventDefault();
       
       const isProfilePage = document.querySelector('.profile_header') !== null;
@@ -446,16 +528,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       
       const viewpost = document.querySelector('.viewpost');
-      if (!viewpost) {
-        return;
-      }
+      if (!viewpost) return;
       
       const postIdFromView = viewpost.getAttribute('postid') || viewpost.dataset.postid || viewpost.id;
-      if (!postIdFromView) {
-        return;
-      }
+      if (!postIdFromView) return;
       
-      let card = listPosts.querySelector(`.card[id="${postIdFromView}"]`);
+      let card = DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`);
       
       if (!card) {
         card = document.getElementById(postIdFromView);
@@ -471,12 +549,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
       
-      isFromPopup = true;
+      STATE.isFromPopup = true;
       selectCardForBoosting(card);
     });
   }
 
-  // ----------------- Global Functions -----------------
-  window.insertPinnedBtn = insertPinnedButton;
+  function initialize() {
+    setupModalEventListeners();
+    setupPromoteButtons();
+    setupDropdownToggle();
+    setupBoostFromPopup();
+    
+    if (POSTS?.listPosts?.affectedRows) {
+      initializePinnedButtons();
+    }
+    
+    window.insertPinnedBtn = insertPinnedButton;
+  }
+
+  initialize();
   
 });
