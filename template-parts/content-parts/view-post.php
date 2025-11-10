@@ -133,7 +133,6 @@
                         </div>
                         <div class="comment_like"><span>7</span></div>
                     </div> -->
-                    
                     </div>
                 </div>
                 
