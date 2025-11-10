@@ -1454,10 +1454,21 @@ function commentToDom(c, append = true) {
 
     const div = document.createElement('div');
     div.classList.add('report-btn');
+    
+    div.addEventListener('click', async function() {
+      const response =  await warnig('Are you sure you want to report a comment?', '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
+      if (response === null || response?.button === 0) {
+        return false;
+      } else {
+        // Api Call
+         success('Comment has been reported', '', false, '<i class="peer-icon peer-icon-good-tick-circle green-text"></i>');
+      }
+      
+    });
 
     const span = document.createElement('span');
     span.classList.add('flag-icon');
-    span.innerHTML = '<i class="peer-icon peer-icon-like"></i>';
+    span.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
 
     div.appendChild(span);
     div.appendChild(document.createTextNode('Report comment'));

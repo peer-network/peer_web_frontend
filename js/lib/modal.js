@@ -149,13 +149,14 @@ function userfriendlymsg(code) {
   }
   return msg;
 }
-function info(title, text = "", dontShowOption = false) {
+function info(title, text = "", dontShowOption = false, svg = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
     buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "info",
     dontShowOption: dontShowOption,
+    svg: svg
   });
 }
 
@@ -169,12 +170,22 @@ function Merror(title, text = "", dontShowOption = false) {
   });
 }
 
-function warnig(title, text = "", dontShowOption = false,svg = null) {
+function warnig(title, text = "", dontShowOption = false, svg = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
     buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white bold" }],
     type: "warning",
+    dontShowOption: dontShowOption,
+     svg: svg
+  });
+}
+function success(title, text = "", dontShowOption = false, svg = null) {
+  return createModal({
+    title: title,
+    message: userfriendlymsg(text),
+    buttons: [{ text: "Okay", className: "btn-white bold" }],
+    type: "success",
     dontShowOption: dontShowOption,
      svg: svg
   });
