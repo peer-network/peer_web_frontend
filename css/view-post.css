@@ -1112,6 +1112,7 @@
 
 .comment_list .comment_item .comment_body {
 	flex: 1;
+	position: relative; /* Added by Luqman */
 }
 
 .comment_list .comment_item .commenter_info {
@@ -1174,7 +1175,7 @@
 }
 
 
-/* comment report action */
+/* comment report action START */
 .comment_list .comment_item .comment_body span.dots {
   position: relative;
   border: 3px solid;
@@ -1204,6 +1205,46 @@
   left: -21px;
 }
 
+.report-btn-container {
+  position: absolute;
+  top: 0;
+  display: inline-flex;
+  padding: 40px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 20px;
+  border-radius: 50px;
+  background: var(--Dark-Inactive, #323232);
+  box-shadow: 0 4px 50px 0 rgba(0, 0, 0, 0.50);
+  z-index: 1;
+}
+
+.report-btn {
+  /* display: inline-flex;
+  align-items: center;
+  background-color: #1e1e1e;
+  color: #ff4d4f;
+  border: 2px solid #ff4d4f;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: sans-serif; */
+
+  display: flex;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  border-radius: 150px;
+  border: 2px solid var(--Red-Accent, #FF3B3B);
+}
+
+.flag-icon {
+  margin-right: 6px;
+  font-size: 16px;
+}
+/* comment report action END */
 .post_comment{
   margin-top: auto;
   display: flex;

@@ -1444,10 +1444,23 @@ function commentToDom(c, append = true) {
 
   // Report Comment Span
   const reportCommentDiv = document.createElement('span')
-  reportCommentDiv.classList.add('dots')
-  reportCommentDiv.addEventListener('click', function() {
-    /////// popup confirmation event
-  })
+  reportCommentDiv.classList.add('dots');
+  reportCommentDiv.addEventListener('click', () => {
+    const divBox = document.createElement('div');
+    divBox.classList.add('report-btn-container');
+
+    const div = document.createElement('div');
+    div.classList.add('report-btn');
+
+    const span = document.createElement('span');
+    span.classList.add('flag-icon');
+    span.innerHTML = '<i class="peer-icon peer-icon-like"></i>';
+
+    div.appendChild(span);
+    div.appendChild(document.createTextNode('Report comment'));
+    divBox.appendChild(div);
+    commentBody.appendChild(divBox);
+  });
 
   // Reply container
   const replyBtn = document.createElement("span");
