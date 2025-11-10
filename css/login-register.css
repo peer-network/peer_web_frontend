@@ -443,7 +443,7 @@ input::placeholder {
 
 .validation-icon {
     padding: 0 12px;
-    color: var(--Dark-gray);
+    color: var(--White-secondary);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -453,9 +453,10 @@ input::placeholder {
 }
 
 .toggle-passwordBtn-icon {
-    color: var(--Dark-gray);
+    color: var(--White-secondary);
     padding: 0 12px;
     transition: opacity 0.3s ease;
+    cursor: pointer;
 }
 
 .toggle-passwordBtn-icon .peer-icon,

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  
   const DOM = {
     promoteBtn: document.querySelector(".promote_posts"),
     cancelBtn: document.querySelector(".promote_posts_cancel"),

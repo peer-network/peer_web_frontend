@@ -1894,6 +1894,7 @@ footer {
 	background-color: #262626;
 	line-height: 0;
 	padding: 0;
+	border: 0;
 }
 
 .feeback_popup_container .btn:hover {
