@@ -163,4 +163,32 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
   }
+
+  const button = document.querySelector('.moreActions_container');
+  const dropdown = document.querySelector('.moreActions_wrapper');
+
+  function toggleDropdown() {
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    
+    if (isExpanded) {
+      button.setAttribute('aria-expanded', 'false');
+      dropdown.classList.remove('open');
+      dropdown.setAttribute('hidden', '');
+    } else {
+      button.setAttribute('aria-expanded', 'true');
+      dropdown.classList.toggle('open');
+      dropdown.hidden = isExpanded;
+    }
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.moreActions_container_wrap')) {
+      button.setAttribute('aria-expanded', 'false');
+      dropdown.setAttribute('hidden', '');
+    }
+  });
+
+  button.addEventListener('click', toggleDropdown);
+
 });
