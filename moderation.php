@@ -81,6 +81,7 @@ checkAuth("unauthorized");
             <div class="admin_restored admin_box">
                 <div class="admin_box_top">
                     <p class="xl_font_size">Restored</p>
+                    
                     <img src="svg/mark-admin.svg" alt="">
                 </div>
                 <div class="admin_box_bottom">

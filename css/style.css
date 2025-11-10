@@ -317,6 +317,9 @@ html input[disabled] {
 .green-text {
 	color: var(--green)
 }
+.red-text {
+	color: var(--red-accent);
+}
 
 /*--------------------------------------------------------------
 ## Links

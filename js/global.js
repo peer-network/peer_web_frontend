@@ -423,6 +423,9 @@ function calctimeAgo(datetime) {
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
 
+
+  console.log(objekt);
+
   const postContainer = document.getElementById("viewpost-container");
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
