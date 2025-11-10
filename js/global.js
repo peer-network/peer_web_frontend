@@ -424,7 +424,8 @@ function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
 
 
-  console.log(objekt);
+  
+
 
   const postContainer = document.getElementById("viewpost-container");
   const shareLinkBox = document.getElementById("share-link-box");
@@ -506,6 +507,7 @@ function postdetail(objekt, CurrentUserID) {
     return false;
   });
 
+  const isreported =objekt.isreported;
   let reportpost_btn = postContainer.querySelector(".more a.reportpost");
 
   // remove old listeners - > element clone 
@@ -513,18 +515,25 @@ function postdetail(objekt, CurrentUserID) {
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
 
+  if (isreported) {
+    // change text if already reported
+    reportpost_btn.querySelector("span").textContent = "Reported by you";
+    reportpost_btn.classList.add("reported"); // optional: add a class for styling
+  } else {
+    // add listener only if not reported
+    reportpost_btn.addEventListener(
+      "click",
+      (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        reportPost(objekt, postContainer);
+      },
+      { capture: true }
+    );
+  }
 
-  reportpost_btn.addEventListener(
-    "click",
-    (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      reportPost(objekt, postContainer);
 
-    }, {
-      capture: true
-    }
-  );
+
 
 
   const containerleft = postContainer.querySelector(".viewpost-left");

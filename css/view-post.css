@@ -521,7 +521,7 @@
 .viewpost .postview_footer .more ul.sublist > li >  a i {
 	line-height: 0;
 }
-.viewpost .postview_footer .more ul.sublist li a.reportpost {
+.viewpost .postview_footer .more ul.sublist li a.reportpost:not(.reported) {
 	border-color: var(--red-accent, #FF3B3B);
 	color: var(--red-accent, #FF3B3B);
 }
@@ -529,7 +529,7 @@
 	background-color: var(--white,#fff);
 	color: var(--black);
 }
-.viewpost .postview_footer .more ul.sublist li a.reportpost:hover {
+.viewpost .postview_footer .more ul.sublist li a.reportpost:not(.reported):hover {
 	background-color: var(--red-accent, #FF3B3B);
 	color: var(--white,#fff);
 }
