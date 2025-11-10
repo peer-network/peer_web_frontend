@@ -205,10 +205,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  padding: 20px;
-  border-radius: 1.5rem;
+  text-align: center;
+  padding: 40px;
+  border-radius: 2rem;
   background-color: var(--background-color);
-  width: min(30rem, 100vw);
+  width: min(35rem, 100vw);
   position: relative;
   animation: modal-scale-in 0.3s ease-out;
 }
@@ -298,7 +299,7 @@
 .modal-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 80px;
 }
 
 .modal-buttons .modal-button {
@@ -312,7 +313,8 @@
   text-transform: uppercase;
   line-height: 50px; */
   flex: 1;
-  margin-top: 1rem;
+  margin-top: 50px;
+  margin-bottom: 0;
 }
 /* .modal-buttons .modal-button[data-index="0"] {
   background-color: var(--button-hover);
@@ -443,6 +445,49 @@
 .modal-checkbox label {
   color: rgba(255, 255, 255, 0.3)
 }
+
+/*----Waring popup----*/
+.warning .modal-icon {
+	border-radius: 100%;
+	background: rgba(255, 59, 59, 0.20);
+	display: flex;
+	width: 200px;
+	height: 200px;
+	padding: 40px;
+	justify-content: center;
+	align-items: center;
+	gap: 8.715px;
+	aspect-ratio: 1/1;
+  margin: 0 auto 40px;
+}
+.warning .modal-icon .peer-icon {
+	font-size: 120px;
+  color: var(--red-accent);
+}
+
+@media screen and (max-width: 2000px) {
+  .modal-content .modal-title {	
+    font-size: 20px;
+  }
+  .modal-buttons {
+  	gap: 20px;
+  }
+  .modal-buttons .modal-button {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+  .warning .modal-icon {
+	
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+  }
+  .warning .modal-icon .peer-icon {
+  	font-size: 50px;
+  }
+
+}
+
 @media screen and (min-width: 2000px) {
 .logOut-pop svg {
       
@@ -453,6 +498,21 @@
     width: 100px;
     height: auto;
 
+  }
+  .modal-content {
+    padding: 80px;
+    width: 40vw;
+    border-radius: 70px;
+  }
+    .warning .modal-icon {
+    
+    width: 150px;
+    height: 150px;
+    
+  }
+  .warning .modal-icon .peer-icon {
+	font-size: 90px;
+	
   }
   
 }
@@ -526,8 +586,9 @@
   }
 
   .modal-content {
-    padding: 60px;    
-    width: 35vw;    
+    padding: 80px;
+    width: 33vw;
+    border-radius: 70px;
   }
   .modal-message {
     font-size: 35px;
