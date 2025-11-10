@@ -9,7 +9,7 @@
 
 <div class="input-field">
   <img class="password-icon" src="svg/lock1.svg" alt="">
-  <input type="password" id="confirm_password" placeholder="Confirm Password" required class="input-text" />
+  <input type="password" id="confirm_password" placeholder="Confirm Password" required class="input-text test" />
   <img class="seePass none" src="svg/seePass.png" alt="See Password" id="toggleConfirmPassword" />
 </div>
 <div class="validationMessage" id="confirmValidationMessage"></div>

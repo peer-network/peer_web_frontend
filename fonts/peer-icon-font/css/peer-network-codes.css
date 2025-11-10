@@ -72,3 +72,5 @@
 .peer-icon-btc:before { content: '\e846'; } /* '' */
 .peer-icon-paste:before { content: '\e847'; } /* '' */
 .peer-icon-home-alt:before { content: '\e848'; } /* '' */
+.peer-icon-flag-fill:before { content: '\e849'; } /* '' */
+.peer-icon-flag:before { content: '\e84a'; } /* '' */

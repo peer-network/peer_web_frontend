@@ -32,7 +32,7 @@
          <a id="changeEmailbtn" href="#" class="button change-email-btn btn-transparent">Change
            e-mail</a>
        </div>
-       
+
      </div>
      <div id="imageModal" class="modal">
        <div class="modal-content">
@@ -77,14 +77,35 @@
        <form id="changepasswordForm" class="form-container">
          <div class="profile-fields">
            <div class="input-field">
+             <img class="password-icon" src="svg/lock1.svg" alt="">
              <input type="password" id="old_password" name="old_password" class="input-text"
                placeholder="Enter old password" required="">
            </div>
            <!-- Password Component -->
            <div class="password-component" data-show-strength="true" data-show-message="false" data-name="password">
+             <div class="input-field">
+               <img class="password-icon" src="svg/lock1.svg" alt="">
+               <input type="password" name="password" placeholder="Password" id="password" class="input-text password-field test" required />
+               <img id="togglePassword" class="seePass none" src="svg/seePass.png" alt="See Password">
+             </div>
+             <div id="passwordStrength" class="strength-bar none">
+               <span class="bar-segment"></span>
+               <span class="bar-segment"></span>
+               <span class="bar-segment"></span>
+               <span class="bar-segment"></span>
+             </div>
+             <div id="validationMessage" class="validationMessage"></div>
            </div>
            <!-- Confirm Password Component -->
-           <div class="confirm-password-component" data-name="confirm_password"></div>
+           <div class="confirm-password-component" data-name="confirm_password">
+             <div class="input-field">
+               <img class="password-icon" src="svg/lock1.svg" alt="">
+               <input type="password" id="confirm_password" placeholder="Confirm Password" required
+                 class="input-text" />
+               <img class="seePass none" src="svg/seePass.png" alt="See Password" id="toggleConfirmPassword" />
+             </div>
+             <div class="validationMessage" id="confirmValidationMessage"></div>
+           </div>
          </div>
          <button id="changePasswordBtn" class="save-btn full-width-btn ">Submit</button>
        </form>

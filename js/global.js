@@ -423,6 +423,9 @@ function calctimeAgo(datetime) {
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
 
+
+  console.log(objekt);
+
   const postContainer = document.getElementById("viewpost-container");
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
@@ -1442,6 +1445,13 @@ function commentToDom(c, append = true) {
   commentTextDiv.classList.add("comment_text");
   commentTextDiv.textContent = c.content;
 
+  // Report Comment Span
+  const reportCommentDiv = document.createElement('span')
+  reportCommentDiv.classList.add('dots')
+  reportCommentDiv.addEventListener('click', function() {
+    /////// popup confirmation event
+  })
+
   // Reply container
   const replyBtn = document.createElement("span");
   const replyContainer = document.createElement("div");
@@ -1492,7 +1502,7 @@ function commentToDom(c, append = true) {
   // Body container
   const commentBody = document.createElement("div");
   commentBody.classList.add("comment_body");
-  commentBody.append(commenterInfoDiv, commentTextDiv, replyContainer);
+  commentBody.append(commenterInfoDiv, commentTextDiv, reportCommentDiv, replyContainer);
 
   // Like
   const likeContainer = document.createElement("div");

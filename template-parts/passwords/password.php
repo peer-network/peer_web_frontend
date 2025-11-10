@@ -9,7 +9,7 @@
 
 <div class="input-field">
   <img class="password-icon" src="svg/lock1.svg" alt="">
-  <input type="password" name="password" placeholder="Password" id="password" required class="input-text password-field">
+  <input type="password" name="password" placeholder="Password" id="password" required class="input-text password-field test">
   <img id="togglePassword" class="seePass none" src="svg/seePass.png" alt="See Password">
 </div>
 <div id="passwordStrength" class="strength-bar none">
