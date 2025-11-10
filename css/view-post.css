@@ -1173,6 +1173,37 @@
 	left: -20px;
 }
 
+
+/* comment report action */
+.comment_list .comment_item .comment_body span.dots {
+  position: relative;
+  border: 3px solid;
+  display: inline-block;
+  border-radius: 100px;
+  margin-left: 30px;
+}
+
+.comment_list .comment_item .comment_body span.dots::before
+{
+  content: "";
+  display: inline-block;
+  border: 3px solid;
+  position: absolute;
+  border-radius: 100%;
+  top: -3px;
+  left: -12px;
+}
+
+.comment_list .comment_item .comment_body span.dots::after {
+  content: "";
+  display: inline-block;
+  border: 3px solid;
+  position: absolute;
+  border-radius: 100%;
+  top: -3px;
+  left: -21px;
+}
+
 .post_comment{
   margin-top: auto;
   display: flex;
