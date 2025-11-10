@@ -44,5 +44,6 @@ regexes = [
   '''style\.[A-Za-z]+''',
   '''passwordStrengthDiv\.classList\.toggle''',
   '''AKIAAwABBAkAAABqALUA''',
-  '''aKIAYNcRFbrKYzmZ6cmx'''
+  '''aKIAYNcRFbrKYzmZ6cmx''',
+  '''AkIAglpDgEIAAEFCAFpA'''
 ]
