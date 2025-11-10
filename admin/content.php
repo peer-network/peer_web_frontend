@@ -81,27 +81,67 @@
 
                 <!--- Content type : Comment --->
                 <div class="content_type_comment">
-                    <h2 class="xxl_font_size bold"><i class="peer-icon peer-icon-comment-fill xl_font_size"></i> Reported comment</h2>
+                    <div class="comment_box">
+                        <h2 class="xxl_font_size bold"><i class="peer-icon peer-icon-comment-fill xl_font_size"></i> Reported comment</h2>
 
-                    <div class="comment_item">
-                        <div class="commenter-pic">
-                            <img class="profile-picture" src="../img/profile_thumb.png" alt="user image">
-                        </div>
-                        <div class="comment_body">
-                            <div class="commenter_info xl_font_size">
-                                <span class="cmt_userName bold italic">Bryan Johnson</span>
-                                <span class="cmt_profile_id txt-color-gray">#93268</span>
-                                <span class="timeagao txt-color-gray">3m</span>
+                        <div class="comment_item">
+                            <div class="commenter-pic">
+                                <img class="profile-picture" src="../img/profile_thumb.png" alt="user image">
                             </div>
-                            <div class="comment_text xl_font_size">Optimizing our biological systems isn't just a goal - it's a responsibility to unlock the best version of ourselves.</div>
-                           
-                        </div>
-                        <div class="comment_like xl_font_size">
-                            <i class="peer-icon peer-icon-like"></i>
-                            <span>0</span>
+                            <div class="comment_body">
+                                <div class="commenter_info xl_font_size">
+                                    <span class="cmt_userName bold italic">Bryan Johnson</span>
+                                    <span class="cmt_profile_id txt-color-gray">#93268</span>
+                                    <span class="timeagao txt-color-gray">3m</span>
+                                </div>
+                                <div class="comment_text xl_font_size">Optimizing our biological systems isn't just a goal - it's a responsibility to unlock the best version of ourselves.</div>
+                            
+                            </div>
+                            <div class="comment_like xl_font_size">
+                                <i class="peer-icon peer-icon-like"></i>
+                                <span>0</span>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="comment_post_detail">
+                        <div class="profile_post">
+                            <div class="profile">
+                                <span class="profile_image">
+                                    <img src="../img/profile_thumb.png" /> 
+                                </span>
+                                <span class="profile_detail">
+                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                    <span class="user_slug txt-color-gray">#123456</span>
+                                </span>
+                            </div>
+                            <div class="fullpost_link">
+                                <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="post_detail">
+                            <div class="post_media">
+                            
+                            </div>
+                            <div class="post_info">
+                                <div class="post_title">
+                                    <h2 class="xl_font_size bold">Rejected at the gates of techno heaven:  Berghain > Mars? </h2>
+                                    <span class="timeagao txt-color-gray">2h</span>
+
+                                </div>
+                                <div class="post_text">
+                                    Hier würde man jz die description reinschreiben. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget justo id arcu interdum facilisis id a purus. Nulla facilisi. Integer auctor, ligula a viverra scelerisque, felis lorem lacinia nunc, a malesuada nisi sapien sit amet ligula. Curabitur fermentum turpis in sapien vulputate, vel laoreet. Lacus tincidunt. Donec gravida orci at elit consequat, vel vestibulum lorem dapibus. Praesent faucibus est vitae est egestas, sit amet laoreet mi tincidunt. ...
+                                </div>
+
+                                <div class="hashtags txt-color-blue">
+                                    <span class="hashtag">#cool</span>
+                                    <span class="hashtag">#khalidpost</span>
+                                    <span class="hashtag">#khalid</span>
+                                </div>
+                             </div>
+
+                        </div>
+                    </div>
                 </div>
                 <!--- End Content type : Comment  --->
 
