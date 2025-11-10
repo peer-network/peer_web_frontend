@@ -333,6 +333,7 @@
 	display: flex;
 	gap: 40px;
 	width: 100%;
+	align-items: center;
 }
 .viewpost .postview_footer .more{
   position: relative;
@@ -394,10 +395,11 @@
  
  
 }
-.viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
+.viewpost .postview_footer .more ul.sublist li#boostPostFromPopup,
+.view-profile .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
 	display: none;
 }
-#profile .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
+#profile.site_layout:not(.view-profile) .viewpost .postview_footer .more ul.sublist li#boostPostFromPopup{
 	display: block;
 }
 .viewpost .postview_footer .more .share-post-box {
@@ -504,6 +506,17 @@
 	gap: 20px;
 	text-decoration: none;
 	text-align: center;
+}
+
+.boostPostFromPopup a {
+  background: var(--blue);
+  border: 2px solid var(--blue) !important;
+}
+.boostPostFromPopup a:hover {
+  border: 2px solid var(--white,#fff) !important;
+}
+.boostPostFromPopup a:hover img {
+  filter: invert(1);
 }
 .viewpost .postview_footer .more ul.sublist > li >  a i {
 	line-height: 0;

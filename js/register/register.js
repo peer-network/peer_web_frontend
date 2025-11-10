@@ -22,6 +22,7 @@ class AccessibleRegistrationForm {
         this.handleURLParams();
         // Announce current step to screen readers
         this.announceStep();
+        fetchEndpoints();
     }
 
     setupEventListeners() {
@@ -313,9 +314,6 @@ class AccessibleRegistrationForm {
         const strengthFill = document.getElementById('strengthFill');
         const metCount = Object.values(requirements).filter(Boolean).length;
         let strength = 'weak';
-
-        console.log('I am here ', metCount)
-
         if (metCount >= 2) {
             strength = 'weak2';
         }

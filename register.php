@@ -16,8 +16,8 @@ include 'host.php';
     <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
     <link rel="stylesheet" href="css/login-register.css?<?php echo filemtime('css/login-register.css'); ?>" media="all" rel="preload">
     
-   
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
     <script src="js/register/register.js?<?php echo filemtime('js/register/register.js'); ?>" defer></script>
     
     <?php
@@ -321,7 +321,7 @@ include 'host.php';
                     </div>
                 </div>
                 <div class="footer_area medium_font">
-                   <p class="version">Version 1.8.1</p>
+                   <p class="version version-number"></p>
                 </div>
             </div>
         </div>

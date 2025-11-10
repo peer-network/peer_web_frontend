@@ -670,7 +670,7 @@
 }
 
 .available_tokens_breakdown .available_tokens {
-	background-color: var(--blue);
+	background-color: #547098;
 	padding: 15px 50px;
 	border-radius: 40px;
 }
@@ -844,19 +844,6 @@
     padding: 50px;
   }
 
-  .boostModal .pinedbtn .button,
-  .post-inhalt .pinedbtn .button,
-  .postview_footer .pinedbtn .button {
-    padding: 18px 25px ;
-    font-size: 35px ;
-    max-width: 440px;
-  }
-
-  .boostModal .pinedbtn .button img,
-  .post-inhalt .pinedbtn .button img,
-  .postview_footer .pinedbtn .button img {
-    width: 35px;
-  }
 
   .boostModal .adDurationInfos {
     padding: 20px 40px;

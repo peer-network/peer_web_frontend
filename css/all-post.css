@@ -274,6 +274,9 @@ line-height: 40px;
 	margin-top: auto;
 	gap: 5%;
 }
+.PINNED.card .social {
+  margin-top: 0;
+}
 .card .social div {
   display: flex;
   align-items: center;
