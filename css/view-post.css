@@ -279,6 +279,7 @@
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	margin-bottom: 25px;
+	position: relative;
 }
 .viewpost .viewpost-right{
   display: flex;
@@ -334,6 +335,7 @@
 	gap: 40px;
 	width: 100%;
 	align-items: center;
+	position: relative;
 }
 .viewpost .postview_footer .more{
   position: relative;
@@ -370,6 +372,7 @@
 }
 .viewpost .postview_footer .more ul.sublist {
 	position: absolute;
+	z-index: 3;
 	bottom: -7px;
 	width: 350px;
 	right: -40px;
@@ -418,7 +421,7 @@
 	transition: all 0.3s;
 	opacity: 0;
 	visibility: hidden;
-	z-index: 1;
+	z-index: 4;
 }
 .site_layout_nonuser .postview_footer .more .share-post-box .btClose {
 	display: flex;
@@ -645,6 +648,7 @@
 			background: rgba(255, 255, 255, 0.01);
 			backdrop-filter: blur(100px);
 			left: 0;
+			top: 0;
 			display: flex;
 			padding: 40px;
 			flex-direction: column;
@@ -656,9 +660,10 @@
 			z-index: 2;
 			border-radius: 40px;
 		}
+		
 		.hidden_content_frame .hidden_content {
 			display: flex;
-			width: 746px;
+			
 			flex-direction: column;
 			align-items: center;
 			gap: 25px;
@@ -683,6 +688,64 @@
 		.viewpost .visibilty_hidden .thumbs-wrapper {
 			display: none;
 		}
+		.hidden_bage {
+			display: flex;
+			width: 250px;
+			height: 70px;
+			padding: 21.875px 43.75px;
+			justify-content: center;
+			align-items: center;
+			gap: 20px;
+			border-radius: 70px;
+			background: var(--black-dark, #252525);
+			backdrop-filter: blur(82.90625762939453px);
+			color: var(--white-secondary);
+		}
+		.viewpost .postview_footer .hidden_bage {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.viewpost .visibilty_hidden .post_content .post_text,
+		.viewpost .visibilty_hidden .post_content .post_title,
+		.viewpost .visibilty_hidden .post_content .hashtags  {
+	
+			filter: blur(25px);
+		}
+
+		.card .post-inhalt .hidden_content_frame {
+			border-radius: 0px;
+		}
+		.card .post-inhalt .hidden_content_frame .hidden_content {
+			
+			gap: 15px;
+			
+		}
+		.card .post-inhalt .hidden_content_frame .icon_hidden {
+			
+			width: 100px;
+			height: 100px;
+			padding: 20px;
+		
+		}
+		.card .post-inhalt .hidden_content_frame .icon_hidden i {
+			font-size: 50px;
+		}
+		.card .post-inhalt .hidden_content_frame .button {
+			line-height: 80px;
+		}
+
+		.card.visibilty_hidden  .post-inhalt .card-header,
+		.card.visibilty_hidden  .post-inhalt .social,
+		.card.visibilty_hidden  .post-inhalt .pinedbtn {
+			position: relative;
+  			z-index: 3;
+		}
+		.card .post-inhalt .hidden_content_frame .hidden_description {
+			font-size: 23px;
+		}
+
 	/*-- end hidden Post content */
 
 .viewpost .post_gallery .slider-wrapper {
