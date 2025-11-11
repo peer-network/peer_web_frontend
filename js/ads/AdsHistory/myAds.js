@@ -142,8 +142,8 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
             </div>
             <div class="ad_details">
-            <h3 class="ad_title">${postTitle}</h3>
-            <p class="ad_description">${postDescription}</p>
+            <h3 class="ad_tiitle">${postTitle}</h3>
+            <p class="ad_deescription">${postDescription}</p>
             </div>
         </div>
         <div class="ad_timeframe_box">

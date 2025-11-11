@@ -229,8 +229,8 @@
   flex: 1;
 }
 
-.ad_title,
-.ad_description {
+.ad_tiitle,
+.ad_deescription {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
