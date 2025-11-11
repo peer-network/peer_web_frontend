@@ -1504,43 +1504,12 @@ function commentToDom(c, append = true) {
   commentTextDiv.classList.add("comment_text");
   commentTextDiv.textContent = c.content;
 
-  // Report Comment Span
-  // const reportCommentDiv = document.createElement('span')
-  // reportCommentDiv.classList.add('dots');
-  // reportCommentDiv.addEventListener('click', () => {
-  //   const divBox = document.createElement('div');
-  //   divBox.classList.add('report-btn-container');
-
-  //   const div = document.createElement('div');
-  //   div.classList.add('report-btn');
-
-  //   div.addEventListener('click', async function() {
-  //     const response =  await warnig('Are you sure you want to report a comment?', '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
-  //     if (response === null || response?.button === 0) {
-  //       return false;
-  //     } else {
-  //       // Api Call
-  //        success('Comment has been reported', '', false, '<i class="peer-icon peer-icon-good-tick-circle green-text"></i>');
-  //     }
-
-  //   });
-
-  //   const span = document.createElement('span');
-  //   span.classList.add('flag-icon');
-  //   span.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
-
-  //   div.appendChild(span);
-  //   div.appendChild(document.createTextNode('Report comment'));
-  //   divBox.appendChild(div);
-  //   commentBody.appendChild(divBox);
-  // });
-  // Create the clickable "dots" span
+  // Report Comment Div
   const reportCommentTrigger = document.createElement("span");
   reportCommentTrigger.classList.add("dots");
 
   // Main trigger for adding the report button
   reportCommentTrigger.addEventListener("click", () => {
-    // create popup
     const reportContainer = document.createElement("div");
     reportContainer.classList.add("report-btn-container");
 
@@ -1568,7 +1537,7 @@ function commentToDom(c, append = true) {
       }
     };
 
-    // Add event listener slightly delayed so it doesn’t immediately close
+    // Add event listener slightly delayed
     setTimeout(() => {
       document.addEventListener("click", handleOutsideClick);
     }, 0);
