@@ -1480,58 +1480,58 @@ function commentToDom(c, append = true) {
   const reportCommentTrigger = document.createElement("span");
   reportCommentTrigger.classList.add("dots");
 
-// Main trigger for adding the report button
-reportCommentTrigger.addEventListener("click", () => {
-  // create popup
-  const reportContainer = document.createElement("div");
-  reportContainer.classList.add("report-btn-container");
+  // Main trigger for adding the report button
+  reportCommentTrigger.addEventListener("click", () => {
+    // create popup
+    const reportContainer = document.createElement("div");
+    reportContainer.classList.add("report-btn-container");
 
-  const reportButton = document.createElement("div");
-  reportButton.classList.add("report-btn");
+    const reportButton = document.createElement("div");
+    reportButton.classList.add("report-btn");
 
-  const flagIcon = document.createElement("span");
-  flagIcon.classList.add("flag-icon");
-  flagIcon.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+    const flagIcon = document.createElement("span");
+    flagIcon.classList.add("flag-icon");
+    flagIcon.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
 
-  reportButton.appendChild(flagIcon);
-  reportButton.appendChild(document.createTextNode("Report comment"));
-  reportContainer.appendChild(reportButton);
-  commentBody.appendChild(reportContainer);
+    reportButton.appendChild(flagIcon);
+    reportButton.appendChild(document.createTextNode("Report comment"));
+    reportContainer.appendChild(reportButton);
+    commentBody.appendChild(reportContainer);
 
-  // --- Add click-outside listener ---
-  const handleOutsideClick = (event) => {
-    // if the click was NOT inside the popup and NOT on the trigger button
-    if (
-      !reportContainer.contains(event.target) &&
-      !reportCommentTrigger.contains(event.target)
-    ) {
-      reportContainer.remove(); // close popup
-      document.removeEventListener("click", handleOutsideClick);
-    }
-  };
+    // --- Add click-outside listener ---
+    const handleOutsideClick = (event) => {
+      // if the click was NOT inside the popup and NOT on the trigger button
+      if (
+        !reportContainer.contains(event.target) &&
+        !reportCommentTrigger.contains(event.target)
+      ) {
+        reportContainer.remove(); // close popup
+        document.removeEventListener("click", handleOutsideClick);
+      }
+    };
 
-  // Add event listener slightly delayed so it doesn’t immediately close
-  setTimeout(() => {
-    document.addEventListener("click", handleOutsideClick);
-  }, 0);
+    // Add event listener slightly delayed so it doesn’t immediately close
+    setTimeout(() => {
+      document.addEventListener("click", handleOutsideClick);
+    }, 0);
 
-  // Handle report button click
-  reportButton.addEventListener("click", async () => {
-    try {
-      const confirmation = await warnig(
-        "Are you sure you want to report a comment?",
-        "",
-        false,
-        '<i class="peer-icon peer-icon-warning red-text"></i>'
-      );
+    // Handle report button click
+    reportButton.addEventListener("click", async () => {
+      try {
+        const confirmation = await warnig(
+          "Are you sure you want to report a comment?",
+          "",
+          false,
+          '<i class="peer-icon peer-icon-warning red-text"></i>'
+        );
 
-      if (!confirmation || confirmation.button === 0) return;
+        if (!confirmation || confirmation.button === 0) return;
 
-      const accessToken = getCookie("authToken");
-      if (!accessToken) throw new Error("Auth token is missing or invalid.");
+        const accessToken = getCookie("authToken");
+        if (!accessToken) throw new Error("Auth token is missing or invalid.");
 
-      const graphql = JSON.stringify({
-        query: `
+        const graphql = JSON.stringify({
+          query: `
           mutation ReportComment($commentid: ID!) {
             reportComment(commentid: $commentid) {
               status
@@ -1541,54 +1541,53 @@ reportCommentTrigger.addEventListener("click", () => {
             }
           }
         `,
-        variables: { commentid: comment.id },
-      });
+          variables: { commentid: comment.id },
+        });
 
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: graphql,
-      };
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: graphql,
+        };
 
-      const response = await fetch(GraphGL, requestOptions);
-      const result = await response.json();
+        const response = await fetch(GraphGL, requestOptions);
+        const result = await response.json();
 
-      if (!response.ok)
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      if (result.errors) throw new Error(result.errors[0].message);
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (result.errors) throw new Error(result.errors[0].message);
 
-      const { status, ResponseCode } = result.data.reportComment;
-      const message = userfriendlymsg(ResponseCode);
+        const { status, ResponseCode } = result.data.reportComment;
+        const message = userfriendlymsg(ResponseCode);
 
-      if (status === "success") {
-        success(
-          message,
-          "",
-          false,
-          '<i class="peer-icon peer-icon-good-tick-circle"></i>'
-        );
-      } else {
+        if (status === "success") {
+          success(
+            message,
+            "",
+            false,
+            '<i class="peer-icon peer-icon-good-tick-circle"></i>'
+          );
+        } else {
+          warnig(
+            message,
+            "",
+            false,
+            '<i class="peer-icon peer-icon-warning red-text"></i>'
+          );
+        }
+      } catch (error) {
         warnig(
-          message,
+          "Something went wrong while reporting the comment.",
           "",
           false,
           '<i class="peer-icon peer-icon-warning red-text"></i>'
         );
       }
-    } catch (error) {
-      warnig(
-        "Something went wrong while reporting the comment.",
-        "",
-        false,
-        '<i class="peer-icon peer-icon-warning red-text"></i>'
-      );
-    }
+    });
   });
-});
-
 
   // Reply container
   const replyBtn = document.createElement("span");
