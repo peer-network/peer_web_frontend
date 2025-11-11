@@ -422,14 +422,41 @@ function calctimeAgo(datetime) {
 
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
-
-
-  
-
-
   const postContainer = document.getElementById("viewpost-container");
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
+
+  let isreported =objekt.isreported;
+
+  /*-- for testing post report and visibility----*/
+    const urlParams = new URLSearchParams(window.location.search);
+    const testPostid = urlParams.get("testid");
+
+    // Define your enum-like object
+      const ContentVisibilityStatus = {
+        NORMAL: "NORMAL",
+        HIDDEN: "HIDDEN",
+        ILLEGAL: "ILLEGAL"
+      };
+    
+      objekt.visibilityStatus = ContentVisibilityStatus.NORMAL;
+
+    if(testPostid==objekt.id){
+      isreported=true;
+
+      if(isreported) {
+        postContainer.classList.add("reported_post");
+      }
+      
+      objekt.visibilityStatus = ContentVisibilityStatus.HIDDEN;
+      postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+
+    }
+    
+    console.log(objekt);
+ /*-- End : testing post report and visibility----*/
+
+  
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -507,7 +534,7 @@ function postdetail(objekt, CurrentUserID) {
     return false;
   });
 
-  const isreported =objekt.isreported;
+ 
   let reportpost_btn = postContainer.querySelector(".more a.reportpost");
 
   // remove old listeners - > element clone 
@@ -988,6 +1015,29 @@ function postdetail(objekt, CurrentUserID) {
 
   }
 
+
+   /*---Hidden Frame content */
+    
+    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+        const hiddenContentHTML = `
+        <div class="hidden_content_frame">
+          <div class="hidden_content">
+            <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+            <div class="hidden_title xl_font_size bold">Sensitive content</div>
+            <div class="hidden_description md_font_size">
+              This content may be sensitive or abusive.<br>
+              Do you want to view it anyway?
+            </div>
+            <div class="view_content">
+              <a href="#" class="button btn-transparent">View content</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
+    }
+  /*---End Hidden Frame content */
   /*const title = document.getElementById("comment-title");
   title.innerText = objekt.title;
   const text = document.getElementById("comment-text");
