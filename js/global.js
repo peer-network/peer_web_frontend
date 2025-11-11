@@ -736,7 +736,7 @@ function postdetail(objekt, CurrentUserID) {
       video.src = tempMedia(extractAfterComma(item.path));
       video.controls = true;
       video.className = "custom-video";
-      video.autoplay = index === 0; // ✅ Autoplay only for the first video
+      video.autoplay = index === 0; // Autoplay only for the first video
       video.muted = false;
       video.loop = true;
 
@@ -1448,7 +1448,6 @@ function openSliderModal(images, startIndex = 0) {
 function commentToDom(c, append = true) {
   const userID = getCookie("userID");
   const commentsContainer = document.getElementById("comments");
-  //console.log(c);
   // Already existing list to track liked comments
   let mostliked = [];
 
@@ -1670,6 +1669,56 @@ function commentToDom(c, append = true) {
     reportCommentTrigger,
     replyContainer
   );
+
+
+   // Display of reported comment
+
+   const urlParams = new URLSearchParams(window.location.search);
+    const testPostid = urlParams.get("commentid");
+ // Mock object
+  const ContentVisibilityStatus = {
+    NORMAL: "NORMAL",
+    HIDDEN: "HIDDEN",
+    ILLEGAL: "ILLEGAL"
+  };
+
+  c.visibilityStatus = ContentVisibilityStatus.NORMAL;
+
+  console.log('testPostid ', testPostid)
+
+   if(testPostid==c.commentid){
+      c.isreported=true; // let suppose make it true: assumption
+
+      if(c.isreported) {
+        commentBody.classList.add("reported_post");
+      }
+      
+      c.visibilityStatus = ContentVisibilityStatus.HIDDEN;
+      commentBody.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
+
+}
+
+  if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
+    const hiddenContentHTML = `
+      <div class="hidden_content_frame">
+        <div class="hidden_content">
+          <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+          <div class="hidden_title xl_font_size bold">Sensitive content</div>
+          <div class="hidden_description md_font_size">
+            This content may be sensitive or abusive.<br>
+            Do you want to view it anyway?
+          </div>
+          <div class="view_content">
+            <a href="#" class="button btn-transparent">View content</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    commentBody.innerHTML = hiddenContentHTML;
+  }
+
+  //END of display reported comment
 
   // Like
   const likeContainer = document.createElement("div");
