@@ -1571,7 +1571,7 @@ function commentToDom(c, append = true) {
             '<i class="peer-icon peer-icon-good-tick-circle"></i>'
           );
         } else {
-          warnig(
+          Merror(
             message,
             "",
             false,
@@ -1579,7 +1579,7 @@ function commentToDom(c, append = true) {
           );
         }
       } catch (error) {
-        warnig(
+        Merror(
           "Something went wrong while reporting the comment.",
           "",
           false,

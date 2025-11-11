@@ -1228,6 +1228,7 @@
   gap: 30px;
   border-radius: 150px;
   border: 2px solid var(--Red-Accent, #FF3B3B);
+  cursor: pointer;
 }
 
 .flag-icon {
