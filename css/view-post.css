@@ -1182,6 +1182,7 @@
   display: inline-block;
   border-radius: 100px;
   margin-left: 30px;
+  cursor: pointer;
 }
 
 .comment_list .comment_item .comment_body span.dots::before
