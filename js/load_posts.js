@@ -430,8 +430,26 @@ async function postsLaden(postbyUserID=null) {
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
+
+    /*-- for testing post report and visibility----*/
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const testPostid = urlParams.get("testid");
+
+        // Define your enum-like object
+          const ContentVisibilityStatus = {
+            NORMAL: "NORMAL",
+            HIDDEN: "HIDDEN",
+            ILLEGAL: "ILLEGAL"
+          };
+        
+      /*-- End : testing post report and visibility----*/
+
+
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
+
       
+      const isreported =objekt.isreported;
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
@@ -442,6 +460,25 @@ async function postsLaden(postbyUserID=null) {
       // card.setAttribute("tags", objekt.tags.join(","));
       // <div class="post"> erstellen und Bild hinzufügen
       //console.log(objekt.id);
+
+      /*-- for testing post report and visibility----*/
+        
+        objekt.visibilityStatus = ContentVisibilityStatus.NORMAL;
+
+        if(testPostid==objekt.id){
+          //isreported=true;
+
+          if(isreported) {
+            card.classList.add("reported_post");
+          }
+          
+          objekt.visibilityStatus = ContentVisibilityStatus.HIDDEN;
+          card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+
+        }
+        
+        
+      /*-- End : testing post report and visibility----*/
   
       let postDiv;
       let img;
@@ -492,7 +529,7 @@ async function postsLaden(postbyUserID=null) {
           event.stopPropagation();
           event.preventDefault();
           redirectToProfile(objekt.user.id); 
-		});
+		  });
 
       card_header.appendChild(card_header_left);
       
@@ -862,6 +899,49 @@ async function postsLaden(postbyUserID=null) {
         card.classList.add("PINNED");
         insertPinnedBtn(card, objekt.user.username, "profile");
       }
+
+        /*---Hidden Frame content */
+         
+          
+
+          if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+              const hiddenContentHTML = `
+              <div class="hidden_content_frame">
+                <div class="hidden_content">
+                  <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+                  <div class="hidden_title md_font_size bold">Sensitive content</div>
+                  <div class="hidden_description">
+                    This content may be sensitive or abusive.<br>
+                    Do you want to view it anyway?
+                  </div>
+                  <div class="view_content">
+                    <a href="#" class="button btn-transparent">View content</a>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
+            
+
+            // Select all inserted hidden frames and attach "View content" listeners
+            inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
+              const viewBtn = frame.querySelector(".view_content a");
+              if (viewBtn) {
+                viewBtn.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  frame.remove(); // remove that specific frame
+                  card.classList.remove('visibilty_hidden');
+                });
+              }
+            });
+
+
+          }
+        /*---End Hidden Frame content */
+
+
+
     });
     // console.log(posts.listPosts.affectedRows.length);
     postoffset += POSTS.listPosts.affectedRows.length;

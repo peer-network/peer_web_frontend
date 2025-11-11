@@ -121,9 +121,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const postImage = getPostImage(ad.post);
     const contentTypeIcon = getContentTypeIcon(ad.post?.contenttype);
-    const postTitle = ad.post?.title || `Advertisement #${ad.id}`;
+    const postTitle = (ad.post && ad.post.title && ad.post.title.trim()) || `Advertisement #${ad.id}`;
     const isPinned = ad.type === 'PINNED';
-    const postDescription = ad.post?.mediadescription || '.....';
+    const postDescription = (ad.post && ad.post.mediadescription && ad.post.mediadescription.trim()) || '....';
     const isTextPost = ad.post?.contenttype?.toUpperCase() === 'TEXT';
     
     const listItem = document.createElement('div');

@@ -33,6 +33,7 @@ checkAuth("unauthorized");
 <script src="js/comments.js?<?php echo filemtime('js/comments.js'); ?>" defer></script>
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
 <script src="js/list_follow.js?<?php echo filemtime('js/list_follow.js'); ?>" defer></script>
+<script src="js/reports/report_user.js?<?php echo filemtime('js/reports/report_user.js'); ?>" defer></script>
 <script src="js/viewprofile.js?<?php echo filemtime('js/viewprofile.js'); ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -69,7 +70,16 @@ checkAuth("unauthorized");
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       <!-- rendering via js code written in viewprofile.js -->
-      <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#"></a></div>
+      <div class="profile_edit_box">
+        <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#"></a></div>
+        <div class="moreActions_container_wrap">
+          <div class="button moreActions_container" role="button" aria-expanded="false" aria-controls="moreActions" tabindex="0">More</div>
+          <div class="moreActions_wrapper" hidden>
+            <div class="report_profile">Report profile</div>
+            <div class="block_content">Block content</div>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- Load Posts Container -->
     <div id="allpost" class="list_all_post"> </div>
