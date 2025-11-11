@@ -66,20 +66,20 @@
           <div class="boostPost_right">
               <p class="xl_font_size">Token distribution</p>
               <div class="token_distribution">
-                  <span class="total_cost">2% retained by the platform</span>
-                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">40</span>
+                  <span class="total_cost">Peer Bank (2%)</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">4</span>
               </div>
               <div class="token_distribution none">
                   <span class="total_cost bold">1% <em>@wosk_kolloin</em></span>
                   <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
               </div>
               <div class="token_distribution">
-                  <span class="total_cost">1% is allocated to a liquidity pool</span>
-                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">20 </span>
+                  <span class="total_cost">To the inviter (1%)</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">2</span>
               </div>
               <div class="token_distribution">
-                  <span class="total_cost">1% is burned, ensuring deflation</span>
-                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">20 </span>
+                  <span class="total_cost">Burn (1%)</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">2</span>
               </div>
           </div>
         </div>

@@ -594,4 +594,9 @@
     height: 30px;
   }
 
+  .ad_avatar {
+    width: 200px !important;
+    height: 150px !important;
+  }
+
 }
