@@ -185,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.moreActions_container_wrap')) {
       button.setAttribute('aria-expanded', 'false');
+      dropdown.classList.remove('open');
       dropdown.setAttribute('hidden', '');
     }
   });

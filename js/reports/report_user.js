@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const userID = params.get('user');
 
     const reportButton = document.querySelector('.report_profile');
     const modalOverlay = document.getElementById('modal_Overlay');
+    const button = document.querySelector('.moreActions_container');
+    const dropdown = document.querySelector('.moreActions_wrapper');
 
     // Toast notification function (for modal)
     function showModalToast(message, type = 'success') {
@@ -37,54 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     }
 
-    // Check if user is already reported on page load
-    async function checkReportedStatus() {
-        try {
-            // TEMPORARY: Using localStorage as dummy storage
-            // REPLACE THIS ENTIRE SECTION when backend API is ready
-            const reportedUsers = JSON.parse(localStorage.getItem('reportedUsers') || '[]');
-            const isReported = reportedUsers.includes(userID);
-            
-            if (isReported) {
-            addReportedBadge();
-            }
-            
-            /* 
-            // I will uncomment this and delete the localStorage code above
-            const accessToken = getCookie("authToken");
-            
-            const headers = new Headers({
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-            });
-            
-            const graphql = JSON.stringify({
-            query: `query CheckReportedUser {
-                checkReportedUser(userid: "${userID}") {
-                isReported
-                }
-            }`,
-            });
-            
-            const requestOptions = {
-            method: "POST",
-            headers: headers,
-            body: graphql,
-            redirect: "follow",
-            };
-            
-            const response = await fetch(GraphQL, requestOptions);
-            const result = await response.json();
-            
-            if (result.data?.checkReportedUser?.isReported) {
-            addReportedBadge();
-            }
-            */
-        } catch (error) {
-            console.error('Error checking reported status:', error);
-        }
-    }
-
     // Add reported badge to profile
     function addReportedBadge() {
         const profileInfo = document.querySelector('.profile_info');
@@ -94,7 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!document.querySelector('.reported_badge')) {
             const reportedBadge = document.createElement('span');
             reportedBadge.className = 'reported_badge';
-            reportedBadge.textContent = 'Reported';
+            reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
+            
             slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
         }
     }
@@ -127,6 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Add modal to overlay
         modalOverlay.innerHTML = modalHTML;
         modalOverlay.classList.remove('none');
+
+        button.setAttribute('aria-expanded', 'false');
+        dropdown.classList.remove('open');
+        dropdown.setAttribute('hidden', '');
         
         // Add event listeners to modal buttons
         document.getElementById('cancelReport').addEventListener('click', closeReportModal);
@@ -145,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Submit report via API
-    async function submitReport(objekt) {
+    async function submitReport() {
 
         const confirmBtn = document.getElementById('confirmReport');
         confirmBtn.disabled = true;
@@ -161,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const graphql = JSON.stringify({
             query: `mutation ReportUser {
-                reportUser(userid: "${objekt.user.id}") {
+                reportUser(userid: "${userID}") {
                 status
                 RequestId
                 ResponseCode
@@ -177,33 +134,30 @@ document.addEventListener("DOMContentLoaded", () => {
             redirect: "follow",
             };
             
-            const response = await fetch(GraphQL, requestOptions);
+            const response = await fetch(GraphGL, requestOptions);
             const result = await response.json();
             
             if (result.data?.reportUser?.status === 'success' || result.data?.reportUser?.ResponseCode === 11012) {
-                // TEMPORARY: Stored in localStorage (Will remove when backend API is ready)
-                const reportedUsers = JSON.parse(localStorage.getItem('reportedUsers') || '[]');
-                if (!reportedUsers.includes(userID)) {
-                    reportedUsers.push(userID);
-                    localStorage.setItem('reportedUsers', JSON.stringify(reportedUsers));
+                const successMessage = result.data.reportUser.ResponseMessage || 'Profile reported successfully';
+                showModalToast(successMessage, 'success');
+
+                const viewProfile = document.querySelector('.view-profile');
+                if (viewProfile) {
+                    viewProfile.classList.add('REPORTED_PROFILE');
                 }
-                
-                // Add "Reported" badge
-                addReportedBadge();
-                
-                // Show success toast inside modal
-                showModalToast('Profile reported successfully', 'success');
                 
                 // Close modal after toast is shown (give time to read the message)
                 setTimeout(() => {
                     closeReportModal();
                 }, 2000);
+                
+                addReportedBadge();
             } else {
             throw new Error(result.data?.reportUser?.ResponseMessage || 'Failed to report profile');
             }
         } catch (error) {
-            // Show error toast inside modal
-            showModalToast('User has already been reported by you!', 'error');
+            const errorMessage = error.message || 'Failed to report profile. Please try again.';
+            showModalToast(errorMessage, 'error');
             confirmBtn.disabled = false;
             confirmBtn.textContent = 'Report';
         }
@@ -211,8 +165,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Report button click event
     reportButton.addEventListener('click', showReportModal);
-
-    // Check reported status on page load
-    checkReportedStatus();
 
 });

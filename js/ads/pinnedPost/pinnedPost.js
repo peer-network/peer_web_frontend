@@ -247,8 +247,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (!adPostCreatedAtTime || !data.affectedRows[0]?.timeframeEnd) return;
     
-    const endDate = new Date(data.affectedRows[0].timeframeEnd.replace(" ", "T"));
-    adPostCreatedAtTime.textContent = endDate.toLocaleString("en-US", {
+    const cleaned = data.affectedRows[0].timeframeEnd.replace(/\.\d+$/, '') + 'Z';
+    const endDate = new Date(cleaned);
+    adPostCreatedAtTime.textContent = endDate.toLocaleString(undefined, {
       month: "short",
       day: "numeric",
       year: "numeric",
