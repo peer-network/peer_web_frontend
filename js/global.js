@@ -1419,6 +1419,11 @@ function showError(message) {
 }
 
 function redirectToProfile(userProfileID) {
+   const UserID = getCookie("userID");
+   if(UserID==userProfileID){
+     window.location.href = `profile.php`;
+     return;
+   }
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 
@@ -1746,7 +1751,6 @@ function commentToDom(c, append = true) {
 
 
    // Display of reported comment
-
    const urlParams = new URLSearchParams(window.location.search);
     const testPostid = urlParams.get("commentid");
  // Mock object
@@ -2774,7 +2778,7 @@ window.insertPinnedBtn = function (card, username, mode = "profile") {
   pinnedBtn.innerHTML = `
       <a class="button btn-blue">
         <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold">@${username}</span>
+        <span class="ad_username none bold">@${username}</span>
       </a>
     `;
 

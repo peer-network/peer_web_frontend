@@ -11,7 +11,7 @@ $parts = explode('.', $host);
 if (count($parts) > 2) {
   $subdomain = implode('.', array_slice($parts, 0, count($parts) - 2));
   if ($subdomain == 'frontend') $domain = 'peernetwork.eu';
-  else if ($subdomain == 'testing') $domain = 'getpeer.eu';
+  else if ($subdomain == 'testing') $domain = 'peer-network.eu';
 } else {
-  $domain = 'getpeer.eu';
+  $domain = 'peer-network.eu';
 }

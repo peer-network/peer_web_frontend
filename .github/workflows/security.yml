@@ -173,7 +173,8 @@ jobs:
               MESSAGE+="Link: <$PR_URL>\n"
               MESSAGE+="Run: <$RUN_URL>\n"
               MESSAGE+="Author: $DISCORD_MENTION\n\n"
-              MESSAGE+="View the **Trivy report artifact** in the Actions run for details."
+              MESSAGE+=":exclamation: **Do NOT ignore this finding — inform your Team Lead or CTO immediately.**\n"
+              MESSAGE+="View the **Trivy report artifact** in the Actions run for full details."
               ;;
             success)
               MESSAGE=":white_check_mark: **Web Frontend Security Scan Passed!**\n"
