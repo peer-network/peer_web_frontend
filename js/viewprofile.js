@@ -1,6 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
-  const userID = params.get('user');
+  // const userID = params.get('user');
+
+  /*-- for testing profile report and visibility----*/
+  const testUserId = params.get("testid");
+  const userID = testUserId || params.get('user');
+  
+  const AccountVisibilityStatus = {
+    NORMAL: "NORMAL",
+    HIDDEN: "HIDDEN",
+    ILLEGAL: "ILLEGAL"
+  };
+  /*-- End : testing profile report and visibility----*/
 
   getProfile(userID).then(userprofile => {
     
@@ -9,6 +20,26 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "404.php";
       return;
     }
+
+    /*-- for testing profile report and visibility----*/
+    userprofile.affectedRows.visibilityStatus = AccountVisibilityStatus.NORMAL;
+    
+    if(testUserId){
+      userprofile.affectedRows.visibilityStatus = AccountVisibilityStatus.HIDDEN;
+      
+      userprofile.affectedRows.originalData = {
+        username: userprofile.affectedRows.username,
+        slug: userprofile.affectedRows.slug,
+        img: userprofile.affectedRows.img,
+        biography: userprofile.affectedRows.biography
+      };
+    
+      const viewProfile = document.querySelector('.view-profile');
+      if(viewProfile) {
+        viewProfile.classList.add("visibility_hidden");
+      }
+    }
+    /*-- End : testing profile report and visibility----*/
 
     const profileimg = document.getElementById("profilbild2");
     const username2 = document.getElementById("username2");
@@ -93,6 +124,75 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("biography2").innerText = "Biography not available";
         });
     } 
+
+    /*---Hidden Account Frame */
+    if(userprofile.affectedRows.visibilityStatus == 'HIDDEN' || userprofile.affectedRows.visibilityStatus == 'hidden'){
+      
+      const profileInfo = document.querySelector(".profile_info");
+      
+      const hiddenAccountHTML = `
+        <div class="hidden_account_frame">
+          <div class="hidden_content">
+            <div class="hidden_header">
+              <i class="peer-icon peer-icon-eye-close"></i>
+              <div class="hidden_title md_font_size bold">Sensitive content</div>
+            </div>
+            <div class="hidden_description">
+              This content may be sensitive or abusive.<br>
+              Do you want to view it anyway?
+            </div>
+          </div>
+          <div class="view_content">
+            <a href="#" class="button btn-transparent">View content</a>
+          </div>
+        </div>
+      `;
+
+      profileInfo.insertAdjacentHTML("afterbegin", hiddenAccountHTML);
+      
+      const hiddenFrame = profileInfo.querySelector(".hidden_account_frame");
+      const viewBtn = hiddenFrame.querySelector(".view_content a");
+      
+      if (viewBtn) {
+        viewBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          
+          if(userprofile.affectedRows.originalData) {
+            const original = userprofile.affectedRows.originalData;
+            
+            if(username2) {
+              username2.innerText = original.username;
+            }
+            if(slug2) {
+              slug2.innerText = "#" + original.slug;
+            }
+            if(profileimg) {
+              profileimg.src = original.img ? tempMedia(original.img.replace("media/", "")) : "svg/noname.svg";
+            }
+            
+            if(original.biography && biography2) {
+              const fullPath2 = tempMedia(original.biography);
+              fetch(fullPath2, { cache: "no-store" })
+                .then(response => response.text())
+                .then(biographyText => {
+                  biography2.innerText = biographyText;
+                })
+                .catch(error => {
+                  console.error("Error loading biography:", error);
+                  biography2.innerText = "Biography not available";
+                });
+            }
+          }
+          
+          hiddenFrame.remove();
+          const viewProfile = document.querySelector('.view-profile');
+          if(viewProfile) {
+            viewProfile.classList.remove('visibility_hidden');
+          }
+        });
+      }
+    }
+    /*---End Hidden Account Frame */
   });
   
   const post_loader = document.getElementById("post_loader");

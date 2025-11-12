@@ -1416,6 +1416,11 @@ function showError(message) {
 }
 
 function redirectToProfile(userProfileID) {
+   const UserID = getCookie("userID");
+   if(UserID==userProfileID){
+     window.location.href = `profile.php`;
+     return;
+   }
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 
@@ -2771,7 +2776,7 @@ window.insertPinnedBtn = function (card, username, mode = "profile") {
   pinnedBtn.innerHTML = `
       <a class="button btn-blue">
         <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold">@${username}</span>
+        <span class="ad_username none bold">@${username}</span>
       </a>
     `;
 
