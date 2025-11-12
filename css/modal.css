@@ -448,8 +448,9 @@
   color: rgba(255, 255, 255, 0.3)
 }
 
-/*----Waring popup----*/
-.warning .modal-icon {
+/*----Waring and error popup----*/
+.warning .modal-icon,
+.error .modal-icon {
 	border-radius: 100%;
 	background: rgba(255, 59, 59, 0.20);
 	display: flex;
@@ -462,7 +463,8 @@
 	aspect-ratio: 1/1;
   margin: 0 auto 40px;
 }
-.warning .modal-icon .peer-icon {
+.warning .modal-icon .peer-icon,
+.error .modal-icon .peer-icon {
 	font-size: 120px;
   color: var(--red-accent);
 }
@@ -534,13 +536,15 @@
     width: 40vw;
     border-radius: 70px;
   }
-  .warning .modal-icon {
+  .warning .modal-icon,
+  .error .modal-icon {
     
     width: 150px;
     height: 150px;
     
   }
-  .warning .modal-icon .peer-icon {
+  .warning .modal-icon .peer-icon,
+  .error .modal-icon .peer-icon {
 	font-size: 90px;
 	
   }

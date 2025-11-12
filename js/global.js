@@ -430,44 +430,21 @@ function postdetail(objekt, CurrentUserID) {
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
-  let isreported =objekt.isreported;
-
-  /*-- for testing post report and visibility----*/
-    postContainer.classList.remove("reported_post");
-    // Remove any class starting with "visibility_"
-    postContainer.classList.forEach(cls => {
-      if (cls.startsWith("visibilty_")) {
-        postContainer.classList.remove(cls);
-      }
-    });
-    const urlParams = new URLSearchParams(window.location.search);
-    const testPostid = urlParams.get("testid");
-
-    // Define your enum-like object
-      const ContentVisibilityStatus = {
-        NORMAL: "NORMAL",
-        HIDDEN: "HIDDEN",
-        ILLEGAL: "ILLEGAL"
-      };
-    
-      objekt.visibilityStatus = ContentVisibilityStatus.NORMAL;
-
-    if(testPostid==objekt.id){
-      isreported=true;
-
-      if(isreported) {
-        postContainer.classList.add("reported_post");
-      }
-      
-      objekt.visibilityStatus = ContentVisibilityStatus.HIDDEN;
-      postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
-
-    }
-    
-    console.log(objekt);
- /*-- End : testing post report and visibility----*/
-
   
+
+  postContainer.classList.remove("reported_post");
+  // Remove any class starting with "visibility_"
+  postContainer.classList.forEach(cls => {
+    if (cls.startsWith("visibilty_")) {
+      postContainer.classList.remove(cls);
+    }
+  });
+
+
+
+
+  if(objekt.isreported==true) {   postContainer.classList.add("reported_post"); }
+  postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -552,11 +529,13 @@ function postdetail(objekt, CurrentUserID) {
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
 
-  if (isreported) {
+  if (objekt.isreported==true) {
     // change text if already reported
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
   } else {
+    reportpost_btn.querySelector("span").textContent = "Report post";
+    reportpost_btn.classList.remove("reported");
     // add listener only if not reported
     reportpost_btn.addEventListener(
       "click",
@@ -1208,7 +1187,7 @@ function postdetail(objekt, CurrentUserID) {
 
 
     /*---Hidden Frame content */
-    const hiddenBadge = postContainer.querySelector(".hidden_bage");
+    const hiddenBadge = postContainer.querySelector(".hidden_badge");
     if (hiddenBadge) {
       hiddenBadge.remove();
     }
@@ -1234,59 +1213,77 @@ function postdetail(objekt, CurrentUserID) {
         </div>
       `;
 
-      post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
-      const  containerleft_text_post =containerleft.querySelector(".post_content");
-      if (containerleft_text_post) {
-        containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
-      }
-
-      // Select all inserted hidden frames and attach "View content" listeners
-      postContainer.querySelectorAll(".hidden_content_frame").forEach(frame => {
-        const viewBtn = frame.querySelector(".view_content a");
-        if (viewBtn) {
-          viewBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            frame.remove(); // remove that specific frame
-            postContainer.classList.remove('visibilty_hidden');
-          });
-        }
-      });
-
-     const video_p = post_gallery.querySelector("video");
-
-      if (video_p) {
-        // Completely disable autoplay attribute before anything else
-        video_p.autoplay = false;
-        video_p.removeAttribute("autoplay");
-
-        // Force pause even if already playing
-        try {
-          video_p.pause();
-          video_p.currentTime = 0; // reset to beginning if desired
-        } catch (err) {
-          console.warn("Pause failed:", err);
+      if(objekt.user.id != UserID ){
+        post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
+        const  containerleft_text_post =containerleft.querySelector(".post_content");
+        if (containerleft_text_post) {
+          containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
         }
 
-        // Safety: Recheck after small delay (in case autoplay triggered before pause)
-        setTimeout(() => {
-          if (!video_p.paused) {
-            video_p.pause();
-            video_p.currentTime = 0;
+        // Select all inserted hidden frames and attach "View content" listeners
+        postContainer.querySelectorAll(".hidden_content_frame").forEach(frame => {
+          const viewBtn = frame.querySelector(".view_content a");
+          if (viewBtn) {
+            viewBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              frame.remove(); // remove that specific frame
+              postContainer.classList.remove('visibilty_hidden');
+            });
           }
-        }, 300);
+        });
 
-        //console.log("Video paused:", video_p.paused);
+        const video_p = post_gallery.querySelector("video");
+
+        if (video_p) {
+          // Completely disable autoplay attribute before anything else
+          video_p.autoplay = false;
+          video_p.removeAttribute("autoplay");
+
+          // Force pause even if already playing
+          try {
+            video_p.pause();
+            video_p.currentTime = 0; // reset to beginning if desired
+          } catch (err) {
+            console.warn("Pause failed:", err);
+          }
+
+          // Safety: Recheck after small delay (in case autoplay triggered before pause)
+          setTimeout(() => {
+            if (!video_p.paused) {
+              video_p.pause();
+              video_p.currentTime = 0;
+            }
+          }, 300);
+
+          //console.log("Video paused:", video_p.paused);
+        }
+      }else{ //else mean logged in user viewing own post 
+        postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
       }
-
 
       const postview_footer = postContainer.querySelector(".postview_footer");
 
       const hiddenBageHTML = `
-        <div class="hidden_bage"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
+        <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
         postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
 
     }
   /*---End Hidden Frame content */
+
+  /*---Content isreported badge ---*/
+      
+    const reportedBadge = postContainer.querySelector(".reported_badge");
+    if (reportedBadge) {
+      reportedBadge.remove();
+    }
+
+    if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+      const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+      const postview_footer = postContainer.querySelector(".postview_footer");
+      postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
+    }
+
+  /*---End Content isreported badge */
 
 
 

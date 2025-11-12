@@ -431,17 +431,12 @@ async function postsLaden(postbyUserID=null) {
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
 
-    /*-- for testing post report and visibility----*/
+      /*-- for testing post report and visibility----*/
         
         const urlParams = new URLSearchParams(window.location.search);
         const testPostid = urlParams.get("testid");
-
-        // Define your enum-like object
-          const ContentVisibilityStatus = {
-            NORMAL: "NORMAL",
-            HIDDEN: "HIDDEN",
-            ILLEGAL: "ILLEGAL"
-          };
+        const testPostidreported = urlParams.get("reported");
+        const testPostidvisibility = urlParams.get("visibility");
         
       /*-- End : testing post report and visibility----*/
 
@@ -449,7 +444,7 @@ async function postsLaden(postbyUserID=null) {
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
 
       
-      const isreported =objekt.isreported;
+      
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
@@ -463,23 +458,27 @@ async function postsLaden(postbyUserID=null) {
 
       /*-- for testing post report and visibility----*/
         
-        objekt.visibilityStatus = ContentVisibilityStatus.NORMAL;
+      
 
         if(testPostid==objekt.id){
-          //isreported=true;
-
-          if(isreported) {
-            card.classList.add("reported_post");
-          }
           
-          objekt.visibilityStatus = ContentVisibilityStatus.HIDDEN;
-          card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+          
+          objekt.isreported=testPostidreported;
+          
+          if(testPostidvisibility){
+            objekt.visibilityStatus = testPostidvisibility;
+          }
 
         }
-        
+         
         
       /*-- End : testing post report and visibility----*/
-  
+
+      
+      if(objekt.isreported==true) {   card.classList.add("reported_post"); }
+      card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+
+
       let postDiv;
       let img;
       postDiv = document.createElement("div");
@@ -901,9 +900,6 @@ async function postsLaden(postbyUserID=null) {
       }
 
         /*---Hidden Frame content */
-         
-          
-
           if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
               const hiddenContentHTML = `
               <div class="hidden_content_frame">
@@ -921,25 +917,37 @@ async function postsLaden(postbyUserID=null) {
               </div>
             `;
 
-            inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
+            if(objekt.user.id != UserID ){
+              //console.log(objekt.user.id,UserID);
+              inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
             
 
-            // Select all inserted hidden frames and attach "View content" listeners
-            inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
-              const viewBtn = frame.querySelector(".view_content a");
-              if (viewBtn) {
-                viewBtn.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  frame.remove(); // remove that specific frame
-                  card.classList.remove('visibilty_hidden');
-                });
-              }
-            });
+              // Select all inserted hidden frames and attach "View content" listeners
+              inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
+                const viewBtn = frame.querySelector(".view_content a");
+                if (viewBtn) {
+                  viewBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    frame.remove(); // remove that specific frame
+                    card.classList.remove('visibilty_hidden');
+                  });
+                }
+              });
+            }else{ //else mean logged in user viewing own post 
+              const hiddenContentBadge = `<div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden</div>`;
+              inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", hiddenContentBadge);
 
-
+            }
           }
         /*---End Hidden Frame content */
 
+        /*---Content isreported badge ---*/
+          if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+              
+              const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+              inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+          }
+        /*---End Content isreported badge */
 
 
     });
@@ -1105,21 +1113,19 @@ function reportPost(objekt, el) {
     }
   
   reportPostAPIcall(objekt.id).then((success) => {
-    if (success) {
-      togglePopup("cardClicked");
-      cancelTimeout();
-      // Add animation class
-      postCardId.classList.add("card_reported");
-      const reported_div = document.createElement("div");
-      reported_div.classList.add("reported");
-      reported_div.innerHTML = `
-        <img src="svg/Union.svg" alt="reported">
-        <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
-      `;
+      if (success) {
+        //togglePopup("cardClicked");
+        cancelTimeout();
+        // Add animation class
+        postCardId.classList.add("reported_post");
 
-      // Step 4: Ab reported_div ko parent div ke andar append karo
-      postCardId.appendChild(reported_div);
-    }
+        const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+        postCardId.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+
+        const postview_footer = el.querySelector(".postview_footer");
+        postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
+
+      }
   });
 }
 
