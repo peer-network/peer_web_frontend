@@ -1743,7 +1743,6 @@ function commentToDom(c, append = true) {
 
 
    // Display of reported comment
-
    const urlParams = new URLSearchParams(window.location.search);
     const testPostid = urlParams.get("commentid");
  // Mock object
