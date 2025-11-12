@@ -435,13 +435,9 @@ async function postsLaden(postbyUserID=null) {
         
         const urlParams = new URLSearchParams(window.location.search);
         const testPostid = urlParams.get("testid");
-
-        // Define your enum-like object
-          const ContentVisibilityStatus = {
-            NORMAL: "NORMAL",
-            HIDDEN: "HIDDEN",
-            ILLEGAL: "ILLEGAL"
-          };
+        const testPostidreported = urlParams.get("reported");
+        
+        
         
       /*-- End : testing post report and visibility----*/
 
@@ -449,7 +445,7 @@ async function postsLaden(postbyUserID=null) {
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
 
       
-      const isreported =objekt.isreported;
+      let isreported =objekt.isreported;
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
@@ -463,20 +459,23 @@ async function postsLaden(postbyUserID=null) {
 
       /*-- for testing post report and visibility----*/
         
-        objekt.visibilityStatus = ContentVisibilityStatus.NORMAL;
+      
 
         if(testPostid==objekt.id){
-          //isreported=true;
-
+          
+          
+          isreported=testPostidreported;
           if(isreported) {
             card.classList.add("reported_post");
           }
           
-          objekt.visibilityStatus = ContentVisibilityStatus.HIDDEN;
-          card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+          //objekt.visibilityStatus = 'HIDDEN';
+          //card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+
+          
 
         }
-        
+         
         
       /*-- End : testing post report and visibility----*/
   

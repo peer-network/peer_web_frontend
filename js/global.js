@@ -442,16 +442,6 @@ function postdetail(objekt, CurrentUserID) {
     });
     const urlParams = new URLSearchParams(window.location.search);
     const testPostid = urlParams.get("testid");
-
-    // Define your enum-like object
-      const ContentVisibilityStatus = {
-        NORMAL: "NORMAL",
-        HIDDEN: "HIDDEN",
-        ILLEGAL: "ILLEGAL"
-      };
-    
-      objekt.visibilityStatus = ContentVisibilityStatus.NORMAL;
-
     if(testPostid==objekt.id){
       isreported=true;
 
@@ -459,12 +449,12 @@ function postdetail(objekt, CurrentUserID) {
         postContainer.classList.add("reported_post");
       }
       
-      objekt.visibilityStatus = ContentVisibilityStatus.HIDDEN;
+      objekt.visibilityStatus = 'HIDDEN';
       postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
 
     }
     
-    console.log(objekt);
+    //console.log(objekt);
  /*-- End : testing post report and visibility----*/
 
   

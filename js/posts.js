@@ -196,6 +196,8 @@
                 amountcomments
                 amountdislikes
                 amounttrending
+                hasActiveReports
+                visibilityStatus
                 isliked
                 isviewed
                 isreported
@@ -211,6 +213,8 @@
                     isfollowed
                     isfollowing
                     isfriend
+                    hasActiveReports
+                    visibilityStatus
                 }
                 comments {
                     commentid
@@ -221,6 +225,8 @@
                     createdat
                     amountlikes
                     amountreplies
+                    hasActiveReports
+                    visibilityStatus
                     isliked
                     user {
                         id
@@ -230,6 +236,8 @@
                         isfollowed
                         isfollowing
                         isfriend
+                        hasActiveReports
+                        visibilityStatus
                     }
                 }
             }
@@ -248,6 +256,8 @@
                     isfollowed
                     isfollowing
                     isfriend
+                    hasActiveReports
+                    visibilityStatus
                 }
             }
         }
@@ -281,13 +291,15 @@
                  title
                  media
                  cover
-                mediadescription
-                createdat
+                 mediadescription
+                 createdat
                  amountlikes
                  amountviews
                  amountcomments
                  amountdislikes
                  amounttrending
+                 hasActiveReports
+                 visibilityStatus
                  isliked
                  isviewed
                  isreported
@@ -301,13 +313,17 @@
                      img
                      isfollowed
                      isfollowing
+                     hasActiveReports
+                     visibilityStatus
                  }
              comments {
                    commentid
                      userid
                      postid
-                    parentid
-                    content
+                     parentid
+                     content
+                     visibilityStatus
+                     hasActiveReports
                      amountlikes
                      amountreplies
                      isliked
@@ -317,8 +333,10 @@
                          username
                          slug
                          img
-                       isfollowed
+                         isfollowed
                          isfollowing
+                         hasActiveReports
+                         visibilityStatus
                     }
                  }
              }
