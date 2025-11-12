@@ -672,24 +672,7 @@
 		.viewpost .visibilty_hidden .thumbs-wrapper {
 			display: none;
 		}
-		.hidden_bage {
-			display: flex;
-			width: 250px;
-			height: 70px;
-			padding: 21.875px 43.75px;
-			justify-content: center;
-			align-items: center;
-			gap: 20px;
-			border-radius: 70px;
-			background: var(--black-dark, #252525);
-			backdrop-filter: blur(82.90625762939453px);
-			color: var(--white-secondary);
-		}
-		.viewpost .postview_footer .hidden_bage {
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
-		}
+	
 
 		.viewpost .visibilty_hidden .post_content .post_text,
 		.viewpost .visibilty_hidden .post_content .post_title,
@@ -729,6 +712,73 @@
 		.card .post-inhalt .hidden_content_frame .hidden_description {
 			font-size: 23px;
 		}
+
+    	.hidden_badge {
+			display: flex;
+			max-width: 250px;
+			height: 70px;
+			padding: 21px 43px;
+			justify-content: center;
+			align-items: center;
+			gap: 5px;
+			border-radius: 70px;
+			background: var(--black-dark, #252525);
+			backdrop-filter: blur(82.90625762939453px);
+			color: var(--white-secondary);
+		}
+		.viewpost .postview_footer .hidden_badge {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+
+
+    .card .post-inhalt .hidden_badge {
+         
+      border: 2px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+      background: none;
+    
+      margin-top: 10px;
+    }
+    .card[content="text"] .hidden_badge {
+      position: absolute;
+      bottom: 100px;
+    }
+    .PINNED.card[content="text"] .hidden_badge {
+      bottom: 190px;
+    }
+
+    .reported_badge {
+        display: flex;
+        padding: 21px 43px;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        border-radius: 70px;
+        border: 2px solid var(--Red-Accent, #FF3B3B);
+        backdrop-filter: blur(82.90625762939453px);
+        color: var(--Red-Accent, #FF3B3B);
+        max-width: 265px;
+        margin-top: 10px;
+    }
+
+    .card[content="text"] .reported_badge {
+      position: absolute;
+      bottom: 100px;
+    }
+    .PINNED.card[content="text"] .reported_badge {
+      bottom: 190px;
+    }
+
+    .viewpost .postview_footer .reported_badge {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+
+
 
 	/*-- end hidden Post content */
 

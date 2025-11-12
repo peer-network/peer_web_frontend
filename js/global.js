@@ -1208,7 +1208,7 @@ function postdetail(objekt, CurrentUserID) {
 
 
     /*---Hidden Frame content */
-    const hiddenBadge = postContainer.querySelector(".hidden_bage");
+    const hiddenBadge = postContainer.querySelector(".hidden_badge");
     if (hiddenBadge) {
       hiddenBadge.remove();
     }
@@ -1234,55 +1234,58 @@ function postdetail(objekt, CurrentUserID) {
         </div>
       `;
 
-      post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
-      const  containerleft_text_post =containerleft.querySelector(".post_content");
-      if (containerleft_text_post) {
-        containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
-      }
-
-      // Select all inserted hidden frames and attach "View content" listeners
-      postContainer.querySelectorAll(".hidden_content_frame").forEach(frame => {
-        const viewBtn = frame.querySelector(".view_content a");
-        if (viewBtn) {
-          viewBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            frame.remove(); // remove that specific frame
-            postContainer.classList.remove('visibilty_hidden');
-          });
-        }
-      });
-
-     const video_p = post_gallery.querySelector("video");
-
-      if (video_p) {
-        // Completely disable autoplay attribute before anything else
-        video_p.autoplay = false;
-        video_p.removeAttribute("autoplay");
-
-        // Force pause even if already playing
-        try {
-          video_p.pause();
-          video_p.currentTime = 0; // reset to beginning if desired
-        } catch (err) {
-          console.warn("Pause failed:", err);
+      if(objekt.user.id != UserID ){
+        post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
+        const  containerleft_text_post =containerleft.querySelector(".post_content");
+        if (containerleft_text_post) {
+          containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
         }
 
-        // Safety: Recheck after small delay (in case autoplay triggered before pause)
-        setTimeout(() => {
-          if (!video_p.paused) {
-            video_p.pause();
-            video_p.currentTime = 0;
+        // Select all inserted hidden frames and attach "View content" listeners
+        postContainer.querySelectorAll(".hidden_content_frame").forEach(frame => {
+          const viewBtn = frame.querySelector(".view_content a");
+          if (viewBtn) {
+            viewBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              frame.remove(); // remove that specific frame
+              postContainer.classList.remove('visibilty_hidden');
+            });
           }
-        }, 300);
+        });
 
-        //console.log("Video paused:", video_p.paused);
+        const video_p = post_gallery.querySelector("video");
+
+        if (video_p) {
+          // Completely disable autoplay attribute before anything else
+          video_p.autoplay = false;
+          video_p.removeAttribute("autoplay");
+
+          // Force pause even if already playing
+          try {
+            video_p.pause();
+            video_p.currentTime = 0; // reset to beginning if desired
+          } catch (err) {
+            console.warn("Pause failed:", err);
+          }
+
+          // Safety: Recheck after small delay (in case autoplay triggered before pause)
+          setTimeout(() => {
+            if (!video_p.paused) {
+              video_p.pause();
+              video_p.currentTime = 0;
+            }
+          }, 300);
+
+          //console.log("Video paused:", video_p.paused);
+        }
+      }else{ // else user own profile
+        postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
       }
-
 
       const postview_footer = postContainer.querySelector(".postview_footer");
 
       const hiddenBageHTML = `
-        <div class="hidden_bage"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
+        <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
         postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
 
     }

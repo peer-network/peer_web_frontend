@@ -921,20 +921,28 @@ async function postsLaden(postbyUserID=null) {
               </div>
             `;
 
-            inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
+            if(objekt.user.id != UserID ){
+              //console.log(objekt.user.id,UserID);
+              inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
             
 
-            // Select all inserted hidden frames and attach "View content" listeners
-            inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
-              const viewBtn = frame.querySelector(".view_content a");
-              if (viewBtn) {
-                viewBtn.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  frame.remove(); // remove that specific frame
-                  card.classList.remove('visibilty_hidden');
-                });
-              }
-            });
+              // Select all inserted hidden frames and attach "View content" listeners
+              inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
+                const viewBtn = frame.querySelector(".view_content a");
+                if (viewBtn) {
+                  viewBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    frame.remove(); // remove that specific frame
+                    card.classList.remove('visibilty_hidden');
+                  });
+                }
+              });
+            }else{ // user profile page 
+
+              const hiddenContentBadge = `<div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden</div>`;
+              inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", hiddenContentBadge);
+
+            }
 
 
           }
@@ -1105,21 +1113,19 @@ function reportPost(objekt, el) {
     }
   
   reportPostAPIcall(objekt.id).then((success) => {
-    if (success) {
-      togglePopup("cardClicked");
-      cancelTimeout();
-      // Add animation class
-      postCardId.classList.add("card_reported");
-      const reported_div = document.createElement("div");
-      reported_div.classList.add("reported");
-      reported_div.innerHTML = `
-        <img src="svg/Union.svg" alt="reported">
-        <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
-      `;
+      if (success) {
+        //togglePopup("cardClicked");
+        cancelTimeout();
+        // Add animation class
+        postCardId.classList.add("reported_post");
 
-      // Step 4: Ab reported_div ko parent div ke andar append karo
-      postCardId.appendChild(reported_div);
-    }
+        const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+        postCardId.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+
+        const postview_footer = el.querySelector(".postview_footer");
+        postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
+
+      }
   });
 }
 
