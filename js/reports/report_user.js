@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (viewProfile) {
                     viewProfile.classList.add('REPORTED_PROFILE');
                     //test for hidden profiles
-                    viewProfile.classList.add('visibility_hidden');
+                    // viewProfile.classList.add('visibility_hidden');
                 }
                 
                 // Close modal after toast is shown (give time to read the message)

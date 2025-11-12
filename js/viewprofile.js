@@ -1,17 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
-  // const userID = params.get('user');
-
-  /*-- for testing profile report and visibility----*/
-  const testUserId = params.get("testid");
-  const userID = testUserId || params.get('user');
-  
-  const AccountVisibilityStatus = {
-    NORMAL: "NORMAL",
-    HIDDEN: "HIDDEN",
-    ILLEGAL: "ILLEGAL"
-  };
-  /*-- End : testing profile report and visibility----*/
+  const userID = params.get('user');
 
   getProfile(userID).then(userprofile => {
     
@@ -21,25 +10,25 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    /*-- for testing profile report and visibility----*/
-    userprofile.affectedRows.visibilityStatus = AccountVisibilityStatus.NORMAL;
+    /*-- handling profile visibility----*/
+    const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     
-    if(testUserId){
-      userprofile.affectedRows.visibilityStatus = AccountVisibilityStatus.HIDDEN;
-      
-      userprofile.affectedRows.originalData = {
-        username: userprofile.affectedRows.username,
-        slug: userprofile.affectedRows.slug,
-        img: userprofile.affectedRows.img,
-        biography: userprofile.affectedRows.biography
-      };
-    
+    if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
       const viewProfile = document.querySelector('.view-profile');
       if(viewProfile) {
         viewProfile.classList.add("visibility_hidden");
       }
     }
-    /*-- End : testing profile report and visibility----*/
+    
+    if(hasActiveReports) {
+      const viewProfile = document.querySelector('.view-profile');
+      if (viewProfile) {
+        viewProfile.classList.add('REPORTED_PROFILE');
+      }
+      addReportedBadge();
+    }
+    /*-- End : handling profile visibility----*/
 
     const profileimg = document.getElementById("profilbild2");
     const username2 = document.getElementById("username2");
@@ -126,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } 
 
     /*---Hidden Account Frame */
-    if(userprofile.affectedRows.visibilityStatus == 'HIDDEN' || userprofile.affectedRows.visibilityStatus == 'hidden'){
+    if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
       
       const profileInfo = document.querySelector(".profile_info");
       
@@ -157,33 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
         viewBtn.addEventListener("click", (e) => {
           e.preventDefault();
           
-          if(userprofile.affectedRows.originalData) {
-            const original = userprofile.affectedRows.originalData;
-            
-            if(username2) {
-              username2.innerText = original.username;
-            }
-            if(slug2) {
-              slug2.innerText = "#" + original.slug;
-            }
-            if(profileimg) {
-              profileimg.src = original.img ? tempMedia(original.img.replace("media/", "")) : "svg/noname.svg";
-            }
-            
-            if(original.biography && biography2) {
-              const fullPath2 = tempMedia(original.biography);
-              fetch(fullPath2, { cache: "no-store" })
-                .then(response => response.text())
-                .then(biographyText => {
-                  biography2.innerText = biographyText;
-                })
-                .catch(error => {
-                  console.error("Error loading biography:", error);
-                  biography2.innerText = "Biography not available";
-                });
-            }
-          }
-          
           hiddenFrame.remove();
           const viewProfile = document.querySelector('.view-profile');
           if(viewProfile) {
@@ -194,6 +156,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     /*---End Hidden Account Frame */
   });
+
+  // Add reported badge to profile
+    function addReportedBadge() {
+        const profileInfo = document.querySelector('.profile_info');
+        const slug = profileInfo.querySelector('.profile_no');
+        
+        // Check if already reported
+        if (!document.querySelector('.reported_badge')) {
+            const reportedBadge = document.createElement('span');
+            reportedBadge.className = 'reported_badge';
+            reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
+            
+            slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
+        }
+    }
   
   const post_loader = document.getElementById("post_loader");
   
@@ -233,6 +210,8 @@ document.addEventListener("DOMContentLoaded", () => {
               slug
               img
               biography
+              visibilityStatus
+              hasActiveReports
               isfollowed
               isfollowing
               amountposts
@@ -241,6 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
               amountfollower
               amountfriends
               amountblocked
+              amountreports
           }
         }
       }

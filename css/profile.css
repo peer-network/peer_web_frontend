@@ -216,7 +216,7 @@
 	background-color: #000;
 	border-radius: 100%;
 	position:relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 	
 }
 .profile_header .profile_picture .cropContainer .online_status {
