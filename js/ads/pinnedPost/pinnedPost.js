@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     pinnedBtn.innerHTML = `
       <a class="button btn-blue">
         <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold">@${username}</span>
+        <span class="ad_username bold none">@${username}</span>
       </a>
     `;
     return pinnedBtn;
@@ -247,9 +247,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (!adPostCreatedAtTime || !data.affectedRows[0]?.timeframeEnd) return;
     
-    const cleaned = data.affectedRows[0].timeframeEnd.replace(/\.\d+$/, '') + 'Z';
-    const endDate = new Date(cleaned);
-    adPostCreatedAtTime.textContent = endDate.toLocaleString(undefined, {
+    const endDate = new Date(data.affectedRows[0].timeframeEnd.replace(" ", "T"));
+    adPostCreatedAtTime.textContent = endDate.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",

@@ -216,6 +216,7 @@
 	background-color: #000;
 	border-radius: 100%;
 	position:relative;
+  overflow: hidden;
 	
 }
 .profile_header .profile_picture .cropContainer .online_status {
@@ -868,6 +869,37 @@
   display: block; 
 } */
 
+/*--------- Hidden account frame -----------*/
+
+.visibility_hidden .profile_info .hidden_account_frame {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.visibility_hidden #profilbild2,
+.visibility_hidden #username2,
+.visibility_hidden #slug2,
+.visibility_hidden #biography2 {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
+  display: flex;
+  gap: 10px;
+  font-size: 25px;
+}
+
+.visibility_hidden .hidden_account_frame .hidden_content .hidden_description {
+  margin-top: 10px;
+}
+
 
 @media screen and (min-width: 2000px) {
   .profile_header .profile_edit_box  .ads_container_wrap,
@@ -1037,5 +1069,17 @@
     width: 20px;
     height: 20px;
   }
+
+  .visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
+    font-size: 40px;
+  }
+
+  .visibility_hidden .hidden_account_frame .hidden_content .hidden_header .hidden_title {
+    font-size: 35px;
+  }
+
+  .visibility_hidden .hidden_account_frame .view_content .button.btn-transparent {
+  line-height: 90px;
+}
 
 }
