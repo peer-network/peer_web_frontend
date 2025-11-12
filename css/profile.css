@@ -855,15 +855,22 @@
 }
 
 /* Reported Badge Styles */
-.reported_badge {
+.reported_badge,
+.hidden_badge {
   display: inline-block;
   background-color: var(--bg-filter);
-  color: #ef4444;
   padding: 15px;
   border-radius: 2.5rem;
   font-size: 20px;
   margin-left: 25px;
   vertical-align: middle;
+}
+.reported_badge {
+  color: #ef4444;
+}
+/* Hidden Badge Styles */
+.hidden_badge {
+  color: var(--white-opacity-50);
 }
 /* .view-profile.REPORTED_PROFILE .reported_badge {
   display: block; 

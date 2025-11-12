@@ -37,21 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     }
 
-    // Add reported badge to profile
-    function addReportedBadge() {
-        const profileInfo = document.querySelector('.profile_info');
-        const slug = profileInfo.querySelector('.profile_no');
-        
-        // Check if already reported
-        if (!document.querySelector('.reported_badge')) {
-            const reportedBadge = document.createElement('span');
-            reportedBadge.className = 'reported_badge';
-            reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
-            
-            slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
-        }
-    }
-
     // Create and show report modal
     function showReportModal() {
         // Get profile data

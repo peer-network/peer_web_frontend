@@ -11,19 +11,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /*-- handling profile visibility----*/
-    const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    // const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    const visibilityStatus = "NORMAL" ;
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     
     if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
       const viewProfile = document.querySelector('.view-profile');
       if(viewProfile) {
+        viewProfile.classList.remove("REPORTED_PROFILE");
         viewProfile.classList.add("visibility_hidden");
       }
     }
     
-    if(hasActiveReports) {
+    else if(hasActiveReports) {
       const viewProfile = document.querySelector('.view-profile');
       if (viewProfile) {
+        viewProfile.classList.add("visibility_hidden");
         viewProfile.classList.add('REPORTED_PROFILE');
       }
       addReportedBadge();
@@ -156,21 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     /*---End Hidden Account Frame */
   });
-
-  // Add reported badge to profile
-    function addReportedBadge() {
-        const profileInfo = document.querySelector('.profile_info');
-        const slug = profileInfo.querySelector('.profile_no');
-        
-        // Check if already reported
-        if (!document.querySelector('.reported_badge')) {
-            const reportedBadge = document.createElement('span');
-            reportedBadge.className = 'reported_badge';
-            reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
-            
-            slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
-        }
-    }
   
   const post_loader = document.getElementById("post_loader");
   
