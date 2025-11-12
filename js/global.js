@@ -2773,7 +2773,7 @@ window.insertPinnedBtn = function (card, username, mode = "profile") {
   const pinnedBtn = document.createElement("div");
   pinnedBtn.classList.add("pinedbtn");
   pinnedBtn.innerHTML = `
-      <a class="button btn-blue">
+      <a class="btn-blue">
         <img src="svg/pin.svg" alt="pin">
         <span class="ad_username none bold">@${username}</span>
       </a>
