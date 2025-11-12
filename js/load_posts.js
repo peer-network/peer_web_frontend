@@ -431,13 +431,12 @@ async function postsLaden(postbyUserID=null) {
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
 
-    /*-- for testing post report and visibility----*/
+      /*-- for testing post report and visibility----*/
         
         const urlParams = new URLSearchParams(window.location.search);
         const testPostid = urlParams.get("testid");
         const testPostidreported = urlParams.get("reported");
-        
-        
+        const testPostidvisibility = urlParams.get("visibility");
         
       /*-- End : testing post report and visibility----*/
 
@@ -445,7 +444,7 @@ async function postsLaden(postbyUserID=null) {
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
 
       
-      let isreported =objekt.isreported;
+      
       // Haupt-<section> erstellen
       const card = document.createElement("section");
       card.id = objekt.id;
@@ -464,21 +463,22 @@ async function postsLaden(postbyUserID=null) {
         if(testPostid==objekt.id){
           
           
-          isreported=testPostidreported;
-          if(isreported) {
-            card.classList.add("reported_post");
+          objekt.isreported=testPostidreported;
+          
+          if(testPostidvisibility){
+            objekt.visibilityStatus = testPostidvisibility;
           }
-          
-          //objekt.visibilityStatus = 'HIDDEN';
-          //card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
-
-          
 
         }
          
         
       /*-- End : testing post report and visibility----*/
-  
+
+      
+      if(objekt.isreported==true) {   card.classList.add("reported_post"); }
+      card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+
+
       let postDiv;
       let img;
       postDiv = document.createElement("div");
@@ -900,9 +900,6 @@ async function postsLaden(postbyUserID=null) {
       }
 
         /*---Hidden Frame content */
-         
-          
-
           if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
               const hiddenContentHTML = `
               <div class="hidden_content_frame">
@@ -936,17 +933,21 @@ async function postsLaden(postbyUserID=null) {
                   });
                 }
               });
-            }else{ // user profile page 
-
+            }else{ //else mean logged in user viewing own post 
               const hiddenContentBadge = `<div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden</div>`;
               inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", hiddenContentBadge);
 
             }
-
-
           }
         /*---End Hidden Frame content */
 
+        /*---Content isreported badge ---*/
+          if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+              
+              const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+              inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+          }
+        /*---End Content isreported badge */
 
 
     });

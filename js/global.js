@@ -430,34 +430,21 @@ function postdetail(objekt, CurrentUserID) {
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
-  let isreported =objekt.isreported;
-
-  /*-- for testing post report and visibility----*/
-    postContainer.classList.remove("reported_post");
-    // Remove any class starting with "visibility_"
-    postContainer.classList.forEach(cls => {
-      if (cls.startsWith("visibilty_")) {
-        postContainer.classList.remove(cls);
-      }
-    });
-    const urlParams = new URLSearchParams(window.location.search);
-    const testPostid = urlParams.get("testid");
-    if(testPostid==objekt.id){
-      isreported=true;
-
-      if(isreported) {
-        postContainer.classList.add("reported_post");
-      }
-      
-      objekt.visibilityStatus = 'HIDDEN';
-      postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
-
-    }
-    
-    //console.log(objekt);
- /*-- End : testing post report and visibility----*/
-
   
+
+  postContainer.classList.remove("reported_post");
+  // Remove any class starting with "visibility_"
+  postContainer.classList.forEach(cls => {
+    if (cls.startsWith("visibilty_")) {
+      postContainer.classList.remove(cls);
+    }
+  });
+
+
+
+
+  if(objekt.isreported==true) {   postContainer.classList.add("reported_post"); }
+  postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -542,11 +529,13 @@ function postdetail(objekt, CurrentUserID) {
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
 
-  if (isreported) {
+  if (objekt.isreported==true) {
     // change text if already reported
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
   } else {
+    reportpost_btn.querySelector("span").textContent = "Report post";
+    reportpost_btn.classList.remove("reported");
     // add listener only if not reported
     reportpost_btn.addEventListener(
       "click",
@@ -1268,7 +1257,7 @@ function postdetail(objekt, CurrentUserID) {
 
           //console.log("Video paused:", video_p.paused);
         }
-      }else{ // else user own profile
+      }else{ //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
       }
 
@@ -1280,6 +1269,21 @@ function postdetail(objekt, CurrentUserID) {
 
     }
   /*---End Hidden Frame content */
+
+  /*---Content isreported badge ---*/
+      
+    const reportedBadge = postContainer.querySelector(".reported_badge");
+    if (reportedBadge) {
+      reportedBadge.remove();
+    }
+
+    if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+      const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+      const postview_footer = postContainer.querySelector(".postview_footer");
+      postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
+    }
+
+  /*---End Content isreported badge */
 
 
 

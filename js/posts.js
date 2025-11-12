@@ -565,7 +565,7 @@
         }
       })
       .catch((error) => {
-        Merror("Report Post failed", error);
+        Merror("Report Post failed", error, (dontShowOption = false),`<i class="peer-icon peer-icon-warning red-text"></i>`);
         //console.log("error", error);
         return false;
       });

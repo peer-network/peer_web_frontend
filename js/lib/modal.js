@@ -164,7 +164,7 @@ function Merror(title, text = "", dontShowOption = false, svg = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Okay", className: "btn-blue bold" }],
     type: "error",
     dontShowOption: dontShowOption,
     svg: svg
