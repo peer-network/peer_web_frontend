@@ -443,8 +443,13 @@ function postdetail(objekt, CurrentUserID) {
 
 
 
-  if(objekt.isreported==true) {   postContainer.classList.add("reported_post"); }
-  postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+  if(objekt.hasActiveReports==true) {   postContainer.classList.add("reported_post"); }
+  if(objekt.visibilityStatus){
+    postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+    
+     document.getElementById("cardClicked").setAttribute("data-visibilty", objekt.visibilityStatus);
+  }
+ 
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -1277,7 +1282,7 @@ function postdetail(objekt, CurrentUserID) {
       reportedBadge.remove();
     }
 
-    if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+    if(objekt.hasActiveReports==true ){
       const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
       const postview_footer = postContainer.querySelector(".postview_footer");
       postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);

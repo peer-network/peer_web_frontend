@@ -565,27 +565,23 @@ document.addEventListener("DOMContentLoaded", () => {
         viewpost.id;
       if (!postIdFromView) return;
 
+      // first need to check whether the object exists in the listPost stack
       let moderatorFlag = true;
-      POSTS?.listPosts?.affectedRows.forEach((post) => {
-        // first need to check whether the object exists in the listPost stack
-        if (postIdFromView == post.id) {
-          // then need to check the visibility status
-          if (post.visibilityStatus == "NORMAL") {
-            const confirmation = warnig(
-              "Your post is currently hidden",
-              "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all?",
-              false,
-              '<i class="peer-icon peer-icon-warning red-text"></i>',
-              "Promote anyway"
-            );
-
-            if (!confirmation || confirmation.button === 0)
-              moderatorFlag = false;
-          }
-        }
-      });
-
-      if (!moderatorFlag) return false; // throw the control back in case of flag false
+      const visibilityStatus = viewpost.getAttribute('data-visibilty');
+      // then need to check the visibility status
+      if (visibilityStatus == "NORMAL") { 
+      const confirmation = warnig(
+                "Your post is currently hidden",
+                "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all?",
+                false,
+                '<i class="peer-icon peer-icon-warning red-text"></i>',
+                "Promote anyway"
+              );
+     
+     
+      if (!confirmation || confirmation.button === 0)
+       return false; // throw the control back in case of flag false
+      }
 
       let card = DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`);
       if (!card) {
