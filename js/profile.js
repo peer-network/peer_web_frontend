@@ -5,6 +5,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const biography = document.getElementById("biography");
     biography.innerText = "Biography not available";
 
+    /*-- handling profile visibility----*/
+    const visibilityStatus = "HIDDEN";
+    const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
+
+    if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+      const myProfile = document.querySelector('.my_profile_page');
+      if(myProfile) {
+        myProfile.classList.remove("REPORTED_PROFILE");
+        myProfile.classList.add("HIDDEN_PROFILE");
+      }
+      removeReportedBadge();
+      addHiddenBadge();
+    }
+
+    else if(hasActiveReports) {
+      const myProfile = document.querySelector('.my_profile_page');
+      if (myProfile) {
+        myProfile.classList.remove("HIDDEN_PROFILE");
+        myProfile.classList.add('REPORTED_PROFILE');
+      }
+      addReportedBadge();
+    }
+    /*-- End : handling profile visibility----*/
+
     // Check if bioPath is valid
     if (bioPath && biography) {
       const fullPath = tempMedia(profile2.data.getProfile.affectedRows.biography);
