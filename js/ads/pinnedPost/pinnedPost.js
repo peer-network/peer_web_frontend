@@ -97,10 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
     pinnedBtn.innerHTML = `
-      <a class="btn-blue">
-        <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold none">@${username}</span>
-      </a>
+      <i class="peer-icon peer-icon-pinpost"></i>
+      <span class="ad_username none bold">@${username}</span>
     `;
     return pinnedBtn;
   }

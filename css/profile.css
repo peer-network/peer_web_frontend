@@ -855,8 +855,8 @@
 }
 
 /* Reported Badge Styles */
-.reported_badge,
-.hidden_badge {
+.profile_reported_badge,
+.profile_hidden_badge {
   display: inline-block;
   background-color: var(--bg-filter);
   padding: 15px;
@@ -865,11 +865,11 @@
   margin-left: 25px;
   vertical-align: middle;
 }
-.reported_badge {
+.profile_reported_badge {
   color: #ef4444;
 }
 /* Hidden Badge Styles */
-.hidden_badge {
+.profile_hidden_badge {
   color: var(--white-opacity-50);
 }
 /* .view-profile.REPORTED_PROFILE .reported_badge {
@@ -1090,7 +1090,12 @@
   }
 
   .visibility_hidden .hidden_account_frame .view_content .button.btn-transparent {
-  line-height: 90px;
-}
+    line-height: 90px;
+  }
+
+  .profile_reported_badge, .profile_hidden_badge {
+    padding: 20px;
+    font-size: 35px;
+  }
 
 }

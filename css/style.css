@@ -24,7 +24,7 @@
 	--shadow-add: hsl(0, 0%, 51%);
 	--white-opacity-50: hsla(0, 0%, 100%, 0.5);
 	--black-opacity-50: hsla(0, 0%, 0%, 0.5);
-
+    --dark-grey: rgba(119, 175, 255, 0.50);
 	--dark-inactive: #323232;
 	--black-dark: #252525;
 	--black-secondary: rgba(50, 50, 50, 0.50);
@@ -2993,49 +2993,23 @@ footer {
 
 /* Temporary posted here the code from profile.css, the style was needed in dashboard */
 .pinedbtn {
-  margin-top: auto;
+  	margin-top: auto;
+	background: var(--dark-grey);
+	width: 15%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-radius: 100%;
+	aspect-ratio: 1;
 }
 
-.boostModal .pinedbtn .btn-blue,
-.post-inhalt .pinedbtn .btn-blue,
-.postview_footer .pinedbtn .btn-blue {
-  background-color: #547098 !important;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  line-height: 40px;
-  border: none;
-  justify-content: flex-start;
-  font-size: 16px;
-  gap: 15px;
-  max-width: 300px;
-  /* padding: 0 15px; */
-  padding: 10px;
-  border-radius: 100%;
-  width: fit-content;
+.pinedbtn .peer-icon.peer-icon-pinpost {
+    font-size: 120%;
 }
 
-.postview_footer .pinedbtn .btn-blue {
+.postview_footer .pinedbtn  {
   gap: 20px;
-}
-
-.boostModal .pinedbtn .btn-blue img,
-.post-inhalt .pinedbtn .btn-blue img,
-.postview_footer .pinedbtn .btn-blue img {
-  width: 20px;
-}
-
-.pinedbtn .btn-blue:hover {
-  background-color: var(--button-hover);
-  border-color: var(--button-hover);
-  color: var(--white);
-}
-.pinedbtn .btn-blue span.ad_username {
-  font-style: italic;
-  width: 10ch;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .error {

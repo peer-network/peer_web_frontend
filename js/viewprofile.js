@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*-- handling profile visibility----*/
     // const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
-    const visibilityStatus = "HIDDEN" ;
+    const visibilityStatus = "HIDDEN";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     
     if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
