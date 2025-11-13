@@ -216,7 +216,7 @@
 	background-color: #000;
 	border-radius: 100%;
 	position:relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 	
 }
 .profile_header .profile_picture .cropContainer .online_status {
@@ -855,15 +855,22 @@
 }
 
 /* Reported Badge Styles */
-.reported_badge {
+.reported_badge,
+.hidden_badge {
   display: inline-block;
   background-color: var(--bg-filter);
-  color: #ef4444;
   padding: 15px;
   border-radius: 2.5rem;
   font-size: 20px;
   margin-left: 25px;
   vertical-align: middle;
+}
+.reported_badge {
+  color: #ef4444;
+}
+/* Hidden Badge Styles */
+.hidden_badge {
+  color: var(--white-opacity-50);
 }
 /* .view-profile.REPORTED_PROFILE .reported_badge {
   display: block; 
@@ -888,6 +895,10 @@
   filter: blur(8px);
   user-select: none;
   pointer-events: none;
+}
+
+.view-profile.visibility_hidden .profil-container .profile_picture .cropContainer {
+  overflow: hidden !important;
 }
 
 .visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
