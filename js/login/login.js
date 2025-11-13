@@ -3,7 +3,6 @@ const refreshToken = getCookie("refreshToken");
 
 async function autoLogin() {
   const remember = localStorage.getItem("rememberMe") === "true";
-  console.log('remember ', remember)
   // Auto-login if tokens exist
   if (remember && refreshToken) {
     rememberMeCheckbox.checked = true;
