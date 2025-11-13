@@ -22,6 +22,8 @@ async function fetchHelloData(userid = null) {
             slug
             img
             biography
+            visibilityStatus
+            hasActiveReports
             isfollowed
             isfollowing
             amountposts
@@ -30,6 +32,7 @@ async function fetchHelloData(userid = null) {
             amountfollower
             amountfriends
             amountblocked
+            amountreports
         }
       }
     }`,

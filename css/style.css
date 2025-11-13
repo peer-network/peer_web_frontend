@@ -2704,17 +2704,17 @@ footer {
 		padding: 1.1rem 1.5rem;
 	}
 
-	.boostModal .pinedbtn .button,
-	.post-inhalt .pinedbtn .button,
-	.postview_footer .pinedbtn .button {
+	.boostModal .pinedbtn .btn-blue,
+	.post-inhalt .pinedbtn .btn-blue,
+	.postview_footer .pinedbtn .btn-blue {
 		line-height: 80px !important;
-		padding: 0 30px !important;
+		padding: 20px !important;
 		max-width: 500px !important;
 	}
 
-	.boostModal .pinedbtn .button img,
-	.post-inhalt .pinedbtn .button img,
-	.postview_footer .pinedbtn .button img {
+	.boostModal .pinedbtn .btn-blue img,
+	.post-inhalt .pinedbtn .btn-blue img,
+	.postview_footer .pinedbtn .btn-blue img {
 		width: 35px !important;
 	}
 
@@ -3000,9 +3000,9 @@ footer {
   margin-top: auto;
 }
 
-.boostModal .pinedbtn .button,
-.post-inhalt .pinedbtn .button,
-.postview_footer .pinedbtn .button {
+.boostModal .pinedbtn .btn-blue,
+.post-inhalt .pinedbtn .btn-blue,
+.postview_footer .pinedbtn .btn-blue {
   background-color: #547098 !important;
   display: flex;
   align-items: center;
@@ -3019,22 +3019,22 @@ footer {
   width: fit-content;
 }
 
-.postview_footer .pinedbtn .button {
+.postview_footer .pinedbtn .btn-blue {
   gap: 20px;
 }
 
-.boostModal .pinedbtn .button img,
-.post-inhalt .pinedbtn .button img,
-.postview_footer .pinedbtn .button img {
+.boostModal .pinedbtn .btn-blue img,
+.post-inhalt .pinedbtn .btn-blue img,
+.postview_footer .pinedbtn .btn-blue img {
   width: 20px;
 }
 
-.pinedbtn .button.btn-blue:hover {
+.pinedbtn .btn-blue:hover {
   background-color: var(--button-hover);
   border-color: var(--button-hover);
   color: var(--white);
 }
-.pinedbtn .button span.ad_username {
+.pinedbtn .btn-blue span.ad_username {
   font-style: italic;
   width: 10ch;
   overflow: hidden;
