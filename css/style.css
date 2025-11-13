@@ -188,7 +188,9 @@ strong,
 img {
 	border: 0;
 }
-
+.peer-icon.peer-icon-three-dots {
+	font-size: 43%;
+}
 h1,
 .xxl_font_size {
 	font-size: 35px;
@@ -1898,6 +1900,8 @@ footer {
 	line-height: 0;
 	padding: 0;
 	border: 0;
+	width: auto;
+	min-width: auto;
 }
 
 .feeback_popup_container .btn:hover {
