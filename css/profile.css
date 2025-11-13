@@ -897,7 +897,7 @@
   pointer-events: none;
 }
 
-.view-profile.visibility_hidden .profil-container .profile_picture .cropContainer {
+.view-profile.visibility_hidden .profile_header .profile_picture .cropContainer {
   overflow: hidden !important;
 }
 

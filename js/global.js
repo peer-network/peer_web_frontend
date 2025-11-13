@@ -1929,6 +1929,8 @@ async function fetchPostByID(postID) {
                             username
                             slug
                             img
+                            visibilityStatus
+                            hasActiveReports
                             isfollowed
                             isfollowing
                         }

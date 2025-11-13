@@ -503,6 +503,21 @@ async function postsLaden(postbyUserID=null) {
       };
 
       userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
+
+
+      /*-- handling users visibility----*/
+      const testUserVisibility = "HIDDEN"; 
+      // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+
+      // Check if user has HIDDEN visibility (using hardcoded value for testing)
+      if(testUserVisibility === 'HIDDEN' || testUserVisibility === 'hidden') {
+        const userCardHeader = inhaltDiv.querySelector(".card-header-left");
+        if (userCardHeader) {
+          userCardHeader.classList.add("userVisibility_hidden");
+        }
+      }
+      /*-- End : handling users visibility----*/
+
       const title = document.createElement("h3");
       title.textContent = objekt.title;
       title.classList.add("post-title","md_font_size","bold");
@@ -888,6 +903,43 @@ async function postsLaden(postbyUserID=null) {
       // Alles in die Haupt-<section> hinzufügen
       card.appendChild(postDiv);
       card.appendChild(inhaltDiv);
+
+      /*---Hidden User Frame */
+      if(testUserVisibility === 'HIDDEN' || testUserVisibility === 'hidden'){
+        const userCardHeader = card.querySelector(".card-header-left");
+        const hiddenUserHTML = `
+          <div class="hidden_userfeed_frame">
+            <div class="hidden_content">
+              <div class="hidden_header">
+                <i class="peer-icon peer-icon-eye-close"></i>
+                <div class="hidden_title md_font_size bold">Sensitive content</div>
+              </div>
+              <div class="hidden_description">
+                Click to see
+              </div>
+            </div>
+          </div>
+        `;
+
+        userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+        
+        const hiddenFrame = card.querySelector(".hidden_userfeed_frame");
+        // const viewBtn = hiddenFrame.querySelector(".view_content a");
+        
+        // if (viewBtn) {
+        //   viewBtn.addEventListener("click", (e) => {
+        //     e.preventDefault();
+        //     hiddenFrame.remove();
+        //     card.classList.remove('hidden_user_profile');
+            
+        //     // Remove blur from user elements
+        //     card.querySelectorAll('.blur-content').forEach(el => {
+        //       el.classList.remove('blur-content');
+        //     });
+        //   });
+        // }
+      }
+      /*---End Hidden User Frame */
       
       card.addEventListener("click", function handleCardClick() {
         postClicked(objekt);

@@ -6,6 +6,8 @@
   //
   let isFetchAd = true;
 
+  /*-- End : handling profile visibility----*/
+
   //   async function getPosts(offset, limit, filterBy, title = "", tag = null, sortby = "NEWEST", userID = null) {
 
   //     const accessToken = getCookie("authToken");

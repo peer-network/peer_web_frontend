@@ -37,8 +37,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     }
 
+    // Disable report button and change text
+    function disableReportButton() {
+        reportButton.disabled = true;
+        reportButton.textContent = "Reported by you";
+        reportButton.classList.add('disabled');
+    }
+
     // Create and show report modal
     function showReportModal() {
+        // Don't show modal if button is disabled
+        if (reportButton.disabled) {
+            return;
+        }
+
         // Get profile data
         const username = document.getElementById('username2').textContent.trim();
         const slug = document.getElementById('slug2').textContent.trim();
@@ -122,7 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(GraphGL, requestOptions);
             const result = await response.json();
             
-            if (result.data?.reportUser?.status === 'success' || result.data?.reportUser?.ResponseCode === 11012) {
+            if (result.data?.reportUser?.ResponseCode === 31008) { 
+                disableReportButton();
+                
+                setTimeout(() => {
+                    closeReportModal();
+                }, 2000);
+            } else if (result.data?.reportUser?.status === 'success' || result.data?.reportUser?.ResponseCode === 11012) {
                 const successMessage = result.data.reportUser.ResponseMessage || 'Profile reported successfully';
                 showModalToast(successMessage, 'success');
 
@@ -132,6 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     //test for hidden profiles
                     // viewProfile.classList.add('visibility_hidden');
                 }
+                
+                // Disable the report button after successful report
+                disableReportButton();
                 
                 // Close modal after toast is shown (give time to read the message)
                 setTimeout(() => {

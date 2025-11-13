@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     biography.innerText = "Biography not available";
 
     /*-- handling profile visibility----*/
-    const visibilityStatus = "HIDDEN";
+    const visibilityStatus = "NORMAL";
     const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
 
     if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){

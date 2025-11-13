@@ -2700,19 +2700,9 @@ footer {
 		padding: 1.1rem 1.5rem;
 	}
 
-	.boostModal .pinedbtn .btn-blue,
-	.post-inhalt .pinedbtn .btn-blue,
-	.postview_footer .pinedbtn .btn-blue {
-		line-height: 80px !important;
-		padding: 20px !important;
-		max-width: 500px !important;
-	}
-
-	.boostModal .pinedbtn .btn-blue img,
-	.post-inhalt .pinedbtn .btn-blue img,
-	.postview_footer .pinedbtn .btn-blue img {
-		width: 35px !important;
-	}
+	/* .postview_footer .pinedbtn  {
+		width: 10% !important;
+	} */
 
 }
 
@@ -2993,25 +2983,47 @@ footer {
 
 /* Temporary posted here the code from profile.css, the style was needed in dashboard */
 .pinedbtn {
-  	margin-top: auto;
-	background: var(--dark-grey);
-	width: 15%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	border-radius: 100%;
-	aspect-ratio: 1;
+  margin-top: auto;
+  background: var(--dark-grey);
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  padding: 10px;
+  aspect-ratio: 1;
 }
 
 .pinedbtn .peer-icon.peer-icon-pinpost {
     font-size: 120%;
 }
 
-.postview_footer .pinedbtn  {
-  gap: 20px;
-}
+/* .postview_footer .pinedbtn  {
+  width: 6%;
+} */
 
 .error {
   color: var(--red-accent, #FF3B3B);
 };
+
+
+.card-header-left .hidden_userfeed_frame {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  bottom: 0;
+}
+
+.hidden_userfeed_frame .hidden_header {
+  display: flex;
+}
+
+.hidden_userfeed_frame .hidden_title.md_font_size.bold {
+  font-size: 16px;
+}
+
+.hidden_userfeed_frame .hidden_description {
+  margin-left: 30px;
+  font-size: 14px;
+}
