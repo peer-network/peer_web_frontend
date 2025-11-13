@@ -475,9 +475,12 @@ async function postsLaden(postbyUserID=null) {
       /*-- End : testing post report and visibility----*/
 
       
-      if(objekt.isreported==true) {   card.classList.add("reported_post"); }
-      card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+      if(objekt.hasActiveReports==true) {   card.classList.add("reported_post"); }
 
+      if(objekt.visibilityStatus){
+        card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+        card.setAttribute("data-visibilty", objekt.visibilityStatus);
+      }
 
       let postDiv;
       let img;
@@ -942,7 +945,7 @@ async function postsLaden(postbyUserID=null) {
         /*---End Hidden Frame content */
 
         /*---Content isreported badge ---*/
-          if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+          if( objekt.hasActiveReports==true ){
               
               const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
               inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);

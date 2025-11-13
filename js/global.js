@@ -1576,25 +1576,38 @@ function commentToDom(c, append = true) {
   commentTextDiv.classList.add("comment_text");
   commentTextDiv.textContent = c.content;
 
+  // Comment Actions
+  const commentActionDiv = document.createElement("div");
+  commentActionDiv.classList.add("comment_action");
+ 
   // Report Comment Div
   const reportCommentTrigger = document.createElement("span");
   reportCommentTrigger.classList.add("dots");
+  reportCommentTrigger.innerHTML = '<i class="peer-icon peer-icon-three-dots"></i>';
 
+  commentActionDiv.append(reportCommentTrigger);
   // Main trigger for adding the report button
   reportCommentTrigger.addEventListener("click", () => {
     const reportContainer = document.createElement("div");
     reportContainer.classList.add("report-btn-container");
 
-    const reportButton = document.createElement("div");
-    reportButton.classList.add("report-btn");
+    const reportButton = document.createElement("button");
+    reportButton.classList.add("report-btn","btn-red-transparent");
 
     const flagIcon = document.createElement("span");
     flagIcon.classList.add("flag-icon");
     flagIcon.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
 
+    const threeDotIcon = document.createElement("i");
+    threeDotIcon.classList.add("peer-icon","peer-icon-three-dots");
+
+    
+    
+
     reportButton.appendChild(flagIcon);
     reportButton.appendChild(document.createTextNode("Report comment"));
     reportContainer.appendChild(reportButton);
+    reportContainer.appendChild(threeDotIcon);
     commentBody.appendChild(reportContainer);
 
     // --- Add click-outside listener ---
@@ -1669,6 +1682,16 @@ function commentToDom(c, append = true) {
             false,
             '<i class="peer-icon peer-icon-good-tick-circle"></i>'
           );
+
+          const reportflaghtml = document.createElement("span");
+          reportflaghtml.classList.add("reported-flag","red-text");
+          reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+            
+          commentActionDiv.appendChild(reportflaghtml);
+          comment.classList.add("reported_comment");
+          c.hasActiveReports=true;
+
+
         } else {
           Merror(
             message,
@@ -1739,55 +1762,78 @@ function commentToDom(c, append = true) {
   commentBody.append(
     commenterInfoDiv,
     commentTextDiv,
-    reportCommentTrigger,
+    commentActionDiv,
     replyContainer
   );
 
+  /*-- for testing Comment visibility----*/
+        
+    const urlParams = new URLSearchParams(window.location.search);
+    const testcommentid = urlParams.get("commentid");
 
-   // Display of reported comment
-   const urlParams = new URLSearchParams(window.location.search);
-    const testPostid = urlParams.get("commentid");
- // Mock object
-  const ContentVisibilityStatus = {
-    NORMAL: "NORMAL",
-    HIDDEN: "HIDDEN",
-    ILLEGAL: "ILLEGAL"
-  };
+        if(testcommentid==c.commentid){
+                
+            c.visibilityStatus = 'HIDDEN';
+          }
 
-  c.visibilityStatus = ContentVisibilityStatus.NORMAL;
-
-  console.log('testPostid ', testPostid)
-
-   if(testPostid==c.commentid){
-      c.isreported=true; // let suppose make it true: assumption
-
-      if(c.isreported) {
-        commentBody.classList.add("reported_post");
-      }
-      
-      c.visibilityStatus = ContentVisibilityStatus.HIDDEN;
-      commentBody.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
-
-}
-
+        
+         
+        
+  /*-- End : testing post report and visibility----*/
+  if(c.visibilityStatus){
+    comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
+  }
   if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
     const hiddenContentHTML = `
-      <div class="hidden_content_frame">
-        <div class="hidden_content">
-          <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
-          <div class="hidden_title xl_font_size bold">Sensitive content</div>
-          <div class="hidden_description md_font_size">
-            This content may be sensitive or abusive.<br>
-            Do you want to view it anyway?
-          </div>
-          <div class="view_content">
-            <a href="#" class="button btn-transparent">View content</a>
-          </div>
-        </div>
-      </div>
-    `;
+              <div class="hidden_content_frame_comment">
+                <div class="hidden_content">
+                  <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+                  <div class="hidden_title md_font_size bold">Sensitive content</div>
+                  <div class="hidden_description">
+                    This content may be sensitive or abusive.<br>
+                    Do you want to view it anyway?
+                  </div>
+                  <div class="view_content">
+                    <a href="#" class="button btn-transparent">View content</a>
+                  </div>
+                </div>
+              </div>
+            `;
 
-    commentBody.innerHTML = hiddenContentHTML;
+   
+      if(c.user.id != userID ){
+         commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", hiddenContentHTML);
+       
+
+        // Select all inserted hidden frames and attach "View content" listeners
+        commentBody.querySelectorAll(".hidden_content_frame_comment").forEach(frame => {
+          const viewBtn = frame.querySelector(".view_content a");
+          if (viewBtn) {
+            viewBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              frame.remove(); // remove that specific frame
+              comment.classList.remove('visibilty_hidden');
+            });
+          }
+        });
+      }else{
+        comment.classList.remove("visibilty_"+c.visibilityStatus.toLowerCase());
+        const hiddedCommentBadge = document.createElement("span");
+        hiddedCommentBadge.classList.add("hidden_badge_comment","txt-color-gray");
+        hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+        commentActionDiv.appendChild(hiddedCommentBadge);
+      }
+  
+   
+  }
+  if(c.hasActiveReports==true){
+    const reportflaghtml = document.createElement("span");
+    reportflaghtml.classList.add("reported-flag","red-text");
+    reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+    commentActionDiv.appendChild(reportflaghtml);
+    comment.classList.add("reported_comment");
+
+   
   }
 
   //END of display reported comment
