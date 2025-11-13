@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*-- handling profile visibility----*/
     // const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
-    const visibilityStatus = "NORMAL" ;
+    const visibilityStatus = "HIDDEN" ;
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     
     if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
@@ -20,13 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if(viewProfile) {
         viewProfile.classList.remove("REPORTED_PROFILE");
         viewProfile.classList.add("visibility_hidden");
+        viewProfile.classList.add("HIDDEN_PROFILE");
       }
     }
     
     else if(hasActiveReports) {
       const viewProfile = document.querySelector('.view-profile');
       if (viewProfile) {
-        viewProfile.classList.add("visibility_hidden");
+        viewProfile.classList.remove("visibility_hidden");
         viewProfile.classList.add('REPORTED_PROFILE');
       }
       addReportedBadge();

@@ -897,6 +897,10 @@
   pointer-events: none;
 }
 
+.view-profile.visibility_hidden .profil-container .profile_picture .cropContainer {
+  overflow: hidden !important;
+}
+
 .visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
   display: flex;
   gap: 10px;
