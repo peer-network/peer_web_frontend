@@ -507,14 +507,12 @@ async function postsLaden(postbyUserID=null) {
 
       /*-- handling users visibility----*/
       const testUserVisibility = "HIDDEN"; 
+      const userHasActiveReports = objekt.user.hasActiveReports || false;
       // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
       // Check if user has HIDDEN visibility (using hardcoded value for testing)
-      if(testUserVisibility === 'HIDDEN' || testUserVisibility === 'hidden') {
-        const userCardHeader = inhaltDiv.querySelector(".card-header-left");
-        if (userCardHeader) {
-          userCardHeader.classList.add("userVisibility_hidden");
-        }
+      if(testUserVisibility) {
+        objekt.user.visibilityStatus = testUserVisibility;
       }
       /*-- End : handling users visibility----*/
 
@@ -905,7 +903,7 @@ async function postsLaden(postbyUserID=null) {
       card.appendChild(inhaltDiv);
 
       /*---Hidden User Frame */
-      if(testUserVisibility === 'HIDDEN' || testUserVisibility === 'hidden'){
+      if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
         const userCardHeader = card.querySelector(".card-header-left");
         const hiddenUserHTML = `
           <div class="hidden_userfeed_frame">
@@ -921,23 +919,20 @@ async function postsLaden(postbyUserID=null) {
           </div>
         `;
 
-        userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
-        
-        const hiddenFrame = card.querySelector(".hidden_userfeed_frame");
-        // const viewBtn = hiddenFrame.querySelector(".view_content a");
-        
-        // if (viewBtn) {
-        //   viewBtn.addEventListener("click", (e) => {
-        //     e.preventDefault();
-        //     hiddenFrame.remove();
-        //     card.classList.remove('hidden_user_profile');
-            
-        //     // Remove blur from user elements
-        //     card.querySelectorAll('.blur-content').forEach(el => {
-        //       el.classList.remove('blur-content');
-        //     });
-        //   });
-        // }
+        if(objekt.user.id != UserID && userHasActiveReports===true){
+          userCardHeader.classList.add("hidden_user_profile");
+
+          userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+          
+          userCardHeader.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+            frame.addEventListener("click", (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              frame.remove(); 
+              userCardHeader.classList.remove('hidden_user_profile');
+            });
+          });
+        }
       }
       /*---End Hidden User Frame */
       

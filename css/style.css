@@ -3006,24 +3006,3 @@ footer {
 .error {
   color: var(--red-accent, #FF3B3B);
 };
-
-
-.card-header-left .hidden_userfeed_frame {
-  position: absolute;
-  top: 5%;
-  left: 5%;
-  bottom: 0;
-}
-
-.hidden_userfeed_frame .hidden_header {
-  display: flex;
-}
-
-.hidden_userfeed_frame .hidden_title.md_font_size.bold {
-  font-size: 16px;
-}
-
-.hidden_userfeed_frame .hidden_description {
-  margin-left: 30px;
-  font-size: 14px;
-}
