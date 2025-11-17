@@ -74,3 +74,5 @@
 .peer-icon-home-alt:before { content: '\e848'; } /* '' */
 .peer-icon-flag-fill:before { content: '\e849'; } /* '' */
 .peer-icon-flag:before { content: '\e84a'; } /* '' */
+.peer-icon-illegal:before { content: '\e84b'; } /* '' */
+.peer-icon-three-dots:before { content: '\e84c'; } /* '' */

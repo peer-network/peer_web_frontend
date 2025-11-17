@@ -140,7 +140,8 @@ if (isset($_GET['message'])) {
                                             type="checkbox" 
                                             id="rememberMe" 
                                             name="rememberMe"
-                                            aria-describedby="checkboxValidation"
+                                            aria-describedby="checkboxValidation",
+                                            checked
                                         >
                                         <span class="checkbox-label medium_font">
                                             Remember me

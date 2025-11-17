@@ -449,7 +449,7 @@ async function postsLaden(postbyUserID=null) {
         
         const urlParams = new URLSearchParams(window.location.search);
         const testPostid = urlParams.get("testid");
-        const testPostidreported = urlParams.get("reported");
+        //const testPostidreported = urlParams.get("reported");
         const testPostidvisibility = urlParams.get("visibility");
         
       /*-- End : testing post report and visibility----*/
@@ -476,9 +476,6 @@ async function postsLaden(postbyUserID=null) {
 
         if(testPostid==objekt.id){
           
-          
-          objekt.isreported=testPostidreported;
-          
           if(testPostidvisibility){
             objekt.visibilityStatus = testPostidvisibility;
           }
@@ -489,9 +486,15 @@ async function postsLaden(postbyUserID=null) {
       /*-- End : testing post report and visibility----*/
 
       
-      if(objekt.isreported==true) {   card.classList.add("reported_post"); }
-      card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+      if(objekt.hasActiveReports==true) {   
+        card.classList.add("reported_post");
+        card.setAttribute("data-hasReported", objekt.hasActiveReports);
+      }
 
+      if(objekt.visibilityStatus){
+        card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+        card.setAttribute("data-visibilty", objekt.visibilityStatus);
+      }
 
       let postDiv;
       let img;
@@ -772,7 +775,7 @@ async function postsLaden(postbyUserID=null) {
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.querySelector(".video_1");
-          if (video.readyState >= 2 ) {
+          if (video?.readyState >= 2 ) {
             // const rect = video.getBoundingClientRect();
             // const mouseX = event.clientX - rect.left;
             // const relativePosition = mouseX / rect.width;
@@ -948,55 +951,72 @@ async function postsLaden(postbyUserID=null) {
         insertPinnedBtn(card, objekt.user.username, "profile");
       }
 
-        /*---Hidden Frame content */
-          if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
-              const hiddenContentHTML = `
-              <div class="hidden_content_frame">
-                <div class="hidden_content">
-                  <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
-                  <div class="hidden_title md_font_size bold">Sensitive content</div>
-                  <div class="hidden_description">
-                    This content may be sensitive or abusive.<br>
-                    Do you want to view it anyway?
-                  </div>
-                  <div class="view_content">
-                    <a href="#" class="button btn-transparent">View content</a>
-                  </div>
+      /*---Hidden Frame content */
+        if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+            const hiddenContentHTML = `
+            <div class="hidden_content_frame">
+              <div class="hidden_content">
+                <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+                <div class="hidden_title md_font_size bold">Sensitive content</div>
+                <div class="hidden_description">
+                  This content may be sensitive or abusive.<br>
+                  Do you want to view it anyway?
+                </div>
+                <div class="view_content">
+                  <a href="#" class="button btn-transparent">View content</a>
                 </div>
               </div>
-            `;
+            </div>
+          `;
 
-            if(objekt.user.id != UserID ){
-              //console.log(objekt.user.id,UserID);
-              inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
+          if(objekt.user.id != UserID ){
+            //console.log(objekt.user.id,UserID);
+            inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
+          
+
+            // Select all inserted hidden frames and attach "View content" listeners
+            inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
+              const viewBtn = frame.querySelector(".view_content a");
+              if (viewBtn) {
+                viewBtn.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  frame.remove(); // remove that specific frame
+                  card.classList.remove('visibilty_hidden');
+                });
+              }
+            });
+          }else{ //else mean logged in user viewing own post 
+            const hiddenContentBadge = `<div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden</div>`;
+            inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", hiddenContentBadge);
+
+          }
+        }
+      /*---End Hidden Frame content */
+
+      /*---illegal Frame content */
+        if(objekt.visibilityStatus=='ILLEGAL' || objekt.visibilityStatus=='illegal'){
             
+          const illegalContentHTML = `
+          <div class="illegal_content_frame">
+            <div class="illegal_content">
+              <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+              <div class="illegal_title bold">This content was removed as illegal</div>
+            </div>
+          </div>`;
+          
+          card.innerHTML="";
+          card.insertAdjacentHTML("beforeend", illegalContentHTML);
+        }
 
-              // Select all inserted hidden frames and attach "View content" listeners
-              inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
-                const viewBtn = frame.querySelector(".view_content a");
-                if (viewBtn) {
-                  viewBtn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    frame.remove(); // remove that specific frame
-                    card.classList.remove('visibilty_hidden');
-                  });
-                }
-              });
-            }else{ //else mean logged in user viewing own post 
-              const hiddenContentBadge = `<div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden</div>`;
-              inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", hiddenContentBadge);
+      /*---End illegal Frame content */
 
-            }
-          }
-        /*---End Hidden Frame content */
-
-        /*---Content isreported badge ---*/
-          if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
-              
-              const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
-              inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
-          }
-        /*---End Content isreported badge */
+      /*---Content isreported badge ---*/
+        if( objekt.hasActiveReports==true ){
+            
+            const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+            inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+        }
+      /*---End Content isreported badge */
 
 
     });

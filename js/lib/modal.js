@@ -171,16 +171,17 @@ function Merror(title, text = "", dontShowOption = false, svg = null) {
   });
 }
 
-function warnig(title, text = "", dontShowOption = false, svg = null) {
+async function warnig(title, text = "", dontShowOption = false, svg = null, actionBtnTxt = "Confirm") {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white bold" }],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: actionBtnTxt, className: "btn-white bold" }],
     type: "warning",
     dontShowOption: dontShowOption,
     svg: svg
   });
 }
+
 function success(title, text = "", dontShowOption = false, svg = null) {
   return createModal({
     title: title,
