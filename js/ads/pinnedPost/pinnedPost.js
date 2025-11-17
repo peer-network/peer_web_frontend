@@ -63,9 +63,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function selectCardForBoosting(card) {
+  async function selectCardForBoosting(card) {
     STATE.selectedCard = card;
     STATE.postid = card.id;
+
+
+    const hasReported = card.dataset.hasreported || card.getAttribute("data-hasreported");
+    // Check visibility status
+    const visibilityStatus = card.dataset.visibilty || card.getAttribute("data-visibilty");
+    let flag = false;
+    let screen = 1;
+    let messageTitle, message = "";
+
+    if (hasReported) {
+      messageTitle = "Your post is currently reported";
+      message =
+        "Your post was reported. When reviewed, its promotion might be hidden";
+      flag = true;
+    }
+
+    if (visibilityStatus == "HIDDEN" || visibilityStatus == "hidden") {
+      messageTitle = "Your post is currently hidden";
+      message =
+        "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?";
+      flag = true;
+    }
+
+    if (flag) {
+      const confirmation = await warnig(
+        messageTitle,
+        message,
+        false,
+        '<i class="peer-icon peer-icon-warning red-text"></i>',
+        "Promote anyway"
+      );
+
+      if (!confirmation || confirmation.button === 0) return false;
+      screen = 2;
+    }
 
     const previewBoostedPost = document.getElementById("preview_boostedPost");
     if (!previewBoostedPost) return;
@@ -90,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     previewBoostedPost.appendChild(clonedCard);
     DOM.modal.classList.remove("none");
-    showStep(1);
+    showStep(screen);
   }
 
   function createPinnedButton(username) {
@@ -544,66 +579,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function setupBoostFromPopup() {
+  async function setupBoostFromPopup() {
     if (!DOM.boostPostFromPopup) return;
-
-    DOM.boostPostFromPopup.addEventListener("click", function (e) {
+    DOM.boostPostFromPopup.addEventListener("click", (e) => {
       e.preventDefault();
 
-      const isProfilePage = document.querySelector(".profile_header") !== null;
-      if (!isProfilePage) {
-        alert("You can only boost posts from your profile page.");
-        return;
-      }
-
-      const viewpost = document.querySelector(".viewpost");
-      if (!viewpost) return;
-
-      const postIdFromView =
-        viewpost.getAttribute("postid") ||
-        viewpost.dataset.postid ||
-        viewpost.id;
-      if (!postIdFromView) return;
-
-      let moderatorFlag = true;
-      POSTS?.listPosts?.affectedRows.forEach((post) => {
-        // first need to check whether the object exists in the listPost stack
-        if (postIdFromView == post.id) {
-          // then need to check the visibility status
-          if (post.visibilityStatus == "NORMAL") {
-            const confirmation = warnig(
-              "Your post is currently hidden",
-              "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all?",
-              false,
-              '<i class="peer-icon peer-icon-warning red-text"></i>',
-              "Promote anyway"
-            );
-
-            if (!confirmation || confirmation.button === 0)
-              moderatorFlag = false;
-          }
+      try {
+        // Ensure we're on the profile page
+        const isProfilePage = !!document.querySelector(".profile_header");
+        if (!isProfilePage) {
+          return alert("You can only boost posts from your profile page.");
         }
-      });
 
-      if (!moderatorFlag) return false; // throw the control back in case of flag false
+        // Find the post being viewed
+        const viewpost = document.querySelector(".viewpost");
+        if (!viewpost) return;
 
-      let card = DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`);
-      if (!card) {
-        card = document.getElementById(postIdFromView);
+        const postIdFromView =
+          viewpost.getAttribute("postid") ||
+          viewpost.dataset.postid ||
+          viewpost.id;
 
-        if (!card) {
-          alert("Could not find the original post card.");
+        if (!postIdFromView) {
+          console.warn("No post ID found in viewpost.");
           return;
         }
-      }
 
-      if (isPostBoosted(card.id)) {
-        alert("This post is already boosted.");
-        return;
-      }
+        // Locate the card in DOM
+        let card =
+          DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`) ||
+          document.getElementById(postIdFromView);
 
-      STATE.isFromPopup = true;
-      selectCardForBoosting(card);
+        if (!card) {
+          return Merror("Could not find the original post card.", '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
+        }
+
+        // Prevent duplicate boosting
+        if (isPostBoosted(card.id)) {
+          return Merror("This post is already boosted.", '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
+        }
+
+        // Mark state and trigger boosting
+        STATE.isFromPopup = true;
+        selectCardForBoosting(card);
+      } catch (error) {
+        console.error("Boosting failed:", error);
+        console.error(
+          "Something went wrong while boosting the post. Please try again."
+        );
+      }
     });
   }
 

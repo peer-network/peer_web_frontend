@@ -441,8 +441,7 @@ function postdetail(objekt, CurrentUserID) {
       postContainer.classList.remove(cls);
     }
   });
-
-
+  
   cardClickedContainer.setAttribute("data-hasReported", objekt.hasActiveReports);
   cardClickedContainer.setAttribute("data-visibilty", objekt.visibilityStatus);
   if(objekt.hasActiveReports==true) {   

@@ -748,7 +748,7 @@ async function postsLaden(postbyUserID=null) {
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.querySelector(".video_1");
-          if (video.readyState >= 2 ) {
+          if (video?.readyState >= 2 ) {
             // const rect = video.getBoundingClientRect();
             // const mouseX = event.clientX - rect.left;
             // const relativePosition = mouseX / rect.width;
