@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (referralInfo && referralInfo.status === 'success' && referralInfo.referralLink) {
           if (linkElement) {
-            const finalLink = referralInfo.referralLink.replace(/^(https?:\/\/)[^/]+\//, baseUrl);
+            //alert(baseUrl);
+            const finalLink = referralInfo.referralLink.replace('register.php', 'invite.php').replace(/^(https?:\/\/)[^/]+\//, baseUrl);
             linkElement.textContent = finalLink;
           }
         } else {
