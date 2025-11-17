@@ -171,8 +171,7 @@ function Merror(title, text = "", dontShowOption = false, svg = null) {
   });
 }
 
-function warnig(title, text = "", dontShowOption = false, svg = null, actionBtnTxt = "Confirm") {
-  console.log('actionBtnTxt ', actionBtnTxt)
+async function warnig(title, text = "", dontShowOption = false, svg = null, actionBtnTxt = "Confirm") {
   return createModal({
     title: title,
     message: userfriendlymsg(text),

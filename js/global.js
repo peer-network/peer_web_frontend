@@ -426,7 +426,9 @@ function calctimeAgo(datetime) {
 
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
+  const cardClickedContainer = document.getElementById("cardClicked");
   const postContainer = document.getElementById("viewpost-container");
+
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
@@ -439,12 +441,16 @@ function postdetail(objekt, CurrentUserID) {
       postContainer.classList.remove(cls);
     }
   });
+  
+  cardClickedContainer.setAttribute("data-hasReported", objekt.hasActiveReports);
+  cardClickedContainer.setAttribute("data-visibilty", objekt.visibilityStatus);
+  if(objekt.hasActiveReports==true) {   
+    postContainer.classList.add("reported_post");
+  }
 
-
-
-
-  if(objekt.isreported==true) {   postContainer.classList.add("reported_post"); }
-  postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+  if(objekt.visibilityStatus){
+    postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+  }
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -528,8 +534,11 @@ function postdetail(objekt, CurrentUserID) {
   const newreportpost_btn = reportpost_btn.cloneNode(true);
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
+  
+  if(objekt.user.id == UserID ){
+    reportpost_btn.classList.add("none"); //your own post
 
-  if (objekt.isreported==true) {
+  }else if (objekt.isreported==true) {
     // change text if already reported
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
@@ -1195,6 +1204,7 @@ function postdetail(objekt, CurrentUserID) {
     if (hiddenContentFrame) {
       hiddenContentFrame.remove();
     }
+     
 
     if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
         const hiddenContentHTML = `
@@ -1210,12 +1220,11 @@ function postdetail(objekt, CurrentUserID) {
               <a href="#" class="button btn-transparent">View content</a>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
 
       if(objekt.user.id != UserID ){
         post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
-        const  containerleft_text_post =containerleft.querySelector(".post_content");
+        const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
         if (containerleft_text_post) {
           containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
         }
@@ -1257,6 +1266,8 @@ function postdetail(objekt, CurrentUserID) {
 
           //console.log("Video paused:", video_p.paused);
         }
+      
+
       }else{ //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
       }
@@ -1270,6 +1281,31 @@ function postdetail(objekt, CurrentUserID) {
     }
   /*---End Hidden Frame content */
 
+
+  /*---illegal Frame content */
+    const illegalContentFrame = postContainer.querySelector(".illegal_content_frame");
+    if (illegalContentFrame) {
+      illegalContentFrame.remove();
+    }
+    if(objekt.visibilityStatus=='ILLEGAL' || objekt.visibilityStatus=='illegal'){
+        
+          const illegalContentHTML = `
+          <div class="illegal_content_frame">
+            <div class="illegal_content">
+              <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+              <div class="illegal_title md_font_size bold">This content was removed as illegal</div>
+            </div>
+          </div>`;
+          const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
+          if (containerleft_text_post) {
+            containerleft_text_post.insertAdjacentHTML("beforeend", illegalContentHTML);
+          }
+          post_gallery.innerHTML="";
+          post_gallery.insertAdjacentHTML("beforeend", illegalContentHTML);
+    }
+
+  /*---End illegal Frame content */
+
   /*---Content isreported badge ---*/
       
     const reportedBadge = postContainer.querySelector(".reported_badge");
@@ -1277,15 +1313,13 @@ function postdetail(objekt, CurrentUserID) {
       reportedBadge.remove();
     }
 
-    if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+    if( objekt.hasActiveReports==true ){
       const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
       const postview_footer = postContainer.querySelector(".postview_footer");
       postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
     }
 
   /*---End Content isreported badge */
-
-
 
 }
 
@@ -1576,25 +1610,38 @@ function commentToDom(c, append = true) {
   commentTextDiv.classList.add("comment_text");
   commentTextDiv.textContent = c.content;
 
+  // Comment Actions
+  const commentActionDiv = document.createElement("div");
+  commentActionDiv.classList.add("comment_action");
+ 
   // Report Comment Div
   const reportCommentTrigger = document.createElement("span");
   reportCommentTrigger.classList.add("dots");
+  reportCommentTrigger.innerHTML = '<i class="peer-icon peer-icon-three-dots"></i>';
 
+  commentActionDiv.append(reportCommentTrigger);
   // Main trigger for adding the report button
   reportCommentTrigger.addEventListener("click", () => {
     const reportContainer = document.createElement("div");
     reportContainer.classList.add("report-btn-container");
 
-    const reportButton = document.createElement("div");
-    reportButton.classList.add("report-btn");
+    const reportButton = document.createElement("button");
+    reportButton.classList.add("report-btn","btn-red-transparent");
 
     const flagIcon = document.createElement("span");
     flagIcon.classList.add("flag-icon");
     flagIcon.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
 
+    const threeDotIcon = document.createElement("i");
+    threeDotIcon.classList.add("peer-icon","peer-icon-three-dots");
+
+    
+    
+
     reportButton.appendChild(flagIcon);
     reportButton.appendChild(document.createTextNode("Report comment"));
     reportContainer.appendChild(reportButton);
+    reportContainer.appendChild(threeDotIcon);
     commentBody.appendChild(reportContainer);
 
     // --- Add click-outside listener ---
@@ -1669,6 +1716,16 @@ function commentToDom(c, append = true) {
             false,
             '<i class="peer-icon peer-icon-good-tick-circle"></i>'
           );
+
+          const reportflaghtml = document.createElement("span");
+          reportflaghtml.classList.add("reported-flag","red-text");
+          reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+            
+          commentActionDiv.appendChild(reportflaghtml);
+          comment.classList.add("reported_comment");
+          c.hasActiveReports=true;
+
+
         } else {
           Merror(
             message,
@@ -1739,55 +1796,75 @@ function commentToDom(c, append = true) {
   commentBody.append(
     commenterInfoDiv,
     commentTextDiv,
-    reportCommentTrigger,
+    commentActionDiv,
     replyContainer
   );
 
+  /*-- for testing Comment visibility----*/
+        
+    const urlParams = new URLSearchParams(window.location.search);
+    const testcommentid = urlParams.get("commentid");
 
-   // Display of reported comment
-   const urlParams = new URLSearchParams(window.location.search);
-    const testPostid = urlParams.get("commentid");
- // Mock object
-  const ContentVisibilityStatus = {
-    NORMAL: "NORMAL",
-    HIDDEN: "HIDDEN",
-    ILLEGAL: "ILLEGAL"
-  };
+        if(testcommentid==c.commentid){
+                
+            c.visibilityStatus = 'HIDDEN';
+          }
 
-  c.visibilityStatus = ContentVisibilityStatus.NORMAL;
-
-  console.log('testPostid ', testPostid)
-
-   if(testPostid==c.commentid){
-      c.isreported=true; // let suppose make it true: assumption
-
-      if(c.isreported) {
-        commentBody.classList.add("reported_post");
-      }
-      
-      c.visibilityStatus = ContentVisibilityStatus.HIDDEN;
-      commentBody.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
-
-}
-
+  /*-- End : testing post report and visibility----*/
+  if(c.visibilityStatus){
+    comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
+  }
   if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
     const hiddenContentHTML = `
-      <div class="hidden_content_frame">
-        <div class="hidden_content">
-          <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
-          <div class="hidden_title xl_font_size bold">Sensitive content</div>
-          <div class="hidden_description md_font_size">
-            This content may be sensitive or abusive.<br>
-            Do you want to view it anyway?
-          </div>
-          <div class="view_content">
-            <a href="#" class="button btn-transparent">View content</a>
-          </div>
-        </div>
-      </div>
-    `;
+              <div class="hidden_content_frame_comment">
+                <div class="hidden_content">
+                  <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+                  <div class="hidden_title md_font_size bold">Sensitive content</div>
+                  <div class="hidden_description">
+                    This content may be sensitive or abusive.<br>
+                    Do you want to view it anyway?
+                  </div>
+                  <div class="view_content">
+                    <a href="#" class="button btn-transparent">View content</a>
+                  </div>
+                </div>
+              </div>
+            `;
 
-    commentBody.innerHTML = hiddenContentHTML;
+   
+      if(c.user.id != userID ){
+         commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", hiddenContentHTML);
+       
+
+        // Select all inserted hidden frames and attach "View content" listeners
+        commentBody.querySelectorAll(".hidden_content_frame_comment").forEach(frame => {
+          const viewBtn = frame.querySelector(".view_content a");
+          if (viewBtn) {
+            viewBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              frame.remove(); // remove that specific frame
+              comment.classList.remove('visibilty_hidden');
+            });
+          }
+        });
+      }else{
+        comment.classList.remove("visibilty_"+c.visibilityStatus.toLowerCase());
+        const hiddedCommentBadge = document.createElement("span");
+        hiddedCommentBadge.classList.add("hidden_badge_comment","txt-color-gray");
+        hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+        commentActionDiv.appendChild(hiddedCommentBadge);
+      }
+  
+   
+  }
+  if(c.hasActiveReports==true){
+    const reportflaghtml = document.createElement("span");
+    reportflaghtml.classList.add("reported-flag","red-text");
+    reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+    commentActionDiv.appendChild(reportflaghtml);
+    comment.classList.add("reported_comment");
+
+   
   }
 
   //END of display reported comment
