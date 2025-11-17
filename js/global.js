@@ -426,7 +426,9 @@ function calctimeAgo(datetime) {
 
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
+  const cardClickedContainer = document.getElementById("cardClicked");
   const postContainer = document.getElementById("viewpost-container");
+
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
@@ -441,10 +443,15 @@ function postdetail(objekt, CurrentUserID) {
   });
 
 
+  cardClickedContainer.setAttribute("data-hasReported", objekt.hasActiveReports);
+  cardClickedContainer.setAttribute("data-visibilty", objekt.visibilityStatus);
+  if(objekt.hasActiveReports==true) {   
+    postContainer.classList.add("reported_post");
+  }
 
-
-  if(objekt.hasActiveReports==true) {   postContainer.classList.add("reported_post"); }
-  postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+  if(objekt.visibilityStatus){
+    postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+  }
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;

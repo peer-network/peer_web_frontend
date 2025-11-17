@@ -435,7 +435,7 @@ async function postsLaden(postbyUserID=null) {
         
         const urlParams = new URLSearchParams(window.location.search);
         const testPostid = urlParams.get("testid");
-        const testPostidreported = urlParams.get("reported");
+        //const testPostidreported = urlParams.get("reported");
         const testPostidvisibility = urlParams.get("visibility");
         
       /*-- End : testing post report and visibility----*/
@@ -472,7 +472,10 @@ async function postsLaden(postbyUserID=null) {
       /*-- End : testing post report and visibility----*/
 
       
-      if(objekt.hasActiveReports==true) {   card.classList.add("reported_post"); }
+      if(objekt.hasActiveReports==true) {   
+        card.classList.add("reported_post");
+        card.setAttribute("data-hasReported", objekt.hasActiveReports);
+      }
 
       if(objekt.visibilityStatus){
         card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
