@@ -1801,21 +1801,35 @@ function commentToDom(c, append = true) {
     replyContainer
   );
 
-  /*-- for testing Comment visibility----*/
+  /*-- for testing Comment report and  visibility----*/
         
     const urlParams = new URLSearchParams(window.location.search);
     const testcommentid = urlParams.get("commentid");
+    const testcommentvisibility = urlParams.get("visibility");
 
         if(testcommentid==c.commentid){
                 
-            c.visibilityStatus = 'HIDDEN';
+            c.visibilityStatus = testcommentvisibility;
           }
 
-  /*-- End : testing post report and visibility----*/
+  /*-- End : testing comment report and visibility----*/
   if(c.visibilityStatus){
     comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
   }
-  if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
+  if(c.visibilityStatus=='ILLEGAL' || c.visibilityStatus=='illegal'){
+
+    const illegalContentHTML = `
+              <div class="illegal_content_frame_comment">
+                <div class="illegal_content">
+                  <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+                  <div class="illegal_title">This content was removed as illegal</div>
+                </div>
+              </div>`;
+
+
+    commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", illegalContentHTML);
+
+  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
     const hiddenContentHTML = `
               <div class="hidden_content_frame_comment">
                 <div class="hidden_content">
@@ -1829,8 +1843,7 @@ function commentToDom(c, append = true) {
                     <a href="#" class="button btn-transparent">View content</a>
                   </div>
                 </div>
-              </div>
-            `;
+              </div>`;
 
    
       if(c.user.id != userID ){
