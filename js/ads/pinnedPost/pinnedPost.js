@@ -570,14 +570,35 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        const hasReported =
+          viewpost.dataset.hasreported ||
+          viewpost.getAttribute("data-hasreported");
         // Check visibility status
-        const visibilityStatus = viewpost.dataset.visibilty || viewpost.getAttribute("data-visibilty");
+        const visibilityStatus =
+          viewpost.dataset.visibilty || viewpost.getAttribute("data-visibilty");
         let screen = 1;
+        let messageTitle,
+          message = "";
+        let flag = false;
 
-        if (visibilityStatus === "NORMAL") {
+        if (hasReported) {
+          messageTitle = "Your post is currently reported";
+          message =
+            "Your post was reported. When reviewed, its promotion might be hidden";
+          flag = true;
+        }
+
+        if (visibilityStatus == "HIDDEN" || visibilityStatus == "hidden") {
+          messageTitle = "Your post is currently hidden";
+          message =
+            "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?";
+          flag = true;
+        }
+
+        if (flag) {
           const confirmation = await warnig(
-            "Your post is currently hidden",
-            "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?",
+            messageTitle,
+            message,
             false,
             '<i class="peer-icon peer-icon-warning red-text"></i>',
             "Promote anyway"
@@ -604,10 +625,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Mark state and trigger boosting
         STATE.isFromPopup = true;
         selectCardForBoosting(card, screen);
-        
       } catch (error) {
         console.error("Boosting failed:", error);
-        console.error("Something went wrong while boosting the post. Please try again.");
+        console.error(
+          "Something went wrong while boosting the post. Please try again."
+        );
       }
     });
   }
