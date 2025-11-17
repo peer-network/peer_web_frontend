@@ -583,6 +583,29 @@
   align-items: center;
   margin-bottom: 30px;
 }
+
+.viewpost .profile-header.hidden_user_profile .hidden_userfeed_frame {
+  position: absolute;
+  height: fit-content;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.viewpost .peer-icon.peer-icon-eye-close {
+  background: rgba(255, 255, 255, 0.20);
+  padding: 5px;
+  border-radius: 100%;
+}
+
+.viewpost .hidden_userfeed_frame .hidden_description {
+  margin-left: 40px;
+}
+
+.viewpost .hidden_userfeed_frame .hidden_header {
+  gap: 5px;
+  align-items: center;
+}
+
 .viewpost .profile-header-left {
   display: flex;
   align-items: center;

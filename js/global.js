@@ -2019,6 +2019,8 @@ async function fetchPostByID(postID) {
                             username
                             slug
                             img
+                            visibilityStatus
+                            hasActiveReports
                             isfollowed
                             isfollowing
                         }
@@ -2860,10 +2862,8 @@ window.insertPinnedBtn = function (card, username, mode = "profile") {
   const pinnedBtn = document.createElement("div");
   pinnedBtn.classList.add("pinedbtn");
   pinnedBtn.innerHTML = `
-      <a class="btn-blue">
-        <img src="svg/pin.svg" alt="pin">
+        <i class="peer-icon peer-icon-pinpost"></i>
         <span class="ad_username none bold">@${username}</span>
-      </a>
     `;
 
   const postInhalt = card.querySelector(".post-inhalt");
@@ -2907,9 +2907,9 @@ function addReportedBadge() {
     const slug = profileInfo.querySelector('.profile_no');
     
     // Check if already reported
-    if (!document.querySelector('.reported_badge')) {
+    if (!document.querySelector('.profile_reported_badge')) {
         const reportedBadge = document.createElement('span');
-        reportedBadge.className = 'reported_badge';
+        reportedBadge.className = 'profile_reported_badge';
         reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
         
         slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
@@ -2918,7 +2918,7 @@ function addReportedBadge() {
 
 // Remove reported badge from profile
 function removeReportedBadge() {
-    const reportedBadge = document.querySelector('.reported_badge');
+    const reportedBadge = document.querySelector('.profile_reported_badge');
     
     if (reportedBadge) {
       reportedBadge.classList.add('none');
@@ -2935,12 +2935,17 @@ function addHiddenBadge() {
     const profileInfo = document.querySelector('.profile_info');
     const slug = profileInfo.querySelector('.profile_no');
     
-    // Check if already reported
-    if (!document.querySelector('.hidden_badge')) {
-        const hiddenBadge = document.createElement('span');
-        hiddenBadge.className = 'hidden_badge';
-        hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
-        
-        slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);
-    }
+    const hiddenBadge = document.createElement('span');
+    hiddenBadge.className = 'profile_hidden_badge';
+    hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+    
+    slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);
 }
+
+// Disable report button and change text
+  function disableReportButton() {
+    const reportButton = document.querySelector('.report_profile');
+    reportButton.disabled = true;
+    reportButton.textContent = "Reported by you";
+    reportButton.classList.add('disabled');
+  }

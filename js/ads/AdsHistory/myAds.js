@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="ad_dropdown_content">
             <div id="myAds_header_dropdown" class="myAds_header">
                 <div class="myAds_earnings">
-                    <h1>Earnings</h1>
+                    <h2 class="xxl_font_size">Earnings</h2>
                     <div class="earnings_box header_box">
                         <p>Gems</p>
                         <div class="ads_gems_count">
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
                 </div>
                 <div class="myAds_interactions">
-                    <h1>Interactions</h1>
+                    <h2 class="xxl_font_size">Interactions</h2>
                     <div class="interactions_box header_box">
                         <div class="likes">
                         <i class="peer-icon peer-icon-like"></i>
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
             </div>
             <div class="myAds_main">
-                <h1>Campaign details</h1>
+                <h2 class="xxl_font_size">Campaign details</h2>
                 <div class="campaign_details">
                     <div class="detail_item">
                         <span class="detail_title">Start date</span>

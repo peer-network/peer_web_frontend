@@ -374,6 +374,20 @@ function appendPost(json) {
   const letztesDiv = parentElement.lastElementChild;
 }
 
+
+const hiddenUserHTML = `
+  <div class="hidden_userfeed_frame">
+    <div class="hidden_content">
+      <div class="hidden_header">
+        <i class="peer-icon peer-icon-eye-close"></i>
+        <div class="hidden_title bold">Sensitive content</div>
+      </div>
+      <div class="hidden_description">
+        Click to see
+      </div>
+    </div>
+  </div>
+`;
 //let manualLoad = false;
 let postoffset = 0;
 let  POSTS;
@@ -506,6 +520,19 @@ async function postsLaden(postbyUserID=null) {
       };
 
       userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
+
+
+      /*-- handling users visibility----*/
+      // const testUserVisibility = "HIDDEN"; 
+      const userHasActiveReports = objekt.user.hasActiveReports || false;
+      const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+
+      // Checking if user has HIDDEN visibility (using hardcoded value for testing)
+      if(testUserVisibility) {
+        objekt.user.visibilityStatus = testUserVisibility;
+      }
+      /*-- End : handling users visibility----*/
+
       const title = document.createElement("h3");
       title.textContent = objekt.title;
       title.classList.add("post-title","md_font_size","bold");
@@ -891,6 +918,28 @@ async function postsLaden(postbyUserID=null) {
       // Alles in die Haupt-<section> hinzufügen
       card.appendChild(postDiv);
       card.appendChild(inhaltDiv);
+
+      /*---Hidden User Frame */
+      if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
+        const userCardHeader = card.querySelector(".card-header-left");
+
+        if(objekt.user.id != UserID && userHasActiveReports === true){
+          userCardHeader.classList.add("hidden_user_profile");
+
+          userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+          
+          userCardHeader.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+            frame.addEventListener("click", (e) => {
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              frame.remove(); 
+              userCardHeader.classList.remove('hidden_user_profile');
+            }, { capture: true });
+          });
+        }
+      }
+      /*---End Hidden User Frame */
       
       card.addEventListener("click", function handleCardClick() {
         postClicked(objekt);
@@ -1176,6 +1225,45 @@ async function postClicked(objekt) {
     cardEl.classList.add("PINNED");
     insertPinnedBtn(cardEl, objekt.user.username, "post");
   }
+
+  /*-- handling users visibility----*/
+    const profileHeaderLeft = document.querySelector("#viewpost-container");
+    const userCardHeader = profileHeaderLeft.querySelector(".profile-header");
+    
+    const existingHiddenFrame = userCardHeader.querySelector(".hidden_userfeed_frame");
+    if (existingHiddenFrame) {
+      existingHiddenFrame.remove();
+    }
+    userCardHeader.classList.remove("hidden_user_profile");
+    
+    // const testUserVisibility = "HIDDEN"; 
+    const userHasActiveReports = objekt.user.hasActiveReports || false;
+    const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+
+    // Checking if user has HIDDEN visibility (using hardcoded value for testing)
+    if(testUserVisibility) {
+      objekt.user.visibilityStatus = testUserVisibility;
+    }
+
+    if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
+      // console.log("Post already viewed");
+
+      if(objekt.user.id != UserID && userHasActiveReports === true){
+        userCardHeader.classList.add("hidden_user_profile");
+        userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+        
+        userCardHeader.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+          frame.addEventListener("click", (e) => {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            frame.remove(); 
+            userCardHeader.classList.remove('hidden_user_profile');
+          }, { capture: true });
+        });
+      }
+    }
+  /*-- End : handling users visibility----*/
 }
 
 function deleteFilter() {

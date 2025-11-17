@@ -855,8 +855,8 @@
 }
 
 /* Reported Badge Styles */
-.reported_badge,
-.hidden_badge {
+.profile_reported_badge,
+.profile_hidden_badge {
   display: inline-block;
   background-color: var(--bg-filter);
   padding: 15px;
@@ -865,11 +865,15 @@
   margin-left: 25px;
   vertical-align: middle;
 }
-.reported_badge {
+.profile_reported_badge {
   color: #ef4444;
 }
+
+.moreActions_wrapper .report_profile.disabled {
+  color: var(--white-opacity-50);
+}
 /* Hidden Badge Styles */
-.hidden_badge {
+.profile_hidden_badge {
   color: var(--white-opacity-50);
 }
 /* .view-profile.REPORTED_PROFILE .reported_badge {
@@ -886,6 +890,7 @@
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  height: fit-content;
 }
 
 .visibility_hidden #profilbild2,
@@ -897,7 +902,7 @@
   pointer-events: none;
 }
 
-.view-profile.visibility_hidden .profil-container .profile_picture .cropContainer {
+.view-profile.visibility_hidden .profile_header .profile_picture .cropContainer {
   overflow: hidden !important;
 }
 
@@ -910,6 +915,8 @@
 .visibility_hidden .hidden_account_frame .hidden_content .hidden_description {
   margin-top: 10px;
 }
+
+/*--------- End : Hidden account frame -----------*/
 
 
 @media screen and (min-width: 2000px) {
@@ -1090,7 +1097,12 @@
   }
 
   .visibility_hidden .hidden_account_frame .view_content .button.btn-transparent {
-  line-height: 90px;
-}
+    line-height: 90px;
+  }
+
+  .profile_reported_badge, .profile_hidden_badge {
+    padding: 20px;
+    font-size: 35px;
+  }
 
 }
