@@ -462,9 +462,6 @@ async function postsLaden(postbyUserID=null) {
 
         if(testPostid==objekt.id){
           
-          
-          objekt.isreported=testPostidreported;
-          
           if(testPostidvisibility){
             objekt.visibilityStatus = testPostidvisibility;
           }

@@ -443,7 +443,7 @@ function postdetail(objekt, CurrentUserID) {
 
 
 
-  if(objekt.isreported==true) {   postContainer.classList.add("reported_post"); }
+  if(objekt.hasActiveReports==true) {   postContainer.classList.add("reported_post"); }
   postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
@@ -1277,7 +1277,7 @@ function postdetail(objekt, CurrentUserID) {
       reportedBadge.remove();
     }
 
-    if((objekt.user.id != UserID  && objekt.isreported==true) || objekt.hasActiveReports==true ){
+    if( objekt.hasActiveReports==true ){
       const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
       const postview_footer = postContainer.querySelector(".postview_footer");
       postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
@@ -1776,9 +1776,6 @@ function commentToDom(c, append = true) {
             c.visibilityStatus = 'HIDDEN';
           }
 
-        
-         
-        
   /*-- End : testing post report and visibility----*/
   if(c.visibilityStatus){
     comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
