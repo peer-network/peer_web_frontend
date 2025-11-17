@@ -709,13 +709,13 @@ transition: 0.6s all;
   display: flex;
 }
 
-.hidden_userfeed_frame .hidden_title.md_font_size.bold {
+.hidden_userfeed_frame .hidden_title.bold,
+.hidden_userfeed_frame .hidden_description {
   font-size: 16px;
 }
 
 .hidden_userfeed_frame .hidden_description {
   margin-left: 30px;
-  font-size: 14px;
 }
 
 .hidden_user_profile .post-userImg,
@@ -806,4 +806,9 @@ transition: 0.6s all;
   
   
   .card .post-inhalt .post-title {padding-right: 80px;}
+
+  .hidden_userfeed_frame .hidden_title.bold,
+  .hidden_userfeed_frame .hidden_description {
+    font-size: 25px !important;
+  }
 }
