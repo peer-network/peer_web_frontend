@@ -85,6 +85,9 @@ jobs:
             Yungsegz)
               echo "discord_mention=<@1354259999442079891>" >> $GITHUB_OUTPUT
               ;;
+            khalidmeraj)
+              echo "discord_mention=<@1370332220094414908>" >> $GITHUB_OUTPUT
+              ;;
             LuqmanUddin0007)
               echo "discord_mention=<@1367037547011641407>" >> $GITHUB_OUTPUT
               ;;
