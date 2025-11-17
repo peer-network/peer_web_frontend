@@ -1205,6 +1205,7 @@ function postdetail(objekt, CurrentUserID) {
     if (hiddenContentFrame) {
       hiddenContentFrame.remove();
     }
+     
 
     if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
         const hiddenContentHTML = `
@@ -1220,12 +1221,11 @@ function postdetail(objekt, CurrentUserID) {
               <a href="#" class="button btn-transparent">View content</a>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
 
       if(objekt.user.id != UserID ){
         post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
-        const  containerleft_text_post =containerleft.querySelector(".post_content");
+        const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
         if (containerleft_text_post) {
           containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
         }
@@ -1267,6 +1267,8 @@ function postdetail(objekt, CurrentUserID) {
 
           //console.log("Video paused:", video_p.paused);
         }
+      
+
       }else{ //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
       }
@@ -1279,6 +1281,31 @@ function postdetail(objekt, CurrentUserID) {
 
     }
   /*---End Hidden Frame content */
+
+
+  /*---illegal Frame content */
+    const illegalContentFrame = postContainer.querySelector(".illegal_content_frame");
+    if (illegalContentFrame) {
+      illegalContentFrame.remove();
+    }
+    if(objekt.visibilityStatus=='ILLEGAL' || objekt.visibilityStatus=='illegal'){
+        
+          const illegalContentHTML = `
+          <div class="illegal_content_frame">
+            <div class="illegal_content">
+              <div class="icon_illegal"><i class="peer-icon peer-icon-eye-close"></i></div>
+              <div class="illegal_title xl_font_size bold">This content was removed as illegal</div>
+            </div>
+          </div>`;
+          const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
+          if (containerleft_text_post) {
+            containerleft_text_post.insertAdjacentHTML("beforeend", illegalContentHTML);
+          }
+          post_gallery.innerHTML="";
+          post_gallery.insertAdjacentHTML("beforeend", illegalContentHTML);
+    }
+
+  /*---End illegal Frame content */
 
   /*---Content isreported badge ---*/
       
@@ -1294,8 +1321,6 @@ function postdetail(objekt, CurrentUserID) {
     }
 
   /*---End Content isreported badge */
-
-
 
 }
 
