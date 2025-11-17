@@ -692,12 +692,17 @@ transition: 0.6s all;
   margin-left: 3rem;
 }
 
+/*--------- Hidden account frame -----------*/
+
 
 .card-header-left.hidden_user_profile .hidden_userfeed_frame {
   position: absolute;
   top: 5%;
   left: 5%;
   bottom: 0;
+  height: fit-content;
+  z-index: 10;
+  cursor: pointer;
 }
 
 .hidden_userfeed_frame .hidden_header {
@@ -719,6 +724,8 @@ transition: 0.6s all;
   filter: blur(4px);
 }
 
+
+/*--------- End : Hidden account frame -----------*/
 
 @media screen and (max-width: 2000px) {
 

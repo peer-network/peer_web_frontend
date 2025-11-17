@@ -583,6 +583,14 @@
   align-items: center;
   margin-bottom: 30px;
 }
+
+.viewpost .profile-header.hidden_user_profile .hidden_userfeed_frame {
+  position: absolute;
+  height: fit-content;
+  z-index: 10;
+  cursor: pointer;
+}
+
 .viewpost .profile-header-left {
   display: flex;
   align-items: center;
