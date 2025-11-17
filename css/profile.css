@@ -868,6 +868,10 @@
 .profile_reported_badge {
   color: #ef4444;
 }
+
+.moreActions_wrapper .report_profile.disabled {
+  color: var(--white-opacity-50);
+}
 /* Hidden Badge Styles */
 .profile_hidden_badge {
   color: var(--white-opacity-50);

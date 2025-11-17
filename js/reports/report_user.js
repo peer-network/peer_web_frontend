@@ -37,13 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     }
 
-    // Disable report button and change text
-    function disableReportButton() {
-        reportButton.disabled = true;
-        reportButton.textContent = "Reported by you";
-        reportButton.classList.add('disabled');
-    }
-
     // Create and show report modal
     function showReportModal() {
         // Don't show modal if button is disabled

@@ -2851,3 +2851,11 @@ function addHiddenBadge() {
     
     slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);
 }
+
+// Disable report button and change text
+  function disableReportButton() {
+    const reportButton = document.querySelector('.report_profile');
+    reportButton.disabled = true;
+    reportButton.textContent = "Reported by you";
+    reportButton.classList.add('disabled');
+  }

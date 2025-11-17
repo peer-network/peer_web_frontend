@@ -26,6 +26,7 @@ async function fetchHelloData(userid = null) {
             hasActiveReports
             isfollowed
             isfollowing
+            isreported
             amountposts
             amounttrending
             amountfollowed

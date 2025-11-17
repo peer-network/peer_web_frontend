@@ -14,6 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
     // const visibilityStatus = "NORMAL";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
+    const isReportedByYou = userprofile.affectedRows.isreported;
+
+    if (isReportedByYou === true) {
+      disableReportButton();
+    }
     
     if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
       const viewProfile = document.querySelector('.view-profile');
@@ -203,6 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
               hasActiveReports
               isfollowed
               isfollowing
+              isreported
               amountposts
               amounttrending
               amountfollowed
