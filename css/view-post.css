@@ -858,22 +858,23 @@
       z-index: 1;
     }
 
-		.card .post-inhalt .illegal_content_frame {
+		.card .illegal_content_frame {
 			border-radius: 0px;
+      background: #323232;
 		}
-		.card .post-inhalt .illegal_content_frame .hidden_content {
+		.card .illegal_content_frame .illegal_content {
 			
 			gap: 15px;
 			
 		}
-		.card .post-inhalt .illegal_content_frame .icon_hidden {
+		.card  .illegal_content_frame .icon_illegal {
 			
 			width: 100px;
 			height: 100px;
 			padding: 20px;
 		
 		}
-		.card .post-inhalt .illegal_content_frame .icon_hidden i {
+		.card .illegal_content_frame .icon_illegal i {
 			font-size: 50px;
 		}
 	

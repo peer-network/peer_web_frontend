@@ -1293,8 +1293,8 @@ function postdetail(objekt, CurrentUserID) {
           const illegalContentHTML = `
           <div class="illegal_content_frame">
             <div class="illegal_content">
-              <div class="icon_illegal"><i class="peer-icon peer-icon-eye-close"></i></div>
-              <div class="illegal_title xl_font_size bold">This content was removed as illegal</div>
+              <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+              <div class="illegal_title md_font_size bold">This content was removed as illegal</div>
             </div>
           </div>`;
           const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
