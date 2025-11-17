@@ -440,14 +440,10 @@ function postdetail(objekt, CurrentUserID) {
     }
   });
 
-
-
-
   if(objekt.hasActiveReports==true) {   postContainer.classList.add("reported_post"); }
   if(objekt.visibilityStatus){
     postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
-    
-     document.getElementById("cardClicked").setAttribute("data-visibilty", objekt.visibilityStatus);
+    document.getElementById("cardClicked").setAttribute("data-visibilty", objekt.visibilityStatus);
   }
  
 

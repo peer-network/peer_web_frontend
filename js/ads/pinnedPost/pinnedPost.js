@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function selectCardForBoosting(card) {
+  function selectCardForBoosting(card, screen = 1) {
     STATE.selectedCard = card;
     STATE.postid = card.id;
 
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     previewBoostedPost.appendChild(clonedCard);
     DOM.modal.classList.remove("none");
-    showStep(1);
+    showStep(screen);
   }
 
   function createPinnedButton(username) {
@@ -544,62 +544,71 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function setupBoostFromPopup() {
+  async function setupBoostFromPopup() {
     if (!DOM.boostPostFromPopup) return;
-
-    DOM.boostPostFromPopup.addEventListener("click", function (e) {
+    DOM.boostPostFromPopup.addEventListener("click", async (e) => {
       e.preventDefault();
 
-      const isProfilePage = document.querySelector(".profile_header") !== null;
-      if (!isProfilePage) {
-        alert("You can only boost posts from your profile page.");
-        return;
-      }
+      try {
+        // Ensure we're on the profile page
+        const isProfilePage = !!document.querySelector(".profile_header");
+        if (!isProfilePage) {
+          return alert("You can only boost posts from your profile page.");
+        }
 
-      const viewpost = document.querySelector(".viewpost");
-      if (!viewpost) return;
+        // Find the post being viewed
+        const viewpost = document.querySelector(".viewpost");
+        if (!viewpost) return;
 
-      const postIdFromView =
-        viewpost.getAttribute("postid") ||
-        viewpost.dataset.postid ||
-        viewpost.id;
-      if (!postIdFromView) return;
+        const postIdFromView =
+          viewpost.getAttribute("postid") ||
+          viewpost.dataset.postid ||
+          viewpost.id;
 
-      // first need to check whether the object exists in the listPost stack
-      let moderatorFlag = true;
-      const visibilityStatus = viewpost.getAttribute('data-visibilty');
-      // then need to check the visibility status
-      if (visibilityStatus == "NORMAL") { 
-      const confirmation = warnig(
-                "Your post is currently hidden",
-                "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all?",
-                false,
-                '<i class="peer-icon peer-icon-warning red-text"></i>',
-                "Promote anyway"
-              );
-     
-     
-      if (!confirmation || confirmation.button === 0)
-       return false; // throw the control back in case of flag false
-      }
-
-      let card = DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`);
-      if (!card) {
-        card = document.getElementById(postIdFromView);
-
-        if (!card) {
-          alert("Could not find the original post card.");
+        if (!postIdFromView) {
+          console.warn("No post ID found in viewpost.");
           return;
         }
-      }
 
-      if (isPostBoosted(card.id)) {
-        alert("This post is already boosted.");
-        return;
-      }
+        // Check visibility status
+        const visibilityStatus = viewpost.dataset.visibilty || viewpost.getAttribute("data-visibilty");
+        let screen = 1;
 
-      STATE.isFromPopup = true;
-      selectCardForBoosting(card);
+        if (visibilityStatus === "NORMAL") {
+          const confirmation = await warnig(
+            "Your post is currently hidden",
+            "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?",
+            false,
+            '<i class="peer-icon peer-icon-warning red-text"></i>',
+            "Promote anyway"
+          );
+
+          if (!confirmation || confirmation.button === 0) return false;
+          screen = 2;
+        }
+
+        // Locate the card in DOM
+        let card =
+          DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`) ||
+          document.getElementById(postIdFromView);
+
+        if (!card) {
+          return alert("Could not find the original post card.");
+        }
+
+        // Prevent duplicate boosting
+        if (isPostBoosted(card.id)) {
+          return alert("This post is already boosted.");
+        }
+
+        // Mark state and trigger boosting
+        STATE.isFromPopup = true;
+        selectCardForBoosting(card, screen);
+        
+      } catch (error) {
+        console.error("Boosting failed:", error);
+        console.error("Something went wrong while boosting the post. Please try again.");
+      }
     });
   }
 
