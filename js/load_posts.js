@@ -520,9 +520,9 @@ async function postsLaden(postbyUserID=null) {
 
 
       /*-- handling users visibility----*/
-      const testUserVisibility = "HIDDEN"; 
+      // const testUserVisibility = "HIDDEN"; 
       const userHasActiveReports = objekt.user.hasActiveReports || false;
-      // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+      const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
       // Checking if user has HIDDEN visibility (using hardcoded value for testing)
       if(testUserVisibility) {
@@ -1216,9 +1216,9 @@ async function postClicked(objekt) {
     }
     userCardHeader.classList.remove("hidden_user_profile");
     
-    const testUserVisibility = "HIDDEN"; 
+    // const testUserVisibility = "HIDDEN"; 
     const userHasActiveReports = objekt.user.hasActiveReports || false;
-    // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+    const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
     // Checking if user has HIDDEN visibility (using hardcoded value for testing)
     if(testUserVisibility) {

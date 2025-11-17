@@ -1,5 +1,84 @@
 [
   {
+    "id": "v11",
+    "version": "Version 1.11.0",
+    "date": "17 Nov 2025",
+    "changes": [
+      {
+        "title": "Report Profiles, Posts & Comments",
+        "description": [
+          "You can now report any profile, post, or comment that breaks the rules",
+          "Reported items may become blurred and hidden if 5 or more users flag them"
+        ]
+      },
+      {
+        "title": "Moderation Improvements",
+        "description": [
+          "New in-app moderation tools to review reported content faster and keep the community safe"
+        ]
+      },
+      {
+        "title": "Illegal content rules",
+        "description": [
+          "Content marked as \"Illegal\" is fully removed across Peer",
+          "No views, likes, comments, or reports allowed",
+          "Hidden for everyone (including the owner)",
+          "Cannot be engaged with, restored, or promoted"
+        ]
+      },
+      {
+        "title": "Updated EULA",
+        "description": [
+          "Our terms now reflect the new moderation and safety rules"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Web Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki/Webapp"
+      },
+      {
+        "label": "Backend Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki"
+      }
+    ]
+  },
+  {
+    "id": "v10",
+    "version": "Version 1.10.0",
+    "date": "1 Nov 2025",
+    "changes": [
+      {
+        "title": "Post Promotion with Peer Tokens",
+        "description": [
+          "Pinned Ads: promote any post to the top of its feed (media, video, or music) for 24 hours",
+          "Cost: 200 Peer Tokens per promotion",
+          "Instant activation: ads start immediately after payment",
+          "Flexible cancellation: cancel anytime before checkout"
+        ]
+      },
+      {
+        "title": "Ad Performance Tracking",
+        "description": [
+          "My Ads dashboard: track all your promotions in one place",
+          "Detailed stats: monitor views, likes, comments, and Gems earned",
+          "Ad history: view both active and ended promotions"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Web Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki/Webapp"
+      },
+      {
+        "label": "Backend Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki"
+      }
+    ]
+  },
+  {
     "id": "v9",
     "version": "Version 1.9.0",
     "date": "23 Oct 2025",
@@ -28,7 +107,7 @@
   },
   {
     "id": "v8",
-    "version": "Version 1.8.1",
+    "version": "Version 1.8.0",
     "date": "23 Oct 2025",
     "changes": [
       {
