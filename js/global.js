@@ -528,8 +528,11 @@ function postdetail(objekt, CurrentUserID) {
   const newreportpost_btn = reportpost_btn.cloneNode(true);
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
+  
+  if(objekt.user.id == UserID ){
+    reportpost_btn.classList.add("none"); //your own post
 
-  if (objekt.isreported==true) {
+  }else if (objekt.isreported==true) {
     // change text if already reported
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
