@@ -426,7 +426,9 @@ function calctimeAgo(datetime) {
 
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
+  const cardClickedContainer = document.getElementById("cardClicked");
   const postContainer = document.getElementById("viewpost-container");
+
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
@@ -439,13 +441,16 @@ function postdetail(objekt, CurrentUserID) {
       postContainer.classList.remove(cls);
     }
   });
+  
+  cardClickedContainer.setAttribute("data-hasReported", objekt.hasActiveReports);
+  cardClickedContainer.setAttribute("data-visibilty", objekt.visibilityStatus);
+  if(objekt.hasActiveReports==true) {   
+    postContainer.classList.add("reported_post");
+  }
 
-  if(objekt.hasActiveReports==true) {   postContainer.classList.add("reported_post"); }
   if(objekt.visibilityStatus){
     postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
-    document.getElementById("cardClicked").setAttribute("data-visibilty", objekt.visibilityStatus);
   }
- 
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -529,8 +534,11 @@ function postdetail(objekt, CurrentUserID) {
   const newreportpost_btn = reportpost_btn.cloneNode(true);
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
+  
+  if(objekt.user.id == UserID ){
+    reportpost_btn.classList.add("none"); //your own post
 
-  if (objekt.isreported==true) {
+  }else if (objekt.isreported==true) {
     // change text if already reported
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
@@ -1196,6 +1204,7 @@ function postdetail(objekt, CurrentUserID) {
     if (hiddenContentFrame) {
       hiddenContentFrame.remove();
     }
+     
 
     if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
         const hiddenContentHTML = `
@@ -1211,12 +1220,11 @@ function postdetail(objekt, CurrentUserID) {
               <a href="#" class="button btn-transparent">View content</a>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
 
       if(objekt.user.id != UserID ){
         post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
-        const  containerleft_text_post =containerleft.querySelector(".post_content");
+        const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
         if (containerleft_text_post) {
           containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
         }
@@ -1258,6 +1266,8 @@ function postdetail(objekt, CurrentUserID) {
 
           //console.log("Video paused:", video_p.paused);
         }
+      
+
       }else{ //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
       }
@@ -1271,6 +1281,31 @@ function postdetail(objekt, CurrentUserID) {
     }
   /*---End Hidden Frame content */
 
+
+  /*---illegal Frame content */
+    const illegalContentFrame = postContainer.querySelector(".illegal_content_frame");
+    if (illegalContentFrame) {
+      illegalContentFrame.remove();
+    }
+    if(objekt.visibilityStatus=='ILLEGAL' || objekt.visibilityStatus=='illegal'){
+        
+          const illegalContentHTML = `
+          <div class="illegal_content_frame">
+            <div class="illegal_content">
+              <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+              <div class="illegal_title md_font_size bold">This content was removed as illegal</div>
+            </div>
+          </div>`;
+          const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
+          if (containerleft_text_post) {
+            containerleft_text_post.insertAdjacentHTML("beforeend", illegalContentHTML);
+          }
+          post_gallery.innerHTML="";
+          post_gallery.insertAdjacentHTML("beforeend", illegalContentHTML);
+    }
+
+  /*---End illegal Frame content */
+
   /*---Content isreported badge ---*/
       
     const reportedBadge = postContainer.querySelector(".reported_badge");
@@ -1278,15 +1313,13 @@ function postdetail(objekt, CurrentUserID) {
       reportedBadge.remove();
     }
 
-    if(objekt.hasActiveReports==true ){
+    if( objekt.hasActiveReports==true ){
       const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
       const postview_footer = postContainer.querySelector(".postview_footer");
       postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
     }
 
   /*---End Content isreported badge */
-
-
 
 }
 
@@ -1777,9 +1810,6 @@ function commentToDom(c, append = true) {
             c.visibilityStatus = 'HIDDEN';
           }
 
-        
-         
-        
   /*-- End : testing post report and visibility----*/
   if(c.visibilityStatus){
     comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
