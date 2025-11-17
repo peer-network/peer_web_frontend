@@ -63,9 +63,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function selectCardForBoosting(card, screen = 1) {
+  async function selectCardForBoosting(card) {
     STATE.selectedCard = card;
     STATE.postid = card.id;
+
+
+    const hasReported = card.dataset.hasreported || card.getAttribute("data-hasreported");
+    // Check visibility status
+    const visibilityStatus = card.dataset.visibilty || card.getAttribute("data-visibilty");
+    let flag = false;
+    let screen = 1;
+    let messageTitle, message = "";
+
+    if (hasReported) {
+      messageTitle = "Your post is currently reported";
+      message =
+        "Your post was reported. When reviewed, its promotion might be hidden";
+      flag = true;
+    }
+
+    if (visibilityStatus == "HIDDEN" || visibilityStatus == "hidden") {
+      messageTitle = "Your post is currently hidden";
+      message =
+        "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?";
+      flag = true;
+    }
+
+    if (flag) {
+      const confirmation = await warnig(
+        messageTitle,
+        message,
+        false,
+        '<i class="peer-icon peer-icon-warning red-text"></i>',
+        "Promote anyway"
+      );
+
+      if (!confirmation || confirmation.button === 0) return false;
+      screen = 2;
+    }
 
     const previewBoostedPost = document.getElementById("preview_boostedPost");
     if (!previewBoostedPost) return;
@@ -546,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function setupBoostFromPopup() {
     if (!DOM.boostPostFromPopup) return;
-    DOM.boostPostFromPopup.addEventListener("click", async (e) => {
+    DOM.boostPostFromPopup.addEventListener("click", (e) => {
       e.preventDefault();
 
       try {
@@ -570,61 +605,23 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        const hasReported =
-          viewpost.dataset.hasreported ||
-          viewpost.getAttribute("data-hasreported");
-        // Check visibility status
-        const visibilityStatus =
-          viewpost.dataset.visibilty || viewpost.getAttribute("data-visibilty");
-        let screen = 1;
-        let messageTitle,
-          message = "";
-        let flag = false;
-
-        if (hasReported) {
-          messageTitle = "Your post is currently reported";
-          message =
-            "Your post was reported. When reviewed, its promotion might be hidden";
-          flag = true;
-        }
-
-        if (visibilityStatus == "HIDDEN" || visibilityStatus == "hidden") {
-          messageTitle = "Your post is currently hidden";
-          message =
-            "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?";
-          flag = true;
-        }
-
-        if (flag) {
-          const confirmation = await warnig(
-            messageTitle,
-            message,
-            false,
-            '<i class="peer-icon peer-icon-warning red-text"></i>',
-            "Promote anyway"
-          );
-
-          if (!confirmation || confirmation.button === 0) return false;
-          screen = 2;
-        }
-
         // Locate the card in DOM
         let card =
           DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`) ||
           document.getElementById(postIdFromView);
 
         if (!card) {
-          return alert("Could not find the original post card.");
+          return Merror("Could not find the original post card.", '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
         }
 
         // Prevent duplicate boosting
         if (isPostBoosted(card.id)) {
-          return alert("This post is already boosted.");
+          return Merror("This post is already boosted.", '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
         }
 
         // Mark state and trigger boosting
         STATE.isFromPopup = true;
-        selectCardForBoosting(card, screen);
+        selectCardForBoosting(card);
       } catch (error) {
         console.error("Boosting failed:", error);
         console.error(
