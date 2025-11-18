@@ -1320,14 +1320,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!/^[a-zA-Z0-9]+$/.test(searchStr)) {
         tagErrorEl.textContent = "Only letters and numbers allowed.";
-        return;
+        return false;
       }
 
       if (searchStr.length <= 1 || searchStr.length > 53) {
         tagErrorEl.textContent = "Tag must be 2-53 chars with letters, numbers.";
         return false;
       }
-      
+
       //need to clear the error div container
       tagErrorEl.textContent = "";
 
