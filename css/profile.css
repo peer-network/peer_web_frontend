@@ -206,8 +206,12 @@
 }
 .profile_header .profile_picture .cropContainer .online_status {
 	position: absolute;
-	left: 15px;
-	top: 15px;
+	left: 50px;
+	top: 25px;
+}
+.profile_header .profile_picture .cropContainer .online_status {
+ width: 40px;
+  height: 40px;
 }
 
 .profile_header .profile_picture img {
@@ -1169,6 +1173,10 @@
     padding: 15px 30px;
     
   }
+  .profile_header .profile_edit_box .ads_container_wrap {
+    top: 100px;
+    
+  }
 }
 
 @media screen and (max-width: 2000px) {
@@ -1181,6 +1189,10 @@
   .profile_info .profile_stats {
   	gap: 30px;  
     flex-wrap: wrap;
+  }
+  .profile_header .profile_edit_box .ads_container_wrap {
+    top: 60px;
+    
   }
   
 }

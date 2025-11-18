@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded",  () => {
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
-
+     
       const selectedTypes = Array.from(checkboxes)
         .filter((cb) => cb.checked)
         .map((cb) => cb.name);
@@ -399,6 +399,7 @@ async function postsLaden(postbyUserID=null) {
     //manualLoad = false;
     const form = document.querySelector(".filterContainer");
     const checkboxes = form.querySelectorAll(".filteritem:checked");
+    console.log(checkboxes);
 
     // Die Werte der angehakten Checkboxen sammeln
     const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
@@ -430,6 +431,7 @@ async function postsLaden(postbyUserID=null) {
       tagInput = normalWords.join(" ");
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
+    console.log(cleanedArray);
 
     if (postbyUserID!=null){
       POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
