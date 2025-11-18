@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /*-- handling profile visibility----*/
-    // const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
-    // const visibilityStatus = "NORMAL";
+    //const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    const visibilityStatus = "HIDDEN";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     const isReportedByYou = userprofile.affectedRows.isreported;
 
@@ -154,11 +154,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const hiddenAccountHTML = `
         <div class="hidden_account_frame">
           <div class="hidden_content">
-            <div class="hidden_header">
-              <i class="peer-icon peer-icon-eye-close"></i>
-              <div class="hidden_title md_font_size bold">Sensitive content</div>
+            <div class="hidden_header xl_font_size bold">
+              <span class="hidden_icon"><i class="peer-icon peer-icon-eye-close"></i></span>
+              <div class="hidden_title">Sensitive content</div>
             </div>
-            <div class="hidden_description">
+            <div class="hidden_description md_font_size">
               This content may be sensitive or abusive.<br>
               Do you want to view it anyway?
             </div>

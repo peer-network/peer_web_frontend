@@ -432,8 +432,6 @@ function postdetail(objekt, CurrentUserID) {
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
-  
-
   postContainer.classList.remove("reported_post");
   // Remove any class starting with "visibility_"
   postContainer.classList.forEach(cls => {
@@ -2909,7 +2907,8 @@ function addReportedBadge() {
     // Check if already reported
     if (!document.querySelector('.profile_reported_badge')) {
         const reportedBadge = document.createElement('span');
-        reportedBadge.className = 'profile_reported_badge';
+        reportedBadge.classList.add('profile_reported_badge','small_font_size');
+        
         reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
         
         slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
