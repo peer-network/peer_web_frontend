@@ -2918,28 +2918,41 @@ function addReportedBadge() {
 
 // Remove reported badge from profile
 function removeReportedBadge() {
-    const reportedBadge = document.querySelector('.profile_reported_badge');
-    
-    if (reportedBadge) {
-      reportedBadge.classList.add('none');
-    }
-    
-    const viewProfile = document.querySelector('.view-profile');
-    if (viewProfile) {
-        viewProfile.classList.remove('REPORTED_PROFILE');
-    }
+  const reportedBadge = document.querySelector('.profile_reported_badge');
+  
+  if (reportedBadge) {
+    reportedBadge.classList.add('none');
+  }
+  
+  const viewProfile = document.querySelector('.view-profile');
+  if (viewProfile) {
+      viewProfile.classList.remove('REPORTED_PROFILE');
+  }
 }
 
 // Add hidden badge to own profile
 function addHiddenBadge() {
-    const profileInfo = document.querySelector('.profile_info');
-    const slug = profileInfo.querySelector('.profile_no');
-    
-    const hiddenBadge = document.createElement('span');
-    hiddenBadge.className = 'profile_hidden_badge';
-    hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
-    
-    slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);
+  const profileInfo = document.querySelector('.profile_info');
+  const slug = profileInfo.querySelector('.profile_no');
+  
+  const hiddenBadge = document.createElement('span');
+  hiddenBadge.classList.add ('profile_hidden_badge', 'xl_font_size');
+  hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+  
+  slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);
+}
+
+function addIllegalBadge() {
+  const profileHeader = document.querySelector('.profile_header');
+  
+  // Check if already reported
+  if (!document.querySelector('.profile_illegal_badge')) {
+      const illegalBadge = document.createElement('div');
+      illegalBadge.classList.add ('profile_illegal_badge', 'red-text', 'xl_font_size');
+      illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal. </span> All changes you make will not be visible for others';
+      
+      profileHeader.insertAdjacentElement("afterend", illegalBadge);
+  }
 }
 
 // Disable report button and change text

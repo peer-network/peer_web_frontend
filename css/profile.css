@@ -869,6 +869,19 @@
   color: #ef4444;
 }
 
+.profile_illegal_badge {
+	display: flex;
+  padding: 40px;
+  flex-wrap: wrap;
+  border-radius: 40px;
+  background: var(--bg-filter);
+  margin-top: 40px;
+}
+
+.profile_illegal_badge .peer-icon-illegal{
+  margin-right: 20px;
+}
+
 .moreActions_wrapper .report_profile.disabled {
   color: var(--white-opacity-50);
 }
@@ -917,6 +930,35 @@
 }
 
 /*--------- End : Hidden account frame -----------*/
+
+
+/*--------- Illegal account frame -----------*/
+
+.illegal_profile .profile_info .illegal_profile_frame {
+  position: absolute;
+  left: 25%;
+  top: 20px;
+}
+
+.illegal_profile_frame .illegal_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.illegal_profile .cropContainer {
+  background-color: var(--bg-filter) !important;
+}
+
+.illegal_profile .profile-picture {
+  opacity: 0;
+}
+
+.illegal_profile .profile_info .profile_title {
+  font-size: 0;
+}
+
+/*--------- End : Illegal account frame -----------*/
 
 
 @media screen and (min-width: 2000px) {
@@ -1100,9 +1142,5 @@
     line-height: 90px;
   }
 
-  .profile_reported_badge, .profile_hidden_badge {
-    padding: 20px;
-    font-size: 35px;
-  }
 
 }

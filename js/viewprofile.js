@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
-  const userID = params.get('user');
+  const userID = params.get('user') || params.get("testid");
+  const visibilityStatus = params.get("uservisibility");
 
   getProfile(userID).then(userprofile => {
     
@@ -11,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /*-- handling profile visibility----*/
-    const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    // const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
     // const visibilityStatus = "NORMAL";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     const isReportedByYou = userprofile.affectedRows.isreported;
@@ -19,17 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isReportedByYou === true) {
       disableReportButton();
     }
-    
-    if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+
+    if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+      const myProfile = document.querySelector('.view-profile');
+      if(myProfile) {
+        myProfile.classList.remove("REPORTED_PROFILE");
+        myProfile.classList.remove("HIDDEN_PROFILE");
+        myProfile.classList.add("illegal_profile");
+      }
+    } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
       const viewProfile = document.querySelector('.view-profile');
       if(viewProfile) {
         viewProfile.classList.remove("REPORTED_PROFILE");
         viewProfile.classList.add("visibility_hidden");
         viewProfile.classList.add("HIDDEN_PROFILE");
       }
-    }
-    
-    else if(hasActiveReports) {
+    } else if(hasActiveReports) {
       const viewProfile = document.querySelector('.view-profile');
       if (viewProfile) {
         viewProfile.classList.remove("visibility_hidden");
@@ -122,6 +128,23 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("biography2").innerText = "Biography not available";
         });
     } 
+
+    /*---illegal Frame content */
+      if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+        const profileInfo = document.querySelector(".profile_info");
+          
+        const illegalProfileHTML = `
+        <div class="illegal_profile_frame xl_font_size">
+          <div class="illegal_content">
+            <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+            <div class="illegal_title bold">Profile data is removed as illegal</div>
+          </div>
+        </div>`;
+        
+        profileInfo.insertAdjacentHTML("afterbegin", illegalProfileHTML);
+      }
+
+    /*---End illegal Frame content */
 
     /*---Hidden Account Frame */
     if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
