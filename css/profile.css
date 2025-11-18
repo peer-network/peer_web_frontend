@@ -38,6 +38,8 @@
 .profile_header .profile_edit_box {
   display: flex;
   flex-direction: column;
+  min-width: 400px;
+  position: relative;
 }
 
 .profile_header .profile_edit_box .btn-white,
@@ -107,6 +109,11 @@
   position: relative;
   z-index: 1;
 }
+.profile_header .profile_edit_box .ads_container_wrap {
+	position: absolute;
+	top: 150px;
+	width: 100%;
+}
 
 .profile_header .profile_edit_box .boost_dropdown_wrapper {
   display: flex;
@@ -115,6 +122,7 @@
   overflow: hidden;
   transition: max-height 0.3s ease;
   padding: 0 20px;
+  gap: 20px;
 }
 
 .moreActions_container_wrap .moreActions_wrapper {
@@ -136,10 +144,14 @@
 .moreActions_container_wrap .moreActions_wrapper.open {
   max-height: 500px; 
 }
+.profile_header .profile_edit_box .boost_dropdown_wrapper.open{
+  padding-bottom: 20px;
+}
 
 .profile_header .profile_edit_box .boost_dropdown_wrapper .button {
   opacity: 0;
   transform: translateY(-10px);
+  padding: 0 30px;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -226,6 +238,7 @@
 .profile_info .profile_stats {
 	display: flex;
 	gap: 80px;
+  margin-top: auto;
 
 }
 .profile_info .profile_stats > span {
@@ -869,7 +882,7 @@
   bottom: 0;
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 50px;
   height: fit-content;
 }
 
@@ -889,7 +902,17 @@
 .visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
   display: flex;
   gap: 10px;
-  font-size: 25px;
+ 
+}
+
+.visibility_hidden .hidden_account_frame .hidden_content .hidden_icon {
+	border-radius: 88.889px;
+	background: rgba(255, 255, 255, 0.20);
+	aspect-ratio: 1/1;
+	width: 68px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .visibility_hidden .hidden_account_frame .hidden_content .hidden_description {
@@ -1066,17 +1089,7 @@
     height: 20px;
   }
 
-  .visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
-    font-size: 40px;
-  }
-
-  .visibility_hidden .hidden_account_frame .hidden_content .hidden_header .hidden_title {
-    font-size: 35px;
-  }
-
-  .visibility_hidden .hidden_account_frame .view_content .button.btn-transparent {
-    line-height: 90px;
-  }
+  
 
   
 }
