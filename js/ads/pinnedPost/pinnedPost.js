@@ -67,13 +67,15 @@ document.addEventListener("DOMContentLoaded", () => {
     STATE.selectedCard = card;
     STATE.postid = card.id;
 
-
-    const hasReported = card.dataset.hasreported || card.getAttribute("data-hasreported");
+    const hasReported =
+      card.dataset.hasreported || card.getAttribute("data-hasreported");
     // Check visibility status
-    const visibilityStatus = card.dataset.visibilty || card.getAttribute("data-visibilty");
+    const visibilityStatus =
+      card.dataset.visibilty || card.getAttribute("data-visibilty");
     let flag = false;
     let screen = 1;
-    let messageTitle, message = "";
+    let messageTitle,
+      message = "";
 
     if (hasReported) {
       messageTitle = "Your post is currently reported";
@@ -90,23 +92,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (flag) {
-      const confirmation = await warnig(
-        messageTitle,
-        message,
-        false,
-        '<i class="peer-icon peer-icon-warning red-text"></i>',
-        "Promote anyway"
-      );
-
+      const confirmation = await warnig(messageTitle, message, false, '<i class="peer-icon peer-icon-warning red-text"></i>', "Promote anyway");
       if (!confirmation || confirmation.button === 0) return false;
       screen = 2;
     }
+
+    // Prevent duplicate boosting
+    if (isPostBoosted(card.id)) 
+      return Merror("This post is already boosted.", "", false, '<i class="peer-icon peer-icon-warning red-text"></i>');
+    
+    // Mark state and trigger boosting
+    STATE.isFromPopup = true;
 
     const previewBoostedPost = document.getElementById("preview_boostedPost");
     if (!previewBoostedPost) return;
 
     previewBoostedPost.innerHTML = "";
-
     const clonedCard = card.cloneNode(true);
     clonedCard.querySelectorAll("*").forEach((el) => {
       el.replaceWith(el.cloneNode(true));
@@ -114,15 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const usernameEl = clonedCard.querySelector(".post-userName");
     const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-
     const postInhalt = clonedCard.querySelector(".post-inhalt");
     const social = clonedCard.querySelector(".social");
-
     if (postInhalt && social) {
       const pinnedBtn = createPinnedButton(username);
       postInhalt.insertBefore(pinnedBtn, social);
     }
-
     previewBoostedPost.appendChild(clonedCard);
     DOM.modal.classList.remove("none");
     showStep(screen);
@@ -609,16 +607,14 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById(postIdFromView);
 
         if (!card) {
-          return Merror("Could not find the original post card.", '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
+          return Merror(
+            "Could not find the original post card.",
+            "",
+            false,
+            '<i class="peer-icon peer-icon-warning red-text"></i>'
+          );
         }
 
-        // Prevent duplicate boosting
-        if (isPostBoosted(card.id)) {
-          return Merror("This post is already boosted.", '', false, '<i class="peer-icon peer-icon-warning red-text"></i>');
-        }
-
-        // Mark state and trigger boosting
-        STATE.isFromPopup = true;
         selectCardForBoosting(card);
       } catch (error) {
         console.error("Boosting failed:", error);

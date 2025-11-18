@@ -378,13 +378,12 @@ function appendPost(json) {
 const hiddenUserHTML = `
   <div class="hidden_userfeed_frame">
     <div class="hidden_content">
+    <i class="peer-icon peer-icon-eye-close md_font_size"></i>
       <div class="hidden_header">
-        <i class="peer-icon peer-icon-eye-close"></i>
         <div class="hidden_title bold">Sensitive content</div>
+        <div class="hidden_description">Click to see</div>
       </div>
-      <div class="hidden_description">
-        Click to see
-      </div>
+      
     </div>
   </div>
 `;
@@ -527,11 +526,15 @@ async function postsLaden(postbyUserID=null) {
       /*-- handling users visibility----*/
       // const testUserVisibility = "HIDDEN"; 
       const userHasActiveReports = objekt.user.hasActiveReports || false;
-      const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+      const testUserVisibility = urlParams.get("uservisibility");
+      // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
       // Checking if user has HIDDEN visibility (using hardcoded value for testing)
-      if(testUserVisibility) {
-        objekt.user.visibilityStatus = testUserVisibility;
+
+      if(testPostid==objekt.user.id){
+        if(testUserVisibility) {
+          objekt.user.visibilityStatus = testUserVisibility;
+        }
       }
       /*-- End : handling users visibility----*/
 
@@ -1238,14 +1241,18 @@ async function postClicked(objekt) {
     }
     userCardHeader.classList.remove("hidden_user_profile");
     
-    // const testUserVisibility = "HIDDEN"; 
+    //  const testUserVisibility = "HIDDEN"; 
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const testPostid = urlParams.get("testid");
     const userHasActiveReports = objekt.user.hasActiveReports || false;
     const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
     // Checking if user has HIDDEN visibility (using hardcoded value for testing)
-    if(testUserVisibility) {
-      objekt.user.visibilityStatus = testUserVisibility;
-    }
+    // if(testPostid==objekt.user.id){
+      if(testUserVisibility) {
+        objekt.user.visibilityStatus = testUserVisibility;
+      }
+    // }
 
     if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
       // console.log("Post already viewed");

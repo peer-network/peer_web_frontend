@@ -222,6 +222,7 @@
 	flex: 1; 
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .profile_info .profile_title {
 	margin-bottom: 40px;
@@ -865,7 +866,6 @@
   color: var(--red-accent);
 }
 
-
 .moreActions_wrapper .report_profile.disabled {
   color: var(--white-opacity-50);
 }
@@ -878,6 +878,19 @@
 } */
 
 /*--------- Hidden account frame -----------*/
+
+.profile_illegal_badge {
+	display: flex;
+  padding: 40px;
+  flex-wrap: wrap;
+  border-radius: 40px;
+  background: var(--bg-filter);
+  margin-top: 40px;
+}
+
+.profile_illegal_badge .peer-icon-illegal{
+  margin-right: 20px;
+}
 
 .visibility_hidden .profile_info .hidden_account_frame {
   position: absolute;
@@ -924,6 +937,53 @@
 }
 
 /*--------- End : Hidden account frame -----------*/
+
+
+/*--------- Illegal account frame -----------*/
+
+.illegal_profile .profile_info .illegal_profile_frame {
+  position: absolute;
+  width: 100%;
+}
+
+.illegal_profile_frame .illegal_content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 50px;
+}
+
+.illegal_profile_frame .illegal_content .illegal_title {
+  background: var(--dark-inactive);
+  width: 100%;
+  text-align: center;
+  border-radius: 50px;
+  padding: 30px;
+}
+
+.illegal_profile .cropContainer {
+  background-color: var(--bg-filter) !important;
+}
+
+.view-profile.illegal_profile .profile-picture {
+  opacity: 0;
+}
+
+.view-profile.illegal_profile .profile_info .profile_title {
+  width: 100%;
+  background: var(--bg-filter);
+}
+
+.view-profile.illegal_profile .profile_info .profile_title .username,
+.view-profile.illegal_profile .profile_info .profile_title .slug {
+  opacity: 0;
+}
+
+.view-profile.illegal_profile .profile_info .profile_description {
+  opacity: 0;
+}
+
+/*--------- End : Illegal account frame -----------*/
 
 
 @media screen and (min-width: 2000px) {
@@ -1093,8 +1153,11 @@
     height: 20px;
   }
 
-  
-
+  .view-profile.illegal_profile .profile_info .profile_title {
+    max-width: 1030px;
+    height: 96px;
+    border-radius: 40px;
+  }
   
 }
 
