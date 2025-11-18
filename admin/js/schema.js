@@ -1,28 +1,213 @@
-window.ChatApp = window.ChatApp || {};
+window.moderationModule = window.moderationModule || {};
 
-ChatApp.graphql = {
-
-
-  LIST_FRIENDS: `
-    query ListFriends {
-      listFriends {
+moderationModule.schema = {
+  LIST_ITEMS: `
+    query ModerationItems {
+      moderationItems {
+        status
+        ResponseCode
         affectedRows {
-          userid
-          img
-          username
+          moderationTicketId
+          targetContentId
+          targettype
+          reportscount
+          status
+          createdat
+          targetcontent {
+            post {
+              id
+              contenttype
+              title
+              media
+              cover
+              mediadescription
+              createdat
+              visibilityStatus
+              hasActiveReports
+              amountreports
+              amountlikes
+              amountviews
+              amountcomments
+              amountdislikes
+              amounttrending
+              isliked
+              isviewed
+              isreported
+              isdisliked
+              issaved
+              tags
+              url
+              user {
+                id
+                username
+                slug
+                img
+                visibilityStatus
+                hasActiveReports
+                isfollowed
+                isfollowing
+                isreported
+                isfriend
+              }
+            }
+            comment {
+              commentid
+              userid
+              postid
+              parentid
+              content
+              createdat
+              visibilityStatus
+              hasActiveReports
+              amountlikes
+              amountreplies
+              amountreports
+              isreported
+              isliked
+            }
+            user {
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              hasActiveReports
+              updatedat
+            }
+          }
         }
       }
-    }`,
+    }
+  `,
 
-  GET_PROFILE: `
-    query GetProfile {
-      getProfile {
+  LIST_POST: `
+    query ModerationItems {
+      moderationItems {
+        status
+        ResponseCode
+        affectedRows {
+          moderationTicketId
+          targetContentId
+          targettype
+          reportscount
           status
-          ResponseCode
-          affectedRows {
+          createdat
+          targetcontent {
+            post {
               id
-              img
+              contenttype
+              title
+              media
+              cover
+              mediadescription
+              createdat
+              visibilityStatus
+              hasActiveReports
+              amountreports
+              amountlikes
+              amountviews
+              amountcomments
+              amountdislikes
+              amounttrending
+              isliked
+              isviewed
+              isreported
+              isdisliked
+              issaved
+              tags
+              url
+              user {
+                id
+                username
+                slug
+                img
+                visibilityStatus
+                hasActiveReports
+                isfollowed
+                isfollowing
+                isreported
+                isfriend
+              }
+            }
           }
+        }
       }
-    }`
-  };
+    }
+  `,
+
+  LIST_COMMENT: `
+    query ModerationItems {
+      moderationItems {
+        status
+        ResponseCode
+        affectedRows {
+          moderationTicketId
+          targetContentId
+          targettype
+          reportscount
+          status
+          createdat
+          targetcontent {
+            comment {
+              commentid
+              userid
+              postid
+              parentid
+              content
+              createdat
+              visibilityStatus
+              hasActiveReports
+              amountlikes
+              amountreplies
+              amountreports
+              isreported
+              isliked
+              user {
+                id
+                username
+                slug
+                img
+                visibilityStatus
+                hasActiveReports
+                isfollowed
+                isfollowing
+                isreported
+                isfriend
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+
+  LIST_USER: `
+    query ModerationItems {
+      moderationItems {
+        status
+        ResponseCode
+        affectedRows {
+          moderationTicketId
+          targetContentId
+          targettype
+          reportscount
+          status
+          createdat
+          targetcontent {
+            user {
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              hasActiveReports
+              updatedat
+            }
+          }
+        }
+      }
+    }
+  `,
+};
