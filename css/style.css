@@ -191,8 +191,7 @@ img {
 .peer-icon.peer-icon-three-dots {
 	font-size: 43%;
 }
-h1,
-.xxl_font_size {
+h1 {
 	font-size: 35px;
 	/*font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);*/
 	line-height: 1.2;
@@ -204,8 +203,14 @@ h1,
 
 }
 
+
 .xxl_font_size {
-	font-weight: 700;
+	font-size: 35px;
+	/*font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);*/
+	line-height: 1.2;
+	letter-spacing: 0.02em;
+	text-transform: none;
+
 }
 
 .xl_font_size {
@@ -236,6 +241,9 @@ h3 {
 	font-weight: 400;
 	margin: 0 0 22px 0;
 }
+.small_font_size{
+		font-size: 18px;
+	}
 
 .widget-head .widget-title {
 	margin: 0 !important;
@@ -1249,9 +1257,7 @@ footer {
 	margin-top: 0.8rem;
 }
 
-#username {
-	color: white;
-}
+
 
 .widget .widget-profile .stats {
 	display: flex;
@@ -2435,6 +2441,10 @@ footer {
 		font-size: clamp(1.25rem, 1.0938rem + 0.25vw, 1.5625rem);
 	}
 
+	.small_font_size{
+		font-size: 18px;
+	}
+
 	input[type="text"],
 	input[type="email"],
 	input[type="url"],
@@ -2514,6 +2524,13 @@ footer {
 	.md_font_size {
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+	}
+
+	.small_font_size, 
+	button.small_font_size{
+
+		font-size: 28px;
+		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
 	}
 
 	.site_layout {

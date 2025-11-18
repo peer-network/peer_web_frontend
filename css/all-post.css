@@ -705,18 +705,11 @@ transition: 0.6s all;
   cursor: pointer;
 }
 
-.hidden_userfeed_frame .hidden_header {
+.hidden_userfeed_frame .hidden_content {
   display: flex;
+  gap: 10px; 
 }
 
-.hidden_userfeed_frame .hidden_title.bold,
-.hidden_userfeed_frame .hidden_description {
-  font-size: 16px;
-}
-
-.hidden_userfeed_frame .hidden_description {
-  margin-left: 30px;
-}
 
 .hidden_user_profile .post-userImg,
 .hidden_user_profile .username-slug .post-userName,
@@ -806,9 +799,4 @@ transition: 0.6s all;
   
   
   .card .post-inhalt .post-title {padding-right: 80px;}
-
-  .hidden_userfeed_frame .hidden_title.bold,
-  .hidden_userfeed_frame .hidden_description {
-    font-size: 25px !important;
-  }
 }
