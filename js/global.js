@@ -1379,16 +1379,16 @@ function updateFollowButtonState(button, isfollowed, isfollowing) {
   );
 
   if (isfollowed && isfollowing) {
-    button.classList.add("Peer", "btn-blue");
+    button.classList.add("Peer", "btn-blue", "small_font_size");
     button.textContent = "Peer";
     button.setAttribute("aria-label", "Mutual followers");
   } else if (isfollowed) {
-    button.classList.add("following", "btn-white");
+    button.classList.add("following", "btn-white", "small_font_size");
     button.textContent = "Following";
     button.setAttribute("aria-label", "You follow this user");
   } else {
-    button.classList.add("follow", "btn-transparent");
-    button.textContent = "Follow +";
+    button.classList.add("follow", "btn-transparent", "small_font_size");
+    button.textContent = "Follow";
     button.setAttribute("aria-label", "Follow this user");
   }
 }
@@ -2935,7 +2935,7 @@ function addHiddenBadge() {
   const slug = profileInfo.querySelector('.profile_no');
   
   const hiddenBadge = document.createElement('span');
-  hiddenBadge.classList.add ('profile_hidden_badge', 'xl_font_size');
+  hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
   hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
   
   slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*-- handling profile visibility----*/
     //const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
-    const visibilityStatus = "HIDDEN";
+    // const visibilityStatus = "HIDDEN";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     const isReportedByYou = userprofile.affectedRows.isreported;
 
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const illegalProfileHTML = `
         <div class="illegal_profile_frame xl_font_size">
           <div class="illegal_content">
-            <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+            <div class="icon_illegal"><i class="peer-icon peer-icon-illegal xxl_font_size"></i></div>
             <div class="illegal_title bold">Profile data is removed as illegal</div>
           </div>
         </div>`;

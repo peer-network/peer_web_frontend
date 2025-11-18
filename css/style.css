@@ -2526,7 +2526,8 @@ footer {
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
 	}
 
-	.small_font_size{
+	.small_font_size, 
+	button.small_font_size{
 
 		font-size: 28px;
 		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
