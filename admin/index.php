@@ -29,8 +29,6 @@
                     <span class="stat_count xxl_font_size bold">25</span>
                     <span class="stat_desc txt-color-gray">Never shows to users</span>
                 </div>
-                
-
             </div>
 
             <div class="content_result">
@@ -106,8 +104,7 @@
                             <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
                         </div>
                         <div class="status">
-                            <span class="restored xl_font_size green-text">Restored</span>                          
-                            
+                            <span class="restored xl_font_size green-text">Restored</span>
                         </div>
                     </div>
 
@@ -134,20 +131,10 @@
                              <span class="review xl_font_size yellow-text">Waiting for review</span>
                         </div>
                     </div>
-
                 </div>
-
-
-
             </div>
-
-
-            
         </main>
-
-
         <?php require_once ('./template-parts/footer.php'); ?>
     </div>
-
 </body>
 </html>

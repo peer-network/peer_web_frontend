@@ -1298,11 +1298,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const formatted = val.replace(/^#+/, "").trim();
         const clean = formatted.toLowerCase();
         const existingTags = getAllUsedTagsSet();
-        if (val.length >= 3 && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
+        if ((val.length > 1 && val.length <= 53) && /^[a-zA-Z0-9]+$/.test(val) && !existingTags.has(clean)) {
           tag_addTag(formatted);
           tagInput.value = "";
           clearTagContainer();
           updateTagUIVisibility();
+          //need to clear the error div container
+          tagErrorEl.textContent = "";
         }
       }
     });
@@ -1323,9 +1325,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (searchStr.length <= 1 || searchStr.length > 53) {
         tagErrorEl.textContent = "Tag must be 2-53 chars with letters, numbers.";
-        return;
+        return false;
       }
-
+      
       //need to clear the error div container
       tagErrorEl.textContent = "";
 
