@@ -705,18 +705,11 @@ transition: 0.6s all;
   cursor: pointer;
 }
 
-.hidden_userfeed_frame .hidden_header {
+.hidden_userfeed_frame .hidden_content {
   display: flex;
+  gap: 10px; 
 }
 
-.hidden_userfeed_frame .hidden_title.bold,
-.hidden_userfeed_frame .hidden_description {
-  font-size: 16px;
-}
-
-.hidden_userfeed_frame .hidden_description {
-  margin-left: 30px;
-}
 
 .hidden_user_profile .post-userImg,
 .hidden_user_profile .username-slug .post-userName,
@@ -799,16 +792,17 @@ transition: 0.6s all;
     min-width: 180px;
     line-height: 66px;
     border-width: 3px;
-   font-size: 28px;
-    font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
+   
+  }
+   .card-header-right button {
+    min-width: 180px;
+    line-height: 66px;
+    border-width: 3px;
+  
+    font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem) !important;
 	
   }
   
   
   .card .post-inhalt .post-title {padding-right: 80px;}
-
-  .hidden_userfeed_frame .hidden_title.bold,
-  .hidden_userfeed_frame .hidden_description {
-    font-size: 25px !important;
-  }
 }

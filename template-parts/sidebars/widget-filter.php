@@ -43,7 +43,7 @@
     <form class="filterContainer">
         
         <!-- Feed Filter -->
-        <section class="filter-section none">
+        <section class="filter-section">
             <button type="button" class="feed filter-toggle filter-section-header" aria-expanded="false" aria-controls="feed-options">
                 <img src="svg/feed-icon.svg" alt="" class="section-icon">
                 <div class="filter-section-container">
@@ -58,11 +58,11 @@
                         <span>All</span>
                     </label>
                     <label class="filter-btn">
-                        <input type="radio" name="feed" value="followers">
+                        <input type="radio" name="FOLLOWER" class="filteritem" value="FOLLOWER">
                         <span>Followers</span>
                     </label>
                     <label class="filter-btn">
-                        <input type="radio" name="feed" value="following">
+                        <input type="radio" name="FOLLOWED" class="filteritem" value="FOLLOWED">
                         <span>Following</span>
                     </label>
                     <!--<label class="filter-btn">

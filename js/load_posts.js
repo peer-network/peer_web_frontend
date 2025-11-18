@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded",  () => {
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
-
+     
       const selectedTypes = Array.from(checkboxes)
         .filter((cb) => cb.checked)
         .map((cb) => cb.name);
@@ -378,13 +378,12 @@ function appendPost(json) {
 const hiddenUserHTML = `
   <div class="hidden_userfeed_frame">
     <div class="hidden_content">
+    <i class="peer-icon peer-icon-eye-close md_font_size"></i>
       <div class="hidden_header">
-        <i class="peer-icon peer-icon-eye-close"></i>
         <div class="hidden_title bold">Sensitive content</div>
+        <div class="hidden_description">Click to see</div>
       </div>
-      <div class="hidden_description">
-        Click to see
-      </div>
+      
     </div>
   </div>
 `;
@@ -400,6 +399,7 @@ async function postsLaden(postbyUserID=null) {
     //manualLoad = false;
     const form = document.querySelector(".filterContainer");
     const checkboxes = form.querySelectorAll(".filteritem:checked");
+    console.log(checkboxes);
 
     // Die Werte der angehakten Checkboxen sammeln
     const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
@@ -431,6 +431,7 @@ async function postsLaden(postbyUserID=null) {
       tagInput = normalWords.join(" ");
     }
     const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
+    console.log(cleanedArray);
 
     if (postbyUserID!=null){
       POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
@@ -525,11 +526,15 @@ async function postsLaden(postbyUserID=null) {
       /*-- handling users visibility----*/
       // const testUserVisibility = "HIDDEN"; 
       const userHasActiveReports = objekt.user.hasActiveReports || false;
-      const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+      const testUserVisibility = urlParams.get("uservisibility");
+      // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
       // Checking if user has HIDDEN visibility (using hardcoded value for testing)
-      if(testUserVisibility) {
-        objekt.user.visibilityStatus = testUserVisibility;
+
+      if(testPostid==objekt.user.id){
+        if(testUserVisibility) {
+          objekt.user.visibilityStatus = testUserVisibility;
+        }
       }
       /*-- End : handling users visibility----*/
 
@@ -1236,14 +1241,18 @@ async function postClicked(objekt) {
     }
     userCardHeader.classList.remove("hidden_user_profile");
     
-    // const testUserVisibility = "HIDDEN"; 
+    //  const testUserVisibility = "HIDDEN"; 
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const testPostid = urlParams.get("testid");
     const userHasActiveReports = objekt.user.hasActiveReports || false;
     const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
 
     // Checking if user has HIDDEN visibility (using hardcoded value for testing)
-    if(testUserVisibility) {
-      objekt.user.visibilityStatus = testUserVisibility;
-    }
+    // if(testPostid==objekt.user.id){
+      if(testUserVisibility) {
+        objekt.user.visibilityStatus = testUserVisibility;
+      }
+    // }
 
     if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
       // console.log("Post already viewed");

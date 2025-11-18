@@ -63,9 +63,9 @@ checkAuth("unauthorized");
         <div class="cropContainer"><img id="profilbild2" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
       </div>
       <div class="profile_info">
-        <h2 class="profile_title"><span  id="username2">&nbsp;</span><span id="slug2" class="profile_no">&nbsp;</span></h2>
-        <div class="profile_description" id="biography2"> </div>
-        <div class="profile_stats"> <span class="post_count"><em id="userPosts2">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers2">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span id="following_count" class="following_count"><em id="following2">&nbsp;</em> Following</span> <span id="peer_count" class="peer_count"><em id="Peers2">0</em> Peers</span>  </div>
+        <h2 class="profile_title"><span  id="username2" class="username xxl_font_size bold">&nbsp;</span><span id="slug2" class="slug profile_no xl_font_size txt-color-gray">&nbsp;</span></h2>
+        <div class="profile_description md_font_size txt-color-gray" id="biography2"> </div>
+        <div class="profile_stats md_font_size txt-color-gray"> <span class="post_count"><em id="userPosts2" class="xxl_font_size">&nbsp;</em> Posts</span> <span id="followers_count" class="followers_count"><em id="followers2" class="xxl_font_size">&nbsp;</em> <span class="new_count" id="recent_followers2"></span> Followers</span> <span id="following_count" class="following_count"><em id="following2" class="xxl_font_size">&nbsp;</em> Following</span> <span id="peer_count" class="peer_count"><em id="Peers2" class="xxl_font_size">0</em> Peers</span>  </div>
         
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
