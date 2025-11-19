@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded",  () => {
     }
   }
   setupFilterLabelSwapping("feed");
-  setupFilterLabelSwapping("sort");
+ 
   //setupFilterLabelSwapping("time");
 
   function updateFilterHeaderIcons(sectionId = "content-options", preset = null) {
