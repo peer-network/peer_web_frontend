@@ -16,22 +16,22 @@
             </button>
                 <div class="filter-options content-options" id="content-options">
                     <div class="filterGroup">
-                        <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" />
+                        <input checked id="filterImage" type="checkbox" name="IMAGE" class="filteritem" value="IMAGE" />
                         <label for="filterImage" class="filterButton" title="Fotos">
                             <img src="svg/photo.svg" alt="Image filter"/>
                             <span>Photo</span>
                         </label>
-                        <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" />
+                        <input checked id="filterVideo" type="checkbox" name="VIDEO" class="filteritem" value="VIDEO" />
                         <label for="filterVideo" class="filterButton" title="Video">
                             <img src="svg/videos.svg" alt="Video filter"/>
                             <span>Video</span>
                         </label>
-                        <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" />
+                        <input checked id="filterNotes" type="checkbox" name="TEXT" class="filteritem" value="TEXT" />
                         <label for="filterNotes" class="filterButton" title="Notes" name="notes">
                             <img src="svg/text.svg" alt="Notes filter"/>
                             <span>Text</span>
                         </label>
-                        <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" />
+                        <input checked id="filterAdio" type="checkbox" name="AUDIO" class="filteritem" value="AUDIO" />
                         <label for="filterAdio" class="filterButton" title="Audio">
                             <img src="svg/music.svg" alt="Audio filter"/>
                             <span>Music</span>
@@ -54,15 +54,15 @@
             <div class="filter-options feed-options" id="feed-options">
                 <div class="filterGroup-feed">
                     <label class="filter-btn">
-                        <input type="radio" name="feed" value="all" checked>
+                        <input id="filterAll" type="radio" name="feed" class="filteritem" value="all" checked>
                         <span>All</span>
                     </label>
                     <label class="filter-btn">
-                        <input type="radio" name="FOLLOWER" class="filteritem" value="FOLLOWER">
+                        <input id="filterFollower" type="radio" name="feed" class="filteritem" value="FOLLOWER">
                         <span>Followers</span>
                     </label>
                     <label class="filter-btn">
-                        <input type="radio" name="FOLLOWED" class="filteritem" value="FOLLOWED">
+                        <input id="filterFollowed" type="radio" name="feed" class="filteritem" value="FOLLOWED">
                         <span>Following</span>
                     </label>
                     <!--<label class="filter-btn">
@@ -73,8 +73,7 @@
             </div>
         </section>
     </form>
-    <form class="filterContainer">
-        <!-- Time Filter -->
+    <!-- <form class="filterContainer">
         <section class="filter-section none">
             <button type="button" class="time filter-toggle filter-section-header" aria-expanded="false" aria-controls="time-options">
                 <img src="svg/time-icon.svg" alt="" class="section-icon">
@@ -86,7 +85,7 @@
             <div class="filter-options time-options" id="time-options">
                 <div class="filterGroup-feed">
                     <label class="filter-btn">
-                        <input type="radio" name="time" value="all" checked>
+                        <input type="radio" name="time" value="all">
                         <span>All</span>
                     </label>
                     <label class="filter-btn">
@@ -108,6 +107,6 @@
                 </div>
             </div>
         </section>
-    </form>
+    </form>-->
 </div>
 

@@ -163,9 +163,9 @@ document.addEventListener("DOMContentLoaded",  () => {
 
         if (input.value === value) {
           labelSpan.textContent = " " + labelText;
-          label.style.display = "none";
+          //label.style.display = "none";
         } else {
-          label.style.display = "";
+          //label.style.display = "";
         }
       });
     }
@@ -175,7 +175,8 @@ document.addEventListener("DOMContentLoaded",  () => {
     }
   }
   setupFilterLabelSwapping("feed");
-  setupFilterLabelSwapping("time");
+  setupFilterLabelSwapping("sort");
+  //setupFilterLabelSwapping("time");
 
   function updateFilterHeaderIcons(sectionId = "content-options", preset = null) {
     const iconMap = {
@@ -224,8 +225,8 @@ document.addEventListener("DOMContentLoaded",  () => {
       saveFilterSettings();
      
       const selectedTypes = Array.from(checkboxes)
-        .filter((cb) => cb.checked)
-        .map((cb) => cb.name);
+        .filter((cb) => cb.checked && cb.value !== "all")
+        .map((cb) => cb.value);
       localStorage.setItem("selectedContentTypes", JSON.stringify(selectedTypes));
 
       const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
@@ -397,12 +398,13 @@ async function postsLaden(postbyUserID=null) {
     // }
     //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
     //manualLoad = false;
-    const form = document.querySelector(".filterContainer");
-    const checkboxes = form.querySelectorAll(".filteritem:checked");
-    console.log(checkboxes);
+    //const form = document.querySelectorAll(".filterContainer");
+
+    const checkboxes = document.querySelectorAll(".filterContainer .filteritem:checked");
+    //console.log(checkboxes);
 
     // Die Werte der angehakten Checkboxen sammeln
-    const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
+    const values = Array.from(checkboxes).filter((checkbox) => checkbox.checked && checkbox.value !== "all").map((checkbox) => checkbox.value);
 
     // Werte als komma-getrennte Zeichenkette zusammenfügen
     // const result = values.join(" ");
@@ -430,8 +432,8 @@ async function postsLaden(postbyUserID=null) {
       const { normalWords } = extractWords(titleElement.value.toLowerCase());
       tagInput = normalWords.join(" ");
     }
-    const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
-    console.log(cleanedArray);
+    const sortby = document.querySelectorAll('.filterContainer.sortby input[type="radio"]:checked');
+    //console.log(cleanedArray);
 
     if (postbyUserID!=null){
       POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
@@ -1287,9 +1289,8 @@ function saveFilterSettings() {
 
   checkboxes.forEach((checkbox) => {
     filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
-
     if (checkbox.closest(".content-options") && checkbox.checked) {
-      selectedContentTypes.push(checkbox.name); // use name, not id
+      selectedContentTypes.push(checkbox.value); // use value, not id
     }
   });
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern

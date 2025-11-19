@@ -1185,6 +1185,15 @@ footer {
 .widget .filterGroup input[type="radio"]:checked+label {
 	background-color: var(--button-color);
 }
+.widget .filterGroup-feed .filter-btn span {
+	
+	cursor: pointer;
+}
+.widget .filterGroup-feed input[type="radio"]:checked + span {
+	font-weight: 700;
+	font-style: italic;
+	cursor:default;
+}
 
 @keyframes borderButton {
 	0% {
@@ -1734,7 +1743,7 @@ footer {
 }
 
 .search-group .divider {
-	width: 1px;
+	width: 3px;
 	height: 24px;
 	background: var(--stat-p);
 	margin: 0 8px;
