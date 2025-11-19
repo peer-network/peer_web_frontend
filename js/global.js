@@ -1192,6 +1192,14 @@ function postdetail(objekt, CurrentUserID) {
     }
   });
 
+  newTextarea.addEventListener("focus", () => {
+    document.querySelector(".post_comment").classList.add("focus");
+  });
+
+  newTextarea.addEventListener("blur", () => {
+    document.querySelector(".post_comment").classList.remove("focus");
+  });
+
 
     /*---Hidden Frame content */
     const hiddenBadge = postContainer.querySelector(".hidden_badge");

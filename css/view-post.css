@@ -753,6 +753,9 @@
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);
+      z-index: 1;
+      max-width: 272px;
+      width: 100%;
 		}
 
 
@@ -1588,8 +1591,16 @@
   border-radius: 196px;
   background: var(--black-dark, #252525);
   box-shadow: 4px 0px 43.4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s linear;
 }
-
+.post_comment.focus {
+  height: 400px;
+  border-radius: 40px;
+}
+.post_comment.focus textarea{
+  height: 85%;
+ 
+}
 .post_comment textarea {
   border-radius: 0;
   padding: 0;
