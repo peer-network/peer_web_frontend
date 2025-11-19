@@ -753,6 +753,9 @@
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);
+      z-index: 1;
+      max-width: 272px;
+      width: 100%;
 		}
 
 
@@ -774,7 +777,7 @@
 
     .reported_badge {
         display: flex;
-        padding: 21px 43px;
+        padding: 13px 30px;
         justify-content: center;
         align-items: center;
         gap: 5px;
@@ -782,17 +785,17 @@
         border: 2px solid var(--Red-Accent, #FF3B3B);
         backdrop-filter: blur(82.90625762939453px);
         color: var(--Red-Accent, #FF3B3B);
-        max-width: 265px;
+        max-width: 225px;
         margin-top: 10px;
     }
 
-    .card[content="text"] .reported_badge {
+    .card.PINNED .post-inhalt .reported_badge {
       position: absolute;
-      bottom: 100px;
+      bottom: 13%;
+      margin-top: 0;
+      left: 106px;
     }
-    .PINNED.card[content="text"] .reported_badge {
-      bottom: 190px;
-    }
+    
 
     .viewpost .postview_footer .reported_badge {
 			position: absolute;
@@ -1588,8 +1591,16 @@
   border-radius: 196px;
   background: var(--black-dark, #252525);
   box-shadow: 4px 0px 43.4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s linear;
 }
-
+.post_comment.focus {
+  height: 400px;
+  border-radius: 40px;
+}
+.post_comment.focus textarea{
+  height: 85%;
+ 
+}
 .post_comment textarea {
   border-radius: 0;
   padding: 0;
@@ -1633,7 +1644,7 @@
 
 .post_comment button i {
   line-height: 0;
-  font-size: 30px;
+  font-size: 18px;
 }
 .post_comment:hover {
   background: var(--Field-Hover-Black, #393939);
@@ -1733,7 +1744,7 @@ button:not(:disabled):hover.switch-btn {
     height: 26px;
   }
   .post_comment button i {
-    font-size: 65px;
+    font-size: 30px;
   }
   .viewpost .post_gallery {
     height: calc(100% - 100px);
