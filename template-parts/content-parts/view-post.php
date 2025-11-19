@@ -98,7 +98,7 @@
             </div>
             <div class="post_content">
                 <div class="post_title">
-                    <h2 class="xxl_font_size"></h2>
+                    <h2 class="xxl_font_size bold"></h2>
                     <span class="timeagao txt-color-gray"></span>
 
                 </div>
@@ -110,7 +110,7 @@
             </div>
             <div class="comments-container">
                 <div class="comments-header">
-                    <h3 class="cmt_head xxl_font_size">Comments</h3>
+                    <h3 class="cmt_head xxl_font_size bold">Comments</h3>
                     <span class="comment_total md_font_size"><i class="peer-icon peer-icon-comment-dot"></i> <span class="comment_count">0</span></span>
                     <span class="cmt-scroll none">Comment Scroll</span>
                 </div>

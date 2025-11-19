@@ -132,7 +132,110 @@
    .site-main-nonuser-inner{
 		max-width: 2000px;
 	}
+
+  .viewpost .post_content .post_title {
+    padding-right: 100px;
+  }
+
+  .viewpost .inner-container {
+    width: 85vw;
+  }
+  .viewpost .profile-header-right .follow-button {
+    min-width: 180px;
+    line-height: 45px;
+    border-width: 2px;
+  }
+  .comment_list .comment_item {
+    gap: 20px;
+  }
+  .comment_list .comment_item .timeagao {
+    padding-left: 30px;
+  }
+  .comment_list .comment_item .timeagao::before {
+    border-width: 3px;
+    left: 11px;
+    top: 10px;
+  }
+
+  .comment_list .comment_item .commenter_info {
+    margin-bottom: 15px;
+  }
+  .comment_list .comment_item .comment_reply_container {
+    margin-top: 15px;
+  }
+  .post_comment {
+    height: 130px;
+  }
+  .post_comment button {
+    width: 76px;
+    padding: 15px;
+    height: 76px;
+  }
+  .post_comment textarea {
+    height: 26px;
+  }
+  .post_comment button i {
+    font-size: 30px;
+  }
+  .viewpost .post_gallery {
+    height: calc(100% - 100px);
+  }
+  .viewpost .post_gallery.multi .slider-wrapper {
+    gap: 40px;
+  }
+  .viewpost .post_gallery.multi .slider-wrapper .slider-track {
+    height: calc(100% - 140px);
+  }
+
+  .viewpost .post_gallery .slider-wrapper .slider-thumbnails {
+    gap: 20px;
+  }
+  .viewpost .post_gallery .slider-wrapper .slider-thumbnails img {
+    height: 90px;
+    border-radius: 10px;
+  }
+  .viewpost .post_gallery .image_item .zoom {
+    width: 100px;
+    height: 100px;
+
+    right: 30px;
+    bottom: 50px;
+
+    font-size: 40px;
+  }
+  .slider-modal .modal-nav {
+    font-size: 30px;
+
+    width: 100px;
+    height: 100px;
+  }
+  .slider-modal .modal-thumbnail {
+    height: 90px;
+    border-radius: 15px;
+  }
+  .viewpost .postview_footer .more .share-post-box {
+    width: 800px;
+    right: -42px;
+  }
+  .share-post-apps .app-icon {
+    padding: 20px;
+  }
+  .share-post-apps .app-icon svg {
+    width: 40px;
+    height: auto;
+  }
+  .share-post-link button {
+    line-height: 80px;
+    height: 80px;
+    gap: 20px;
+  }
+  .share-post-link button svg {
+    width: 37px;
+    height: auto;
+  }
 }
+
+
 @media screen and (min-width: 3000px) {
 	.site_layout_nonuser .site-logo .logo {
 		width: 17rem !important;
@@ -140,6 +243,126 @@
 	.site-main-nonuser-inner{
 		max-width: 2600px;
 	}
+
+  .viewpost .post_content .post_title {
+    padding-right: 150px;
+  }
+  .viewpost .post_content .post_text {
+    margin-top: 30px;
+  }
+  .viewpost .inner-container {
+    width: 68vw;
+  }
+
+  .viewpost .profile-header-left .post-userImg,
+  .viewpost .comment_list .commenter-pic img {
+    width: 8rem;
+  }
+
+  .viewpost .profile-header-right .follow-button {
+    min-width: 250px;
+    line-height: 66px;
+    border-width: 3px;
+  }
+  .comment_list .comment_item {
+    gap: 40px;
+  }
+  .comment_list .comment_item .timeagao {
+    padding-left: 40px;
+  }
+  .comment_list .comment_item .timeagao::before {
+    border-width: 5px;
+    left: 16px;
+    top: 15px;
+  }
+  .comment_list .comment_item .commenter_info {
+    margin-bottom: 27px;
+  }
+  .comment_list .comment_item .comment_reply_container {
+    margin-top: 30px;
+  }
+  .comment_list .comment_item .comment_reply_container .reply_btn a span,
+  .viewpost .postview_footer .more a.morebtn span.dots {
+    border-width: 5px;
+    margin-left: 80px;
+  }
+  .comment_list
+    .comment_item
+    .comment_reply_container
+    .reply_btn
+    a
+    span::before,
+  .comment_list .comment_item .comment_reply_container .reply_btn a span::after,
+  .viewpost .postview_footer .more a.morebtn span.dots::before,
+  .viewpost .postview_footer .more a.morebtn span.dots::after {
+    top: -4px;
+    left: -35px;
+    border-width: 5px;
+  }
+  .comment_list .comment_item .comment_reply_container .reply_btn a span::after,
+  .viewpost .postview_footer .more a.morebtn span.dots::after {
+    left: -20px;
+  }
+
+  .post_comment button {
+    width: 110px;
+    padding: 24px;
+    height: 110px;
+  }
+  .post_comment textarea {
+    height: 40px;
+  }
+  .viewpost .postview_footer .more ul.sublist {
+    width: 500px;
+    padding: 40px 40px 80px;
+  }
+  .viewpost .postview_footer .more ul.sublist > li > a {
+    line-height: 130px;
+  }
+
+  .slider-modal .modal-nav {
+    width: 150px;
+    height: 150px;
+    font-size: 55px;
+    min-width: 100px;
+  }
+  .slider-modal .modal-thumbnail {
+    height: 140px;
+    border-radius: 20px;
+  }
+  .button.nav-button.next_button,
+  .button.nav-button.prev_button {
+    line-height: 0;
+    min-width: 0;
+  }
+  .post_gallery.audio .audio-item .audio_player_con .time-info {
+    min-width: 140px;
+  }
+  .viewpost .postview_footer .more .share-post-box {
+    width: 1000px;
+  }
+  .share-post-apps .app-icon {
+    padding: 40px;
+  }
+  .share-post-apps .app-icon svg {
+    width: 80px;
+    height: auto;
+  }
+  .share-post-link button {
+    line-height: 100px;
+    height: 100px;
+    gap: 20px;
+  }
+  .share-post-link button svg {
+    width: 37px;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 2300px) {
+  .post_gallery.audio #play-pause {
+    height: 150px;
+  }
 }
 @media screen and (max-width: 2000px) {
 	
@@ -148,6 +371,32 @@
 	}
 	
 }
+@media screen and (max-width: 1800px) {
+  .post_gallery.audio #play-pause {
+    height: 100px;
+  }
+  .viewpost .inner-container {
+    width: 95vw;
+    height: 95vh;
+
+    border-radius: 40px;
+
+    padding: 40px;
+  }
+  .post_gallery.audio .audio-item {
+    border-radius: 20px;
+  }
+  .viewpost .post_gallery .slide_item {
+    border-radius: 20px;
+  }
+  .viewpost .post_gallery .slide_item {
+    border-radius: 20px;
+  }
+  .viewpost .post_gallery .slider-wrapper .slider-thumbnails .timg i {
+    font-size: 15px;
+  }
+}
+
 
 
 @media screen and (max-width: 1400px) {
@@ -166,6 +415,9 @@
 	}
 	.site_layout_nonuser .viewpost .viewpost-left {
 		width: 53%;
+	}
+	.site_layout_nonuser .viewpost {
+		overflow: hidden;
 	}
 	
 }
