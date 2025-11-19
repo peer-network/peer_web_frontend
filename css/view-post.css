@@ -1644,7 +1644,7 @@
 
 .post_comment button i {
   line-height: 0;
-  font-size: 30px;
+  font-size: 18px;
 }
 .post_comment:hover {
   background: var(--Field-Hover-Black, #393939);
@@ -1744,7 +1744,7 @@ button:not(:disabled):hover.switch-btn {
     height: 26px;
   }
   .post_comment button i {
-    font-size: 65px;
+    font-size: 30px;
   }
   .viewpost .post_gallery {
     height: calc(100% - 100px);

@@ -14,12 +14,7 @@ include 'host.php';
     <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/font-poppins/stylesheet.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/peer-icon-font/css/peer-network.css">
 
-    <link rel='stylesheet'
-        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel='stylesheet'
-        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
-    <link rel='stylesheet'
-        href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+    
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/style.css" />
 
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/all-post.css" />

@@ -119,6 +119,11 @@
 	margin-left: -100px;
 }
 
+.site-main-nonuser .report-btn-container{ display: none !important;}
+.viewpost .postview_footer .more ul.sublist li.reportpostli{
+	display: none !important;
+}
+
 @media screen and (min-width: 2000px) {
   .site_layout_nonuser .site-logo .logo {
     width: 15rem !important;

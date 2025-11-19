@@ -853,11 +853,11 @@ function postdetail(objekt, CurrentUserID) {
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
                     <div class="thumbs-wrapper">
-                      <span class="button nav-button prev_button"><i class="fi fi-rr-angle-left"></i></span>
+                      <span class="button nav-button prev_button"><i class="peer-icon peer-icon-arrow-left"></i></span>
                       <div class="slider_thumbnails_wrapper">
                         <div class="slider-thumbnails"></div>
                       </div>
-                      <span class="button nav-button next_button"><i class="fi fi-rr-angle-right"></i></span>
+                      <span class="button nav-button next_button"><i class="peer-icon peer-icon-arrow-right"></i></span>
                     </div>
                   </div>
                 `;
@@ -929,7 +929,7 @@ function postdetail(objekt, CurrentUserID) {
 
       const zoomElement = document.createElement("span");
       zoomElement.className = "zoom";
-      zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+      zoomElement.innerHTML = `<i class="peer-icon peer-icon-plus"></i>`;
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
