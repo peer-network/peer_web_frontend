@@ -1348,8 +1348,8 @@ function renderFollowButton(objekt, currentUserId) {
 
   updateFollowButtonState(
     followButton,
-    objekt.user.isfollowed,
-    objekt.user.isfollowing
+    objekt.user.isfollowing,
+    objekt.user.isfollowed
   );
 
   followButton.addEventListener("click", async (event) => {
@@ -1368,7 +1368,7 @@ function renderFollowButton(objekt, currentUserId) {
  * @param {boolean} isfollowed - Whether current user follows this user
  * @param {boolean} isfollowing - Whether this user follows current user
  */
-function updateFollowButtonState(button, isfollowed, isfollowing) {
+function updateFollowButtonState(button, isfollowing, isfollowed) {
   button.classList.remove(
     "Peer",
     "btn-blue",
@@ -1378,11 +1378,11 @@ function updateFollowButtonState(button, isfollowed, isfollowing) {
     "btn-transparent"
   );
 
-  if (isfollowed && isfollowing) {
+  if (isfollowing && isfollowed) {
     button.classList.add("Peer", "btn-blue", "small_font_size");
     button.textContent = "Peer";
     button.setAttribute("aria-label", "Mutual followers");
-  } else if (isfollowed) {
+  } else if (isfollowing) {
     button.classList.add("following", "btn-white", "small_font_size");
     button.textContent = "Following";
     button.setAttribute("aria-label", "You follow this user");
@@ -1405,8 +1405,8 @@ async function handleFollowButtonClick(button, user) {
     const newStatus = await toggleFollowStatus(user.id);
 
     if (newStatus !== null) {
-      user.isfollowed = newStatus;
-      updateFollowButtonState(button, user.isfollowed, user.isfollowing);
+      user.isfollowing = newStatus;
+      updateAllFollowButtonsForUser(user.id, user.isfollowing, user.isfollowed);
       updateFollowingCount(newStatus);
     } else {
       showError("Failed to update follow status. Please try again.");
@@ -1418,6 +1418,21 @@ async function handleFollowButtonClick(button, user) {
     button.disabled = false;
   }
 }
+
+/**
+ * Updates all follow buttons for a specific user across the page
+ * @param {string} userId - The user ID to update buttons for
+ * @param {boolean} isfollowing - Whether current user follows this user
+ * @param {boolean} isfollowed - Whether this user follows current user
+ */
+  function updateAllFollowButtonsForUser(userId, isfollowing, isfollowed) {
+    // Find all follow buttons for this user using the data-userid attribute
+    const allButtons = document.querySelectorAll(`button[data-userid="${userId}"]`);
+    
+    allButtons.forEach(btn => {
+      updateFollowButtonState(btn, isfollowing, isfollowed);
+    });
+  }
 
 /**
  * Updates the following count in the UI
