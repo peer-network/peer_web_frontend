@@ -994,7 +994,7 @@
 }
 
 
-@media screen and (min-width: 3000px) {
+@media screen and (min-width: 1000px) {
 
   
 
@@ -1162,7 +1162,7 @@
 }
 
 
-@media screen and (max-width: 3000px) {
+@media screen and (max-width: 3000px) {/*
   .profile_header .profile_picture {
     max-width: 300px;
   }
@@ -1193,6 +1193,6 @@
   .profile_header .profile_edit_box .ads_container_wrap {
     top: 60px;
     
-  }
+  }*/
   
 }

@@ -1185,6 +1185,15 @@ footer {
 .widget .filterGroup input[type="radio"]:checked+label {
 	background-color: var(--button-color);
 }
+.widget .filterGroup-feed .filter-btn span {
+	
+	cursor: pointer;
+}
+.widget .filterGroup-feed input[type="radio"]:checked + span {
+	font-weight: 700;
+	font-style: italic;
+	cursor:default;
+}
 
 @keyframes borderButton {
 	0% {
@@ -1734,7 +1743,7 @@ footer {
 }
 
 .search-group .divider {
-	width: 1px;
+	width: 3px;
 	height: 24px;
 	background: var(--stat-p);
 	margin: 0 8px;
@@ -3004,7 +3013,7 @@ footer {
 
 /* Temporary posted here the code from profile.css, the style was needed in dashboard */
 .pinedbtn {
-  margin-top: auto;
+ 
   background: var(--dark-grey);
   width: fit-content;
   display: flex;
@@ -3014,6 +3023,10 @@ footer {
   border-radius: 100%;
   padding: 10px;
   aspect-ratio: 1;
+}
+
+.card[content="text"] .pinedbtn {
+	margin-top: auto;
 }
 
 .pinedbtn .peer-icon.peer-icon-pinpost {
