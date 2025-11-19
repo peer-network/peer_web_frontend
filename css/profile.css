@@ -789,20 +789,18 @@
   text-align: center;
   align-items: center;
   gap: 25px;
-  width: 100%;
-  max-width: 550px;
 }
 
 .report_modal_content .report_user_info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .report_user_info .report_user_details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  text-align: start;
 }
 
 .report_user_details .report_slug {
@@ -824,7 +822,7 @@
   width: 60px;
   border-radius: 100%;
   object-fit: cover;
-  height: 60px;
+  aspect-ratio: 1/1;
 }
 
 
@@ -1138,6 +1136,16 @@
 
   .moreActions_container_wrap .moreActions_wrapper {
     padding: 0 60px;
+  }
+
+  .report_modal_content .report_user_info .report_profile_pic {
+    width: 130px;
+  }
+
+  .modalOverlay .report_modal_content {
+    padding: 80px;
+    border-radius: 120px;
+    gap: 80px;
   }
 
   .moreActions_container_wrap .moreActions_wrapper .report_profile, 

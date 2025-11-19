@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const userID = params.get('user') || params.get("testid");
   const visibilityStatus = params.get("uservisibility");
+  const urlIsReported = params.get("isreported");
 
   getProfile(userID).then(userprofile => {
     
@@ -15,7 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
     //const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
     // const visibilityStatus = "HIDDEN";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
-    const isReportedByYou = userprofile.affectedRows.isreported;
+    let isReportedByYou = userprofile.affectedRows.isreported;
+
+    if (urlIsReported !== null) {
+      isReportedByYou = (urlIsReported.toLowerCase() === "true");
+    }
 
     if (isReportedByYou === true) {
       disableReportButton();
