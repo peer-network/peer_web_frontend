@@ -130,6 +130,7 @@
     const accessToken = getCookie("authToken");
     const headers = getHeaders(accessToken);
 
+   
     // Fetch advertisement posts
     const adsQuery = await getAdvertisementPosts(userID, offset, limit);
     let result = await fetchGraphQL(adsQuery, headers);
@@ -345,8 +346,10 @@
       }
     }
   `;
+   
     return query;
   }
+
 
   // === Helper 2: Build headers ===
   function getHeaders(accessToken) {
