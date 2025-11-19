@@ -774,7 +774,7 @@
 
     .reported_badge {
         display: flex;
-        padding: 21px 43px;
+        padding: 13px 30px;
         justify-content: center;
         align-items: center;
         gap: 5px;
@@ -782,17 +782,17 @@
         border: 2px solid var(--Red-Accent, #FF3B3B);
         backdrop-filter: blur(82.90625762939453px);
         color: var(--Red-Accent, #FF3B3B);
-        max-width: 265px;
+        max-width: 225px;
         margin-top: 10px;
     }
 
-    .card[content="text"] .reported_badge {
+    .card.PINNED .post-inhalt .reported_badge {
       position: absolute;
-      bottom: 100px;
+      bottom: 13%;
+      margin-top: 0;
+      left: 106px;
     }
-    .PINNED.card[content="text"] .reported_badge {
-      bottom: 190px;
-    }
+    
 
     .viewpost .postview_footer .reported_badge {
 			position: absolute;
