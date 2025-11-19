@@ -2,6 +2,8 @@
 <html lang="de">
 <?php require_once ('./template-parts/head.php'); ?>
 <body>
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+    
     <div id="moderation" class="site_layout">
         <?php require_once ('./template-parts/header.php'); ?>
 
@@ -59,7 +61,7 @@
                     </div>
                 
                 
-                    <div class="content_item post">
+                    <!--<div class="content_item post">
                         <div class="content">
                             <span class="content_image">
                                 <img src="../img/audio-bg.png" />
@@ -82,10 +84,10 @@
                             <span class="hidden-tx xl_font_size red-text">Hidden</span>
                             
                         </div>
-                    </div>
+                    </div>-->
 
 
-                    <div class="content_item user">
+                    <!--<div class="content_item user">
                         <div class="content">
                             <span class="content_image">
                                 <img src="../img/profile_thumb.png" />
@@ -106,9 +108,9 @@
                         <div class="status">
                             <span class="restored xl_font_size green-text">Restored</span>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <div class="content_item comment">
+                    <!--<div class="content_item comment">
                         <div class="content">
                             <span class="content_image">
                                <i class="peer-icon peer-icon-comment-fill"></i>
@@ -130,7 +132,7 @@
                         <div class="status">
                              <span class="review xl_font_size yellow-text">Waiting for review</span>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </main>

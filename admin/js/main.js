@@ -1,14 +1,29 @@
 window.addEventListener("DOMContentLoaded", async () => {
-  const { state, api, ui, loader, utils } = window.ChatApp;
+  const { store, service, view, fetcher, helpers } = window.moderationModule;
 
   try {
-    // state.currentUserId = await utils.getCurrentUserId();
-    // state.currentUserImg = await utils.getCurrentUserImage();
-    // ui.initChatTabs();
-    // ui.initSearch();
-    // ui.bindSendMessageHandler();
-    loader.loadChats();
+    // store.currentUserId = helpers.getCookie("userId");
+    // store.currentUserImg = helpers.getCookie("userImg");
+
+    view.initSearch();
+
+    // Load items first
+    const items = await fetcher.loadItems('LIST_ITEMS');
+
+    // Then render them
+    view.renderItems(items);
   } catch (err) {
     console.error("Initialization error:", err);
   }
 });
+
+/**
+ * MAPPING:
+ * loader  -> fetcher
+ * graphql -> schema
+ * index   -> main
+ * api     -> service
+ * state   -> store
+ * ui      -> view
+ * utils   -> helpers
+ */
