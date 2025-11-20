@@ -12,6 +12,7 @@ moderationModule.view = {
   },
 
   renderItems(items) {
+    console.log('items i am here', items)
     const container = moderationModule.helpers.getElement(".content_list");
     if (!container) return;
 

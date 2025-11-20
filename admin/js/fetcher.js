@@ -7,10 +7,8 @@ moderationModule.fetcher = {
       if (!query) throw new Error("Invalid query type: " + type);
 
       const response = await moderationModule.service.fetchGraphQL(query);
-
-      // GraphQL responses usually have `data` field
-      const items = response.data.moderationItems.affectedRows;
-
+      // GraphQL responses
+      const items = response?.moderationItems?.affectedRows;
       // store items
       moderationModule.store.items = items;
       moderationModule.store.filteredItems = items;
