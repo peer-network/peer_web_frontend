@@ -26,6 +26,7 @@ checkAuth("unauthorized");
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+    <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
     <script src="./js/ads/adsHistory/myAds.js?<?php echo filemtime('./js/ads/adsHistory/myAds.js'); ?>" defer></script>
@@ -56,7 +57,7 @@ checkAuth("unauthorized");
       <h1 class="myAds_h1">My Ads</h1>
       <div id="myAds_header" class="myAds_header">
         <div class="myAds_earnings">
-          <h1>Earnings</h1>
+          <h2 class="xxl_font_size">Earnings</h2>
           <div class="earnings_box header_box">
             <p>Gems</p>
             <div class="ads_gems_count">
@@ -66,7 +67,7 @@ checkAuth("unauthorized");
           </div>
         </div>
         <div class="myAds_spendings">
-          <h1>Spendings</h1>
+          <h2 class="xxl_font_size">Spendings</h2>
           <div class="spendings_box header_box">
             <p>Tokens</p>
             <div class="ads_tokens_count">
@@ -76,7 +77,7 @@ checkAuth("unauthorized");
           </div>
         </div>
         <div class="myAds_interactions">
-          <h1>Interactions</h1>
+          <h2 class="xxl_font_size">Interactions</h2>
           <div class="interactions_box header_box">
             <div class="likes">
               <i class="peer-icon peer-icon-like"></i>
@@ -112,7 +113,7 @@ checkAuth("unauthorized");
       </div>
       <div class="myAds_main">
         <div class="top">
-          <h1 class="myAds_h1">All advertisements</h1>
+          <h2 class="xxl_font_size myAds_h1">All advertisements</h2>
           <span>Total: <em id="myAdsTotalCount">0</em></span>
         </div>
         <div class="myAds_lists"></div>

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded",  () => {
   if (closePost) {
     closePost.addEventListener("click", () => {
       togglePopup("cardClicked");
-      clearAdBtnBox();
+      window.clearAdBtnBox();
       cancelTimeout();
     });
   }
@@ -163,9 +163,9 @@ document.addEventListener("DOMContentLoaded",  () => {
 
         if (input.value === value) {
           labelSpan.textContent = " " + labelText;
-          label.style.display = "none";
+          //label.style.display = "none";
         } else {
-          label.style.display = "";
+          //label.style.display = "";
         }
       });
     }
@@ -175,7 +175,8 @@ document.addEventListener("DOMContentLoaded",  () => {
     }
   }
   setupFilterLabelSwapping("feed");
-  setupFilterLabelSwapping("time");
+ 
+  //setupFilterLabelSwapping("time");
 
   function updateFilterHeaderIcons(sectionId = "content-options", preset = null) {
     const iconMap = {
@@ -222,10 +223,10 @@ document.addEventListener("DOMContentLoaded",  () => {
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
-
+     
       const selectedTypes = Array.from(checkboxes)
-        .filter((cb) => cb.checked)
-        .map((cb) => cb.name);
+        .filter((cb) => cb.checked && cb.value !== "all")
+        .map((cb) => cb.value);
       localStorage.setItem("selectedContentTypes", JSON.stringify(selectedTypes));
 
       const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
@@ -374,6 +375,19 @@ function appendPost(json) {
   const letztesDiv = parentElement.lastElementChild;
 }
 
+
+const hiddenUserHTML = `
+  <div class="hidden_userfeed_frame">
+    <div class="hidden_content">
+    <i class="peer-icon peer-icon-eye-close md_font_size"></i>
+      <div class="hidden_header">
+        <div class="hidden_title bold">Sensitive content</div>
+        <div class="hidden_description">Click to see</div>
+      </div>
+      
+    </div>
+  </div>
+`;
 //let manualLoad = false;
 let postoffset = 0;
 let  POSTS;
@@ -384,11 +398,13 @@ async function postsLaden(postbyUserID=null) {
     // }
     //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
     //manualLoad = false;
-    const form = document.querySelector(".filterContainer");
-    const checkboxes = form.querySelectorAll(".filteritem:checked");
+    //const form = document.querySelectorAll(".filterContainer");
+
+    const checkboxes = document.querySelectorAll(".filterContainer .filteritem:checked");
+    //console.log(checkboxes);
 
     // Die Werte der angehakten Checkboxen sammeln
-    const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
+    const values = Array.from(checkboxes).filter((checkbox) => checkbox.checked && checkbox.value !== "all").map((checkbox) => checkbox.value);
 
     // Werte als komma-getrennte Zeichenkette zusammenfügen
     // const result = values.join(" ");
@@ -416,7 +432,8 @@ async function postsLaden(postbyUserID=null) {
       const { normalWords } = extractWords(titleElement.value.toLowerCase());
       tagInput = normalWords.join(" ");
     }
-    const sortby = document.querySelectorAll('.filterContainer input[type="radio"]:checked');
+    const sortby = document.querySelectorAll('.filterContainer.sortby input[type="radio"]:checked');
+    //console.log(cleanedArray);
 
     if (postbyUserID!=null){
       POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
@@ -430,7 +447,20 @@ async function postsLaden(postbyUserID=null) {
     const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
     let audio, video;
     // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
+
+      /*-- for testing post report and visibility----*/
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const testPostid = urlParams.get("testid");
+        //const testPostidreported = urlParams.get("reported");
+        const testPostidvisibility = urlParams.get("visibility");
+        
+      /*-- End : testing post report and visibility----*/
+
+
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
+
+      
       
       // Haupt-<section> erstellen
       const card = document.createElement("section");
@@ -442,7 +472,33 @@ async function postsLaden(postbyUserID=null) {
       // card.setAttribute("tags", objekt.tags.join(","));
       // <div class="post"> erstellen und Bild hinzufügen
       //console.log(objekt.id);
-  
+
+      /*-- for testing post report and visibility----*/
+        
+      
+
+        if(testPostid==objekt.id){
+          
+          if(testPostidvisibility){
+            objekt.visibilityStatus = testPostidvisibility;
+          }
+
+        }
+         
+        
+      /*-- End : testing post report and visibility----*/
+
+      
+      if(objekt.hasActiveReports==true) {   
+        card.classList.add("reported_post");
+        card.setAttribute("data-hasReported", objekt.hasActiveReports);
+      }
+
+      if(objekt.visibilityStatus){
+        card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+        card.setAttribute("data-visibilty", objekt.visibilityStatus);
+      }
+
       let postDiv;
       let img;
       postDiv = document.createElement("div");
@@ -467,6 +523,23 @@ async function postsLaden(postbyUserID=null) {
       };
 
       userImg.src = objekt.user.img ? tempMedia(objekt.user.img.replace("media/", "")) : "svg/noname.svg";
+
+
+      /*-- handling users visibility----*/
+      // const testUserVisibility = "HIDDEN"; 
+      const userHasActiveReports = objekt.user.hasActiveReports || false;
+      const testUserVisibility = urlParams.get("uservisibility");
+      // const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+
+      // Checking if user has HIDDEN visibility (using hardcoded value for testing)
+
+      if(testPostid==objekt.user.id){
+        if(testUserVisibility) {
+          objekt.user.visibilityStatus = testUserVisibility;
+        }
+      }
+      /*-- End : handling users visibility----*/
+
       const title = document.createElement("h3");
       title.textContent = objekt.title;
       title.classList.add("post-title","md_font_size","bold");
@@ -492,7 +565,7 @@ async function postsLaden(postbyUserID=null) {
           event.stopPropagation();
           event.preventDefault();
           redirectToProfile(objekt.user.id); 
-		});
+		  });
 
       card_header.appendChild(card_header_left);
       
@@ -709,7 +782,7 @@ async function postsLaden(postbyUserID=null) {
           const videoCover = this.querySelector(".video-cover");
           if(videoCover)  videoCover.classList.add("none");
           const video = this.querySelector(".video_1");
-          if (video.readyState >= 2 ) {
+          if (video?.readyState >= 2 ) {
             // const rect = video.getBoundingClientRect();
             // const mouseX = event.clientX - rect.left;
             // const relativePosition = mouseX / rect.width;
@@ -852,6 +925,28 @@ async function postsLaden(postbyUserID=null) {
       // Alles in die Haupt-<section> hinzufügen
       card.appendChild(postDiv);
       card.appendChild(inhaltDiv);
+
+      /*---Hidden User Frame */
+      if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
+        const userCardHeader = card.querySelector(".card-header-left");
+
+        if(objekt.user.id != UserID && userHasActiveReports === true){
+          userCardHeader.classList.add("hidden_user_profile");
+
+          userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+          
+          userCardHeader.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+            frame.addEventListener("click", (e) => {
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              frame.remove(); 
+              userCardHeader.classList.remove('hidden_user_profile');
+            }, { capture: true });
+          });
+        }
+      }
+      /*---End Hidden User Frame */
       
       card.addEventListener("click", function handleCardClick() {
         postClicked(objekt);
@@ -859,8 +954,78 @@ async function postsLaden(postbyUserID=null) {
       // Die <section class="card"> in das übergeordnete Container-Element hinzufügen
       parentElement.appendChild(card);
       if (objekt.isAd) {
-        insertPinnedBtn(card, objekt.user.username, "profile", calctimeAgo(objekt.startdate));
+        card.classList.add("PINNED");
+        insertPinnedBtn(card, objekt.user.username, "profile");
       }
+
+      /*---Hidden Frame content */
+        if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+            const hiddenContentHTML = `
+            <div class="hidden_content_frame">
+              <div class="hidden_content">
+                <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+                <div class="hidden_title md_font_size bold">Sensitive content</div>
+                <div class="hidden_description">
+                  This content may be sensitive or abusive.<br>
+                  Do you want to view it anyway?
+                </div>
+                <div class="view_content">
+                  <a href="#" class="button btn-transparent">View content</a>
+                </div>
+              </div>
+            </div>
+          `;
+
+          if(objekt.user.id != UserID ){
+            //console.log(objekt.user.id,UserID);
+            inhaltDiv.insertAdjacentHTML("beforeend", hiddenContentHTML);
+          
+
+            // Select all inserted hidden frames and attach "View content" listeners
+            inhaltDiv.querySelectorAll(".hidden_content_frame").forEach(frame => {
+              const viewBtn = frame.querySelector(".view_content a");
+              if (viewBtn) {
+                viewBtn.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  frame.remove(); // remove that specific frame
+                  card.classList.remove('visibilty_hidden');
+                });
+              }
+            });
+          }else{ //else mean logged in user viewing own post 
+            const hiddenContentBadge = `<div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden</div>`;
+            inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", hiddenContentBadge);
+
+          }
+        }
+      /*---End Hidden Frame content */
+
+      /*---illegal Frame content */
+        if(objekt.visibilityStatus=='ILLEGAL' || objekt.visibilityStatus=='illegal'){
+            
+          const illegalContentHTML = `
+          <div class="illegal_content_frame">
+            <div class="illegal_content">
+              <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+              <div class="illegal_title bold">This content was removed as illegal</div>
+            </div>
+          </div>`;
+          
+          card.innerHTML="";
+          card.insertAdjacentHTML("beforeend", illegalContentHTML);
+        }
+
+      /*---End illegal Frame content */
+
+      /*---Content isreported badge ---*/
+        if( objekt.hasActiveReports==true ){
+            
+            const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+            inhaltDiv.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+        }
+      /*---End Content isreported badge */
+
+
     });
     // console.log(posts.listPosts.affectedRows.length);
     postoffset += POSTS.listPosts.affectedRows.length;
@@ -1024,21 +1189,19 @@ function reportPost(objekt, el) {
     }
   
   reportPostAPIcall(objekt.id).then((success) => {
-    if (success) {
-      togglePopup("cardClicked");
-      cancelTimeout();
-      // Add animation class
-      postCardId.classList.add("card_reported");
-      const reported_div = document.createElement("div");
-      reported_div.classList.add("reported");
-      reported_div.innerHTML = `
-        <img src="svg/Union.svg" alt="reported">
-        <p class="xl_font_size reported_text">This Post has been reported by you and will be temporarily hidden.</p>
-      `;
+      if (success) {
+        //togglePopup("cardClicked");
+        cancelTimeout();
+        // Add animation class
+        postCardId.classList.add("reported_post");
 
-      // Step 4: Ab reported_div ko parent div ke andar append karo
-      postCardId.appendChild(reported_div);
-    }
+        const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+        postCardId.querySelector(".post-content").insertAdjacentHTML("beforebegin", reportContentBadge);
+
+        const postview_footer = el.querySelector(".postview_footer");
+        postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
+
+      }
   });
 }
 
@@ -1066,11 +1229,53 @@ async function postClicked(objekt) {
   postdetail(objekt, UserID); //this funtion  define in global.js and used for guest post as well.
   if (objekt.isAd) {
     const cardEl = document.getElementById(`${objekt.id}`);
-    insertPinnedBtn(cardEl, objekt.user.username, "post", calctimeAgo(objekt.startdate));
+    cardEl.classList.add("PINNED");
+    insertPinnedBtn(cardEl, objekt.user.username, "post");
   }
+
+  /*-- handling users visibility----*/
+    const profileHeaderLeft = document.querySelector("#viewpost-container");
+    const userCardHeader = profileHeaderLeft.querySelector(".profile-header");
+    
+    const existingHiddenFrame = userCardHeader.querySelector(".hidden_userfeed_frame");
+    if (existingHiddenFrame) {
+      existingHiddenFrame.remove();
+    }
+    userCardHeader.classList.remove("hidden_user_profile");
+    
+    //  const testUserVisibility = "HIDDEN"; 
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const testPostid = urlParams.get("testid");
+    const userHasActiveReports = objekt.user.hasActiveReports || false;
+    const testUserVisibility = objekt.user.visibilityStatus || 'NORMAL';
+
+    // Checking if user has HIDDEN visibility (using hardcoded value for testing)
+    // if(testPostid==objekt.user.id){
+      if(testUserVisibility) {
+        objekt.user.visibilityStatus = testUserVisibility;
+      }
+    // }
+
+    if(objekt.user.visibilityStatus === 'HIDDEN' || objekt.user.visibilityStatus === 'hidden'){
+      // console.log("Post already viewed");
+
+      if(objekt.user.id != UserID && userHasActiveReports === true){
+        userCardHeader.classList.add("hidden_user_profile");
+        userCardHeader.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+        
+        userCardHeader.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+          frame.addEventListener("click", (e) => {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            frame.remove(); 
+            userCardHeader.classList.remove('hidden_user_profile');
+          }, { capture: true });
+        });
+      }
+    }
+  /*-- End : handling users visibility----*/
 }
-
-
 
 function deleteFilter() {
   localStorage.removeItem("filterSettings");
@@ -1084,9 +1289,8 @@ function saveFilterSettings() {
 
   checkboxes.forEach((checkbox) => {
     filterSettings[checkbox.id] = checkbox.checked; // Speichert Name und Zustand
-
     if (checkbox.closest(".content-options") && checkbox.checked) {
-      selectedContentTypes.push(checkbox.name); // use name, not id
+      selectedContentTypes.push(checkbox.value); // use value, not id
     }
   });
   localStorage.setItem("filterSettings", JSON.stringify(filterSettings)); // In localStorage speichern
@@ -1121,33 +1325,61 @@ function restoreFilterSettings() {
 const postSpan = document.querySelector(".post-view span");
 if (postSpan) {
   postSpan.addEventListener("click", async () => {
-    const postid = postSpan.closest(".viewpost").getAttribute("postid");
-    await postInteractionsModal(postid, "VIEW");
+    const viewpost = postSpan.closest(".viewpost");
+    const postid = viewpost.getAttribute("postid");
+    
+    // Scope selectors to THIS specific viewpost element
+    const counts = {
+      amountviews: parseInt(viewpost.querySelector(".post-view span").textContent) || 0,
+      amountlikes: parseInt(viewpost.querySelector(".post-like span").textContent) || 0,
+      amountdislikes: parseInt(viewpost.querySelector(".post-dislike span").textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "VIEW", counts);
   });
 }
-
 
 const likeSpan = document.querySelector(".post-like span");
 if (likeSpan) {
   likeSpan.addEventListener("click", async () => {
-    const postid = likeSpan.closest(".viewpost").getAttribute("postid");
-    await postInteractionsModal(postid, "LIKE");
+    const viewpost = likeSpan.closest(".viewpost");
+    const postid = viewpost.getAttribute("postid");
+    
+    const counts = {
+      amountviews: parseInt(viewpost.querySelector(".post-view span").textContent) || 0,
+      amountlikes: parseInt(viewpost.querySelector(".post-like span").textContent) || 0,
+      amountdislikes: parseInt(viewpost.querySelector(".post-dislike span").textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "LIKE", counts);
   });
 }
-
 
 const dislikeSpan = document.querySelector(".post-dislike span");
 if (dislikeSpan) {
   dislikeSpan.addEventListener("click", async () => {
-    const postid = dislikeSpan.closest(".viewpost").getAttribute("postid");
-    await postInteractionsModal(postid, "DISLIKE");
+    const viewpost = dislikeSpan.closest(".viewpost");
+    const postid = viewpost.getAttribute("postid");
+    
+    const counts = {
+      amountviews: parseInt(viewpost.querySelector(".post-view span").textContent) || 0,
+      amountlikes: parseInt(viewpost.querySelector(".post-like span").textContent) || 0,
+      amountdislikes: parseInt(viewpost.querySelector(".post-dislike span").textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "DISLIKE", counts);
   });
 }
 
-
 document.body.addEventListener("click", async (e) => {
   if (e.target.matches(".comment_like span")) {
-    const postid = e.target.closest(".comment_item").getAttribute("id");
-      await postInteractionsModal(postid, "COMMENTLIKE");
+    const commentItem = e.target.closest(".comment_item");
+    const postid = commentItem.getAttribute("id");
+    
+    const counts = {
+      amountlikes: parseInt(e.target.textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "COMMENTLIKE", counts);
   }
 });

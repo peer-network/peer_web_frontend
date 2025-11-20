@@ -24,7 +24,7 @@
 	--shadow-add: hsl(0, 0%, 51%);
 	--white-opacity-50: hsla(0, 0%, 100%, 0.5);
 	--black-opacity-50: hsla(0, 0%, 0%, 0.5);
-
+    --dark-grey: rgba(119, 175, 255, 0.50);
 	--dark-inactive: #323232;
 	--black-dark: #252525;
 	--black-secondary: rgba(50, 50, 50, 0.50);
@@ -188,9 +188,10 @@ strong,
 img {
 	border: 0;
 }
-
-h1,
-.xxl_font_size {
+.peer-icon.peer-icon-three-dots {
+	font-size: 43%;
+}
+h1 {
 	font-size: 35px;
 	/*font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);*/
 	line-height: 1.2;
@@ -202,8 +203,14 @@ h1,
 
 }
 
+
 .xxl_font_size {
-	font-weight: 700;
+	font-size: 35px;
+	/*font-size: clamp(1.875rem, 1.5714rem + 0.9714vw, 4rem);*/
+	line-height: 1.2;
+	letter-spacing: 0.02em;
+	text-transform: none;
+
 }
 
 .xl_font_size {
@@ -234,6 +241,9 @@ h3 {
 	font-weight: 400;
 	margin: 0 0 22px 0;
 }
+.small_font_size{
+		font-size: 18px;
+	}
 
 .widget-head .widget-title {
 	margin: 0 !important;
@@ -316,6 +326,9 @@ html input[disabled] {
 
 .green-text {
 	color: var(--green)
+}
+.red-text {
+	color: var(--red-accent);
 }
 
 /*--------------------------------------------------------------
@@ -708,8 +721,8 @@ textarea {
 }
 
 .online_status {
-	width: 15px;
-	height: 15px;
+	width: 30px;
+	height: 30px;
 	border-radius: 100%;
 	background-color: hsl(101.1, 80.5%, 65.9%);
 	text-indent: -99999px;
@@ -1172,6 +1185,15 @@ footer {
 .widget .filterGroup input[type="radio"]:checked+label {
 	background-color: var(--button-color);
 }
+.widget .filterGroup-feed .filter-btn span {
+	
+	cursor: pointer;
+}
+.widget .filterGroup-feed input[type="radio"]:checked + span {
+	font-weight: 700;
+	font-style: italic;
+	cursor:default;
+}
 
 @keyframes borderButton {
 	0% {
@@ -1202,7 +1224,7 @@ footer {
 
 .widget .widget-profile .profile-header .cropContainer .online_status {
 	position: absolute;
-	right: 49px;
+	right: 87px;
 	top: 23px;
 }
 
@@ -1244,9 +1266,7 @@ footer {
 	margin-top: 0.8rem;
 }
 
-#username {
-	color: white;
-}
+
 
 .widget .widget-profile .stats {
 	display: flex;
@@ -1723,7 +1743,7 @@ footer {
 }
 
 .search-group .divider {
-	width: 1px;
+	width: 3px;
 	height: 24px;
 	background: var(--stat-p);
 	margin: 0 8px;
@@ -1894,6 +1914,9 @@ footer {
 	background-color: #262626;
 	line-height: 0;
 	padding: 0;
+	border: 0;
+	width: auto;
+	min-width: auto;
 }
 
 .feeback_popup_container .btn:hover {
@@ -2372,9 +2395,41 @@ footer {
 	transform: scale(1);
 }
 
+
+/* Temporary posted here the code from profile.css, the style was needed in dashboard */
+.pinedbtn {
+ 
+  background: var(--dark-grey);
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  padding: 10px;
+  aspect-ratio: 1;
+}
+
+.card[content="text"] .pinedbtn {
+	margin-top: auto;
+}
+
+.pinedbtn .peer-icon.peer-icon-pinpost {
+    font-size: 120%;
+}
+
+/* .postview_footer .pinedbtn  {
+  width: 6%;
+} */
+
+.error {
+  color: var(--red-accent, #FF3B3B);
+}
+
 /*--------------------------------------------------------------
 # Media Queries  Block CSS
 --------------------------------------------------------------*/
+/*
 @media screen and (min-width: 2000px) {
 
 	body,
@@ -2416,7 +2471,7 @@ footer {
 	.xl_font_size {
 		font-size: 30px;
 		font-size: clamp(1.5rem, 1.3125rem + 0.3vw, 1.875rem);
-		/*==== 3k to 1k*/
+		
 
 
 	}
@@ -2425,6 +2480,10 @@ footer {
 	.md_font_size {
 		font-size: 25px;
 		font-size: clamp(1.25rem, 1.0938rem + 0.25vw, 1.5625rem);
+	}
+
+	.small_font_size{
+		font-size: 18px;
 	}
 
 	input[type="text"],
@@ -2456,9 +2515,10 @@ footer {
 
 
 
-}
+}*/
 
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
 
 
 	body,
@@ -2479,7 +2539,7 @@ footer {
 		min-width: 300px;
 
 		font-size: 35px;
-		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem) !important;
 	}
 
 	.xxxl_font_size {
@@ -2506,6 +2566,13 @@ footer {
 	.md_font_size {
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+	}
+
+	.small_font_size, 
+	button.small_font_size{
+
+		font-size: 28px;
+		font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
 	}
 
 	.site_layout {
@@ -2696,8 +2763,12 @@ footer {
 		padding: 1.1rem 1.5rem;
 	}
 
-}
+	/* .postview_footer .pinedbtn  {
+		width: 10% !important;
+	} */
 
+}
+/*
 @media screen and (max-width: 2999px) {
 
 	.widget .filter-section-container .section-selected-label,
@@ -2922,7 +2993,7 @@ footer {
 		height: auto;
 	}
 
-}
+}*/
 
 @media screen and (max-width: 768px) {
 
@@ -2970,47 +3041,3 @@ footer {
 		font-weight: 400;
 	}
 }
-
-
-
-/* Temporary posted here the code from profile.css, the style was needed in dashboard */
-.pinedbtn {
-  margin-top: auto;
-}
-
-.boostModal .pinedbtn .button,
-.post-inhalt .pinedbtn .button,
-.postview_footer .pinedbtn .button {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  line-height: 40px;
-  font-size: 18px;
-  border: none;
-  padding: 0 15px;
-  justify-content: space-between;
-  max-width: 300px;
-}
-
-.postview_footer .pinedbtn .button {
-  gap: 20px;
-}
-
-.boostModal .pinedbtn .button img,
-.post-inhalt .pinedbtn .button img,
-.postview_footer .pinedbtn .button img {
-  width: 20px;
-}
-
-.pinedbtn .button.btn-blue:hover {
-  background-color: var(--button-hover);
-  border-color: var(--button-hover);
-  color: var(--white);
-}
-.pinedbtn .button span.ad_username {
-  font-style: italic;
-}
-
-.error {
-  color: var(--red-accent, #FF3B3B);
-};

@@ -1,295 +1,181 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // function for the boost post posts button & cancel boost post button
-  const promoteBtn = document.querySelector(".promote_posts");
-  const cancelBtn = document.querySelector(".promote_posts_cancel");
-  const profileBox = document.querySelector(".profile_header");
-  const boostPostDescription = document.querySelector(".boost_post_description");
-  const listPosts = document.querySelector(".list_all_post");
-  const modal = document.getElementById('boostModal');
-  const adsStats = document.querySelector('.ads_container_wrap');
-  const advertisePost = document.getElementById('advertisePost');
-  const ADPOSTPRICE = 2000;
-  let currentStep = 1;
-  let postid, BALANCE, currentAdTime = null;
+  const DOM = {
+    promoteBtn: document.querySelector(".promote_posts"),
+    cancelBtn: document.querySelector(".promote_posts_cancel"),
+    profileBox: document.querySelector(".profile_header"),
+    boostPostDescription: document.querySelector(".boost_post_description"),
+    listPosts: document.querySelector(".list_all_post"),
+    modal: document.getElementById("boostModal"),
+    adsStats: document.querySelector(".ads_container_wrap"),
+    advertisePost: document.getElementById("advertisePost"),
+    boostPostFromPopup: document.getElementById("boostPostFromPopup"),
+    dropdownContainer: document.querySelector(".boost_adsStats_container"),
+    dropdownWrapper: document.querySelector(".boost_dropdown_wrapper"),
+  };
 
-  // ----------------- Show Step Function -----------------
-  function showStep(step) {
-    if (step == 2 && BALANCE < ADPOSTPRICE) {
-      checkAdPostElg();
-    } 
-    document.querySelectorAll('.modal-step').forEach(el => {
-      el.classList.remove('active');
-    });
-    const stepEl = document.querySelector(`.modal-step[data-step="${step}"]`);
-    if (stepEl) stepEl.classList.add('active');
-    currentStep = step;
-  }
+  const STATE = {
+    ADPOSTPRICE: 200,
+    currentStep: 1,
+    postid: null,
+    BALANCE: 0,
+    selectedCard: null,
+    adEndTime: null,
+    isFromPopup: false,
+  };
 
-  // ----------------- Boost Card Click -----------------
-  function boostCardClick(card) {
-    window.lastBoostedCard = card;
-    const previewBoostedPost = document.getElementById("preview_boostedPost");
-    if (previewBoostedPost) {
-      previewBoostedPost.innerHTML = "";
-
-      const clonedCard = card.cloneNode(true);
-      clonedCard.querySelectorAll("*").forEach(el => {
-        el.replaceWith(el.cloneNode(true));
-      });
-
-      const usernameEl = clonedCard.querySelector(".post-userName");
-      const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-
-      const postInhalt = clonedCard.querySelector(".post-inhalt");
-      const social = clonedCard.querySelector(".social");
-
-      if (postInhalt && social) {
-        const pinnedBtn = document.createElement("div");
-        pinnedBtn.classList.add("pinedbtn");
-        pinnedBtn.innerHTML = `<a class="button btn-blue"> <img src="svg/pin.svg" alt="pin"> <span class="ad_username bold">@${username}</span> <span class="ad_duration txt-color-gray">00:00</span></a>`;
-        postInhalt.insertBefore(pinnedBtn, social);
-      }
-
-      previewBoostedPost.appendChild(clonedCard);
-    }
- 
-    modal.classList.remove('none');
-    showStep(1);
-  }
-  
   (async () => {
-    BALANCE = await currentliquidity("token_balance");
+    STATE.BALANCE = await currentliquidity("token_balance");
   })();
 
-  // ----------------- Insert Pinned Button in Opened Post -----------------
-  function insertPinnedBtnToOpenedPost(card, username, mode = "post") {
-    const viewpost = document.querySelector(".viewpost");
-    if (!viewpost) return;
+  function isPostBoosted(postId) {
+    if (!POSTS?.listPosts?.affectedRows) return false;
+    const post = POSTS.listPosts.affectedRows.find((p) => p.id === postId);
+    return post?.isAd === true;
+  }
+
+  function showStep(step) {
+    if (step === 3) {
+      checkAdPostEligibility();
+    }
+
+    document.querySelectorAll(".modal-step").forEach((el) => {
+      el.classList.remove("active");
+    });
+
+    const stepEl = document.querySelector(`.modal-step[data-step="${step}"]`);
+    if (stepEl) stepEl.classList.add("active");
+    STATE.currentStep = step;
+  }
+
+  function checkAdPostEligibility() {
+    const adMessageEl = document.querySelector(".ad_message");
+    const hasEnoughBalance = STATE.BALANCE >= STATE.ADPOSTPRICE;
+
+    DOM.advertisePost.innerText = hasEnoughBalance ? "Pay" : "Go to profile";
+    DOM.advertisePost.classList.toggle("next-btn", hasEnoughBalance);
+    DOM.advertisePost.classList.toggle("goToProfile-btn", !hasEnoughBalance);
+
+    if (adMessageEl) {
+      adMessageEl.classList.toggle("error", !hasEnoughBalance);
+      adMessageEl.innerText = hasEnoughBalance
+        ? "All set! Your ad is ready to go - click 'Pay' to launch your ad."
+        : "You don't have enough Peer Tokens to start this promotion.";
+    }
+  }
+
+  async function selectCardForBoosting(card) {
+    STATE.selectedCard = card;
+    STATE.postid = card.id;
+
+    const hasReported =
+      card.dataset.hasreported || card.getAttribute("data-hasreported");
+    // Check visibility status
+    const visibilityStatus =
+      card.dataset.visibilty || card.getAttribute("data-visibilty");
+    let flag = false;
+    let screen = 1;
+    let messageTitle,
+      message = "";
+
+    if (hasReported) {
+      messageTitle = "Your post is currently reported";
+      message =
+        "Your post was reported. When reviewed, its promotion might be hidden";
+      flag = true;
+    }
+
+    if (visibilityStatus == "HIDDEN" || visibilityStatus == "hidden") {
+      messageTitle = "Your post is currently hidden";
+      message =
+        "Your post has been reported and is temporarily hidden. Your promotion won’t be visible for all. Do you still want to promote?";
+      flag = true;
+    }
+
+    if (flag) {
+      const confirmation = await warnig(messageTitle, message, false, '<i class="peer-icon peer-icon-warning red-text"></i>', "Promote anyway");
+      if (!confirmation || confirmation.button === 0) return false;
+      screen = 2;
+    }
+
+    // Prevent duplicate boosting
+    if (isPostBoosted(card.id)) 
+      return Merror("This post is already boosted.", "", false, '<i class="peer-icon peer-icon-warning red-text"></i>');
+    
+    // Mark state and trigger boosting
+    STATE.isFromPopup = true;
+
+    const previewBoostedPost = document.getElementById("preview_boostedPost");
+    if (!previewBoostedPost) return;
+
+    previewBoostedPost.innerHTML = "";
+    const clonedCard = card.cloneNode(true);
+    clonedCard.querySelectorAll("*").forEach((el) => {
+      el.replaceWith(el.cloneNode(true));
+    });
+
+    const usernameEl = clonedCard.querySelector(".post-userName");
+    const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+    const postInhalt = clonedCard.querySelector(".post-inhalt");
+    const social = clonedCard.querySelector(".social");
+    if (postInhalt && social) {
+      const pinnedBtn = createPinnedButton(username);
+      postInhalt.insertBefore(pinnedBtn, social);
+    }
+    previewBoostedPost.appendChild(clonedCard);
+    DOM.modal.classList.remove("none");
+    showStep(screen);
+  }
+
+  function createPinnedButton(username) {
     const pinnedBtn = document.createElement("div");
     pinnedBtn.classList.add("pinedbtn");
     pinnedBtn.innerHTML = `
-      <a class="button btn-blue">
-        <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold">@${username}</span>
-        <span class="ad_duration txt-color-gray">${currentAdTime}</span>
-      </a>
+      <i class="peer-icon peer-icon-pinpost"></i>
+      <span class="ad_username none bold">@${username}</span>
     `;
+    return pinnedBtn;
+  }
 
-    const footer = viewpost.querySelector(".postview_footer");
-    const comments = viewpost.querySelector(".post-comments");
-    const postInhalt = card.querySelector(".post-inhalt");
-    const social = card.querySelector(".social");
+  function insertPinnedButton(card, username, mode = "profile") {
+    const postId = card.id || card.getAttribute("id");
+    if (!isPostBoosted(postId)) return;
 
-    if (!footer || footer.querySelector(".pinedbtn")) return;
-
-    if (mode === "post") {
-      if (footer && comments) {
-        comments.insertAdjacentElement("afterend", pinnedBtn);
-      }
-    }
+    card.classList.add("PINNED");
+    const pinnedBtn = createPinnedButton(username);
 
     if (mode === "profile") {
-      if (postInhalt && social) {
+      const postInhalt = card.querySelector(".post-inhalt");
+      const social = card.querySelector(".social");
+
+      if (postInhalt && social && !postInhalt.querySelector(".pinedbtn")) {
         postInhalt.insertBefore(pinnedBtn, social);
       }
     }
-  }
 
-  // ----------------- Mark Card as Boosted -----------------
-  // function markCardAsBoosted(card) {
-  //   console.log('inside markCardAsBoosted')
-  //   card.classList.add("boosted");
+    if (mode === "post") {
+      const viewpost = document.getElementById("cardClicked");
+      if (!viewpost) return;
 
-  //   // Wrap card content in front/back container if not already wrapped
-  //   if (!card.querySelector(".post-card-inner")) {
-  //     const inner = document.createElement("div");
-  //     inner.classList.add("post-card-inner");
+      const footer = viewpost.querySelector(".postview_footer");
+      const comments = viewpost.querySelector(".post-comments");
 
-  //     const front = document.createElement("div");
-  //     front.classList.add("post-card-front");
-  //     front.append(...Array.from(card.childNodes));
-
-  //     const back = document.createElement("div");
-  //     back.classList.add("post-card-back", "bold", "xl_font_size");
-  //     back.textContent = "This Post has already been boosted";
-
-  //     inner.appendChild(front);
-  //     inner.appendChild(back);
-  //     card.appendChild(inner);
-  //   }
-  // }
-
-  // ----------------- Modal Buttons -----------------
-  modal.addEventListener('click', function (e) {
-    if (e.target.classList.contains('next-btn')) {
-      showStep(currentStep + 1);
-    }
-    if (e.target.classList.contains('back-btn')) {
-      if (currentStep > 1) showStep(currentStep - 1);
-    }
-    if (e.target.classList.contains('close-btn')) {
-      modal.classList.add('none');
-    }
-    if (e.target.classList.contains('goToProfile-btn')) {
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
-      modal.classList.add('none');
-      if (window.lastBoostedCard) {
-        const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
-        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile");
-        // markCardAsBoosted(window.lastBoostedCard);
+      if (footer && comments && !footer.querySelector(".pinedbtn")) {
+        comments.insertAdjacentElement("afterend", pinnedBtn);
       }
-    }
-    if (e.target.classList.contains('goToPost-btn')) {
-      profileBox.classList.remove('boostActive');
-      listPosts.classList.remove('boostActive');
-      modal.classList.add('none');
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
-      if (window.lastBoostedCard) {
-        const usernameEl = window.lastBoostedCard.querySelector(".post-userName");
-        const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
-        insertPinnedBtn(window.lastBoostedCard, username, "profile");
-        // markCardAsBoosted(window.lastBoostedCard);
-        window.lastBoostedCard.click();
-        insertPinnedBtnToOpenedPost(window.lastBoostedCard, username, "post"); // the called function was already commented out
-      }
-    }
-    if (e.target === modal) {
-      modal.classList.add('none');
-    }
-  });
-
-  function hideAdCards() {
-    const cards = listPosts.querySelectorAll(".card");
-      cards.forEach((card, i) => {
-        const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
-        if (isAd) card.classList.add('none');
-    });
-  }
-
-  function showAdCards() {
-    const cards = listPosts.querySelectorAll(".card");
-    console.log('POSTS ', POSTS)
-    cards.forEach((card, i) => {
-      const isAd = POSTS.listPosts.affectedRows[i]?.isAd;
-      if (isAd) card.classList.remove('none');
-    });
-  }
-
-  function attachWrapperListeners() {
-    const cards = listPosts.querySelectorAll(".card");
-    cards.forEach((card, i) => {
-      if (!card.dataset.listenersAdded) {
-        card.addEventListener(
-          "click",
-          function (e) {
-            if (listPosts.classList.contains("boostActive")) {
-              e.stopImmediatePropagation();
-              postid = this.id;
-              if (!card.classList.contains("boosted")) boostCardClick(card);
-
-              // if (card.classList.contains("boosted")) {
-                // markCardAsBoosted(card);
-                // card.classList.add("flipped");
-
-                // setTimeout(() => {
-                //   card.classList.remove("flipped");
-                // }, 2000);
-              // } else {
-              //   boostCardClick(card);
-              // }
-            
-            }
-          }, {
-            capture: true
-          }
-        );
-        card.dataset.listenersAdded = true;
-      }
-    });
-  }
-
-  // ----------------- Promote / Cancel Buttons -----------------
-  if (promoteBtn) {
-    promoteBtn.addEventListener("click", () => {
-      profileBox.classList.add("boostActive");
-      listPosts.classList.add("boostActive");
-      cancelBtn.classList.remove("none");
-      boostPostDescription.classList.remove("none");
-      adsStats.classList.add('none');
-
-      attachWrapperListeners();
-      hideAdCards();
-    });
-  }
-
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
-      profileBox.classList.remove("boostActive");
-      listPosts.classList.remove("boostActive");
-      cancelBtn.classList.add("none");
-      boostPostDescription.classList.add("none");
-      adsStats.classList.remove('none');
-      showAdCards();
-    });
-  }
-
-  // ----------------- Dropdown trigger for boost/Ads buttons -----------------
-
-  const container = document.querySelector('.boost_adsStats_container');
-  const dropdownWrapper = document.querySelector('.boost_dropdown_wrapper');
-
-  container.addEventListener('click', function () {
-    const expanded = this.getAttribute('aria-expanded') === 'true';
-    this.setAttribute('aria-expanded', !expanded);
-    dropdownWrapper.classList.toggle('open', !expanded);
-    dropdownWrapper.hidden = expanded;
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest('.boost_adsStats_container') &&
-      !e.target.closest('.boost_dropdown_wrapper')) {
-      container.setAttribute('aria-expanded', 'false');
-      dropdownWrapper.classList.remove('open');
-      dropdownWrapper.hidden = true;
-    }
-  });
-
-  // Api call for AdvertisePostPinned endpoint
-  advertisePost.addEventListener('click', advertisePostPinned);
-
-  async function checkAdPostElg() {
-      
-    // BALANCE = await currentliquidity('token_balance');
-    if (BALANCE < ADPOSTPRICE) {
-      advertisePost.innerText = 'Go to profile';
-      advertisePost.classList.add('goToProfile-btn');
-      advertisePost.classList.add('not-enough-balance');
-      advertisePost.classList.remove('next-btn');
-
-      const adMessageEl = document.querySelector('.ad_message');
-      adMessageEl.classList.add('error');
-      adMessageEl.innerText = 'You don’t have enough Peer Tokens to start this promotion.';
-      // showStep(3)
-      // return false;
     }
   }
 
   async function advertisePostPinned() {
     const accessToken = getCookie("authToken");
-    // Create headers
+
     const headers = new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     });
 
-    var graphql = JSON.stringify({
+    const graphql = JSON.stringify({
       query: `mutation AdvertisePostPinned {
-          advertisePostPinned(postid: "${postid}", advertisePlan: PINNED) {
+          advertisePostPinned(postid: "${STATE.postid}", advertisePlan: PINNED) {
               status
               ResponseCode
               affectedRows {
@@ -303,11 +189,10 @@ document.addEventListener("DOMContentLoaded", () => {
               }
           }
         }`,
-
       variables: {},
     });
 
-    var requestOptions = {
+    const requestOptions = {
       method: "POST",
       headers: headers,
       body: graphql,
@@ -317,37 +202,441 @@ document.addEventListener("DOMContentLoaded", () => {
       const query = await fetch(GraphGL, requestOptions);
       const result = await query.json();
       const data = result.data?.advertisePostPinned;
-      if (!data) throw new Error("Invalid response structure");
-      if (data.status === "error") {
-        throw new Error(userfriendlymsg(data.ResponseCode));
+
+      if (!data || data?.status === "error") {
+        throw new Error(
+          data?.ResponseCode
+            ? userfriendlymsg(data.ResponseCode)
+            : "Failed to boost post"
+        );
       }
-      shiftPostToTop(data);
-      return true;
-    } catch {
-      console.error("AdvertisePostPinned failed");
-      return false;
+
+      updatePostData(data);
+
+      if (STATE.isFromPopup) {
+        await closeViewpostModal();
+      }
+
+      shiftPostToTop();
+      addPinnedButtonToShiftedPost();
+      updateStep4Display(data);
+      showStep(4);
+
+      STATE.BALANCE = await currentliquidity("token_balance");
+    } catch (error) {
+      console.error("AdvertisePostPinned failed:", error);
+      alert("Failed to boost post. Please try again.");
     }
   }
 
-  function shiftPostToTop(data) {
+  function updatePostData(data) {
+    if (POSTS?.listPosts?.affectedRows) {
+      const postIndex = POSTS.listPosts.affectedRows.findIndex(
+        (p) => p.id === STATE.postid
+      );
+      if (postIndex !== -1) {
+        POSTS.listPosts.affectedRows[postIndex].isAd = true;
+      }
+    }
+    STATE.adEndTime = data.affectedRows[0]?.timeframeEnd;
+  }
+
+  async function closeViewpostModal() {
+    const viewpost = document.querySelector(".viewpost");
+    if (viewpost) {
+      const closeBtn = viewpost.querySelector(".btClose");
+      if (closeBtn) {
+        closeBtn.click();
+      }
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  }
+
+  function shiftPostToTop() {
     const parentElement = document.getElementById("allpost");
-    const cardEl = document.getElementById(`${postid}`);
-    currentAdTime = calctimeAgo(data.affectedRows[0]?.createdAt);
-    if (parentElement && cardEl) {
-      // move card to top
-      parentElement.prepend(cardEl);
-      // remove duplicate cards with the same ID (after the first one)
-      parentElement.querySelectorAll(`.card#${postid}`).forEach((el, index) => {
-        if (index > 0) el.remove();
-      });
+    const cardEl = document.getElementById(STATE.postid);
+
+    if (!parentElement || !cardEl) return;
+
+    cardEl.classList.add("PINNED");
+    parentElement.prepend(cardEl);
+
+    const allCards = parentElement.querySelectorAll(".card");
+    allCards.forEach((el) => {
+      if (el.id === STATE.postid && el !== cardEl) {
+        el.remove();
+      }
+    });
+  }
+
+  function addPinnedButtonToShiftedPost() {
+    const shiftedCard = document.getElementById(STATE.postid);
+    if (!shiftedCard) return;
+
+    const usernameEl = shiftedCard.querySelector(".post-userName");
+    const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+    insertPinnedButton(shiftedCard, username, "profile");
+  }
+
+  function updateStep4Display(data) {
+    const adPostCreatedAtTime = document.getElementById("adPostCreatedAtTime");
+
+    if (!adPostCreatedAtTime || !data.affectedRows[0]?.timeframeEnd) return;
+
+    const endDate = new Date(
+      data.affectedRows[0].timeframeEnd.replace(" ", "T")
+    );
+    adPostCreatedAtTime.textContent = endDate
+      .toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+      .replace(",", " at");
+  }
+
+  function hideBoostedCards() {
+    const cards = DOM.listPosts.querySelectorAll(".card.PINNED");
+    cards.forEach((card) => card.classList.add("none"));
+  }
+
+  function showBoostedCards() {
+    const cards = DOM.listPosts.querySelectorAll(".card.PINNED");
+    cards.forEach((card) => card.classList.remove("none"));
+  }
+
+  function attachCardListeners() {
+    const cards = DOM.listPosts.querySelectorAll(".card");
+    cards.forEach((card) => {
+      if (card.dataset.boostListenerAdded) return;
+
+      card.addEventListener(
+        "click",
+        function (e) {
+          if (DOM.listPosts.classList.contains("boostActive")) {
+            e.stopImmediatePropagation();
+
+            if (!isPostBoosted(card.id)) {
+              selectCardForBoosting(card);
+            }
+          }
+        },
+        { capture: true }
+      );
+
+      card.dataset.boostListenerAdded = true;
+    });
+  }
+
+  function setupModalEventListeners() {
+    DOM.modal.addEventListener("click", function (e) {
+      if (e.target.classList.contains("next-btn")) {
+        handleNextButton();
+      }
+
+      if (e.target.classList.contains("back-btn")) {
+        handleBackButton();
+      }
+
+      if (e.target.classList.contains("close-btn")) {
+        handleCloseButton();
+      }
+
+      if (e.target.classList.contains("goToProfile-btn")) {
+        handleGoToProfileButton(e);
+      }
+
+      if (e.target.classList.contains("goToPost-btn")) {
+        handleGoToPostButton();
+      }
+    });
+  }
+
+  function handleNextButton() {
+    if (STATE.currentStep === 3) {
+      advertisePostPinned();
+    } else {
+      showStep(STATE.currentStep + 1);
     }
   }
 
-  window.clearAdBtnBox = function () {
-    const cardPopup = document.getElementById('cardClicked');
-    const adBtn = cardPopup.querySelector('.pinedbtn');
-    if (adBtn) {
-      adBtn.remove()
+  function handleBackButton() {
+    if (STATE.currentStep > 1) {
+      showStep(STATE.currentStep - 1);
     }
   }
+
+  function handleCloseButton() {
+    DOM.modal.classList.add("none");
+    resetModalState();
+  }
+
+  function handleGoToProfileButton(e) {
+    e.stopPropagation();
+    setTimeout(() => {
+      window.location.reload();
+    }, 0);
+  }
+
+  function handleGoToPostButton() {
+    DOM.modal.classList.add("none");
+    deactivateBoostMode();
+
+    if (!STATE.selectedCard || !isPostBoosted(STATE.selectedCard.id)) {
+      resetModalState();
+      return;
+    }
+
+    const usernameEl = STATE.selectedCard.querySelector(".post-userName");
+    const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+    const cardToClick = getCardToClick();
+
+    if (cardToClick) {
+      cardToClick.click();
+      setupPostViewHandlers(cardToClick, username);
+    }
+
+    resetModalState();
+  }
+
+  function getCardToClick() {
+    if (!STATE.isFromPopup) {
+      return STATE.selectedCard;
+    }
+
+    const viewpost = document.querySelector(".viewpost");
+    const postIdFromView =
+      viewpost?.getAttribute("postid") ||
+      viewpost?.dataset.postid ||
+      viewpost?.id;
+
+    if (postIdFromView) {
+      const popupCard = document.getElementById(postIdFromView);
+      if (popupCard) {
+        return popupCard;
+      }
+    }
+
+    return STATE.selectedCard;
+  }
+
+  function setupPostViewHandlers(card, username) {
+    setTimeout(() => {
+      insertPinnedButton(card, username, "post");
+
+      const viewpost = document.querySelector(".viewpost");
+      if (!viewpost) return;
+
+      setupViewpostObserver(viewpost);
+      setupCloseButtonHandler(viewpost);
+    }, 150);
+  }
+
+  function setupViewpostObserver(viewpost) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class"
+        ) {
+          const target = mutation.target;
+          if (
+            target.classList.contains("none") ||
+            target.style.display === "none"
+          ) {
+            window.location.reload();
+          }
+        }
+
+        if (mutation.type === "childList" && mutation.removedNodes.length > 0) {
+          mutation.removedNodes.forEach((node) => {
+            if (node === viewpost || node.contains?.(viewpost)) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    });
+
+    observer.observe(viewpost, {
+      attributes: true,
+      attributeFilter: ["class", "style"],
+    });
+
+    observer.observe(viewpost.parentElement, {
+      childList: true,
+    });
+  }
+
+  function setupCloseButtonHandler(viewpost) {
+    const closePostBtn = viewpost.querySelector(".btClose");
+    if (!closePostBtn) return;
+
+    closePostBtn.onclick = null;
+
+    const newCloseBtn = closePostBtn.cloneNode(true);
+    closePostBtn.parentNode.replaceChild(newCloseBtn, closePostBtn);
+
+    newCloseBtn.addEventListener(
+      "click",
+      (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.reload();
+      },
+      { capture: true }
+    );
+  }
+
+  function resetModalState() {
+    STATE.currentStep = 1;
+    STATE.selectedCard = null;
+    STATE.postid = null;
+    STATE.isFromPopup = false;
+
+    DOM.advertisePost.innerText = "Pay";
+    DOM.advertisePost.classList.add("next-btn");
+    DOM.advertisePost.classList.remove("goToProfile-btn");
+
+    const adMessageEl = document.querySelector(".ad_message");
+    if (adMessageEl) {
+      adMessageEl.classList.remove("error");
+      adMessageEl.innerText =
+        "All set! Your ad is ready to go - click 'Pay' to launch your ad.";
+    }
+  }
+
+  function activateBoostMode() {
+    DOM.profileBox.classList.add("boostActive");
+    DOM.listPosts.classList.add("boostActive");
+    DOM.cancelBtn.classList.remove("none");
+    DOM.boostPostDescription.classList.remove("none");
+    DOM.adsStats.classList.add("none");
+
+    attachCardListeners();
+    hideBoostedCards();
+  }
+
+  function deactivateBoostMode() {
+    DOM.profileBox.classList.remove("boostActive");
+    DOM.listPosts.classList.remove("boostActive");
+    DOM.cancelBtn.classList.add("none");
+    DOM.boostPostDescription.classList.add("none");
+    DOM.adsStats.classList.remove("none");
+
+    showBoostedCards();
+  }
+
+  function setupPromoteButtons() {
+    if (DOM.promoteBtn) {
+      DOM.promoteBtn.addEventListener("click", activateBoostMode);
+    }
+
+    if (DOM.cancelBtn) {
+      DOM.cancelBtn.addEventListener("click", deactivateBoostMode);
+    }
+  }
+
+  function setupDropdownToggle() {
+    if (!DOM.dropdownContainer || !DOM.dropdownWrapper) return;
+
+    DOM.dropdownContainer.addEventListener("click", function () {
+      const expanded = this.getAttribute("aria-expanded") === "true";
+      this.setAttribute("aria-expanded", !expanded);
+      DOM.dropdownWrapper.classList.toggle("open", !expanded);
+      DOM.dropdownWrapper.hidden = expanded;
+    });
+
+    document.addEventListener("click", function (e) {
+      if (
+        !e.target.closest(".boost_adsStats_container") &&
+        !e.target.closest(".boost_dropdown_wrapper")
+      ) {
+        DOM.dropdownContainer.setAttribute("aria-expanded", "false");
+        DOM.dropdownWrapper.classList.remove("open");
+        DOM.dropdownWrapper.hidden = true;
+      }
+    });
+  }
+
+  function initializePinnedButtons() {
+    const cards = DOM.listPosts.querySelectorAll(".card");
+    cards.forEach((card) => {
+      const postId = card.id || card.getAttribute("id");
+      if (!isPostBoosted(postId)) return;
+
+      card.classList.add("PINNED");
+      const usernameEl = card.querySelector(".post-userName");
+      const username = usernameEl ? usernameEl.textContent.trim() : "unknown";
+      insertPinnedButton(card, username, "profile");
+    });
+  }
+
+  async function setupBoostFromPopup() {
+    if (!DOM.boostPostFromPopup) return;
+    DOM.boostPostFromPopup.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      try {
+        // Ensure we're on the profile page
+        const isProfilePage = !!document.querySelector(".profile_header");
+        if (!isProfilePage) {
+          return alert("You can only boost posts from your profile page.");
+        }
+
+        // Find the post being viewed
+        const viewpost = document.querySelector(".viewpost");
+        if (!viewpost) return;
+
+        const postIdFromView =
+          viewpost.getAttribute("postid") ||
+          viewpost.dataset.postid ||
+          viewpost.id;
+
+        if (!postIdFromView) {
+          console.warn("No post ID found in viewpost.");
+          return;
+        }
+
+        // Locate the card in DOM
+        let card =
+          DOM.listPosts.querySelector(`.card[id="${postIdFromView}"]`) ||
+          document.getElementById(postIdFromView);
+
+        if (!card) {
+          return Merror(
+            "Could not find the original post card.",
+            "",
+            false,
+            '<i class="peer-icon peer-icon-warning red-text"></i>'
+          );
+        }
+
+        selectCardForBoosting(card);
+      } catch (error) {
+        console.error("Boosting failed:", error);
+        console.error(
+          "Something went wrong while boosting the post. Please try again."
+        );
+      }
+    });
+  }
+
+  function initialize() {
+    setupModalEventListeners();
+    setupPromoteButtons();
+    setupDropdownToggle();
+    setupBoostFromPopup();
+
+    if (POSTS?.listPosts?.affectedRows) {
+      initializePinnedButtons();
+    }
+
+    window.insertPinnedBtn = insertPinnedButton;
+  }
+
+  initialize();
 });

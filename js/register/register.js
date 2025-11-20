@@ -22,6 +22,7 @@ class AccessibleRegistrationForm {
         this.handleURLParams();
         // Announce current step to screen readers
         this.announceStep();
+        fetchEndpoints();
     }
 
     setupEventListeners() {
@@ -313,9 +314,6 @@ class AccessibleRegistrationForm {
         const strengthFill = document.getElementById('strengthFill');
         const metCount = Object.values(requirements).filter(Boolean).length;
         let strength = 'weak';
-
-        console.log('I am here ', metCount)
-
         if (metCount >= 2) {
             strength = 'weak2';
         }
@@ -534,9 +532,10 @@ class AccessibleRegistrationForm {
 
     goToStep(stepNumber) {
         this.currentStep = stepNumber;
+        //console.log(stepNumber);
         this.showStep(this.getStepId(stepNumber));
 
-        this.updateBackButton(stepNumber > 1);
+        this.updateBackButton(stepNumber >= 1);
         if (stepNumber > 2)
             this.updateBackButton(false);
 

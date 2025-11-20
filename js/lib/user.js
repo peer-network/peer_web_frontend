@@ -22,14 +22,18 @@ async function fetchHelloData(userid = null) {
             slug
             img
             biography
+            visibilityStatus
+            hasActiveReports
             isfollowed
             isfollowing
+            isreported
             amountposts
             amounttrending
             amountfollowed
             amountfollower
             amountfriends
             amountblocked
+            amountreports
         }
       }
     }`,

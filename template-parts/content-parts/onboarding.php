@@ -157,7 +157,7 @@
                 </div>
 
                 <div class="onboarding-footer">
-                    <p class="md_font_size txt-color-gray">But hey - you can also invite friends and <em class="bold txt-color-white">earn 1%</em> of their token income daily.</p>
+                    <p class="md_font_size txt-color-gray">And hey - Invite friends and <em class="bold txt-color-white">earn 1%</em> from every token transaction they make!</p>
                     <div class="onboarding-footer-buttons">
                         <button class="onboarding-close-button btn-transparent ">
                             Skip
@@ -325,7 +325,7 @@
                             </svg>
                         </span>
                         <span class="text-box-title md_font_size blod">Boost your content</span>
-                        <span class="text-box-desc md_font_size txt-color-gray">Coming soon...</span>
+                        <span class="text-box-desc md_font_size txt-color-gray none">Coming soon...</span>
                     </div>
                     <div class="token-box">
                         <span class="icon-box">

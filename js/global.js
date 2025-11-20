@@ -4,23 +4,28 @@ let likeCost = 0.3,
   commentCost = 0.05,
   postCost = 2;
 
-
 let baseUrl;
 
 if (location.hostname === "localhost") {
-  baseUrl = `${location.origin}${location.pathname.split('/')[1] ? '/' + location.pathname.split('/')[1] + '/' : '/'}`;
+  baseUrl = `${location.origin}${
+    location.pathname.split("/")[1]
+      ? "/" + location.pathname.split("/")[1] + "/"
+      : "/"
+  }`;
 } else {
   baseUrl = `${location.origin}/`;
 }
 //console.log(baseUrl);
 // below variable used in wallet module
 // need to declare in global scope
-let storedUserInfo, balance = null;
+let storedUserInfo,
+  balance = null;
 // Global variable to hold tokenomics data
 window.tokenomicsData = null;
 
 ///////////////////////////////
 document.addEventListener("DOMContentLoaded", async () => {
+  applyZoom();
   const accessToken = getCookie("authToken");
   if (accessToken) {
     hello();
@@ -34,7 +39,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const openBtn = document.querySelector("#open-onboarding");
     if (openBtn) {
       openBtn.addEventListener("click", function (e) {
-
         e.preventDefault();
         showOnboardingPopup();
       });
@@ -56,51 +60,85 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
     updateOnlineStatus();
-    
+    fetchEndpoints();
   }
 });
 
+
+function applyZoom() {
+  const BASE_WIDTH = 3840;
+  const layout = document.querySelector(".site_layout");
+  const left_sidebar = layout.querySelector(".left-sidebar");
+  const right_sidebar = layout.querySelector(".right-sidebar");
+  const cardClickedDiv= document.getElementById("cardClicked");
+
+  function applyScale() {
+    const vw = window.visualViewport.width;
+    const vh = window.visualViewport.height;
+
+    if (vw < BASE_WIDTH) {
+      const scale = vw / BASE_WIDTH;
+
+      layout.style.zoom = scale;
+
+      // compensate for zoom: divide viewport height by scale
+      left_sidebar.style.height = vh / scale + "px";
+      right_sidebar.style.height = vh / scale + "px";
+      if(cardClickedDiv) cardClickedDiv.style.height = vh / scale + "px";
+
+    } else {
+      // reset zoom, let layout flow naturally
+      layout.style.zoom = "";
+      left_sidebar.style.height = "";
+      right_sidebar.style.height = "";
+      if(cardClickedDiv) cardClickedDiv.style.height = "";
+    }
+  }
+
+  applyScale();
+  window.visualViewport.addEventListener("resize", applyScale);
+}
+
+
+
+
+
 function getHostConfig() {
   const config = document.querySelector("#config");
-  
-  if (!config) {
-    console.error('Config element not found');
-    return { domain: 'getpeer.eu', server: 'test' }; // fallback
-  }
-  
-  const host = config.getAttribute('data-host');
-  
-  if (!host) {
-    console.error('data-host attribute not found');
-    return { domain: 'getpeer.eu', server: 'test' }; // fallback
-  }
-  
-  // Remove protocol if present (https://, http://)
-  const cleanHost = host.replace(/^https?:\/\//, '');
 
-  
-  
+  if (!config) {
+    console.error("Config element not found");
+    return { domain: "getpeer.eu", server: "test" }; // fallback
+  }
+
+  const host = config.getAttribute("data-host");
+
+  if (!host) {
+    console.error("data-host attribute not found");
+    return { domain: "getpeer.eu", server: "test" }; // fallback
+  }
+
+  // Remove protocol if present (https://, http://)
+  const cleanHost = host.replace(/^https?:\/\//, "");
+
   let server, domain;
-  
+
   if (cleanHost) {
-    
-    
-    if (cleanHost === 'peernetwork.eu') {
+    if (cleanHost === "peernetwork.eu") {
       domain = cleanHost;
       server = "production";
-    } else if (cleanHost === 'getpeer.eu') {
+    } else if (cleanHost === "getpeer.eu") {
       domain = cleanHost;
-      server = 'test';
-     
+      server = "test";
     } else {
       domain = cleanHost;
       server = "test";
     }
   } else {
-    domain = 'getpeer.eu';
+    domain = "getpeer.eu";
     server = "test";
   }
-  
+
   return { domain, server };
 }
 
@@ -123,11 +161,17 @@ function updateOnlineStatus() {
 function extractWords(str) {
   const words = str.split(" ");
 
-  const hashtags = words.filter((word) => word.startsWith("#")).map((word) => word.slice(1));
+  const hashtags = words
+    .filter((word) => word.startsWith("#"))
+    .map((word) => word.slice(1));
 
-  const usernames = words.filter((word) => word.startsWith("@")).map((word) => word.slice(1));
+  const usernames = words
+    .filter((word) => word.startsWith("@"))
+    .map((word) => word.slice(1));
 
-  const normalWords = words.filter((word) => !word.startsWith("#") && !word.startsWith("@"));
+  const normalWords = words.filter(
+    (word) => !word.startsWith("#") && !word.startsWith("@")
+  );
 
   return {
     hashtags,
@@ -168,7 +212,6 @@ function addMediaListener(mediaElement) {
     });
   });
 }
-
 
 function togglePopup(popup) {
   const mediaElements = document.querySelectorAll("video, audio");
@@ -233,7 +276,9 @@ async function dailyfree() {
     result.data.getDailyFreeStatus.affectedRows.forEach((entry) => {
       const used = document.getElementById(entry.name + "used");
       const available = document.getElementById(entry.name + "available");
-      const iconContainer = document.querySelector(`.progress-icons[data-type="${entry.name}"]`);
+      const iconContainer = document.querySelector(
+        `.progress-icons[data-type="${entry.name}"]`
+      );
       if (used) {
         used.innerText = entry.used;
       }
@@ -325,7 +370,6 @@ async function currentliquidity(targetId = "token") {
   }
 }
 
-
 async function getDailyFreeStatus() {
   const accessToken = getCookie("authToken");
 
@@ -394,7 +438,7 @@ async function getDailyFreeStatus() {
 
 function calctimeAgo(datetime) {
   // Clean microseconds and treat as UTC
-  const cleaned = datetime.replace(/\.\d+$/, '') + 'Z';
+  const cleaned = datetime.replace(/\.\d+$/, "") + "Z";
   const timestamp = new Date(cleaned);
   const now = Date.now();
 
@@ -422,17 +466,36 @@ function calctimeAgo(datetime) {
 
 function postdetail(objekt, CurrentUserID) {
   const UserID = CurrentUserID || null; // Default to null if not provided
-
+  const cardClickedContainer = document.getElementById("cardClicked");
   const postContainer = document.getElementById("viewpost-container");
+
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
+
+  postContainer.classList.remove("reported_post");
+  // Remove any class starting with "visibility_"
+  postContainer.classList.forEach(cls => {
+    if (cls.startsWith("visibilty_")) {
+      postContainer.classList.remove(cls);
+    }
+  });
+  
+  cardClickedContainer.setAttribute("data-hasReported", objekt.hasActiveReports);
+  cardClickedContainer.setAttribute("data-visibilty", objekt.visibilityStatus);
+  if(objekt.hasActiveReports==true) {   
+    postContainer.classList.add("reported_post");
+  }
+
+  if(objekt.visibilityStatus){
+    postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
+  }
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
 
   let copyLinkBtn = shareLinkBox.querySelector(".copy-link-btn");
 
-  // remove old listeners - > element clone 
+  // remove old listeners - > element clone
   const newcopyLinkBtn = copyLinkBtn.cloneNode(true);
   copyLinkBtn.parentNode.replaceChild(newcopyLinkBtn, copyLinkBtn);
   copyLinkBtn = newcopyLinkBtn;
@@ -453,45 +516,44 @@ function postdetail(objekt, CurrentUserID) {
     });
   }
 
-
   const whatsappShare = "https://wa.me/?text=" + encodeURIComponent(shareUrl);
-  shareLinkBox.querySelector(".whatsapplink").setAttribute("href", whatsappShare);
+  shareLinkBox
+    .querySelector(".whatsapplink")
+    .setAttribute("href", whatsappShare);
 
-  const telegramShare = "https://t.me/share/url?url=" + encodeURIComponent(shareUrl) + "&text=" + encodeURIComponent(objekt.title);
-  shareLinkBox.querySelector(".telegramlink").setAttribute("href", telegramShare);
+  const telegramShare =
+    "https://t.me/share/url?url=" +
+    encodeURIComponent(shareUrl) +
+    "&text=" +
+    encodeURIComponent(objekt.title);
+  shareLinkBox
+    .querySelector(".telegramlink")
+    .setAttribute("href", telegramShare);
 
-
- let shareAnchor = postContainer.querySelector(".sharelinks a.share");
-  // remove old listeners - > element clone 
+  let shareAnchor = postContainer.querySelector(".sharelinks a.share");
+  // remove old listeners - > element clone
   const newshareAnchor = shareAnchor.cloneNode(true);
   shareAnchor.parentNode.replaceChild(newshareAnchor, shareAnchor);
   shareAnchor = newshareAnchor;
 
-
   shareAnchor.addEventListener("click", (e) => {
     e.preventDefault();
-      const sharebox=document.getElementById('share-link-box');
-      sharebox.classList.add('active');
-   
+    const sharebox = document.getElementById("share-link-box");
+    sharebox.classList.add("active");
   });
-  const shareClose=document.getElementById('closeSharebox');
+  const shareClose = document.getElementById("closeSharebox");
   shareClose.addEventListener("click", (e) => {
     e.preventDefault();
-      const sharebox=document.getElementById('share-link-box');
-      sharebox.classList.remove('active');
-   
+    const sharebox = document.getElementById("share-link-box");
+    sharebox.classList.remove("active");
   });
-  
 
   let donwloadAnchor = postContainer.querySelector(".more a.download");
-  // remove old listeners - > element clone 
+  // remove old listeners - > element clone
   const newdonwloadAnchor = donwloadAnchor.cloneNode(true);
   donwloadAnchor.parentNode.replaceChild(newdonwloadAnchor, donwloadAnchor);
   donwloadAnchor = newdonwloadAnchor;
   //donwloadAnchor.setAttribute("href", "");
-
-
-
 
   donwloadAnchor.addEventListener("click", (e) => {
     e.preventDefault();
@@ -503,26 +565,35 @@ function postdetail(objekt, CurrentUserID) {
     return false;
   });
 
+ 
   let reportpost_btn = postContainer.querySelector(".more a.reportpost");
 
-  // remove old listeners - > element clone 
+  // remove old listeners - > element clone
   const newreportpost_btn = reportpost_btn.cloneNode(true);
   reportpost_btn.parentNode.replaceChild(newreportpost_btn, reportpost_btn);
   reportpost_btn = newreportpost_btn;
+  
+  if(objekt.user.id == UserID ){
+    reportpost_btn.classList.add("none"); //your own post
 
-
-  reportpost_btn.addEventListener(
-    "click",
-    (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      reportPost(objekt, postContainer);
-
-    }, {
-      capture: true
-    }
-  );
-
+  }else if (objekt.isreported==true) {
+    // change text if already reported
+    reportpost_btn.querySelector("span").textContent = "Reported by you";
+    reportpost_btn.classList.add("reported"); // optional: add a class for styling
+  } else {
+    reportpost_btn.querySelector("span").textContent = "Report post";
+    reportpost_btn.classList.remove("reported");
+    // add listener only if not reported
+    reportpost_btn.addEventListener(
+      "click",
+      (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        reportPost(objekt, postContainer);
+      },
+      { capture: true }
+    );
+  }
 
   const containerleft = postContainer.querySelector(".viewpost-left");
   const containerright = postContainer.querySelector(".viewpost-right");
@@ -540,12 +611,13 @@ function postdetail(objekt, CurrentUserID) {
 
   const username = objekt.user.username;
   const profile_id = objekt.user.slug;
-  const user_img_src = objekt.user.img ? tempMedia(objekt.user.img) : `${baseUrl}svg/noname.svg`;
+  const user_img_src = objekt.user.img
+    ? tempMedia(objekt.user.img)
+    : `${baseUrl}svg/noname.svg`;
 
   user_img_src.onerror = function () {
     this.src = `${baseUrl}svg/noname.svg`;
   };
-
 
   const post_userName = postContainer.querySelector(".post-userName");
   post_userName.innerHTML = username;
@@ -566,16 +638,18 @@ function postdetail(objekt, CurrentUserID) {
     post_followbtn.innerHTML = "";
     post_followbtn.appendChild(followButton);
   }
-  const profile_header_left = postContainer.querySelector(".profile-header-left");
+  const profile_header_left = postContainer.querySelector(
+    ".profile-header-left"
+  );
 
-  profile_header_left.addEventListener("click",
+  profile_header_left.addEventListener(
+    "click",
     function handledisLikeClick(event) {
       event.stopPropagation();
       event.preventDefault();
       if (UserID && UserID !== null) {
         redirectToProfile(objekt.user.id);
       }
-
     }
   );
 
@@ -586,7 +660,6 @@ function postdetail(objekt, CurrentUserID) {
   const cont_post_title = containerright.querySelector(".post_title h2");
   const cont_post_time = containerright.querySelector(".timeagao");
   const cont_post_tags = containerright.querySelector(".hashtags");
-
 
   const card_post_text = objekt.mediadescription;
   cont_post_text.innerHTML = card_post_text;
@@ -669,7 +742,6 @@ function postdetail(objekt, CurrentUserID) {
       // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
       post_gallery.appendChild(audioContainer);
       if (donwloadAnchor) {
-
         donwloadAnchor.setAttribute("href", audio.src);
       }
       initAudioplayer("audio_player_custom", audio.src);
@@ -692,21 +764,19 @@ function postdetail(objekt, CurrentUserID) {
     let currentIndex = 0;
 
     for (const [index, item] of array.entries()) {
-
       const video = document.createElement("video");
       video.id = "video2";
       video.src = tempMedia(extractAfterComma(item.path));
       video.controls = true;
       video.className = "custom-video";
-      video.autoplay = (index === 0); // ✅ Autoplay only for the first video
+      video.autoplay = index === 0; // Autoplay only for the first video
       video.muted = false;
       video.loop = true;
 
-      let coversrc = 'img/audio-bg.png';
+      let coversrc = "img/audio-bg.png";
       if (objekt.cover) {
         const cover = JSON.parse(objekt.cover);
         coversrc = tempMedia(cover[0].path);
-
       }
 
       const videoContainer = document.createElement("div");
@@ -772,37 +842,36 @@ function postdetail(objekt, CurrentUserID) {
       });
     });
     // Swipe logic
-      let startX = 0;
-      let endX = 0;
+    let startX = 0;
+    let endX = 0;
 
-      sliderTrack.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-      });
+    sliderTrack.addEventListener("touchstart", (e) => {
+      startX = e.touches[0].clientX;
+    });
 
-      sliderTrack.addEventListener("touchmove", (e) => {
-        endX = e.touches[0].clientX;
-      });
+    sliderTrack.addEventListener("touchmove", (e) => {
+      endX = e.touches[0].clientX;
+    });
 
-      sliderTrack.addEventListener("touchend", () => {
-        const diff = startX - endX;
-        const threshold = 50;
+    sliderTrack.addEventListener("touchend", () => {
+      const diff = startX - endX;
+      const threshold = 50;
 
-        if (Math.abs(diff) > threshold) {
-          const totalSlides = sliderTrack.children.length;
+      if (Math.abs(diff) > threshold) {
+        const totalSlides = sliderTrack.children.length;
 
-          if (diff > 0) {
-            currentIndex = (currentIndex + 1) % totalSlides; // Next
-          } else {
-            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
-          }
-
-          updateSlider(currentIndex);
+        if (diff > 0) {
+          currentIndex = (currentIndex + 1) % totalSlides; // Next
+        } else {
+          currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
         }
 
-        startX = 0;
-        endX = 0;
-      });
+        updateSlider(currentIndex);
+      }
 
+      startX = 0;
+      endX = 0;
+    });
   } else if (objekt.contenttype === "text") {
     if (containerleft && post_contentright) {
       containerleft.prepend(post_contentright.cloneNode(true)); // copy the node
@@ -820,16 +889,15 @@ function postdetail(objekt, CurrentUserID) {
     if (array.length > 1) post_gallery.classList.add("multi");
     else post_gallery.classList.remove("multi");
 
-
     post_gallery.innerHTML = `
                   <div class="slider-wrapper">
                     <div class="slider-track"></div>
                     <div class="thumbs-wrapper">
-                      <span class="button nav-button prev_button"><i class="fi fi-rr-angle-left"></i></span>
+                      <span class="button nav-button prev_button"><i class="peer-icon peer-icon-arrow-left"></i></span>
                       <div class="slider_thumbnails_wrapper">
                         <div class="slider-thumbnails"></div>
                       </div>
-                      <span class="button nav-button next_button"><i class="fi fi-rr-angle-right"></i></span>
+                      <span class="button nav-button next_button"><i class="peer-icon peer-icon-arrow-right"></i></span>
                     </div>
                   </div>
                 `;
@@ -837,8 +905,8 @@ function postdetail(objekt, CurrentUserID) {
     const sliderTrack = post_gallery.querySelector(".slider-track");
     const thumbsWrapper = document.querySelector(".slider_thumbnails_wrapper");
     const sliderThumb = thumbsWrapper.querySelector(".slider-thumbnails");
-    const nextBtn = document.querySelector('.next_button');
-    const prevBtn = document.querySelector('.prev_button');
+    const nextBtn = document.querySelector(".next_button");
+    const prevBtn = document.querySelector(".prev_button");
 
     function toggleTheScrollButtons() {
       const totalWidth = sliderThumb.scrollWidth;
@@ -862,23 +930,23 @@ function postdetail(objekt, CurrentUserID) {
       }
     }
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener("click", () => {
       thumbsWrapper.scrollBy({
         left: 150,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     });
 
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addEventListener("click", () => {
       thumbsWrapper.scrollBy({
         left: -150,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     });
 
     setTimeout(toggleTheScrollButtons, 0);
-    window.addEventListener('resize', toggleTheScrollButtons);
-    thumbsWrapper.addEventListener('scroll', toggleTheScrollButtons);
+    window.addEventListener("resize", toggleTheScrollButtons);
+    thumbsWrapper.addEventListener("scroll", toggleTheScrollButtons);
     const imageSrcArray = [];
     array.forEach((item, index) => {
       const image_item = document.createElement("div");
@@ -901,11 +969,10 @@ function postdetail(objekt, CurrentUserID) {
 
       const zoomElement = document.createElement("span");
       zoomElement.className = "zoom";
-      zoomElement.innerHTML = `<i class="fi fi-sr-expand"></i>`;
+      zoomElement.innerHTML = `<i class="peer-icon peer-icon-plus"></i>`;
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
-     
 
       imageSrcArray.push(src);
       // Open modal on click
@@ -914,68 +981,67 @@ function postdetail(objekt, CurrentUserID) {
       });
     });
 
-     let currentIndex = 0;
+    let currentIndex = 0;
 
-      function updateSlider(index) {
-        currentIndex = index;
-        const targetItem = sliderTrack.children[index];
-        const offsetLeft = targetItem.offsetLeft;
-        sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
-        if (donwloadAnchor) {
-          const img = targetItem.querySelector("img");
-          const imgSrc = img ? img.src : null;
-          donwloadAnchor.setAttribute("href", imgSrc);
-        }
-        // Manage active class
-        sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
-          thumb.classList.toggle("active", i === index);
-        });
+    function updateSlider(index) {
+      currentIndex = index;
+      const targetItem = sliderTrack.children[index];
+      const offsetLeft = targetItem.offsetLeft;
+      sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+      if (donwloadAnchor) {
+        const img = targetItem.querySelector("img");
+        const imgSrc = img ? img.src : null;
+        donwloadAnchor.setAttribute("href", imgSrc);
       }
-      // Initialize active thumbnail
-      updateSlider(0);
-      // Add click listener to each thumbnail
-      sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
-        thumb.addEventListener("click", () => {
-          updateSlider(index);
-        });
+      // Manage active class
+      sliderThumb.querySelectorAll(".timg").forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === index);
       });
-
-       
-
-      // Swipe logic
-      let startX = 0;
-      let endX = 0;
-
-      sliderTrack.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
+    }
+    // Initialize active thumbnail
+    updateSlider(0);
+    // Add click listener to each thumbnail
+    sliderThumb.querySelectorAll(".timg").forEach((thumb, index) => {
+      thumb.addEventListener("click", () => {
+        updateSlider(index);
       });
+    });
 
-      sliderTrack.addEventListener("touchmove", (e) => {
-        endX = e.touches[0].clientX;
-      });
+    // Swipe logic
+    let startX = 0;
+    let endX = 0;
 
-      sliderTrack.addEventListener("touchend", () => {
-        const diff = startX - endX;
-        const threshold = 50;
+    sliderTrack.addEventListener("touchstart", (e) => {
+      startX = e.touches[0].clientX;
+    });
 
-        if (Math.abs(diff) > threshold) {
-          const totalSlides = sliderTrack.children.length;
+    sliderTrack.addEventListener("touchmove", (e) => {
+      endX = e.touches[0].clientX;
+    });
 
-          if (diff > 0) {
-            currentIndex = (currentIndex + 1) % totalSlides; // Next
-          } else {
-            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
-          }
+    sliderTrack.addEventListener("touchend", () => {
+      const diff = startX - endX;
+      const threshold = 50;
 
-          updateSlider(currentIndex);
+      if (Math.abs(diff) > threshold) {
+        const totalSlides = sliderTrack.children.length;
+
+        if (diff > 0) {
+          currentIndex = (currentIndex + 1) % totalSlides; // Next
+        } else {
+          currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Prev
         }
 
-        startX = 0;
-        endX = 0;
-      });
+        updateSlider(currentIndex);
+      }
 
+      startX = 0;
+      endX = 0;
+    });
   }
 
+
+ 
   /*const title = document.getElementById("comment-title");
   title.innerText = objekt.title;
   const text = document.getElementById("comment-text");
@@ -993,7 +1059,6 @@ function postdetail(objekt, CurrentUserID) {
   const postComments = social.querySelector(".post-comments span ");
   postComments.innerText = objekt.amountcomments;
 
-
   // Zweites -Icon mit #post-like
   const likeContainer = social.querySelector(".post-like ");
   let postlikeIcon = likeContainer.querySelector("i");
@@ -1003,9 +1068,7 @@ function postdetail(objekt, CurrentUserID) {
 
   if (objekt.isliked) {
     likeContainer.classList.add("active");
-
   } else if (objekt.user.id !== UserID && UserID !== null) {
-
     // Purane listeners remove karne ke liye element clone karo
     const newPostlikeIcon = postlikeIcon.cloneNode(true);
     postlikeIcon.parentNode.replaceChild(newPostlikeIcon, postlikeIcon);
@@ -1017,12 +1080,11 @@ function postdetail(objekt, CurrentUserID) {
         event.stopPropagation();
         event.preventDefault();
         like_dislike_post(objekt, "like", likeContainer);
-
-      }, {
-        capture: true
+      },
+      {
+        capture: true,
       }
     );
-
   }
 
   const dislikeContainer = social.querySelector(".post-dislike");
@@ -1033,11 +1095,13 @@ function postdetail(objekt, CurrentUserID) {
 
   if (objekt.isdisliked) {
     dislikeContainer.classList.add("active");
-
   } else if (objekt.user.id !== UserID && UserID !== null) {
     // Purane listeners remove karne ke liye element clone karo
     const newPostDislikeIcon = postdislikeIcon.cloneNode(true);
-    postdislikeIcon.parentNode.replaceChild(newPostDislikeIcon, postdislikeIcon);
+    postdislikeIcon.parentNode.replaceChild(
+      newPostDislikeIcon,
+      postdislikeIcon
+    );
     postdislikeIcon = newPostDislikeIcon;
 
     postdislikeIcon.addEventListener(
@@ -1046,9 +1110,9 @@ function postdetail(objekt, CurrentUserID) {
         event.stopPropagation();
         event.preventDefault();
         like_dislike_post(objekt, "dislike", dislikeContainer);
-
-      }, {
-        capture: true
+      },
+      {
+        capture: true,
       }
     );
   }
@@ -1081,7 +1145,6 @@ function postdetail(objekt, CurrentUserID) {
             mostlikedcontainer.appendChild(img);
           }*/
 
-
   const postComment = document.getElementById("post_comment");
   const textarea = postComment.querySelector("textarea");
   const button = postComment.querySelector("button");
@@ -1103,7 +1166,6 @@ function postdetail(objekt, CurrentUserID) {
       return;
     }
     if (UserID === null) {
-
       return;
     }
     if (content.length === 0) {
@@ -1122,7 +1184,7 @@ function postdetail(objekt, CurrentUserID) {
     try {
       // Attempt to change the username after passing validations
       const result = await createComment(postID, content);
-      if (result && result.data ?.createComment ?.status === "success") {
+      if (result && result.data?.createComment?.status === "success") {
         dailyfree();
         commentToDom(result.data.createComment.affectedRows[0], false);
         newTextarea.value = ""; // Clear textarea
@@ -1156,27 +1218,161 @@ function postdetail(objekt, CurrentUserID) {
           isSubmitting = false; // modal ka case, lock hata do
           return;
         }
-
       }
       const currentTarget = e.currentTarget; // save here
       if (isSubmitting) return; // agar already process ho raha hai to ignore
       isSubmitting = true; // lock
-      handleCommentSubmit()
-        .finally(() => {
-          // jab complete ho jaye to dobara allow karo
-          isSubmitting = false;
-          if (currentTarget) {
-            currentTarget.focus(); // use saved ref
-          }
-        });
+      handleCommentSubmit().finally(() => {
+        // jab complete ho jaye to dobara allow karo
+        isSubmitting = false;
+        if (currentTarget) {
+          currentTarget.focus(); // use saved ref
+        }
+      });
     }
   });
+
+  newTextarea.addEventListener("focus", () => {
+    document.querySelector(".post_comment").classList.add("focus");
+  });
+
+  newTextarea.addEventListener("blur", () => {
+    document.querySelector(".post_comment").classList.remove("focus");
+  });
+
+
+    /*---Hidden Frame content */
+    const hiddenBadge = postContainer.querySelector(".hidden_badge");
+    if (hiddenBadge) {
+      hiddenBadge.remove();
+    }
+    const hiddenContentFrame = postContainer.querySelector(".hidden_content_frame");
+    if (hiddenContentFrame) {
+      hiddenContentFrame.remove();
+    }
+     
+
+    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+        const hiddenContentHTML = `
+        <div class="hidden_content_frame">
+          <div class="hidden_content">
+            <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+            <div class="hidden_title xl_font_size bold">Sensitive content</div>
+            <div class="hidden_description md_font_size">
+              This content may be sensitive or abusive.<br>
+              Do you want to view it anyway?
+            </div>
+            <div class="view_content">
+              <a href="#" class="button btn-transparent">View content</a>
+            </div>
+          </div>
+        </div>`;
+
+      if(objekt.user.id != UserID ){
+        post_gallery.insertAdjacentHTML("beforeend", hiddenContentHTML);
+        const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
+        if (containerleft_text_post) {
+          containerleft_text_post.insertAdjacentHTML("beforeend", hiddenContentHTML);
+        }
+
+        // Select all inserted hidden frames and attach "View content" listeners
+        postContainer.querySelectorAll(".hidden_content_frame").forEach(frame => {
+          const viewBtn = frame.querySelector(".view_content a");
+          if (viewBtn) {
+            viewBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              frame.remove(); // remove that specific frame
+              postContainer.classList.remove('visibilty_hidden');
+            });
+          }
+        });
+
+        const video_p = post_gallery.querySelector("video");
+
+        if (video_p) {
+          // Completely disable autoplay attribute before anything else
+          video_p.autoplay = false;
+          video_p.removeAttribute("autoplay");
+
+          // Force pause even if already playing
+          try {
+            video_p.pause();
+            video_p.currentTime = 0; // reset to beginning if desired
+          } catch (err) {
+            console.warn("Pause failed:", err);
+          }
+
+          // Safety: Recheck after small delay (in case autoplay triggered before pause)
+          setTimeout(() => {
+            if (!video_p.paused) {
+              video_p.pause();
+              video_p.currentTime = 0;
+            }
+          }, 300);
+
+          //console.log("Video paused:", video_p.paused);
+        }
+      
+
+      }else{ //else mean logged in user viewing own post 
+        postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
+      }
+
+      const postview_footer = postContainer.querySelector(".postview_footer");
+
+      const hiddenBageHTML = `
+        <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
+        postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
+
+    }
+  /*---End Hidden Frame content */
+
+
+  /*---illegal Frame content */
+    const illegalContentFrame = postContainer.querySelector(".illegal_content_frame");
+    if (illegalContentFrame) {
+      illegalContentFrame.remove();
+    }
+    if(objekt.visibilityStatus=='ILLEGAL' || objekt.visibilityStatus=='illegal'){
+        
+          const illegalContentHTML = `
+          <div class="illegal_content_frame">
+            <div class="illegal_content">
+              <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+              <div class="illegal_title md_font_size bold">This content was removed as illegal</div>
+            </div>
+          </div>`;
+          const  containerleft_text_post =containerleft.querySelector(".post_content"); // for text post
+          if (containerleft_text_post) {
+            containerleft_text_post.insertAdjacentHTML("beforeend", illegalContentHTML);
+          }
+          post_gallery.innerHTML="";
+          post_gallery.insertAdjacentHTML("beforeend", illegalContentHTML);
+    }
+
+  /*---End illegal Frame content */
+
+  /*---Content isreported badge ---*/
+      
+    const reportedBadge = postContainer.querySelector(".reported_badge");
+    if (reportedBadge) {
+      reportedBadge.remove();
+    }
+
+    if( objekt.hasActiveReports==true ){
+      const reportContentBadge = `<div class="reported_badge"><i class="peer-icon peer-icon-flag-fill"></i> Reported</div>`;
+      const postview_footer = postContainer.querySelector(".postview_footer");
+      postview_footer.insertAdjacentHTML("beforeend", reportContentBadge);
+    }
+
+  /*---End Content isreported badge */
+
 }
 
 function forceDownload(url) {
   const baseUrl = `${location.protocol}//${location.host}/`;
-  window.location.href = baseUrl + "download.php?file=" + encodeURIComponent(url);
-
+  window.location.href =
+    baseUrl + "download.php?file=" + encodeURIComponent(url);
 }
 
 // ============================================
@@ -1198,12 +1394,16 @@ function renderFollowButton(objekt, currentUserId) {
   followButton.classList.add("follow-button");
   followButton.dataset.userid = objekt.user.id;
 
-  updateFollowButtonState(followButton, objekt.user.isfollowed, objekt.user.isfollowing);
+  updateFollowButtonState(
+    followButton,
+    objekt.user.isfollowing,
+    objekt.user.isfollowed
+  );
 
   followButton.addEventListener("click", async (event) => {
     event.stopPropagation();
     event.preventDefault();
-    
+
     await handleFollowButtonClick(followButton, objekt.user);
   });
 
@@ -1216,20 +1416,27 @@ function renderFollowButton(objekt, currentUserId) {
  * @param {boolean} isfollowed - Whether current user follows this user
  * @param {boolean} isfollowing - Whether this user follows current user
  */
-function updateFollowButtonState(button, isfollowed, isfollowing) {
-  button.classList.remove("Peer", "btn-blue", "following", "btn-white", "follow", "btn-transparent");
+function updateFollowButtonState(button, isfollowing, isfollowed) {
+  button.classList.remove(
+    "Peer",
+    "btn-blue",
+    "following",
+    "btn-white",
+    "follow",
+    "btn-transparent"
+  );
 
-  if (isfollowed && isfollowing) {
-    button.classList.add("Peer", "btn-blue");
+  if (isfollowing && isfollowed) {
+    button.classList.add("Peer", "btn-blue", "small_font_size");
     button.textContent = "Peer";
     button.setAttribute("aria-label", "Mutual followers");
-  } else if (isfollowed) {
-    button.classList.add("following", "btn-white");
+  } else if (isfollowing) {
+    button.classList.add("following", "btn-white", "small_font_size");
     button.textContent = "Following";
     button.setAttribute("aria-label", "You follow this user");
   } else {
-    button.classList.add("follow", "btn-transparent");
-    button.textContent = "Follow +";
+    button.classList.add("follow", "btn-transparent", "small_font_size");
+    button.textContent = "Follow";
     button.setAttribute("aria-label", "Follow this user");
   }
 }
@@ -1246,8 +1453,8 @@ async function handleFollowButtonClick(button, user) {
     const newStatus = await toggleFollowStatus(user.id);
 
     if (newStatus !== null) {
-      user.isfollowed = newStatus;
-      updateFollowButtonState(button, user.isfollowed, user.isfollowing);
+      user.isfollowing = newStatus;
+      updateAllFollowButtonsForUser(user.id, user.isfollowing, user.isfollowed);
       updateFollowingCount(newStatus);
     } else {
       showError("Failed to update follow status. Please try again.");
@@ -1259,6 +1466,21 @@ async function handleFollowButtonClick(button, user) {
     button.disabled = false;
   }
 }
+
+/**
+ * Updates all follow buttons for a specific user across the page
+ * @param {string} userId - The user ID to update buttons for
+ * @param {boolean} isfollowing - Whether current user follows this user
+ * @param {boolean} isfollowed - Whether this user follows current user
+ */
+  function updateAllFollowButtonsForUser(userId, isfollowing, isfollowed) {
+    // Find all follow buttons for this user using the data-userid attribute
+    const allButtons = document.querySelectorAll(`button[data-userid="${userId}"]`);
+    
+    allButtons.forEach(btn => {
+      updateFollowButtonState(btn, isfollowing, isfollowed);
+    });
+  }
 
 /**
  * Updates the following count in the UI
@@ -1286,6 +1508,11 @@ function showError(message) {
 }
 
 function redirectToProfile(userProfileID) {
+   const UserID = getCookie("userID");
+   if(UserID==userProfileID){
+     window.location.href = `profile.php`;
+     return;
+   }
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 
@@ -1320,11 +1547,11 @@ function openSliderModal(images, startIndex = 0) {
     thumbnailContainer.appendChild(thumb);
   });
 
-
   let current = startIndex;
   const total = images.length;
   const imageElements = track.querySelectorAll(".modal-image");
-  const thumbnailElements = thumbnailContainer.querySelectorAll(".modal-thumbnail");
+  const thumbnailElements =
+    thumbnailContainer.querySelectorAll(".modal-thumbnail");
 
   function update() {
     imageElements.forEach((img, i) => {
@@ -1344,7 +1571,6 @@ function openSliderModal(images, startIndex = 0) {
     thumbnailElements.forEach((thumb, i) => {
       thumb.classList.toggle("active", i === current);
     });
-
   }
 
   function setModalWidth(img) {
@@ -1390,7 +1616,6 @@ function openSliderModal(images, startIndex = 0) {
 function commentToDom(c, append = true) {
   const userID = getCookie("userID");
   const commentsContainer = document.getElementById("comments");
-  //console.log(c);
   // Already existing list to track liked comments
   let mostliked = [];
 
@@ -1401,7 +1626,10 @@ function commentToDom(c, append = true) {
   // Profile Picture
   const img = document.createElement("img");
   img.classList.add("profile-picture");
-  img.src = c.user && c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
+  img.src =
+    c.user && c.user.img
+      ? tempMedia(c.user.img.replace("media/", ""))
+      : "svg/noname.svg";
   img.alt = "user image";
   img.onerror = function () {
     this.src = `${baseUrl}svg/noname.svg`;
@@ -1443,6 +1671,141 @@ function commentToDom(c, append = true) {
   commentTextDiv.classList.add("comment_text");
   commentTextDiv.textContent = c.content;
 
+  // Comment Actions
+  const commentActionDiv = document.createElement("div");
+  commentActionDiv.classList.add("comment_action");
+ 
+  // Report Comment Div
+  const reportCommentTrigger = document.createElement("span");
+  reportCommentTrigger.classList.add("dots");
+  reportCommentTrigger.innerHTML = '<i class="peer-icon peer-icon-three-dots"></i>';
+
+  commentActionDiv.append(reportCommentTrigger);
+  // Main trigger for adding the report button
+  reportCommentTrigger.addEventListener("click", () => {
+    const reportContainer = document.createElement("div");
+    reportContainer.classList.add("report-btn-container");
+
+    const reportButton = document.createElement("button");
+    reportButton.classList.add("report-btn","btn-red-transparent");
+
+    const flagIcon = document.createElement("span");
+    flagIcon.classList.add("flag-icon");
+    flagIcon.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+
+    const threeDotIcon = document.createElement("i");
+    threeDotIcon.classList.add("peer-icon","peer-icon-three-dots");
+
+    
+    
+
+    reportButton.appendChild(flagIcon);
+    reportButton.appendChild(document.createTextNode("Report comment"));
+    reportContainer.appendChild(reportButton);
+    reportContainer.appendChild(threeDotIcon);
+    commentBody.appendChild(reportContainer);
+
+    // --- Add click-outside listener ---
+    const handleOutsideClick = (event) => {
+      // if the click was NOT inside the popup and NOT on the trigger button
+      if (
+        !reportContainer.contains(event.target) &&
+        !reportCommentTrigger.contains(event.target)
+      ) {
+        reportContainer.remove(); // close popup
+        document.removeEventListener("click", handleOutsideClick);
+      }
+    };
+
+    // Add event listener slightly delayed
+    setTimeout(() => {
+      document.addEventListener("click", handleOutsideClick);
+    }, 0);
+
+    // Handle report button click
+    reportButton.addEventListener("click", async () => {
+      try {
+        const confirmation = await warnig(
+          "Are you sure you want to report a comment?",
+          "",
+          false,
+          '<i class="peer-icon peer-icon-warning red-text"></i>'
+        );
+
+        if (!confirmation || confirmation.button === 0) return;
+
+        const accessToken = getCookie("authToken");
+        if (!accessToken) throw new Error("Auth token is missing or invalid.");
+
+        const graphql = JSON.stringify({
+          query: `
+          mutation ReportComment($commentid: ID!) {
+            reportComment(commentid: $commentid) {
+              status
+              RequestId
+              ResponseCode
+              ResponseMessage
+            }
+          }
+        `,
+          variables: { commentid: comment.id },
+        });
+
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: graphql,
+        };
+
+        const response = await fetch(GraphGL, requestOptions);
+        const result = await response.json();
+
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (result.errors) throw new Error(result.errors[0].message);
+
+        const { status, ResponseCode } = result.data.reportComment;
+        const message = userfriendlymsg(ResponseCode);
+
+        if (status === "success") {
+          success(
+            message,
+            "",
+            false,
+            '<i class="peer-icon peer-icon-good-tick-circle"></i>'
+          );
+
+          const reportflaghtml = document.createElement("span");
+          reportflaghtml.classList.add("reported-flag","red-text");
+          reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+            
+          commentActionDiv.appendChild(reportflaghtml);
+          comment.classList.add("reported_comment");
+          c.hasActiveReports=true;
+
+
+        } else {
+          Merror(
+            message,
+            "",
+            false,
+            '<i class="peer-icon peer-icon-warning red-text"></i>'
+          );
+        }
+      } catch (error) {
+        Merror(
+          "Something went wrong while reporting the comment.",
+          "",
+          false,
+          '<i class="peer-icon peer-icon-warning red-text"></i>'
+        );
+      }
+    });
+  });
+
   // Reply container
   const replyBtn = document.createElement("span");
   const replyContainer = document.createElement("div");
@@ -1468,11 +1831,10 @@ function commentToDom(c, append = true) {
     hideReply.classList.add("hide_reply", "txt-color-gray", "none");
     hideReply.innerHTML = `Hide`;
 
-
-    showReply.addEventListener('click', function () {
-      this.classList.add('none')
+    showReply.addEventListener("click", function () {
+      this.classList.add("none");
       hideReply.classList.remove("none");
-      
+
       // fetchChildComments(c.commentid).then((result) => {
       //   if (!result) return;
       //   result.slice().forEach(function (c2) {
@@ -1480,7 +1842,6 @@ function commentToDom(c, append = true) {
       //   });
       // });
     });
-
 
     // hideReply.addEventListener('click', function () {
     //   this.closest('.comment_item').classList.add('none')
@@ -1493,7 +1854,94 @@ function commentToDom(c, append = true) {
   // Body container
   const commentBody = document.createElement("div");
   commentBody.classList.add("comment_body");
-  commentBody.append(commenterInfoDiv, commentTextDiv, replyContainer);
+  commentBody.append(
+    commenterInfoDiv,
+    commentTextDiv,
+    commentActionDiv,
+    replyContainer
+  );
+
+  /*-- for testing Comment report and  visibility----*/
+        
+    const urlParams = new URLSearchParams(window.location.search);
+    const testcommentid = urlParams.get("commentid");
+    const testcommentvisibility = urlParams.get("visibility");
+
+        if(testcommentid==c.commentid){
+                
+            c.visibilityStatus = testcommentvisibility;
+          }
+
+  /*-- End : testing comment report and visibility----*/
+  if(c.visibilityStatus){
+    comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
+  }
+  if(c.visibilityStatus=='ILLEGAL' || c.visibilityStatus=='illegal'){
+
+    const illegalContentHTML = `
+              <div class="illegal_content_frame_comment">
+                <div class="illegal_content">
+                  <div class="icon_illegal"><i class="peer-icon peer-icon-illegal"></i></div>
+                  <div class="illegal_title">This content was removed as illegal</div>
+                </div>
+              </div>`;
+
+
+    commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", illegalContentHTML);
+
+  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
+    const hiddenContentHTML = `
+              <div class="hidden_content_frame_comment">
+                <div class="hidden_content">
+                  <div class="icon_hidden"><i class="peer-icon peer-icon-eye-close"></i></div>
+                  <div class="hidden_title md_font_size bold">Sensitive content</div>
+                  <div class="hidden_description">
+                    This content may be sensitive or abusive.<br>
+                    Do you want to view it anyway?
+                  </div>
+                  <div class="view_content">
+                    <a href="#" class="button btn-transparent">View content</a>
+                  </div>
+                </div>
+              </div>`;
+
+   
+      if(c.user.id != userID ){
+         commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", hiddenContentHTML);
+       
+
+        // Select all inserted hidden frames and attach "View content" listeners
+        commentBody.querySelectorAll(".hidden_content_frame_comment").forEach(frame => {
+          const viewBtn = frame.querySelector(".view_content a");
+          if (viewBtn) {
+            viewBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              frame.remove(); // remove that specific frame
+              comment.classList.remove('visibilty_hidden');
+            });
+          }
+        });
+      }else{
+        comment.classList.remove("visibilty_"+c.visibilityStatus.toLowerCase());
+        const hiddedCommentBadge = document.createElement("span");
+        hiddedCommentBadge.classList.add("hidden_badge_comment","txt-color-gray");
+        hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+        commentActionDiv.appendChild(hiddedCommentBadge);
+      }
+  
+   
+  }
+  if(c.hasActiveReports==true){
+    const reportflaghtml = document.createElement("span");
+    reportflaghtml.classList.add("reported-flag","red-text");
+    reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
+    commentActionDiv.appendChild(reportflaghtml);
+    comment.classList.add("reported_comment");
+
+   
+  }
+
+  //END of display reported comment
 
   // Like
   const likeContainer = document.createElement("div");
@@ -1510,7 +1958,6 @@ function commentToDom(c, append = true) {
   if (c.isliked) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID && userID !== "") {
-
     likeIcon.addEventListener(
       "click",
       function (event) {
@@ -1521,16 +1968,19 @@ function commentToDom(c, append = true) {
             c.isliked = true;
             c.amountlikes++;
             likeContainer.classList.add("active");
-            if (!spanLike.textContent.includes("K") && !spanLike.textContent.includes("M")) {
+            if (
+              !spanLike.textContent.includes("K") &&
+              !spanLike.textContent.includes("M")
+            ) {
               let current = parseInt(spanLike.textContent);
               spanLike.textContent = formatNumber(current + 1);
             }
-
           }
         });
-      }, {
+      },
+      {
         capture: true,
-        once: true
+        once: true,
       }
     );
   }
@@ -1565,7 +2015,6 @@ function commentToDom(c, append = true) {
   }
 }
 
-
 function getPostIdFromURL() {
   // Try query param first (?postid=...)
   const urlParams = new URLSearchParams(window.location.search);
@@ -1596,7 +2045,7 @@ async function fetchPostByID(postID) {
       "Content-Type": "application/json",
     });
 
-    // if logged in then to Authorization header add 
+    // if logged in then to Authorization header add
     if (accessToken) {
       headers.append("Authorization", `Bearer ${accessToken}`);
     }
@@ -1631,6 +2080,8 @@ async function fetchPostByID(postID) {
                             username
                             slug
                             img
+                            visibilityStatus
+                            hasActiveReports
                             isfollowed
                             isfollowing
                         }
@@ -1664,9 +2115,9 @@ async function fetchPostByID(postID) {
       body: JSON.stringify({
         query: query,
         variables: {
-          postid: postID
-        }
-      })
+          postid: postID,
+        },
+      }),
     });
 
     const result = await response.json();
@@ -1677,7 +2128,6 @@ async function fetchPostByID(postID) {
       console.error("GraphQL Error:", result.errors || "No data received");
       return null;
     }
-
   } catch (error) {
     console.error("GraphQL request failed", error);
     return null;
@@ -1699,15 +2149,17 @@ async function fetchPostByID(postID) {
 //   }, '');
 // }
 
-const POPUP_KEY = 'feedbackPopupData';
+const POPUP_KEY = "feedbackPopupData";
 
 function getPopupData() {
   const stored = getCookie(POPUP_KEY);
-  return stored ? JSON.parse(stored) : {
-    count: 0,
-    lastClosed: 0,
-    disabled: false
-  };
+  return stored
+    ? JSON.parse(stored)
+    : {
+        count: 0,
+        lastClosed: 0,
+        disabled: false,
+      };
 }
 
 function setPopupData(data) {
@@ -1715,10 +2167,10 @@ function setPopupData(data) {
 }
 
 function showFeedbackPopup() {
-  const popup = document.getElementById('feebackPopup');
-  popup.classList.remove('none');
+  const popup = document.getElementById("feebackPopup");
+  popup.classList.remove("none");
   setTimeout(() => {
-    popup.querySelector('.feeback_popup_container').classList.add('open');
+    popup.querySelector(".feeback_popup_container").classList.add("open");
   }, 100);
 
   // Increment display count
@@ -1728,11 +2180,11 @@ function showFeedbackPopup() {
 }
 
 function closeFeedbackPopup(increment = false) {
-  const popup = document.getElementById('feebackPopup');
-  popup.querySelector(".feeback_popup_container").classList.remove('open');
+  const popup = document.getElementById("feebackPopup");
+  popup.querySelector(".feeback_popup_container").classList.remove("open");
 
   setTimeout(() => {
-    popup.classList.add('none');
+    popup.classList.add("none");
   }, 200);
 
   const data = getPopupData();
@@ -1740,8 +2192,10 @@ function closeFeedbackPopup(increment = false) {
 
   data.lastClosed = Date.now();
 
-  const dontShowCheckbox = popup.querySelector('input[name="dont_show_feedbackPopup"]');
-  if (dontShowCheckbox ?.checked) {
+  const dontShowCheckbox = popup.querySelector(
+    'input[name="dont_show_feedbackPopup"]'
+  );
+  if (dontShowCheckbox?.checked) {
     data.disabled = true;
   }
 
@@ -1755,39 +2209,37 @@ function shouldShowPopup() {
 
   //const fiveDays =  60 * 1000; // 1 mint for testing
 
-  const sessionShown = sessionStorage.getItem('popupShown') === 'true';
-  const closedRecently = (now - data.lastClosed) < fiveDays;
-
-
+  const sessionShown = sessionStorage.getItem("popupShown") === "true";
+  const closedRecently = now - data.lastClosed < fiveDays;
 
   if (data.disabled || data.count >= 3 || sessionShown || closedRecently) {
-
     return false;
   }
   return true;
 }
 
-window.addEventListener('load', () => {
-
+window.addEventListener("load", () => {
   const accessToken = getCookie("authToken");
   if (accessToken) {
     if (shouldShowPopup()) {
       setTimeout(() => {
         showFeedbackPopup();
-        sessionStorage.setItem('popupShown', 'true');
+        sessionStorage.setItem("popupShown", "true");
       }, 30 * 1000); // 30 seconds
     }
   }
 
   // Close button
-  const closeBtn = document.querySelector('#feebackPopup .close');
-  closeBtn ?.addEventListener('click', () => {
+  const closeBtn = document.querySelector("#feebackPopup .close");
+  closeBtn?.addEventListener("click", () => {
     closeFeedbackPopup(); // Do not increment count here, already incremented on show
   });
 
   // "Share Feedback" button
-  const shareBtn = document.querySelector('#feebackPopup a[href*="docs.google.com"]');
-  shareBtn ?.addEventListener('click', () => {
+  const shareBtn = document.querySelector(
+    '#feebackPopup a[href*="docs.google.com"]'
+  );
+  shareBtn?.addEventListener("click", () => {
     closeFeedbackPopup(false); // Do not increment count here, already incremented on show
   });
 });
@@ -1831,7 +2283,7 @@ async function getUserInfo() {
   const requestOptions = {
     method: "POST",
     headers: headers,
-    body: graphql
+    body: graphql,
   };
 
   try {
@@ -1844,7 +2296,7 @@ async function getUserInfo() {
     // Check for errors in GraphQL response
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
-    isInvited = userData ?.invited;
+    isInvited = userData?.invited;
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
   } catch (error) {
@@ -1852,7 +2304,6 @@ async function getUserInfo() {
     throw error;
   }
 }
-
 
 // function to render users in the modal
 // used in list_follow.js and posts.js for rendering followers and following lists
@@ -1874,7 +2325,7 @@ function renderUsers(users, container) {
     return;
   }
 
-  users.forEach(user => {
+  users.forEach((user) => {
     const userItem = createUserItem(user, currentUserId);
     container.appendChild(userItem);
   });
@@ -1888,16 +2339,18 @@ function renderUsers(users, container) {
  */
 function createUserItem(user, currentUserId) {
   const userId = user.id || user.userid;
-  const userimg = user.img ? tempMedia(user.img.replace("media/", "")) : "svg/noname.svg";
+  const userimg = user.img
+    ? tempMedia(user.img.replace("media/", ""))
+    : "svg/noname.svg";
 
   const item = document.createElement("div");
   item.className = "dropdown-item clickable-user";
   item.innerHTML = `
     <div class="profilStats">
-      <img src="${userimg}" alt="${user.username || 'User'}" />
+      <img src="${userimg}" alt="${user.username || "User"}" />
       <div class="user_info">
-        <span class="user_name">${user.username || 'Unknown'}</span>
-        <span class="user_slug">#${user.slug || 'unknown'}</span>
+        <span class="user_name">${user.username || "Unknown"}</span>
+        <span class="user_slug">#${user.slug || "unknown"}</span>
       </div>
     </div>
   `;
@@ -1983,8 +2436,10 @@ async function handleModalFollowButtonClick(button, user) {
  * @param {boolean} isfollowing - Whether this user follows current user
  */
 function updateAllUserButtons(userId, isfollowed, isfollowing) {
-  const buttons = document.querySelectorAll(`.follow-button[data-userid="${userId}"]`);
-  buttons.forEach(btn => {
+  const buttons = document.querySelectorAll(
+    `.follow-button[data-userid="${userId}"]`
+  );
+  buttons.forEach((btn) => {
     updateFollowButtonState(btn, isfollowed, isfollowing);
   });
 }
@@ -1998,24 +2453,22 @@ function initOnboarding() {
   const slides = inner.querySelectorAll(".onboarding-slide");
   const close_btns = inner.querySelectorAll(".onboarding-close-button");
 
+  // Get Server
+  const config = getHostConfig();
+  //console.log('Domain:', config.domain);
+  //console.log('Server:', config.server);
 
-    // Get Server
-    const config = getHostConfig();
-    //console.log('Domain:', config.domain);
-    //console.log('Server:', config.server);
-
- 
   // Get userid from localStorage
   let userId = null;
   try {
     const parsed = JSON.parse(localStorage.getItem("userData"));
-    userId = parsed ?.userid || null;
+    userId = parsed?.userid || null;
   } catch (e) {
     console.error("Error parsing userData", e);
   }
-  
+
   // Set the user ID in GA
-  if (typeof firebase !== 'undefined' && config.server!=='test') {
+  if (typeof firebase !== "undefined" && config.server !== "test") {
     if (userId) {
       //console.log(userId);
       firebase.analytics().setUserId(userId);
@@ -2023,21 +2476,25 @@ function initOnboarding() {
   }
 
   if (close_btns) {
-    close_btns.forEach(btn => {
+    close_btns.forEach((btn) => {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
-        onboardingScreens.classList.add('none'); // popup hide
-        inner.classList.remove('open');
+        onboardingScreens.classList.add("none"); // popup hide
+        inner.classList.remove("open");
         // Log onboarding skipped event
-       try {
-          if (typeof firebase !== 'undefined' && firebase.analytics && config.server!=='test') {
-                firebase.analytics().logEvent('onboarding', {
-                  skipped: 1 // 1 = true
-                });
-                //console.log("skipped event fire");
-              }
-          } catch (error) {
-          console.error('Firebase analytics error:', error);
+        try {
+          if (
+            typeof firebase !== "undefined" &&
+            firebase.analytics &&
+            config.server !== "test"
+          ) {
+            firebase.analytics().logEvent("onboarding", {
+              skipped: 1, // 1 = true
+            });
+            //console.log("skipped event fire");
+          }
+        } catch (error) {
+          console.error("Firebase analytics error:", error);
         }
       });
     });
@@ -2089,31 +2546,31 @@ function initOnboarding() {
     if (completeBtn) {
       completeBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        onboardingScreens.classList.add('none');
-        inner.classList.remove('open');
+        onboardingScreens.classList.add("none");
+        inner.classList.remove("open");
 
-         // Log onboarding completed
+        // Log onboarding completed
         try {
-          if (typeof firebase !== 'undefined' && firebase.analytics && config.server!=='test') {
-                firebase.analytics().logEvent('onboarding', {
-                  skipped: 0 // 0 = false
-                });
-                //console.log("Complete Fired");
-              }
-              if(config.server=='test') {
-                console.log("Firebase event not fired on "+config.server);
-              }else{
-
-                console.log("Firebase event fired on "+config.server);
-              }
-          } catch (error) {
-          console.error('Firebase analytics error:', error);
+          if (
+            typeof firebase !== "undefined" &&
+            firebase.analytics &&
+            config.server !== "test"
+          ) {
+            firebase.analytics().logEvent("onboarding", {
+              skipped: 0, // 0 = false
+            });
+            //console.log("Complete Fired");
+          }
+          if (config.server == "test") {
+            console.log("Firebase event not fired on " + config.server);
+          } else {
+            console.log("Firebase event fired on " + config.server);
+          }
+        } catch (error) {
+          console.error("Firebase analytics error:", error);
         }
-       
-
       });
     }
-
   });
 
   // Append nav dots
@@ -2121,12 +2578,11 @@ function initOnboarding() {
 }
 
 function showOnboardingPopup() {
-  const OnboardingPopup = document.getElementById('site-onboarding-screens');
-  OnboardingPopup.classList.remove('none');
+  const OnboardingPopup = document.getElementById("site-onboarding-screens");
+  OnboardingPopup.classList.remove("none");
   setTimeout(() => {
-    OnboardingPopup.querySelector('.onboarding-inner').classList.add('open');
+    OnboardingPopup.querySelector(".onboarding-inner").classList.add("open");
   }, 100);
-
 }
 
 // Helper function: show slide by index for initOnboarding()
@@ -2135,7 +2591,6 @@ function showSlide(index, slides, nav) {
     s.classList.remove("active");
     s.classList.add("none");
   });
-
 
   setTimeout(() => {
     slides[index].classList.add("active");
@@ -2151,17 +2606,14 @@ function showSlide(index, slides, nav) {
 
 /*----------- End  : Onboarding screens Logic --------------*/
 
-
 // Function to fetch Tokenomics
 async function fetchTokenomics() {
-
   const accessToken = getCookie("authToken");
   // Create headers
   const headers = new Headers({
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-
 
   const graphql = JSON.stringify({
     query: `query GetTokenomics {
@@ -2203,38 +2655,53 @@ async function fetchTokenomics() {
       /*-- Action Prices --*/
       const extra_post_price = document.getElementById("extra_post_price");
       const extra_like_price = document.getElementById("extra_like_price");
-      const extra_comment_price = document.getElementById("extra_comment_price");
+      const extra_comment_price = document.getElementById(
+        "extra_comment_price"
+      );
       const dislike_price = document.getElementById("dislike_price");
 
       if (extra_post_price)
-        extra_post_price.innerText = result.data.getTokenomics.actionTokenPrices.postPrice;
+        extra_post_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.postPrice;
       if (extra_like_price)
-        extra_like_price.innerText = result.data.getTokenomics.actionTokenPrices.likePrice;
+        extra_like_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.likePrice;
       if (extra_comment_price)
-        extra_comment_price.innerText = result.data.getTokenomics.actionTokenPrices.commentPrice;
+        extra_comment_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.commentPrice;
       if (dislike_price)
-        dislike_price.innerText = result.data.getTokenomics.actionTokenPrices.dislikePrice;
+        dislike_price.innerText =
+          result.data.getTokenomics.actionTokenPrices.dislikePrice;
 
       /*-- Gems Return Prices --*/
       const gems_return_like = document.getElementById("gems_return_like");
-      const gems_return_dislike = document.getElementById("gems_return_dislike");
-      const gems_return_comment = document.getElementById("gems_return_comment");
+      const gems_return_dislike = document.getElementById(
+        "gems_return_dislike"
+      );
+      const gems_return_comment = document.getElementById(
+        "gems_return_comment"
+      );
       const gems_return_view = document.getElementById("gems_return_view");
-      const likeReturn = result.data.getTokenomics.actionGemsReturns.likeGemsReturn;
-      const dislikeReturn = result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
-      const commentReturn = result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
-      const viewReturn = result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
+      const likeReturn =
+        result.data.getTokenomics.actionGemsReturns.likeGemsReturn;
+      const dislikeReturn =
+        result.data.getTokenomics.actionGemsReturns.dislikeGemsReturn;
+      const commentReturn =
+        result.data.getTokenomics.actionGemsReturns.commentGemsReturn;
+      const viewReturn =
+        result.data.getTokenomics.actionGemsReturns.viewGemsReturn;
       if (gems_return_like)
-        gems_return_like.innerText = likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
+        gems_return_like.innerText =
+          likeReturn > 0 ? `+${likeReturn}` : `${likeReturn}`;
       if (gems_return_dislike)
-        gems_return_dislike.innerText = dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
+        gems_return_dislike.innerText =
+          dislikeReturn > 0 ? `+${dislikeReturn}` : `${dislikeReturn}`;
       if (gems_return_comment)
-        gems_return_comment.innerText = commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
+        gems_return_comment.innerText =
+          commentReturn > 0 ? `+${commentReturn}` : `${commentReturn}`;
       if (gems_return_view)
-        gems_return_view.innerText = viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
-
-
-
+        gems_return_view.innerText =
+          viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
 
       //console.log("Tokenomics loaded:", window.tokenomicsData);
     } else {
@@ -2281,13 +2748,11 @@ async function updateUserPreferences() {
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
-    const {
-      status,
-      ResponseCode,
-      affectedRows
-    } = result.data.updateUserPreferences;
+    const { status, ResponseCode, affectedRows } =
+      result.data.updateUserPreferences;
 
-    if (ResponseCode !== "11014" && status !== "success") console.warn("Error Message:", userfriendlymsg(ResponseCode));
+    if (ResponseCode !== "11014" && status !== "success")
+      console.warn("Error Message:", userfriendlymsg(ResponseCode));
 
     return affectedRows;
   } catch (error) {
@@ -2295,7 +2760,6 @@ async function updateUserPreferences() {
   }
 }
 /*----------- End  :  fetch Tokenomics --------------*/
-
 
 const accessToken = getCookie("authToken");
 const refreshToken = getCookie("refreshToken");
@@ -2306,7 +2770,7 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     return;
   }
   try {
-    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    const payload = JSON.parse(atob(accessToken.split(".")[1]));
     // Original expiry time (from backend)
     let exp = payload.exp * 1000;
     // const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
@@ -2370,10 +2834,13 @@ async function refreshAccessToken(refreshToken) {
         status,
         ResponseCode,
         accessToken,
-        refreshToken: newRefreshToken
+        refreshToken: newRefreshToken,
       } = result.data.refreshToken;
 
-      if (status !== "success" && (ResponseCode == "10801" || ResponseCode == "10901")) {
+      if (
+        status !== "success" &&
+        (ResponseCode == "10801" || ResponseCode == "10901")
+      ) {
         throw new Error("Refresh failed with code: " + ResponseCode);
       }
       // Store updated tokens
@@ -2394,10 +2861,12 @@ function setCookie(name, value, days) {
   let expires = "";
   if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = date.toUTCString(); // just store date
   }
-  document.cookie = `${name}=${encodeURIComponent(value || "")}; expires=${expires}; path=/; Secure; SameSite=Strict`;
+  document.cookie = `${name}=${encodeURIComponent(
+    value || ""
+  )}; expires=${expires}; path=/; Secure; SameSite=Strict`;
 
   // Save expiry separately for later reuse
   if (days) {
@@ -2407,10 +2876,11 @@ function setCookie(name, value, days) {
 
 function getCookie(name) {
   const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
+  const ca = document.cookie.split(";");
   for (let c of ca) {
     c = c.trim();
-    if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length));
+    if (c.indexOf(nameEQ) == 0)
+      return decodeURIComponent(c.substring(nameEQ.length));
   }
   return null;
 }
@@ -2418,7 +2888,9 @@ function getCookie(name) {
 function updateCookieValue(name, value) {
   const expiry = localStorage.getItem(name + "_expiry");
   if (expiry) {
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
+    document.cookie = `${name}=${encodeURIComponent(
+      value
+    )}; expires=${expiry}; path=/; Secure; SameSite=Strict`;
   } else {
     setCookie(name, value);
   }
@@ -2435,44 +2907,120 @@ scheduleSilentRefresh(accessToken, refreshToken);
 const backBtn = document.querySelector(".general_backBtn");
 if (backBtn) {
   backBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (document.referrer) {
-          window.location.href = document.referrer;
-      } else {
-          window.history.back();
-      }
+    event.preventDefault();
+    if (document.referrer) {
+      window.location.href = document.referrer;
+    } else {
+      window.history.back();
+    }
   });
 }
 
-  // ----------------- Insert Pinned Button -----------------
-  window.insertPinnedBtn = function(card, username, mode = "profile", time = '23') {
-    if (!card) return;
-    if (card.querySelector(".pinedbtn") && mode != 'post') return;
-    const pinnedBtn = document.createElement("div");
-    pinnedBtn.classList.add("pinedbtn");
-    pinnedBtn.innerHTML = `
-      <a class="button btn-blue">
-        <img src="svg/pin.svg" alt="pin">
-        <span class="ad_username bold">@${username}</span>
-        <span class="ad_duration txt-color-gray">${time}</span>
-      </a>
+// ----------------- Insert Pinned Button -----------------
+window.insertPinnedBtn = function (card, username, mode = "profile") {
+  if (!card) return;
+  if (card.querySelector(".pinedbtn") && mode != "post") return;
+  const pinnedBtn = document.createElement("div");
+  pinnedBtn.classList.add("pinedbtn");
+  pinnedBtn.innerHTML = `
+        <i class="peer-icon peer-icon-pinpost"></i>
+        <span class="ad_username none bold">@${username}</span>
     `;
 
-    const postInhalt = card.querySelector(".post-inhalt");
-    const social = card.querySelector(".social");
-    const viewpost = document.querySelector(".viewpost");
-    const footer = viewpost ?.querySelector(".postview_footer");
-    const comments = viewpost ?.querySelector(".post-comments");
+  const postInhalt = card.querySelector(".post-inhalt");
+  const social = card.querySelector(".social");
+  const viewpost = document.querySelector(".viewpost");
+  const footer = viewpost?.querySelector(".postview_footer");
+  const comments = viewpost?.querySelector(".post-comments");
 
-    if (mode === "profile") {
-      if (postInhalt && social) {
-        postInhalt.insertBefore(pinnedBtn, social);
-      }
+  if (mode === "profile") {
+    if (postInhalt && social) {
+      postInhalt.insertBefore(pinnedBtn, social);
     }
+  }
+
+  if (mode === "post") {
+    if (footer && comments && !footer.querySelector(".pinedbtn")) {
+      comments.insertAdjacentElement("afterend", pinnedBtn);
+    }
+  }
+};
+
+window.clearAdBtnBox = function () {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", window.clearAdBtnBox);
+    return;
+  }
+
+  const cardPopup = document.getElementById("cardClicked");
+  if (!cardPopup) return;
+
+  const adBtn = cardPopup.querySelector(".pinedbtn");
+  if (adBtn) {
+    adBtn.remove();
+  }
+};
+
+
+// Add reported badge to profile
+function addReportedBadge() {
+    const profileInfo = document.querySelector('.profile_info');
+    const slug = profileInfo.querySelector('.profile_no');
     
-    if (mode === "post") {
-      if (footer && comments && !footer.querySelector(".pinedbtn")) {
-        comments.insertAdjacentElement("afterend", pinnedBtn);
-      }
+    // Check if already reported
+    if (!document.querySelector('.profile_reported_badge')) {
+        const reportedBadge = document.createElement('span');
+        reportedBadge.classList.add('profile_reported_badge','small_font_size');
+        
+        reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
+        
+        slug.parentNode.insertBefore(reportedBadge, slug.nextSibling);
     }
+}
+
+// Remove reported badge from profile
+function removeReportedBadge() {
+  const reportedBadge = document.querySelector('.profile_reported_badge');
+  
+  if (reportedBadge) {
+    reportedBadge.classList.add('none');
+  }
+  
+  const viewProfile = document.querySelector('.view-profile');
+  if (viewProfile) {
+      viewProfile.classList.remove('REPORTED_PROFILE');
+  }
+}
+
+// Add hidden badge to own profile
+function addHiddenBadge() {
+  const profileInfo = document.querySelector('.profile_info');
+  const slug = profileInfo.querySelector('.profile_no');
+  
+  const hiddenBadge = document.createElement('span');
+  hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
+  hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+  
+  slug.parentNode.insertBefore(hiddenBadge, slug.nextSibling);
+}
+
+function addIllegalBadge() {
+  const profileHeader = document.querySelector('.profile_header');
+  
+  // Check if already reported
+  if (!document.querySelector('.profile_illegal_badge')) {
+      const illegalBadge = document.createElement('div');
+      illegalBadge.classList.add ('profile_illegal_badge', 'red-text', 'xl_font_size');
+      illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal. </span> All changes you make will not be visible for others';
+      
+      profileHeader.insertAdjacentElement("afterend", illegalBadge);
+  }
+}
+
+// Disable report button and change text
+  function disableReportButton() {
+    const reportButton = document.querySelector('.report_profile');
+    reportButton.disabled = true;
+    reportButton.textContent = "Reported by you";
+    reportButton.classList.add('disabled');
   }

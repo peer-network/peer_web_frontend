@@ -32,6 +32,7 @@ checkAuth("unauthorized");
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
     <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
     <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
+    <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
     <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
     <script src="js/add_post.js?<?php echo filemtime('js/add_post.js'); ?>" defer></script>
     <script src="js/crop.js?<?php echo filemtime('js/crop.js'); ?>" defer></script>

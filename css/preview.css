@@ -797,7 +797,7 @@ i[class*=" fi-rr-"]::before {
 }
 
 
-
+/*
 @media screen and (min-width: 2000px) {
   .previewPost .post_content .post_title {
     padding-right: 100px;
@@ -885,10 +885,10 @@ i[class*=" fi-rr-"]::before {
 		border-radius: 15px;
 	}
    
-}
+}*/
 
-
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
   .previewPost .post_content .post_title {
     padding-right: 150px;
     }

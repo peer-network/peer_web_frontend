@@ -32,7 +32,6 @@
                 this.formData = {};
                 this.validators = {};
                 this.init();
-               
             }
 
             init() {
@@ -747,6 +746,7 @@
         // Initialize the form when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             autoLogin();
+            fetchEndpoints();
             new AccessibleResetpasswordForm();
         });
 
