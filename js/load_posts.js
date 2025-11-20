@@ -1325,33 +1325,61 @@ function restoreFilterSettings() {
 const postSpan = document.querySelector(".post-view span");
 if (postSpan) {
   postSpan.addEventListener("click", async () => {
-    const postid = postSpan.closest(".viewpost").getAttribute("postid");
-    await postInteractionsModal(postid, "VIEW");
+    const viewpost = postSpan.closest(".viewpost");
+    const postid = viewpost.getAttribute("postid");
+    
+    // Scope selectors to THIS specific viewpost element
+    const counts = {
+      amountviews: parseInt(viewpost.querySelector(".post-view span").textContent) || 0,
+      amountlikes: parseInt(viewpost.querySelector(".post-like span").textContent) || 0,
+      amountdislikes: parseInt(viewpost.querySelector(".post-dislike span").textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "VIEW", counts);
   });
 }
-
 
 const likeSpan = document.querySelector(".post-like span");
 if (likeSpan) {
   likeSpan.addEventListener("click", async () => {
-    const postid = likeSpan.closest(".viewpost").getAttribute("postid");
-    await postInteractionsModal(postid, "LIKE");
+    const viewpost = likeSpan.closest(".viewpost");
+    const postid = viewpost.getAttribute("postid");
+    
+    const counts = {
+      amountviews: parseInt(viewpost.querySelector(".post-view span").textContent) || 0,
+      amountlikes: parseInt(viewpost.querySelector(".post-like span").textContent) || 0,
+      amountdislikes: parseInt(viewpost.querySelector(".post-dislike span").textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "LIKE", counts);
   });
 }
-
 
 const dislikeSpan = document.querySelector(".post-dislike span");
 if (dislikeSpan) {
   dislikeSpan.addEventListener("click", async () => {
-    const postid = dislikeSpan.closest(".viewpost").getAttribute("postid");
-    await postInteractionsModal(postid, "DISLIKE");
+    const viewpost = dislikeSpan.closest(".viewpost");
+    const postid = viewpost.getAttribute("postid");
+    
+    const counts = {
+      amountviews: parseInt(viewpost.querySelector(".post-view span").textContent) || 0,
+      amountlikes: parseInt(viewpost.querySelector(".post-like span").textContent) || 0,
+      amountdislikes: parseInt(viewpost.querySelector(".post-dislike span").textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "DISLIKE", counts);
   });
 }
 
-
 document.body.addEventListener("click", async (e) => {
   if (e.target.matches(".comment_like span")) {
-    const postid = e.target.closest(".comment_item").getAttribute("id");
-      await postInteractionsModal(postid, "COMMENTLIKE");
+    const commentItem = e.target.closest(".comment_item");
+    const postid = commentItem.getAttribute("id");
+    
+    const counts = {
+      amountlikes: parseInt(e.target.textContent) || 0
+    };
+    
+    await postInteractionsModal(postid, "COMMENTLIKE", counts);
   }
 });

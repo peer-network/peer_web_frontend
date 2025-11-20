@@ -131,6 +131,7 @@
 .interactionsModal .modal-content .profilStats .user_info {
   display: flex;
   flex-direction: column;
+  text-align: start;
 }
 
 .interactionsModal .modal-content .profilStats .user_info .user_slug {
@@ -142,6 +143,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .interactionsModal .follow-button {
@@ -566,7 +568,8 @@
 
   .interactionsModal .modal-content {
     width: min(90rem, 100vw);
-    padding: 40px 140px;
+    padding: 80px 120px;
+    border-radius: 70px;
   }
 
   .interactionsModal .results {
@@ -576,12 +579,12 @@
   }
 
   .interactionsModal .tabs {
-    border-radius: 2.5rem;
+    border-radius: 70px;
   }
 
   .interactionsModal .tabs .tab-btn {
-    line-height: 70px;
-    border-radius: 2.5rem;
+    line-height: 100px;
+    border-radius: 70px;
   }
 
   .interactionsModal .follow-button {
@@ -590,14 +593,14 @@
   }
 
   .interactionsModal .dropdown-item {
-    padding: 0;
+    padding: 10px 0;
   }
 
   .interactionsModal .close-btn {
-    margin-left: 55px;
-    margin-top: 60px;
-    width: 60px;
-    height: 60px;
+    margin-left: 30px;
+    margin-top: 105px;
+    width: 80px;
+    height: 80px;
   }
 
   .interactionsModal .interactions-close {
