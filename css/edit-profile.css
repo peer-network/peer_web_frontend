@@ -351,6 +351,7 @@
   opacity: 1;
  
 }
+/*
 @media screen and (min-width: 2000px) {
   .setting-layout .setting-menu ul li a{
     line-height: 100px;
@@ -382,9 +383,10 @@
     transform: translateX(calc(100% + 20px));
   }
 
-}
+}*/
 
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
   .setting-content .edit-profile .profile_picture img.profile-picture {
     width: 300px;
   }

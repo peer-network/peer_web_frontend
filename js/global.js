@@ -64,31 +64,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+
 function applyZoom() {
   const BASE_WIDTH = 3840;
   const layout = document.querySelector(".site_layout");
+  const left_sidebar = layout.querySelector(".left-sidebar");
+  const right_sidebar = layout.querySelector(".right-sidebar");
+  const cardClickedDiv= document.getElementById("cardClicked");
 
   function applyScale() {
-    const w = window.innerWidth;
+    const vw = window.visualViewport.width;
+    const vh = window.visualViewport.height;
 
-    // sirf width BASE_WIDTH se kam ho tab scale apply ho
-    if (w < BASE_WIDTH) {
-      const scale = w / BASE_WIDTH;
+    if (vw < BASE_WIDTH) {
+      const scale = vw / BASE_WIDTH;
 
-      layout.style.transformOrigin = "top left";
-      layout.style.transform = `scale(${scale})`;
-      layout.style.width = BASE_WIDTH + "px";
-    } 
-    else {
-      // agar width BASE_WIDTH ya usse zyada ho to scaling hata do
-      layout.style.transform = "scale(1)";
-      layout.style.width = BASE_WIDTH + "px";
+      layout.style.zoom = scale;
+
+      // compensate for zoom: divide viewport height by scale
+      left_sidebar.style.height = vh / scale + "px";
+      right_sidebar.style.height = vh / scale + "px";
+      if(cardClickedDiv) cardClickedDiv.style.height = vh / scale + "px";
+
+    } else {
+      // reset zoom, let layout flow naturally
+      layout.style.zoom = "";
+      left_sidebar.style.height = "";
+      right_sidebar.style.height = "";
+      if(cardClickedDiv) cardClickedDiv.style.height = "";
     }
   }
 
   applyScale();
-  window.addEventListener("resize", applyScale);
+  window.visualViewport.addEventListener("resize", applyScale);
 }
+
+
+
+
 
 function getHostConfig() {
   const config = document.querySelector("#config");

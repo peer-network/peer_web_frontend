@@ -1891,8 +1891,8 @@
 }
 
 
-
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
 
   #addPost .drop-area .plus-icon {
 
@@ -1988,6 +1988,7 @@
 }
 
 /*-------------------------------------------------*/
+/*
 @media screen and (max-width: 2300px) {
   .col-right {	flex: 6 1 0;}
   
@@ -2036,7 +2037,9 @@
     margin-bottom: 15px;
     padding-left: 39px;
   }
-}
+}*/
+
+
 #videoPos{
   position: absolute;
   left: 0;
