@@ -356,6 +356,7 @@
 .modalOverlay .modal-content .profilStats .user_info {
   display: flex;
   flex-direction: column;
+  text-align: start;
 }
 
 .modalOverlay .modal-content .profilStats .user_info .user_slug {
@@ -998,7 +999,8 @@
 
   .modalOverlay .modal-content {
     width: min(90rem, 100vw);
-    padding: 40px 140px;
+    padding: 80px 120px;
+    border-radius: 70px;
   }
 
   .modalOverlay .modal-body {
@@ -1012,8 +1014,8 @@
   }
 
   .modalOverlay .tabs .tab-btn {
-    line-height: 70px;
-    border-radius: 2.5rem;
+    line-height: 100px;
+    border-radius: 70px;
   }
 
   .modalOverlay .follow-button {
@@ -1022,7 +1024,7 @@
   }
 
   .modalOverlay .dropdown-item {
-    padding: 0;
+    padding: 10px 0;
   }
 
   .modalOverlay .close-btn {
