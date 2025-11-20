@@ -576,56 +576,66 @@
       });
   }
 
-  async function postInteractionsModal(postid, startType = "VIEW") {
+  // ============================================
+  // POST INTERACTIONS MODAL
+  // Displays users who liked, disliked, or viewed a post/comment
+  // Supports infinite scroll pagination
+  // ============================================
+
+  async function postInteractionsModal(postid, startType = "VIEW", counts = {}) {
     const accessToken = getCookie("authToken");
     const modal = document.getElementById("interactionsModal");
+    const LIMIT = 20;
 
-    // build tabs dynamically
+    // ============================================
+    // BUILD MODAL HTML
+    // ============================================
+
     let tabsHTML = "";
     if (startType === "COMMENTLIKE") {
-      tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="peer-icon peer-icon-like"></i><span class="count">0</span></div>`;
+      tabsHTML = `<div class="tab-btn active" data-type="COMMENTLIKE">Comment Likes <i class="peer-icon peer-icon-like"></i><span class="count">${counts.amountlikes || 0}</span></div>`;
     } else {
       tabsHTML = `
-        <div class="tab-btn" data-type="LIKE">Likes <i class="peer-icon peer-icon-like"></i><span class="count">0</span></div>
-        <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="peer-icon peer-icon-dislike"></i><span class="count">0</span></div>
-        <div class="tab-btn" data-type="VIEW">Views <i class="peer-icon peer-icon-eye-open"></i><span class="count">0</span></div>
+        <div class="tab-btn" data-type="LIKE">Likes <i class="peer-icon peer-icon-like"></i><span class="count">${counts.amountlikes || 0}</span></div>
+        <div class="tab-btn" data-type="DISLIKE">Dislikes <i class="peer-icon peer-icon-dislike"></i><span class="count">${counts.amountdislikes || 0}</span></div>
+        <div class="tab-btn" data-type="VIEW">Views <i class="peer-icon peer-icon-eye-open"></i><span class="count">${counts.amountviews || 0}</span></div>
       `;
     }
 
     modal.innerHTML = `
       <div class="modal-content">
         <span class="close-btn"><img class="interactions-close" src="svg/arrow-left.svg"></span>
-
         <div class="tabs">
           ${tabsHTML}
         </div>
-
         <div id="interactionResults" class="results"></div>
       </div>
     `;
 
     showModal();
 
-    async function getPostInteractions(type = "VIEW") {
-      const limit = 20;
-      const offset = 0;
+    // ============================================
+    // API CALL - FETCH INTERACTIONS
+    // ============================================
+
+    async function getPostInteractions(type = "VIEW", offset = 0) {
       const query = `
         query PostInteractions {
           postInteractions(
-          postOrCommentId: "${postid}", 
-          getOnly: ${type},
-          limit: ${limit},
-          offset: ${offset}) {
-            status
-            ResponseCode
-            affectedRows {
-              id
-              username
-              slug
-              img
-              isfollowed
-              isfollowing
-            }
+            postOrCommentId: "${postid}", 
+            getOnly: ${type},
+            limit: ${LIMIT},
+            offset: ${offset}) {
+              status
+              ResponseCode
+              affectedRows {
+                id
+                username
+                slug
+                img
+                isfollowed
+                isfollowing
+              }
           }
         }
       `;
@@ -637,26 +647,42 @@
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`
           },
-          body: JSON.stringify({
-            query
-          })
+          body: JSON.stringify({ query })
         });
 
         const json = await response.json();
-        return json ?.data ?.postInteractions ?.affectedRows || [];
+        return json?.data?.postInteractions?.affectedRows || [];
       } catch (error) {
         console.error(`Error loading ${type} interactions:`, error);
         return [];
       }
     }
 
+    // ============================================
+    // STATE MANAGEMENT
+    // ============================================
+
     let currentType = startType;
+    
     let cachedResults = {
       VIEW: [],
       LIKE: [],
       DISLIKE: [],
       COMMENTLIKE: []
     };
+
+    let pagination = {
+      VIEW: { offset: 0, hasMore: true, loading: false },
+      LIKE: { offset: 0, hasMore: true, loading: false },
+      DISLIKE: { offset: 0, hasMore: true, loading: false },
+      COMMENTLIKE: { offset: 0, hasMore: true, loading: false }
+    };
+
+    let interactionObserver = null;
+
+    // ============================================
+    // MODAL CONTROLS
+    // ============================================
 
     function openModal(type) {
       modal.querySelectorAll(".tab-btn").forEach(btn => {
@@ -672,60 +698,158 @@
     function hideModal() {
       modal.classList.remove("open");
       modal.classList.add("none");
+      disconnectObserver();
     }
+
+    // ============================================
+    // INTERSECTION OBSERVER MANAGEMENT
+    // ============================================
+
+    function disconnectObserver() {
+      if (interactionObserver) {
+        interactionObserver.disconnect();
+        interactionObserver = null;
+      }
+      
+      const oldSentinel = modal.querySelector("#interactionSentinel");
+      if (oldSentinel) oldSentinel.remove();
+    }
+
+    // ============================================
+    // USER RENDERING
+    // ============================================
+
+    function appendMoreUsers(newUsers, container) {
+      const sentinel = container.querySelector("#interactionSentinel");
+      const currentUserId = getCookie("userID");
+
+      newUsers.forEach(user => {
+        const el = createUserItem(user, currentUserId);
+        if (sentinel) container.insertBefore(el, sentinel);
+        else container.appendChild(el);
+      });
+    }
+
+    // ============================================
+    // LOAD INTERACTIONS 
+    // ============================================
 
     async function loadInteractions(type) {
       currentType = type;
       const container = modal.querySelector("#interactionResults");
 
-      let data = cachedResults[type];
+      pagination[type].offset = 0;
+      pagination[type].hasMore = true;
+      pagination[type].loading = false;
+
+      disconnectObserver();
+
+      const data = await getPostInteractions(type, 0);
+      cachedResults[type] = data || [];
+      
+      container.innerHTML = "";
+
       if (!data || data.length === 0) {
-        data = await getPostInteractions(type);
-        cachedResults[type] = data;
-      }
-
-      const tab = modal.querySelector(`.tab-btn[data-type="${type}"] .count`);
-      if (tab) {
-        tab.textContent = data.length;
-      }
-
-      if (data.length === 0) {
         let label = "";
         switch (type) {
-          case "LIKE":
-            label = "likes";
-            break;
-          case "DISLIKE":
-            label = "dislikes";
-            break;
-          case "VIEW":
-            label = "views";
-            break;
-          case "COMMENTLIKE":
-            label = "comment likes";
-            break;
+          case "LIKE": label = "likes"; break;
+          case "DISLIKE": label = "dislikes"; break;
+          case "VIEW": label = "views"; break;
+          case "COMMENTLIKE": label = "comment likes"; break;
         }
         container.innerHTML = `<div class="empty-message">No ${label} yet!</div>`;
+        pagination[type].hasMore = false;
         return;
       }
+
       renderUsers(data, container);
+
+      pagination[type].offset = data.length;
+      pagination[type].hasMore = (data.length === LIMIT);
+
+      const existingLoader = modal.querySelector("#interactionLoader");
+      if (existingLoader) existingLoader.remove();
+      
+      const loader = document.createElement("div");
+      loader.id = "interactionLoader";
+      loader.className = "loader";
+      loader.style.display = "none";
+      loader.textContent = "Loading...";
+      container.appendChild(loader);
+
+      if (pagination[type].hasMore) {
+        const sentinel = document.createElement("div");
+        sentinel.id = "interactionSentinel";
+        sentinel.style.height = "1px";
+        sentinel.style.marginTop = "20px";
+        container.appendChild(sentinel);
+
+        if (interactionObserver) {
+          interactionObserver.disconnect();
+          interactionObserver = null;
+        }
+
+        interactionObserver = new IntersectionObserver(async (entries) => {
+          const first = entries[0];
+          if (!first.isIntersecting) return;
+          await loadMore(type);
+        }, {
+          root: container,
+          rootMargin: '100px',
+          threshold: 0
+        });
+
+        interactionObserver.observe(sentinel);
+      } else {
+        disconnectObserver();
+        const loaderEl = modal.querySelector("#interactionLoader");
+        if (loaderEl) loaderEl.style.display = "none";
+      }
     }
 
+    // ============================================
+    // PRELOAD INTERACTIONS (BACKGROUND)
+    // ============================================
 
     async function preloadInteractions(type) {
       if (!cachedResults[type] || cachedResults[type].length === 0) {
         const data = await getPostInteractions(type);
         cachedResults[type] = data;
-
-        // only update count, NOT results
-        const tab = modal.querySelector(`.tab-btn[data-type="${type}"] .count`);
-        if (tab) {
-          tab.textContent = data.length;
-        }
       }
     }
 
-    // tab switching
+    // ============================================
+    // LOAD MORE (PAGINATION)
+    // ============================================
+
+    async function loadMore(type) {
+      const state = pagination[type];
+      const container = modal.querySelector("#interactionResults");
+      const loader = modal.querySelector("#interactionLoader");
+
+      if (!state.hasMore || state.loading) return;
+
+      state.loading = true;
+      if (loader) loader.style.display = "block";
+
+      const newData = await getPostInteractions(type, state.offset);
+
+      if (newData && newData.length > 0) {
+        appendMoreUsers(newData, container);
+        cachedResults[type] = [...(cachedResults[type] || []), ...newData];
+        state.offset += newData.length;
+      }
+
+      if (!newData || newData.length < LIMIT) {
+        state.hasMore = false;
+        disconnectObserver();
+        if (loader) loader.style.display = "none";
+      }
+
+      if (loader) loader.style.display = "none";
+      state.loading = false;
+    }
+
     modal.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const type = btn.dataset.type;
@@ -736,6 +860,10 @@
 
     modal.querySelector(".close-btn").addEventListener("click", hideModal);
 
+    // ============================================
+    // INITIALIZE MODAL
+    // ============================================
+
     openModal(startType);
     await loadInteractions(startType);
 
@@ -745,6 +873,7 @@
       });
     }
   }
+
 
   async function LiquiudityCheck(postCosts, title, action) {
     // console.log("Liquidity Check for postCosts:", postCosts);

@@ -423,9 +423,7 @@ h1 {
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
   }
-  .post-text {
-    /* display: none !important; */
-  }
+  
   .main {
     grid-template-columns: auto auto !important;
   }
@@ -595,9 +593,7 @@ h1 {
   cursor: pointer;
 }
 
-.filterGroup input[type="checkbox"] + label:hover img {
-  /* animation: borderButton 2s forwards; */
-}
+
 
 .filter > p {
   width: 100%;
@@ -1190,9 +1186,7 @@ h1 {
   border-radius: 0.2rem;
   margin-top: 3rem;
 }
-[content="text"] h1 {
-  /* background-color: var(--background-color); */
-}
+
 .card[content="text"]:hover h1 {
   /* top: 3rem !important; */
   z-index: 100 !important;

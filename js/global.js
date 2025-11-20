@@ -25,6 +25,7 @@ window.tokenomicsData = null;
 
 ///////////////////////////////
 document.addEventListener("DOMContentLoaded", async () => {
+  applyZoom();
   const accessToken = getCookie("authToken");
   if (accessToken) {
     hello();
@@ -62,6 +63,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     fetchEndpoints();
   }
 });
+
+
+function applyZoom() {
+  const BASE_WIDTH = 3840;
+  const layout = document.querySelector(".site_layout");
+  const left_sidebar = layout.querySelector(".left-sidebar");
+  const right_sidebar = layout.querySelector(".right-sidebar");
+  const cardClickedDiv= document.getElementById("cardClicked");
+
+  function applyScale() {
+    const vw = window.visualViewport.width;
+    const vh = window.visualViewport.height;
+
+    if (vw < BASE_WIDTH) {
+      const scale = vw / BASE_WIDTH;
+
+      layout.style.zoom = scale;
+
+      // compensate for zoom: divide viewport height by scale
+      left_sidebar.style.height = vh / scale + "px";
+      right_sidebar.style.height = vh / scale + "px";
+      if(cardClickedDiv) cardClickedDiv.style.height = vh / scale + "px";
+
+    } else {
+      // reset zoom, let layout flow naturally
+      layout.style.zoom = "";
+      left_sidebar.style.height = "";
+      right_sidebar.style.height = "";
+      if(cardClickedDiv) cardClickedDiv.style.height = "";
+    }
+  }
+
+  applyScale();
+  window.visualViewport.addEventListener("resize", applyScale);
+}
+
+
+
+
 
 function getHostConfig() {
   const config = document.querySelector("#config");
