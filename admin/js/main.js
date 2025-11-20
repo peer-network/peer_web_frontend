@@ -8,10 +8,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     view.initSearch();
 
     // Load items first
-    const items = await fetcher.loadItems('LIST_ITEMS');
+    // const items = await
+    fetcher.loadItems('LIST_ITEMS');
 
     // Then render them
-    view.renderItems(items);
+    // view.renderItems(items);
   } catch (err) {
     console.error("Initialization error:", err);
   }
