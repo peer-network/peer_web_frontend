@@ -25,6 +25,7 @@ window.tokenomicsData = null;
 
 ///////////////////////////////
 document.addEventListener("DOMContentLoaded", async () => {
+  applyZoom();
   const accessToken = getCookie("authToken");
   if (accessToken) {
     hello();
@@ -62,6 +63,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     fetchEndpoints();
   }
 });
+
+function applyZoom() {
+  const BASE_WIDTH = 3840;
+  const layout = document.querySelector(".site_layout");
+
+  function applyScale() {
+    const w = window.innerWidth;
+
+    // sirf width BASE_WIDTH se kam ho tab scale apply ho
+    if (w < BASE_WIDTH) {
+      const scale = w / BASE_WIDTH;
+
+      layout.style.transformOrigin = "top left";
+      layout.style.transform = `scale(${scale})`;
+      layout.style.width = BASE_WIDTH + "px";
+    } 
+    else {
+      // agar width BASE_WIDTH ya usse zyada ho to scaling hata do
+      layout.style.transform = "scale(1)";
+      layout.style.width = BASE_WIDTH + "px";
+    }
+  }
+
+  applyScale();
+  window.addEventListener("resize", applyScale);
+}
 
 function getHostConfig() {
   const config = document.querySelector("#config");
