@@ -55,11 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="report_user_info">
                 <img src="${profilePic}" alt="Profile Picture" class="report_profile_pic">
                 <div class="report_user_details">
-                    <div class="report_username bold">${username}</div>
-                    <div class="report_slug">${slug}</div>
+                    <div class="report_username xxl_font_size bold">${username}</div>
+                    <div class="report_slug xl_font_size">${slug}</div>
                 </div>
                 </div>
-                <p class="report_message bold">Are you sure you want to report this user?</p>
+                <p class="report_message xl_font_size bold">Are you sure you want to report this user?</p>
                 <div class="report_actions">
                 <button class="button btn-transparent btn-cancel" id="cancelReport">Cancel</button>
                 <button class="button btn-blue btn-report" id="confirmReport">Report</button>
