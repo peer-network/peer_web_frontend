@@ -495,8 +495,8 @@ h2.xxl_font_size {
 
 
 
-
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
   .myAds_header .header_box {
     border-radius: 50px;
     padding: 40px;

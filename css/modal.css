@@ -521,7 +521,7 @@
   }
 
 }
-
+/*
 @media screen and (min-width: 2000px) {
 .logOut-pop svg {
       
@@ -562,8 +562,9 @@
 	
   }
   
-}
-@media screen and (min-width: 3000px) {
+}*/
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
 
   .interactionsModal .modal-content {
     width: min(90rem, 100vw);

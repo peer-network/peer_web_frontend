@@ -720,6 +720,7 @@ transition: 0.6s all;
 
 /*--------- End : Hidden account frame -----------*/
 
+/*
 @media screen and (max-width: 2000px) {
 
     .card .post-userName {	font-size: 15px;}
@@ -735,7 +736,9 @@ transition: 0.6s all;
     .card[content="audio"] .post-inhalt .audio-player span {	bottom: 11px;	font-size: 12px;}
     .card .post-inhalt .post-content {	margin-top: 0;}
 
-}
+}*/
+
+/*
 @media screen and (min-width: 2000px) and (max-width: 3000px){
   .card[content="video"] .post-inhalt .video-player .video-ratio {line-height: 35px;	padding: 0 20px;	font-size: 15px;}
     .card[content="video"] .post-inhalt .video-player img {	margin-top: -20px;	width: 30px;}
@@ -770,7 +773,8 @@ transition: 0.6s all;
   
 
 }
-
+*/
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
 @media screen and (min-width: 1000px) {
 
 	.list_all_post {
