@@ -386,15 +386,17 @@ implement in all-post.css
   box-shadow: none;
 } */
 
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
   #cropButtons .button {	min-width: 30%; line-height: 130px;}
   #cropQuit::before {    width: 30px;    height: 30px;  }
 }
 
+/*
 @media screen and (max-width: 3000px) {
   #trimButtons {
 
     max-width: 1000px;
    
   }
-}
+}*/

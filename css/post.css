@@ -125,6 +125,248 @@
 	display: none !important;
 }
 
+/*--------------- Start Copy media form style.css---------------*/
+
+  /*--------------------------------------------------------------
+  # Media Queries  Block CSS
+  --------------------------------------------------------------*/
+  @media screen and (min-width: 2000px) {
+
+    body,
+    button,
+    input,
+    select,
+    optgroup,
+    textarea {
+
+      font-size: 18px;
+
+    }
+
+
+    button,
+    .button {
+      line-height: 80px;
+
+      padding: 0 30px;
+
+
+      font-size: 28px;
+      font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
+    }
+
+    header.site-header .logo {
+      width: 2.2rem !important;
+      height: auto;
+    }
+
+    h1,
+    .xxl_font_size {
+      font-size: 45px;
+      font-size: clamp(1.875rem, 1.4063rem + 0.75vw, 2.8125rem);
+
+
+    }
+
+    .xl_font_size {
+      font-size: 30px;
+      font-size: clamp(1.5rem, 1.3125rem + 0.3vw, 1.875rem);
+      /*==== 3k to 1k*/
+
+
+    }
+
+    h3,
+    .md_font_size {
+      font-size: 25px;
+      font-size: clamp(1.25rem, 1.0938rem + 0.25vw, 1.5625rem);
+    }
+
+    .small_font_size{
+      font-size: 18px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="range"],
+    input[type="date"],
+    input[type="month"],
+    input[type="week"],
+    input[type="time"],
+    input[type="datetime"],
+    input[type="datetime-local"],
+    input[type="color"],
+    textarea {
+      font-size: 18px;
+
+
+    }
+
+  }
+
+  @media screen and (min-width: 3000px) {
+
+
+    body,
+    input,
+    select,
+    optgroup,
+    textarea {
+
+      font-size: 28px;
+      font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
+    }
+
+    button,
+    .button {
+      line-height: 130px;
+      border-radius: 150px;
+      padding: 0 60px;
+      min-width: 300px;
+
+      font-size: 35px;
+      font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem) !important;
+    }
+
+    .xxxl_font_size {
+      font-size: 128px;
+
+      font-size: clamp(4rem, 2rem + 3vw, 8rem);
+    }
+
+    h1,
+    .xxl_font_size {
+      font-size: 64px;
+
+      font-size: clamp(2.5rem, 1rem + 1.2vw, 4rem);
+
+    }
+
+    .xl_font_size {
+      font-size: 45px;
+      font-size: clamp(1.875rem, 0.9375rem + 0.75vw, 2.8125rem);
+
+    }
+
+    h3,
+    .md_font_size {
+      font-size: 35px;
+      font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+    }
+
+    .small_font_size, 
+    button.small_font_size{
+
+      font-size: 28px;
+      font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
+    }
+
+    .site_layout {
+
+      grid-template-columns: 650px calc(100% - 1300px) 650px;
+    }
+
+   
+
+    header.site-header {
+      padding: 80px 100px 50px;
+    }
+
+    header.site-header .logo {
+      width: auto;
+      height: auto;
+    }
+
+    
+    main.site-main {
+      padding-top: 80px;
+    }
+
+    
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="range"],
+    input[type="date"],
+    input[type="month"],
+    input[type="week"],
+    input[type="time"],
+    input[type="datetime"],
+    input[type="datetime-local"],
+    input[type="color"],
+    textarea {
+      font-size: 35px;
+      font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem);
+      padding: 2.5rem;
+      border-radius: 70px;
+
+    }
+
+    
+
+  }
+
+ 
+
+  @media screen and (max-width: 768px) {
+
+    body,
+    button,
+    input,
+    select,
+    optgroup,
+    textarea {
+      font-size: 16px;
+    }
+
+    h1,
+    .xxl_font_size {
+      font-size: 25px;
+
+    }
+
+    .xl_font_size {
+      font-size: 22px;
+    }
+
+    h2 {
+      font-size: 25px;
+    }
+
+    h3 {
+      font-size: 22px;
+    }
+
+    h4 {
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 700;
+      margin: 0 0 22px 0;
+    }
+
+    h5 {
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    h6 {
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+
+/*--------------- End Copy media form style.css---------------*/
+
 @media screen and (min-width: 2000px) {
   .site_layout_nonuser .site-logo .logo {
     width: 15rem !important;

@@ -2395,9 +2395,41 @@ footer {
 	transform: scale(1);
 }
 
+
+/* Temporary posted here the code from profile.css, the style was needed in dashboard */
+.pinedbtn {
+ 
+  background: var(--dark-grey);
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  padding: 10px;
+  aspect-ratio: 1;
+}
+
+.card[content="text"] .pinedbtn {
+	margin-top: auto;
+}
+
+.pinedbtn .peer-icon.peer-icon-pinpost {
+    font-size: 120%;
+}
+
+/* .postview_footer .pinedbtn  {
+  width: 6%;
+} */
+
+.error {
+  color: var(--red-accent, #FF3B3B);
+}
+
 /*--------------------------------------------------------------
 # Media Queries  Block CSS
 --------------------------------------------------------------*/
+/*
 @media screen and (min-width: 2000px) {
 
 	body,
@@ -2439,7 +2471,7 @@ footer {
 	.xl_font_size {
 		font-size: 30px;
 		font-size: clamp(1.5rem, 1.3125rem + 0.3vw, 1.875rem);
-		/*==== 3k to 1k*/
+		
 
 
 	}
@@ -2483,9 +2515,10 @@ footer {
 
 
 
-}
+}*/
 
-@media screen and (min-width: 3000px) {
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
 
 
 	body,
@@ -2735,7 +2768,7 @@ footer {
 	} */
 
 }
-
+/*
 @media screen and (max-width: 2999px) {
 
 	.widget .filter-section-container .section-selected-label,
@@ -2960,7 +2993,7 @@ footer {
 		height: auto;
 	}
 
-}
+}*/
 
 @media screen and (max-width: 768px) {
 
@@ -3008,35 +3041,3 @@ footer {
 		font-weight: 400;
 	}
 }
-
-
-
-/* Temporary posted here the code from profile.css, the style was needed in dashboard */
-.pinedbtn {
- 
-  background: var(--dark-grey);
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 100%;
-  padding: 10px;
-  aspect-ratio: 1;
-}
-
-.card[content="text"] .pinedbtn {
-	margin-top: auto;
-}
-
-.pinedbtn .peer-icon.peer-icon-pinpost {
-    font-size: 120%;
-}
-
-/* .postview_footer .pinedbtn  {
-  width: 6%;
-} */
-
-.error {
-  color: var(--red-accent, #FF3B3B);
-};
