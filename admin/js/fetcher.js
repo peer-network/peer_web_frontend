@@ -47,7 +47,7 @@ moderationModule.fetcher = {
                     break;
                 case "audio":
                     item.media = safeMedia(post.cover, "../img/audio-bg.png"); 
-                    item.icon = "peer-icon peer-icon-audio";
+                    item.icon = "peer-icon peer-icon-audio-fill";
                     break;
                 case "video":
                     item.media = safeMedia(post.cover, "../img/video-bg.png");
