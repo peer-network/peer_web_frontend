@@ -61,7 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           const coverArray = JSON.parse(post.cover);
           const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/'); 
           if (coverPath) {
-            return `https://media.getpeer.eu${coverPath}`;
+           
+            return tempMedia(coverPath);
           }
         } catch (e) {
           console.error("Error parsing post cover:", e);
@@ -77,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const mediaArray = JSON.parse(post.media);
           const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/'); 
           if (mediaPath) {
-            return `https://media.getpeer.eu${mediaPath}`;
+            return  tempMedia(mediaPath)
           }
         } catch (e) {
           console.error("Error parsing post media:", e);
