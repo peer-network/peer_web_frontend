@@ -1579,6 +1579,9 @@
     cursor: pointer;
 
 }
+.micButton span.icon-mic .peer-icon {
+	font-size: 340%;
+}
 .micButton span.icon-mic svg {
 	width: 55px;
   height: auto;
@@ -1858,6 +1861,9 @@
 
     height: auto;
 
+}
+#preview-audio .record-again span.icon-mic .peer-icon {
+	font-size: 160%;
 }
 
 

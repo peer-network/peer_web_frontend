@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 function applyZoom() {
-  const BASE_WIDTH = 3840;
+  const BASE_WIDTH = 3800;
   const layout = document.querySelector(".site_layout");
   const left_sidebar = layout.querySelector(".left-sidebar");
   const right_sidebar = layout.querySelector(".right-sidebar");

@@ -231,10 +231,12 @@ document.addEventListener("DOMContentLoaded", () => {
       dropdown.classList.add("active");
       const item = document.createElement("div");
       item.className = "dropdown-item";
+      
       if (query.length < 2 || query.length > 53 || !/^[a-zA-Z]+$/.test(query)) {
          
           item.innerHTML = `Tag must be 2-53 chars with letters only.`; // matches regex
-          console.log('i m in if');
+          
+          //console.log('i m in if');
       } else {
           searchTags(query);
       }
@@ -293,11 +295,16 @@ document.addEventListener("DOMContentLoaded", () => {
     tagDropdown.innerHTML = "";
 
     if (!Array.isArray(tags) || tags.length === 0) {
-      tagDropdown.classList.remove("active");
+      tagDropdown.classList.add("active");
+       const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.innerHTML = 'No tag found. Try different search terms.';
+        tagDropdown.appendChild(item);
       return;
     } else {
       tagDropdown.classList.add("active");
     }
+
 
     tags.forEach(tag => {
       const tagItem = document.createElement("div");
