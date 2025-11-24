@@ -41,7 +41,7 @@
             <li class="menu-item referralPage <?= ($currentPage === 'referralBoard.php') ? 'active' : '' ?>">
                 <a class="white_border" href="referralBoard.php">
                     <i class="peer-icon peer-icon-referral"></i>
-                     <i class="filled peer-icon peer-icon-referral"></i>
+                     <i class="filled peer-icon peer-icon-referral-fill"></i>
 
                     Invite a friend
                 </a>
