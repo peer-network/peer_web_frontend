@@ -2531,11 +2531,9 @@ footer {
 
 	button,
 	.button {
-		line-height: 130px;
+		line-height: 350%;
 		border-radius: 150px;
-		padding: 0 60px;
-		min-width: 300px;
-
+		padding: 0 6%;
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem) !important;
 	}

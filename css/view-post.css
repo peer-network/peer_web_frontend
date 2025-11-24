@@ -1583,7 +1583,7 @@
 .post_comment {
   margin-top: auto;
   display: flex;
-  height: 100px;
+  height: 150px;
   padding: 10px 10px 10px 40px;
   justify-content: space-between;
   align-items: center;
