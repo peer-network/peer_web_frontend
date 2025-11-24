@@ -211,8 +211,8 @@
 }
 
 .viewpost .inner-container {
-  width: 90vw;
-  height: 90vh;
+  width: 80%;
+  height: 80%;
   left: 50%;
   transform: translate(-50%, -50%);
   top: 50%;
@@ -1813,7 +1813,7 @@ button:not(:disabled):hover.switch-btn {
     margin-top: 30px;
   }
   .viewpost .inner-container {
-    width: 68vw;
+    width: 80%;
   }
 
   .viewpost .profile-header-left .post-userImg,
