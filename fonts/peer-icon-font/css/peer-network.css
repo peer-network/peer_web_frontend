@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'peer-network';
-  src: url('../font/peer-network.eot?48413061');
-  src: url('../font/peer-network.eot?48413061#iefix') format('embedded-opentype'),
-       url('../font/peer-network.woff2?48413061') format('woff2'),
-       url('../font/peer-network.woff?48413061') format('woff'),
-       url('../font/peer-network.ttf?48413061') format('truetype'),
-       url('../font/peer-network.svg?48413061#peer-network') format('svg');
+  src: url('../font/peer-network.eot?46241358');
+  src: url('../font/peer-network.eot?46241358#iefix') format('embedded-opentype'),
+       url('../font/peer-network.woff2?46241358') format('woff2'),
+       url('../font/peer-network.woff?46241358') format('woff'),
+       url('../font/peer-network.ttf?46241358') format('truetype'),
+       url('../font/peer-network.svg?46241358#peer-network') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'peer-network';
-    src: url('../font/peer-network.svg?48413061#peer-network') format('svg');
+    src: url('../font/peer-network.svg?46241358#peer-network') format('svg');
   }
 }
 */
@@ -28,7 +28,7 @@
   display: inline-block;
   text-decoration: inherit;
   width: auto;
-  margin-right: 0;
+  margin-right: .0;
   text-align: center;
   /* opacity: .8; */
 
@@ -131,3 +131,12 @@
 .peer-icon-flag:before { content: '\e84a'; } /* '' */
 .peer-icon-illegal:before { content: '\e84b'; } /* '' */
 .peer-icon-three-dots:before { content: '\e84c'; } /* '' */
+.peer-icon-expand:before { content: '\e84d'; } /* '' */
+.peer-icon-search:before { content: '\e84e'; } /* '' */
+.peer-icon-mic:before { content: '\e84f'; } /* '' */
+.peer-icon-pause:before { content: '\e850'; } /* '' */
+.peer-icon-daily-mint:before { content: '\e851'; } /* '' */
+.peer-icon-referral-fill:before { content: '\e852'; } /* '' */
+.peer-icon-video-fill:before { content: '\e853'; } /* '' */
+.peer-icon-audio-fill:before { content: '\e854'; } /* '' */
+.peer-icon-camera-fill:before { content: '\e855'; } /* '' */

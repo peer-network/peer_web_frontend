@@ -867,9 +867,7 @@ header.site-header h1 {
 	padding: 50px 30px;
 }
 
-.right-sidebar-profile .inner-scroll {
-	margin-top: 170px;
-}
+
 
 .left-sidebar .inner-scroll {
 	display: flex;
@@ -899,6 +897,7 @@ footer {
 
 .widget.share_version {
 	gap: 10px;
+	margin-top: auto;
 }
 
 .widget .share_feedback {
@@ -2139,7 +2138,7 @@ footer {
 	display: block;
 	width: 100%;
 	margin: 0 auto;
-	max-width: 21vw;
+	max-width: 52%;
 }
 
 .onboarding-footer p {
@@ -2324,7 +2323,7 @@ footer {
 .distributed-daily-preview img {
 	display: block;
 	width: 100%;
-	max-width: 30vw;
+	max-width: 75%;
 	margin: 0 auto;
 }
 
@@ -2533,11 +2532,9 @@ footer {
 
 	button,
 	.button {
-		line-height: 130px;
+		line-height: 350%;
 		border-radius: 150px;
-		padding: 0 60px;
-		min-width: 300px;
-
+		padding: 0 6%;
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem) !important;
 	}
@@ -2600,6 +2597,9 @@ footer {
 	.left-sidebar .inner-scroll,
 	.right-sidebar .inner-scroll {
 		padding: 80px 100px;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 
 	main.site-main {

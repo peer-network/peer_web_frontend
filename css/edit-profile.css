@@ -83,13 +83,15 @@
 }
 
 .profile-back-button {
-  position: fixed;
-  bottom: 30px;
+  /*position: fixed;
+  bottom: 30px;*/
+  margin-top: auto;
 }
 
 .profile-back-button a {
   display: block;
-  min-width: 256px;
+ /* min-width: 256px;*/
+  margin-bottom: 0;
 }
 
 .setting-content .input-field {
