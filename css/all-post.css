@@ -39,34 +39,7 @@
   flex-grow: 1;
   cursor: pointer;
 }
-.card .reported {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 30px;
-	align-items: center;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: var(--bg-filter);
-	-webkit-backdrop-filter: blur(10px);
-	backdrop-filter: blur(10px);
-	z-index: 3;
-  text-align: center;
-  padding: 10px;	
-}
 
-.reported .reported_text {
-  color: #FF3B3B;
-}
-
-.card.card_reported {
-	pointer-events: none;
-}
-.card .reported img {
-	max-width: 30%;
-	min-width: 100px;
-}
 .card.disbale_click {
 	pointer-events: none;
 	cursor: not-allowed;
@@ -254,6 +227,11 @@ line-height: 40px;
 .card .post-inhalt .hashtags {
 	color: var(--blue-text, #0069FF);
   margin-top: 20px;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .card .post-inhalt .hashtags:empty {
 	margin: 0;
@@ -273,6 +251,9 @@ line-height: 40px;
 	width: 100%;
 	margin-top: auto;
 	gap: 5%;
+}
+.PINNED.card .social {
+  margin-top: 0;
 }
 .card .social div {
   display: flex;
@@ -488,6 +469,7 @@ transition: 0.6s all;
 	height: 0;
 	overflow: hidden;
   opacity: 0;
+  margin-top: 0;
 }
 .card[content="video"] .post-inhalt:hover .post-content {
 	transform: translateY(0);
@@ -710,6 +692,35 @@ transition: 0.6s all;
   margin-left: 3rem;
 }
 
+/*--------- Hidden account frame -----------*/
+
+
+.card-header-left.hidden_user_profile .hidden_userfeed_frame {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  bottom: 0;
+  height: fit-content;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.hidden_userfeed_frame .hidden_content {
+  display: flex;
+  gap: 10px; 
+}
+
+
+.hidden_user_profile .post-userImg,
+.hidden_user_profile .username-slug .post-userName,
+.hidden_user_profile .username-slug span.profile_id {
+  filter: blur(4px);
+}
+
+
+/*--------- End : Hidden account frame -----------*/
+
+/*
 @media screen and (max-width: 2000px) {
 
     .card .post-userName {	font-size: 15px;}
@@ -725,7 +736,9 @@ transition: 0.6s all;
     .card[content="audio"] .post-inhalt .audio-player span {	bottom: 11px;	font-size: 12px;}
     .card .post-inhalt .post-content {	margin-top: 0;}
 
-}
+}*/
+
+/*
 @media screen and (min-width: 2000px) and (max-width: 3000px){
   .card[content="video"] .post-inhalt .video-player .video-ratio {line-height: 35px;	padding: 0 20px;	font-size: 15px;}
     .card[content="video"] .post-inhalt .video-player img {	margin-top: -20px;	width: 30px;}
@@ -760,8 +773,9 @@ transition: 0.6s all;
   
 
 }
-
-@media screen and (min-width: 3000px) {
+*/
+/*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
+@media screen and (min-width: 1000px) {
 
 	.list_all_post {
 		gap: 4rem;
@@ -782,8 +796,14 @@ transition: 0.6s all;
     min-width: 180px;
     line-height: 66px;
     border-width: 3px;
-   font-size: 28px;
-    font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem);
+   
+  }
+   .card-header-right button {
+    min-width: 180px;
+    line-height: 66px;
+    border-width: 3px;
+  
+    font-size: clamp(1.5rem, 1.25rem + 0.2vw, 1.75rem) !important;
 	
   }
   

@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
-  const userID = params.get('user');
+  const userID = params.get('user') || params.get("testid");
+  const visibilityStatus = params.get("uservisibility");
+  const urlIsReported = params.get("isreported");
 
   getProfile(userID).then(userprofile => {
     
@@ -9,6 +11,44 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "404.php";
       return;
     }
+
+    /*-- handling profile visibility----*/
+    //const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    // const visibilityStatus = "HIDDEN";
+    const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
+    let isReportedByYou = userprofile.affectedRows.isreported;
+
+    if (urlIsReported !== null) {
+      isReportedByYou = (urlIsReported.toLowerCase() === "true");
+    }
+
+    if (isReportedByYou === true) {
+      disableReportButton();
+    }
+
+    if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+      const myProfile = document.querySelector('.view-profile');
+      if(myProfile) {
+        myProfile.classList.remove("REPORTED_PROFILE");
+        myProfile.classList.remove("HIDDEN_PROFILE");
+        myProfile.classList.add("illegal_profile");
+      }
+    } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+      const viewProfile = document.querySelector('.view-profile');
+      if(viewProfile) {
+        viewProfile.classList.remove("REPORTED_PROFILE");
+        viewProfile.classList.add("visibility_hidden");
+        viewProfile.classList.add("HIDDEN_PROFILE");
+      }
+    } else if(hasActiveReports) {
+      const viewProfile = document.querySelector('.view-profile');
+      if (viewProfile) {
+        viewProfile.classList.remove("visibility_hidden");
+        viewProfile.classList.add('REPORTED_PROFILE');
+      }
+      addReportedBadge();
+    }
+    /*-- End : handling profile visibility----*/
 
     const profileimg = document.getElementById("profilbild2");
     const username2 = document.getElementById("username2");
@@ -93,6 +133,65 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("biography2").innerText = "Biography not available";
         });
     } 
+
+    /*---illegal Frame content */
+      if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+        const profileInfo = document.querySelector(".profile_info");
+          
+        const illegalProfileHTML = `
+        <div class="illegal_profile_frame xl_font_size">
+          <div class="illegal_content">
+            <div class="icon_illegal"><i class="peer-icon peer-icon-illegal xxl_font_size"></i></div>
+            <div class="illegal_title bold">Profile data is removed as illegal</div>
+          </div>
+        </div>`;
+        
+        profileInfo.insertAdjacentHTML("afterbegin", illegalProfileHTML);
+      }
+
+    /*---End illegal Frame content */
+
+    /*---Hidden Account Frame */
+    if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+      
+      const profileInfo = document.querySelector(".profile_info");
+      
+      const hiddenAccountHTML = `
+        <div class="hidden_account_frame">
+          <div class="hidden_content">
+            <div class="hidden_header xl_font_size bold">
+              <span class="hidden_icon"><i class="peer-icon peer-icon-eye-close"></i></span>
+              <div class="hidden_title">Sensitive content</div>
+            </div>
+            <div class="hidden_description md_font_size">
+              This content may be sensitive or abusive.<br>
+              Do you want to view it anyway?
+            </div>
+          </div>
+          <div class="view_content">
+            <a href="#" class="button btn-transparent">View content</a>
+          </div>
+        </div>
+      `;
+
+      profileInfo.insertAdjacentHTML("afterbegin", hiddenAccountHTML);
+      
+      const hiddenFrame = profileInfo.querySelector(".hidden_account_frame");
+      const viewBtn = hiddenFrame.querySelector(".view_content a");
+      
+      if (viewBtn) {
+        viewBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          
+          hiddenFrame.remove();
+          const viewProfile = document.querySelector('.view-profile');
+          if(viewProfile) {
+            viewProfile.classList.remove('visibility_hidden');
+          }
+        });
+      }
+    }
+    /*---End Hidden Account Frame */
   });
   
   const post_loader = document.getElementById("post_loader");
@@ -133,14 +232,18 @@ document.addEventListener("DOMContentLoaded", () => {
               slug
               img
               biography
+              visibilityStatus
+              hasActiveReports
               isfollowed
               isfollowing
+              isreported
               amountposts
               amounttrending
               amountfollowed
               amountfollower
               amountfriends
               amountblocked
+              amountreports
           }
         }
       }
@@ -163,4 +266,33 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
   }
+
+  const button = document.querySelector('.moreActions_container');
+  const dropdown = document.querySelector('.moreActions_wrapper');
+
+  function toggleDropdown() {
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    
+    if (isExpanded) {
+      button.setAttribute('aria-expanded', 'false');
+      dropdown.classList.remove('open');
+      dropdown.setAttribute('hidden', '');
+    } else {
+      button.setAttribute('aria-expanded', 'true');
+      dropdown.classList.toggle('open');
+      dropdown.hidden = isExpanded;
+    }
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.moreActions_container_wrap')) {
+      button.setAttribute('aria-expanded', 'false');
+      dropdown.classList.remove('open');
+      dropdown.setAttribute('hidden', '');
+    }
+  });
+
+  button.addEventListener('click', toggleDropdown);
+
 });

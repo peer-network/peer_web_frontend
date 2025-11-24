@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  let limit = 20; 
+  let offset = 0;
+  let isLoading = false;
+  let hasMore = true;
   
   // Function to format large numbers (e.g., 300000 -> 300K)
   function formatNumber(num) {
@@ -45,6 +49,66 @@ document.addEventListener("DOMContentLoaded", async () => {
     return now < endTime;
   }
 
+  // Function to get the appropriate post image based on content type
+  function getPostImage(post) {
+    if (!post) return "";
+    
+    const contentType = post.contenttype?.toUpperCase();
+
+    if (contentType === 'IMAGE' || contentType === 'VIDEO' || contentType === 'AUDIO') {
+      if (post.cover) {
+        try {
+          const coverArray = JSON.parse(post.cover);
+          const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/'); 
+          if (coverPath) {
+            return `https://media.peernetwork.eu${coverPath}`;
+          }
+        } catch (e) {
+          console.error("Error parsing post cover:", e);
+        }
+      }
+
+      if (contentType === "AUDIO") {
+        return "/img/audio-bg.png";
+      }
+      
+      if (post.media) {
+        try {
+          const mediaArray = JSON.parse(post.media);
+          const mediaPath = mediaArray?.[0]?.path?.replace(/\\\//g, '/'); 
+          if (mediaPath) {
+            return `https://media.peernetwork.eu${mediaPath}`;
+          }
+        } catch (e) {
+          console.error("Error parsing post media:", e);
+        }
+      }
+    }
+
+    // For TEXT - return blank
+    return "";
+  }
+
+  // Function to get content type icon class
+  function getContentTypeIcon(contentType) {
+    if (!contentType) return "";
+    
+    const type = contentType.toUpperCase();
+    
+    switch(type) {
+      case 'TEXT':
+        return 'peer-icon-text';
+      case 'IMAGE':
+        return 'peer-icon-camera';
+      case 'VIDEO':
+        return 'peer-icon-play-btn';
+      case 'AUDIO':
+        return 'peer-icon-audio';
+      default:
+        return '';
+    }
+  }
+
   // Function to create ad listing HTML
   function createAdListing(ad) {
     const active = isActive(ad.timeframeEnd);
@@ -55,23 +119,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     const startTime = formatTime(ad.timeframeStart);
     const endTime = formatTime(ad.timeframeEnd);
 
-    const userId = ad.user?.id || ad.user?.userid;
-    const userimg = ad.user?.img ? tempMedia(ad.user.img.replace("media/", "")) : "svg/noname.svg";
-    const postTitle = ad.post?.title || `Advertisement #${ad.id}`;
+    const postImage = getPostImage(ad.post);
+    const contentTypeIcon = getContentTypeIcon(ad.post?.contenttype);
+    const postTitle = (ad.post && ad.post.title && ad.post.title.trim()) || `Advertisement #${ad.id}`;
     const isPinned = ad.type === 'PINNED';
-    const postDescription = ad.post?.mediadescription || '.....';
+    const postDescription = (ad.post && ad.post.mediadescription && ad.post.mediadescription.trim()) || '....';
+    const isTextPost = ad.post?.contenttype?.toUpperCase() === 'TEXT';
+    
     const listItem = document.createElement('div');
     listItem.className = `myAds_list_item ${statusClass}${isPinned ? ' PINNED' : ''}`;
     listItem.innerHTML = `
       <div class="ad_main_info">
         <div class="ad_info">
             <div class="ad_avatar">
-            <img src="${userimg}" alt="User ${userId || ''}" class="user_avatar" />
-            ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
+              ${isTextPost ? `
+                <div class="post_image_placeholder"></div>
+                <i class="peer-icon ${contentTypeIcon}"></i>
+              ` : `
+                <img src="${postImage}" alt="Post image" class="post_image" />
+                ${contentTypeIcon ? `<i class="peer-icon ${contentTypeIcon}"></i>` : ''}
+              `}
+              ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
             </div>
             <div class="ad_details">
-            <h3 class="ad_title">${postTitle}</h3>
-            <p class="ad_description">${postDescription}</p>
+            <h3 class="ad_tiitle">${postTitle}</h3>
+            <p class="ad_deescription">${postDescription}</p>
             </div>
         </div>
         <div class="ad_timeframe_box">
@@ -93,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="ad_dropdown_content">
             <div id="myAds_header_dropdown" class="myAds_header">
                 <div class="myAds_earnings">
-                    <h1>Earnings</h1>
+                    <h2 class="xxl_font_size">Earnings</h2>
                     <div class="earnings_box header_box">
                         <p>Gems</p>
                         <div class="ads_gems_count">
@@ -103,7 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
                 </div>
                 <div class="myAds_interactions">
-                    <h1>Interactions</h1>
+                    <h2 class="xxl_font_size">Interactions</h2>
                     <div class="interactions_box header_box">
                         <div class="likes">
                         <i class="peer-icon peer-icon-like"></i>
@@ -138,7 +210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
             </div>
             <div class="myAds_main">
-                <h1>Campaign details</h1>
+                <h2 class="xxl_font_size">Campaign details</h2>
                 <div class="campaign_details">
                     <div class="detail_item">
                         <span class="detail_title">Start date</span>
@@ -169,79 +241,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
     listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
 
-    const imgElement = listItem.querySelector("img");
-    imgElement.onerror = () => {
-      imgElement.src = "svg/noname.svg";
-    };
-
     listItem.addEventListener("click", () => {
       const adDropdown = listItem.querySelector('.ad_dropdown');
-      const timerEl = listItem.querySelector('.ad_timer_count');
       const adFrameBox = listItem.querySelector('.ad_timeframe_box');
       adDropdown.classList.toggle('open');
         if (adDropdown.classList.contains('open')) {
-            timerEl.classList.remove("none");
-            timerEl.classList.add("show");
             adFrameBox.classList.add("hidden");
         } else {
-            timerEl.classList.remove("show");
-            timerEl.classList.add("none");
             adFrameBox.classList.remove("hidden");
         }
     });
-
-    // --- Countdown logic ---
-    const timerEl = listItem.querySelector('.ad_timer_count');
-    if (!timerEl) return;
-
-    const cleanedEnd = ad.timeframeEnd.replace(/\.\d+$/, '') + 'Z';
-    const endTimer = new Date(cleanedEnd).getTime();
-    let timerInterval; 
-
-    const updateTimer = () => {
-      const now = new Date().getTime();
-      const remaining = endTimer - now;
-
-      if (active) {
-          timerEl.classList.add('active');
-      }
-
-      if (remaining <= 0) {
-        clearInterval(timerInterval);
-        timerEl.textContent = '00 : 00 : 00';
-        timerEl.classList.remove('warning');
-        timerEl.classList.remove('active');
-        timerEl.classList.add('ended');
-        listItem.classList.remove('active');
-        listItem.classList.add('ended');
-        return;
-      }
-
-      if (remaining <= 60 * 60 * 1000) {
-          timerEl.classList.remove('active');
-          timerEl.classList.add('warning');
-      } 
-
-      const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((remaining / (1000 * 60)) % 60);
-      const seconds = Math.floor((remaining / 1000) % 60);
-
-      const formatted = `${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
-      timerEl.textContent = formatted;
-    };
-
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
 
     return listItem;
   }
 
   function showContent() {
     const mainContainer = document.querySelector('.site-main-myAds');
-
     mainContainer.classList.add('loaded');
     
-    const listItems = document.querySelectorAll('.myAds_list_item');
+    const listItems = document.querySelectorAll('.myAds_list_item:not(.loaded)');
     listItems.forEach((item, index) => {
       setTimeout(() => {
         item.classList.add('loaded');
@@ -249,7 +267,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  async function loadAdvertisementHistory() {
+  async function loadAdvertisementHistory(isLoadMore = false) {
+    if (isLoading || !hasMore) return;
+    
+    isLoading = true;
+    
+    // Show loading indicator if it exists
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+      loadingIndicator.style.display = 'block';
+    }
+    
     const accessToken = getCookie("authToken");
     const payload = JSON.parse(atob(accessToken.split('.')[1]));
     const userId = payload.uid;
@@ -261,7 +289,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const graphql = JSON.stringify({
       query: `query AdvertisementHistory {
-        advertisementHistory(offset: 0, limit: 20, filter: { userId: "${userId}" }, sort: NEWEST) {
+        advertisementHistory(filter: { userId: "${userId}" }, limit: ${limit}, offset: ${offset}, sort: NEWEST) {
           status
           ResponseCode
           affectedRows {
@@ -294,6 +322,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 id
                 contenttype
                 title
+                media
+                cover
                 mediadescription
               }
               user {
@@ -326,25 +356,89 @@ document.addEventListener("DOMContentLoaded", async () => {
         const myADs = document.querySelector('.site-main-myAds');
         
         if (advertisements && advertisements.length > 0) {
-          document.getElementById('myAdsGemsEarned').textContent = formatNumber(stats.gemsEarned);
-          document.getElementById('myAdsTokensSpent').textContent = formatNumber(stats.tokenSpent);
-          document.getElementById('myAdsLikes').textContent = formatNumber(stats.amountLikes);
-          document.getElementById('myAdsDislikes').textContent = formatNumber(stats.amountDislikes);
-          document.getElementById('myAdsComments').textContent = formatNumber(stats.amountComments);
-          document.getElementById('myAdsViews').textContent = formatNumber(stats.amountViews);
-          document.getElementById('myAdsReports').textContent = formatNumber(stats.amountReports);
-          document.getElementById('myAdsTotalCount').textContent = stats.amountAds;
+          if (!isLoadMore) {
+            document.getElementById('myAdsGemsEarned').textContent = formatNumber(stats.gemsEarned);
+            document.getElementById('myAdsTokensSpent').textContent = formatNumber(stats.tokenSpent);
+            document.getElementById('myAdsLikes').textContent = formatNumber(stats.amountLikes);
+            document.getElementById('myAdsDislikes').textContent = formatNumber(stats.amountDislikes);
+            document.getElementById('myAdsComments').textContent = formatNumber(stats.amountComments);
+            document.getElementById('myAdsViews').textContent = formatNumber(stats.amountViews);
+            document.getElementById('myAdsReports').textContent = formatNumber(stats.amountReports);
+            document.getElementById('myAdsTotalCount').textContent = stats.amountAds;
+          }
 
           const myAdsListsContainer = document.querySelector('.myAds_lists');
-          myAdsListsContainer.innerHTML = '';
+          
+          // Get references to sentinel and loading indicator (if they exist)
+          const sentinel = document.getElementById('sentinel');
+          const loadingIndicator = document.getElementById('loadingIndicator');
+          
+          advertisements.sort((a, b) => {
+            const aActive = isActive(a.timeframeEnd);
+            const bActive = isActive(b.timeframeEnd);
+            
+            if (aActive && !bActive) return -1;
+            if (!aActive && bActive) return 1;
+            
+            return 0;
+          });
           
           advertisements.forEach(ad => {
             const adElement = createAdListing(ad);
-            myAdsListsContainer.appendChild(adElement);
+            const adActive = isActive(ad.timeframeEnd);
+            
+            if (adActive) {
+              const existingAds = Array.from(myAdsListsContainer.querySelectorAll('.myAds_list_item'));
+              const firstEndedIndex = existingAds.findIndex(item => item.classList.contains('ended'));
+              
+              if (firstEndedIndex !== -1) {
+                myAdsListsContainer.insertBefore(adElement, existingAds[firstEndedIndex]);
+              } else if (sentinel) {
+                myAdsListsContainer.insertBefore(adElement, sentinel);
+              } else {
+                myAdsListsContainer.appendChild(adElement);
+              }
+            } else {
+              if (sentinel) {
+                myAdsListsContainer.insertBefore(adElement, sentinel);
+              } else {
+                myAdsListsContainer.appendChild(adElement);
+              }
+            }
           });
 
+          offset += advertisements.length;
+          
+          if (advertisements.length < limit || offset >= stats.amountAds) {
+            hasMore = false;
+            if (sentinel) {
+              sentinel.remove();
+            }
+            if (loadingIndicator) {
+              loadingIndicator.remove();
+            }
+          }
+
           showContent();
-        } else {
+          
+          if (!isLoadMore && hasMore && !document.getElementById('sentinel')) {
+            const sentinel = document.createElement('div');
+            sentinel.id = 'sentinel';
+            sentinel.style.height = '1px';
+            sentinel.style.marginTop = '20px';
+            myAdsListsContainer.appendChild(sentinel); 
+            
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingIndicator';
+            loadingDiv.style.textAlign = 'center';
+            loadingDiv.style.padding = '20px';
+            loadingDiv.style.display = 'none';
+            loadingDiv.innerHTML = '<p>Loading more ads...</p>';
+            myAdsListsContainer.appendChild(loadingDiv); 
+            
+            setupIntersectionObserver();
+          }
+        } else if (!isLoadMore) {
           myADs.innerHTML = `
             <h1 class="myAds_h1">My Ads</h1>
             <div class="myAds_main">
@@ -359,11 +453,40 @@ document.addEventListener("DOMContentLoaded", async () => {
           `;
           
           myADs.classList.add('loaded');
+          hasMore = false;
         }
       }
     } catch (error) {
       console.error('Error fetching advertisement history:', error);
+    } finally {
+      isLoading = false;
+      
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+      }
     }
+  }
+
+  function setupIntersectionObserver() {
+    const sentinel = document.getElementById('sentinel');
+    const myAdsListsContainer = document.querySelector('.myAds_lists');
+    
+    if (!sentinel || !myAdsListsContainer) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading && hasMore) {
+          loadAdvertisementHistory(true);
+        }
+      });
+    }, {
+      root: myAdsListsContainer, 
+      rootMargin: '100px', 
+      threshold: 0 
+    });
+    
+    observer.observe(sentinel);
   }
 
   await loadAdvertisementHistory();

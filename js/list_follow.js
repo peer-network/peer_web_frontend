@@ -1,5 +1,9 @@
-const limit = 20; 
-const offset = 0;
+let currentOffset = 0;
+let currentLimit = 20;
+let isLoading = false;
+let hasMore = true;
+let currentType = null;
+let observerInstance = null;
 // Get user ID from URL or cookie
 function getEffectiveUserID() {
   const params = new URLSearchParams(window.location.search);
@@ -24,6 +28,11 @@ async function openRelationsModal(userID, defaultType = "followers") {
     console.error("Modal overlay element not found");
     return;
   }
+
+  currentOffset = 0;
+  hasMore = true;
+  isLoading = false;
+  currentType = null;
 
   modal.classList.remove("none");
   document.body.style.overflow = "hidden";
@@ -63,21 +72,36 @@ async function openRelationsModal(userID, defaultType = "followers") {
   const tabButtons = modal.querySelectorAll(".tab-btn");
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      loadTab(btn.dataset.type, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken);
+      currentOffset = 0;
+      hasMore = true;
+      isLoading = false;
+
+      loadTab(btn.dataset.type, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken, false);
     });
   });
 
   // Load default tab
   const tabToLoad = (defaultType === "peers" && !isOwnProfile) ? "followers" : defaultType;
-  await loadTab(tabToLoad, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken);
+  await loadTab(tabToLoad, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken, false);
 }
 
-/**
+/**e
  * Closes the modal
  * @param {HTMLElement} modal - Modal element
  */
 function closeModal(modal) {
   modal.classList.add("none");
+  document.body.style.overflow = "";
+  
+  if (observerInstance) {
+    observerInstance.disconnect();
+    observerInstance = null;
+  }
+
+  currentOffset = 0;
+  hasMore = true;
+  isLoading = false;
+  currentType = null;
 }
 
 /**
@@ -90,9 +114,25 @@ function closeModal(modal) {
  * @param {boolean} isOwnProfile - Whether viewing own profile
  * @param {Object} cache - Cache object for storing fetched data
  * @param {string} accessToken - Authentication token
+ * @param {boolean} isLoadMore - Whether this is a load more request
  */
-async function loadTab(type, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken) {
-  body.innerHTML = "Loading...";
+async function loadTab(type, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken, isLoadMore = false) {
+  if (isLoading || (!isLoadMore && !hasMore)) return;
+  
+  isLoading = true;
+  currentType = type;
+
+  if (!isLoadMore) {
+    body.innerHTML = "Loading...";
+    currentOffset = 0;
+    hasMore = true;
+  }
+
+  // Show loading indicator
+  let loadingIndicator = document.getElementById('loadingIndicator');
+  if (loadingIndicator) {
+    loadingIndicator.style.display = 'block';
+  }
 
   // Update active tab styling
   tabButtons.forEach(btn => {
@@ -100,17 +140,102 @@ async function loadTab(type, body, tabButtons, userID, currentUserId, isOwnProfi
   });
 
   try {
-    const users = await fetchRelations(type, userID, currentUserId, isOwnProfile, cache, accessToken);
+    const users = await fetchRelations(type, userID, currentUserId, isOwnProfile, accessToken, isLoadMore);
 
     if (!users || users.length === 0) {
-      body.innerHTML = `<p>No ${type} found.</p>`;
+      if (!isLoadMore) {
+        body.innerHTML = `<p>No ${type} found.</p>`;
+      }
+      hasMore = false;
+
+      const sentinel = document.getElementById('sentinel');
+      if (sentinel) sentinel.remove();
+      if (loadingIndicator) loadingIndicator.remove();
     } else {
-      renderUsers(users, body);
+      if (!isLoadMore) {
+        // Initial load - use renderUsers (which clears container)
+        renderUsers(users, body);
+        
+        // Setup infinite scroll
+        setupIntersectionObserver(body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken);
+      } else {
+        // Load more - append users before sentinel
+        appendMoreUsers(users, body);
+      }
+      
+      // Update offset
+      currentOffset += users.length;
+      
+      // Check if we've loaded all users
+      if (users.length < currentLimit) {
+        hasMore = false;
+        const sentinel = document.getElementById('sentinel');
+        if (sentinel) sentinel.remove();
+        if (loadingIndicator) loadingIndicator.remove();
+      }
     }
   } catch (error) {
     console.error(`Error loading ${type} tab:`, error);
-    body.innerHTML = `<p>Error loading ${type}. Please try again.</p>`;
+    if (!isLoadMore) {
+      body.innerHTML = `<p>Error loading ${type}. Please try again.</p>`;
+    }
+    hasMore = false;
+  } finally {
+    isLoading = false;
+    
+    // Hide loading indicator
+    if (loadingIndicator) {
+      loadingIndicator.style.display = 'none';
+    }
   }
+}
+
+/**
+ * Sets up intersection observer for infinite scroll
+ */
+function setupIntersectionObserver(body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken) {
+  // Remove existing sentinel and loading indicator if they exist
+  let sentinel = document.getElementById('sentinel');
+  let loadingIndicator = document.getElementById('loadingIndicator');
+  
+  if (sentinel) sentinel.remove();
+  if (loadingIndicator) loadingIndicator.remove();
+  
+  // Disconnect existing observer
+  if (observerInstance) {
+    observerInstance.disconnect();
+  }
+  
+  // Create new sentinel
+  sentinel = document.createElement('div');
+  sentinel.id = 'sentinel';
+  sentinel.style.height = '1px';
+  sentinel.style.marginTop = '20px';
+  body.appendChild(sentinel);
+  
+  // Create loading indicator
+  loadingIndicator = document.createElement('div');
+  loadingIndicator.id = 'loadingIndicator';
+  loadingIndicator.style.textAlign = 'center';
+  loadingIndicator.style.padding = '20px';
+  loadingIndicator.style.display = 'none';
+  loadingIndicator.innerHTML = '<p>Loading more...</p>';
+  body.appendChild(loadingIndicator);
+  
+  // Create new observer
+  observerInstance = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !isLoading && hasMore) {
+        loadTab(currentType, body, tabButtons, userID, currentUserId, isOwnProfile, cache, accessToken, true);
+      }
+    });
+  }, {
+    root: body,
+    rootMargin: '100px',
+    threshold: 0
+  });
+  
+  observerInstance.observe(sentinel);
 }
 
 /**
@@ -121,13 +246,10 @@ async function loadTab(type, body, tabButtons, userID, currentUserId, isOwnProfi
  * @param {boolean} isOwnProfile - Whether viewing own profile
  * @param {Object} cache - Cache object
  * @param {string} accessToken - Authentication token
+ * @param {boolean} isLoadMore - Whether this is a load more request
  * @returns {Promise<Array>} Array of user objects
  */
-async function fetchRelations(type, userID, currentUserId, isOwnProfile, cache, accessToken) {
-  // Return cached data if available
-  if (cache[type]) {
-    return cache[type];
-  }
+async function fetchRelations(type, userID, currentUserId, isOwnProfile, accessToken, isLoadMore) {
 
   try {
     let users;
@@ -140,12 +262,10 @@ async function fetchRelations(type, userID, currentUserId, isOwnProfile, cache, 
       users = await fetchFollowersOrFollowing(type, userID, currentUserId, accessToken);
     }
 
-    cache[type] = users;
-    return users;
+    return users || []; 
 
   } catch (error) {
     console.error(`Error fetching ${type}:`, error);
-    cache[type] = [];
     return [];
   }
 }
@@ -165,7 +285,7 @@ async function fetchPeers(accessToken) {
     body: JSON.stringify({
       query: `
         query {
-          listFriends {
+          listFriends (limit: ${currentLimit}, offset: ${currentOffset}) {
             affectedRows {
               userid
               img
@@ -185,8 +305,8 @@ async function fetchPeers(accessToken) {
   return peers.map(peer => ({
     ...peer,
     id: peer.userid,
-    isfollowed: true,
-    isfollowing: true
+    isfollowing: true,
+    isfollowed: true
   }));
 }
 
@@ -258,6 +378,8 @@ async function fetchFollowersOrFollowing(type, userID, currentUserId, accessToke
  * @returns {Promise<Object>} Object containing followers and following arrays
  */
 async function fetchUserRelations(userID, accessToken) {
+  console.log(`Fetching relations with offset: ${currentOffset}, limit: ${currentLimit}`);
+
   const response = await fetch(GraphGL, {
     method: "POST",
     headers: {
@@ -269,8 +391,8 @@ async function fetchUserRelations(userID, accessToken) {
         query {
           listFollowRelations(
             userid: "${userID}"
-            limit: ${limit}
-            offset: ${offset}
+            limit: ${currentLimit}
+            offset: ${currentOffset}
           ) {
             affectedRows {
               followers {
@@ -293,7 +415,49 @@ async function fetchUserRelations(userID, accessToken) {
   });
 
   const data = await response.json();
+  console.log(`Received ${data?.data?.listFollowRelations?.affectedRows?.followers?.length || 0} followers, ${data?.data?.listFollowRelations?.affectedRows?.following?.length || 0} following`);
+
   return data?.data?.listFollowRelations?.affectedRows || { followers: [], following: [] };
+}
+
+/**
+ * Renders users for initial load (clears container first)
+ * @param {Array} users - Array of user objects
+ * @param {HTMLElement} container - Container element
+ */
+function renderUsersInitial(users, container) {
+  container.innerHTML = "";
+  const currentUserId = getCookie("userID");
+
+  if (!users || users.length === 0) {
+    container.innerHTML = "<p>No users found.</p>";
+    return;
+  }
+
+  users.forEach((user) => {
+    const userItem = createUserItem(user, currentUserId);
+    container.appendChild(userItem);
+  });
+}
+
+/**
+ * Appends more users for infinite scroll (doesn't clear container)
+ * @param {Array} users - Array of user objects
+ * @param {HTMLElement} container - Container element
+ */
+function appendMoreUsers(users, container) {
+  const currentUserId = getCookie("userID");
+  const sentinel = document.getElementById('sentinel');
+
+  users.forEach((user) => {
+    const userItem = createUserItem(user, currentUserId);
+    // Insert before sentinel if it exists, otherwise append
+    if (sentinel) {
+      container.insertBefore(userItem, sentinel);
+    } else {
+      container.appendChild(userItem);
+    }
+  });
 }
 
 // bind clicks

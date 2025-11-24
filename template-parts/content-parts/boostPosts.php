@@ -38,7 +38,7 @@
             <p class="md_font_size total_cost_head">Pricing:</p>
             <div class="adDurationInfos">
                 <span class="total_cost txt-color-gray">Total cost</span>
-                <span class="bold price xl_font_size"><span class="total_cost">2 000</span> <img src="svg/logo_sw.svg" alt="peer logo"></span>
+                <span class="bold price xl_font_size"><span class="total_cost">200</span> <img src="svg/logo_sw.svg" alt="peer logo"></span>
             </div>
         </div>
       </div>
@@ -59,27 +59,27 @@
         <div class="pricing_breakdown">
           <div class="boostPost_left">
               <p class="xl_font_size">Payable tokens for ad</p>
-              <span class="bold xxxl_font_size price">2 000 <img src="svg/logo_sw.svg" alt="peer logo"></span>
+              <span class="bold xxxl_font_size price">200 <img src="svg/logo_sw.svg" alt="peer logo"></span>
           </div>
           <!-- Vertical Divider -->
           <div class="vr"></div>
           <div class="boostPost_right">
               <p class="xl_font_size">Token distribution</p>
               <div class="token_distribution">
-                  <span class="total_cost">96% Burn pccount </span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">1 536 </span>
+                  <span class="total_cost">Peer Bank (2%)</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">4</span>
               </div>
-              <div class="token_distribution">
+              <div class="token_distribution none">
                   <span class="total_cost bold">1% <em>@wosk_kolloin</em></span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
               </div>
               <div class="token_distribution">
-                  <span class="total_cost">1% Liquidity pool</span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">16 </span>
+                  <span class="total_cost">To the inviter (1%)</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">2</span>
               </div>
               <div class="token_distribution">
-                  <span class="total_cost">2% Peer bank</span>
-                  <span class=" price"><img src="svg/logo_sw.svg" alt="peer logo">32 </span>
+                  <span class="total_cost">Burn (1%)</span>
+                  <span class="price"><img src="svg/logo_sw.svg" alt="peer logo">2</span>
               </div>
           </div>
         </div>
@@ -96,7 +96,7 @@
       <div class="modal-body">
         <img src="svg/confirmIcon.svg" alt="Confirmed">
         <h2 class="xxl_font_size">Your post promotion has started.</h2>
-        <p class="md_font_size">Your post is now pinned and will expire on <br><span class="bold">Jun 25, 2025 at 14:30 </span> (24 hours from now)</p>
+        <p class="md_font_size">Your post is now pinned and will expire on <br><span class="bold" id="adPostCreatedAtTime">Jun 25, 2025 at 14:30 </span> (24 hours from now)</p>
        </div>
       <div class="modal-footer">
         <div class="button btn-transparent goToProfile-btn">Go to profile</div>

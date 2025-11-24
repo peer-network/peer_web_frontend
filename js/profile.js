@@ -1,9 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
   const CurrentUserID = getCookie("userID");
+  const params = new URLSearchParams(window.location.search);
+  const visibilityStatus = params.get("uservisibility");
   getUser().then(profile2 => {
     const bioPath = profile2.data.getProfile.affectedRows.biography;
     const biography = document.getElementById("biography");
     biography.innerText = "Biography not available";
+
+    /*-- handling profile visibility----*/
+    // const visibilityStatus = "HIDDEN";
+    // const visibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
+    const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
+
+    if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+      const myProfile = document.querySelector('.my_profile_page');
+      if(myProfile) {
+        myProfile.classList.remove("REPORTED_PROFILE");
+        myProfile.classList.remove("HIDDEN_PROFILE");
+        myProfile.classList.add("illegal_profile");
+      }
+      addIllegalBadge();
+    }
+    
+    else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+      const myProfile = document.querySelector('.my_profile_page');
+      if(myProfile) {
+        myProfile.classList.remove("REPORTED_PROFILE");
+        myProfile.classList.add("HIDDEN_PROFILE");
+      }
+      removeReportedBadge();
+      addHiddenBadge();
+    }
+
+    else if(hasActiveReports) {
+      const myProfile = document.querySelector('.my_profile_page');
+      if (myProfile) {
+        myProfile.classList.remove("HIDDEN_PROFILE");
+        myProfile.classList.add('REPORTED_PROFILE');
+      }
+      addReportedBadge();
+    }
+    /*-- End : handling profile visibility----*/
 
     // Check if bioPath is valid
     if (bioPath && biography) {

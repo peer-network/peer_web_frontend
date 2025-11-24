@@ -30,7 +30,8 @@ function createModal({
         <span class="modal-close">&times;</span>
        ${svg ? `<span class="modal-icon">${svg}</span>` : ""}
         <h2 class="modal-title xxl_font_size">${title}</h2>
-        <p class="modal-message xl_font_size">${message}</p>
+        ${message ? `<p class="modal-message xl_font_size">${message}</p>` : ""}
+        
         ${checkboxHTML}
         ${textarea ? `<textarea class="modal-textarea" placeholder="${typeof textarea === "object" && textarea.placeholder ? textarea.placeholder : ""}">${typeof textarea === "object" && textarea.value ? textarea.value : ""}</textarea>` : ""}
         <div class="modal-buttons">
@@ -148,33 +149,47 @@ function userfriendlymsg(code) {
   }
   return msg;
 }
-function info(title, text = "", dontShowOption = false) {
+function info(title, text = "", dontShowOption = false, svg = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
     buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
     type: "info",
     dontShowOption: dontShowOption,
+    svg: svg
   });
 }
 
-function Merror(title, text = "", dontShowOption = false) {
+function Merror(title, text = "", dontShowOption = false, svg = null) {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: ["OK"],
+    buttons: [{ text: "Okay", className: "btn-blue bold" }],
     type: "error",
     dontShowOption: dontShowOption,
+    svg: svg
   });
 }
 
-function warnig(title, text = "", dontShowOption = false) {
+async function warnig(title, text = "", dontShowOption = false, svg = null, actionBtnTxt = "Confirm") {
   return createModal({
     title: title,
     message: userfriendlymsg(text),
-    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: "Confirm", className: "btn-white" }],
+    buttons: [{ text: "Cancel", className: "btn-transparent" }, { text: actionBtnTxt, className: "btn-white bold" }],
     type: "warning",
     dontShowOption: dontShowOption,
+    svg: svg
+  });
+}
+
+function success(title, text = "", dontShowOption = false, svg = null) {
+  return createModal({
+    title: title,
+    message: userfriendlymsg(text),
+    buttons: [{ text: "Okay", className: "btn-white bold" }],
+    type: "success",
+    dontShowOption: dontShowOption,
+     svg: svg
   });
 }
 function confirm(title, text = "", dontShowOption = false, typeKey = null, svg = null) {
