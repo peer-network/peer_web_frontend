@@ -1,4 +1,4 @@
-<div class="widget">
+<div class="widget widget-margin-bottom">
   <div class="widget-inner widget-type-box widget-new-menu-post">
     <?php $currentPage = basename($_SERVER['PHP_SELF']); // e.g. "dashboard.php" or "profile.php"?>
     <ul class="menu">
