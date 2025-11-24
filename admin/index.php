@@ -60,77 +60,99 @@
                         <div class="status xl_font_size txt-color-gray">Status</div>
                     </div>
                 
-                
-                    <div class="content_item post">
-                        <div class="content">
-                            <span class="content_image">
-                                <img src="../img/audio-bg.png" />
-                                <i class="peer-icon peer-icon-camera"></i>
-                            </span>
-                            <span class="content_detail">
-                                <span class="user_name bold italic">@scammer_idiot</span>
-                                <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                    <div class="content_load">
+                        <!-- image, audio and video -->
+                        <div class="content_item post">
+                            <div class="content">
+                                <span class="content_image">
+                                    <img src="../img/audio-bg.png" />
+                                    <i class="peer-icon peer-icon-camera"></i>
+                                </span>
+                                <span class="content_detail">
+                                    <span class="user_name bold italic">@scammer_idiot</span>
+                                    <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                                </span>
+                            </div>
+                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                            <div class="reports">
+                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                            </div>
+                            <div class="status">
+                                <span class="hidden-tx xl_font_size red-text">Hidden</span>
                                 
-
-                            </span>
+                            </div>
                         </div>
-                        <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                        <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                        <div class="reports">
-                            <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                            <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
-                        </div>
-                        <div class="status">
-                            <span class="hidden-tx xl_font_size red-text">Hidden</span>
-                            
-                        </div>
-                    </div>
-
-
-                    <div class="content_item user">
-                        <div class="content">
-                            <span class="content_image">
-                                <img src="../img/profile_thumb.png" />
+                        
+                        <!-- text post -->
+                        <div class="content_item post">
+                            <div class="content">
+                                <span class="content_image">
+                                    <i class="peer-icon peer-icon-text"></i>
+                                </span>
+                                <span class="content_detail">
+                                    <span class="user_name bold italic">@scammer_idiot</span>
+                                    <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                                </span>
+                            </div>
+                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                            <div class="reports">
+                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                            </div>
+                            <div class="status">
+                                <span class="hidden-tx xl_font_size red-text">Hidden</span>
                                 
-                            </span>
-                            <span class="content_detail">
-                                <span class="user_name xl_font_size bold italic">valaria_konso</span>
-                                <span class="user_slug txt-color-gray">#123456</span>
+                            </div>
+                        </div>
 
-                            </span>
-                        </div>
-                        <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                        <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                        <div class="reports">
-                            <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                            <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
-                        </div>
-                        <div class="status">
-                            <span class="restored xl_font_size green-text">Restored</span>
-                        </div>
-                    </div>
+                        <!-- reported user div -->
+                        <div class="content_item user">
+                            <div class="content">
+                                <span class="content_image">
+                                    <img src="../img/profile_thumb.png" />
+                                </span>
+                                <span class="content_detail">
+                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                    <span class="user_slug txt-color-gray">#123456</span>
 
-                    <div class="content_item comment">
-                        <div class="content">
-                            <span class="content_image">
-                               <i class="peer-icon peer-icon-comment-fill"></i>
-                                
-                            </span>
-                            <span class="content_detail">
-                                <span class="user_name  bold italic">@scammer_idiot</span>
-                                <span class="post_title xl_font_size bold">Rejected at the gates...</span>
-                                <span class="user_slug txt-color-gray">2f1f96ec-f60e-4f05-b3fd-d3444c7cd74d</span>
+                                </span>
+                            </div>
+                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                            <div class="reports">
+                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                            </div>
+                            <div class="status">
+                                <span class="restored xl_font_size green-text">Restored</span>
+                            </div>
+                        </div>
 
-                            </span>
-                        </div>
-                        <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                        <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                        <div class="reports">
-                            <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                            <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
-                        </div>
-                        <div class="status">
-                             <span class="review xl_font_size yellow-text">Waiting for review</span>
+                        <!-- reported comment div -->
+                        <div class="content_item comment">
+                            <div class="content">
+                                <span class="content_image">
+                                <i class="peer-icon peer-icon-comment-fill"></i>
+                                </span>
+                                <span class="content_detail">
+                                    <span class="user_name  bold italic">@scammer_idiot</span>
+                                    <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                                    <span class="user_slug txt-color-gray">2f1f96ec-f60e-4f05-b3fd-d3444c7cd74d</span>
+
+                                </span>
+                            </div>
+                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                            <div class="reports">
+                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                            </div>
+                            <div class="status">
+                                <span class="review xl_font_size yellow-text">Waiting for review</span>
+                            </div>
                         </div>
                     </div>
                 </div>

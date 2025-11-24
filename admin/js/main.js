@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     // Load items first
     // const items = await
-    fetcher.loadItems('LIST_ITEMS');
+    // fetcher.loadItems('LIST_ITEMS');
 
     // Then render them
     // view.renderItems(items);

@@ -5,57 +5,82 @@ moderationModule.fetcher = {
   /* ---------------------- NORMALIZER ---------------------- */
   normalizeItems(items) {
     return items.map(x => {
-      let item = {
-        type: x.targettype,                               // FIX
-        moderationId: x.moderationTicketId,
-        date: x.createdat,
-        reports: x.reportscount,
-        status: x.status.replace(/_/g, " "),              // waiting_for_review → waiting for review
-        visible: false
-      };
+        let item = {
+            kind: x.targettype,                // post / comment / user
+            moderationId: x.moderationTicketId,
+            date: x.createdat,
+            reports: x.reportscount,
+            status: x.status.replace(/_/g, " "),
+            visible: false
+        };
 
-      /* ---------------------- POST ---------------------- */
-      if (x.targettype === "post" && x.targetcontent.post) {
-        const post = x.targetcontent.post;
-        const postUser = post.user || {};
+        /* -------------------- COMMON HELPERS -------------------- */
+        const safeMedia = (raw, fallback = "") => {
+         
+            try {
+                const arr = JSON.parse(raw || "[]");
+                
+                return Array.isArray(arr) && arr[0]?.path ? tempMedia(arr[0].path) : fallback;
+            } catch {
+                return fallback;
+            }
+        };
 
-        item.username = postUser.username || "@unknown";
-        item.slug = "#" + (postUser.slug || "0000");
-        item.title = post.title || "";
+        /* -------------------- POST -------------------- */
+        if (x.targettype === "post" && x.targetcontent.post) {
+            const post = x.targetcontent.post;
+            const user = post.user || {};
 
-        try {
-          const media = JSON.parse(post.media);
-          const path = media?.[0]?.path || "";
-          item.image = path
-            ? "https://testing.getpeer.eu" + path
-            : "../img/audio-bg.png";
-        } catch {
-          item.image = "../img/audio-bg.png";
+            item.username = user.username || "@unknown";
+            item.slug = "#" + (user.slug || "0000");
+            item.title = post.title || "";
+            item.contentType = post.contenttype;
+
+            switch (post.contenttype) {
+                case "image":
+                    item.media = safeMedia(post.media);
+                    item.icon = "peer-icon peer-icon-camera";
+                    break;
+                case "text":
+                    item.media = null;
+                    item.icon = "peer-icon peer-icon-text";
+                    break;
+                case "audio":
+                    item.media = safeMedia(post.cover, "../img/audio-bg.png"); 
+                    item.icon = "peer-icon peer-icon-audio";
+                    break;
+                case "video":
+                    item.media = safeMedia(post.cover, "../img/video-bg.png");
+                    item.icon = "peer-icon peer-icon-play-btn";
+                    break;
+            }
         }
-      }
 
-      /* ---------------------- USER ---------------------- */
-      if (x.targettype === "user" && x.targetcontent.user) {
-        const user = x.targetcontent.user;
+        /* -------------------- COMMENT -------------------- */
+        if (x.targettype === "comment" && x.targetcontent.comment) {
+            const c = x.targetcontent.comment;
+            const user = c.user || {};
 
-        item.username = user.username;
-        item.slug = "#" + user.slug;
-        item.image = user.img
-          ? "https://testing.getpeer.eu" + user.img
-          : "../img/profile_thumb.png";
-      }
+            item.username = user.username || "@unknown";
+            item.slug = c.commentid;
+            item.title = c.content;
+            item.contentType = "comment";
+            item.media = null;
+            item.icon = "peer-icon peer-icon-comment-fill";
+        }
 
-      /* ---------------------- COMMENT ---------------------- */
-      if (x.targettype === "comment" && x.targetcontent.comment) {
-        const c = x.targetcontent.comment;
-        const cUser = c.user || {};
+        /* -------------------- USER -------------------- */
+        if (x.targettype === "user" && x.targetcontent.user) {
+            const u = x.targetcontent.user;
 
-        item.username = cUser.username || "@unknown";
-        item.slug = c.commentid;   // comments don’t have slugs
-        item.title = c.content;
-      }
+            item.username = u.username || "@unknown";
+            item.slug = "#" + (u.slug || "0000");
+            item.media = tempMedia(u.img) || "../svg/noname.svg";
+            item.contentType = "user";
+            // item.icon = "peer-icon peer-icon-profile";
+        }
 
-      return item;
+        return item;
     });
   },
 
@@ -68,7 +93,7 @@ moderationModule.fetcher = {
       const response = await moderationModule.service.fetchGraphQL(query);
       const rawItems = response?.moderationItems?.affectedRows || [];
 
-      // 🔥 Normalize BEFORE storing and rendering
+      // Normalize BEFORE storing and rendering
       const normalized = this.normalizeItems(rawItems);
 
       moderationModule.store.items = normalized;
@@ -85,8 +110,8 @@ moderationModule.fetcher = {
     const lower = searchText.toLowerCase();
 
     const filtered = moderationModule.store.items.filter(item =>
-      item.title?.toLowerCase().includes(lower) ||
-      item.username?.toLowerCase().includes(lower)
+      (item.title && item.title.toLowerCase().includes(lower)) ||
+      (item.username && item.username.toLowerCase().includes(lower))
     );
 
     moderationModule.store.filteredItems = filtered;

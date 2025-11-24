@@ -14,6 +14,7 @@ checkAuth("unauthorized");
     <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
     <script src="../js/lib/const.js?<?php echo filemtime('../js/lib/const.js'); ?>" defer></script>
     <script src="../js/lib/cookie.js?<?php echo filemtime('../js/lib/cookie.js'); ?>" defer></script>
+    <script src="../js/lib/tmp.js?<?php echo filemtime('../js/lib/tmp.js'); ?>" defer></script>
     <script src="js/schema.js?<?php echo filemtime('js/schema.js'); ?>" defer></script>
     <script src="js/store.js?<?php echo filemtime('js/store.js'); ?>" defer></script>
     <script src="js/helpers.js?<?php echo filemtime('js/helpers.js'); ?>" defer></script>

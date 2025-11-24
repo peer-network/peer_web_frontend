@@ -8,7 +8,7 @@ moderationModule.service = {
        Authorization: `Bearer ${accessToken}`,
     });
 
-    const response = await fetch(GraphGL, { // graphGl need to be declare in store.js
+    const response = await fetch(GraphGL, {
       method: "POST",
       headers,
       cache: "no-store",

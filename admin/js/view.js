@@ -12,8 +12,7 @@ moderationModule.view = {
   },
 
   renderItems(items) {
-    console.log('items i am here', items)
-    const container = moderationModule.helpers.getElement(".content_list");
+    const container = moderationModule.helpers.getElement(".content_load");
     if (!container) return;
 
     container.innerHTML = "";
@@ -23,212 +22,118 @@ moderationModule.view = {
       return;
     }
 
-    // items.forEach(item => {
-    //   const itemEl = moderationModule.helpers.createEl("div", { className: `content_item ${item.type}` });
+    items.forEach((item) => {
+      const itemEl = moderationModule.helpers.createEl("div", {
+        className: `content_item ${item.kind}`,
+      });
 
-    //   // Content block
-    //   const contentEl = moderationModule.helpers.createEl("div", { className: "content" });
+      /* -------------------- CONTENT -------------------- */
+      const contentEl = moderationModule.helpers.createEl("div", { className: "content" });
+      const imgWrapper = moderationModule.helpers.createEl("span", { className: "content_image" });
 
-    //   // Content image/icon
-    //   const imgWrapper = moderationModule.helpers.createEl("span", { className: "content_image" });
-    //   if (item.type === "post") {
-    //     const img = moderationModule.helpers.createEl("img", { src: item.image || "../img/audio-bg.png" });
-    //     const icon = moderationModule.helpers.createEl("i", { className: "peer-icon peer-icon-camera" });
-    //     imgWrapper.append(img, icon);
-    //   } else if (item.type === "user") {
-    //     const img = moderationModule.helpers.createEl("img", { src: item.image || "../img/profile_thumb.png" });
-    //     imgWrapper.appendChild(img);
-    //   } else if (item.type === "comment") {
-    //     const icon = moderationModule.helpers.createEl("i", { className: "peer-icon peer-icon-comment-fill" });
-    //     imgWrapper.appendChild(icon);
-    //   }
+      /* -------------------- MEDIA / ICON -------------------- */
+      if (item.media) {
+        const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
 
-    //   // Content details
-    //   const detailEl = moderationModule.helpers.createEl("span", { className: "content_detail" });
-    //   const userName = moderationModule.helpers.createEl("span", { textContent: item.username, className: item.type === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic" });
-    //   detailEl.appendChild(userName);
+        /* USER IMAGE FALLBACK */
+        if (item.kind === "user") {
+          imgEl.onerror = function () {
+            this.src = "../svg/noname.svg";
+          };
+        }
 
-    //   if (item.type === "post" || item.type === "comment") {
-    //     const postTitle = moderationModule.helpers.createEl("span", { textContent: item.title, className: "post_title xl_font_size bold" });
-    //     detailEl.appendChild(postTitle);
-    //   }
+        imgWrapper.append(imgEl);
 
-    //   if (item.type === "user" || item.type === "comment") {
-    //     const userSlug = moderationModule.helpers.createEl("span", { textContent: item.slug, className: "user_slug txt-color-gray" });
-    //     detailEl.appendChild(userSlug);
-    //   }
+        if (item.kind === "post") {
+          imgWrapper.append(
+            moderationModule.helpers.createEl("i", { className: item.icon })
+          );
+        }
+      } else {
+        imgWrapper.append(
+          moderationModule.helpers.createEl("i", { className: item.icon })
+        );
+      }
 
-    //   contentEl.append(imgWrapper, detailEl);
+      /* -------------------- DETAILS -------------------- */
+      const detailEl = moderationModule.helpers.createEl("span", { className: "content_detail" });
 
-    //   // Moderation ID
-    //   const modId = moderationModule.helpers.createEl("div", { textContent: item.moderationId, className: "moderation_id xl_font_size txt-color-gray" });
+      const userNameClass =
+        item.kind === "user"
+          ? "user_name xl_font_size bold italic"
+          : "user_name bold italic";
 
-    //   // Date
-    //   const modDate = moderationModule.helpers.createEl("div", { textContent: item.date, className: "moderation_date xl_font_size txt-color-gray" });
+      detailEl.append(
+        moderationModule.helpers.createEl("span", {
+          className: userNameClass,
+          textContent: item.username,
+        })
+      );
 
-    //   // Reports
-    //   const reportsEl = moderationModule.helpers.createEl("div", { className: "reports" });
-    //   const reportCount = moderationModule.helpers.createEl("span", { innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`, className: "xl_font_size txt-color-gray" });
-    //   const visibility = moderationModule.helpers.createEl("span", { innerHTML: `<i class="peer-icon peer-icon-eye-close"></i> ${item.visible ? "Visible in the feed" : "Not visible in the feed"}`, className: "visible txt-color-gray" });
-    //   reportsEl.append(reportCount, visibility);
+      if (item.kind === "post" || item.kind === "comment") {
+        detailEl.append(
+          moderationModule.helpers.createEl("span", {
+            className: "post_title xl_font_size bold",
+            textContent: item.title,
+          })
+        );
+      }
 
-    //   // Status
-    //   const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
-    //   let statusClass = "";
-    //   if (item.status === "Hidden") statusClass = "hidden-tx xl_font_size red-text";
-    //   if (item.status === "Restored") statusClass = "restored xl_font_size green-text";
-    //   if (item.status === "Waiting for review") statusClass = "review xl_font_size yellow-text";
+      if (item.kind === "user" || item.kind === "comment") {
+        detailEl.append(
+          moderationModule.helpers.createEl("span", {
+            className: "user_slug txt-color-gray",
+            textContent: item.slug,
+          })
+        );
+      }
 
-    //   const statusSpan = moderationModule.helpers.createEl("span", { textContent: item.status, className: statusClass });
-    //   statusEl.appendChild(statusSpan);
+      contentEl.append(imgWrapper, detailEl);
 
-    //   itemEl.append(contentEl, modId, modDate, reportsEl, statusEl);
-    //   container.appendChild(itemEl);
-    // });
+      /* -------------------- MOD INFO -------------------- */
+      const modId = moderationModule.helpers.createEl("div", {
+        className: "moderation_id xl_font_size txt-color-gray",
+        textContent: item.moderationId,
+      });
 
-    items.forEach(item => {
-  const itemEl = moderationModule.helpers.createEl("div", {
-    className: `content_item ${item.type}`
-  });
+      const modDate = moderationModule.helpers.createEl("div", {
+        className: "moderation_date xl_font_size txt-color-gray",
+        textContent: item.date,
+      });
 
-  /* -------------------- CONTENT BLOCK -------------------- */
-  const contentEl = moderationModule.helpers.createEl("div", {
-    className: "content"
-  });
+      const reportsEl = moderationModule.helpers.createEl("div", { className: "reports" });
 
-  /* IMAGE / ICON (exact HTML match) */
-  const imgWrapper = moderationModule.helpers.createEl("span", {
-    className: "content_image"
-  });
+      const reportCount = moderationModule.helpers.createEl("span", {
+        className: "xl_font_size txt-color-gray",
+        innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
+      });
 
-  if (item.type === "post") {
-    // <img> + camera icon
-    imgWrapper.append(
-      moderationModule.helpers.createEl("img", {
-        src: item.image || "../img/audio-bg.png"
-      }),
-      moderationModule.helpers.createEl("i", {
-        className: "peer-icon peer-icon-camera"
-      })
-    );
-  }
+      const visibility = moderationModule.helpers.createEl("span", {
+        className: "visible txt-color-gray",
+        innerHTML: `<i class="peer-icon peer-icon-eye-close"></i> ${
+          item.visible ? "Visible in the feed" : "Not visible in the feed"
+        }`,
+      });
 
-  if (item.type === "user") {
-    // only <img>
-    imgWrapper.append(
-      moderationModule.helpers.createEl("img", {
-        src: item.image || "../img/profile_thumb.png"
-      })
-    );
-  }
+      reportsEl.append(reportCount, visibility);
 
-  if (item.type === "comment") {
-    // only comment icon
-    imgWrapper.append(
-      moderationModule.helpers.createEl("i", {
-        className: "peer-icon peer-icon-comment-fill"
-      })
-    );
-  }
+      /* -------------------- STATUS -------------------- */
+      const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
+      let statusClass = "";
 
-  /* DETAILS (exact class match) */
-  const detailEl = moderationModule.helpers.createEl("span", {
-    className: "content_detail"
-  });
+      if (item.status === "Hidden") statusClass = "hidden-tx xl_font_size red-text";
+      else if (item.status === "Restored") statusClass = "restored xl_font_size green-text";
+      else if (item.status === "Waiting for review") statusClass = "review xl_font_size yellow-text";
 
-  // USERNAME — EXACT logic per your HTML
-  const userNameClass =
-    item.type === "user"
-      ? "user_name xl_font_size bold italic" // user
-      : "user_name bold italic";              // post + comment
+      statusEl.append(
+        moderationModule.helpers.createEl("span", {
+          className: statusClass,
+          textContent: item.status,
+        })
+      );
 
-  detailEl.append(
-    moderationModule.helpers.createEl("span", {
-      className: userNameClass,
-      textContent: item.username
-    })
-  );
-
-  // POST TITLE (post + comment only)
-  if (item.type === "post" || item.type === "comment") {
-    detailEl.append(
-      moderationModule.helpers.createEl("span", {
-        className: "post_title xl_font_size bold",
-        textContent: item.title
-      })
-    );
-  }
-
-  // USER SLUG (user + comment only)
-  if (item.type === "user" || item.type === "comment") {
-    detailEl.append(
-      moderationModule.helpers.createEl("span", {
-        className: "user_slug txt-color-gray",
-        textContent: item.slug
-      })
-    );
-  }
-
-  contentEl.append(imgWrapper, detailEl);
-
-  /* -------------------- MODERATION ID -------------------- */
-  const modId = moderationModule.helpers.createEl("div", {
-    className: "moderation_id xl_font_size txt-color-gray",
-    textContent: item.moderationId
-  });
-
-  /* -------------------- DATE -------------------- */
-  const modDate = moderationModule.helpers.createEl("div", {
-    className: "moderation_date xl_font_size txt-color-gray",
-    textContent: item.date
-  });
-
-  /* -------------------- REPORTS -------------------- */
-  const reportsEl = moderationModule.helpers.createEl("div", {
-    className: "reports"
-  });
-
-  const reportCount = moderationModule.helpers.createEl("span", {
-    className: "xl_font_size txt-color-gray",
-    innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`
-  });
-
-  const visibilityText = item.visible
-    ? "Visible in the feed"
-    : "Not visible in the feed";
-
-  const visibility = moderationModule.helpers.createEl("span", {
-    className: "visible txt-color-gray",
-    innerHTML: `<i class="peer-icon peer-icon-eye-close"></i> ${visibilityText}`
-  });
-
-  reportsEl.append(reportCount, visibility);
-
-  /* -------------------- STATUS -------------------- */
-  const statusEl = moderationModule.helpers.createEl("div", {
-    className: "status"
-  });
-
-  let statusClass = "";
-  if (item.status === "Hidden")
-    statusClass = "hidden-tx xl_font_size red-text";
-  else if (item.status === "Restored")
-    statusClass = "restored xl_font_size green-text";
-  else if (item.status === "Waiting for review")
-    statusClass = "review xl_font_size yellow-text";
-
-  const statusSpan = moderationModule.helpers.createEl("span", {
-    className: statusClass,
-    textContent: item.status
-  });
-
-  statusEl.appendChild(statusSpan);
-
-  /* -------------------- FINAL APPEND -------------------- */
-  itemEl.append(contentEl, modId, modDate, reportsEl, statusEl);
-  container.appendChild(itemEl);
-});
-
-
-  }
+      itemEl.append(contentEl, modId, modDate, reportsEl, statusEl);
+      container.appendChild(itemEl);
+    });
+  },
 };
