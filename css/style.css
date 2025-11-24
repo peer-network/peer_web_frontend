@@ -2138,7 +2138,7 @@ footer {
 	display: block;
 	width: 100%;
 	margin: 0 auto;
-	max-width: 21vw;
+	max-width: 52%;
 }
 
 .onboarding-footer p {
@@ -2323,7 +2323,7 @@ footer {
 .distributed-daily-preview img {
 	display: block;
 	width: 100%;
-	max-width: 30vw;
+	max-width: 75%;
 	margin: 0 auto;
 }
 
