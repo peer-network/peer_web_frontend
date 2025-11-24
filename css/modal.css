@@ -290,6 +290,7 @@
 
 .modal-title {
   color: var(--red-accent, #FF3B3B);
+  font-weight: 700;
 }
 .modal-content.success .modal-title {
 	color: var(--green);

@@ -639,7 +639,7 @@
 }
 
 .viewpost .post_gallery {
-  height: calc(100% - 50px);
+  height: calc(100% - 100px);
   width: 100%;
   position: relative;
   overflow: hidden;

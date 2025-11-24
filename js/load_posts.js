@@ -457,7 +457,7 @@ async function postsLaden(postbyUserID=null) {
         
       /*-- End : testing post report and visibility----*/
 
-
+      
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
 
       
@@ -1033,7 +1033,7 @@ async function postsLaden(postbyUserID=null) {
 
      const post_loader = document.getElementById("post_loader");
     const no_post_found = document.getElementById("no_post_found");
-    //console.log(posts.listPosts.counter +"---"+posts.listPosts.affectedRows.length);
+    //console.log(postoffset+"---"+POSTS.listPosts.affectedRows.length);
     if(postoffset==0 && POSTS.listPosts.affectedRows.length==0) // no  post found 
     { 
       no_post_found.classList.add("active");
