@@ -24,45 +24,27 @@ function fetchCurrentUserId(string $domain): ?string {
         'variables' => new stdClass(),
     ]);
 
-    if (function_exists('curl_init')) {
-        $ch = curl_init($endpoint);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'Authorization: ' . 'Bearer ' . $token,
-            ],
-            CURLOPT_POSTFIELDS => $payload,
-            CURLOPT_TIMEOUT => 5,
-        ]);
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/json\r\nAuthorization: Bearer {$token}\r\n",
+            'content' => $payload,
+            'timeout' => 5,
+        ],
+    ]);
 
-        $response = curl_exec($ch);
-        if ($response === false) {
-            curl_close($ch);
-            return null;
-        }
+    $response = @file_get_contents($endpoint, false, $context);
+    if ($response === false) {
+        return null;
+    }
 
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($status !== 200) {
-            return null;
-        }
-    } else {
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\nAuthorization: Bearer {$token}\r\n",
-                'content' => $payload,
-                'timeout' => 5,
-            ],
-        ]);
-
-        $response = @file_get_contents($endpoint, false, $context);
-        if ($response === false) {
-            return null;
-        }
+    // Validate HTTP status (expects 200)
+    $status = 0;
+    if (isset($http_response_header[0]) && preg_match('#HTTP/\\S+\\s(\\d{3})#', $http_response_header[0], $m)) {
+        $status = (int) $m[1];
+    }
+    if ($status !== 200) {
+        return null;
     }
 
     $data = json_decode($response, true);
@@ -70,12 +52,12 @@ function fetchCurrentUserId(string $domain): ?string {
 }
 
 /**
- * Deny access unless the current user id matches the allowed one.
+ * Deny access unless the current user id matches an allowed one.
  */
-function enforceAllowedUser(string $allowedUserId, string $domain): void {
+function enforceAllowedUser(array $allowedUserIds, string $domain): void {
     $currentUserId = fetchCurrentUserId($domain);
 
-    if ($currentUserId !== $allowedUserId) {
+    if ($currentUserId === null || !in_array($currentUserId, $allowedUserIds, true)) {
         http_response_code(403);
         exit('Access denied');
     }

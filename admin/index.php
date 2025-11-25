@@ -3,8 +3,7 @@ require_once '../host.php';
 require_once '../auth.php';
 
 checkAuth("unauthorized");
-$allowedUserId = '90fd2510-b682-4fe3-8a3a-2456c5a8d170';
-enforceAllowedUser($allowedUserId, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''));
+enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 ?>
 <!DOCTYPE html>
 <html lang="de">
