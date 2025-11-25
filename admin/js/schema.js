@@ -103,8 +103,8 @@ moderationModule.schema = {
   }`,
 
   LIST_POST: `
-    query ModerationItems {
-      moderationItems(offset: 0, limit: 20, contentType: post) {
+      query ModerationItems($offset: Int, $limit: Int, $contentType: ModerationContentType) {
+       moderationItems(offset: $offset, limit: $limit, contentType: $contentType) {
         status
         ResponseCode
         affectedRows {
@@ -158,8 +158,8 @@ moderationModule.schema = {
   `,
 
   LIST_COMMENT: `
-    query ModerationItems {
-    moderationItems(limit: 20, offset: 0, contentType: comment) {
+      query ModerationItems($offset: Int, $limit: Int, $contentType: ModerationContentType) {
+      moderationItems(offset: $offset, limit: $limit, contentType: $contentType) {
         status
         ResponseCode
         affectedRows {
@@ -213,8 +213,8 @@ moderationModule.schema = {
   }`,
 
   LIST_USER: `
-    query ModerationItems {
-      moderationItems(offset: 0, limit: 20, contentType: user) {
+    query ModerationItems($offset: Int, $limit: Int, $contentType: ModerationContentType) {
+      moderationItems(offset: $offset, limit: $limit, contentType: $contentType) {
         status
         ResponseCode
         affectedRows {

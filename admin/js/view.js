@@ -11,25 +11,69 @@ moderationModule.view = {
   //   });
   // },
 
+  // initFilters() {
+  //   const list = document.querySelectorAll(".item_filters li");
+  //   list.forEach(li => {
+  //     li.addEventListener("click", async (e) => {
+  //       e.preventDefault();
+
+  //       document.querySelectorAll(".item_filters li a")
+  //         .forEach(a => a.classList.remove("active"));
+
+  //       li.querySelector("a").classList.add("active");
+
+  //       let queryType = "LIST_ITEMS";
+
+  //       if (li.classList.contains("post")) queryType = "LIST_POST";
+  //       else if (li.classList.contains("comments")) queryType = "LIST_COMMENT";
+  //       else if (li.classList.contains("accounts")) queryType = "LIST_USER";
+
+  //       await moderationModule.fetcher.loadItems(queryType);
+
+  //       moderationModule.store.filterText = "";
+  //       const search = document.querySelector("#search-input");
+  //       if (search) search.value = "";
+  //     });
+  //   });
+  // },
+
   initFilters() {
     const list = document.querySelectorAll(".item_filters li");
-    list.forEach(li => {
+
+    list.forEach((li) => {
       li.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        document.querySelectorAll(".item_filters li a")
-          .forEach(a => a.classList.remove("active"));
+        // remove active
+        document
+          .querySelectorAll(".item_filters li a")
+          .forEach((a) => a.classList.remove("active"));
 
         li.querySelector("a").classList.add("active");
 
-        let queryType = "LIST_ITEMS";
+        // Determine schema type + contentType
+        let type = "LIST_ITEMS";
+        let contentType = null;
 
-        if (li.classList.contains("post")) queryType = "LIST_POST";
-        else if (li.classList.contains("comments")) queryType = "LIST_COMMENT";
-        else if (li.classList.contains("accounts")) queryType = "LIST_USER";
+        if (li.classList.contains("post")) {
+          type = "LIST_POST";
+          contentType = "post";
+        } else if (li.classList.contains("comments")) {
+          type = "LIST_COMMENT";
+          contentType = "comment";
+        } else if (li.classList.contains("accounts")) {
+          type = "LIST_USER";
+          contentType = "user";
+        }
 
-        await moderationModule.fetcher.loadItems(queryType);
+        // Load items
+        await moderationModule.fetcher.loadItems(type, {
+          offset: 0,
+          limit: 20,
+          contentType,
+        });
 
+        // Reset search
         moderationModule.store.filterText = "";
         const search = document.querySelector("#search-input");
         if (search) search.value = "";
@@ -54,12 +98,18 @@ moderationModule.view = {
       });
 
       /* -------------------- CONTENT -------------------- */
-      const contentEl = moderationModule.helpers.createEl("div", { className: "content" });
-      const imgWrapper = moderationModule.helpers.createEl("span", { className: "content_image" });
+      const contentEl = moderationModule.helpers.createEl("div", {
+        className: "content",
+      });
+      const imgWrapper = moderationModule.helpers.createEl("span", {
+        className: "content_image",
+      });
 
       /* -------------------- MEDIA / ICON -------------------- */
       if (item.media) {
-        const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
+        const imgEl = moderationModule.helpers.createEl("img", {
+          src: item.media,
+        });
 
         /* USER IMAGE FALLBACK */
         if (item.kind === "user") {
@@ -71,9 +121,10 @@ moderationModule.view = {
         imgWrapper.append(imgEl);
 
         if (item.kind === "post") {
-          imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
+          imgWrapper.append(
+            moderationModule.helpers.createEl("i", { className: item.icon })
+          );
         }
-
       } else {
         imgWrapper.append(
           moderationModule.helpers.createEl("i", { className: item.icon })
@@ -81,7 +132,9 @@ moderationModule.view = {
       }
 
       /* -------------------- DETAILS -------------------- */
-      const detailEl = moderationModule.helpers.createEl("span", { className: "content_detail" });
+      const detailEl = moderationModule.helpers.createEl("span", {
+        className: "content_detail",
+      });
 
       const userNameClass =
         item.kind === "user"
@@ -126,7 +179,9 @@ moderationModule.view = {
         textContent: item.date,
       });
 
-      const reportsEl = moderationModule.helpers.createEl("div", { className: "reports" });
+      const reportsEl = moderationModule.helpers.createEl("div", {
+        className: "reports",
+      });
 
       const reportCount = moderationModule.helpers.createEl("span", {
         className: "xl_font_size txt-color-gray",
@@ -135,20 +190,26 @@ moderationModule.view = {
 
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: item.visible === "illegal"
-          ? `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
-          : "",
+        innerHTML:
+          item.visible === "illegal"
+            ? `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
+            : "",
       });
 
       reportsEl.append(reportCount, visibility);
 
       /* -------------------- STATUS -------------------- */
-      const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
+      const statusEl = moderationModule.helpers.createEl("div", {
+        className: "status",
+      });
       let statusClass = "";
 
-      if (item.status == "Hidden" || item.status == "illegal") statusClass = "hidden-tx xl_font_size red-text";
-      else if (item.status == "Restored") statusClass = "restored xl_font_size green-text";
-      else if (item.status == "waiting for review") statusClass = "review xl_font_size yellow-text";
+      if (item.status == "Hidden" || item.status == "illegal")
+        statusClass = "hidden-tx xl_font_size red-text";
+      else if (item.status == "Restored")
+        statusClass = "restored xl_font_size green-text";
+      else if (item.status == "waiting for review")
+        statusClass = "review xl_font_size yellow-text";
 
       statusEl.append(
         moderationModule.helpers.createEl("span", {

@@ -2,18 +2,18 @@ window.addEventListener("DOMContentLoaded", async () => {
   const { store, service, view, fetcher, helpers } = window.moderationModule;
 
   try {
-    // store.currentUserId = helpers.getCookie("userId");
-    // store.currentUserImg = helpers.getCookie("userImg");
+    view.initFilters();
 
-    // view.initSearch();
+    // Load default ALL items on start
+    await fetcher.loadItems(
+      "LIST_ITEMS",
+      {
+        offset: 0,
+        limit: 20,
+        contentType: null   // null means ALL
+      }
+    );
 
-    view.initFilters();   // 
-
-    // Load items
-    fetcher.loadItems('LIST_ITEMS');
-
-    // Then render them
-    // view.renderItems(items);
   } catch (err) {
     console.error("Initialization error:", err);
   }
