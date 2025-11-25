@@ -1,13 +1,39 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.view = {
-  initSearch() {
-    const input = moderationModule.helpers.getElement("#search-input");
-    if (!input) return;
+  // initSearch() {
+  //   const input = moderationModule.helpers.getElement("#search-input");
+  //   if (!input) return;
 
-    input.addEventListener("input", (e) => {
-      moderationModule.store.filterText = e.target.value;
-      moderationModule.fetcher.filterItems(e.target.value);
+  //   input.addEventListener("input", (e) => {
+  //     moderationModule.store.filterText = e.target.value;
+  //     moderationModule.fetcher.filterItems(e.target.value);
+  //   });
+  // },
+
+  initFilters() {
+    const list = document.querySelectorAll(".item_filters li");
+    list.forEach(li => {
+      li.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        document.querySelectorAll(".item_filters li a")
+          .forEach(a => a.classList.remove("active"));
+
+        li.querySelector("a").classList.add("active");
+
+        let queryType = "LIST_ITEMS";
+
+        if (li.classList.contains("post")) queryType = "LIST_POST";
+        else if (li.classList.contains("comments")) queryType = "LIST_COMMENT";
+        else if (li.classList.contains("accounts")) queryType = "LIST_USER";
+
+        await moderationModule.fetcher.loadItems(queryType);
+
+        moderationModule.store.filterText = "";
+        const search = document.querySelector("#search-input");
+        if (search) search.value = "";
+      });
     });
   },
 
@@ -45,10 +71,9 @@ moderationModule.view = {
         imgWrapper.append(imgEl);
 
         if (item.kind === "post") {
-          imgWrapper.append(
-            moderationModule.helpers.createEl("i", { className: item.icon })
-          );
+          imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
         }
+
       } else {
         imgWrapper.append(
           moderationModule.helpers.createEl("i", { className: item.icon })
@@ -110,9 +135,9 @@ moderationModule.view = {
 
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: `<i class="peer-icon peer-icon-eye-close"></i> ${
-          item.visible ? "Visible in the feed" : "Not visible in the feed"
-        }`,
+        innerHTML: item.visible === "illegal"
+          ? `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
+          : "",
       });
 
       reportsEl.append(reportCount, visibility);
@@ -121,9 +146,9 @@ moderationModule.view = {
       const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
       let statusClass = "";
 
-      if (item.status === "Hidden") statusClass = "hidden-tx xl_font_size red-text";
-      else if (item.status === "Restored") statusClass = "restored xl_font_size green-text";
-      else if (item.status === "Waiting for review") statusClass = "review xl_font_size yellow-text";
+      if (item.status == "Hidden" || item.status == "illegal") statusClass = "hidden-tx xl_font_size red-text";
+      else if (item.status == "Restored") statusClass = "restored xl_font_size green-text";
+      else if (item.status == "waiting for review") statusClass = "review xl_font_size yellow-text";
 
       statusEl.append(
         moderationModule.helpers.createEl("span", {

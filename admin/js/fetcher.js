@@ -14,18 +14,6 @@ moderationModule.fetcher = {
             visible: false
         };
 
-        /* -------------------- COMMON HELPERS -------------------- */
-        const safeMedia = (raw, fallback = "") => {
-         
-            try {
-                const arr = JSON.parse(raw || "[]");
-                
-                return Array.isArray(arr) && arr[0]?.path ? tempMedia(arr[0].path) : fallback;
-            } catch {
-                return fallback;
-            }
-        };
-
         /* -------------------- POST -------------------- */
         if (x.targettype === "post" && x.targetcontent.post) {
             const post = x.targetcontent.post;
@@ -38,7 +26,7 @@ moderationModule.fetcher = {
 
             switch (post.contenttype) {
                 case "image":
-                    item.media = safeMedia(post.media);
+                    item.media = moderationModule.helpers.safeMedia(post.media);
                     item.icon = "peer-icon peer-icon-camera";
                     break;
                 case "text":
@@ -46,11 +34,11 @@ moderationModule.fetcher = {
                     item.icon = "peer-icon peer-icon-text";
                     break;
                 case "audio":
-                    item.media = safeMedia(post.cover, "../img/audio-bg.png"); 
+                    item.media = moderationModule.helpers.safeMedia(post.cover, "../img/audio-bg.png"); 
                     item.icon = "peer-icon peer-icon-audio-fill";
                     break;
                 case "video":
-                    item.media = safeMedia(post.cover, "../img/video-bg.png");
+                    item.media = moderationModule.helpers.safeMedia(post.cover, "../img/video-bg.png");
                     item.icon = "peer-icon peer-icon-play-btn";
                     break;
             }
@@ -106,15 +94,15 @@ moderationModule.fetcher = {
   },
 
   /* ---------------------- FILTER ---------------------- */
-  filterItems(searchText) {
-    const lower = searchText.toLowerCase();
+  // filterItems(searchText) {
+  //   const lower = searchText.toLowerCase();
 
-    const filtered = moderationModule.store.items.filter(item =>
-      (item.title && item.title.toLowerCase().includes(lower)) ||
-      (item.username && item.username.toLowerCase().includes(lower))
-    );
+  //   const filtered = moderationModule.store.items.filter(item =>
+  //     (item.title && item.title.toLowerCase().includes(lower)) ||
+  //     (item.username && item.username.toLowerCase().includes(lower))
+  //   );
 
-    moderationModule.store.filteredItems = filtered;
-    moderationModule.view.renderItems(filtered);
-  }
+  //   moderationModule.store.filteredItems = filtered;
+  //   moderationModule.view.renderItems(filtered);
+  // }
 };

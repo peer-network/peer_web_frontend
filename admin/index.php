@@ -37,7 +37,7 @@
 
                 <div class="content_filter_row">
                     <div class="content_filter xl_font_size">
-                        <ul>
+                        <ul class= "item_filters">
                             <li class="all"><a href="#" class="active"><span>All</span></a></li>
                             <li class="post"><a href="#"><span>Post</span></a></li>
                             <li class="comments"><a href="#"><span>Comments</span></a></li>
@@ -81,7 +81,6 @@
                             </div>
                             <div class="status">
                                 <span class="hidden-tx xl_font_size red-text">Hidden</span>
-                                
                             </div>
                         </div>
                         

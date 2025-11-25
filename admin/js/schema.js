@@ -104,7 +104,7 @@ moderationModule.schema = {
 
   LIST_POST: `
     query ModerationItems {
-      moderationItems {
+      moderationItems(offset: 0, limit: 20, contentType: post) {
         status
         ResponseCode
         affectedRows {
@@ -159,53 +159,62 @@ moderationModule.schema = {
 
   LIST_COMMENT: `
     query ModerationItems {
-      moderationItems {
+    moderationItems(limit: 20, offset: 0, contentType: comment) {
         status
         ResponseCode
         affectedRows {
-          moderationTicketId
-          targetContentId
-          targettype
-          reportscount
-          status
-          createdat
-          targetcontent {
-            comment {
-              commentid
-              userid
-              postid
-              parentid
-              content
-              createdat
-              visibilityStatus
-              hasActiveReports
-              amountlikes
-              amountreplies
-              amountreports
-              isreported
-              isliked
-              user {
-                id
+            moderationTicketId
+            targetContentId
+            targettype
+            reportscount
+            status
+            createdat
+            targetcontent {
+                comment {
+                    commentid
+                    userid
+                    postid
+                    parentid
+                    content
+                    createdat
+                    visibilityStatus
+                    hasActiveReports
+                    amountlikes
+                    amountreplies
+                    amountreports
+                    isreported
+                    isliked
+                    user {
+                        id
+                        username
+                        slug
+                        img
+                        visibilityStatus
+                        hasActiveReports
+                        isfollowed
+                        isfollowing
+                        isreported
+                        isfriend
+                    }
+                }
+            }
+            reporters {
+                userid
+                img
                 username
                 slug
-                img
+                biography
                 visibilityStatus
                 hasActiveReports
-                isfollowed
-                isfollowing
-                isreported
-                isfriend
-              }
+                updatedat
             }
-          }
         }
-      }
     }
-  `,
+  }`,
 
   LIST_USER: `
     query ModerationItems {
-      moderationItems {
+      moderationItems(offset: 0, limit: 20, contentType: user) {
         status
         ResponseCode
         affectedRows {

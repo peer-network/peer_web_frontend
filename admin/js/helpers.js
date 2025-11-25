@@ -25,9 +25,19 @@ moderationModule.helpers = {
     Object.entries(attrs).forEach(([k, v]) => {
       if (k === "className") el.className = v;
       else if (k === "textContent") el.textContent = v;
+      else if (k === "innerHTML") el.innerHTML = v;
       else el.setAttribute(k, v);
     });
     children.forEach(child => el.appendChild(child));
     return el;
+  },
+
+  safeMedia(raw, fallback = "") {
+    try {
+        const arr = JSON.parse(raw || "[]");  
+        return Array.isArray(arr) && arr[0]?.path ? tempMedia(arr[0].path) : fallback;
+    } catch {
+        return fallback;
+    }
   }
 };

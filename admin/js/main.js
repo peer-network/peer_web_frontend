@@ -5,10 +5,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     // store.currentUserId = helpers.getCookie("userId");
     // store.currentUserImg = helpers.getCookie("userImg");
 
-    view.initSearch();
+    // view.initSearch();
 
-    // Load items first
-    // const items = await
+    view.initFilters();   // 
+
+    // Load items
     fetcher.loadItems('LIST_ITEMS');
 
     // Then render them
