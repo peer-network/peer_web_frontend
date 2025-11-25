@@ -692,9 +692,18 @@
 		.hidden_content_frame .icon_hidden i {
 			font-size: 100px;
 		}
+    .hidden_content_frame .view_content {
+      width: 100%;
+    }
+    .hidden_content_frame .view_content .button {
+      margin-bottom: 0;
+      margin-top: 13px;
+      padding: 0 13%;
+    }
 		.viewpost .visibilty_hidden .thumbs-wrapper {
 			display: none;
 		}
+    
 	
 
 		.viewpost .visibilty_hidden .post_content .post_text,
@@ -722,9 +731,16 @@
 		.card .post-inhalt .hidden_content_frame .icon_hidden i {
 			font-size: 50px;
 		}
+    .card .post-inhalt .hidden_content_frame .view_content{
+      width: 100%;
+    }
 		.card .post-inhalt .hidden_content_frame .button {
-			line-height: 80px;
-		}
+      line-height: 80px;
+      padding: 0 10%;
+      font-size: 28px !important;
+      margin-bottom: 0;
+      margin-top: 13px;
+    }
 
 		.card.visibilty_hidden  .post-inhalt .card-header,
 		.card.visibilty_hidden  .post-inhalt .social,
@@ -787,6 +803,14 @@
         color: var(--Red-Accent, #FF3B3B);
         max-width: 225px;
         margin-top: 10px;
+    }
+
+    .card[content="text"] .reported_badge {
+      position: absolute;
+      bottom: 100px;
+    }
+    .PINNED.card[content="text"] .reported_badge {
+      bottom: 190px;
     }
 
     .card.PINNED .post-inhalt .reported_badge {
@@ -920,14 +944,14 @@
 }
 .viewpost .post_gallery .slide_item .zoom {
   position: absolute;
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   z-index: 3;
   right: 20px;
   bottom: 30px;
   border-radius: 70px;
   background: var(--dark-inactive, #323232);
-  font-size: 20px;
+  font-size: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
