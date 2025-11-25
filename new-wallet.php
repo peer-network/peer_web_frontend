@@ -56,8 +56,6 @@ checkAuth("unauthorized");
       <div class="inner-scroll">
         <!-- Load sidebar widgets -->
         <?php require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
-        <?php require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
-
       </div>
     </aside>
 
@@ -93,12 +91,8 @@ checkAuth("unauthorized");
           <span>1 Gem ≈ 133 PeerTokens</span>
         </div>
       </div>
-      <div class="wallet-transaction none" id="wallet-transaction">
-        <h2>List of transactions</h2><div class="history-header">
-            <span class="type">Type</span>
-            <span class="date">Date</span>
-            <span class="amount">Amount</span>
-          </div>
+      <div class="wallet-transaction" id="wallet-transaction">
+        <h2 class="xxl_font_size">List of transactions</h2>
         <div id="history-container" class="history-container">
           
           <!-- <div id="history-sentinel" class="history-sentinel"></div> -->

@@ -32,7 +32,7 @@
   color: var(--white);
   padding: 12px;
   border-radius: 100%;
-  width: 60px;
+  width: 80px;
   aspect-ratio: 1;
   justify-content: center;
   display: flex;
@@ -61,12 +61,13 @@
   grid-column: span 2;
 }
 
-#wallet-transaction {
-  width: 100%;
+.wallet-transaction {
+  margin-top: 50px;
 }
 
-#wallet-transaction h2 {
-  margin-bottom: 1.5rem;
+.wallet-transaction h2 {
+    display: flex;
+  margin-bottom: 50px;
 }
 
 
@@ -131,7 +132,7 @@
 .label span {
   color: #5ea4ff;
 }
-.history-header,
+
 .history-item {
   display: flex;
   justify-content: space-between;
@@ -218,11 +219,9 @@
 
 
 .site-main-wallet {
-  background-image: url(../svg/bgWallet.svg);
+  background-image: url(../img/wallet-bg.png);
   background-repeat: no-repeat;
-  background-size: 190%;
-  background-position: -29rem -7rem;
-  padding: 2rem;
+  background-position: -52rem -43rem;
   background-attachment: fixed;
 }
 
@@ -241,7 +240,7 @@
   display: inline-block;
 }
 
-.site-main-wallet .transfer-dropdown {
+/* .site-main-wallet .transfer-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
@@ -257,7 +256,7 @@
     overflow: hidden;
     overscroll-behavior: contain;
    
-}
+} */
 
 .site-main-wallet .user-list {
   display: flex;
@@ -313,12 +312,9 @@
 /* Second screen — Transfer Inline Form */
 
 .site-main-wallet .transfer-dropdown .transfer-form-screen {
-  background: #1f1f1f;
-  border-radius: 10px;
-  padding: 80px;
-  color: white;
-  overflow-y: scroll;
-  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 .site-main-wallet .transfer-dropdown .transfer-form-screen .loader-screen-contents {
 	text-align: center;
@@ -328,7 +324,9 @@
   justify-content: space-between;
   align-items: center;
   font-size: 20px;
-  margin-bottom: 20px;
+}
+.transfer-header h2 {
+  margin: 0;
 }
 .site-main-wallet .transfer-dropdown .transfer-form-screen label {
 	padding-bottom: 10px;
@@ -425,18 +423,19 @@
   z-index: 1000;
   margin-top: 0 !important;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-  min-width: 520px;
-  min-height: 520px;
   text-align: left;
-  width: 33vw;
+  background: var(--black-dark);
+  width: 100%;
+  max-width: 700px;
 }
 
 /* Backdrop when modal is active */
 .transfer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(37, 37, 37, 0.50);
   z-index: 999;
+  backdrop-filter: blur(15px);
 }
 
 .commission-breakdown {
@@ -581,10 +580,18 @@
 	background: #2a2a2a;
 	color: white;
 	border: none;
-	margin-bottom: 60px;
 	padding: 30px 40px;
 }
 
+.wallet_available_balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px;
+  border-radius: 70px;
+  background-image: url(../img/balance.png);
+  background-size: cover;
+}
 
 @media screen and (min-width: 3000px) {
     .site-main-wallet {
@@ -597,7 +604,12 @@
         gap: 200px;
     }
     .openTransferDropdown {
-        padding: 30px;
+        padding: 20px 20px 20px 40px;
         border-radius: 70px;
+    }
+    .transfer-dropdown.modal-mode {
+        padding: 80px;
+        max-width: 1350px;
+        border-radius: 77px;
     }
 }

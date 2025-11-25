@@ -482,6 +482,7 @@ async function renderUsers() {
   header.className = "transfer-header";
 
   const h2 = document.createElement("h2");
+  h2.classList.add("xxl_font_size");
   h2.textContent = "Transfer";
 
   const closeBtn = document.createElement("button");
@@ -491,6 +492,22 @@ async function renderUsers() {
 
   header.append(h2, closeBtn);
   wrapper.appendChild(header);
+
+  // Users balance
+
+  const balanceDiv = document.createElement("div");
+  balanceDiv.className = "wallet_available_balance";
+  balanceDiv.innerHTML = `
+    <div class="available_tokens md_font_size">Available tokens</div>
+    <div class="available_tokens_amount">
+      <img src="svg/logo_sw.svg" alt="peer logo">
+      <span id="token_balance" class="bold xxl_font_size token_balance"</span>
+    </div>
+  `;
+
+
+  wrapper.appendChild(balanceDiv);
+
 
   // Always-visible Search Input
   const searchInput = document.createElement("input");
