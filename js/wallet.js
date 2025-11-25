@@ -5,7 +5,7 @@ let hasMoreUsers = true;
 
 // Initialization
 function initAppData() {
-  nextMint();
+  //nextMint();
   resetTransactionHistoryList();
   // getTransactionHistory();
   // dailyPays();

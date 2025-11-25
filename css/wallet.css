@@ -1,3 +1,125 @@
+  .site_layout {
+    
+    background-image: url(../img/wallet-page-bg.png);
+    background-size: cover;
+    background-attachment: fixed;
+    
+  }
+.left-sidebar.left-sidebar-wallet {
+	background-color: var(--background-color);
+}
+.right-sidebar.right-sidebar-wallet {
+	background-color: var(--background-color);
+}
+
+
+.wallet_main {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 50px;
+  margin-top: 180px;
+}
+.wallet_header .wallet_heading.xl_font_size {
+	margin-bottom: 0;
+}
+.wallet_transactions .transaction_heading {
+  margin-bottom: 0;
+}
+.wallet_header {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	align-self: stretch;
+}
+
+.balance_transfer {
+	display: flex;
+	align-items: center;
+	gap: 200px;
+	align-self: stretch;
+}
+.wallet_balance {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 80px;
+}
+.wallet_balance .logo {
+	width: 96px;
+  animation: loading 4s ease 0s infinite;
+}
+.wallet_reload {
+	margin-left: auto;
+}
+
+.wallet_transfer a {
+	text-decoration: none;
+	display: flex;
+	height: 130px;
+	padding: 15px 20px 15px 50px;
+	align-items: center;
+	gap: 20px;
+	background: #fff;
+	border-radius: 70px;
+	color: var(--black);
+  transition: all 0.3s linear;
+}
+.wallet_transfer a em {
+	color: var(--black-dark);
+	opacity: 0.5;
+	font-style: normal;
+}
+.wallet_transfer a .peer-icon {
+	display: flex;
+	aspect-ratio: 1;
+	height: 100%;
+	padding: 12px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	border-radius: 51px;
+	background: var(--black-dark, #252525);
+	color: #fff;
+	transition: all 0.3s linear;
+}
+.wallet_transfer a:hover {
+	color: var(--white);
+	background: var(--black-dark);
+}
+ .wallet_transfer a:hover em{
+  color: var(--white);
+ }
+ .wallet_transfer a:hover .peer-icon{
+  background: var(--white);
+  color: var(--black-dark, #252525);
+  margin-left: 30px;
+ }
+
+ .wallet_reload a {
+	display: flex;
+	height: 130px;
+	padding: 23.5px 64px;
+	justify-content: space-between;
+	align-items: center;
+	border-radius: 100px;
+	border: 2px solid var(--white,#FFF);
+	gap: 100px;
+	text-decoration: none;
+	color: var(--white);
+}
+.wallet_reload a:hover {
+  color: var(--black-dark);
+  background-color: var(--white);
+}
+.wallet_reload a .peer-icon {
+  transition: all 0.3s linear;
+}
+
+.wallet_reload a:hover .peer-icon {
+  animation: loading 4s ease 0s infinite;
+}
 #wallet {
   display: grid;
   justify-content: center;
@@ -192,12 +314,9 @@
 
 
 .site-main-wallet {
-  background-image: url(../svg/bgWallet.svg);
-  background-repeat: no-repeat;
-  background-size: 190%;
-  background-position: -29rem -7rem;
+  
   padding: 2rem;
-  background-attachment: fixed;
+  
 }
 
 /* wallet-to-wallet transfer */
@@ -455,7 +574,7 @@
 /* Final Confirmation Screen — Safe Scoped Additions */
 
 .site-main-wallet {
-  text-align: center;
+  
   padding-top: 40px;
 }
 

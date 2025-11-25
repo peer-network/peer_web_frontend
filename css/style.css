@@ -829,6 +829,9 @@ header.site-header .logo {
 header.site-header h1 {
 	margin: 0;
 }
+header.site-header h1 .peer-icon{
+	font-size: 78%;
+}
 
 .collapsed header.site-header h1 {
 	opacity: 0;

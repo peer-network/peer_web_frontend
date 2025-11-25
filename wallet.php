@@ -25,8 +25,6 @@ checkAuth("unauthorized");
 
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-  <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
-  <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
   <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
@@ -42,20 +40,46 @@ checkAuth("unauthorized");
   </div>
   <div id="edit-profile" class="site_layout">
     <header class="site-header header-profile">
-      <img class="logo" src="svg/Home.svg" alt="Peer Network">
-      <h1 id="h1">Wallet</h1>
+      <h1 id="h1"><i class="peer-icon peer-icon-wallet-filled"></i> Wallet</h1>
     </header>
 
     <aside class="left-sidebar left-sidebar-wallet">
       <div class="inner-scroll">
         <!-- Load sidebar widgets -->
-        <?php require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
-        <?php require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
+        <?php //require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
+        <?php //require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
 
       </div>
     </aside>
 
     <main id="main" class="site-main site-main-wallet">
+
+      <div class="wallet_main">
+        <div class="wallet_header">
+          <h2 class="wallet_heading xl_font_size">Available balance</h2>
+          <div class="balance_transfer">
+            <div class="wallet_balance">
+              <img src="svg/logo_sw.svg" alt="peer token" class="logo">
+              <span id="token" class="bold xxxl_font_size">0</span>
+            </div>
+            
+            <div class="wallet_transfer">
+              
+              <a href="#" id="openTransferDropdown" class="md_font_size"><span>Transfer <em>to user</em></span> <i class="peer-icon peer-icon-arrow-right"></i></a>
+            </div>
+
+              <div class="wallet_reload">
+              <a href="#"  class="md_font_size">Reload <i class="peer-icon peer-icon-refresh-alt"></i></a>
+            </div>
+
+          </div>
+        </div>
+        <div class="wallet_transactions">
+          <h3 class="transaction_heading xl_font_size">Transactions</h3>
+          <div class="transaction_lists">
+          </div>
+        </div>
+      </div>
 
       <?php require_once ('./template-parts/wallet/walletTokenTransfer.php'); ?>
 
@@ -64,7 +88,7 @@ checkAuth("unauthorized");
           <h2>Total Tokens</h2>
           <div>
             <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
-            <span id="token"></span>
+            
             <div class="money">
               <span>~</span>
               <span id="money"></span>
