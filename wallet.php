@@ -77,6 +77,22 @@ checkAuth("unauthorized");
         <div class="wallet_transactions">
           <h3 class="transaction_heading xl_font_size">Transactions</h3>
           <div class="transaction_lists">
+            <div class="tarnsaction_item">
+              <div class="transaction_info">
+                <div class="transaction_media">
+                  <i class="peer-icon peer-icon-pinpost"></i>
+                </div>
+                <div class="transaction_content">
+                  <div class="tinfo"><span class="title">Transfer from</span> <span class="user_name">@Krikowl</span><span class="user_slug">#239100</span></div>
+                  <div class="message"><i class="peer-icon peer-icon-comment-dot"></i>Thank you so much for all your help with the project... </div>
+                </div>
+
+              </div>
+              <div class="transaction_date">10 Jun 2025, 04:20</div>
+              <div class="transaction_price xl_font_size bold">-200</div>
+            </div>
+
+
           </div>
         </div>
       </div>
