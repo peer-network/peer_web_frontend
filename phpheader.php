@@ -10,5 +10,9 @@ $modified = gmdate("D, d M Y H:i:s", filemtime($me)) . " GMT";
 header("Last-Modified:" . $modified);
 $modified = date('c', filemtime($me));
 header("Etag:" . md5_file($me));
+// HTML-Dokumente sollen bei jedem Aufruf neu validiert werden, damit nach Deployments keine veralteten Shells geladen werden.
+header("Cache-Control: no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
 header('Content-Type:text/html; charset=UTF-8');
 ?>
