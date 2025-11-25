@@ -14,6 +14,12 @@ checkAuth("unauthorized");
   <title>Wallet</title>
   <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
   <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
+  <link rel='stylesheet'
+     href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  <link rel='stylesheet'
+     href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+  <link rel='stylesheet'
+     href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
   <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
 
   <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
@@ -42,7 +48,7 @@ checkAuth("unauthorized");
   </div>
   <div id="edit-profile" class="site_layout">
     <header class="site-header header-profile">
-      <img class="logo" src="svg/Home.svg" alt="Peer Network">
+      <i class="xl_font_size peer-icon peer-icon-wallet-filled"></i>
       <h1 id="h1">Wallet</h1>
     </header>
 
@@ -59,20 +65,27 @@ checkAuth("unauthorized");
 
       <?php require_once ('./template-parts/wallet/walletTokenTransfer.php'); ?>
 
-      <div id="wallet">
-        <div class="token">
-          <h2>Total Tokens</h2>
-          <div>
-            <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
-            <span id="token"></span>
-            <div class="money">
-              <span>~</span>
-              <span id="money"></span>
-              <span id="tokenpercent"></span>
+      <div class="wallet" id="wallet">
+        <div class="wallet_top_container">
+          <h2 class="xxl_font_size">Available balance</h2>
+          <div class="token_transfer_container">
+            <div class="token_container">
+                <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
+                <span class="token xxxl_font_size bold" id="token"></span>
+                <div class="money none">
+                <span>~</span>
+                <span id="money"></span>
+                <span id="tokenpercent"></span>
+                </div>
             </div>
+            <ul class="menu">
+                <li class="menu-item" > <a href="#" class="openTransferDropdown" id="openTransferDropdown"><span class="md_font_size">Transfer</span><span class="md_font_size faint">To user</span><i class="peer-icon peer-icon-arrow-right"></i>  </a> </li>
+                <li class="menu-item none"> <a href="#" > <img class="icon" src="svg/buy.svg" alt="Buy" /> Buy </a> </li>
+                <li class="menu-item none" > <a href="#" > <img class="icon" src="svg/sell.svg" alt="Sell" /> Sell </a> </li>
+            </ul>
           </div>
         </div>
-        <div class="kurs">
+        <div class="none kurs">
           <div>
             <span class="peerkurs">1 Peer Token ≈ 0.1€</span>
             <img src="svg/steigend.svg" alt="">
@@ -80,7 +93,7 @@ checkAuth("unauthorized");
           <span>1 Gem ≈ 133 PeerTokens</span>
         </div>
       </div>
-      <div id="wallet-transaction">
+      <div class="wallet-transaction none" id="wallet-transaction">
         <h2>List of transactions</h2><div class="history-header">
             <span class="type">Type</span>
             <span class="date">Date</span>

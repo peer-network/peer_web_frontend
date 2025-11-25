@@ -1,16 +1,42 @@
-#wallet {
-  display: grid;
-  justify-content: center;
+.wallet .wallet_top_container h2 {
+    display: flex;
+}
+.wallet_top_container .token_transfer_container {
+  display: flex;
   align-items: center;
-  /* flex-direction: row; */
-  grid-template-columns: 50% 50%;
-  /* grid-template-rows: 50% 50%; */
-  width: 100%;
-  gap: 2rem;
-  padding: 1rem 3rem;
-
-  /* display: flex; */
-  align-items: baseline;
+}
+.wallet_top_container .token_transfer_container .token_container {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+.token_transfer_container .token_container .logo {
+  width: 80px;
+}
+.wallet_top_container .token_transfer_container .menu {
+  display: flex;
+}
+.token_transfer_container .menu .menu-item .openTransferDropdown {
+  display: flex;
+  background: var(--white);
+  text-decoration: none;
+  align-items: center;
+  gap: 20px;
+  color: var(--black);
+}
+.menu-item .md_font_size.faint {
+  color: var(--black-secondary);
+}
+.menu-item .openTransferDropdown .peer-icon.peer-icon-arrow-right {
+  background: var(--black);
+  color: var(--white);
+  padding: 12px;
+  border-radius: 100%;
+  width: 60px;
+  aspect-ratio: 1;
+  justify-content: center;
+  display: flex;
+  align-items: center;
 }
 #wallet-amount img {
   width: 2rem;
@@ -557,4 +583,21 @@
 	border: none;
 	margin-bottom: 60px;
 	padding: 30px 40px;
+}
+
+
+@media screen and (min-width: 3000px) {
+    .site-main-wallet {
+        padding: 80px 80px 40px 80px;
+    }
+    .site-main-wallet .wallet {
+        margin-top: 100px;
+    }
+    .wallet_top_container .token_transfer_container {
+        gap: 200px;
+    }
+    .openTransferDropdown {
+        padding: 30px;
+        border-radius: 70px;
+    }
 }
