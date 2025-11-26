@@ -134,38 +134,7 @@ checkAuth("unauthorized");
 
       <?php require_once ('./template-parts/wallet/walletTokenTransfer.php'); ?>
 
-      <div id="wallet">
-        <div class="token">
-          <h2>Total Tokens</h2>
-          <div>
-            <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
-            
-            <div class="money">
-              <span>~</span>
-              <span id="money"></span>
-              <span id="tokenpercent"></span>
-            </div>
-          </div>
-        </div>
-        <div class="kurs">
-          <div>
-            <span class="peerkurs">1 Peer Token ≈ 0.1€</span>
-            <img src="svg/steigend.svg" alt="">
-          </div>
-          <span>1 Gem ≈ 133 PeerTokens</span>
-        </div>
-      </div>
-      <div id="wallet-transaction">
-        <h2>List of transactions</h2><div class="history-header">
-            <span class="type">Type</span>
-            <span class="date">Date</span>
-            <span class="amount">Amount</span>
-          </div>
-        <div id="history-container" class="history-container">
-          
-          <!-- <div id="history-sentinel" class="history-sentinel"></div> -->
-        </div>
-      </div>
+      
     </main>
     <aside class="right-sidebar right-sidebar-wallet">
       <div class="inner-scroll">
