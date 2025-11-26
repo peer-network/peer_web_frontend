@@ -77,19 +77,54 @@ checkAuth("unauthorized");
         <div class="wallet_transactions">
           <h3 class="transaction_heading xl_font_size">Transactions</h3>
           <div class="transaction_lists">
-            <div class="tarnsaction_item">
-              <div class="transaction_info">
-                <div class="transaction_media">
-                  <i class="peer-icon peer-icon-pinpost"></i>
-                </div>
-                <div class="transaction_content">
-                  <div class="tinfo"><span class="title">Transfer from</span> <span class="user_name">@Krikowl</span><span class="user_slug">#239100</span></div>
-                  <div class="message"><i class="peer-icon peer-icon-comment-dot"></i>Thank you so much for all your help with the project... </div>
-                </div>
+            <div class="tarnsaction_item trans_in">
+              <div class="transaction_record">
+                <div class="transaction_info">
+                  <div class="transaction_media">
+                    <i class="peer-icon peer-icon-pinpost"></i>
+                  </div>
+                  <div class="transaction_content">
+                    <div class="tinfo md_font_size"><span class="title bold">Pinned post promo</span></div>
+                  </div>
 
+                </div>
+                <div class="transaction_date md_font_size txt-color-gray">10 Jun 2025, 04:20</div>
+                <div class="transaction_price xl_font_size bold">-200</div>
               </div>
-              <div class="transaction_date">10 Jun 2025, 04:20</div>
-              <div class="transaction_price xl_font_size bold">-200</div>
+              <div class="transaction_detail">
+                <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">0.000000009</span></div>
+                <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">0.0.96</span></div>
+                <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">38</span></div>
+                <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">14</span></div>
+                <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">12</span></div>
+                <div class="price_detail_row"><span class="price_label txt-color-gray">1% to your Inviter</span> <span class="price txt-color-gray">12</span></div>
+              </div>
+            </div>
+
+             <div class="tarnsaction_item trans_out">
+              <div class="transaction_record">
+                <div class="transaction_info">
+                  <div class="transaction_media">
+                    <img src="img/profile_thumb.png">
+                  </div>
+                  <div class="transaction_content">
+                    <div class="tinfo md_font_size"><span class="title bold">Transfer from</span> <span class="user_name bold italic">@Krikowl</span> <span class="user_slug txt-color-gray">#239100</span></div>
+                    <div class="message txt-color-gray"><i class="peer-icon peer-icon-comment-dot"></i>Thank you so much for all your help with the project... </div>
+                  </div>
+
+                </div>
+                <div class="transaction_date md_font_size txt-color-gray">10 Jun 2025, 04:20</div>
+                <div class="transaction_price xl_font_size bold">+2000</div>
+              </div>
+
+              <div class="transaction_detail">
+                <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">0.000000009</span></div>
+                <div class="message_row">
+                  <span class="message_label md_font_size txt-color-gray"><i class="peer-icon peer-icon-comment-dot"></i> Message:</span> 
+                  <span class="message_body">Hey! Thank you so much for all your help with the project presentation yesterday. I really appreciate how you stayed late to help me finalize the slides and practice the pitch. Your feedback was invaluable and I couldn't have done it without your support. The client loved it! Here's a little something to show my gratitude. Let's celebrate this weekend! 🎉🙌</span>
+                </div>
+                
+              </div>
             </div>
 
 

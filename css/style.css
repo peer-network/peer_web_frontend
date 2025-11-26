@@ -184,6 +184,9 @@ strong,
 .bold {
 	font-weight: bold;
 }
+.italic{
+	font-style: italic;
+}
 
 img {
 	border: 0;
@@ -2537,7 +2540,7 @@ footer {
 	.button {
 		line-height: 350%;
 		border-radius: 150px;
-		padding: 0 6%;
+		padding: 0 50px;
 		font-size: 35px;
 		font-size: clamp(1.5rem, 0.8125rem + 0.55vw, 2.1875rem) !important;
 	}

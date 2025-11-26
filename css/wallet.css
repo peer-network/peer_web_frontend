@@ -138,18 +138,132 @@
 .tarnsaction_item {
 	display: flex;
 	padding: 40px;
-	justify-content: space-between;
+	flex-direction: column;
 	align-items: center;
 	flex-shrink: 0;
 	border-radius: 70px;
 	background: var(--dark-inactive, #323232);
 	backdrop-filter: blur(5px);
 	align-self: stretch;
+  gap: 40px;
+ 
+}
+.tarnsaction_item .transaction_record {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	
+	align-self: stretch;
+  cursor: pointer;
+}
+.transaction_info {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+  width: 50%;
+}
+.transaction_info .transaction_media {
+	display: block;
+	border-radius: 100px;
+
+	width: 136px;
+	aspect-ratio: 1;
+	position: relative;
+	background: var(--black-dark,#252525);
+}
+.transaction_info .transaction_media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+  border-radius: 100px;
+	object-fit: cover;
+}
+.transaction_info .transaction_media::after {
+	content: '\e83a';
+	width: 52px;
+	height: 52px;
+	aspect-ratio: 1/1;
+	position: absolute;
+	border-radius: 52px;
+	background: #0069FF;
+	bottom: -5px;
+	right: -10px;
+	font-family: "peer-network";
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	font-size: 16px;
+}
+.trans_out .transaction_info .transaction_media::after {
+  content: '\e83b';
 }
 
-.tarnsaction_item .transaction_price{
-  padding-right: 50px;
+.transaction_info .transaction_content {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
+
+.transaction_info .transaction_content  .message {
+	display: flex;
+	padding: 20px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	border-radius: 40px;
+	background: var(--black-dark, #252525);
+}
+
+.transaction_info .transaction_media .peer-icon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	font-size: 180%;
+}
+
+.tarnsaction_item .transaction_price {
+	padding-right: 65px;
+	background-image: url(../svg/logo_sw.svg);
+	background-size: 46px;
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+.tarnsaction_item .transaction_detail {
+	display: flex;
+	align-self: stretch;
+	flex-direction: column;
+	border-top: 2px solid var(--white-secondary);
+	padding-top: 40px;
+  gap: 12px;
+}
+.tarnsaction_item .transaction_detail .price_detail_row {
+	display: flex;
+	justify-content: space-between;
+	gap: 30px;
+}
+.tarnsaction_item .transaction_detail .price_detail_row .price {
+	padding-right: 40px;
+	background-image: url(../svg/logo_sw.svg);
+	background-size: 28px;
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
+.tarnsaction_item .transaction_detail .message_row {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding-top: 30px;
+}
+.tarnsaction_item .transaction_detail .message_row .message_body {
+	display: block;
+	padding: 20px;
+	border-radius: 40px;
+	background: var(--black-dark, #252525);
+}
+
 
 
 #wallet {
