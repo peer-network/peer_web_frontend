@@ -70,95 +70,672 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                     <div class="content_load">
                         <!-- image, audio and video -->
                         <div class="content_item post">
-                            <div class="content">
-                                <span class="content_image">
-                                    <img src="../img/audio-bg.png" />
-                                    <i class="peer-icon peer-icon-camera"></i>
-                                </span>
-                                <span class="content_detail">
-                                    <span class="user_name bold italic">@scammer_idiot</span>
-                                    <span class="post_title xl_font_size bold">Rejected at the gates...</span>
-                                </span>
+                            <div class="content_item_inner">
+
+                                <div class="content">
+                                    <span class="content_image">
+                                        <img src="../img/audio-bg.png" />
+                                        <i class="peer-icon peer-icon-camera"></i>
+                                    </span>
+                                    <span class="content_detail">
+                                        <span class="user_name bold italic">@scammer_idiot</span>
+                                        <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                                    </span>
+                                </div>
+                                <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                                <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                                <div class="reports">
+                                    <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                    <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                                </div>
+                                <div class="status">
+                                    <span class="hidden-tx xl_font_size red-text">Hidden</span>
+                                </div>
                             </div>
-                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                            <div class="reports">
-                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+
+                            <div class="content_box">
+                                <div class="content_box_left">
+                                    <!--- Content type : Post --->
+                                    <div class="content_type_post">
+                                        <div class="profile_post">
+                                            <div class="profile">
+                                                <span class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </span>
+                                                <span class="profile_detail">
+                                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                    <span class="user_slug txt-color-gray">#123456</span>
+                                                </span>
+                                            </div>
+                                            <div class="fullpost_link">
+                                                <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="post_detail">
+                                            <div class="post_title">
+                                                <h2 class="xxl_font_size bold">Rejected at the gates of techno heaven:  Berghain > Mars? </h2>
+                                                <span class="timeagao txt-color-gray">2h</span>
+
+                                            </div>
+                                            <div class="post_text">
+                                                Hier würde man jz die description reinschreiben. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget justo id arcu interdum facilisis id a purus. Nulla facilisi. Integer auctor, ligula a viverra scelerisque, felis lorem lacinia nunc, a malesuada nisi sapien sit amet ligula. Curabitur fermentum turpis in sapien vulputate, vel laoreet. Lacus tincidunt. Donec gravida orci at elit consequat, vel vestibulum lorem dapibus. Praesent faucibus est vitae est egestas, sit amet laoreet mi tincidunt. ...
+                                            </div>
+
+                                            <div class="hashtags txt-color-blue"><span class="hashtag">#cool</span><span class="hashtag">#khalidpost</span><span class="hashtag">#khalid</span></div>
+
+                                        </div>
+                                    </div>
+                                    <!--- End Content type : Post  --->
+                                </div>
+
+                                <div class="content_box_right">
+                                    <div class="conten_status">
+                                        <span class="label xl_font_size txt-color-gray">Status</span>    
+                                        <span class="review xl_font_size yellow-text">Waiting for review</span>
+                                    </div>
+
+                                    <div class="reported_by">
+                                        <div class="head">
+                                            <span class="label xl_font_size">Reported by</span>    
+                                            <span class="flag xl_font_size red-text"><i class="peer-icon peer-icon-copy-alt"></i> 5 </span>
+                                        </div>
+                                        <div class="reported_by_profiles">
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                
+                                    <!--- Action Boxes --->
+                                    <div class="action_buttons">
+                                        <a class="button btn-blue bold" href="#">Restore</a>
+                                        <a class="button btn-transparent" href="#">Hide</a>
+                                        <a class="button btn-red-transparent" href="#">Mark as illegal</a>
+                                    </div>
+                                    <!--- End Action Boxes --->
+
+                                    <!--- Moderated Boxes --->
+                                    <div class="moderated_by_box none">
+                                        <div class="moderated_info">
+                                            <span class="label xl_font_size txt-color-gray">Moderated by</span>
+                                            <span class="profile">
+                                                <span class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </span>
+                                                <span class="profile_detail">
+                                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                    <span class="user_slug txt-color-gray">#123456</span>
+                                                </span>
+
+                                            </span>
+                                            <span class="datetime xl_font_size txt-color-gray">24 Jun 2025, 09:15</span>
+                                        </div>
+
+                                        <div class="moderated_action xl_font_size green-text">Restored</div>
+
+                                    </div>
+
+                                    <!--- End Moderated Boxes --->
+
+                                </div>
                             </div>
-                            <div class="status">
-                                <span class="hidden-tx xl_font_size red-text">Hidden</span>
-                            </div>
+
+
                         </div>
                         
                         <!-- text post -->
                         <div class="content_item post">
-                            <div class="content">
-                                <span class="content_image">
-                                    <i class="peer-icon peer-icon-text"></i>
-                                </span>
-                                <span class="content_detail">
-                                    <span class="user_name bold italic">@scammer_idiot</span>
-                                    <span class="post_title xl_font_size bold">Rejected at the gates...</span>
-                                </span>
+                            <div class="content_item_inner">
+                                <div class="content">
+                                    <span class="content_image">
+                                        <i class="peer-icon peer-icon-text"></i>
+                                    </span>
+                                    <span class="content_detail">
+                                        <span class="user_name bold italic">@scammer_idiot</span>
+                                        <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                                    </span>
+                                </div>
+                                <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                                <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                                <div class="reports">
+                                    <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                    <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                                </div>
+                                <div class="status">
+                                    <span class="hidden-tx xl_font_size red-text">Hidden</span>
+                                    
+                                </div>
                             </div>
-                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                            <div class="reports">
-                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
-                            </div>
-                            <div class="status">
-                                <span class="hidden-tx xl_font_size red-text">Hidden</span>
+
+                            <div class="content_box">
+                                <div class="content_box_left">
+                                    <!--- Content type : Post --->
+                                    <div class="content_type_post">
+                                        <div class="profile_post">
+                                            <div class="profile">
+                                                <span class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </span>
+                                                <span class="profile_detail">
+                                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                    <span class="user_slug txt-color-gray">#123456</span>
+                                                </span>
+                                            </div>
+                                            <div class="fullpost_link">
+                                                <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="post_detail">
+                                            <div class="post_title">
+                                                <h2 class="xxl_font_size bold">Rejected at the gates of techno heaven:  Berghain > Mars? </h2>
+                                                <span class="timeagao txt-color-gray">2h</span>
+
+                                            </div>
+                                            <div class="post_text">
+                                                Hier würde man jz die description reinschreiben. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget justo id arcu interdum facilisis id a purus. Nulla facilisi. Integer auctor, ligula a viverra scelerisque, felis lorem lacinia nunc, a malesuada nisi sapien sit amet ligula. Curabitur fermentum turpis in sapien vulputate, vel laoreet. Lacus tincidunt. Donec gravida orci at elit consequat, vel vestibulum lorem dapibus. Praesent faucibus est vitae est egestas, sit amet laoreet mi tincidunt. ...
+                                            </div>
+
+                                            <div class="hashtags txt-color-blue"><span class="hashtag">#cool</span><span class="hashtag">#khalidpost</span><span class="hashtag">#khalid</span></div>
+
+                                        </div>
+                                    </div>
+                                    <!--- End Content type : Post  --->
+                                </div>
+
+                                <div class="content_box_right">
+                                    <div class="conten_status">
+                                        <span class="label xl_font_size txt-color-gray">Status</span>    
+                                        <span class="review xl_font_size yellow-text">Waiting for review</span>
+                                    </div>
+
+                                    <div class="reported_by">
+                                        <div class="head">
+                                            <span class="label xl_font_size">Reported by</span>    
+                                            <span class="flag xl_font_size red-text"><i class="peer-icon peer-icon-copy-alt"></i> 5 </span>
+                                        </div>
+                                        <div class="reported_by_profiles">
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 
+                                    <!--- Action Boxes --->
+                                    <div class="action_buttons">
+                                        <a class="button btn-blue bold" href="#">Restore</a>
+                                        <a class="button btn-transparent" href="#">Hide</a>
+                                        <a class="button btn-red-transparent" href="#">Mark as illegal</a>
+                                    </div>
+                                    <!--- End Action Boxes --->
+
+                                    <!--- Moderated Boxes --->
+                                    <div class="moderated_by_box none">
+                                        <div class="moderated_info">
+                                            <span class="label xl_font_size txt-color-gray">Moderated by</span>
+                                            <span class="profile">
+                                                <span class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </span>
+                                                <span class="profile_detail">
+                                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                    <span class="user_slug txt-color-gray">#123456</span>
+                                                </span>
+
+                                            </span>
+                                            <span class="datetime xl_font_size txt-color-gray">24 Jun 2025, 09:15</span>
+                                        </div>
+
+                                        <div class="moderated_action xl_font_size green-text">Restored</div>
+
+                                    </div>
+
+                                    <!--- End Moderated Boxes --->
+
+                                </div>
                             </div>
+
                         </div>
 
                         <!-- reported user div -->
                         <div class="content_item user">
-                            <div class="content">
-                                <span class="content_image">
-                                    <img src="../img/profile_thumb.png" />
-                                </span>
-                                <span class="content_detail">
-                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
-                                    <span class="user_slug txt-color-gray">#123456</span>
+                            <div class="content_item_inner">
+                                <div class="content">
+                                    <span class="content_image">
+                                        <img src="../img/profile_thumb.png" />
+                                    </span>
+                                    <span class="content_detail">
+                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                        <span class="user_slug txt-color-gray">#123456</span>
 
-                                </span>
+                                    </span>
+                                </div>
+                                <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                                <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                                <div class="reports">
+                                    <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                    <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                                </div>
+                                <div class="status">
+                                    <span class="restored xl_font_size green-text">Restored</span>
+                                </div>
                             </div>
-                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                            <div class="reports">
-                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+
+                            <div class="content_box">
+                                <div class="content_box_left">
+                                     <!--- Content type : Profile --->
+                                        <div class="content_type_profile">
+                                            <div class="profile">
+                                                <div class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </div>
+                                                <div class="profile_detail">
+                                                    <div class="user_info">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </div>
+                                                    <div class="user_profile_txt txt-color-gray">Curating my little corner of the internet | 📷 Film lover | ☕️ Flat white enthusiast  🌿 Finding beauty in the small things</div>
+
+                                                    <div class="profile_stats txt-color-gray">
+                                                        <span class="post_count">
+                                                            <em id="userPosts" class="xl_font_size bold">102</em> Publications
+                                                        </span> 
+                                                        <span id="followers_count" class="followers_count">
+                                                            <em id="followers" class="xl_font_size bold">12</em> Followers
+                                                        </span> 
+                                                        <span id="following_count" class="following_count">
+                                                            <em id="following" class="xl_font_size bold">10</em> Following
+                                                        </span> 
+                                                        <span id="peer_count" class="peer_count">
+                                                            <em id="peers" class="xl_font_size bold">5</em> Peers
+                                                        </span> 
+                                                    </div>
+                                                
+                                                </div>
+                                            </div>
+                                            <div class="profile_link">
+                                                <a class="button btn-transparent" href="#">View profile <i class="peer-icon peer-icon-arrow-right"></i></a>
+                                            </div>
+
+                                        </div>
+                                    <!--- End Content type : Profile  --->
+                                </div>
+
+                                <div class="content_box_right">
+                                    <div class="conten_status">
+                                        <span class="label xl_font_size txt-color-gray">Status</span>    
+                                        <span class="review xl_font_size yellow-text">Waiting for review</span>
+                                    </div>
+
+                                    <div class="reported_by">
+                                        <div class="head">
+                                            <span class="label xl_font_size">Reported by</span>    
+                                            <span class="flag xl_font_size red-text"><i class="peer-icon peer-icon-copy-alt"></i> 5 </span>
+                                        </div>
+                                        <div class="reported_by_profiles">
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                
+                                    <!--- Action Boxes --->
+                                    <div class="action_buttons">
+                                        <a class="button btn-blue bold" href="#">Restore</a>
+                                        <a class="button btn-transparent" href="#">Hide</a>
+                                        <a class="button btn-red-transparent" href="#">Mark as illegal</a>
+                                    </div>
+                                    <!--- End Action Boxes --->
+
+                                    <!--- Moderated Boxes --->
+                                    <div class="moderated_by_box none">
+                                        <div class="moderated_info">
+                                            <span class="label xl_font_size txt-color-gray">Moderated by</span>
+                                            <span class="profile">
+                                                <span class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </span>
+                                                <span class="profile_detail">
+                                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                    <span class="user_slug txt-color-gray">#123456</span>
+                                                </span>
+
+                                            </span>
+                                            <span class="datetime xl_font_size txt-color-gray">24 Jun 2025, 09:15</span>
+                                        </div>
+
+                                        <div class="moderated_action xl_font_size green-text">Restored</div>
+
+                                    </div>
+
+                                    <!--- End Moderated Boxes --->
+
+                                </div>
                             </div>
-                            <div class="status">
-                                <span class="restored xl_font_size green-text">Restored</span>
-                            </div>
+
                         </div>
 
                         <!-- reported comment div -->
                         <div class="content_item comment">
-                            <div class="content">
-                                <span class="content_image">
-                                <i class="peer-icon peer-icon-comment-fill"></i>
-                                </span>
-                                <span class="content_detail">
-                                    <span class="user_name  bold italic">@scammer_idiot</span>
-                                    <span class="post_title xl_font_size bold">Rejected at the gates...</span>
-                                    <span class="user_slug txt-color-gray">2f1f96ec-f60e-4f05-b3fd-d3444c7cd74d</span>
+                            <div class="content_item_inner">
+                                <div class="content">
+                                    <span class="content_image">
+                                    <i class="peer-icon peer-icon-comment-fill"></i>
+                                    </span>
+                                    <span class="content_detail">
+                                        <span class="user_name  bold italic">@scammer_idiot</span>
+                                        <span class="post_title xl_font_size bold">Rejected at the gates...</span>
+                                        <span class="user_slug txt-color-gray">2f1f96ec-f60e-4f05-b3fd-d3444c7cd74d</span>
 
-                                </span>
+                                    </span>
+                                </div>
+                                <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
+                                <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
+                                <div class="reports">
+                                    <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
+                                    <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+                                </div>
+                                <div class="status">
+                                    <span class="review xl_font_size yellow-text">Waiting for review</span>
+                                </div>
                             </div>
-                            <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
-                            <div class="moderation_date xl_font_size txt-color-gray">20 Jun 15:03</div>
-                            <div class="reports">
-                                <span class=" xl_font_size txt-color-gray"><i class="peer-icon peer-icon-copy-alt"></i> 1 </span>
-                                <span class="visible txt-color-gray"><i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed</span>
+
+                             <div class="content_box">
+                                <div class="content_box_left">
+                                    <!--- Content type : Comment --->
+                                        <div class="content_type_comment">
+                                            <div class="comment_box">
+                                                <h2 class="xxl_font_size bold"><i class="peer-icon peer-icon-comment-fill xl_font_size"></i> Reported comment</h2>
+
+                                                <div class="comment_item">
+                                                    <div class="commenter-pic">
+                                                        <img class="profile-picture" src="../img/profile_thumb.png" alt="user image">
+                                                    </div>
+                                                    <div class="comment_body">
+                                                        <div class="commenter_info xl_font_size">
+                                                            <span class="cmt_userName bold italic">Bryan Johnson</span>
+                                                            <span class="cmt_profile_id txt-color-gray">#93268</span>
+                                                            <span class="timeagao txt-color-gray">3m</span>
+                                                        </div>
+                                                        <div class="comment_text xl_font_size">Optimizing our biological systems isn't just a goal - it's a responsibility to unlock the best version of ourselves.</div>
+                                                    
+                                                    </div>
+                                                    <div class="comment_like xl_font_size">
+                                                        <i class="peer-icon peer-icon-like"></i>
+                                                        <span>0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="comment_post_detail">
+                                                <div class="profile_post">
+                                                    <div class="profile">
+                                                        <span class="profile_image">
+                                                            <img src="../img/profile_thumb.png" /> 
+                                                        </span>
+                                                        <span class="profile_detail">
+                                                            <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                            <span class="user_slug txt-color-gray">#123456</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="fullpost_link">
+                                                        <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="post_detail">
+                                                    <div class="post_media">
+                                                    
+                                                    </div>
+                                                    <div class="post_info">
+                                                        <div class="post_title">
+                                                            <h2 class="xl_font_size bold">Rejected at the gates of techno heaven:  Berghain > Mars? </h2>
+                                                            <span class="timeagao txt-color-gray">2h</span>
+
+                                                        </div>
+                                                        <div class="post_text">
+                                                            Hier würde man jz die description reinschreiben. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget justo id arcu interdum facilisis id a purus. Nulla facilisi. Integer auctor, ligula a viverra scelerisque, felis lorem lacinia nunc, a malesuada nisi sapien sit amet ligula. Curabitur fermentum turpis in sapien vulputate, vel laoreet. Lacus tincidunt. Donec gravida orci at elit consequat, vel vestibulum lorem dapibus. Praesent faucibus est vitae est egestas, sit amet laoreet mi tincidunt. ...
+                                                        </div>
+
+                                                        <div class="hashtags txt-color-blue">
+                                                            <span class="hashtag">#cool</span>
+                                                            <span class="hashtag">#khalidpost</span>
+                                                            <span class="hashtag">#khalid</span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <!--- End Content type : Comment  --->
+
+
+
+
+                                </div>
+
+                                <div class="content_box_right">
+                                    <div class="conten_status">
+                                        <span class="label xl_font_size txt-color-gray">Status</span>    
+                                        <span class="review xl_font_size yellow-text">Waiting for review</span>
+                                    </div>
+
+                                    <div class="reported_by">
+                                        <div class="head">
+                                            <span class="label xl_font_size">Reported by</span>    
+                                            <span class="flag xl_font_size red-text"><i class="peer-icon peer-icon-copy-alt"></i> 5 </span>
+                                        </div>
+                                        <div class="reported_by_profiles">
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+
+
+                                            <div class="profile_item">
+                                                <div class="profile">
+                                                    <span class="profile_image">
+                                                        <img src="../img/profile_thumb.png" /> 
+                                                    </span>
+                                                    <span class="profile_detail">
+                                                        <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                        <span class="user_slug txt-color-gray">#123456</span>
+                                                    </span>
+                                                </div>
+                                                <div class="report_time xl_font_size txt-color-gray">
+                                                    20 Jun 2025, 15:03
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                
+                                    <!--- Action Boxes --->
+                                    <div class="action_buttons">
+                                        <a class="button btn-blue bold" href="#">Restore</a>
+                                        <a class="button btn-transparent" href="#">Hide</a>
+                                        <a class="button btn-red-transparent" href="#">Mark as illegal</a>
+                                    </div>
+                                    <!--- End Action Boxes --->
+
+                                    <!--- Moderated Boxes --->
+                                    <div class="moderated_by_box none">
+                                        <div class="moderated_info">
+                                            <span class="label xl_font_size txt-color-gray">Moderated by</span>
+                                            <span class="profile">
+                                                <span class="profile_image">
+                                                    <img src="../img/profile_thumb.png" /> 
+                                                </span>
+                                                <span class="profile_detail">
+                                                    <span class="user_name xl_font_size bold italic">valaria_konso</span>
+                                                    <span class="user_slug txt-color-gray">#123456</span>
+                                                </span>
+
+                                            </span>
+                                            <span class="datetime xl_font_size txt-color-gray">24 Jun 2025, 09:15</span>
+                                        </div>
+
+                                        <div class="moderated_action xl_font_size green-text">Restored</div>
+
+                                    </div>
+
+                                    <!--- End Moderated Boxes --->
+
+                                </div>
                             </div>
-                            <div class="status">
-                                <span class="review xl_font_size yellow-text">Waiting for review</span>
-                            </div>
+
                         </div>
                     </div>
                 </div>

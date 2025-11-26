@@ -1,6 +1,27 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.schema = {
+
+  STATS: `
+    query ModerationStats {
+      moderationStats {
+          status
+          ResponseCode
+          affectedRows {
+              AmountAwaitingReview
+              AmountHidden
+              AmountRestored
+              AmountIllegal
+          }
+          meta {
+              status
+              RequestId
+              ResponseCode
+              ResponseMessage
+          }
+      }
+  }`,
+
   LIST_ITEMS: `
     query ModerationItems {
     moderationItems(offset: 0, limit: 20) {

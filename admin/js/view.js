@@ -1,42 +1,6 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.view = {
-  // initSearch() {
-  //   const input = moderationModule.helpers.getElement("#search-input");
-  //   if (!input) return;
-
-  //   input.addEventListener("input", (e) => {
-  //     moderationModule.store.filterText = e.target.value;
-  //     moderationModule.fetcher.filterItems(e.target.value);
-  //   });
-  // },
-
-  // initFilters() {
-  //   const list = document.querySelectorAll(".item_filters li");
-  //   list.forEach(li => {
-  //     li.addEventListener("click", async (e) => {
-  //       e.preventDefault();
-
-  //       document.querySelectorAll(".item_filters li a")
-  //         .forEach(a => a.classList.remove("active"));
-
-  //       li.querySelector("a").classList.add("active");
-
-  //       let queryType = "LIST_ITEMS";
-
-  //       if (li.classList.contains("post")) queryType = "LIST_POST";
-  //       else if (li.classList.contains("comments")) queryType = "LIST_COMMENT";
-  //       else if (li.classList.contains("accounts")) queryType = "LIST_USER";
-
-  //       await moderationModule.fetcher.loadItems(queryType);
-
-  //       moderationModule.store.filterText = "";
-  //       const search = document.querySelector("#search-input");
-  //       if (search) search.value = "";
-  //     });
-  //   });
-  // },
-
   initFilters() {
     const list = document.querySelectorAll(".item_filters li");
 
@@ -45,9 +9,7 @@ moderationModule.view = {
         e.preventDefault();
 
         // remove active
-        document
-          .querySelectorAll(".item_filters li a")
-          .forEach((a) => a.classList.remove("active"));
+        document .querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
 
         li.querySelector("a").classList.add("active");
 
@@ -58,28 +20,37 @@ moderationModule.view = {
         if (li.classList.contains("post")) {
           type = "LIST_POST";
           contentType = "post";
+
         } else if (li.classList.contains("comments")) {
           type = "LIST_COMMENT";
           contentType = "comment";
+        
         } else if (li.classList.contains("accounts")) {
           type = "LIST_USER";
           contentType = "user";
         }
 
         // Load items
-        await moderationModule.fetcher.loadItems(type, {
-          offset: 0,
-          limit: 20,
-          contentType,
-        });
-
-        // Reset search
-        moderationModule.store.filterText = "";
-        const search = document.querySelector("#search-input");
-        if (search) search.value = "";
+        await moderationModule.fetcher.loadItems(type, { offset: 0, limit: 20, contentType });
       });
     });
   },
+
+  renderStats(stats) {
+  if (!stats) return;
+
+  const selectors = {
+    awaiting: ".stat_box.review .stat_count",
+    hidden: ".stat_box.hidden-st .stat_count",
+    restored: ".stat_box.restored .stat_count",
+    illegal: ".stat_box.illegal .stat_count",
+  };
+
+  Object.entries(selectors).forEach(([key, selector]) => {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = stats[key];
+  });
+},
 
   renderItems(items) {
     const container = moderationModule.helpers.getElement(".content_load");
@@ -107,9 +78,7 @@ moderationModule.view = {
 
       /* -------------------- MEDIA / ICON -------------------- */
       if (item.media) {
-        const imgEl = moderationModule.helpers.createEl("img", {
-          src: item.media,
-        });
+        const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
 
         /* USER IMAGE FALLBACK */
         if (item.kind === "user") {
@@ -121,14 +90,10 @@ moderationModule.view = {
         imgWrapper.append(imgEl);
 
         if (item.kind === "post") {
-          imgWrapper.append(
-            moderationModule.helpers.createEl("i", { className: item.icon })
-          );
+          imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
         }
       } else {
-        imgWrapper.append(
-          moderationModule.helpers.createEl("i", { className: item.icon })
-        );
+        imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
       }
 
       /* -------------------- DETAILS -------------------- */
@@ -136,10 +101,7 @@ moderationModule.view = {
         className: "content_detail",
       });
 
-      const userNameClass =
-        item.kind === "user"
-          ? "user_name xl_font_size bold italic"
-          : "user_name bold italic";
+      const userNameClass = item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
 
       detailEl.append(
         moderationModule.helpers.createEl("span", {
@@ -199,12 +161,10 @@ moderationModule.view = {
       reportsEl.append(reportCount, visibility);
 
       /* -------------------- STATUS -------------------- */
-      const statusEl = moderationModule.helpers.createEl("div", {
-        className: "status",
-      });
+      const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
       let statusClass = "";
 
-      if (item.status == "Hidden" || item.status == "illegal")
+      if (item.status == "hidden" || item.status == "illegal")
         statusClass = "hidden-tx xl_font_size red-text";
       else if (item.status == "Restored")
         statusClass = "restored xl_font_size green-text";
@@ -220,6 +180,56 @@ moderationModule.view = {
 
       itemEl.append(contentEl, modId, modDate, reportsEl, statusEl);
       container.appendChild(itemEl);
+
+
+      itemEl.addEventListener("click", () => {
+        window.location.href = `content.php?id=${item.moderationId}`;
+      });
     });
   },
+
+
+
+
+
+
+
+  renderContentDetails(item) {
+    const container = document.querySelector(".content_box_left"); 
+    if (!container) return;
+
+    container.innerHTML = ""; // clear old content
+
+    // Username
+    const usernameEl = window.moderationModule.helpers.createEl("h2", {
+      textContent: item.username,
+      className: "xl_font_size bold italic",
+    });
+
+    // Title / Comment
+    const titleEl = window.moderationModule.helpers.createEl("p", {
+      textContent: item.title || "No title/content",
+      className: "xl_font_size",
+    });
+
+    // Status
+    const statusEl = window.moderationModule.helpers.createEl("p", {
+      textContent: `Status: ${item.status}`,
+      className: "txt-color-gray",
+    });
+
+    // Media if exists
+    let mediaEl = null;
+    if (item.media) {
+      mediaEl = window.moderationModule.helpers.createEl("img", {
+        src: item.media,
+        alt: item.title || "",
+        className: "content_media",
+      });
+    }
+
+    container.append(usernameEl, titleEl, statusEl);
+    if (mediaEl) container.appendChild(mediaEl);
+  }
+
 };

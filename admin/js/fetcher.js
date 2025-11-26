@@ -77,6 +77,31 @@ moderationModule.fetcher = {
     });
   },
 
+
+    /* ---------------------- LOAD ITEMS ---------------------- */
+    async loadStats() {
+      try {
+        const query = moderationModule.schema.STATS;
+        if (!query) throw new Error("Invalid STATS query");
+
+        const response = await moderationModule.service.fetchGraphQL(query);
+
+        const stats = response?.moderationStats?.affectedRows || {};
+
+        const parsed = {
+          awaiting: stats.AmountAwaitingReview || 0,
+          hidden: stats.AmountHidden || 0,
+          restored: stats.AmountRestored || 0,
+          illegal: stats.AmountIllegal || 0,
+        };
+
+        moderationModule.view.renderStats(parsed);
+
+      } catch (err) {
+        console.error("Error loading stats:", err);
+      }
+    }, 
+
   /* ---------------------- LOAD ITEMS ---------------------- */
   async loadItems(type = "LIST_ITEMS", { offset = 0, limit = 20, contentType = null } = {}) {
     try {
@@ -95,12 +120,32 @@ moderationModule.fetcher = {
 
       moderationModule.store.items = normalized;
       moderationModule.store.filteredItems = normalized;
-
+  console.log(moderationModule.store.items)
       moderationModule.view.renderItems(normalized);
     } catch (err) {
       console.error("Error loading items:", err);
     }
   },
+
+
+  initContentPage() {
+    const params = new URLSearchParams(window.location.search);
+    const moderationId = params.get("id");
+
+    if (!moderationId) return console.error("No moderation ID in URL");
+
+    console.log(moderationModule.store)
+    const item = moderationModule.store.items.find(
+      (i) => i.moderationId == moderationId
+    );
+
+    if (!item) {
+      console.error("Item not found in store. You may need to fetch it from backend.");
+      return;
+    }
+
+    moderationModule.view.renderContentDetails(item);
+  }
 
   /* ---------------------- FILTER ---------------------- */
   // filterItems(searchText) {
