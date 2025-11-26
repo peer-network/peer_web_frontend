@@ -1061,7 +1061,7 @@ footer {
 	text-shadow: none;
 }
 
-.content_list {
+.content_list, .content_load {
 	display: flex;
 	width: 100%;
 	flex-direction: column;

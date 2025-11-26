@@ -1,5 +1,7 @@
 <?php 
-ini_set("session.cookie_httponly", 1);
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set("session.cookie_httponly", 1);
+}
 
 $me = substr($_SERVER["REQUEST_URI"],1);
 if(strpos($me, '/')!==false) $me = substr($me,strrpos($me, '/')+1);
