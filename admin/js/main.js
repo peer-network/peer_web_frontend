@@ -1,7 +1,7 @@
 window.addEventListener("DOMContentLoaded", async () => {
   const { store, service, view, fetcher, helpers } = window.moderationModule;
   try {
-      // detect page
+    // detect page
     // const page = window.location.pathname.split("/").pop(); // 'index.php' or 'content.php'
     // if (page === "content.php") {
     //   fetcher.initContentPage();
@@ -10,7 +10,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       //load stats
       fetcher.loadStats();
       // Load default ALL items on start
-      // fetcher.loadItems("LIST_ITEMS", { offset: 0, limit: 20, contentType: null});
+      fetcher.loadItems("LIST_ITEMS", { offset: 0, limit: 20, contentType: null});
     // }
   } catch (err) {
     console.error("Initialization error:", err);

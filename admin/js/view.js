@@ -295,7 +295,7 @@ moderationModule.view = {
         boxLeft.append(commentType);
       }
 
-      /* RIGHT SIDE: Status, Reported by Actions */
+      /* RIGHT SIDE: status, reported by actions */
       const contenStatus = moderationModule.helpers.createEl("div", { className: "conten_status" });
       const rightStatusClass =
         statusVal === "hidden" || statusVal === "illegal" ? "hidden-tx xl_font_size red-text" :

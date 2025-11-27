@@ -81,13 +81,13 @@ moderationModule.fetcher = {
 normalizeItems(items) {
   return items.map((x) => {
     let item = {
-      kind: x.targettype, // post / comment / user
+      kind: x.targettype, // post, comment, user
       moderationId: x.moderationTicketId,
       date: x.createdat,
       reports: x.reportscount,
-      // normalize status: replace underscores, force lowercase for comparison
+      // normalize status
       status: (x.status || "").replace(/_/g, " ").toLowerCase(),
-      // visible: map from backend if available, default false
+      // visible: map : default false
       visible: x.visible !== undefined ? x.visible : false,
     };
 
@@ -100,7 +100,7 @@ normalizeItems(items) {
       item.slug = "#" + (user.slug || "0000");
       item.title = post.title || "";
       item.description = post.description || ""; // for content_box details
-      item.hashtags = post.hashtags || [];       // array of hashtags
+      item.hashtags = post.hashtags || [];   
       item.contentType = post.contenttype;
 
       switch (post.contenttype) {
