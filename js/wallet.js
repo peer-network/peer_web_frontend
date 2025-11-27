@@ -458,6 +458,10 @@ document.getElementById("openTransferDropdown").addEventListener("click", async 
   renderUsers()
 });
 
+document.getElementById("wallet_refresh").addEventListener("click", () => {
+  location.reload();
+});
+
 async function renderUsers() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.innerHTML = "";
@@ -1186,5 +1190,5 @@ function closeModal() {
   document.querySelectorAll(".modal-container").forEach(modal => {
     modal.classList.remove("modal-show");
     modal.classList.remove("modal-hide");
-});
+  });
 }

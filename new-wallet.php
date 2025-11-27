@@ -77,9 +77,10 @@ checkAuth("unauthorized");
                 </div>
             </div>
             <ul class="menu">
-                <li class="menu-item" > <a href="#" class="openTransferDropdown" id="openTransferDropdown"><span class="md_font_size">Transfer</span><span class="md_font_size faint">To user</span><i class="peer-icon peer-icon-arrow-right"></i>  </a> </li>
-                <li class="menu-item none"> <a href="#" > <img class="icon" src="svg/buy.svg" alt="Buy" /> Buy </a> </li>
-                <li class="menu-item none" > <a href="#" > <img class="icon" src="svg/sell.svg" alt="Sell" /> Sell </a> </li>
+                <li class="menu-item wallet_transfers"> <a href="#" class="openTransferDropdown" id="openTransferDropdown"><span class="md_font_size">Transfer</span><span class="md_font_size faint">To user</span><i class="peer-icon peer-icon-arrow-right"></i>  </a> </li>
+                <li class="menu-item wallet_cashin none"> <a href="#" > <img class="icon" src="svg/buy.svg" alt="Buy" /> Buy </a> </li>
+                <li class="menu-item wallet_cashout none" > <a href="#" > <img class="icon" src="svg/sell.svg" alt="Sell" /> Sell </a> </li>
+                <li class="menu-item wallet_refresh"><a href="#" id="wallet_refresh" class="button btn-transparent">Reload <i class="peer-icon peer-icon-refresh"></i></a></li>
             </ul>
           </div>
         </div>
