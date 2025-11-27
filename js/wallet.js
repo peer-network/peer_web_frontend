@@ -208,41 +208,90 @@ const actionLabel = (entry) => {
 function renderRows(rows) {
   rows.forEach((entry) => {
     // Duplikate vermeiden (z. B. bei schnellem mehrfachen Triggern)
-    if (entry.transactionid && seenTxIds.has(entry.transactionid)) return;
-    if (entry.transactionid) seenTxIds.add(entry.transactionid);
+    if (entry.operationid && seenTxIds.has(entry.operationid)) return;
+    if (entry.operationid) seenTxIds.add(entry.operationid);
 
     const historyItem = document.createElement("div");
-    historyItem.className = "history-item";
+    historyItem.classList.add("tarnsaction_item");
 
-    const typeDiv = document.createElement("div");
-    typeDiv.className = "type";
-    typeDiv.textContent = actionLabel(entry);
-
-    const dateDiv = document.createElement("div");
-    dateDiv.className = "date";
-    dateDiv.textContent = adjustForDSTAndFormat(entry.createdat);
-
-    const centerDiv = document.createElement("div");
-    centerDiv.className = "center";
-
-    const amountSpan = document.createElement("span");
-    amountSpan.className = "amount";
     const amount =
-      typeof entry.tokenamount === "number"
-        ? entry.tokenamount
-        : Number(String(entry.tokenamount).replace(",", "."));
-    amountSpan.textContent = String(amount).replace(/,/g, ".");
+      typeof entry.netTokenAmount === "number"
+        ? entry.netTokenAmount
+        : Number(String(entry.netTokenAmount).replace(",", "."));
+      let transaction_title,transferto,icon_html;
+      transferto='';
+      icon_html='';
+        if(entry.transactiontype=='transferForDislike'){
+          transaction_title ='Dislike';
+          icon_html='<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
+        }else if(entry.transactiontype=='transferForLike'){
 
-    const logoImg = document.createElement("img");
-    logoImg.src = "svg/logo_sw.svg";
-    logoImg.alt = "";
+          transaction_title ='Extra Like';
+          icon_html='<i class="peer-icon peer-icon-like-fill red-text"></i>';
+        }else if(entry.transactiontype=='transferForComment'){
 
-    centerDiv.appendChild(amountSpan);
-    centerDiv.appendChild(logoImg);
+          transaction_title ='Extra comment';
+          icon_html='<i class="peer-icon peer-icon-comment-fill"></i>';
+          
+        }else if(entry.transactiontype=='transferForPost'){
 
-    historyItem.appendChild(typeDiv);
-    historyItem.appendChild(dateDiv);
-    historyItem.appendChild(centerDiv);
+          transaction_title ='Extra post';
+          icon_html='<i class="peer-icon peer-icon-camera-fill"></i>';
+        }else if(entry.transactiontype=='transferForAds'){
+
+          transaction_title ='Pinned post promo ';
+          icon_html='<i class="peer-icon peer-icon-pinpost"></i>';
+        }
+        else if(entry.transactiontype=='transferSenderToRecipient'){
+
+          transaction_title ='Transfer to';
+          transferto=`<span class="user_name bold italic">@${entry.recipient.username}</span> <span class="user_slug txt-color-gray">#${entry.recipient.slug}</span>`;
+          icon_html = `<img class="userimg" src="${entry.recipient.img
+                          ? tempMedia(entry.recipient.img.replace("media/", ""))
+                          : "svg/noname.svg"
+                        }" onerror="this.src='svg/noname.svg'">`;
+
+        }
+
+        
+        else{
+          transaction_title =entry.transactiontype;
+          transferto='';
+        }
+
+    const record =`<div class="transaction_record">
+                <div class="transaction_info">
+                  <div class="transaction_media">
+                    ${icon_html}
+                  </div>
+                  <div class="transaction_content">
+                    <div class="tinfo md_font_size"><span class="title bold">${transaction_title}</span> ${transferto}</div>
+                  </div>
+
+                </div>
+                <div class="transaction_date md_font_size txt-color-gray">${adjustForDSTAndFormat(entry.createdat)}</div>
+                <div class="transaction_price xl_font_size bold">${amount}</div>
+              </div>
+              
+              <div class="transaction_detail">
+                <div class="transaction_detail_inner">
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">0.000000009</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">0.96</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">38</span></div>
+                  <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${entry.fees.peer}</span></div>
+                  <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${entry.fees.burn}</span></div>
+                  <div class="price_detail_row"><span class="price_label txt-color-gray">1% to your Inviter</span> <span class="price txt-color-gray">${entry.fees.inviter ?? 0}</span></div>
+                </div>
+              </div>
+              `;
+    
+ historyItem.insertAdjacentHTML("beforeend", record);
+
+ historyItem.addEventListener("click", () => {
+      historyItem.classList.toggle('open');
+       
+    });
+ 
 
     historyContainer?.insertBefore(historyItem, historySentinel);
   });
@@ -261,20 +310,47 @@ async function loadMoreTransactionHistory() {
     });
 
     const graphql = JSON.stringify({
-      query: `query GetTransactionHistory {
-        getTransactionHistory(limit: ${LIMIT}, offset: ${txOffset}, sort: NEWEST) {
-          status
-          ResponseCode
-          affectedRows {
-            transactionid
-            operationid
-            transactiontype
-            senderid
-            recipientid
-            tokenamount
-            transferaction
-            message
-            createdat
+      query: `query TransactionHistory {
+        transactionHistory {
+            affectedRows {
+              operationid
+              transactiontype
+              tokenamount
+              netTokenAmount
+              message
+              createdat
+              sender {
+                  userid
+                  img
+                  username
+                  slug
+                  biography
+                  visibilityStatus
+                  hasActiveReports
+                  updatedat
+              }
+              recipient {
+                  userid
+                  img
+                  username
+                  slug
+                  biography
+                  visibilityStatus
+                  hasActiveReports
+                  updatedat
+              }
+              fees {
+                  total
+                  burn
+                  peer
+                  inviter
+              }
+          }
+          meta {
+              status
+              RequestId
+              ResponseCode
+              ResponseMessage
           }
         }
       }`,
@@ -293,7 +369,7 @@ async function loadMoreTransactionHistory() {
     const result = await response.json();
     if (result.errors) throw new Error(result.errors[0].message);
 
-    const rows = result?.data?.getTransactionHistory?.affectedRows ?? [];
+    const rows = result?.data?.transactionHistory?.affectedRows ?? [];
 
     // Server liefert bereits NEWEST. Wenn du magst, kannst du hier noch fallback-sortieren.
     renderRows(rows);
@@ -453,6 +529,8 @@ function resetTransactionHistoryList() {
 //     throw error;
 //   }
 // }
+
+/*-------------- Transnsfer Token Process------------------*/ 
 
 document.getElementById("openTransferDropdown").addEventListener("click", async () => {
   renderUsers()
@@ -1171,3 +1249,4 @@ function closeModal() {
     modal.classList.remove("modal-hide");
 });
 }
+/*-------------- End Transnsfer Token Process------------------*/ 

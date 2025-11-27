@@ -145,7 +145,6 @@
 	background: var(--dark-inactive, #323232);
 	backdrop-filter: blur(5px);
 	align-self: stretch;
-  gap: 40px;
  
 }
 .tarnsaction_item .transaction_record {
@@ -234,9 +233,25 @@
 	display: flex;
 	align-self: stretch;
 	flex-direction: column;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease;
+	
+}
+.tarnsaction_item.open .transaction_detail {
+	opacity: 1;
+  max-height: 1000px;
+	
+}
+.tarnsaction_item .transaction_detail .transaction_detail_inner{
+  display: flex;
+	align-self: stretch;
+	flex-direction: column;
 	border-top: 2px solid var(--white-secondary);
 	padding-top: 40px;
   gap: 12px;
+  margin-top: 40px;
+
 }
 .tarnsaction_item .transaction_detail .price_detail_row {
 	display: flex;
