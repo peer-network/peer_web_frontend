@@ -50,7 +50,7 @@ moderationModule.view = {
     const el = document.querySelector(selector);
     if (el) el.textContent = stats[key];
   });
-},
+  },
 
   renderItems(items) {
     const container = moderationModule.helpers.getElement(".content_load");
@@ -68,27 +68,22 @@ moderationModule.view = {
         className: `content_item ${item.kind}`,
       });
 
-      /* -------------------- CONTENT -------------------- */
-      const contentEl = moderationModule.helpers.createEl("div", {
-        className: "content",
-      });
-      const imgWrapper = moderationModule.helpers.createEl("span", {
-        className: "content_image",
+      const itemInner = moderationModule.helpers.createEl("div", {
+        className: "content_item_inner",
       });
 
-      /* -------------------- MEDIA / ICON -------------------- */
+      /* -------------------- SUMMARY -------------------- */
+      const contentEl = moderationModule.helpers.createEl("div", { className: "content" });
+      const imgWrapper = moderationModule.helpers.createEl("span", { className: "content_image" });
+
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-
-        /* USER IMAGE FALLBACK */
         if (item.kind === "user") {
           imgEl.onerror = function () {
             this.src = "../svg/noname.svg";
           };
         }
-
         imgWrapper.append(imgEl);
-
         if (item.kind === "post") {
           imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
         }
@@ -96,12 +91,9 @@ moderationModule.view = {
         imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
       }
 
-      /* -------------------- DETAILS -------------------- */
-      const detailEl = moderationModule.helpers.createEl("span", {
-        className: "content_detail",
-      });
-
-      const userNameClass = item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
+      const detailEl = moderationModule.helpers.createEl("span", { className: "content_detail" });
+      const userNameClass =
+        item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
 
       detailEl.append(
         moderationModule.helpers.createEl("span", {
@@ -130,7 +122,6 @@ moderationModule.view = {
 
       contentEl.append(imgWrapper, detailEl);
 
-      /* -------------------- MOD INFO -------------------- */
       const modId = moderationModule.helpers.createEl("div", {
         className: "moderation_id xl_font_size txt-color-gray",
         textContent: item.moderationId,
@@ -141,36 +132,29 @@ moderationModule.view = {
         textContent: item.date,
       });
 
-      const reportsEl = moderationModule.helpers.createEl("div", {
-        className: "reports",
-      });
-
+      const reportsEl = moderationModule.helpers.createEl("div", { className: "reports" });
       const reportCount = moderationModule.helpers.createEl("span", {
         className: "xl_font_size txt-color-gray",
         innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
       });
-
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML:
-          item.visible === "illegal"
-            ? `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
-            : "",
+        innerHTML: item.visible === false
+          ? `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
+          : "",
       });
-
       reportsEl.append(reportCount, visibility);
 
-      /* -------------------- STATUS -------------------- */
       const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
       let statusClass = "";
-
-      if (item.status == "hidden" || item.status == "illegal")
+      const statusVal = (item.status || "").toLowerCase();
+      if (statusVal === "hidden" || statusVal === "illegal") {
         statusClass = "hidden-tx xl_font_size red-text";
-      else if (item.status == "Restored")
+      } else if (statusVal === "restored") {
         statusClass = "restored xl_font_size green-text";
-      else if (item.status == "waiting for review")
+      } else if (statusVal === "waiting for review") {
         statusClass = "review xl_font_size yellow-text";
-
+      }
       statusEl.append(
         moderationModule.helpers.createEl("span", {
           className: statusClass,
@@ -178,58 +162,226 @@ moderationModule.view = {
         })
       );
 
-      itemEl.append(contentEl, modId, modDate, reportsEl, statusEl);
+      itemInner.append(contentEl, modId, modDate, reportsEl, statusEl);
+      itemEl.append(itemInner);
+
+      /* -------------------- DETAILS BOX -------------------- */
+      const contentBox = moderationModule.helpers.createEl("div", {
+        className: "content_box none",
+      });
+      const boxLeft = moderationModule.helpers.createEl("div", { className: "content_box_left" });
+      const boxRight = moderationModule.helpers.createEl("div", { className: "content_box_right" });
+
+      /* POST DETAILS */
+      if (item.kind === "post") {
+        const postBlock = document.createElement("div");
+        postBlock.className = "content_type_post";
+        postBlock.innerHTML = `
+          <div class="profile_post">
+            <div class="profile">
+              <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+              <span class="profile_detail">
+                <span class="user_name xl_font_size bold italic">${item.username}</span>
+                <span class="user_slug txt-color-gray">${item.slug}</span>
+              </span>
+            </div>
+            <div class="fullpost_link">
+              <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+            </div>
+          </div>
+          <div class="post_detail">
+            <div class="post_title">
+              <h2 class="xxl_font_size bold">${item.title}</h2>
+              <span class="timeagao txt-color-gray">2h</span>
+            </div>
+            <div class="post_text">${item.description || ""}</div>
+            <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
+          </div>
+        `;
+        boxLeft.append(postBlock);
+      }
+
+      /* USER DETAILS */
+      if (item.kind === "user") {
+        const userBlock = document.createElement("div");
+        userBlock.className = "content_type_profile";
+        userBlock.innerHTML = `
+          <div class="profile">
+            <div class="profile_image"><img src="${item.media || "../img/profile_thumb.png"}" /></div>
+            <div class="profile_detail">
+              <div class="user_info">
+                <span class="user_name xl_font_size bold italic">${item.username}</span>
+                <span class="user_slug txt-color-gray">${item.slug}</span>
+              </div>
+              <div class="user_profile_txt txt-color-gray">${item.bio || ""}</div>
+              <div class="profile_stats txt-color-gray">
+                <span class="post_count"><em class="xl_font_size bold">${item.posts || 0}</em> Publications</span>
+                <span class="followers_count"><em class="xl_font_size bold">${item.followers || 0}</em> Followers</span>
+                <span class="following_count"><em class="xl_font_size bold">${item.following || 0}</em> Following</span>
+                <span class="peer_count"><em class="xl_font_size bold">${item.peers || 0}</em> Peers</span>
+              </div>
+            </div>
+          </div>
+          <div class="profile_link">
+            <a class="button btn-transparent" href="#">View profile <i class="peer-icon peer-icon-arrow-right"></i></a>
+          </div>
+        `;
+        boxLeft.append(userBlock);
+      }
+
+      /* COMMENT DETAILS */
+      if (item.kind === "comment") {
+        const commentType = document.createElement("div");
+        commentType.className = "content_type_comment";
+
+        // Comment box
+        const commentBox = document.createElement("div");
+        commentBox.className = "comment_box";
+        commentBox.innerHTML = `
+          <h2 class="xxl_font_size bold">
+            <i class="peer-icon peer-icon-comment-fill xl_font_size"></i> Reported comment
+          </h2>
+          <div class="comment_item">
+            <div class="commenter-pic">
+              <img class="profile-picture" src="../img/profile_thumb.png" alt="user image">
+            </div>
+            <div class="comment_body">
+              <div class="commenter_info xl_font_size">
+                <span class="cmt_userName bold italic">${item.username}</span>
+                <span class="cmt_profile_id txt-color-gray">${item.slug}</span>
+                <span class="timeagao txt-color-gray">3m</span>
+              </div>
+              <div class="comment_text xl_font_size">${item.title || ""}</div>
+            </div>
+            <div class="comment_like xl_font_size">
+              <i class="peer-icon peer-icon-like"></i>
+              <span>0</span>
+            </div>
+          </div>
+        `;
+
+        // Linked post details under the comment
+        const commentPostDetail = document.createElement("div");
+        commentPostDetail.className = "comment_post_detail";
+        commentPostDetail.innerHTML = `
+          <div class="profile_post">
+            <div class="profile">
+              <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+              <span class="profile_detail">
+                <span class="user_name xl_font_size bold italic">${item.username}</span>
+                <span class="user_slug txt-color-gray">${item.slug}</span>
+              </span>
+            </div>
+            <div class="fullpost_link">
+              <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+            </div>
+          </div>
+          <div class="post_detail">
+            <div class="post_media"></div>
+            <div class="post_info">
+              <div class="post_title">
+                <h2 class="xl_font_size bold">${item.parentTitle || item.title || ""}</h2>
+                <span class="timeagao txt-color-gray">2h</span>
+              </div>
+              <div class="post_text">${item.parentDescription || item.description || ""}</div>
+              <div class="hashtags txt-color-blue">
+                ${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+
+        commentType.append(commentBox, commentPostDetail);
+        boxLeft.append(commentType);
+      }
+
+      /* RIGHT SIDE: Status, Reported by Actions */
+      const contenStatus = moderationModule.helpers.createEl("div", { className: "conten_status" });
+      const rightStatusClass =
+        statusVal === "hidden" || statusVal === "illegal" ? "hidden-tx xl_font_size red-text" :
+        statusVal === "restored" ? "restored xl_font_size green-text" :
+        "review xl_font_size yellow-text";
+
+      contenStatus.innerHTML = `
+        <span class="label xl_font_size txt-color-gray">Status</span>
+        <span class="${rightStatusClass}">${item.status}</span>
+      `;
+      boxRight.append(contenStatus);
+
+      const reportedBy = moderationModule.helpers.createEl("div", { className: "reported_by" });
+      reportedBy.innerHTML = `
+        <div class="head">
+          <span class="label xl_font_size">Reported by</span>
+          <span class="flag xl_font_size red-text"><i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}</span>
+        </div>
+        <div class="reported_by_profiles"></div>
+      `;
+      boxRight.append(reportedBy);
+
+      const actionButtons = moderationModule.helpers.createEl("div", { className: "action_buttons" });
+      actionButtons.innerHTML = `
+        <a class="button btn-blue bold" href="#">Restore</a>
+        <a class="button btn-transparent" href="#">Hide</a>
+        <a class="button btn-red-transparent" href="#">Mark as illegal</a>
+      `;
+      boxRight.append(actionButtons);
+
+      /* Moderated box */
+      const moderatedBox = moderationModule.helpers.createEl("div", { className: "moderated_by_box none" });
+      moderatedBox.innerHTML = `
+        <div class="moderated_info">
+          <span class="label xl_font_size txt-color-gray">Moderated by</span>
+          <span class="profile">
+            <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+            <span class="profile_detail">
+              <span class="user_name xl_font_size bold italic">${item.moderatorName || "moderator"}</span>
+              <span class="user_slug txt-color-gray">${item.moderatorSlug || "#000000"}</span>
+            </span>
+          </span>
+          <span class="datetime xl_font_size txt-color-gray">${item.moderatedAt || ""}</span>
+        </div>
+        <div class="moderated_action xl_font_size ${statusVal === "restored" ? "green-text" : statusVal === "illegal" ? "red-text" : "yellow-text"}">
+          ${item.status}
+        </div>
+      `;
+      boxRight.append(moderatedBox);
+
+      contentBox.append(boxLeft, boxRight);
+      itemEl.append(contentBox);
       container.appendChild(itemEl);
 
+      /* -------------------- TOGGLE -------------------- */
+      itemInner.addEventListener("click", (evt) => {
+        this.toggleRow(itemEl, contentBox);
+      });
 
-      itemEl.addEventListener("click", () => {
-        window.location.href = `content.php?id=${item.moderationId}`;
+      // Prevent clicks inside row
+      contentBox.addEventListener("click", (evt) => {
+        evt.stopPropagation();
       });
     });
   },
 
+  toggleRow(itemEl, contentBox) {
+    // Close any other open rows first
+    const container = moderationModule.helpers.getElement(".content_load");
+    const allBoxes = container.querySelectorAll(".content_item .content_box");
 
-
-
-
-
-
-  renderContentDetails(item) {
-    const container = document.querySelector(".content_box_left"); 
-    if (!container) return;
-
-    container.innerHTML = ""; // clear old content
-
-    // Username
-    const usernameEl = window.moderationModule.helpers.createEl("h2", {
-      textContent: item.username,
-      className: "xl_font_size bold italic",
+    allBoxes.forEach((box) => {
+      if (box !== contentBox && !box.classList.contains("none")) {
+        box.classList.add("none");
+        box.parentElement.classList.remove("active"); // optional styling hook
+      }
     });
 
-    // Title / Comment
-    const titleEl = window.moderationModule.helpers.createEl("p", {
-      textContent: item.title || "No title/content",
-      className: "xl_font_size",
-    });
-
-    // Status
-    const statusEl = window.moderationModule.helpers.createEl("p", {
-      textContent: `Status: ${item.status}`,
-      className: "txt-color-gray",
-    });
-
-    // Media if exists
-    let mediaEl = null;
-    if (item.media) {
-      mediaEl = window.moderationModule.helpers.createEl("img", {
-        src: item.media,
-        alt: item.title || "",
-        className: "content_media",
-      });
+    // Toggle the clicked row
+    const isOpen = !contentBox.classList.contains("none");
+    if (isOpen) {
+      contentBox.classList.add("none");
+      itemEl.classList.remove("active"); // optional styling hook
+    } else {
+      contentBox.classList.remove("none");
+      itemEl.classList.add("active"); // optional styling hook
     }
-
-    container.append(usernameEl, titleEl, statusEl);
-    if (mediaEl) container.appendChild(mediaEl);
   }
-
 };

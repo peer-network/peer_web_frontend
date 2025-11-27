@@ -1092,6 +1092,7 @@ footer {
     margin: 0;
     border-top: 1px solid #ffffff69;
     padding-top: 40px;
+	align-self: stretch;
 }
 
 .content_list .content_item.head {

@@ -222,8 +222,6 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 
                                 </div>
                             </div>
-
-
                         </div>
                         
                         <!-- text post -->
@@ -374,12 +372,9 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                                         <div class="moderated_action xl_font_size green-text">Restored</div>
 
                                     </div>
-
                                     <!--- End Moderated Boxes --->
-
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- reported user div -->
@@ -405,7 +400,6 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                                     <span class="restored xl_font_size green-text">Restored</span>
                                 </div>
                             </div>
-
                             <div class="content_box">
                                 <div class="content_box_left">
                                      <!--- Content type : Profile --->
@@ -540,7 +534,6 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- reported comment div -->
@@ -635,10 +628,6 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                                             </div>
                                         </div>
                                     <!--- End Content type : Comment  --->
-
-
-
-
                                 </div>
 
                                 <div class="content_box_right">
@@ -735,7 +724,6 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
