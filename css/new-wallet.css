@@ -280,10 +280,13 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 40px;
+  border-radius: 70px;
   cursor: pointer;
   transition: background 0.2s ease;
+  background: var(--black-dark);
+  width: 100%;
+  justify-content: space-between;
 }
 
 .site-main-wallet .user-list .user-item:hover {
@@ -299,7 +302,7 @@
 
 .site-main-wallet .user-list .user-item .info {
   display: flex;
-  flex-direction: column;
+  gap: 10px;
 }
 
 .site-main-wallet .user-list .user-item .info strong {
@@ -583,23 +586,33 @@
   margin-top: 70px;
 }
 
-.site-main-wallet .search-user-input {
-	width: 100%;
-	border-radius: 70px;
-	background: #2a2a2a;
-	color: white;
-	border: none;
-	padding: 30px 40px;
+.search_user_container .search-input-wrapper {
+  display: flex;
+  background: var(--black-dark);
+  align-items: center;
+  justify-content: space-between;
 }
 
-.wallet_available_balance {
+.search_user_container .search-input-wrapper .search-user-input {
+	width: 100%;
+  background: var(--black-dark);
+  color: white;
+  border: none;
+  padding: 0;
+}
+
+.transfer-form-screen .wallet_available_balance {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 40px;
-  border-radius: 70px;
   background-image: url(../img/balance.png);
   background-size: cover;
+}
+
+.transfer-form-screen .search_user_container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-filter);
 }
 
 @media screen and (min-width: 3000px) {
@@ -624,5 +637,18 @@
     .wallet_refresh .button.btn-transparent {
         gap: 100px;
         padding: 0 64px;
+    }
+    .transfer-form-screen .wallet_available_balance {
+        padding: 40px;
+        border-radius: 70px;
+    }
+    .transfer-form-screen .search_user_container {
+        gap: 40px;
+        padding: 40px;
+        border-radius: 70px;
+    }
+    .search_user_container .search-input-wrapper {
+        padding: 40px;
+        border-radius: 70px;
     }
 }

@@ -514,16 +514,34 @@ async function renderUsers() {
 
 
   // Always-visible Search Input
+  const searchContainer = document.createElement("div");
+  searchContainer.className = "search_user_container";
+
+  const searchheader = document.createElement("p");
+  searchheader.className = "md_font_size";
+  searchheader.textContent = "Recipient username";
+
+  const searchInputWrapper = document.createElement("div");
+  searchInputWrapper.className = "search-input-wrapper";
+
   const searchInput = document.createElement("input");
   searchInput.type = "text";
-  searchInput.placeholder = "@Search User";
+  searchInput.placeholder = "Search user...";
   searchInput.className = "search-user-input";
-  wrapper.appendChild(searchInput);
 
+  const searchIcon = document.createElement("i");
+  searchIcon.className = "peer-icon peer-icon-search";
+
+  searchInputWrapper.appendChild(searchInput);
+  searchInputWrapper.appendChild(searchIcon);
+
+  searchContainer.appendChild(searchheader);
+  searchContainer.appendChild(searchInputWrapper);
+  wrapper.appendChild(searchContainer);
   // User results container
   const userList = document.createElement("div");
   userList.className = "user-list";
-  wrapper.appendChild(userList);
+  searchContainer.appendChild(userList);
 
   //load/render friends-list
   renderFriendListUI(userList);
@@ -549,6 +567,9 @@ async function renderUsers() {
       const item = document.createElement("div");
       item.className = "user-item";
 
+      const userInfo = document.createElement("div");
+      userInfo.className = "user_info";
+
       const avatar = document.createElement("img");
       avatar.src = tempMedia(user.img.replace("media/", ""));
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
@@ -562,8 +583,14 @@ async function renderUsers() {
       const slug = document.createElement("span");
       slug.textContent = `#${user.slug}`;
 
+      const icon = document.createElement("i");
+      icon.className = "peer-icon peer-icon-arrow-right";
+
       info.append(name, slug);
-      item.append(avatar, info);
+      userInfo.appendChild(avatar);
+      userInfo.appendChild(info);
+      item.appendChild(userInfo);
+      item.appendChild(icon);
 
       item.onclick = () => renderTransferFormView(user);
       userList.appendChild(item);
