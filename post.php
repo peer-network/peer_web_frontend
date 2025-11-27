@@ -1,6 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-// include 'phpheader.php';
+//include 'phpheader.php';
 include 'host.php';
 ?>
 <!DOCTYPE html>

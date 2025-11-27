@@ -1,9 +1,9 @@
 <?php
 require_once '../host.php';
-require_once '../auth.php';
+//require_once '../auth.php';
 
-checkAuth("unauthorized");
-enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
+//checkAuth("unauthorized");
+//enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 ?>
 <!DOCTYPE html>
 <html lang="de">
