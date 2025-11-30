@@ -37,19 +37,19 @@ moderationModule.view = {
   },
 
   renderStats(stats) {
-  if (!stats) return;
+    if (!stats) return;
 
-  const selectors = {
-    awaiting: ".stat_box.review .stat_count",
-    hidden: ".stat_box.hidden-st .stat_count",
-    restored: ".stat_box.restored .stat_count",
-    illegal: ".stat_box.illegal .stat_count",
-  };
+    const selectors = {
+      awaiting: ".stat_box.review .stat_count",
+      hidden: ".stat_box.hidden-st .stat_count",
+      restored: ".stat_box.restored .stat_count",
+      illegal: ".stat_box.illegal .stat_count",
+    };
 
-  Object.entries(selectors).forEach(([key, selector]) => {
-    const el = document.querySelector(selector);
-    if (el) el.textContent = stats[key];
-  });
+    Object.entries(selectors).forEach(([key, selector]) => {
+      const el = document.querySelector(selector);
+      if (el) el.textContent = stats[key];
+    });
   },
 
   renderItems(items) {
@@ -306,7 +306,7 @@ moderationModule.view = {
         <span class="label xl_font_size txt-color-gray">Status</span>
         <span class="${rightStatusClass}">${item.status}</span>
       `;
-      boxRight.append(contenStatus);
+      //boxRight.append(contenStatus);
 
       const reportedBy = moderationModule.helpers.createEl("div", { className: "reported_by" });
       reportedBy.innerHTML = `
@@ -316,14 +316,76 @@ moderationModule.view = {
         </div>
         <div class="reported_by_profiles"></div>
       `;
+
+      const profilesContainer = reportedBy.querySelector(".reported_by_profiles");
+      if (Array.isArray(item.reporters)) {
+        item.reporters.forEach(rep => {
+          const r = document.createElement("div");
+          r.innerHTML = ` <div class="profile_item">
+                            <div class="profile">
+                                <span class="profile_image">
+                                    <img src="${rep.img}" onerror="this.src='../svg/noname.svg'">
+                                </span>
+                                <span class="profile_detail">
+                                    <span
+                                        class="user_name xl_font_size bold italic">${rep.username}</span>
+                                    <span class="user_slug txt-color-gray">${rep.slug}</span>
+                                </span>
+                            </div>
+                            <div class="report_time xl_font_size txt-color-gray">
+                                ${rep.updatedat}
+                            </div>
+                        </div>`;
+
+          profilesContainer.appendChild(r);
+        });
+      }
+ 
       boxRight.append(reportedBy);
 
       const actionButtons = moderationModule.helpers.createEl("div", { className: "action_buttons" });
-      actionButtons.innerHTML = `
-        <a class="button btn-blue bold" href="#">Restore</a>
-        <a class="button btn-transparent" href="#">Hide</a>
-        <a class="button btn-red-transparent" href="#">Mark as illegal</a>
-      `;
+      // actionButtons.innerHTML = `
+      //   <a class="button btn-blue bold" href="#">Restore</a>
+      //   <a class="button btn-transparent" href="#">Hide</a>
+      //   <a class="button btn-red-transparent" href="#">Mark as illegal</a>
+      // `;
+
+     
+
+      const hideBtn = moderationModule.helpers.createEl("a", {
+        className: "button btn-transparent",
+        textContent: "Hide",
+        href: "#"
+      });
+      hideBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const res = await moderationModule.service.performModeration(item.moderationId, "hidden");
+        console.log("Hidden:", res);
+      });
+  
+      const restoreBtn = moderationModule.helpers.createEl("a", {
+        className: "button btn-blue bold",
+        textContent: "Restore",
+        href: "#"
+      });
+     restoreBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const res = await moderationModule.service.performModeration(item.moderationId, "restored");
+        console.log("Restored:", res);
+      });
+
+      const illegalBtn = moderationModule.helpers.createEl("a", {
+        className: "button btn-red-transparent",
+        textContent: "Mark as illegal",
+        href: "#"
+      });
+      illegalBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const res = await moderationModule.service.performModeration(item.moderationId, "illegal");
+        console.log("Illegal:", res);
+      });
+
+      actionButtons.append(restoreBtn, hideBtn, illegalBtn);
       boxRight.append(actionButtons);
 
       /* Moderated box */

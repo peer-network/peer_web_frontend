@@ -78,93 +78,101 @@ moderationModule.fetcher = {
   //   });
   // },
 
-normalizeItems(items) {
-  return items.map((x) => {
-    let item = {
-      kind: x.targettype, // post, comment, user
-      moderationId: x.moderationTicketId,
-      date: x.createdat,
-      reports: x.reportscount,
-      // normalize status
-      status: (x.status || "").replace(/_/g, " ").toLowerCase(),
-      // visible: map : default false
-      visible: x.visible !== undefined ? x.visible : false,
-    };
+  normalizeItems(items) {
+    return items.map((x) => {
+      let item = {
+        kind: x.targettype, // post, comment, user
+        moderationId: x.moderationTicketId,
+        date: x.createdat,
+        reports: x.reportscount,
+        // normalize status
+        status: (x.status || "").replace(/_/g, " ").toLowerCase(),
+        // visible: map : default false
+        visible: x.visible !== undefined ? x.visible : false,
+      };
 
-    /* -------------------- POST -------------------- */
-    if (x.targettype === "post" && x.targetcontent.post) {
-      const post = x.targetcontent.post;
-      const user = post.user || {};
+      item.reporters = Array.isArray(x.reporters)
+        ? x.reporters.map(r => ({
+            userid: r.userid,
+            username: r.username || "@unknown",
+            slug: "#" + (r.slug || "0000"),
+            img: r.img || "../svg/noname.svg",
+            updatedat: r.updatedat || null,
+          }))
+        : [];
 
-      item.username = user.username || "@unknown";
-      item.slug = "#" + (user.slug || "0000");
-      item.title = post.title || "";
-      item.description = post.description || ""; // for content_box details
-      item.hashtags = post.hashtags || [];   
-      item.contentType = post.contenttype;
+      /* -------------------- POST -------------------- */
+      if (x.targettype === "post" && x.targetcontent.post) {
+        const post = x.targetcontent.post;
+        const user = post.user || {};
 
-      switch (post.contenttype) {
-        case "image":
-          item.media = moderationModule.helpers.safeMedia(post.media);
-          item.icon = "peer-icon peer-icon-camera";
-          break;
-        case "text":
-          item.media = null;
-          item.icon = "peer-icon peer-icon-text";
-          break;
-        case "audio":
-          item.media = moderationModule.helpers.safeMedia(
-            post.cover,
-            "../img/audio-bg.png"
-          );
-          item.icon = "peer-icon peer-icon-audio-fill";
-          break;
-        case "video":
-          item.media = moderationModule.helpers.safeMedia(
-            post.cover,
-            "../img/video-bg.png"
-          );
-          item.icon = "peer-icon peer-icon-play-btn";
-          break;
-        default:
-          item.media = null;
-          item.icon = "peer-icon peer-icon-file";
+        item.username = user.username || "@unknown";
+        item.slug = "#" + (user.slug || "0000");
+        item.title = post.title || "";
+        item.description = post.description || ""; // for content_box details
+        item.hashtags = post.tags || [];   
+        item.contentType = post.contenttype;
+
+        switch (post.contenttype) {
+          case "image":
+            item.media = moderationModule.helpers.safeMedia(post.media);
+            item.icon = "peer-icon peer-icon-camera";
+            break;
+          case "text":
+            item.media = null;
+            item.icon = "peer-icon peer-icon-text";
+            break;
+          case "audio":
+            item.media = moderationModule.helpers.safeMedia(
+              post.cover,
+              "../img/audio-bg.png"
+            );
+            item.icon = "peer-icon peer-icon-audio-fill";
+            break;
+          case "video":
+            item.media = moderationModule.helpers.safeMedia(
+              post.cover,
+              "../img/video-bg.png"
+            );
+            item.icon = "peer-icon peer-icon-play-btn";
+            break;
+          default:
+            item.media = null;
+            item.icon = "peer-icon peer-icon-file";
+        }
       }
-    }
 
-    /* -------------------- COMMENT -------------------- */
-    if (x.targettype === "comment" && x.targetcontent.comment) {
-      const c = x.targetcontent.comment;
-      const user = c.user || {};
+      /* -------------------- COMMENT -------------------- */
+      if (x.targettype === "comment" && x.targetcontent.comment) {
+        const c = x.targetcontent.comment;
+        const user = c.user || {};
+        
+        item.username = c.user.username || "@unknown";
+        item.slug = "#" + (c.commentid || "0000"); // consistent with posts/users
+        item.title = c.content || "";
+        item.contentType = "comment";
+        item.media = null;
+        item.icon = "peer-icon peer-icon-comment-fill";
+      }
 
-      item.username = user.username || "@unknown";
-      item.slug = "#" + (c.commentid || "0000"); // consistent with posts/users
-      item.title = c.content || "";
-      item.contentType = "comment";
-      item.media = null;
-      item.icon = "peer-icon peer-icon-comment-fill";
-    }
+      /* -------------------- USER -------------------- */
+      if (x.targettype === "user" && x.targetcontent.user) {
+        const u = x.targetcontent.user;
+        item.username = u.username || "@unknown";
+        item.slug = "#" + (u.slug || "0000");
+        item.bio = u.bio || ""; // profile text
+        item.posts = u.posts || 0;
+        item.followers = u.followers || 0;
+        item.following = u.following || 0;
+        item.peers = u.peers || 0;
+        item.media = tempMedia(u.img) || "../svg/noname.svg";
+        item.contentType = "user";
+        item.icon = "peer-icon peer-icon-profile";
+      }
 
-    /* -------------------- USER -------------------- */
-    if (x.targettype === "user" && x.targetcontent.user) {
-      const u = x.targetcontent.user;
-
-      item.username = u.username || "@unknown";
-      item.slug = "#" + (u.slug || "0000");
-      item.bio = u.bio || ""; // profile text
-      item.posts = u.posts || 0;
-      item.followers = u.followers || 0;
-      item.following = u.following || 0;
-      item.peers = u.peers || 0;
-      item.media = tempMedia(u.img) || "../svg/noname.svg";
-      item.contentType = "user";
-      item.icon = "peer-icon peer-icon-profile";
-    }
-
-    return item;
-  });
-}
-,
+      return item;
+    });
+  },
     /* ---------------------- LOAD ITEMS ---------------------- */
     async loadStats() {
       try {
