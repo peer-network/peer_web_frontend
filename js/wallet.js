@@ -560,6 +560,7 @@ async function renderUsers() {
   header.className = "transfer-header";
 
   const h2 = document.createElement("h2");
+  h2.className = "xl_font_size";
   h2.textContent = "Transfer";
 
   const closeBtn = document.createElement("button");
@@ -569,6 +570,27 @@ async function renderUsers() {
 
   header.append(h2, closeBtn);
   wrapper.appendChild(header);
+
+  const balance_header = document.createElement("div");
+  balance_header.className = "balance-header";
+
+  const sp_bal = document.createElement("span");
+  sp_bal.classList.add("md_font_size");
+  sp_bal.textContent = "Your Balance";
+
+  const sp_bal_amt = document.createElement("span");
+  sp_bal_amt.classList.add("xl_font_size","bold");
+  const token_bal = await getLiquiudity();
+  sp_bal_amt.textContent = token_bal;
+
+
+  balance_header.append(sp_bal,sp_bal_amt);
+
+  wrapper.appendChild(balance_header);
+
+
+
+
 
   // Always-visible Search Input
   const searchInput = document.createElement("input");

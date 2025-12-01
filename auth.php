@@ -1,22 +1,29 @@
 <?php
 session_start();
+require_once './host.php';
 
 function checkAuth($redirectMessage = "unauthorized") {
     if (!isset($_COOKIE['authToken']) || empty($_COOKIE['authToken'])) {
         header("Location: login.php?message=$redirectMessage");
         exit();
     }
+    
+
 }
+fetchHelloData($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
+     
 
 /**
  * Execute Hello query via GraphQL using the auth token.
  * Returns the decoded "hello" object or null on failure.
  */
 function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
+    
     $token = $_COOKIE['authToken'] ?? '';
-    if ($token === '') {
+    if ($token == '') {
         return null;
     }
+    //$domain='getpeer.eu';
 
     // Normalize domain in case a scheme was passed accidentally.
     $domain = preg_replace('#^https?://#i', '', trim($domain));
@@ -35,6 +42,7 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
         }',
         'variables' => new stdClass(),
     ]);
+    
 
     $attempt = function (string $scheme, string $path) use ($domain, $payload, $token): array {
         $endpoint = $scheme . '://' . $domain . $path;
@@ -49,6 +57,33 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
         ]);
 
         $body = @file_get_contents($endpoint, false, $context);
+           
+       
+        $data = json_decode($body, true);
+
+        // Check if API returned { "error": "Invalid Access Token" }
+        if (!empty($data['error']) && $data['error'] === 'Invalid Access Token') {
+
+            // ---- CLEAR SESSION ----
+            session_start();
+            $_SESSION = [];             // empty session array
+            session_destroy();          // destroy session
+
+            // ---- CLEAR ALL COOKIES ----
+            if (isset($_SERVER['HTTP_COOKIE'])) {
+                $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                foreach ($cookies as $cookie) {
+                    $parts = explode('=', $cookie);
+                    $name = trim($parts[0]);
+                    setcookie($name, '', time() - 3600, '/'); // expire cookie
+                }
+            }
+
+            // Optionally redirect user
+            header("Location: login.php");
+            exit;
+        }
+
 
         $status = 0;
         if (isset($http_response_header[0]) && preg_match('#HTTP/\\S+\\s(\\d{3})#', $http_response_header[0], $m)) {
@@ -57,6 +92,8 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
 
         return ['body' => $body, 'status' => $status];
     };
+    //echo "<pre>"; print_r($body); exit;
+        //var_dump($attempt );exit;
 
     $paths = ['/graphql', '/api/graphql'];
     $schemes = [$protocol];
@@ -73,6 +110,8 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
             }
         }
     }
+
+    
 
     return null;
 }

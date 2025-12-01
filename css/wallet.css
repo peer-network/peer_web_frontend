@@ -230,6 +230,8 @@
 	background-repeat: no-repeat;
 	background-position: right center;
   width: 20%;
+  line-height: 56px;
+  text-align: right;
 }
 .tarnsaction_item .transaction_detail {
 	display: flex;
@@ -481,8 +483,7 @@
 .site-main-wallet {
   
   padding: 2rem;
-  height: 100vh;
-  overflow: hidden;
+
   
 }
 
@@ -505,17 +506,13 @@
     position: absolute;
     top: 100%;
     left: 0;
-    
-    
     overflow-y: auto;
-    background: #1f1f1f;
-    border-radius: 70px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    margin-top: 8px;
     z-index: 999;
-    padding: 10px 12px;
+    padding: 80px;
     overflow: hidden;
     overscroll-behavior: contain;
+    border-radius: 77px;
+    background: var(--black-dark, #252525);
    
 }
 
@@ -573,13 +570,24 @@
 /* Second screen — Transfer Inline Form */
 
 .site-main-wallet .transfer-dropdown .transfer-form-screen {
-  background: #1f1f1f;
-  border-radius: 10px;
-  padding: 80px;
+ 
   color: white;
   overflow-y: scroll;
   scrollbar-width: none;
 }
+
+.transfer-form-screen .balance-header {
+	background-image: url(../img/balance_bg.png);
+	background-size: cover;
+	display: flex;
+	padding: 40px;
+	align-items: center;
+	gap: 40px;
+	align-self: stretch;
+	border-radius: 70px;
+	justify-content: space-between;
+}
+
 .site-main-wallet .transfer-dropdown .transfer-form-screen .loader-screen-contents {
 	text-align: center;
 }
@@ -684,19 +692,17 @@
   transform: translate(-50%, -50%) !important;
   z-index: 1000;
   margin-top: 0 !important;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-  min-width: 520px;
-  min-height: 520px;
   text-align: left;
-  width: 33vw;
+  width: 1350px;
 }
 
 /* Backdrop when modal is active */
 .transfer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
   z-index: 999;
+  background: rgba(37, 37, 37, 0.50);
+  backdrop-filter: blur(15px);
 }
 
 .commission-breakdown {

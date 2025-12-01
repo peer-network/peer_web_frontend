@@ -71,7 +71,7 @@ function applyZoom() {
   const left_sidebar = layout.querySelector(".left-sidebar");
   const right_sidebar = layout.querySelector(".right-sidebar");
   const cardClickedDiv= document.getElementById("cardClicked");
-  const site_main_wallet = layout.querySelector(".site-main-wallet");
+
 
   function applyScale() {
     const vw = window.visualViewport.width;
@@ -87,14 +87,14 @@ function applyZoom() {
       right_sidebar.style.height = vh / scale + "px";
       if(cardClickedDiv) cardClickedDiv.style.height = vh / scale + "px";
 
-      if(site_main_wallet) site_main_wallet.style.height = vh / scale + "px";
+      
     } else {
       // reset zoom, let layout flow naturally
       layout.style.zoom = "";
       left_sidebar.style.height = "";
       right_sidebar.style.height = "";
       if(cardClickedDiv) cardClickedDiv.style.height = "";
-      if(site_main_wallet) site_main_wallet.style.height = "";
+      
     }
   }
 
