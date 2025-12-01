@@ -273,6 +273,13 @@
   gap: 8px;
   min-height: 400px;
   overflow: auto;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+  max-height: 0;
+}
+
+.site-main-wallet .user-list.show {
+  opacity: 1;
 }
 
 .site-main-wallet .user-list .user-item .user_info {
@@ -656,7 +663,7 @@
         padding: 40px;
         border-radius: 70px;
     }
-    .site-main-wallet .user-list {
+    .site-main-wallet .user-list.show {
         max-height: 1441px;
     }
 }

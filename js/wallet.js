@@ -548,10 +548,13 @@ async function renderUsers() {
     const search = searchInput.value.trim();
 
     if (search.length < 3) {
-      userList.innerHTML = "";
-      if (userList.parentElement) {
-        searchContainer.removeChild(userList);
-      }
+      userList.classList.remove("show");
+      setTimeout(() => {
+        userList.innerHTML = "";
+        if (userList.parentElement) {
+          searchContainer.removeChild(userList);
+        }
+      }, 400);
       return;
     }
 
@@ -560,14 +563,19 @@ async function renderUsers() {
     if (results.length > 0) {
       if (!userList.parentElement) {
         searchContainer.appendChild(userList);
+        userList.offsetHeight;
       }
     } else {
-      userList.innerHTML = "";
-      if (userList.parentElement) {
-        searchContainer.removeChild(userList);
-      }
+      userList.classList.remove("show");
+      setTimeout(() => {
+        userList.innerHTML = "";
+        if (userList.parentElement) {
+          searchContainer.removeChild(userList);
+        }
+      }, 400);
       return;
     }
+
 
     userList.innerHTML = "";
 
@@ -603,6 +611,9 @@ async function renderUsers() {
       item.onclick = () => renderTransferFormView(user);
       userList.appendChild(item);
     });
+    setTimeout(() => {
+      userList.classList.add("show");
+    }, 10);
   });
 
   dropdown.appendChild(wrapper);
