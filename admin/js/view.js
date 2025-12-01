@@ -243,7 +243,7 @@ moderationModule.view = {
           </h2>
           <div class="comment_item">
             <div class="commenter-pic">
-              <img class="profile-picture" src="../img/profile_thumb.png" alt="user image">
+              <img class="profile-picture" src="${item.post?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
             </div>
             <div class="comment_body">
               <div class="commenter_info xl_font_size">
@@ -266,10 +266,10 @@ moderationModule.view = {
         commentPostDetail.innerHTML = `
           <div class="profile_post">
             <div class="profile">
-              <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+              <span class="profile_image"><img src="${item.post.img}" onerror="this.src='../svg/noname.svg'"></span>
               <span class="profile_detail">
-                <span class="user_name xl_font_size bold italic">${item.username}</span>
-                <span class="user_slug txt-color-gray">${item.slug}</span>
+                <span class="user_name xl_font_size bold italic">${item.post.user}</span>
+                <span class="user_slug txt-color-gray">${item.post.slug}</span>
               </span>
             </div>
             <div class="fullpost_link">
@@ -280,10 +280,10 @@ moderationModule.view = {
             <div class="post_media"></div>
             <div class="post_info">
               <div class="post_title">
-                <h2 class="xl_font_size bold">${item.parentTitle || item.title || ""}</h2>
+                <h2 class="xl_font_size bold">${item.post.title}</h2>
                 <span class="timeagao txt-color-gray">2h</span>
               </div>
-              <div class="post_text">${item.parentDescription || item.description || ""}</div>
+              <div class="post_text">${item.post.description}</div>
               <div class="hashtags txt-color-blue">
                 ${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}
               </div>
@@ -349,8 +349,6 @@ moderationModule.view = {
       //   <a class="button btn-transparent" href="#">Hide</a>
       //   <a class="button btn-red-transparent" href="#">Mark as illegal</a>
       // `;
-
-     
 
       const hideBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-transparent",

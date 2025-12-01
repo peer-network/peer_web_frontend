@@ -2,84 +2,8 @@ window.moderationModule = window.moderationModule || {};
 
 moderationModule.fetcher = {
   /* ---------------------- NORMALIZER ---------------------- */
-  // normalizeItems(items) {
-  //   return items.map((x) => {
-  //     let item = {
-  //       kind: x.targettype, // post / comment / user
-  //       moderationId: x.moderationTicketId,
-  //       date: x.createdat,
-  //       reports: x.reportscount,
-  //       status: x.status.replace(/_/g, " "),
-  //       visible: false,
-  //     };
-
-  //     /* -------------------- POST -------------------- */
-  //     if (x.targettype === "post" && x.targetcontent.post) {
-  //       const post = x.targetcontent.post;
-  //       const user = post.user || {};
-
-  //       item.username = user.username || "@unknown";
-  //       item.slug = "#" + (user.slug || "0000");
-  //       item.title = post.title || "";
-  //       item.contentType = post.contenttype;
-
-  //       switch (post.contenttype) {
-  //         case "image":
-  //           item.media = moderationModule.helpers.safeMedia(post.media);
-  //           item.icon = "peer-icon peer-icon-camera";
-  //           break;
-  //         case "text":
-  //           item.media = null;
-  //           item.icon = "peer-icon peer-icon-text";
-  //           break;
-  //         case "audio":
-  //           item.media = moderationModule.helpers.safeMedia(
-  //             post.cover,
-  //             "../img/audio-bg.png"
-  //           );
-  //           item.icon = "peer-icon peer-icon-audio-fill";
-  //           break;
-            
-  //         case "video":
-  //           item.media = moderationModule.helpers.safeMedia(
-  //             post.cover,
-  //             "../img/video-bg.png"
-  //           );
-  //           item.icon = "peer-icon peer-icon-play-btn";
-  //           break;
-  //       }
-  //     }
-
-  //     /* -------------------- COMMENT -------------------- */
-  //     if (x.targettype === "comment" && x.targetcontent.comment) {
-  //       const c = x.targetcontent.comment;
-  //       const user = c.user || {};
-
-  //       item.username = user.username || "@unknown";
-  //       item.slug = c.commentid;
-  //       item.title = c.content;
-  //       item.contentType = "comment";
-  //       item.media = null;
-  //       item.icon = "peer-icon peer-icon-comment-fill";
-  //     }
-
-  //     /* -------------------- USER -------------------- */
-  //     if (x.targettype === "user" && x.targetcontent.user) {
-  //       const u = x.targetcontent.user;
-
-  //       item.username = u.username || "@unknown";
-  //       item.slug = "#" + (u.slug || "0000");
-  //       item.media = tempMedia(u.img) || "../svg/noname.svg";
-  //       item.contentType = "user";
-  //       // item.icon = "peer-icon peer-icon-profile";
-  //     }
-
-  //     return item;
-  //   });
-  // },
-
   normalizeItems(items) {
-    return items.map((x) => {
+    return items.map( (x) => {
       let item = {
         kind: x.targettype, // post, comment, user
         moderationId: x.moderationTicketId,
@@ -89,9 +13,7 @@ moderationModule.fetcher = {
         status: (x.status || "").replace(/_/g, " ").toLowerCase(),
         // visible: map : default false
         visible: x.visible !== undefined ? x.visible : false,
-      };
-
-      item.reporters = Array.isArray(x.reporters)
+        reporters: Array.isArray(x.reporters)
         ? x.reporters.map(r => ({
             userid: r.userid,
             username: r.username || "@unknown",
@@ -99,7 +21,8 @@ moderationModule.fetcher = {
             img: r.img || "../svg/noname.svg",
             updatedat: r.updatedat || null,
           }))
-        : [];
+        : []
+      };
 
       /* -------------------- POST -------------------- */
       if (x.targettype === "post" && x.targetcontent.post) {
@@ -145,14 +68,16 @@ moderationModule.fetcher = {
       /* -------------------- COMMENT -------------------- */
       if (x.targettype === "comment" && x.targetcontent.comment) {
         const c = x.targetcontent.comment;
-        const user = c.user || {};
+        // const user = c.user || {};
         
         item.username = c.user.username || "@unknown";
-        item.slug = "#" + (c.commentid || "0000"); // consistent with posts/users
+        item.slug = "#" + (c.user.slug || "0000"); // consistent with posts/users
         item.title = c.content || "";
         item.contentType = "comment";
-        item.media = null;
+        item.media = c.user?.img ?? '../img/profile_thumb.png';
         item.icon = "peer-icon peer-icon-comment-fill";
+        item.postid = c.postid;
+        item.post = null
       }
 
       /* -------------------- USER -------------------- */
@@ -213,13 +138,61 @@ moderationModule.fetcher = {
       const rawItems = response?.moderationItems?.affectedRows || [];
       const normalized = this.normalizeItems(rawItems);
 
-      moderationModule.store.items = normalized;
-      moderationModule.store.filteredItems = normalized;
-      moderationModule.view.renderItems(normalized);
+      // moderationModule.store.items = normalized;
+      // moderationModule.store.filteredItems = normalized;
+      // moderationModule.view.renderItems(normalized);
+      // enrich in background
+      this.enrichCommentsWithPosts(normalized).then(updated => {
+        moderationModule.store.items = updated;
+        moderationModule.store.filteredItems = updated;
+        moderationModule.view.renderItems(updated);
+      });
     } catch (err) {
       console.error("Error loading items:", err);
     }
   },
+
+   async loadPostById(postid) {
+    try {
+      const query = moderationModule.schema.LIST_POST_BY_ID;
+      if (!query) throw new Error("Invalid LIST_POST_BY_ID query");
+      const variables = { postid };
+      const response = await moderationModule.service.fetchGraphQL(query, variables);
+      const post = response?.listPosts?.affectedRows?.[0] || null;
+      if (!post) {
+        console.warn("No post found for ID:", postid);
+        return null;
+      }
+
+      return post;
+    } catch (err) {
+      console.error("Error loading post by ID:", err);
+      return null;
+    }
+  },
+
+  async enrichCommentsWithPosts(items) {
+    for (const item of items) {
+      console.log(item)
+      if (item.contentType === "comment" && item.postid && !item.post) {
+        const post = await this.loadPostById(item.postid);
+        if (post) {
+          item.post = {
+            id: post.id,
+            title: post.title,
+            description: post.mediadescription,
+            contentType: post.contenttype,
+            media: post.media,
+            cover: post.cover,
+            user: post.user?.username || "@unknown",
+            img: post.user?.img,
+            slug: post.user?.slug
+          };
+        }
+      }
+    }
+    return items;
+  }
 
   // initContentPage() {
   //   const params = new URLSearchParams(window.location.search);
@@ -252,4 +225,8 @@ moderationModule.fetcher = {
   //   moderationModule.store.filteredItems = filtered;
   //   moderationModule.view.renderItems(filtered);
   // }
+
+
+ 
+
 };

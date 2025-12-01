@@ -261,4 +261,50 @@ moderationModule.schema = {
       }
     }
   `,
+
+  LIST_POST_BY_ID: `query ($postid: ID!) {
+      listPosts(postid: $postid) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+          id
+          contenttype
+          title
+          media
+          cover
+          mediadescription
+          createdat
+          visibilityStatus
+          isHiddenForUsers
+          hasActiveReports
+          amountreports
+          amountlikes
+          amountviews
+          amountcomments
+          amountdislikes
+          amounttrending
+          isliked
+          isviewed
+          isreported
+          isdisliked
+          issaved
+          tags
+          url
+          user {
+            id
+            username
+            slug
+            img
+            visibilityStatus
+            isHiddenForUsers
+            hasActiveReports
+            isfollowed
+            isfollowing
+            isreported
+            isfriend
+          }
+        }
+      }
+    }`
 };
