@@ -498,7 +498,6 @@ async function renderUsers() {
   wrapper.appendChild(header);
 
   // Users balance
-
   const balanceDiv = document.createElement("div");
   balanceDiv.className = "wallet_available_balance";
   balanceDiv.innerHTML = `
@@ -509,9 +508,7 @@ async function renderUsers() {
     </div>
   `;
 
-
   wrapper.appendChild(balanceDiv);
-
 
   // Always-visible Search Input
   const searchContainer = document.createElement("div");
@@ -538,29 +535,40 @@ async function renderUsers() {
   searchContainer.appendChild(searchheader);
   searchContainer.appendChild(searchInputWrapper);
   wrapper.appendChild(searchContainer);
-  // User results container
+
+  // User results container (initially not appended)
   const userList = document.createElement("div");
   userList.className = "user-list";
-  searchContainer.appendChild(userList);
 
-  //load/render friends-list
-  renderFriendListUI(userList);
-  // Search logic on input
+  // not appending userList or load friends initially
+  // searchContainer.appendChild(userList); // REMOVED
+  // renderFriendListUI(userList); // REMOVED
+
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
 
-
-    if (!search) {
-      //load/render friends-list
+    if (search.length < 3) {
       userList.innerHTML = "";
-      renderFriendListUI(userList);
+      if (userList.parentElement) {
+        searchContainer.removeChild(userList);
+      }
       return;
     }
 
     const results = await searchUser(search);
-    if (!results.length) return;
+    
+    if (results.length > 0) {
+      if (!userList.parentElement) {
+        searchContainer.appendChild(userList);
+      }
+    } else {
+      userList.innerHTML = "";
+      if (userList.parentElement) {
+        searchContainer.removeChild(userList);
+      }
+      return;
+    }
 
-    // need to make it empty before executing loop
     userList.innerHTML = "";
 
     results.forEach(user => {
@@ -597,17 +605,21 @@ async function renderUsers() {
     });
   });
 
-
   dropdown.appendChild(wrapper);
 }
 
+// This function is no longer needed since we're not showing friends list initially
+// But keeping it commented in case we use it elsewhere
+/*
 async function renderFriendListUI(container) {
-  //loadFrinds
   const frindsList = await loadFrinds();
   if (frindsList) {
     frindsList.forEach(user => {
       const item = document.createElement("div");
       item.className = "user-item";
+
+      const userInfo = document.createElement("div");
+      userInfo.className = "user_info";
 
       const avatar = document.createElement("img");
       avatar.src = tempMedia(user.img.replace("media/", ""));
@@ -622,24 +634,30 @@ async function renderFriendListUI(container) {
       const slug = document.createElement("span");
       slug.textContent = `#${user.slug}`;
 
+      const icon = document.createElement("i");
+      icon.className = "peer-icon peer-icon-arrow-right";
+
       info.append(name, slug);
-      item.append(avatar, info);
+      userInfo.appendChild(avatar);
+      userInfo.appendChild(info);
+      item.appendChild(userInfo);
+      item.appendChild(icon);
+      
       item.onclick = () => renderTransferFormView(user);
       container.appendChild(item);
     });
   }
 }
+*/
 
 async function loadFrinds() {
   const accessToken = getCookie("authToken");
 
-  // Create headers
   const headers = new Headers({
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
 
-  // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
     query: `query ListFriends {
                 listFriends {
@@ -657,7 +675,6 @@ async function loadFrinds() {
           `,
   });
 
-  // Define request options
   const requestOptions = {
     method: "POST",
     headers: headers,
@@ -665,10 +682,8 @@ async function loadFrinds() {
   };
 
   try {
-    // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
-    // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
     return result.data.listFriends.affectedRows;
@@ -711,7 +726,7 @@ async function searchUser(username = null) {
     });
 
     const json = await res.json();
-    return json ?.data ?.searchUser ?.affectedRows || [];
+    return json?.data?.searchUser?.affectedRows || [];
   } catch (err) {
     console.error("searchUser() failed:", err);
     return [];
