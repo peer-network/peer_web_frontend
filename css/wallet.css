@@ -19,6 +19,7 @@
 	align-items: flex-start;
 	gap: 50px;
   margin-top: 180px;
+  height: calc(100% - 180px);
 }
 .wallet_header .wallet_heading.xl_font_size {
 	margin-bottom: 0;
@@ -228,6 +229,7 @@
 	background-size: 46px;
 	background-repeat: no-repeat;
 	background-position: right center;
+  width: 20%;
 }
 .tarnsaction_item .transaction_detail {
 	display: flex;
@@ -415,8 +417,10 @@
   text-align: right;
 }
 #history-container {
-	height: 70vh;
+	height: calc(100% - 680px);
 	overflow: auto;
+	overflow-y: scroll;
+	scrollbar-width: none;
 }
 .kurs {
   display: flex;
@@ -477,6 +481,8 @@
 .site-main-wallet {
   
   padding: 2rem;
+  height: 100vh;
+  overflow: hidden;
   
 }
 
