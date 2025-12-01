@@ -575,11 +575,11 @@ async function renderUsers() {
   balance_header.className = "balance-header";
 
   const sp_bal = document.createElement("span");
-  sp_bal.classList.add("md_font_size");
+  sp_bal.classList.add("md_font_size","txt-color-gray");
   sp_bal.textContent = "Your Balance";
 
   const sp_bal_amt = document.createElement("span");
-  sp_bal_amt.classList.add("xl_font_size","bold");
+  sp_bal_amt.classList.add("xl_font_size","bold","tbalance");
   const token_bal = await getLiquiudity();
   sp_bal_amt.textContent = token_bal;
 
@@ -593,16 +593,25 @@ async function renderUsers() {
 
 
   // Always-visible Search Input
+  const search_wrapper = document.createElement("div");
+  search_wrapper.classList.add("search_wrapper");
+   const ru_span = document.createElement("span");
+  ru_span.classList.add("md_font_size");
+  ru_span.textContent = "Recipient username";
+  search_wrapper.appendChild(ru_span);
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.placeholder = "@Search User";
   searchInput.className = "search-user-input";
-  wrapper.appendChild(searchInput);
+ 
+   search_wrapper.appendChild(searchInput);
 
   // User results container
   const userList = document.createElement("div");
   userList.className = "user-list";
-  wrapper.appendChild(userList);
+
+  search_wrapper.appendChild(userList);
+  wrapper.appendChild(search_wrapper);
 
   //load/render friends-list
   renderFriendListUI(userList);

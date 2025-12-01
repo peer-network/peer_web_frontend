@@ -588,6 +588,16 @@
 	justify-content: space-between;
 }
 
+.transfer-form-screen .balance-header .tbalance {
+	padding-left: 65px;
+	background-image: url(../svg/logo_sw.svg);
+	background-size: 46px;
+	background-repeat: no-repeat;
+	background-position: left center;
+
+	text-align: right;
+}
+
 .site-main-wallet .transfer-dropdown .transfer-form-screen .loader-screen-contents {
 	text-align: center;
 }
