@@ -42,6 +42,14 @@ moderationModule.fetcher = {
             item.icon = "peer-icon peer-icon-camera";
             break;
           case "text":
+            try {
+              const parsed = JSON.parse(post.media);
+              if (Array.isArray(parsed) && parsed.length > 0) 
+                item.path = parsed[0].path; 
+            } catch (err) {
+              console.error("Failed to parse text media:", err);
+              item.path = null;
+            }
             item.media = null;
             item.icon = "peer-icon peer-icon-text";
             break;
@@ -98,29 +106,26 @@ moderationModule.fetcher = {
       return item;
     });
   },
-    /* ---------------------- LOAD ITEMS ---------------------- */
-    async loadStats() {
-      try {
-        const query = moderationModule.schema.STATS;
-        if (!query) throw new Error("Invalid STATS query");
+  /* ---------------------- LOAD ITEMS ---------------------- */
+  async loadStats() {
+    try {
+      const query = moderationModule.schema.STATS;
+      if (!query) throw new Error("Invalid STATS query");
 
-        const response = await moderationModule.service.fetchGraphQL(query);
+      const response = await moderationModule.service.fetchGraphQL(query);
+      const stats = response?.moderationStats?.affectedRows || {};
+      const parsed = {
+        awaiting: stats.AmountAwaitingReview || 0,
+        hidden: stats.AmountHidden || 0,
+        restored: stats.AmountRestored || 0,
+        illegal: stats.AmountIllegal || 0,
+      };
 
-        const stats = response?.moderationStats?.affectedRows || {};
-
-        const parsed = {
-          awaiting: stats.AmountAwaitingReview || 0,
-          hidden: stats.AmountHidden || 0,
-          restored: stats.AmountRestored || 0,
-          illegal: stats.AmountIllegal || 0,
-        };
-
-        moderationModule.view.renderStats(parsed);
-
-      } catch (err) {
-        console.error("Error loading stats:", err);
-      }
-    }, 
+      moderationModule.view.renderStats(parsed);
+    } catch (err) {
+      console.error("Error loading stats:", err);
+    }
+  }, 
 
   /* ---------------------- LOAD ITEMS ---------------------- */
   async loadItems(type = "LIST_ITEMS", { offset = 0, limit = 20, contentType = null } = {}) {
@@ -152,7 +157,7 @@ moderationModule.fetcher = {
     }
   },
 
-   async loadPostById(postid) {
+  async loadPostById(postid) {
     try {
       const query = moderationModule.schema.LIST_POST_BY_ID;
       if (!query) throw new Error("Invalid LIST_POST_BY_ID query");
@@ -171,10 +176,20 @@ moderationModule.fetcher = {
     }
   },
 
+  async loadTextFile(url) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      console.error("Error loading text file:", err);
+      return "Unable to load text content.";
+    }
+  },
+
   async enrichCommentsWithPosts(items) {
     for (const item of items) {
-      console.log(item)
-      if (item.contentType === "comment" && item.postid && !item.post) {
+      if (item.contentType === "comment" && item.postid) {
         const post = await this.loadPostById(item.postid);
         if (post) {
           item.post = {
@@ -182,51 +197,42 @@ moderationModule.fetcher = {
             title: post.title,
             description: post.mediadescription,
             contentType: post.contenttype,
-            media: post.media,
             cover: post.cover,
             user: post.user?.username || "@unknown",
             img: post.user?.img,
             slug: post.user?.slug
           };
+
+          // Use safeMedia to extract a clean URL
+          const mediaUrl = moderationModule.helpers.safeMedia(post.media);
+
+          if (post.contenttype === "text" && mediaUrl) {
+            item.post.description = await this.loadTextFile(mediaUrl);
+          } else {
+            if(post.contenttype === "video"){
+
+              item.post.media = `<video  src="${mediaUrl}" controls=""  autoplay="" loop=""></video>`; 
+
+            }
+            else if(post.contenttype === "image"){
+
+              item.post.media = `<img  src="${mediaUrl}" />`; 
+
+            }
+
+
+
+            
+            
+            else{
+              item.post.media = `<audio  src="${mediaUrl}" controls=""  autoplay=""></audio>`; 
+
+            }
+            
+          }
         }
       }
     }
     return items;
   }
-
-  // initContentPage() {
-  //   const params = new URLSearchParams(window.location.search);
-  //   const moderationId = params.get("id");
-
-  //   if (!moderationId) return console.error("No moderation ID in URL");
-
-  //   console.log(moderationModule.store)
-  //   const item = moderationModule.store.items.find(
-  //     (i) => i.moderationId == moderationId
-  //   );
-
-  //   if (!item) {
-  //     console.error("Item not found in store. You may need to fetch it from backend.");
-  //     return;
-  //   }
-
-  //   moderationModule.view.renderContentDetails(item);
-  // }
-
-  /* ---------------------- FILTER ---------------------- */
-  // filterItems(searchText) {
-  //   const lower = searchText.toLowerCase();
-
-  //   const filtered = moderationModule.store.items.filter(item =>
-  //     (item.title && item.title.toLowerCase().includes(lower)) ||
-  //     (item.username && item.username.toLowerCase().includes(lower))
-  //   );
-
-  //   moderationModule.store.filteredItems = filtered;
-  //   moderationModule.view.renderItems(filtered);
-  // }
-
-
- 
-
 };

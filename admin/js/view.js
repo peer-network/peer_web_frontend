@@ -201,6 +201,8 @@ moderationModule.view = {
         boxLeft.append(postBlock);
       }
 
+   
+
       /* USER DETAILS */
       if (item.kind === "user") {
         const userBlock = document.createElement("div");
@@ -269,15 +271,15 @@ moderationModule.view = {
               <span class="profile_image"><img src="${item.post.img}" onerror="this.src='../svg/noname.svg'"></span>
               <span class="profile_detail">
                 <span class="user_name xl_font_size bold italic">${item.post.user}</span>
-                <span class="user_slug txt-color-gray">${item.post.slug}</span>
+                <span class="user_slug txt-color-gray">#${item.post.slug}</span>
               </span>
             </div>
             <div class="fullpost_link">
-              <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+              <a class="button btn-transparent" href="../dashboard.php?postid=${item.post.id}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
             </div>
           </div>
-          <div class="post_detail">
-            <div class="post_media"></div>
+          <div class="post_detail post_type_${item.post.contentType}">
+            <div class="post_media">${item.post.media}</div>
             <div class="post_info">
               <div class="post_title">
                 <h2 class="xl_font_size bold">${item.post.title}</h2>
