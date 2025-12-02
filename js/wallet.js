@@ -595,16 +595,23 @@ async function renderUsers() {
   // Always-visible Search Input
   const search_wrapper = document.createElement("div");
   search_wrapper.classList.add("search_wrapper");
-   const ru_span = document.createElement("span");
+  const ru_span = document.createElement("span");
   ru_span.classList.add("md_font_size");
   ru_span.textContent = "Recipient username";
   search_wrapper.appendChild(ru_span);
+
   const searchInput = document.createElement("input");
   searchInput.type = "text";
-  searchInput.placeholder = "@Search User";
+  searchInput.placeholder = "Search user...";
   searchInput.className = "search-user-input";
- 
-   search_wrapper.appendChild(searchInput);
+
+  const s_input_box = document.createElement("div");
+  s_input_box.classList.add("search_input_box");
+  const search_icon = document.createElement("i");
+  search_icon.classList.add("peer-icon","peer-icon-search");
+  
+  s_input_box.append(searchInput,search_icon);
+  search_wrapper.appendChild(s_input_box);
 
   // User results container
   const userList = document.createElement("div");
@@ -642,12 +649,14 @@ async function renderUsers() {
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
 
       const info = document.createElement("div");
-      info.className = "info";
+      info.classList.add("md_font_size","info");
 
       const name = document.createElement("strong");
+      name.classList.add("italic");
       name.textContent = user.username;
 
       const slug = document.createElement("span");
+      slug.classList.add("txt-color-gray");
       slug.textContent = `#${user.slug}`;
 
       info.append(name, slug);
@@ -675,12 +684,17 @@ async function renderFriendListUI(container) {
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
 
       const info = document.createElement("div");
-      info.className = "info";
+      info.classList.add("md_font_size","info");
+
+  
+     
 
       const name = document.createElement("strong");
+       name.classList.add("italic");
       name.textContent = user.username;
 
       const slug = document.createElement("span");
+       slug.classList.add("txt-color-gray");
       slug.textContent = `#${user.slug}`;
 
       info.append(name, slug);
@@ -781,11 +795,13 @@ async function searchUser(username = null) {
 
 function renderTransferFormView(user) {
   const dropdown = document.getElementById("transferDropdown");
-  dropdown.innerHTML = "";
+ // dropdown.innerHTML = "";
+  dropdown.querySelector(".search_wrapper").remove();
+  const wrapper = dropdown.querySelector(".transfer-form-screen");
 
   // Enable modal mode
-  dropdown.classList.add("modal-mode");
-  dropdown.classList.remove("hidden");
+  //dropdown.classList.add("modal-mode");
+  //dropdown.classList.remove("hidden");
 
   // Add backdrop
   if (!document.querySelector(".transfer-backdrop")) {
@@ -795,67 +811,103 @@ function renderTransferFormView(user) {
     document.body.appendChild(backdrop);
   }
 
-  const wrapper = document.createElement("div");
+ /* const wrapper = document.createElement("div");
   wrapper.className = "transfer-form-screen";
 
   const header = document.createElement("div");
   header.className = "transfer-header";
   const h2 = document.createElement("h2");
+  h2.className = "xl_font_size";
   h2.textContent = "Transfer";
+ 
   const closeBtn = document.createElement("button");
   closeBtn.className = "close-transfer";
   closeBtn.innerHTML = "&times;";
   closeBtn.onclick = closeModal;
-  header.append(h2, closeBtn);
-
-  const recipientLabel = document.createElement("label");
-  recipientLabel.textContent = "Recipient";
+  header.append(h2, closeBtn);*/
   const recipientInfo = document.createElement("div");
   recipientInfo.className = "recipient-info";
+
   const infoWrap = document.createElement("div");
-  infoWrap.className = "info";
-  const img = document.createElement("img");
-  img.src = "svg/logo_sw.svg";
-  const meta = document.createElement("div");
+  infoWrap.classList.add("md_font_size","info");
+  
+  const recipientLabel = document.createElement("div");
+  recipientLabel.classList.add("md_font_size","label");
+  recipientLabel.textContent = "Sending to";
+
+  const avatar = document.createElement("img");
+  avatar.src = tempMedia(user.img.replace("media/", ""));
+  avatar.onerror = () => (avatar.src = "./svg/noname.svg");
+
+  
+
   const name = document.createElement("strong");
+  name.classList.add("italic");
   name.textContent = user.username;
-  meta.append(name);
 
-  infoWrap.append(img, meta);
-  const check = document.createElement("div");
-  check.className = "check-circle";
-  check.textContent = "✓";
-  recipientInfo.append(infoWrap, check);
+  const slug = document.createElement("span");
+  slug.classList.add("txt-color-gray");
+  slug.textContent = `#${user.slug}`;
 
-  const amountLabel = document.createElement("label");
-  amountLabel.textContent = "Amount";
+  const edit_btn = document.createElement("span");
+  edit_btn.classList.add("edit_btn");
+  edit_btn.innerHTML = `<i class="peer-icon peer-icon-edit-pencil"></i>`;
+
+   edit_btn.onclick = () => {
+    closeModal();
+    document.getElementById("openTransferDropdown").click();
+  };
+
+  infoWrap.append(avatar,name, slug,edit_btn);
+  recipientInfo.append(recipientLabel,infoWrap);
+  
+
+  const amountLabel = document.createElement("div");
+  amountLabel.classList.add("md_font_size","label");
+  amountLabel.textContent = "Enter amount";
+
   const amountWrap = document.createElement("div");
   amountWrap.className = "amount-input";
   const input = document.createElement("input");
   input.type = "number";
-  input.placeholder = "1234";
+  input.placeholder = "min: 0.00000001";
   input.id = "transferAmount";
-  const icon = document.createElement("img");
-  icon.src = "svg/logo_sw.svg";
-  amountWrap.append(input, icon);
+ 
+  amountWrap.append(amountLabel,input);
 
-  const feeLabel = document.createElement("div");
+  const messageLabel = document.createElement("div");
+  messageLabel.classList.add("md_font_size","label");
+  messageLabel.textContent = "Add a message (optional)";
+
+  const messageWrap = document.createElement("div");
+  messageWrap.className = "message-wrap";
+
+  const textareaCon = document.createElement("div");
+  textareaCon.classList.add("message_area");
+  const textarea = document.createElement("textarea");
+ 
+  textarea.placeholder = "e.g., Thanks for the coffee! ☕";
+  textarea.id = "transferMessage";
+  textareaCon.append(textarea);
+ 
+   const messageInsturction = document.createElement("div");
+  messageInsturction.classList.add("txt-color-gray","ins_label");
+  messageInsturction.textContent = "You can use letters, numbers, emojis, and special symbols. No links";
+  messageWrap.append(messageLabel,textareaCon,messageInsturction);
+
+
+
+  /*  const feeLabel = document.createElement("div");
   feeLabel.className = "fee-label";
   const percentage = isInvited === "" ? "4%" : "5%";
-  feeLabel.textContent = `Price fee: ${percentage} would apply`;
+  feeLabel.textContent = `Price fee: ${percentage} would apply`;*/
 
   const actions = document.createElement("div");
   actions.className = "modal-actions";
-  const backBtn = document.createElement("button");
-  backBtn.className = "btn-back";
-  backBtn.textContent = "Back";
-  backBtn.onclick = () => {
-    closeModal();
-    document.getElementById("openTransferDropdown").click();
-  };
+  
   const nextBtn = document.createElement("button");
-  nextBtn.className = "btn-next btn-blue";
-  nextBtn.textContent = "Next";
+  nextBtn.className = "btn-next btn-white bold";
+  nextBtn.textContent = "Continue";
   nextBtn.onclick = () => {
     const raw = input.value.trim();
     if (!raw) return Merror("Enter an amount");
@@ -864,9 +916,9 @@ function renderTransferFormView(user) {
     renderCheckoutScreen(user, amount);
   };
 
-  actions.append(backBtn, nextBtn);
-  wrapper.append(header, recipientLabel, recipientInfo, amountLabel, amountWrap, feeLabel, actions);
-  dropdown.appendChild(wrapper);
+  actions.append(nextBtn);
+  wrapper.append( recipientInfo, amountWrap, messageWrap, actions);
+ // dropdown.appendChild(wrapper);
 }
 
 function renderCheckoutScreen(user, amount) {
