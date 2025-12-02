@@ -493,6 +493,11 @@ h2.xxl_font_size {
 }
 
 
+.myAds_list_item.illegal_ads_post .ad_avatar {
+  background: var(--bg-filter);
+}
+
+
 
 
 /*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/

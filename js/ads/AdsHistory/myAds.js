@@ -1,8 +1,23 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const params = new URLSearchParams(window.location.search);
+  const targetPostId = params.get("postid");
+  const visibilityStatus = params.get("postvisibility");
+
   let limit = 20; 
   let offset = 0;
   let isLoading = false;
   let hasMore = true;
+
+  function addHiddenBadge(listItem) {
+    const timeFrame = listItem.querySelector('.ad_timeframe_box');
+    
+    const hiddenBadge = document.createElement('div');
+    hiddenBadge.classList.add('ad_hidden_badge', 'small_font_size');
+    hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i><span class="ads_hidden_texts none"> This post is shown as sensitive content</span>';
+    
+    // Insert badge after ad_info
+    timeFrame.parentNode.insertBefore(hiddenBadge, timeFrame.nextSibling);
+  }
   
   // Function to format large numbers (e.g., 300000 -> 300K)
   function formatNumber(num) {
@@ -112,149 +127,168 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Function to create ad listing HTML
   function createAdListing(ad) {
-    const active = isActive(ad.timeframeEnd);
-    const statusClass = active ? 'active' : 'ended';
-    const statusText = active ? 'Active' : 'Ended';
-    const startDate = formatDate(ad.timeframeStart);
-    const endDate = formatDate(ad.timeframeEnd);
-    const startTime = formatTime(ad.timeframeStart);
-    const endTime = formatTime(ad.timeframeEnd);
+      const active = isActive(ad.timeframeEnd);
+      const statusClass = active ? 'active' : 'ended';
+      const statusText = active ? 'Active' : 'Ended';
+      const startDate = formatDate(ad.timeframeStart);
+      const endDate = formatDate(ad.timeframeEnd);
+      const startTime = formatTime(ad.timeframeStart);
+      const endTime = formatTime(ad.timeframeEnd);
 
-    const postImage = getPostImage(ad.post);
-    const contentTypeIcon = getContentTypeIcon(ad.post?.contenttype);
-    const postTitle = (ad.post && ad.post.title && ad.post.title.trim()) || `Advertisement #${ad.id}`;
-    const isPinned = ad.type === 'PINNED';
-    const postDescription = (ad.post && ad.post.mediadescription && ad.post.mediadescription.trim()) || '....';
-    const isTextPost = ad.post?.contenttype?.toUpperCase() === 'TEXT';
-    
-    const listItem = document.createElement('div');
-    listItem.className = `myAds_list_item ${statusClass}${isPinned ? ' PINNED' : ''}`;
-    listItem.innerHTML = `
-      <div class="ad_main_info">
-        <div class="ad_info">
-            <div class="ad_avatar">
-              ${isTextPost ? `
-                <div class="post_image_placeholder"></div>
-                <i class="peer-icon ${contentTypeIcon}"></i>
-              ` : `
-                <img src="${postImage}" alt="Post image" class="post_image" />
-                ${contentTypeIcon ? `<i class="peer-icon ${contentTypeIcon}"></i>` : ''}
-              `}
-              ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
-            </div>
-            <div class="ad_details">
-            <h3 class="ad_tiitle">${postTitle}</h3>
-            <p class="ad_deescription">${postDescription}</p>
-            </div>
-        </div>
-        <div class="ad_timeframe_box">
-            <div><span class="ad_timeframe">${startDate}</span><span class="ad_timer"> ${startTime}</span></div>
-            <hr></hr>
-            <div><span class="ad_timeframe">${endDate}</span><span class="ad_timer"> ${endTime}</span></div>
-        </div>
-        <div class="ad_status">
-            <span class="status_badge ${statusClass}">
-            <span class="status_dot"></span>
-            ${statusText}
-            </span>
-            <div class="ad_timer_count none">${active ? '' : '00 : 00 : 00'}</div>
-        </div>
-      </div>
-
-      <!-- Dropdown section -->
-      <div class="ad_dropdown">
-        <div class="ad_dropdown_content">
-            <div id="myAds_header_dropdown" class="myAds_header">
-                <div class="myAds_earnings">
-                    <h2 class="xxl_font_size">Earnings</h2>
-                    <div class="earnings_box header_box">
-                        <p>Gems</p>
-                        <div class="ads_gems_count">
-                            <img src="svg/peer-icon-gems.svg" alt="">
-                            <span id="myAdsGemsEarnedDropdown" class="bold xxl_font_size">0</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="myAds_interactions">
-                    <h2 class="xxl_font_size">Interactions</h2>
-                    <div class="interactions_box header_box">
-                        <div class="likes">
-                        <i class="peer-icon peer-icon-like"></i>
-                        <p>Likes</p>
-                        <span id="myAdsLikesDropdown" class="bold xxl_font_size">0</span>
-                        </div>
-                        <div class="vr"></div>
-                        <div class="dislikes">
-                        <i class="peer-icon peer-icon-dislike"></i>
-                        <p>Dislikes</p>
-                        <span id="myAdsDislikesDropdown" class="bold xxl_font_size">0</span>
-                        </div>
-                        <div class="vr"></div>
-                        <div class="comments">
-                        <i class="peer-icon peer-icon-comment-alt"></i>
-                        <p>Comments</p>
-                        <span id="myAdsCommentsDropdown" class="bold xxl_font_size">0</span>
-                        </div>
-                        <div class="vr"></div>
-                        <div class="views">
-                        <i class="peer-icon peer-icon-eye-open"></i>
-                        <p>Views</p>
-                        <span id="myAdsViewsDropdown" class="bold xxl_font_size">0</span>
-                        </div>
-                        <div class="vr"></div>
-                        <div class="reports">
-                        <i class="peer-icon peer-icon-warning"></i>
-                        <p>Reports</p>
-                        <span id="myAdsReportsDropdown" class="bold xxl_font_size">0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="myAds_main">
-                <h2 class="xxl_font_size">Campaign details</h2>
-                <div class="campaign_details">
-                    <div class="detail_item">
-                        <span class="detail_title">Start date</span>
-                        <span class="detail_value">${startDate} <em> ${startTime} </em> </span>
-                    </div>
-                    <div class="detail_item">
-                        <span class="detail_title">End date</span>
-                        <span class="detail_value">${endDate} <em> ${endTime} </em> </span>
-                    </div>
-                    <div class="detail_item">
-                        <span class="detail_title">Total ad cost</span>
-                        <div class="ads_tokens_count">
-                            <span id="myAdsTokensSpentDropdown" class="bold xxl_font_size">0</span>
-                            <img src="svg/logo_sw.svg" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </div>
-    `;
-
-    listItem.querySelector('#myAdsLikesDropdown').textContent = formatNumber(ad.amountLikes);
-    listItem.querySelector('#myAdsDislikesDropdown').textContent = formatNumber(ad.amountDislikes);
-    listItem.querySelector('#myAdsCommentsDropdown').textContent = formatNumber(ad.amountComments);
-    listItem.querySelector('#myAdsViewsDropdown').textContent = formatNumber(ad.amountViews);
-    listItem.querySelector('#myAdsReportsDropdown').textContent = formatNumber(ad.amountReports);
-    listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
-    listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
-
-    listItem.addEventListener("click", () => {
-      const adDropdown = listItem.querySelector('.ad_dropdown');
-      const adFrameBox = listItem.querySelector('.ad_timeframe_box');
-      adDropdown.classList.toggle('open');
-        if (adDropdown.classList.contains('open')) {
-            adFrameBox.classList.add("hidden");
-        } else {
-            adFrameBox.classList.remove("hidden");
+      const postImage = getPostImage(ad.post);
+      const contentTypeIcon = getContentTypeIcon(ad.post?.contenttype);
+      const postTitle = (ad.post && ad.post.title && ad.post.title.trim()) || `Advertisement #${ad.id}`;
+      const isPinned = ad.type === 'PINNED';
+      const postDescription = (ad.post && ad.post.mediadescription && ad.post.mediadescription.trim()) || '....';
+      const isTextPost = ad.post?.contenttype?.toUpperCase() === 'TEXT';
+      
+      const listItem = document.createElement('div');
+      listItem.className = `myAds_list_item ${statusClass}${isPinned ? ' PINNED' : ''}`;
+      
+      /*-- handling post visibility (for testing via URL parameters)----*/
+      // Check if this specific post matches the targetPostId from URL
+      if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
+        if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+          listItem.classList.add("illegal_ads_post");
+        } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+          listItem.classList.add("hidden_ads_post");
         }
-    });
+      }
+      /*-- End : handling post visibility----*/
+      
+      listItem.innerHTML = `
+        <div class="ad_main_info">
+          <div class="ad_info">
+              <div class="ad_avatar">
+                ${isTextPost ? `
+                  <div class="post_image_placeholder"></div>
+                  <i class="peer-icon ${contentTypeIcon}"></i>
+                ` : `
+                  <img src="${postImage}" alt="Post image" class="post_image" />
+                  ${contentTypeIcon ? `<i class="peer-icon ${contentTypeIcon}"></i>` : ''}
+                `}
+                ${isPinned ? `<div class="pin_badge"><img src="svg/pin.svg" alt="pin"/></div>` : ''}
+              </div>
+              <div class="ad_details">
+              <h3 class="ad_tiitle">${postTitle}</h3>
+              <p class="ad_deescription">${postDescription}</p>
+              </div>
+          </div>
+          <div class="ad_timeframe_box">
+              <div><span class="ad_timeframe">${startDate}</span><span class="ad_timer"> ${startTime}</span></div>
+              <hr></hr>
+              <div><span class="ad_timeframe">${endDate}</span><span class="ad_timer"> ${endTime}</span></div>
+          </div>
+          <div class="ad_status">
+              <span class="status_badge ${statusClass}">
+              <span class="status_dot"></span>
+              ${statusText}
+              </span>
+              <div class="ad_timer_count none">${active ? '' : '00 : 00 : 00'}</div>
+          </div>
+        </div>
 
-    return listItem;
-  }
+        <!-- Dropdown section -->
+        <div class="ad_dropdown">
+          <div class="ad_dropdown_content">
+              <div id="myAds_header_dropdown" class="myAds_header">
+                  <div class="myAds_earnings">
+                      <h2 class="xxl_font_size">Earnings</h2>
+                      <div class="earnings_box header_box">
+                          <p>Gems</p>
+                          <div class="ads_gems_count">
+                              <img src="svg/peer-icon-gems.svg" alt="">
+                              <span id="myAdsGemsEarnedDropdown" class="bold xxl_font_size">0</span>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="myAds_interactions">
+                      <h2 class="xxl_font_size">Interactions</h2>
+                      <div class="interactions_box header_box">
+                          <div class="likes">
+                          <i class="peer-icon peer-icon-like"></i>
+                          <p>Likes</p>
+                          <span id="myAdsLikesDropdown" class="bold xxl_font_size">0</span>
+                          </div>
+                          <div class="vr"></div>
+                          <div class="dislikes">
+                          <i class="peer-icon peer-icon-dislike"></i>
+                          <p>Dislikes</p>
+                          <span id="myAdsDislikesDropdown" class="bold xxl_font_size">0</span>
+                          </div>
+                          <div class="vr"></div>
+                          <div class="comments">
+                          <i class="peer-icon peer-icon-comment-alt"></i>
+                          <p>Comments</p>
+                          <span id="myAdsCommentsDropdown" class="bold xxl_font_size">0</span>
+                          </div>
+                          <div class="vr"></div>
+                          <div class="views">
+                          <i class="peer-icon peer-icon-eye-open"></i>
+                          <p>Views</p>
+                          <span id="myAdsViewsDropdown" class="bold xxl_font_size">0</span>
+                          </div>
+                          <div class="vr"></div>
+                          <div class="reports">
+                          <i class="peer-icon peer-icon-warning"></i>
+                          <p>Reports</p>
+                          <span id="myAdsReportsDropdown" class="bold xxl_font_size">0</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="myAds_main">
+                  <h2 class="xxl_font_size">Campaign details</h2>
+                  <div class="campaign_details">
+                      <div class="detail_item">
+                          <span class="detail_title">Start date</span>
+                          <span class="detail_value">${startDate} <em> ${startTime} </em> </span>
+                      </div>
+                      <div class="detail_item">
+                          <span class="detail_title">End date</span>
+                          <span class="detail_value">${endDate} <em> ${endTime} </em> </span>
+                      </div>
+                      <div class="detail_item">
+                          <span class="detail_title">Total ad cost</span>
+                          <div class="ads_tokens_count">
+                              <span id="myAdsTokensSpentDropdown" class="bold xxl_font_size">0</span>
+                              <img src="svg/logo_sw.svg" alt="">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      `;
+
+      listItem.querySelector('#myAdsLikesDropdown').textContent = formatNumber(ad.amountLikes);
+      listItem.querySelector('#myAdsDislikesDropdown').textContent = formatNumber(ad.amountDislikes);
+      listItem.querySelector('#myAdsCommentsDropdown').textContent = formatNumber(ad.amountComments);
+      listItem.querySelector('#myAdsViewsDropdown').textContent = formatNumber(ad.amountViews);
+      listItem.querySelector('#myAdsReportsDropdown').textContent = formatNumber(ad.amountReports);
+      listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
+      listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
+
+      // Add hidden badge if this post matches the targetPostId and status is HIDDEN
+      if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
+        if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+          addHiddenBadge(listItem);
+        }
+      }
+
+      listItem.addEventListener("click", () => {
+        const adDropdown = listItem.querySelector('.ad_dropdown');
+        const adFrameBox = listItem.querySelector('.ad_timeframe_box');
+        adDropdown.classList.toggle('open');
+          if (adDropdown.classList.contains('open')) {
+              adFrameBox.classList.add("hidden");
+          } else {
+              adFrameBox.classList.remove("hidden");
+          }
+      });
+
+      return listItem;
+    }
 
   function showContent() {
     const mainContainer = document.querySelector('.site-main-myAds');
@@ -326,6 +360,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 media
                 cover
                 mediadescription
+                visibilityStatus
+                isHiddenForUsers
+                hasActiveReports
+                isreported
               }
               user {
                 id
