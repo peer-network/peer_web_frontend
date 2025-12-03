@@ -1,4 +1,12 @@
+// ============================================
+// MYADS.JS - Advertisement History Manager
+// ============================================
+
 document.addEventListener("DOMContentLoaded", async () => {
+  // ============================================
+  // URL PARAMETERS & CONFIGURATION
+  // ============================================
+  
   const params = new URLSearchParams(window.location.search);
   const targetPostId = params.get("postid");
   const visibilityStatus = params.get("postvisibility");
@@ -8,18 +16,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   let isLoading = false;
   let hasMore = true;
 
+  // ============================================
+  // BADGE HELPERS
+  // ============================================
+  
   function addHiddenBadge(listItem) {
     const timeFrame = listItem.querySelector('.ad_timeframe_box');
     
     const hiddenBadge = document.createElement('div');
     hiddenBadge.classList.add('ad_hidden_badge', 'small_font_size');
-    hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i><span class="ads_hidden_texts none"> This post is shown as sensitive content</span>';
+    hiddenBadge.innerHTML = `
+      <i class="peer-icon peer-icon-eye-close xl_font_size"></i>
+      <div class="hidden_post_opened none">
+        <i class="peer-icon peer-icon-eye-close small_font_size"></i>
+        <span class="ads_hidden_texts">This post is shown as sensitive content</span>
+      </div>
+    `;
     
-    // Insert badge after ad_info
     timeFrame.parentNode.insertBefore(hiddenBadge, timeFrame.nextSibling);
   }
+
+  // ============================================
+  // NUMBER & DATE FORMATTING
+  // ============================================
   
-  // Function to format large numbers (e.g., 300000 -> 300K)
   function formatNumber(num) {
     if (num == null || isNaN(num)) return '0';
     if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -27,7 +47,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return num.toString();
   }
 
-  // Function to format date
   function formatDate(dateInput) {
     let date;
     
@@ -57,6 +76,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return date.toTimeString().split(' ')[0].replace(/:/g, ' : ');
   }
 
+  // ============================================
+  // STATUS HELPERS
+  // ============================================
+  
   function isActive(timeframeEnd) {
     const cleaned = timeframeEnd.replace(/\.\d+$/, '') + 'Z';
     const now = new Date();
@@ -64,7 +87,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return now < endTime;
   }
 
-  // Function to get the appropriate post image based on content type
+  // ============================================
+  // POST IMAGE & CONTENT TYPE HELPERS
+  // ============================================
+  
   function getPostImage(post) {
     if (!post) return "";
     
@@ -76,7 +102,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           const coverArray = JSON.parse(post.cover);
           const coverPath = coverArray?.[0]?.path?.replace(/\\\//g, '/'); 
           if (coverPath) {
-           
             return tempMedia(coverPath);
           }
         } catch (e) {
@@ -101,11 +126,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // For TEXT - return blank
     return "";
   }
 
-  // Function to get content type icon class
   function getContentTypeIcon(contentType) {
     if (!contentType) return "";
     
@@ -125,7 +148,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Function to create ad listing HTML
+  // ============================================
+  // AD LISTING CREATION
+  // ============================================
+  
   function createAdListing(ad) {
       const active = isActive(ad.timeframeEnd);
       const statusClass = active ? 'active' : 'ended';
@@ -145,8 +171,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const listItem = document.createElement('div');
       listItem.className = `myAds_list_item ${statusClass}${isPinned ? ' PINNED' : ''}`;
       
-      /*-- handling post visibility (for testing via URL parameters)----*/
-      // Check if this specific post matches the targetPostId from URL
       if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
         if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
           listItem.classList.add("illegal_ads_post");
@@ -154,7 +178,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           listItem.classList.add("hidden_ads_post");
         }
       }
-      /*-- End : handling post visibility----*/
       
       listItem.innerHTML = `
         <div class="ad_main_info">
@@ -174,21 +197,22 @@ document.addEventListener("DOMContentLoaded", async () => {
               <p class="ad_deescription">${postDescription}</p>
               </div>
           </div>
-          <div class="ad_timeframe_box">
-              <div><span class="ad_timeframe">${startDate}</span><span class="ad_timer"> ${startTime}</span></div>
-              <hr></hr>
-              <div><span class="ad_timeframe">${endDate}</span><span class="ad_timer"> ${endTime}</span></div>
-          </div>
-          <div class="ad_status">
-              <span class="status_badge ${statusClass}">
-              <span class="status_dot"></span>
-              ${statusText}
-              </span>
-              <div class="ad_timer_count none">${active ? '' : '00 : 00 : 00'}</div>
+          <div class="time_badge_status">
+            <div class="ad_timeframe_box">
+                <div><span class="ad_timeframe">${startDate}</span><span class="ad_timer"> ${startTime}</span></div>
+                <hr></hr>
+                <div><span class="ad_timeframe">${endDate}</span><span class="ad_timer"> ${endTime}</span></div>
+            </div>
+            <div class="ad_status">
+                <span class="status_badge ${statusClass}">
+                <span class="status_dot"></span>
+                ${statusText}
+                </span>
+                <div class="ad_timer_count none">${active ? '' : '00 : 00 : 00'}</div>
+            </div>
           </div>
         </div>
 
-        <!-- Dropdown section -->
         <div class="ad_dropdown">
           <div class="ad_dropdown_content">
               <div id="myAds_header_dropdown" class="myAds_header">
@@ -269,7 +293,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
       listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
 
-      // Add hidden badge if this post matches the targetPostId and status is HIDDEN
       if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
         if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
           const adInfo = listItem.querySelector('.ad_info'); 
@@ -296,17 +319,48 @@ document.addEventListener("DOMContentLoaded", async () => {
       listItem.addEventListener("click", () => {
         const adDropdown = listItem.querySelector('.ad_dropdown');
         const adFrameBox = listItem.querySelector('.ad_timeframe_box');
+        const hiddenBadge = listItem.querySelector('.ad_hidden_badge');
+        
         adDropdown.classList.toggle('open');
-          if (adDropdown.classList.contains('open')) {
-              adFrameBox.classList.add("hidden");
-          } else {
-              adFrameBox.classList.remove("hidden");
+        
+        if (adDropdown.classList.contains('open')) {
+          adFrameBox.classList.add("none");
+          
+          if (hiddenBadge) {
+            const eyeIconLarge = hiddenBadge.querySelector('.peer-icon-eye-close.xl_font_size');
+            const hiddenPostOpened = hiddenBadge.querySelector('.hidden_post_opened');
+            
+            if (eyeIconLarge) {
+              eyeIconLarge.classList.add('none');
+            }
+            if (hiddenPostOpened) {
+              hiddenPostOpened.classList.remove('none');
+            }
           }
+        } else {
+          adFrameBox.classList.remove("none");
+          
+          if (hiddenBadge) {
+            const eyeIconLarge = hiddenBadge.querySelector('.peer-icon-eye-close.xl_font_size');
+            const hiddenPostOpened = hiddenBadge.querySelector('.hidden_post_opened');
+            
+            if (eyeIconLarge) {
+              eyeIconLarge.classList.remove('none');
+            }
+            if (hiddenPostOpened) {
+              hiddenPostOpened.classList.add('none');
+            }
+          }
+        }
       });
 
       return listItem;
     }
 
+  // ============================================
+  // UI ANIMATION
+  // ============================================
+  
   function showContent() {
     const mainContainer = document.querySelector('.site-main-myAds');
     mainContainer.classList.add('loaded');
@@ -319,12 +373,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // ============================================
+  // DATA FETCHING & RENDERING
+  // ============================================
+  
   async function loadAdvertisementHistory(isLoadMore = false) {
     if (isLoading || !hasMore) return;
     
     isLoading = true;
     
-    // Show loading indicator if it exists
     const loadingIndicator = document.getElementById('loadingIndicator');
     if (loadingIndicator) {
       loadingIndicator.style.display = 'block';
@@ -425,7 +482,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           const myAdsListsContainer = document.querySelector('.myAds_lists');
           
-          // Get references to sentinel and loading indicator (if they exist)
           const sentinel = document.getElementById('sentinel');
           const loadingIndicator = document.getElementById('loadingIndicator');
           
@@ -524,6 +580,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // ============================================
+  // INFINITE SCROLL OBSERVER
+  // ============================================
+  
   function setupIntersectionObserver() {
     const sentinel = document.getElementById('sentinel');
     const myAdsListsContainer = document.querySelector('.myAds_lists');
@@ -545,6 +605,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     observer.observe(sentinel);
   }
 
+  // ============================================
+  // INITIALIZATION
+  // ============================================
+  
   await loadAdvertisementHistory();
 
 });
