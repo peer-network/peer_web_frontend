@@ -1,44 +1,130 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.view = {
+  // initFilters() {
+  //   const list = document.querySelectorAll(".item_filters li");
+
+  //   list.forEach((li) => {
+  //     li.addEventListener("click", async (e) => {
+  //       e.preventDefault();
+
+  //       // remove active
+  //       document .querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
+
+  //       li.querySelector("a").classList.add("active");
+
+  //       // Determine schema type + contentType
+  //       let type = "LIST_ITEMS";
+  //       let contentType = null;
+
+  //       if (li.classList.contains("post")) {
+  //         type = "LIST_POST";
+  //         contentType = "post";
+
+  //       } else if (li.classList.contains("comments")) {
+  //         type = "LIST_COMMENT";
+  //         contentType = "comment";
+        
+  //       } else if (li.classList.contains("accounts")) {
+  //         type = "LIST_USER";
+  //         contentType = "user";
+  //       }
+
+  //       // Load items
+  //       await moderationModule.fetcher.loadItems(type, { offset: 0, limit: 20, contentType });
+  //     });
+  //   });
+  // },
+
   initFilters() {
     const list = document.querySelectorAll(".item_filters li");
+    const reviewChk = document.getElementById("review_chk");
+
+    // normalize kind from type/contentType
+    const kindFrom = (type, contentType) => {
+      if (contentType) return contentType;
+      if (type === "LIST_POST") return "post";
+      if (type === "LIST_COMMENT") return "comment";
+      if (type === "LIST_USER") return "user";
+      return null;
+    };
+
+    // robust status check (handles nested post.status etc)
+    const statusIsWaiting = (item) => {
+      const s = ((item.status || item.post?.status || item.targetstatus || "") + "").toLowerCase().trim();
+      return s.includes("waiting");
+    };
+
+    // apply filter by kind + waiting status and render
+    const applyAndRender = (items, kind = null) => {
+      let arr = Array.isArray(items) ? items.slice() : [];
+      if (kind) arr = arr.filter(i => (i.kind || "").toString() === kind);
+      if (reviewChk && reviewChk.checked) {
+        const filtered = arr.filter(i => statusIsWaiting(i));
+        console.debug("applyAndRender: filtered waiting items", filtered.length, "of", arr.length, "kind=", kind);
+        this.renderItems(filtered);
+      } else {
+        this.renderItems(arr);
+      }
+    };
+
+    // load from server; if server returns nothing and we have cached items, fallback to cache
+    const loadAndRender = async (type, contentType) => {
+      const opts = { offset: 0, limit: 20, contentType };
+      if (reviewChk && reviewChk.checked) opts.status = "waiting for review";
+      const result = await moderationModule.fetcher.loadItems(type, opts);
+      const items = Array.isArray(result) ? result : (moderationModule.store?.items || []);
+      const kind = kindFrom(type, contentType);
+
+      if ((!items || items.length === 0) && Array.isArray(moderationModule.store?.items) && moderationModule.store.items.length) {
+        // fallback: try cached items for the same kind
+        const cached = moderationModule.store.items.filter(i => !kind || (i.kind === kind));
+        applyAndRender(cached, kind);
+        return;
+      }
+
+      applyAndRender(items, kind);
+    };
+
+    let lastType = "LIST_ITEMS";
+    let lastContentType = null;
 
     list.forEach((li) => {
       li.addEventListener("click", async (e) => {
         e.preventDefault();
+        document.querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
+        li.querySelector("a")?.classList.add("active");
 
-        // remove active
-        document .querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
-
-        li.querySelector("a").classList.add("active");
-
-        // Determine schema type + contentType
         let type = "LIST_ITEMS";
         let contentType = null;
+        if (li.classList.contains("post")) { type = "LIST_POST"; contentType = "post"; }
+        else if (li.classList.contains("comments")) { type = "LIST_COMMENT"; contentType = "comment"; }
+        else if (li.classList.contains("accounts")) { type = "LIST_USER"; contentType = "user"; }
 
-        if (li.classList.contains("post")) {
-          type = "LIST_POST";
-          contentType = "post";
+        lastType = type;
+        lastContentType = contentType;
 
-        } else if (li.classList.contains("comments")) {
-          type = "LIST_COMMENT";
-          contentType = "comment";
-        
-        } else if (li.classList.contains("accounts")) {
-          type = "LIST_USER";
-          contentType = "user";
-        }
-
-        // Load items
-        await moderationModule.fetcher.loadItems(type, { offset: 0, limit: 20, contentType });
+        await loadAndRender(type, contentType);
       });
     });
+
+    if (reviewChk) {
+      reviewChk.addEventListener("change", async () => {
+        // prefer client-side cached items for the current kind to avoid disappearing list
+        const kind = kindFrom(lastType, lastContentType);
+        const cached = Array.isArray(moderationModule.store?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
+        if (cached.length) {
+          applyAndRender(cached, kind);
+          return;
+        }
+        // else request server for the last selected filter
+        await loadAndRender(lastType, lastContentType);
+      });
+    }
   },
 
   renderStats(stats) {
     if (!stats) return;
-
     const selectors = {
       awaiting: ".stat_box.review .stat_count",
       hidden: ".stat_box.hidden-st .stat_count",
@@ -78,7 +164,7 @@ moderationModule.view = {
 
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-        if (item.kind === "user") {
+        if (item.kind == "user") {
           imgEl.onerror = function () {
             this.src = "../svg/noname.svg";
           };
@@ -201,38 +287,52 @@ moderationModule.view = {
         boxLeft.append(postBlock);
       }
 
-   
-
       /* USER DETAILS */
       if (item.kind === "user") {
         const userBlock = document.createElement("div");
         userBlock.className = "content_type_profile";
         userBlock.innerHTML = `
           <div class="profile">
-            <div class="profile_image"><img src="${item.media || "../img/profile_thumb.png"}" /></div>
-            <div class="profile_detail">
-              <div class="user_info">
-                <span class="user_name xl_font_size bold italic">${item.username}</span>
-                <span class="user_slug txt-color-gray">${item.slug}</span>
+              <div class="profile_image">
+                  <img src="../img/profile_thumb.png" />
+                  <img src="${item.media || "../img/profile_thumb.png"}" />
               </div>
-              <div class="user_profile_txt txt-color-gray">${item.bio || ""}</div>
-              <div class="profile_stats txt-color-gray">
-                <span class="post_count"><em class="xl_font_size bold">${item.posts || 0}</em> Publications</span>
-                <span class="followers_count"><em class="xl_font_size bold">${item.followers || 0}</em> Followers</span>
-                <span class="following_count"><em class="xl_font_size bold">${item.following || 0}</em> Following</span>
-                <span class="peer_count"><em class="xl_font_size bold">${item.peers || 0}</em> Peers</span>
+              <div class="profile_detail">
+                  <div class="user_info">
+                      <span
+                          class="user_name xl_font_size bold italic">${item.username}</span>
+                      <span class="user_slug txt-color-gray">#${item.slug}</span>
+                  </div>
+                  <div class="user_profile_txt txt-color-gray">${item.biography || ""}</div>
+
+                  <div class="profile_stats txt-color-gray">
+                      <span class="post_count">
+                          <em id="userPosts" class="xl_font_size bold">${item?.posts || 0}</em>
+                          Publications
+                      </span>
+                      <span id="followers_count" class="followers_count">
+                          <em id="followers" class="xl_font_size bold">${item?.followers || 0}</em> Followers
+                      </span>
+                      <span id="following_count" class="following_count">
+                          <em id="following" class="xl_font_size bold">${item?.following || 0}</em> Following
+                      </span>
+                      <span id="peer_count" class="peer_count">
+                          <em id="peers" class="xl_font_size bold">${item?.peers || 0}</em> Peers
+                      </span>
+                  </div>
+
               </div>
-            </div>
           </div>
           <div class="profile_link">
-            <a class="button btn-transparent" href="#">View profile <i class="peer-icon peer-icon-arrow-right"></i></a>
+              <a class="button btn-transparent" href="../view-profile.php?user=${item.userid}" target='_blank'>View profile <i class="peer-icon peer-icon-arrow-right"></i></a>
           </div>
         `;
+
         boxLeft.append(userBlock);
       }
 
       /* COMMENT DETAILS */
-      if (item.kind === "comment") {
+      if (item.kind === "comment" && item.post) {
         const commentType = document.createElement("div");
         commentType.className = "content_type_comment";
 
@@ -260,6 +360,35 @@ moderationModule.view = {
               <span>0</span>
             </div>
           </div>
+
+          <h2 class="xxl_font_size bold">
+              <i class="peer-icon peer-icon-comment-fill xl_font_size"></i> 
+              Reported comment
+          </h2>
+          <div class="comment_item">
+              <div class="commenter-pic">
+                  <img class="profile-picture" src="../img/profile_thumb.png"
+                      alt="user image">
+
+                  <img class="profile-picture" src="${item.post?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
+              </div>
+              <div class="comment_body">
+                  <div class="commenter_info xl_font_size">
+                      <span class="cmt_userName bold italic">Bryan Johnson</span>
+                      <span class="cmt_profile_id txt-color-gray">#93268</span>
+                      <span class="timeagao txt-color-gray">3m</span>
+                  </div>
+                  <div class="comment_text xl_font_size">Optimizing our biological
+                      systems isn't just a goal - it's a responsibility to unlock the
+                      best version of ourselves.</div>
+
+              </div>
+              <div class="comment_like xl_font_size">
+                  <i class="peer-icon peer-icon-like"></i>
+                  <span>0</span>
+              </div>
+          </div>
+
         `;
 
         // Linked post details under the comment
@@ -268,24 +397,24 @@ moderationModule.view = {
         commentPostDetail.innerHTML = `
           <div class="profile_post">
             <div class="profile">
-              <span class="profile_image"><img src="${item.post.img}" onerror="this.src='../svg/noname.svg'"></span>
+              <span class="profile_image"><img src="${item?.post?.img}" onerror="this.src='../svg/noname.svg'"></span>
               <span class="profile_detail">
-                <span class="user_name xl_font_size bold italic">${item.post.user}</span>
-                <span class="user_slug txt-color-gray">#${item.post.slug}</span>
+                <span class="user_name xl_font_size bold italic">${item?.post?.username}</span>
+                <span class="user_slug txt-color-gray">#${item?.post?.slug}</span>
               </span>
             </div>
             <div class="fullpost_link">
-              <a class="button btn-transparent" href="../dashboard.php?postid=${item.post.id}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+              <a class="button btn-transparent" href="../dashboard.php?postid=${item?.post?.id}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
             </div>
           </div>
-          <div class="post_detail post_type_${item.post.contentType}">
-            <div class="post_media">${item.post.media}</div>
+          <div class="post_detail post_type_${item?.post?.contentType}">
+            <div class="post_media">${item?.post?.media}</div>
             <div class="post_info">
               <div class="post_title">
-                <h2 class="xl_font_size bold">${item.post.title}</h2>
+                <h2 class="xl_font_size bold">${item?.post?.title}</h2>
                 <span class="timeagao txt-color-gray">2h</span>
               </div>
-              <div class="post_text">${item.post.description}</div>
+              <div class="post_text">${item?.post?.description}</div>
               <div class="hashtags txt-color-blue">
                 ${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}
               </div>

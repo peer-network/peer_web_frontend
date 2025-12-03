@@ -33,11 +33,12 @@ moderationModule.helpers = {
   },
 
   safeMedia(raw, fallback = "") {
-    try {
-        const arr = JSON.parse(raw || "[]");  
-        return Array.isArray(arr) && arr[0]?.path ? tempMedia(arr[0].path) : fallback;
-    } catch {
-        return fallback;
-    }
+      try {
+          const arr = JSON.parse(raw || "[]");
+          const path = arr[0]?.path;
+          return Array.isArray(arr) && path ? domain.replace("://", "://media.") + path : fallback;
+      } catch {
+          return fallback;
+      }
   }
 };

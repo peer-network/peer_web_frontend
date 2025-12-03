@@ -1,9 +1,9 @@
 <?php
 require_once '../host.php';
-//require_once '../auth.php';
+require_once '../auth.php';
 
-//checkAuth("unauthorized");
-//enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
+checkAuth("unauthorized");
+enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -484,10 +484,8 @@ require_once '../host.php';
                                             </div>
                                         </div>
                                         <div class="profile_link">
-                                            <a class="button btn-transparent" href="#">View profile <i
-                                                    class="peer-icon peer-icon-arrow-right"></i></a>
+                                            <a class="button btn-transparent" href="#">View profile <i class="peer-icon peer-icon-arrow-right"></i></a>
                                         </div>
-
                                     </div>
                                     <!--- End Content type : Profile  --->
                                 </div>
@@ -626,10 +624,10 @@ require_once '../host.php';
                                     <!--- Content type : Comment --->
                                     <div class="content_type_comment">
                                         <div class="comment_box">
-                                            <h2 class="xxl_font_size bold"><i
-                                                    class="peer-icon peer-icon-comment-fill xl_font_size"></i> Reported
-                                                comment</h2>
-
+                                            <h2 class="xxl_font_size bold">
+                                                <i class="peer-icon peer-icon-comment-fill xl_font_size"></i> 
+                                                Reported comment
+                                            </h2>
                                             <div class="comment_item">
                                                 <div class="commenter-pic">
                                                     <img class="profile-picture" src="../img/profile_thumb.png"
