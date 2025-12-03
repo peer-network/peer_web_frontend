@@ -333,53 +333,7 @@
 
 
 
-.progress-bar {
-  background: #333;
-  border-radius: 4px;
-  height: 8px;
-  overflow: hidden;
-}
 
-.progress {
-  height: 100%;
-  background: linear-gradient(to right, #444, #5ea4ff);
-  width: var(--progress);
-  transition: width 0.3s ease;
-}
-
-.radial-progress {
-  --size: 11rem;
-  --thickness: 0.5rem;
-  --progress: 65;
-  /* in Prozent (0–100) */
-
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background: conic-gradient(#5ea4ff calc(var(--progress) * 1%), #333 calc(var(--progress) * 1%) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin: auto;
-}
-
-.radial-progress::before {
-  content: "";
-  position: absolute;
-  width: calc(var(--size) - var(--thickness) * 2);
-  height: calc(var(--size) - var(--thickness) * 2);
-  background: #262626;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-.value {
-  color: #5ea4ff;
-  font-size: 24px;
-  text-align: center;
-  z-index: 2;
-}
 
 
 .history-header,
@@ -583,6 +537,9 @@
 	border-radius: 70px;
 	justify-content: space-between;
 }
+.transfer-form-screen .balance-header.summary-header {
+	background: rgba(255, 255, 255, 0.20);
+}
 
 .transfer-form-screen .balance-header .tbalance {
 	padding-left: 65px;
@@ -640,6 +597,7 @@
 	border-radius: 70px;
 	justify-content: space-between;
 	background: var(--dark-inactive, #323232);
+	min-height: 130px;
 }
 
 .site-main-wallet .transfer-form-screen .recipient-info .info .edit_btn {
@@ -684,6 +642,20 @@
 	border-radius: 70px;
 	background: var(--dark-inactive, #323232);
 }
+.site-main-wallet .transfer-form-screen .message-wrap .label {
+	padding-left: 60px;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.site-main-wallet .transfer-form-screen .message-wrap .label::after {
+	content: '\e856';
+	position: absolute;
+	top: 0;
+  	left: 0px;
+	font-family: "peer-network";	
+}
 
 .site-main-wallet .transfer-form-screen .amount-input input {
 	width: 100%;
@@ -693,6 +665,97 @@
 	background-repeat: no-repeat;
 	background-position: 96% center;
 }
+.site-main-wallet .transfer-form-screen .amount-input .amount_error {
+	text-align: center;
+}
+.fee-section {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+.fee-section .fee-title,
+.fee-section .total_amount {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	justify-content: space-between;
+	position: relative;
+	
+}	
+.summary-amount .fee-section .total_amount {
+	order: -1;
+	border-radius: 100px;
+	background: var(--black-dark, #252525);
+	height: 130px;
+	padding: 0 40px;
+}
+.fee-section .fee-title {
+	padding-right: 43px;
+	cursor: pointer;
+}
+
+.fee-section .fee-title .fee-total,
+.fee-section .total_amount .final-total {
+	padding-right: 55px;
+	background-image: url(../svg/logo_sw.svg);
+	background-size: 40px;
+	background-repeat: no-repeat;
+	background-position: right center;
+	text-align: right;
+
+}
+.fee-section .fee-title .fee-total{
+
+	filter: brightness(50%);
+	color: var(--white);
+}
+.fee-section .fee-title::after {
+	content: '\e82f';
+	position: absolute;
+	top: 19px;
+  	right: 0px;
+	font-family: "peer-network";
+	font-size: 15px;
+}
+.fee-section.close .fee-title::after {
+	content: '\e82e';
+}
+
+.fee-section.close .fee-breakdowns {
+	max-height: 0;
+	overflow: hidden;
+	opacity: 0;
+}
+.fee-breakdowns {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	opacity: 1;
+  	max-height: 300px;
+	transition: max-height 0.4s ease;
+}
+.fee-breakdowns .fee-item {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	justify-content: space-between;
+	position: relative;
+	
+}
+
+.fee-breakdowns .fee-item .value {
+	padding-right: 45px;
+	background-image: url(../svg/logo_sw.svg);
+	background-size: 30px;
+	background-repeat: no-repeat;
+	background-position: right center;
+	text-align: right;
+	filter: brightness(50%);
+	color: var(--white);
+}
+
+
+
 
 .site-main-wallet .transfer-form-screen .message-wrap .message_area {
 	width: 100%;

@@ -575,7 +575,7 @@ async function renderUsers() {
   balance_header.className = "balance-header";
 
   const sp_bal = document.createElement("span");
-  sp_bal.classList.add("md_font_size","txt-color-gray");
+  sp_bal.classList.add("md_font_size","txt-color-gray","bal_label");
   sp_bal.textContent = "Your Balance";
 
   const sp_bal_amt = document.createElement("span");
@@ -863,7 +863,7 @@ function renderTransferFormView(user) {
   
 
   const amountLabel = document.createElement("div");
-  amountLabel.classList.add("md_font_size","label");
+  amountLabel.classList.add("md_font_size","label" ,"amtlabel");
   amountLabel.textContent = "Enter amount";
 
   const amountWrap = document.createElement("div");
@@ -872,12 +872,23 @@ function renderTransferFormView(user) {
   input.type = "number";
   input.placeholder = "min: 0.00000001";
   input.id = "transferAmount";
- 
+  input.className = "bold";
   amountWrap.append(amountLabel,input);
 
   const messageLabel = document.createElement("div");
   messageLabel.classList.add("md_font_size","label");
   messageLabel.textContent = "Add a message (optional)";
+
+  const charCounter = document.createElement("span");
+  charCounter.classList.add("txt-color-gray","charCounter", "small_font_size");
+  charCounter.textContent = "0/";
+
+  const charCounter_limit = document.createElement("span");
+  charCounter_limit.classList.add("charCounter_limit");
+  charCounter_limit.innerHTML = "500";
+
+  charCounter.append(charCounter_limit);
+  messageLabel.append(charCounter);
 
   const messageWrap = document.createElement("div");
   messageWrap.className = "message-wrap";
@@ -894,37 +905,256 @@ function renderTransferFormView(user) {
   messageInsturction.classList.add("txt-color-gray","ins_label");
   messageInsturction.textContent = "You can use letters, numbers, emojis, and special symbols. No links";
   messageWrap.append(messageLabel,textareaCon,messageInsturction);
-
-
-
-  /*  const feeLabel = document.createElement("div");
-  feeLabel.className = "fee-label";
-  const percentage = isInvited === "" ? "4%" : "5%";
-  feeLabel.textContent = `Price fee: ${percentage} would apply`;*/
-
   const actions = document.createElement("div");
   actions.className = "modal-actions";
   
   const nextBtn = document.createElement("button");
   nextBtn.className = "btn-next btn-white bold";
   nextBtn.textContent = "Continue";
-  nextBtn.onclick = () => {
-    const raw = input.value.trim();
-    if (!raw) return Merror("Enter an amount");
-    const amount = parseFloat(raw);
-    if (isNaN(amount)) return alert("Invalid amount");
-    renderCheckoutScreen(user, amount);
-  };
+  nextBtn.disabled = true;
+
+
+
+  let messagevalidChk=true;
+  // === Textarea Live Counter & Validation ===
+  textarea.addEventListener("input", () => {
+    const limit = 500;
+    const currentLength = textarea.value.length;
+
+    // Update counter
+    charCounter.textContent = `${currentLength}/`;
+    charCounter.append(charCounter_limit);
+
+    // Regex to detect URLs or <a> tags
+    const linkRegex = /<a\s+href=("|').*?\1>|https?:\/\/\S+|www\.\S+/gi;
+
+    // If input contains links
+    if (linkRegex.test(textarea.value)) {
+      messageInsturction.textContent = "Links are not allowed.";
+      messageInsturction.classList.add("error");
+      nextBtn.disabled = true;
+      messagevalidChk=false;
+      return;
+    }
+
+    // If exceed limit
+    if (currentLength > limit) {
+      charCounter.classList.add("red-text");
+      messageInsturction.textContent = "Message exceeds 500 characters.";
+      messageInsturction.classList.add("error");
+      nextBtn.disabled = true;
+       messagevalidChk=false
+
+      // Optional: prevent further typing
+      //textarea.value = textarea.value.substring(0, limit);
+      //charCounter.textContent = `${limit}/`;
+      //charCounter.append(charCounter_limit);
+      
+      return;
+    }
+
+    // Valid state
+    nextBtn.disabled = false;
+    charCounter.classList.remove("red-text");
+    messageInsturction.textContent = "You can use letters, numbers, emojis, and special symbols. No links";
+    messageInsturction.classList.remove("error");
+    messagevalidChk=true;
+  });
+
+  const balanceAmount = parseFloat(
+    dropdown.querySelector(".balance-header .tbalance").textContent
+  );
+
+  input.addEventListener("blur", () => {
+
+    // Reset always
+    nextBtn.onclick = null;
+    nextBtn.disabled = true;
+
+    const result = validateAmount(input, balanceAmount);
+
+    if (result.valid) {
+        const amount = parseFloat(input.value);
+        const finalresult = showTotalAmountUI(input,amount,balanceAmount);   // <-- CALL UI BUILDER
+
+       
+      if (finalresult) {
+        nextBtn.disabled = false;
+        nextBtn.onclick = () => { 
+          if(messagevalidChk){ 
+            renderCheckoutScreen(user, amount);
+          }
+        }
+      }
+        
+    }
+    
+  });
+ 
+
+
+
+
 
   actions.append(nextBtn);
   wrapper.append( recipientInfo, amountWrap, messageWrap, actions);
  // dropdown.appendChild(wrapper);
 }
 
+function validateAmount(inputEl, balanceAmount) {
+  const value = inputEl.value.trim();
+
+  // Remove previous error message (if any)
+  const oldError = inputEl.parentElement.querySelector(".amount_error");
+  if (oldError) oldError.remove();
+
+ // Remove previous fee panel  (if any)
+  const oldfeePanel = inputEl.parentElement.querySelector(".feePanel");
+  if (oldfeePanel) oldfeePanel.remove();
+
+  let message = null;
+
+  // Empty check
+  if (!value) {
+    message = "Enter valid amount.";
+  }
+
+  // Valid number check
+  else if (isNaN(parseFloat(value))) {
+    message = "Please enter a valid number";
+  }
+
+  // Decimal places check (max 8 allowed)
+  else if (value.includes(".")) {
+    const decimals = value.split(".")[1];
+    if (decimals.length > 8) {
+      message = "Invalid format. Use up to 8 decimals.";
+    }
+  }
+
+  // Minimum amount check
+  else if (parseFloat(value) < 0.00000001) {
+    message = "Enter at least 0.00000001 Peer Tokens to continue.";
+  }
+
+  // Balance check
+ // else if (parseFloat(value) > balanceAmount) {
+ //   message = "Amount cannot exceed your balance: " + balanceAmount;
+ // }
+
+  // If message exists → show error + return false
+  if (message) {
+    const amount_error = document.createElement("span");
+    amount_error.classList.add("amount_error", "red-text");
+    amount_error.innerHTML = message;
+
+    // Insert error message below input
+    inputEl.insertAdjacentElement("afterend", amount_error);
+
+    return { valid: false, message };
+  }
+
+  // All good
+  return { valid: true };
+}
+
+function showTotalAmountUI(inputEl,amount,balanceAmount) {
+
+  // Remove previous fee panel  (if any)
+  const oldfeePanel = inputEl.parentElement.querySelector(".feePanel");
+  if (oldfeePanel) oldfeePanel.remove();
+
+   // Remove previous error message (if any)
+  const oldError = inputEl.parentElement.querySelector(".amount_error");
+  if (oldError) oldError.remove();
+
+
+  
+  const data = getCommissionBreakdown(amount);
+  const  total_tokens =data.totalCommission + amount;
+
+  
+
+  const panel =  document.createElement("div");
+  panel.classList.add("feePanel");
+  panel.innerHTML = `
+    
+
+    <div class="fee-section close">
+      <div class="fee-title  md_font_size txt-color-gray">
+        Transfer fee 
+        <span class="fee-total bold xl_font_size">${formatNum(data.totalCommission)}</span>
+      </div>
+
+      <div class="fee-breakdowns">
+        ${data.breakdown.map(item => `
+          <div class="fee-item txt-color-gray">
+            <span class="label">${item.label}</span>
+            <span class="value">${formatNum(item.amount)}</span>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="total_amount  md_font_size">
+        Total amount 
+        <span class="final-total bold xl_font_size">${formatNum(total_tokens)}</span>
+      </div>
+    </div>
+  `;
+  // After setting panel.innerHTML
+  const feeSection = panel.querySelector(".fee-section");
+  const feeTitle = panel.querySelector(".fee-title");
+
+  // Toggle on click
+  feeTitle.addEventListener("click", () => {
+    feeSection.classList.toggle("close");
+  });
+
+  // Insert error message below input
+  inputEl.insertAdjacentElement("afterend", panel);
+
+  if(total_tokens > balanceAmount ){
+    const amount_error = document.createElement("span");
+    amount_error.classList.add("amount_error", "red-text");
+    amount_error.innerHTML = 'Insufficient tokens.';
+    // Insert error message below input
+    inputEl.insertAdjacentElement("afterend", amount_error);
+     return false;
+  }
+
+   return true;
+
+}
+function formatNum(num) {
+  return parseFloat(num.toFixed(8)).toString();
+}
+
+
+
 function renderCheckoutScreen(user, amount) {
   const dropdown = document.getElementById("transferDropdown");
-  dropdown.innerHTML = "";
-  dropdown.classList.add("modal-mode");
+  dropdown.querySelector(".modal-actions").remove();
+  dropdown.querySelector(".recipient-info .edit_btn").remove();
+  dropdown.querySelector(".transfer-header h2").innerHTML="Summary";
+  dropdown.querySelector(".balance-header .bal_label").innerHTML="Remaining balance";
+  dropdown.querySelector(".balance-header").classList.add("summary-header");
+  dropdown.querySelector(".amount-input .amtlabel").remove();
+  dropdown.querySelector(".amount-input input").remove();
+  dropdown.querySelector(".amount-input").classList.add("summary-amount");
+  
+
+  const total_tranfer_tokens=parseFloat(
+    dropdown.querySelector(".total_amount .final-total").textContent
+  );
+
+  const old_balance_tokens = parseFloat(
+    dropdown.querySelector(".balance-header .tbalance").textContent
+  );
+
+  const balance_tokens =old_balance_tokens - total_tranfer_tokens;
+  dropdown.querySelector(".balance-header .tbalance").textContent=balance_tokens;
+  
+   const wrapper = dropdown.querySelector(".transfer-form-screen");
 
   if (!document.querySelector(".transfer-backdrop")) {
     const backdrop = document.createElement("div");
@@ -938,69 +1168,7 @@ function renderCheckoutScreen(user, amount) {
     breakdown
   } = getCommissionBreakdown(amount);
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "transfer-form-screen";
-
-  // Header
-  const header = document.createElement("div");
-  header.className = "transfer-header";
-  const h2 = document.createElement("h2");
-  h2.textContent = "Checkout";
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "close-transfer btn-white";
-  closeBtn.innerHTML = "&times;";
-  // closeBtn.onclick = closeTransferModal;
-  closeBtn.onclick = closeModal;
-  header.append(h2, closeBtn);
-
-  // Recipient
-  const recipientLabel = document.createElement("label");
-  recipientLabel.textContent = "Recipient";
-  const recipientInfo = document.createElement("div");
-  recipientInfo.className = "recipient-info";
-  const infoWrap = document.createElement("div");
-  infoWrap.className = "info";
-  const img = document.createElement("img");
-  img.src = "svg/logo_sw.svg";
-  const meta = document.createElement("div");
-  const name = document.createElement("strong");
-  name.textContent = user.username;
-  meta.append(name);
-  infoWrap.append(img, meta);
-  recipientInfo.append(infoWrap, recipientLabel);
-
-  // Amount
-  const amountLabel = document.createElement("label");
-  amountLabel.textContent = "Amount including fees";
-  const amountWrap = document.createElement("div");
-  amountWrap.className = "amount-input";
-  const value = document.createElement("strong");
-  value.innerHTML = `${(totalAmount).toFixed(2)} <img src="svg/logo_sw.svg" style="height: 20px;" />`;
-  amountWrap.appendChild(value);
-  amountWrap.appendChild(amountLabel);
-
-  // Commission Breakdown
-  const commissionSection = document.createElement("div");
-  commissionSection.className = "commission-breakdown";
-
-  const commissionTitle = document.createElement("div");
-  commissionTitle.className = "fee-label";
-  commissionTitle.textContent = "Commission";
-  commissionSection.appendChild(commissionTitle);
-
-  breakdown.forEach(detail => {
-    const row = document.createElement("div");
-    row.className = "row";
-
-    const label = document.createElement("span");
-    label.textContent = detail.label;
-
-    const amountEl = document.createElement("span");
-    amountEl.innerHTML = `${detail.amount.toFixed(2)} <img src="svg/logo_sw.svg" style="height: 16px;" />`;
-
-    row.append(label, amountEl);
-    commissionSection.appendChild(row);
-  });
+ 
 
   // Actions
   const actions = document.createElement("div");
@@ -1052,11 +1220,9 @@ function renderCheckoutScreen(user, amount) {
   actions.append(backBtn, transferBtn);
   // Final render
   wrapper.append(
-    header,
-    recipientInfo,
-    amountLabel,
-    amountWrap,
-    commissionSection,
+    
+  
+   
     actions
   );
 
@@ -1290,10 +1456,10 @@ function getCommissionBreakdown(transferAmount) {
   const burnFee = baseAmount * 0.01;
 
   breakdown.push({
-    label: "2% retained by the platform",
+    label: "2% to Peer Bank (platform fee)",
     amount: platformFee
   }, {
-    label: "1% is allocated to a liquidity pool",
+    label: "1% Burned (removed from supply)",
     amount: liquidityFee
   }, {
     label: "1% is burned, ensuring deflation",
@@ -1304,7 +1470,7 @@ function getCommissionBreakdown(transferAmount) {
   if (isInvited !== "") {
     inviterFee = baseAmount * 0.01;
     breakdown.push({
-      label: "1% is given back to inviter",
+      label: "1% to your Inviter",
       amount: inviterFee
     });
   }
