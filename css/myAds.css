@@ -227,6 +227,7 @@
   overflow: hidden;
   min-width: 0;
   flex: 1;
+  gap: 15px;
 }
 
 .ad_tiitle,
@@ -391,7 +392,7 @@
   left: 3px;
   width: 25px;
   height: 25px;
-  z-index: 2;
+  z-index: 4;
   border-radius: 50%;
   background: var(--blue);
   display: flex;
@@ -493,10 +494,50 @@ h2.xxl_font_size {
 }
 
 
-.myAds_list_item.illegal_ads_post .ad_avatar {
-  background: var(--bg-filter);
+
+.illegal_ads_post .illegal_adsPost_frame.xl_font_size {
+  position: absolute;
+  z-index: 3;
+  left: 35px;
 }
 
+.illegal_adsPost_frame .illegal_content {
+  display: flex;
+  gap: 10px;
+}
+
+.illegal_adsPost_frame .illegal_content .icon_illegal {
+  display: flex;
+  background: var(--black-dark);
+  width: 200px;
+  height: 150px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.illegal_adsPost_frame .illegal_content .illegal_title_description{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.illegal_adsPost_frame .illegal_content .illegal_title_description .illegal_title {
+  display: flex;
+  background: var(--black-dark);
+  padding: 10px 0;
+  width: 600px;
+  border-radius: 40px;
+  justify-content: center;
+}
+
+.illegal_adsPost_frame .illegal_content .illegal_title_description .illegal_description {
+  display: flex;
+  background: var(--black-dark);
+  width: 1000px;
+  height: 50px;
+  border-radius: 40px;
+}
 
 
 

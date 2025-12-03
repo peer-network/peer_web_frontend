@@ -271,7 +271,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // Add hidden badge if this post matches the targetPostId and status is HIDDEN
       if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
-        if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
+        if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+          const adInfo = listItem.querySelector('.ad_info'); 
+          
+          if (adInfo) { 
+            const illegalAdsPostHTML = `
+            <div class="illegal_adsPost_frame xl_font_size">
+              <div class="illegal_content">
+                <div class="icon_illegal"><i class="peer-icon peer-icon-illegal xxl_font_size"></i></div>
+                <div class="illegal_title_description">
+                  <div class="illegal_title">Removed as illegal</div>
+                  <div class="illegal_description"></div>
+                </div>
+              </div>
+            </div>`;
+            adInfo.insertAdjacentHTML("afterbegin", illegalAdsPostHTML);
+            listItem.classList.add("illegal_ads_post");
+          }
+        } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
           addHiddenBadge(listItem);
         }
       }
