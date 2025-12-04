@@ -458,6 +458,10 @@ document.getElementById("openTransferDropdown").addEventListener("click", async 
   renderUsers()
 });
 
+document.getElementById("wallet_refresh").addEventListener("click", () => {
+  location.reload();
+});
+
 async function renderUsers() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.innerHTML = "";
@@ -482,6 +486,7 @@ async function renderUsers() {
   header.className = "transfer-header";
 
   const h2 = document.createElement("h2");
+  h2.classList.add("xxl_font_size");
   h2.textContent = "Transfer";
 
   const closeBtn = document.createElement("button");
@@ -492,42 +497,95 @@ async function renderUsers() {
   header.append(h2, closeBtn);
   wrapper.appendChild(header);
 
+  // Users balance
+  const balanceDiv = document.createElement("div");
+  balanceDiv.className = "wallet_available_balance";
+  balanceDiv.innerHTML = `
+    <div class="available_tokens md_font_size">Available tokens</div>
+    <div class="available_tokens_amount">
+      <img src="svg/logo_sw.svg" alt="peer logo">
+      <span id="token_balance" class="bold xxl_font_size token_balance"</span>
+    </div>
+  `;
+
+  wrapper.appendChild(balanceDiv);
+
   // Always-visible Search Input
+  const searchContainer = document.createElement("div");
+  searchContainer.className = "search_user_container";
+
+  const searchheader = document.createElement("p");
+  searchheader.className = "md_font_size";
+  searchheader.textContent = "Recipient username";
+
+  const searchInputWrapper = document.createElement("div");
+  searchInputWrapper.className = "search-input-wrapper";
+
   const searchInput = document.createElement("input");
   searchInput.type = "text";
-  searchInput.placeholder = "@Search User";
+  searchInput.placeholder = "Search user...";
   searchInput.className = "search-user-input";
-  wrapper.appendChild(searchInput);
 
-  // User results container
+  const searchIcon = document.createElement("i");
+  searchIcon.className = "peer-icon peer-icon-search";
+
+  searchInputWrapper.appendChild(searchInput);
+  searchInputWrapper.appendChild(searchIcon);
+
+  searchContainer.appendChild(searchheader);
+  searchContainer.appendChild(searchInputWrapper);
+  wrapper.appendChild(searchContainer);
+
+  // User results container (initially not appended)
   const userList = document.createElement("div");
   userList.className = "user-list";
-  wrapper.appendChild(userList);
 
-  //load/render friends-list
-  renderFriendListUI(userList);
-  // Search logic on input
+  // not appending userList or load friends initially
+  // searchContainer.appendChild(userList); // REMOVED
+  // renderFriendListUI(userList); // REMOVED
+
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
 
-
-    if (!search) {
-      //load/render friends-list
-      userList.innerHTML = "";
-      renderFriendListUI(userList);
+    if (search.length < 3) {
+      userList.classList.remove("show");
+      setTimeout(() => {
+        userList.innerHTML = "";
+        if (userList.parentElement) {
+          searchContainer.removeChild(userList);
+        }
+      }, 400);
       return;
     }
 
     const results = await searchUser(search);
-    if (!results.length) return;
+    
+    if (results.length > 0) {
+      if (!userList.parentElement) {
+        searchContainer.appendChild(userList);
+        userList.offsetHeight;
+      }
+    } else {
+      userList.classList.remove("show");
+      setTimeout(() => {
+        userList.innerHTML = "";
+        if (userList.parentElement) {
+          searchContainer.removeChild(userList);
+        }
+      }, 400);
+      return;
+    }
 
-    // need to make it empty before executing loop
+
     userList.innerHTML = "";
 
     results.forEach(user => {
       const item = document.createElement("div");
       item.className = "user-item";
 
+      const userInfo = document.createElement("div");
+      userInfo.className = "user_info";
+
       const avatar = document.createElement("img");
       avatar.src = tempMedia(user.img.replace("media/", ""));
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
@@ -541,26 +599,39 @@ async function renderUsers() {
       const slug = document.createElement("span");
       slug.textContent = `#${user.slug}`;
 
+      const icon = document.createElement("i");
+      icon.className = "peer-icon peer-icon-arrow-right";
+
       info.append(name, slug);
-      item.append(avatar, info);
+      userInfo.appendChild(avatar);
+      userInfo.appendChild(info);
+      item.appendChild(userInfo);
+      item.appendChild(icon);
 
       item.onclick = () => renderTransferFormView(user);
       userList.appendChild(item);
     });
+    setTimeout(() => {
+      userList.classList.add("show");
+    }, 10);
   });
-
 
   dropdown.appendChild(wrapper);
 }
 
+// This function is no longer needed since we're not showing friends list initially
+// But keeping it commented in case we use it elsewhere
+/*
 async function renderFriendListUI(container) {
-  //loadFrinds
   const frindsList = await loadFrinds();
   if (frindsList) {
     frindsList.forEach(user => {
       const item = document.createElement("div");
       item.className = "user-item";
 
+      const userInfo = document.createElement("div");
+      userInfo.className = "user_info";
+
       const avatar = document.createElement("img");
       avatar.src = tempMedia(user.img.replace("media/", ""));
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
@@ -574,24 +645,30 @@ async function renderFriendListUI(container) {
       const slug = document.createElement("span");
       slug.textContent = `#${user.slug}`;
 
+      const icon = document.createElement("i");
+      icon.className = "peer-icon peer-icon-arrow-right";
+
       info.append(name, slug);
-      item.append(avatar, info);
+      userInfo.appendChild(avatar);
+      userInfo.appendChild(info);
+      item.appendChild(userInfo);
+      item.appendChild(icon);
+      
       item.onclick = () => renderTransferFormView(user);
       container.appendChild(item);
     });
   }
 }
+*/
 
 async function loadFrinds() {
   const accessToken = getCookie("authToken");
 
-  // Create headers
   const headers = new Headers({
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
 
-  // Define the GraphQL mutation with variables
   const graphql = JSON.stringify({
     query: `query ListFriends {
                 listFriends {
@@ -609,7 +686,6 @@ async function loadFrinds() {
           `,
   });
 
-  // Define request options
   const requestOptions = {
     method: "POST",
     headers: headers,
@@ -617,10 +693,8 @@ async function loadFrinds() {
   };
 
   try {
-    // Send the request and handle the response
     const response = await fetch(GraphGL, requestOptions);
     const result = await response.json();
-    // Check for errors in response
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
     return result.data.listFriends.affectedRows;
@@ -663,7 +737,7 @@ async function searchUser(username = null) {
     });
 
     const json = await res.json();
-    return json ?.data ?.searchUser ?.affectedRows || [];
+    return json?.data?.searchUser?.affectedRows || [];
   } catch (err) {
     console.error("searchUser() failed:", err);
     return [];
@@ -1169,5 +1243,5 @@ function closeModal() {
   document.querySelectorAll(".modal-container").forEach(modal => {
     modal.classList.remove("modal-show");
     modal.classList.remove("modal-hide");
-});
+  });
 }
