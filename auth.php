@@ -1,11 +1,39 @@
 <?php
 session_start();
 
-$GLOBALS['userRole'] = null;
+/**
+ * Decode a JWT payload without verifying the signature.
+ */
+function decodeJwtPayload(string $token): ?array {
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) {
+        return null;
+    }
+
+    $payload = base64_decode(strtr($parts[1], '-_', '+/'));
+    if ($payload === false) {
+        return null;
+    }
+
+    $data = json_decode($payload, true);
+    return is_array($data) ? $data : null;
+}
 
 function checkAuth($redirectMessage = "unauthorized") {
-    if (!isset($_COOKIE['authToken']) || empty($_COOKIE['authToken'])) {
+    $token = $_COOKIE['authToken'] ?? '';
+    if ($token === '') {
         header("Location: login.php?message=$redirectMessage");
+        exit();
+    }
+
+    $payload = decodeJwtPayload($token);
+    $isExpired = !is_array($payload) || !isset($payload['exp']) || (int) $payload['exp'] < time();
+
+    if ($isExpired) {
+        // Clear potentially stale cookies to force fresh login
+        setcookie('authToken', '', time() - 3600, '/', '', true, true);
+        setcookie('refreshToken', '', time() - 3600, '/', '', true, true);
+        header("Location: login.php?message=sessionExpired");
         exit();
     }
 }
