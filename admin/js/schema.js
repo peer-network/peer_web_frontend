@@ -205,18 +205,6 @@ moderationModule.schema = {
                     amountreports
                     isreported
                     isliked
-                    user {
-                        id
-                        username
-                        slug
-                        img
-                        visibilityStatus
-                        hasActiveReports
-                        isfollowed
-                        isfollowing
-                        isreported
-                        isfriend
-                    }
                 }
             }
             reporters {
@@ -306,5 +294,33 @@ moderationModule.schema = {
           }
         }
       }
-    }`
+  }`,
+
+  LIST_USER_BY_ID: `query ($userid: ID!) {
+    getProfile(userid: $userid) {
+        status
+        ResponseCode
+        affectedRows {
+            id
+            username
+            status
+            slug
+            img
+            biography
+            visibilityStatus
+            amounttrending
+            amountfollowed
+            amountfollower
+            amountfriends
+            amountblocked
+            amountreports
+            amountposts
+            isreported
+            isfollowing
+            isfollowed
+            isHiddenForUsers
+            hasActiveReports
+        }
+    }
+  }`,
 };

@@ -39,6 +39,7 @@ moderationModule.fetcher = {
             item.media = moderationModule.helpers.safeMedia(post.media);
             item.icon = "peer-icon peer-icon-camera";
             break;
+
           case "text":
             try {
               const parsed = JSON.parse(post.media);
@@ -51,14 +52,17 @@ moderationModule.fetcher = {
             item.media = null;
             item.icon = "peer-icon peer-icon-text";
             break;
+          
           case "audio":
             item.media = moderationModule.helpers.safeMedia(post.cover, "../img/audio-bg.png");
             item.icon = "peer-icon peer-icon-audio-fill";
             break;
+          
           case "video":
             item.media = moderationModule.helpers.safeMedia(post.cover, "../img/video-bg.png");
             item.icon = "peer-icon peer-icon-play-btn";
             break;
+          
           default:
             item.media = null;
             item.icon = "peer-icon peer-icon-file";
@@ -68,19 +72,45 @@ moderationModule.fetcher = {
       /* -------------------- COMMENT -------------------- */
       if (x.targettype === "comment" && x.targetcontent.comment) {
         const c = x.targetcontent.comment;
-        item.username = c.user.username || "@unknown";
-        item.slug = "#" + (c.user.slug || "0000");
-        item.title = c.content || "";
+        const commenterId = c.userid || null;
+        // item.username = c.user.username || "@unknown";
+        // item.slug = "#" + (c.user.slug || "0000");
+        item.content = c.content || "";
         item.contentType = "comment";
-        item.media = tempMedia(c.user?.img) ?? '../img/profile_thumb.png';
+        item.timeAgo = timeAgo(c.createdat);
+        // item.media = tempMedia(c.user?.img) ?? '../img/profile_thumb.png';
         item.icon = "peer-icon peer-icon-comment-fill";
         item.postid = c.postid;
         item.post = null
+
+        // *** NEW LOGIC TO FETCH FULL USER PROFILE FOR THE COMMENTER ***
+        if (commenterId) {
+            // FIX 1: Remove Promise.all. loadUserById returns a single Promise.
+            const fullUserArray = await self.loadUserById(commenterId);
+            
+            // FIX 2: Check if the array is populated and get the first element.
+            // (Assuming loadUserById might return an array of 1 result based on your previous code)
+            const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
+            
+            if (fullUser && fullUser.id) { // Check if the object is valid
+              console.log('fullUser fetched for commenter', fullUser);
+              item.commenterProfile = {
+                userid: fullUser.id,
+                username: fullUser.username || "@unknown",
+                slug: "#" + (fullUser.slug || "0000"),
+                img: tempMedia(fullUser.img) || "../svg/noname.svg",
+                // Use the correct field names from the LIST_USER_BY_ID query
+                posts: fullUser.amountposts || 0,
+                followers: fullUser.amountfollower || 0,
+                following: fullUser.amountfollowed || 0,
+              };
+            }
+            console.log('fullUser', fullUser);
+        }
       }
 
       /* -------------------- USER -------------------- */
       if (x.targettype === "user" && x.targetcontent.user) {
-        // console.log('Parsed biography --> ', (x.targetcontent.user.biography));
         const u = x.targetcontent.user;
         item.userid = u.userid;
         item.username = u.username || "@unknown";
@@ -197,6 +227,20 @@ moderationModule.fetcher = {
       return post;
     } catch (err) {
       console.error("Error loading post by ID:", err);
+      return null;
+    }
+  },
+
+  // Add this to moderationModule.fetcher (next to loadPostById)
+  async loadUserById(userid) {
+    try {
+      const query = moderationModule.schema.LIST_USER_BY_ID;
+      if (!query) throw new Error("Invalid LIST_USER_BY_ID query");
+      const variables = { userid };
+      const response = await moderationModule.service.fetchGraphQL(query, variables);
+      return response?.getProfile?.affectedRows?.[0] || null;
+    } catch (err) {
+      console.error("Error loading user by ID:", err);
       return null;
     }
   },
