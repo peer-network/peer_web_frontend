@@ -31,7 +31,7 @@
                     Settings
                 </a>
             </li>
-           <?php if($GLOBALS["userRole"] == "MODERATOR"): ?>
+            <?php if (isModerator()): ?>
                 <li class="menu-item">
                     <a href="/peer_web_frontend/admin/index.php" target="_blank" rel="noopener">
                         <i class="peer-icon peer-icon-shield"></i>

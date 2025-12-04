@@ -147,4 +147,15 @@ function enforceAdminRole(string $domain, string $protocol = 'https'): void {
         exit('Access denied');
     }
 }
+
+/* ---------------------------------------------------
+   Initialize global role once per request
+--------------------------------------------------- */
+$role = fetchUserRoleString($domain);
+$GLOBALS["userRole"] = strtoupper($role !== null ? $role : "GUEST");
+
+function isModerator(): bool {
+    return isset($GLOBALS["userRole"]) && $GLOBALS["userRole"] === "MODERATOR";
+}
+
 ?>
