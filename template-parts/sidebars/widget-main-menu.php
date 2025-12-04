@@ -34,8 +34,8 @@
             <?php if (isModerator()): ?>
                 <li class="menu-item">
                     <a href="/peer_web_frontend/admin/index.php" target="_blank" rel="noopener">
-                        <i class="peer-icon peer-icon-shield"></i>
-                        <i class="filled peer-icon peer-icon-shield-fill"></i>
+                        <i class="peer-icon peer-icon-warning"></i>
+                        <i class="filled peer-icon peer-icon-warning"></i>
                         Moderation Panel
                     </a>
                 </li>
