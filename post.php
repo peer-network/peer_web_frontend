@@ -2,7 +2,6 @@
 header('Access-Control-Allow-Origin: *');
 //include 'phpheader.php';
 include 'host.php';
-
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -14,21 +13,15 @@ include 'host.php';
     <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/font-poppins/stylesheet.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/peer-icon-font/css/peer-network.css">
 
-    
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/style.css" />   
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/view-post.css" />
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/post.css" />
     
-
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="<?= $baseUrl ?>/js/lib.min.js" defer></script>
     <script src="<?= $baseUrl ?>/js/audio.js" async></script>
     <script src="<?= $baseUrl ?>/js/comments.js" defer></script>
-    <script src="<?= $baseUrl ?>/js/global.js" defer></script>
-    
-
-
-    
+    <script src="<?= $baseUrl ?>/js/global.js" defer></script>    
     <script src="<?= $baseUrl ?>/js/guestpost.js" defer></script>
 
 

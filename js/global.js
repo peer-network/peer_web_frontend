@@ -969,7 +969,7 @@ function postdetail(objekt, CurrentUserID) {
 
       const zoomElement = document.createElement("span");
       zoomElement.className = "zoom";
-      zoomElement.innerHTML = `<i class="peer-icon peer-icon-plus"></i>`;
+      zoomElement.innerHTML = `<i class="peer-icon peer-icon-expand"></i>`;
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
@@ -2801,6 +2801,8 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     console.error("Error in scheduling token refresh:", err);
   }
 }
+
+
 
 async function refreshAccessToken(refreshToken) {
   const headers = new Headers({

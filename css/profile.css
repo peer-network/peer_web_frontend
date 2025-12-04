@@ -894,7 +894,7 @@
 .visibility_hidden .profile_info .hidden_account_frame {
   position: absolute;
   top: 0;
-  left: 20%;
+  left: 10%;
   bottom: 0;
   display: flex;
   justify-content: space-between;
@@ -974,7 +974,8 @@
 }
 
 .view-profile.illegal_profile .profile_info .profile_title .username,
-.view-profile.illegal_profile .profile_info .profile_title .slug {
+.view-profile.illegal_profile .profile_info .profile_title .slug,
+.view-profile.illegal_profile .profile_info .profile_title span  {
   opacity: 0;
 }
 
