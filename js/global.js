@@ -72,6 +72,7 @@ function applyZoom() {
   const right_sidebar = layout.querySelector(".right-sidebar");
   const cardClickedDiv= document.getElementById("cardClicked");
 
+
   function applyScale() {
     const vw = window.visualViewport.width;
     const vh = window.visualViewport.height;
@@ -86,12 +87,14 @@ function applyZoom() {
       right_sidebar.style.height = vh / scale + "px";
       if(cardClickedDiv) cardClickedDiv.style.height = vh / scale + "px";
 
+      
     } else {
       // reset zoom, let layout flow naturally
       layout.style.zoom = "";
       left_sidebar.style.height = "";
       right_sidebar.style.height = "";
       if(cardClickedDiv) cardClickedDiv.style.height = "";
+      
     }
   }
 
