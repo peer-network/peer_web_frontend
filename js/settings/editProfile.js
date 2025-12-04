@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgElem.classList.add(bioResult.updateBio.status);
       msgElem.innerHTML = userfriendlymsg(bioResult.updateBio.ResponseCode);
       if (imageSuccess && bioSuccess) {
-        location.reload();
+       location.reload();
       } else {
         console.error("One or both updates failed.");
       }

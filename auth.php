@@ -2,13 +2,41 @@
 session_start();
 require_once './host.php';
 
+/**
+ * Decode a JWT payload without verifying the signature.
+ */
+function decodeJwtPayload(string $token): ?array {
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) {
+        return null;
+    }
+
+    $payload = base64_decode(strtr($parts[1], '-_', '+/'));
+    if ($payload === false) {
+        return null;
+    }
+
+    $data = json_decode($payload, true);
+    return is_array($data) ? $data : null;
+}
+
 function checkAuth($redirectMessage = "unauthorized") {
-    if (!isset($_COOKIE['authToken']) || empty($_COOKIE['authToken'])) {
+    $token = $_COOKIE['authToken'] ?? '';
+    if ($token === '') {
         header("Location: login.php?message=$redirectMessage");
         exit();
     }
-    
 
+    $payload = decodeJwtPayload($token);
+    $isExpired = !is_array($payload) || !isset($payload['exp']) || (int) $payload['exp'] < time();
+
+    if ($isExpired) {
+        // Clear potentially stale cookies to force fresh login
+        setcookie('authToken', '', time() - 3600, '/', '', true, true);
+        setcookie('refreshToken', '', time() - 3600, '/', '', true, true);
+        header("Location: login.php?message=sessionExpired");
+        exit();
+    }
 }
 fetchHelloData($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
      
@@ -150,8 +178,8 @@ function enforceAllowedUser(array $allowedUserIds, string $domain, string $proto
  */
 function enforceAdminRole(string $domain, string $protocol = 'https'): void {
     $role = fetchUserRoleString($domain, $protocol);
-
-    if ($role !== 'ADMIN') {
+ 
+    if ($role !== 'MODERATOR') {
         http_response_code(403);
         exit('Access denied');
     }

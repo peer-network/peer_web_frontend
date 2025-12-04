@@ -1,6 +1,27 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.schema = {
+
+  STATS: `
+    query ModerationStats {
+      moderationStats {
+          status
+          ResponseCode
+          affectedRows {
+              AmountAwaitingReview
+              AmountHidden
+              AmountRestored
+              AmountIllegal
+          }
+          meta {
+              status
+              RequestId
+              ResponseCode
+              ResponseMessage
+          }
+      }
+  }`,
+
   LIST_ITEMS: `
     query ModerationItems {
     moderationItems(offset: 0, limit: 20) {
@@ -103,8 +124,8 @@ moderationModule.schema = {
   }`,
 
   LIST_POST: `
-    query ModerationItems {
-      moderationItems(offset: 0, limit: 20, contentType: post) {
+      query ModerationItems($offset: Int, $limit: Int, $contentType: ModerationContentType) {
+       moderationItems(offset: $offset, limit: $limit, contentType: $contentType) {
         status
         ResponseCode
         affectedRows {
@@ -158,8 +179,8 @@ moderationModule.schema = {
   `,
 
   LIST_COMMENT: `
-    query ModerationItems {
-    moderationItems(limit: 20, offset: 0, contentType: comment) {
+      query ModerationItems($offset: Int, $limit: Int, $contentType: ModerationContentType) {
+      moderationItems(offset: $offset, limit: $limit, contentType: $contentType) {
         status
         ResponseCode
         affectedRows {
@@ -213,8 +234,8 @@ moderationModule.schema = {
   }`,
 
   LIST_USER: `
-    query ModerationItems {
-      moderationItems(offset: 0, limit: 20, contentType: user) {
+    query ModerationItems($offset: Int, $limit: Int, $contentType: ModerationContentType) {
+      moderationItems(offset: $offset, limit: $limit, contentType: $contentType) {
         status
         ResponseCode
         affectedRows {
@@ -240,4 +261,50 @@ moderationModule.schema = {
       }
     }
   `,
+
+  LIST_POST_BY_ID: `query ($postid: ID!) {
+      listPosts(postid: $postid) {
+        status
+        counter
+        ResponseCode
+        affectedRows {
+          id
+          contenttype
+          title
+          media
+          cover
+          mediadescription
+          createdat
+          visibilityStatus
+          isHiddenForUsers
+          hasActiveReports
+          amountreports
+          amountlikes
+          amountviews
+          amountcomments
+          amountdislikes
+          amounttrending
+          isliked
+          isviewed
+          isreported
+          isdisliked
+          issaved
+          tags
+          url
+          user {
+            id
+            username
+            slug
+            img
+            visibilityStatus
+            isHiddenForUsers
+            hasActiveReports
+            isfollowed
+            isfollowing
+            isreported
+            isfriend
+          }
+        }
+      }
+    }`
 };

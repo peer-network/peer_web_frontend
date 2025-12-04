@@ -10,25 +10,19 @@ include 'host.php';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Peer Network - View Post</title>
-    <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/font-poppins/stylesheet.css?<?= filemtime('fonts/font-poppins/stylesheet.css'); ?>">
-    <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/peer-icon-font/css/peer-network.css?<?= filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/font-poppins/stylesheet.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/fonts/peer-icon-font/css/peer-network.css">
 
+    <link rel="stylesheet" href="<?= $baseUrl ?>/css/style.css" />   
+    <link rel="stylesheet" href="<?= $baseUrl ?>/css/view-post.css" />
+    <link rel="stylesheet" href="<?= $baseUrl ?>/css/post.css" />
     
-    <link rel="stylesheet" href="<?= $baseUrl ?>/css/style.css?<?= filemtime('css/style.css'); ?>" />   
-    <link rel="stylesheet" href="<?= $baseUrl ?>/css/view-post.css?<?= filemtime('css/view-post.css'); ?>" />
-    <link rel="stylesheet" href="<?= $baseUrl ?>/css/post.css?<?= filemtime('css/post.css'); ?>" />
-    
-
     <!-- <script src="sw_instal.min.js" async></script> -->
-    <script src="<?= $baseUrl ?>/js/lib.min.js?<?= filemtime('js/lib.min.js'); ?>" defer></script>
-    <script src="<?= $baseUrl ?>/js/audio.js?<?= filemtime('js/audio.js'); ?>" async></script>
-    <script src="<?= $baseUrl ?>/js/comments.js?<?= filemtime('js/comments.js'); ?>" defer></script>
-    <script src="<?= $baseUrl ?>/js/global.js?<?= filemtime('js/global.js'); ?>" defer></script>
-    
-
-
-    
-    <script src="<?= $baseUrl ?>/js/guestpost.js?<?= filemtime('js/guestpost.js'); ?>" defer></script>
+    <script src="<?= $baseUrl ?>/js/lib.min.js" defer></script>
+    <script src="<?= $baseUrl ?>/js/audio.js" async></script>
+    <script src="<?= $baseUrl ?>/js/comments.js" defer></script>
+    <script src="<?= $baseUrl ?>/js/global.js" defer></script>    
+    <script src="<?= $baseUrl ?>/js/guestpost.js" defer></script>
 
 
     <?php

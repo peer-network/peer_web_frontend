@@ -2805,6 +2805,8 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
   }
 }
 
+
+
 async function refreshAccessToken(refreshToken) {
   const headers = new Headers({
     "Content-Type": "application/json",

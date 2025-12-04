@@ -315,9 +315,9 @@ class AccessibleLoginForm {
         // Use cookie helpers consistently
         const rememberMeChecked = rememberMeCheckbox.checked;
         if (rememberMeChecked) {
-          setCookie("authToken", result.data.login.accessToken, 7); //7 days
-          setCookie("refreshToken", result.data.login.refreshToken, 7);
-          setCookie("userEmail", email, 7);
+          setCookie("authToken", result.data.login.accessToken, 3650); // approx. 10 years
+          setCookie("refreshToken", result.data.login.refreshToken, 3650); // approx. 10 years
+          setCookie("userEmail", email, 3650);
           localStorage.setItem("rememberMe", "true"); // adding RememberMe-flag on checked
         } else {
           setCookie("authToken", result.data.login.accessToken);
