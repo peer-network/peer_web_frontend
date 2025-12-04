@@ -341,27 +341,6 @@ moderationModule.view = {
         commentBox.className = "comment_box";
         commentBox.innerHTML = `
           <h2 class="xxl_font_size bold">
-            <i class="peer-icon peer-icon-comment-fill xl_font_size"></i> Reported comment
-          </h2>
-          <div class="comment_item">
-            <div class="commenter-pic">
-              <img class="profile-picture" src="${item.post?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
-            </div>
-            <div class="comment_body">
-              <div class="commenter_info xl_font_size">
-                <span class="cmt_userName bold italic">${item.username}</span>
-                <span class="cmt_profile_id txt-color-gray">${item.slug}</span>
-                <span class="timeagao txt-color-gray">3m</span>
-              </div>
-              <div class="comment_text xl_font_size">${item.title || ""}</div>
-            </div>
-            <div class="comment_like xl_font_size">
-              <i class="peer-icon peer-icon-like"></i>
-              <span>0</span>
-            </div>
-          </div>
-
-          <h2 class="xxl_font_size bold">
               <i class="peer-icon peer-icon-comment-fill xl_font_size"></i> 
               Reported comment
           </h2>
@@ -369,27 +348,22 @@ moderationModule.view = {
               <div class="commenter-pic">
                   <img class="profile-picture" src="../img/profile_thumb.png"
                       alt="user image">
-
-                  <img class="profile-picture" src="${item.post?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
+                  <img class="profile-picture" src="${item?.commenterProfile?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
               </div>
               <div class="comment_body">
                   <div class="commenter_info xl_font_size">
-                      <span class="cmt_userName bold italic">Bryan Johnson</span>
-                      <span class="cmt_profile_id txt-color-gray">#93268</span>
-                      <span class="timeagao txt-color-gray">3m</span>
+                      <span class="cmt_userName bold italic">${item?.commenterProfile?.username}</span>
+                      <span class="cmt_profile_id txt-color-gray">${item?.commenterProfile?.slug}</span>
+                      <span class="timeagao txt-color-gray">${item?.timeAgo}</span>
                   </div>
-                  <div class="comment_text xl_font_size">Optimizing our biological
-                      systems isn't just a goal - it's a responsibility to unlock the
-                      best version of ourselves.</div>
+                  <div class="comment_text xl_font_size">${item.content}</div>
 
               </div>
               <div class="comment_like xl_font_size">
                   <i class="peer-icon peer-icon-like"></i>
                   <span>0</span>
               </div>
-          </div>
-
-        `;
+          </div>`;
 
         // Linked post details under the comment
         const commentPostDetail = document.createElement("div");
@@ -452,21 +426,22 @@ moderationModule.view = {
       if (Array.isArray(item.reporters)) {
         item.reporters.forEach(rep => {
           const r = document.createElement("div");
-          r.innerHTML = ` <div class="profile_item">
-                            <div class="profile">
-                                <span class="profile_image">
-                                    <img src="${rep.img}" onerror="this.src='../svg/noname.svg'">
-                                </span>
-                                <span class="profile_detail">
-                                    <span
-                                        class="user_name xl_font_size bold italic">${rep.username}</span>
-                                    <span class="user_slug txt-color-gray">${rep.slug}</span>
-                                </span>
-                            </div>
-                            <div class="report_time xl_font_size txt-color-gray">
-                                ${rep.updatedat}
-                            </div>
-                        </div>`;
+          r.innerHTML = ` 
+              <div class="profile_item">
+                <div class="profile">
+                    <span class="profile_image">
+                        <img src="${rep.img}" onerror="this.src='../svg/noname.svg'">
+                    </span>
+                    <span class="profile_detail">
+                        <span
+                            class="user_name xl_font_size bold italic">${rep.username}</span>
+                        <span class="user_slug txt-color-gray">${rep.slug}</span>
+                    </span>
+                </div>
+                <div class="report_time xl_font_size txt-color-gray">
+                    ${rep.updatedat}
+                </div>
+              </div>`;
 
           profilesContainer.appendChild(r);
         });
