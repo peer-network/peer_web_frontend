@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+$GLOBALS['userRole'] = null;
+
 function checkAuth($redirectMessage = "unauthorized") {
     if (!isset($_COOKIE['authToken']) || empty($_COOKIE['authToken'])) {
         header("Location: login.php?message=$redirectMessage");
@@ -111,7 +113,7 @@ function enforceAllowedUser(array $allowedUserIds, string $domain, string $proto
  */
 function enforceAdminRole(string $domain, string $protocol = 'https'): void {
     $role = fetchUserRoleString($domain, $protocol);
-
+ 
     if ($role !== 'MODERATOR') {
         http_response_code(403);
         exit('Access denied');
