@@ -203,13 +203,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	flex: 1;
 }
 
 .transaction_info .transaction_content  .message {
 	display: flex;
 	padding: 20px;
-	justify-content: center;
-	align-items: center;
 	gap: 10px;
 	border-radius: 40px;
 	background: var(--black-dark, #252525);
@@ -446,19 +445,7 @@
   display: inline-block;
 }
 
-.site-main-wallet .transfer-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    overflow-y: auto;
-    z-index: 999;
-    padding: 80px;
-    overflow: hidden;
-    overscroll-behavior: contain;
-    border-radius: 77px;
-    background: var(--black-dark, #252525);
-   
-}
+
 
 .site-main-wallet .user-list {
   display: flex;
@@ -593,7 +580,7 @@
 .site-main-wallet .transfer-form-screen .recipient-info {
 	display: flex;
 	align-items: center;
-	padding: 20px 20px 20px 40px;
+	padding: 20px 40px;
 	border-radius: 70px;
 	justify-content: space-between;
 	background: var(--dark-inactive, #323232);
@@ -612,7 +599,8 @@
 	background: var(--black-dark, #252525);
 	aspect-ratio: 1/1;
 	cursor: pointer;
-	margin-left: 50px;
+	margin-left: 20px;
+	margin-right: -20px;
 }
 .site-main-wallet .transfer-form-screen .recipient-info .info .edit_btn:hover {
 	background: var(--white);
@@ -643,7 +631,7 @@
 	background: var(--dark-inactive, #323232);
 }
 .site-main-wallet .transfer-form-screen .message-wrap .label {
-	padding-left: 60px;
+	padding-left: 50px;
 	position: relative;
 	display: flex;
 	justify-content: space-between;
@@ -682,6 +670,11 @@
 	position: relative;
 	
 }	
+
+.amount-input.summary-amount input,
+.amount-input.summary-amount .amtlabel{
+	display: none;
+}
 .summary-amount .fee-section .total_amount {
 	order: -1;
 	border-radius: 100px;
@@ -764,6 +757,14 @@
   padding: 40px;
 
 }
+.site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
+	border-radius: 0;
+	padding: 20px 20px 0 0;
+	background-color: transparent;
+	border-top: 1px solid var(--white-secondary);
+	overflow: auto;
+	height: 160px;
+}
 .site-main-wallet .transfer-form-screen .message-wrap textarea {
 	width: 100%;
 	border-radius: 0;
@@ -777,6 +778,9 @@
 }
 .site-main-wallet .transfer-form-screen .message-wrap .ins_label {
 	text-align: center;
+}
+.site-main-wallet .transfer-form-screen .message-wrap.summary-message .ins_label {
+	display: none;
 }
 
 
@@ -793,15 +797,20 @@
 
 
 /* Only apply when .modal-mode is added */
-.transfer-dropdown.modal-mode {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 1000;
-  margin-top: 0 !important;
-  text-align: left;
-  width: 1350px;
+.site-main-wallet  .transfer-dropdown {
+	position: fixed !important;
+	top: 50% !important;
+	left: 50% !important;
+	transform: translate(-50%, -50%) !important;
+	z-index: 1000;
+	margin-top: 0 !important;
+	text-align: left;
+	width: 1350px;
+	padding: 80px;
+	overflow: hidden;
+	overscroll-behavior: contain;
+	border-radius: 77px;
+	background: var(--black-dark, #252525);
 }
 
 /* Backdrop when modal is active */

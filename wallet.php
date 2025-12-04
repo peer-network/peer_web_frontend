@@ -25,6 +25,7 @@ checkAuth("unauthorized");
 
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
+  <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
   <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
@@ -113,7 +114,7 @@ checkAuth("unauthorized");
                   </div>
                   <div class="transaction_content">
                     <div class="tinfo md_font_size"><span class="title bold">Transfer from</span> <span class="user_name bold italic">@Krikowl</span> <span class="user_slug txt-color-gray">#239100</span></div>
-                    <div class="message txt-color-gray"><i class="peer-icon peer-icon-comment-dot"></i>Thank you so much for all your help with the project... </div>
+                    <div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>Thank you so much for all your help with the project... </div>
                   </div>
 
                 </div>

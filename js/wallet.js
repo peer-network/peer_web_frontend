@@ -5,45 +5,14 @@ let hasMoreUsers = true;
 
 // Initialization
 function initAppData() {
-  //nextMint();
+  
   resetTransactionHistoryList();
-  // getTransactionHistory();
-  // dailyPays();
+  
 }
 
 window.addEventListener('DOMContentLoaded', initAppData);
 
-function nextMint() {
-  const now = new Date();
-  const nextMintDate = getNext0930(); // Funktion aufrufen, um das nächste 09:30 zu erhalten
-  const dif = nextMintDate - now; // Differenz in Millisekunden
-  const seconds = Math.floor((dif / 1000) % 60);
-  document.getElementById("nextmintseconds").innerText = String(seconds).padStart(2, "0");
-  const minutes = Math.floor((dif / (1000 * 60)) % 60);
-  document.getElementById("nextmintminutes").innerText = String(minutes).padStart(2, "0");
-  const hours = Math.floor((dif / (1000 * 60 * 60)) % 24);
-  document.getElementById("nextminthours").innerText = String(hours).padStart(2, "0");
-  document.getElementById("nextminttime").innerText = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
-  document.getElementById("nextmintRadial").style.setProperty("--progress", percentageOfDayFromDates(now, nextMintDate));
-}
 
-function percentageOfDayFromDates(startDate, endDate) {
-  const diffMs = endDate - startDate;
-  const oneDayMs = 24 * 60 * 60 * 1000;
-  return (diffMs / oneDayMs) * 100;
-}
-
-function getNext0930() {
-  const now = new Date();
-  const next0930 = new Date(now);
-  next0930.setHours(9, 30, 0, 0); // heute um 09:30
-
-  if (now >= next0930) {
-    // Wenn 09:30 heute schon vorbei ist → morgen
-    next0930.setDate(next0930.getDate() + 1);
-  }
-  return next0930;
-}
 
 // Holt die Transaktionshistorie und rendert sie in #history-container
 // async function getTransactionHistory() {
@@ -218,9 +187,10 @@ function renderRows(rows) {
       typeof entry.netTokenAmount === "number"
         ? entry.netTokenAmount
         : Number(String(entry.netTokenAmount).replace(",", "."));
-      let transaction_title,transferto,icon_html;
+      let transaction_title,transferto,icon_html,message_html;
       transferto='';
       icon_html='';
+      message_html='';
         if(entry.transactiontype=='transferForDislike'){
           transaction_title ='Dislike';
           icon_html='<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
@@ -258,7 +228,15 @@ function renderRows(rows) {
           transaction_title =entry.transactiontype;
           transferto='';
         }
+        let messageText = entry.message || "";
+        let shortMessage =
+          messageText.length > 60
+            ? messageText.slice(0, 60) + "..."
+            : messageText;
 
+        if(entry.message!=''){
+          message_html=`<div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>${shortMessage}</div>`;
+        }
     const record =`<div class="transaction_record">
                 <div class="transaction_info">
                   <div class="transaction_media">
@@ -266,6 +244,7 @@ function renderRows(rows) {
                   </div>
                   <div class="transaction_content">
                     <div class="tinfo md_font_size"><span class="title bold">${transaction_title}</span> ${transferto}</div>
+                    ${message_html}
                   </div>
 
                 </div>
@@ -540,14 +519,14 @@ async function renderUsers() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.innerHTML = "";
   dropdown.classList.remove("hidden");
-  dropdown.classList.add("modal-mode");
+  //dropdown.classList.add("modal-mode");
 
   // Backdrop
   const existingBackdrop = document.querySelector(".transfer-backdrop");
   if (!existingBackdrop) {
     const backdrop = document.createElement("div");
     backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeModal;
+    backdrop.onclick = closeTransferModal;
     document.body.appendChild(backdrop);
   }
 
@@ -566,7 +545,7 @@ async function renderUsers() {
   const closeBtn = document.createElement("button");
   closeBtn.className = "close-transfer";
   closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = closeModal;
+  closeBtn.onclick = closeTransferModal;
 
   header.append(h2, closeBtn);
   wrapper.appendChild(header);
@@ -795,10 +774,20 @@ async function searchUser(username = null) {
 
 function renderTransferFormView(user) {
   const dropdown = document.getElementById("transferDropdown");
- // dropdown.innerHTML = "";
-  dropdown.querySelector(".search_wrapper").remove();
+ /*---- This code is when user press back button form checkout scree---*/
+    dropdown.querySelector(".search_wrapper")?.remove();
+    dropdown.querySelector(".modal-actions")?.remove();
+    dropdown.querySelector(".transfer-header h2").innerHTML="Transfer";
+    dropdown.querySelector(".balance-header")?.classList.remove("none");
+    dropdown.querySelector(".balance-header.summary-header")?.remove();
+    
+    dropdown.querySelector(".recipient-info")?.remove();
+    const oldtransferamopunt = dropdown.querySelector(".amount-input input")?.value?.trim() || "";
+    dropdown.querySelector(".amount-input")?.remove();
+    const message = dropdown.querySelector(".message-wrap .message_area")?.textContent?.trim() || "";
+    dropdown.querySelector(".message-wrap")?.remove();
+  /*---- End This code is when user press back button form checkout scree---*/
   const wrapper = dropdown.querySelector(".transfer-form-screen");
-
   // Enable modal mode
   //dropdown.classList.add("modal-mode");
   //dropdown.classList.remove("hidden");
@@ -807,7 +796,7 @@ function renderTransferFormView(user) {
   if (!document.querySelector(".transfer-backdrop")) {
     const backdrop = document.createElement("div");
     backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeModal;
+    backdrop.onclick = closeTransferModal;
     document.body.appendChild(backdrop);
   }
 
@@ -823,7 +812,7 @@ function renderTransferFormView(user) {
   const closeBtn = document.createElement("button");
   closeBtn.className = "close-transfer";
   closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = closeModal;
+  closeBtn.onclick = closeTransferModal;
   header.append(h2, closeBtn);*/
   const recipientInfo = document.createElement("div");
   recipientInfo.className = "recipient-info";
@@ -854,7 +843,7 @@ function renderTransferFormView(user) {
   edit_btn.innerHTML = `<i class="peer-icon peer-icon-edit-pencil"></i>`;
 
    edit_btn.onclick = () => {
-    closeModal();
+    closeTransferModal();
     document.getElementById("openTransferDropdown").click();
   };
 
@@ -872,6 +861,7 @@ function renderTransferFormView(user) {
   input.type = "number";
   input.placeholder = "min: 0.00000001";
   input.id = "transferAmount";
+  input.value=oldtransferamopunt;
   input.className = "bold";
   amountWrap.append(amountLabel,input);
 
@@ -899,6 +889,7 @@ function renderTransferFormView(user) {
  
   textarea.placeholder = "e.g., Thanks for the coffee! ☕";
   textarea.id = "transferMessage";
+  textarea.value=message;
   textareaCon.append(textarea);
  
    const messageInsturction = document.createElement("div");
@@ -965,7 +956,7 @@ function renderTransferFormView(user) {
     dropdown.querySelector(".balance-header .tbalance").textContent
   );
 
-  input.addEventListener("blur", () => {
+  input.addEventListener("input", () => {
 
     // Reset always
     nextBtn.onclick = null;
@@ -990,7 +981,10 @@ function renderTransferFormView(user) {
     }
     
   });
- 
+  // If value is not empty → trigger blur
+  if (input.value.trim() !== "") {
+      input.dispatchEvent(new Event("input"));
+  }
 
 
 
@@ -1023,6 +1017,10 @@ function validateAmount(inputEl, balanceAmount) {
   else if (isNaN(parseFloat(value))) {
     message = "Please enter a valid number";
   }
+   // Minimum amount check
+  else if (parseFloat(value) < 0.00000001) {
+    message = "Enter at least 0.00000001 Peer Tokens to continue.";
+  }
 
   // Decimal places check (max 8 allowed)
   else if (value.includes(".")) {
@@ -1032,11 +1030,7 @@ function validateAmount(inputEl, balanceAmount) {
     }
   }
 
-  // Minimum amount check
-  else if (parseFloat(value) < 0.00000001) {
-    message = "Enter at least 0.00000001 Peer Tokens to continue.";
-  }
-
+ 
   // Balance check
  // else if (parseFloat(value) > balanceAmount) {
  //   message = "Amount cannot exceed your balance: " + balanceAmount;
@@ -1136,11 +1130,25 @@ function renderCheckoutScreen(user, amount) {
   dropdown.querySelector(".modal-actions").remove();
   dropdown.querySelector(".recipient-info .edit_btn").remove();
   dropdown.querySelector(".transfer-header h2").innerHTML="Summary";
-  dropdown.querySelector(".balance-header .bal_label").innerHTML="Remaining balance";
-  dropdown.querySelector(".balance-header").classList.add("summary-header");
-  dropdown.querySelector(".amount-input .amtlabel").remove();
-  dropdown.querySelector(".amount-input input").remove();
+  const clonebalance_header=dropdown.querySelector(".balance-header").cloneNode(true);
+  dropdown.querySelector(".balance-header").classList.add("none");
+
+  clonebalance_header.classList.add("summary-header");
+  clonebalance_header.querySelector(".bal_label").innerHTML="Remaining balance";
+
+ 
   dropdown.querySelector(".amount-input").classList.add("summary-amount");
+
+  dropdown.querySelector(".message-wrap").classList.add("summary-message");
+  dropdown.querySelector(".message-wrap .label").innerHTML="Message";
+  const message=dropdown.querySelector(".message-wrap .message_area textarea").value;
+
+  if(message==''){
+    dropdown.querySelector(".message-wrap").classList.add("none");
+  }
+  dropdown.querySelector(".message-wrap .message_area").innerHTML=message;
+  
+
   
 
   const total_tranfer_tokens=parseFloat(
@@ -1152,92 +1160,109 @@ function renderCheckoutScreen(user, amount) {
   );
 
   const balance_tokens =old_balance_tokens - total_tranfer_tokens;
-  dropdown.querySelector(".balance-header .tbalance").textContent=balance_tokens;
+  clonebalance_header.querySelector(".tbalance").textContent=balance_tokens;
+
+  dropdown.querySelector(".balance-header").insertAdjacentElement("afterend", clonebalance_header);
   
    const wrapper = dropdown.querySelector(".transfer-form-screen");
 
   if (!document.querySelector(".transfer-backdrop")) {
     const backdrop = document.createElement("div");
     backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeModal;
+    backdrop.onclick = closeTransferModal;
     document.body.appendChild(backdrop);
   }
 
   const totalAmount = calculateTotalWithFee(amount);
-  const {
-    breakdown
-  } = getCommissionBreakdown(amount);
-
- 
+  //console.log(totalAmount,balance);
 
   // Actions
   const actions = document.createElement("div");
   actions.className = "modal-actions";
 
   const backBtn = document.createElement("button");
-  backBtn.className = "btn-back";
+  backBtn.className = "btn-back btn-transparent";
   backBtn.textContent = "Back";
   backBtn.onclick = () => renderTransferFormView(user);
 
   const transferBtn = document.createElement("button");
-  transferBtn.className = "btn-next";
-  transferBtn.innerHTML = `Transfer &rarr;`;
+  transferBtn.className = "btn-next btn-blue bold";
+  transferBtn.innerHTML = `Submit transfer`;
 
   transferBtn.onclick = async () => {
 
     if (balance < totalAmount) {
-      const confirmContinue = await confirm("You don't have enough balance. Do you still want to try?");
+      const confirmContinue = await warnig("Insufficient balance","You don't have enough balance. Do you still want to try?",false,'<i class="peer-icon peer-icon-warning"></i>');
       if (confirmContinue === null || confirmContinue.button === 0) {
         return false;
       }
 
-      balance = await getLiquiudity();
+      //balance = await getLiquiudity();
       await new Promise(resolve => setTimeout(resolve, 300));
       if (balance < totalAmount) {
         Merror("Still insufficient balance.");
-        closeModal();
+        closeTransferModal();
         return false
       }
     }
 
     try {
-      renderLoaderScreen();
+      //renderLoaderScreen();
       const userId = (user ?.userid === undefined) ? user ?.id : user ?.userid;
-      const res = await resolveTransfer(userId, amount);
+      const res = await resolveTransfer(userId, amount,message);
       if (res.status === "success") {
-        renderFinalScreen(totalAmount, user);
+        closeTransferModal();
+        const confirmContinue = await success("Completed","Your transfer was sent successfully.",false,'<i class="peer-icon peer-icon-good-tick-circle"></i>');
+        if (confirmContinue === null || confirmContinue.button === 0) {
+          return false;
+        }
+        //renderFinalScreen(totalAmount, user);
       } else {
-        alert(`Transfer failed: ${res.ResponseCode}`);
-        closeModal();
+
+
+        const tryagain = await warnig("Transfer failed",userfriendlymsg(res.ResponseCode),false,'<i class="peer-icon peer-icon-warning"></i>','Try again');
+        
+      
+      if (tryagain === null || tryagain.button === 0) {
+       
+          closeTransferModal();
+          return false;
+        }
+       
       }
-    } catch (err) {
-      alert("Transfer error occurred.");
+    } catch (err) { 
+      const tryagain = await warnig("Something went wrong","We were not able to make your transfer. Please try again later.",false,'<i class="peer-icon peer-icon-warning"></i>','Try again');
+        
+      
+      if (tryagain === null || tryagain.button === 0) {
+       
+          closeTransferModal();
+          return false;
+        }
+      //alert("Transfer error occurred.");
       console.error(err);
-      closeModal();
+      
     }
   };
 
   actions.append(backBtn, transferBtn);
   // Final render
   wrapper.append(
-    
-  
-   
     actions
   );
 
   dropdown.appendChild(wrapper);
 }
-
+/*
 function renderLoaderScreen() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.innerHTML = "";
-  dropdown.classList.add("modal-mode");
+  //dropdown.classList.add("modal-mode");
 
   if (!document.querySelector(".transfer-backdrop")) {
     const backdrop = document.createElement("div");
     backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeModal;
+    backdrop.onclick = closeTransferModal;
     document.body.appendChild(backdrop);
   }
 
@@ -1279,15 +1304,15 @@ function renderLoaderScreen() {
 function renderFinalScreen(transferredAmount, user) {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.innerHTML = "";
-  dropdown.classList.add("modal-mode");
-  dropdown.classList.add("modal-mode");
+  //dropdown.classList.add("modal-mode");
+  
   dropdown.classList.remove("hidden");
 
   // Backdrop
   if (!document.querySelector(".transfer-backdrop")) {
     const backdrop = document.createElement("div");
     backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeModal;
+    backdrop.onclick = closeTransferModal;
     document.body.appendChild(backdrop);
   }
 
@@ -1400,9 +1425,9 @@ function renderFinalScreen(transferredAmount, user) {
   wrapper.appendChild(actions);
 
   dropdown.appendChild(wrapper);
-}
+}*/
 
-async function resolveTransfer(recipientId, numberOfTokens) {
+async function resolveTransfer(recipientId, numberOfTokens,message) {
   const accessToken = getCookie("authToken");
 
   const headers = new Headers({
@@ -1412,8 +1437,8 @@ async function resolveTransfer(recipientId, numberOfTokens) {
 
   const graphql = JSON.stringify({
     query: `
-      mutation ResolveTransfer($recipient: ID!, $numberoftokens: Int!) {
-        resolveTransfer(recipient: $recipient, numberoftokens: $numberoftokens) {
+      mutation ResolveTransferV2($recipient: ID!, $numberoftokens: Decimal!, $message: String!) {
+        resolveTransferV2(recipient: $recipient, numberoftokens: $numberoftokens,message: $message) {
           status
           ResponseCode
         }
@@ -1421,7 +1446,8 @@ async function resolveTransfer(recipientId, numberOfTokens) {
     `,
     variables: {
       recipient: recipientId,
-      numberoftokens: parseInt(numberOfTokens, 10),
+      numberoftokens: numberOfTokens,
+      message: message,
     },
   });
 
@@ -1437,7 +1463,7 @@ async function resolveTransfer(recipientId, numberOfTokens) {
     throw new Error(result.errors[0].message);
   }
 
-  return result.data.resolveTransfer;
+  return result.data.resolveTransferV2;
 }
 
 function calculateTotalWithFee(amount) {
@@ -1486,10 +1512,9 @@ function getCommissionBreakdown(transferAmount) {
   };
 }
 
-function closeModal() {
+function closeTransferModal() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.classList.add("hidden");
-  dropdown.classList.remove("modal-mode");
   const backdrop = document.querySelector(".transfer-backdrop");
   if (backdrop) backdrop.remove();  
   //addition
