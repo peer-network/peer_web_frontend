@@ -227,6 +227,7 @@
   overflow: hidden;
   min-width: 0;
   flex: 1;
+  gap: 15px;
 }
 
 .ad_tiitle,
@@ -237,12 +238,21 @@
   width: 100%;
 }
 
+.time_badge_status {
+  flex: 0.7;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 20px;
+  align-items: center;
+}
+
 .ad_timeframe_box {
-  flex: 0.5;
+  /* flex: 0.5; */
   display: flex;
   align-items: center;
   gap: 15px;
   transition: 0.3s ease;
+  grid-column: 1;
 }
 
 .ad_timeframe_box div {
@@ -282,10 +292,11 @@
 .ad_status {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex: 0.2;
+  /* justify-content: flex-end; */
+  /* flex: 0.2; */
   flex-direction: column;
   gap: 5px;
+  grid-column: 4;
 }
 
 .status_badge {
@@ -391,7 +402,7 @@
   left: 3px;
   width: 25px;
   height: 25px;
-  z-index: 2;
+  z-index: 4;
   border-radius: 50%;
   background: var(--blue);
   display: flex;
@@ -493,6 +504,71 @@ h2.xxl_font_size {
 }
 
 
+
+.illegal_ads_post .illegal_adsPost_frame.xl_font_size {
+  position: absolute;
+  z-index: 3;
+  left: 35px;
+}
+
+.illegal_adsPost_frame .illegal_content {
+  display: flex;
+  gap: 10px;
+}
+
+.illegal_adsPost_frame .illegal_content .icon_illegal {
+  display: flex;
+  background: var(--black-dark);
+  width: 200px;
+  height: 150px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.illegal_adsPost_frame .illegal_content .illegal_title_description{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.illegal_adsPost_frame .illegal_content .illegal_title_description .illegal_title {
+  display: flex;
+  background: var(--black-dark);
+  padding: 10px 0;
+  width: 600px;
+  border-radius: 40px;
+  justify-content: center;
+}
+
+.illegal_adsPost_frame .illegal_content .illegal_title_description .illegal_description {
+  display: flex;
+  background: var(--black-dark);
+  width: 1000px;
+  height: 50px;
+  border-radius: 40px;
+}
+
+.hidden_post_opened {
+  display: flex;
+  gap: 20px;
+  padding: 20px 40px;
+  border-radius: 40px;
+  border: 1px solid var(--white-secondary);
+}
+
+.ad_hidden_badge.small_font_size {
+  grid-column: 3;
+  transform: translateX(-450px);
+}
+
+.peer-icon.peer-icon-eye-close {
+  color: var(--white-secondary);
+}
+
+.ads_hidden_texts {
+  color: var(--white-secondary);
+}
 
 
 /*-- changed min-width 3000px to 1000px becuase we are now use 4k css with zoom --*/
