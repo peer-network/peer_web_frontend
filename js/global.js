@@ -1653,6 +1653,15 @@ function commentToDom(c, append = true) {
   const usernameSpan = document.createElement("span");
   usernameSpan.classList.add("cmt_userName", "md_font_size", "bold");
   usernameSpan.textContent = c.user.username;
+  usernameSpan.addEventListener("click", function handledisLikeClick(event) {
+    // event.stopPropagation();
+    event.preventDefault();
+    if (userID && userID !== "") {
+      // redirectToProfile(c, this);
+      redirectToProfile(c.userid);
+    }
+  });
+  usernameSpan.style.cursor = "pointer";
 
   const profileIdSpan = document.createElement("span");
   profileIdSpan.classList.add("cmt_profile_id", "txt-color-gray");
