@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './host.php';
+require_once 'host.php';
 
 /**
  * Decode a JWT payload without verifying the signature.

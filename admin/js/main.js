@@ -1,17 +1,27 @@
 window.addEventListener("DOMContentLoaded", async () => {
   const { store, service, view, fetcher, helpers } = window.moderationModule;
+  
   try {
-    // detect page
-    // const page = window.location.pathname.split("/").pop(); // 'index.php' or 'content.php'
-    // if (page === "content.php") {
-    //   fetcher.initContentPage();
-    // } else {
-      view.initFilters();
-      //load stats
-      fetcher.loadStats();
-      // Load default ALL items on start
-      fetcher.loadItems("LIST_ITEMS", { offset: 0, limit: 20, contentType: null});
-    // }
+    // Fetch and display username
+    const userid = helpers.getFromStorage('userData', 'userid');
+    
+    if (userid) {
+      const query = moderationModule.schema.LIST_USER_BY_ID;
+      const response = await service.fetchGraphQL(query, { userid });
+      const user = response?.getProfile?.affectedRows;
+      
+      // Update username in header
+      const usernameEl = document.querySelector('.loggedin .username');
+      if (usernameEl && user) {
+        usernameEl.textContent = user.username || 'Admin';
+      }
+    }
+    
+    // Normal initialization
+    view.initFilters();
+    fetcher.loadStats();
+    fetcher.loadItems("LIST_ITEMS", { offset: 0, limit: 20, contentType: null });
+    
   } catch (err) {
     console.error("Initialization error:", err);
   }
