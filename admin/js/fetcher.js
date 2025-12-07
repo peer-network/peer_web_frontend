@@ -1,7 +1,7 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.fetcher = {
-  //     /* -------------/* ---------------------- NORMALIZER ---------------------- */
+  /* -------------/* ---------------------- NORMALIZER ---------------------- */
   async normalizeItems(items) {
     const mapped = items.map(async (x) => {
       const self = this;
@@ -17,8 +17,8 @@ moderationModule.fetcher = {
             userid: r.userid,
             username: r.username || "@unknown",
             slug: "#" + (r.slug || "0000"),
-            img: r.img || "../svg/noname.svg",
-            updatedat: r.updatedat || null,
+            img: tempMedia(r.img) || "../svg/noname.svg",
+            updatedat: moderationModule.helpers.formatDate(r.updatedat) || null,
           }))
         : []
       };
@@ -70,42 +70,73 @@ moderationModule.fetcher = {
       }
 
       /* -------------------- COMMENT -------------------- */
+      // if (x.targettype === "comment" && x.targetcontent.comment) {
+      //   const c = x.targetcontent.comment;
+      //   let commenterId = c.userid || null;
+      //   // item.username = c.user.username || "@unknown";
+      //   // item.slug = "#" + (c.user.slug || "0000");
+      //   item.content = c.content || "";
+      //   item.contentType = "comment";
+      //   item.timeAgo = timeAgo(c.createdat);
+      //   // item.media = tempMedia(c.user?.img) ?? '../img/profile_thumb.png';
+      //   item.icon = "peer-icon peer-icon-comment-fill";
+      //   item.postid = c.postid;
+      //   item.post = null
+
+      //   // *** NEW LOGIC TO FETCH FULL USER PROFILE FOR THE COMMENTER ***
+      //   if (commenterId) {
+      //       const fullUserArray = await self.loadUserById(commenterId);
+      //       const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
+      //       const userId = fullUser.userid || fullUser.id;
+      //       if (userId) {
+      //         item.commenterProfile = {
+      //           userid: fullUser.id,
+      //           username: fullUser.username || "@unknown",
+      //           slug: "#" + (fullUser.slug || "0000"),
+      //           img: tempMedia(fullUser.img) || "../svg/noname.svg",
+      //           posts: fullUser.amountposts || 0,
+      //           followers: fullUser.amountfollower || 0,
+      //           following: fullUser.amountfollowed || 0,
+      //         };
+      //       }
+      //   }
+      // }
+
       if (x.targettype === "comment" && x.targetcontent.comment) {
         const c = x.targetcontent.comment;
-        const commenterId = c.userid || null;
-        // item.username = c.user.username || "@unknown";
-        // item.slug = "#" + (c.user.slug || "0000");
+        let commenterId = c.userid || null;
+        
         item.content = c.content || "";
         item.contentType = "comment";
         item.timeAgo = timeAgo(c.createdat);
-        // item.media = tempMedia(c.user?.img) ?? '../img/profile_thumb.png';
         item.icon = "peer-icon peer-icon-comment-fill";
         item.postid = c.postid;
-        item.post = null
+        item.post = null;
 
-        // *** NEW LOGIC TO FETCH FULL USER PROFILE FOR THE COMMENTER ***
         if (commenterId) {
-            // FIX 1: Remove Promise.all. loadUserById returns a single Promise.
-            const fullUserArray = await self.loadUserById(commenterId);
+          const fullUserArray = await self.loadUserById(commenterId);
+          const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
+          const userId = fullUser?.userid || fullUser?.id; // Added optional chaining
+          
+          if (userId) {
+            item.commenterProfile = {
+              userid: fullUser.id,
+              username: fullUser.username || "@unknown",
+              slug: "#" + (fullUser.slug || "0000"),
+              img: tempMedia(fullUser.img) || "../svg/noname.svg",
+              posts: fullUser.amountposts || 0,
+              followers: fullUser.amountfollower || 0,
+              following: fullUser.amountfollowed || 0,
+            };
             
-            // FIX 2: Check if the array is populated and get the first element.
-            // (Assuming loadUserById might return an array of 1 result based on your previous code)
-            const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
-            
-            if (fullUser && fullUser.id) { // Check if the object is valid
-              console.log('fullUser fetched for commenter', fullUser);
-              item.commenterProfile = {
-                userid: fullUser.id,
-                username: fullUser.username || "@unknown",
-                slug: "#" + (fullUser.slug || "0000"),
-                img: tempMedia(fullUser.img) || "../svg/noname.svg",
-                // Use the correct field names from the LIST_USER_BY_ID query
-                posts: fullUser.amountposts || 0,
-                followers: fullUser.amountfollower || 0,
-                following: fullUser.amountfollowed || 0,
-              };
-            }
-            console.log('fullUser', fullUser);
+            item.username = item.commenterProfile.username;
+            item.slug = item.commenterProfile.slug;
+            item.media = item.commenterProfile.img;
+          } else {
+            item.username = "@unknown";
+            item.slug = "#0000";
+            item.media = "../svg/noname.svg";
+          }
         }
       }
 
@@ -165,7 +196,7 @@ moderationModule.fetcher = {
 
     return await Promise.all(mapped);
   },
-// ...existing code...
+
   /* ---------------------- LOAD ITEMS ---------------------- */
   async loadStats() {
     try {
@@ -187,7 +218,6 @@ moderationModule.fetcher = {
     }
   }, 
 
-  /* ---------------------- LOAD ITEMS ---------------------- */
   async loadItems(type = "LIST_ITEMS", { offset = 0, limit = 20, contentType = null } = {}) {
     try {
       const query = moderationModule.schema[type];
@@ -197,16 +227,14 @@ moderationModule.fetcher = {
       const response = await moderationModule.service.fetchGraphQL(query, variables);
       const rawItems = response?.moderationItems?.affectedRows || [];
       const normalized = await this.normalizeItems(rawItems);
-
-      // moderationModule.store.items = normalized;
-      // moderationModule.store.filteredItems = normalized;
-      // moderationModule.view.renderItems(normalized);
-      // enrich in background
-      this.enrichCommentsWithPosts(normalized).then(updated => {
-        moderationModule.store.items = updated;
-        moderationModule.store.filteredItems = updated;
-        moderationModule.view.renderItems(updated);
-      });
+      // console.log("After normalize:", normalized.filter(i => i.contentType === "comment"));
+      const enriched = await this.enrichCommentsWithPosts(normalized);
+      // console.log("After enrich:", enriched.filter(i => i.contentType === "comment"));
+      
+      moderationModule.store.items = enriched;
+      moderationModule.store.filteredItems = enriched;
+      moderationModule.view.renderItems(enriched);
+      
     } catch (err) {
       console.error("Error loading items:", err);
     }
@@ -231,14 +259,13 @@ moderationModule.fetcher = {
     }
   },
 
-  // Add this to moderationModule.fetcher (next to loadPostById)
   async loadUserById(userid) {
     try {
       const query = moderationModule.schema.LIST_USER_BY_ID;
       if (!query) throw new Error("Invalid LIST_USER_BY_ID query");
       const variables = { userid };
       const response = await moderationModule.service.fetchGraphQL(query, variables);
-      return response?.getProfile?.affectedRows?.[0] || null;
+      return response?.getProfile?.affectedRows || null;
     } catch (err) {
       console.error("Error loading user by ID:", err);
       return null;

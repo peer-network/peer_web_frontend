@@ -45,7 +45,7 @@ checkAuth("unauthorized");
             <div class="leftContainer">
                 <p>Logged in as</p>
                 <div id="adminID" class="adminID">Jacob123</div>
-                <a href="dashbord.php" class="button btn-red-transparent back_toUserBtn">
+                <a href="./dashbord.php" class="button btn-red-transparent back_toUserBtn">
                     Back to user mode
                     <img src="svg/back-icon.svg" alt="">
                 </a>
