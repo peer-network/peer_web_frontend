@@ -287,7 +287,6 @@ moderationModule.view = {
 
       /* POST DETAILS */
       if (item.kind === "post") {
-        console.log("Rendering post item:", item);
         const postBlock = document.createElement("div");
         postBlock.className = "content_type_post";
         postBlock.innerHTML = `
