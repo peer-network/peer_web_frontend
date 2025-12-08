@@ -220,6 +220,38 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                                         <a class="button btn-transparent" href="#">Hide</a>
                                         <a class="button btn-red-transparent" href="#">Mark as illegal</a>
                                     </div>
+                                    <div class="action_box action_restore none">
+                                        <div class="action_info">
+                                            <h3 class="xl_font_size bold">Are you sure you want to restore this content?</h3>
+                                            <p class="txt-color-gray">It will reappear in everyone’s feed</p>
+                                        </div>
+                                        <div class="action_buttons">
+                                            <a class="button btn-transparent" href="#">No</a>
+                                            <a class="button btn-white" href="#">Yes</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="action_box action_illegal none">
+                                        <div class="action_info">
+                                            <h3 class="xl_font_size bold red-text">Are you sure this content is illegal?</h3>
+                                            <p class="txt-color-gray">It will not be shown to anyone ever without possibility to restore.</p>
+                                        </div>
+                                        <div class="action_buttons">
+                                            <a class="button btn-transparent" href="#">No</a>
+                                            <a class="button btn-white" href="#">Yes</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="action_box action_hide none">
+                                        <div class="action_info">
+                                            <h3 class="xl_font_size bold">Are you sure you want to hide this content?</h3>
+                                            <p class="txt-color-gray">It will require additional confirmation from users to be shown.</p>
+                                        </div>
+                                        <div class="action_buttons">
+                                            <a class="button btn-transparent" href="#">No</a>
+                                            <a class="button btn-white" href="#">Yes</a>
+                                        </div>
+                                    </div>
                                     <!--- End Action Boxes --->
 
                                     <!--- Moderated Boxes --->
@@ -601,9 +633,7 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                                     <span class="content_detail">
                                         <span class="user_name  bold italic">@scammer_idiot</span>
                                         <span class="post_title xl_font_size bold">Rejected at the gates...</span>
-                                        <span
-                                            class="user_slug txt-color-gray">2f1f96ec-f60e-4f05-b3fd-d3444c7cd74d</span>
-
+                                        <span class="user_slug txt-color-gray">2f1f96ec-f60e-4f05-b3fd-d3444c7cd74d</span>
                                     </span>
                                 </div>
                                 <div class="moderation_id xl_font_size txt-color-gray">#124582687163813253732687</div>
@@ -669,15 +699,12 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
                                                 </div>
                                             </div>
                                             <div class="post_detail">
-                                                <div class="post_media">
-
-                                                </div>
+                                                <div class="post_media"></div>
                                                 <div class="post_info">
                                                     <div class="post_title">
                                                         <h2 class="xl_font_size bold">Rejected at the gates of techno
                                                             heaven: Berghain > Mars? </h2>
                                                         <span class="timeagao txt-color-gray">2h</span>
-
                                                     </div>
                                                     <div class="post_text">
                                                         Hier würde man jz die description reinschreiben. Lorem ipsum

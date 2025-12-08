@@ -179,35 +179,26 @@ moderationModule.view = {
 
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-        //if (item.kind == "user") {
-          imgEl.onerror = function () { this.src = "../svg/noname.svg"; };
-        //}
-        imgWrapper.append(imgEl);
-        if (item.kind === "post") {
-          imgWrapper.append(moderationModule.helpers.createEl("i", {
-            className: item.icon
-          }));
+          (item.kind == "user") ? imgEl.onerror = function () { this.src = "../svg/noname.svg"; }: imgEl.onerror = function () { this.remove(); };
+          imgWrapper.append(imgEl);
         }
-      } else {
-        imgWrapper.append(moderationModule.helpers.createEl("i", {
+      
+       imgWrapper.append(moderationModule.helpers.createEl("i", {
           className: item.icon
         }));
-      }
 
       const detailEl = moderationModule.helpers.createEl("span", {
         className: "content_detail"
       });
-      const userNameClass =
-        item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
-
+      const userNameClass =  item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
       detailEl.append(
         moderationModule.helpers.createEl("span", {
           className: userNameClass,
-          textContent: item.username,
+          textContent: '@' + item.username,
         })
       );
 
-      if (item.kind === "post" || item.kind === "comment") {
+      if (item.kind === "post") {
         detailEl.append(
           moderationModule.helpers.createEl("span", {
             className: "post_title xl_font_size bold",
@@ -216,7 +207,7 @@ moderationModule.view = {
         );
       }
 
-      if (item.kind === "user" || item.kind === "comment") {
+      if (item.kind === "user") {
         detailEl.append(
           moderationModule.helpers.createEl("span", {
             className: "user_slug txt-color-gray",
@@ -225,11 +216,26 @@ moderationModule.view = {
         );
       }
 
+      if (item.kind === "comment") {
+        detailEl.append(
+            moderationModule.helpers.createEl("span", {
+              className: "post_title xl_font_size bold",
+              textContent: item.post?.title,
+            })
+        );
+         detailEl.append(
+            moderationModule.helpers.createEl("span", {
+              className: "user_slug txt-color-gray",
+              textContent: item.commentid,
+            })
+        );
+      }
+
       contentEl.append(imgWrapper, detailEl);
 
       const modId = moderationModule.helpers.createEl("div", {
         className: "moderation_id xl_font_size txt-color-gray",
-        textContent: item.moderationId,
+        textContent: '#' + item.moderationId,
       });
 
       const modDate = moderationModule.helpers.createEl("div", {
@@ -244,11 +250,12 @@ moderationModule.view = {
         className: "xl_font_size txt-color-gray",
         innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
       });
+      
+      const statusVal = (item.status || "").toLowerCase();
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: item.visible === false ?
-          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed` :
-          "",
+        innerHTML: statusVal == "restored" ? "" : 
+          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
       });
       reportsEl.append(reportCount, visibility);
 
@@ -256,7 +263,7 @@ moderationModule.view = {
         className: "status"
       });
       let statusClass = "";
-      const statusVal = (item.status || "").toLowerCase();
+
       if (statusVal === "hidden" || statusVal === "illegal") {
         statusClass = "hidden-tx xl_font_size red-text";
       } else if (statusVal === "restored") {
@@ -308,7 +315,7 @@ moderationModule.view = {
               <span class="timeagao txt-color-gray">2h</span>
             </div>
             <div class="post_text">${item.description || ""}</div>
-            <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
+            <div class="hashtags txt-color-blue">#${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
           </div>
         `;
         boxLeft.append(postBlock);
@@ -425,9 +432,7 @@ moderationModule.view = {
       }
 
       /* RIGHT SIDE: status, reported by actions */
-      const contenStatus = moderationModule.helpers.createEl("div", {
-        className: "conten_status"
-      });
+      const contenStatus = moderationModule.helpers.createEl("div", { className: "conten_status" });
       const rightStatusClass =
         statusVal === "hidden" || statusVal === "illegal" ? "hidden-tx xl_font_size red-text" :
         statusVal === "restored" ? "restored xl_font_size green-text" :
@@ -456,9 +461,10 @@ moderationModule.view = {
       const profilesContainer = reportedBy.querySelector(".reported_by_profiles");
       if (Array.isArray(item.reporters)) {
         item.reporters.forEach(rep => {
-          const r = document.createElement("div");
+          const r = moderationModule.helpers.createEl("div", {
+            className: "profile_item"
+          });
           r.innerHTML = ` 
-              <div class="profile_item">
                 <div class="profile">
                     <span class="profile_image">
                         <img src="${rep.img}" alt="user image" onerror="this.src='../svg/noname.svg'" />
@@ -471,8 +477,7 @@ moderationModule.view = {
                 </div>
                 <div class="report_time xl_font_size txt-color-gray">
                     ${rep.updatedat}
-                </div>
-              </div>`;
+                </div>`;
 
           profilesContainer.appendChild(r);
         });
@@ -494,7 +499,16 @@ moderationModule.view = {
       hideBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         const res = await moderationModule.service.performModeration(item.moderationId, "hidden");
-        console.log("Hidden:", res);
+        <div class="action_box action_hide none">
+            <div class="action_info">
+                <h3 class="xl_font_size bold">Are you sure you want to hide this content?</h3>
+                <p class="txt-color-gray">It will require additional confirmation from users to be shown.</p>
+            </div>
+            <div class="action_buttons">
+                <a class="button btn-transparent" href="#">No</a>
+                <a class="button btn-white" href="#">Yes</a>
+            </div>
+        </div>
       });
 
       const restoreBtn = moderationModule.helpers.createEl("a", {
@@ -505,7 +519,17 @@ moderationModule.view = {
       restoreBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         const res = await moderationModule.service.performModeration(item.moderationId, "restored");
-        console.log("Restored:", res);
+           <div class="action_box action_restore none">
+              <div class="action_info">
+                  <h3 class="xl_font_size bold">Are you sure you want to restore this content?</h3>
+                  <p class="txt-color-gray">It will reappear in everyone’s feed</p>
+              </div>
+              <div class="action_buttons">
+                  <a class="button btn-transparent" href="#">No</a>
+                  <a class="button btn-white" href="#">Yes</a>
+              </div>
+          </div>
+
       });
 
       const illegalBtn = moderationModule.helpers.createEl("a", {
@@ -516,7 +540,16 @@ moderationModule.view = {
       illegalBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         const res = await moderationModule.service.performModeration(item.moderationId, "illegal");
-        console.log("Illegal:", res);
+        <div class="action_box action_illegal none">
+            <div class="action_info">
+                <h3 class="xl_font_size bold red-text">Are you sure this content is illegal?</h3>
+                <p class="txt-color-gray">It will not be shown to anyone ever without possibility to restore.</p>
+            </div>
+            <div class="action_buttons">
+                <a class="button btn-transparent" href="#">No</a>
+                <a class="button btn-white" href="#">Yes</a>
+            </div>
+        </div>
       });
 
       actionButtons.append(restoreBtn, hideBtn, illegalBtn);
@@ -524,7 +557,7 @@ moderationModule.view = {
 
       /* Moderated box */
       const moderatedBox = moderationModule.helpers.createEl("div", {
-        className: `moderated_by_box  ${statusVal == "waiting for review" ? "none" : ""}`
+        className: `moderated_by_box ${statusVal == "waiting for review" ? "none" : ""}`
       });
 
       moderatedBox.innerHTML = `
@@ -562,6 +595,39 @@ moderationModule.view = {
       });
     });
   },
+
+
+
+
+  //temp code
+
+  [actionHideBox, actionRestoreBox, actionIllegalBox].forEach((box) => {
+  
+  // close (No)
+  box.querySelector(".btn_no").addEventListener("click", (e) => {
+    e.preventDefault();
+    box.classList.add("none");
+  });
+
+  // confirm (Yes)
+  box.querySelector(".btn_yes").addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const action = box.classList.contains("action_hide") ? "hidden"
+                 : box.classList.contains("action_restore") ? "restored"
+                 : "illegal";
+
+    await moderationModule.service.performModeration(item.moderationId, action);
+
+    box.classList.add("none");
+  });
+});
+
+
+
+
+
+
 
   toggleRow(itemEl, contentBox) {
     // Close any other open rows first
