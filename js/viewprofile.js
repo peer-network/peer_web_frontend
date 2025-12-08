@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const userID = params.get('user') || params.get("testid");
-  const visibilityStatus = params.get("uservisibility");
+  //const visibilityStatus = params.get("uservisibility");
   const urlIsReported = params.get("isreported");
 
   getProfile(userID).then(userprofile => {
+    
     
     if(userprofile.ResponseCode=='30201' && userprofile.status=='error'){
       //No User Found;
@@ -13,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /*-- handling profile visibility----*/
-    //const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
-    // const visibilityStatus = "HIDDEN";
+    const visibilityStatus = userprofile.affectedRows.visibilityStatus || 'NORMAL';
+    //const visibilityStatus = "ILLEGAL";
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     let isReportedByYou = userprofile.affectedRows.isreported;
 
@@ -25,23 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isReportedByYou === true) {
       disableReportButton();
     }
-
+     const viewProfile = document.querySelector('.view-profile');
     if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
-      const myProfile = document.querySelector('.view-profile');
-      if(myProfile) {
-        myProfile.classList.remove("REPORTED_PROFILE");
-        myProfile.classList.remove("HIDDEN_PROFILE");
-        myProfile.classList.add("illegal_profile");
+     
+      if(viewProfile) {
+        viewProfile.classList.remove("REPORTED_PROFILE");
+        viewProfile.classList.remove("HIDDEN_PROFILE");
+        viewProfile.classList.add("illegal_profile");
       }
     } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
-      const viewProfile = document.querySelector('.view-profile');
+      
       if(viewProfile) {
         viewProfile.classList.remove("REPORTED_PROFILE");
         viewProfile.classList.add("visibility_hidden");
         viewProfile.classList.add("HIDDEN_PROFILE");
       }
     } else if(hasActiveReports) {
-      const viewProfile = document.querySelector('.view-profile');
+      
       if (viewProfile) {
         viewProfile.classList.remove("visibility_hidden");
         viewProfile.classList.add('REPORTED_PROFILE');
