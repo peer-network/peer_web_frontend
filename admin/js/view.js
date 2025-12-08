@@ -179,9 +179,14 @@ moderationModule.view = {
 
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-        //if (item.kind == "user") {
-          imgEl.onerror = function () { this.src = "../svg/noname.svg"; };
-        //}
+             
+        if (item.kind == "user") {
+      
+         imgEl.onerror = function () { this.src = "../svg/noname.svg"; };
+        }else{
+          imgEl.onerror = function () { this.remove(); };
+        }
+         
         imgWrapper.append(imgEl);
         if (item.kind === "post") {
           imgWrapper.append(moderationModule.helpers.createEl("i", {

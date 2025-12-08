@@ -5,7 +5,7 @@ moderationModule.fetcher = {
   async normalizeItems(items) {
     const mapped = items.map(async (x) => {
       const self = this;
-      console.log("Normalizing item:", x.targettype);
+     
       let item = {
         kind: x.targettype,
         moderationId: x.moderationTicketId,
@@ -31,31 +31,38 @@ moderationModule.fetcher = {
         item.username = user.username || "@unknown";
         item.slug = "#" + (user.slug || "0000");
         item.title = post.title || "";
-        item.description = post.description || "";
+        item.description = post.mediadescription || "";
         item.hashtags = post.tags || [];   
         item.contentType = post.contenttype;
         item.postid = post.id;
-
+       // console.log(post);
+        
         switch (post.contenttype) {
           case "image":
             item.media = moderationModule.helpers.safeMedia(post.media);
             item.icon = "peer-icon peer-icon-camera";
+           
             break;
 
           case "text":
             try {
-              const parsed = JSON.parse(post.media);
-              if (Array.isArray(parsed) && parsed.length > 0) 
-                item.path = parsed[0].path; 
+              
+             // const parsed = JSON.parse(post.media);
+              //if (Array.isArray(parsed) && parsed.length > 0) 
+              //item.path = parsed[0].path; 
+               const mediaUrl = moderationModule.helpers.safeMedia(post.media);
+               item.description = await self.loadTextFile(mediaUrl);
+              
             } catch (err) {
               console.error("Failed to parse text media:", err);
-              item.path = null;
+              //item.path = null;
             }
             item.media = null;
             item.icon = "peer-icon peer-icon-text";
             break;
           
           case "audio":
+            
             item.media = moderationModule.helpers.safeMedia(post.cover, "../img/audio-bg.png");
             item.icon = "peer-icon peer-icon-audio-fill";
             break;
@@ -133,7 +140,7 @@ moderationModule.fetcher = {
             
             item.username = item.commenterProfile.username;
             item.slug = item.commenterProfile.slug;
-            item.media = item.commenterProfile.img;
+            //item.media = item.commenterProfile.img;
           } else {
             item.username = "@unknown";
             item.slug = "#0000";
