@@ -1,10 +1,27 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.helpers = {
-  // getCookie(name) {
-  //   const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  //   return match ? decodeURIComponent(match[1]) : null;
-  // },
+  getCookie(name) {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  },
+
+  getFromStorage(key, path = null) {
+    try {
+      const data = localStorage.getItem(key);
+      if (!data) return null;
+      
+      const parsed = JSON.parse(data);
+      
+      // If no path specified, return entire object
+      if (!path) return parsed;
+      
+      return path.split('.').reduce((obj, prop) => obj?.[prop], parsed);
+    } catch (err) {
+      console.error(`Error reading from localStorage (${key}):`, err);
+      return null;
+    }
+  },
 
   getElement(selector) {
     return document.querySelector(selector);
@@ -40,5 +57,19 @@ moderationModule.helpers = {
       } catch {
           return fallback;
       }
+  },
+
+  formatDate(dateString) {
+    const date = new Date(dateString);
+    
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day} ${month} ${year}, ${hours}:${minutes}`;
   }
 };

@@ -24,7 +24,7 @@ moderationModule.view = {
   //       } else if (li.classList.contains("comments")) {
   //         type = "LIST_COMMENT";
   //         contentType = "comment";
-        
+
   //       } else if (li.classList.contains("accounts")) {
   //         type = "LIST_USER";
   //         contentType = "user";
@@ -51,7 +51,7 @@ moderationModule.view = {
 
     // robust status check (handles nested post.status etc)
     const statusIsWaiting = (item) => {
-      const s = ((item.status || item.post?.status || item.targetstatus || "") + "").toLowerCase().trim();
+      const s = ((item.status || item.post ?.status || item.targetstatus || "") + "").toLowerCase().trim();
       return s.includes("waiting");
     };
 
@@ -70,13 +70,17 @@ moderationModule.view = {
 
     // load from server; if server returns nothing and we have cached items, fallback to cache
     const loadAndRender = async (type, contentType) => {
-      const opts = { offset: 0, limit: 20, contentType };
+      const opts = {
+        offset: 0,
+        limit: 20,
+        contentType
+      };
       if (reviewChk && reviewChk.checked) opts.status = "waiting for review";
       const result = await moderationModule.fetcher.loadItems(type, opts);
-      const items = Array.isArray(result) ? result : (moderationModule.store?.items || []);
+      const items = Array.isArray(result) ? result : (moderationModule.store ?.items || []);
       const kind = kindFrom(type, contentType);
 
-      if ((!items || items.length === 0) && Array.isArray(moderationModule.store?.items) && moderationModule.store.items.length) {
+      if ((!items || items.length === 0) && Array.isArray(moderationModule.store ?.items) && moderationModule.store.items.length) {
         // fallback: try cached items for the same kind
         const cached = moderationModule.store.items.filter(i => !kind || (i.kind === kind));
         applyAndRender(cached, kind);
@@ -93,13 +97,20 @@ moderationModule.view = {
       li.addEventListener("click", async (e) => {
         e.preventDefault();
         document.querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
-        li.querySelector("a")?.classList.add("active");
+        li.querySelector("a") ?.classList.add("active");
 
         let type = "LIST_ITEMS";
         let contentType = null;
-        if (li.classList.contains("post")) { type = "LIST_POST"; contentType = "post"; }
-        else if (li.classList.contains("comments")) { type = "LIST_COMMENT"; contentType = "comment"; }
-        else if (li.classList.contains("accounts")) { type = "LIST_USER"; contentType = "user"; }
+        if (li.classList.contains("post")) {
+          type = "LIST_POST";
+          contentType = "post";
+        } else if (li.classList.contains("comments")) {
+          type = "LIST_COMMENT";
+          contentType = "comment";
+        } else if (li.classList.contains("accounts")) {
+          type = "LIST_USER";
+          contentType = "user";
+        }
 
         lastType = type;
         lastContentType = contentType;
@@ -112,7 +123,7 @@ moderationModule.view = {
       reviewChk.addEventListener("change", async () => {
         // prefer client-side cached items for the current kind to avoid disappearing list
         const kind = kindFrom(lastType, lastContentType);
-        const cached = Array.isArray(moderationModule.store?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
+        const cached = Array.isArray(moderationModule.store ?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
         if (cached.length) {
           applyAndRender(cached, kind);
           return;
@@ -159,25 +170,33 @@ moderationModule.view = {
       });
 
       /* -------------------- SUMMARY -------------------- */
-      const contentEl = moderationModule.helpers.createEl("div", { className: "content" });
-      const imgWrapper = moderationModule.helpers.createEl("span", { className: "content_image" });
+      const contentEl = moderationModule.helpers.createEl("div", {
+        className: "content"
+      });
+      const imgWrapper = moderationModule.helpers.createEl("span", {
+        className: "content_image"
+      });
 
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-        if (item.kind == "user") {
-          imgEl.onerror = function () {
-            this.src = "../svg/noname.svg";
-          };
-        }
+        //if (item.kind == "user") {
+          imgEl.onerror = function () { this.src = "../svg/noname.svg"; };
+        //}
         imgWrapper.append(imgEl);
         if (item.kind === "post") {
-          imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
+          imgWrapper.append(moderationModule.helpers.createEl("i", {
+            className: item.icon
+          }));
         }
       } else {
-        imgWrapper.append(moderationModule.helpers.createEl("i", { className: item.icon }));
+        imgWrapper.append(moderationModule.helpers.createEl("i", {
+          className: item.icon
+        }));
       }
 
-      const detailEl = moderationModule.helpers.createEl("span", { className: "content_detail" });
+      const detailEl = moderationModule.helpers.createEl("span", {
+        className: "content_detail"
+      });
       const userNameClass =
         item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
 
@@ -218,20 +237,24 @@ moderationModule.view = {
         textContent: item.date,
       });
 
-      const reportsEl = moderationModule.helpers.createEl("div", { className: "reports" });
+      const reportsEl = moderationModule.helpers.createEl("div", {
+        className: "reports"
+      });
       const reportCount = moderationModule.helpers.createEl("span", {
         className: "xl_font_size txt-color-gray",
         innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
       });
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: item.visible === false
-          ? `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
-          : "",
+        innerHTML: item.visible === false ?
+          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed` :
+          "",
       });
       reportsEl.append(reportCount, visibility);
 
-      const statusEl = moderationModule.helpers.createEl("div", { className: "status" });
+      const statusEl = moderationModule.helpers.createEl("div", {
+        className: "status"
+      });
       let statusClass = "";
       const statusVal = (item.status || "").toLowerCase();
       if (statusVal === "hidden" || statusVal === "illegal") {
@@ -255,8 +278,12 @@ moderationModule.view = {
       const contentBox = moderationModule.helpers.createEl("div", {
         className: "content_box none",
       });
-      const boxLeft = moderationModule.helpers.createEl("div", { className: "content_box_left" });
-      const boxRight = moderationModule.helpers.createEl("div", { className: "content_box_right" });
+      const boxLeft = moderationModule.helpers.createEl("div", {
+        className: "content_box_left"
+      });
+      const boxRight = moderationModule.helpers.createEl("div", {
+        className: "content_box_right"
+      });
 
       /* POST DETAILS */
       if (item.kind === "post") {
@@ -272,7 +299,7 @@ moderationModule.view = {
               </span>
             </div>
             <div class="fullpost_link">
-              <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+              <a class="button btn-transparent" href="../dashboard.php?postid=${item?.postid}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
             </div>
           </div>
           <div class="post_detail">
@@ -335,7 +362,6 @@ moderationModule.view = {
       if (item.kind === "comment" && item.post) {
         const commentType = document.createElement("div");
         commentType.className = "content_type_comment";
-
         // Comment box
         const commentBox = document.createElement("div");
         commentBox.className = "comment_box";
@@ -346,8 +372,6 @@ moderationModule.view = {
           </h2>
           <div class="comment_item">
               <div class="commenter-pic">
-                  <img class="profile-picture" src="../img/profile_thumb.png"
-                      alt="user image">
                   <img class="profile-picture" src="${item?.commenterProfile?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
               </div>
               <div class="comment_body">
@@ -401,7 +425,9 @@ moderationModule.view = {
       }
 
       /* RIGHT SIDE: status, reported by actions */
-      const contenStatus = moderationModule.helpers.createEl("div", { className: "conten_status" });
+      const contenStatus = moderationModule.helpers.createEl("div", {
+        className: "conten_status"
+      });
       const rightStatusClass =
         statusVal === "hidden" || statusVal === "illegal" ? "hidden-tx xl_font_size red-text" :
         statusVal === "restored" ? "restored xl_font_size green-text" :
@@ -413,11 +439,16 @@ moderationModule.view = {
       `;
       //boxRight.append(contenStatus);
 
-      const reportedBy = moderationModule.helpers.createEl("div", { className: "reported_by" });
+      const reportedBy = moderationModule.helpers.createEl("div", {
+        className: "reported_by"
+      });
       reportedBy.innerHTML = `
         <div class="head">
           <span class="label xl_font_size">Reported by</span>
-          <span class="flag xl_font_size red-text"><i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}</span>
+          <span class="flag xl_font_size red-text">
+            <i class="peer-icon peer-icon-copy-alt"></i>
+            ${item.reports}
+          </span>
         </div>
         <div class="reported_by_profiles"></div>
       `;
@@ -430,7 +461,7 @@ moderationModule.view = {
               <div class="profile_item">
                 <div class="profile">
                     <span class="profile_image">
-                        <img src="${rep.img}" onerror="this.src='../svg/noname.svg'">
+                        <img src="${rep.img}" alt="user image" onerror="this.src='../svg/noname.svg'" />
                     </span>
                     <span class="profile_detail">
                         <span
@@ -446,15 +477,14 @@ moderationModule.view = {
           profilesContainer.appendChild(r);
         });
       }
- 
+
       boxRight.append(reportedBy);
 
-      const actionButtons = moderationModule.helpers.createEl("div", { className: "action_buttons" });
-      // actionButtons.innerHTML = `
-      //   <a class="button btn-blue bold" href="#">Restore</a>
-      //   <a class="button btn-transparent" href="#">Hide</a>
-      //   <a class="button btn-red-transparent" href="#">Mark as illegal</a>
-      // `;
+      const actionButtons = moderationModule.helpers.createEl("div", {
+        className: `action_buttons ${statusVal == "waiting for review" ? "" : "none"}`
+      });
+
+      // console.log("Creating action buttons for item:", actionButtons.className);
 
       const hideBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-transparent",
@@ -466,13 +496,13 @@ moderationModule.view = {
         const res = await moderationModule.service.performModeration(item.moderationId, "hidden");
         console.log("Hidden:", res);
       });
-  
+
       const restoreBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-blue bold",
         textContent: "Restore",
         href: "#"
       });
-     restoreBtn.addEventListener("click", async (e) => {
+      restoreBtn.addEventListener("click", async (e) => {
         e.preventDefault();
         const res = await moderationModule.service.performModeration(item.moderationId, "restored");
         console.log("Restored:", res);
@@ -493,12 +523,17 @@ moderationModule.view = {
       boxRight.append(actionButtons);
 
       /* Moderated box */
-      const moderatedBox = moderationModule.helpers.createEl("div", { className: "moderated_by_box none" });
+      const moderatedBox = moderationModule.helpers.createEl("div", {
+        className: `moderated_by_box  ${statusVal == "waiting for review" ? "none" : ""}`
+      });
+
       moderatedBox.innerHTML = `
         <div class="moderated_info">
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
           <span class="profile">
-            <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+            <span class="profile_image">
+              <img src="../img/profile_thumb.png" />
+            </span>
             <span class="profile_detail">
               <span class="user_name xl_font_size bold italic">${item.moderatorName || "moderator"}</span>
               <span class="user_slug txt-color-gray">${item.moderatorSlug || "#000000"}</span>
@@ -506,7 +541,7 @@ moderationModule.view = {
           </span>
           <span class="datetime xl_font_size txt-color-gray">${item.moderatedAt || ""}</span>
         </div>
-        <div class="moderated_action xl_font_size ${statusVal === "restored" ? "green-text" : statusVal === "illegal" ? "red-text" : "yellow-text"}">
+        <div class="moderated_action xl_font_size ${statusVal === "restored" ? "green-text" : statusVal === "illegal" || statusVal === "hidden" ? "red-text" : "yellow-text"}">
           ${item.status}
         </div>
       `;
