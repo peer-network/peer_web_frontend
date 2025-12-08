@@ -489,77 +489,130 @@ moderationModule.view = {
         className: `action_buttons ${statusVal == "waiting for review" ? "" : "none"}`
       });
 
-      // console.log("Creating action buttons for item:", actionButtons.className);
+      const applyModerationUI = () => {
+        actionButtons.classList.add("none");
+        moderatedBox.classList.remove("none");
+      };
 
+      // Hide confirmation box
+      const confirmHide = moderationModule.helpers.createEl("div", {
+        className: "action_box action_hide none"
+      });
+      confirmHide.innerHTML = `
+        <div class="action_info">
+            <h3 class="xl_font_size bold">Are you sure you want to hide this content?</h3>
+            <p class="txt-color-gray">It will require additional confirmation from users to be shown.</p>
+        </div>
+        <div class="action_buttons">
+            <a class="button btn-transparent btn_cancel" href="#">No</a>
+            <a class="button btn-white btn_confirm" href="#">Yes</a>
+        </div>
+      `;
+
+      // Restore confirmation box
+      const confirmRestore = moderationModule.helpers.createEl("div", {
+        className: "action_box action_restore none"
+      });
+      confirmRestore.innerHTML = `
+        <div class="action_info">
+            <h3 class="xl_font_size bold">Are you sure you want to restore this content?</h3>
+            <p class="txt-color-gray">It will reappear in everyone’s feed.</p>
+        </div>
+        <div class="action_buttons">
+            <a class="button btn-transparent btn_cancel" href="#">No</a>
+            <a class="button btn-white btn_confirm" href="#">Yes</a>
+        </div>
+      `;
+
+      // Illegal confirmation box
+      const confirmIllegal = moderationModule.helpers.createEl("div", {
+        className: "action_box action_illegal none"
+      });
+      confirmIllegal.innerHTML = `
+        <div class="action_info">
+            <h3 class="xl_font_size bold red-text">Are you sure this content is illegal?</h3>
+            <p class="txt-color-gray">It will never be shown to anyone again.</p>
+        </div>
+        <div class="action_buttons">
+            <a class="button btn-transparent btn_cancel" href="#">No</a>
+            <a class="button btn-white btn_confirm" href="#">Yes</a>
+        </div>
+      `;
+
+      // Hide button + handlers
       const hideBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-transparent",
         textContent: "Hide",
-        href: "#"
+        href: ""
       });
-      hideBtn.addEventListener("click", async (e) => {
+      hideBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const res = await moderationModule.service.performModeration(item.moderationId, "hidden");
-        <div class="action_box action_hide none">
-            <div class="action_info">
-                <h3 class="xl_font_size bold">Are you sure you want to hide this content?</h3>
-                <p class="txt-color-gray">It will require additional confirmation from users to be shown.</p>
-            </div>
-            <div class="action_buttons">
-                <a class="button btn-transparent" href="#">No</a>
-                <a class="button btn-white" href="#">Yes</a>
-            </div>
-        </div>
+        confirmHide.classList.remove("none");
       });
+      confirmHide.querySelector(".btn_cancel").onclick = () => confirmHide.classList.add("none");
+      confirmHide.querySelector(".btn_confirm").onclick = async (e) => {
+        await moderationModule.service.performModeration(item.moderationId, "hidden");
+        confirmHide.classList.add("none");
 
+        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        statusSpan.textContent = "hidden";
+
+        applyModerationUI();
+      };
+
+      // Restore button + handlers
       const restoreBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-blue bold",
         textContent: "Restore",
-        href: "#"
+        href: ""
       });
-      restoreBtn.addEventListener("click", async (e) => {
+      restoreBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const res = await moderationModule.service.performModeration(item.moderationId, "restored");
-           <div class="action_box action_restore none">
-              <div class="action_info">
-                  <h3 class="xl_font_size bold">Are you sure you want to restore this content?</h3>
-                  <p class="txt-color-gray">It will reappear in everyone’s feed</p>
-              </div>
-              <div class="action_buttons">
-                  <a class="button btn-transparent" href="#">No</a>
-                  <a class="button btn-white" href="#">Yes</a>
-              </div>
-          </div>
-
+        confirmRestore.classList.remove("none");
       });
+      confirmRestore.querySelector(".btn_cancel").onclick = () => confirmRestore.classList.add("none");
+      confirmRestore.querySelector(".btn_confirm").onclick = async (e) => {
+        await moderationModule.service.performModeration(item.moderationId, "restored");
+        confirmRestore.classList.add("none");
 
+        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        statusSpan.textContent = "restored";
+
+        applyModerationUI();
+      };
+
+      // Illegal button + handlers
       const illegalBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-red-transparent",
         textContent: "Mark as illegal",
-        href: "#"
+        href: ""
       });
-      illegalBtn.addEventListener("click", async (e) => {
+      illegalBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const res = await moderationModule.service.performModeration(item.moderationId, "illegal");
-        <div class="action_box action_illegal none">
-            <div class="action_info">
-                <h3 class="xl_font_size bold red-text">Are you sure this content is illegal?</h3>
-                <p class="txt-color-gray">It will not be shown to anyone ever without possibility to restore.</p>
-            </div>
-            <div class="action_buttons">
-                <a class="button btn-transparent" href="#">No</a>
-                <a class="button btn-white" href="#">Yes</a>
-            </div>
-        </div>
+        confirmIllegal.classList.remove("none");
       });
+      confirmIllegal.querySelector(".btn_cancel").onclick = () => confirmIllegal.classList.add("none");
+      confirmIllegal.querySelector(".btn_confirm").onclick = async (e) => {
+        await moderationModule.service.performModeration(item.moderationId, "illegal");
+        confirmIllegal.classList.add("none");
 
+        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        statusSpan.textContent = "illegal";
+        
+        applyModerationUI();
+      };
+
+      // Append buttons and confirmation boxes to right box       
       actionButtons.append(restoreBtn, hideBtn, illegalBtn);
+      boxRight.append(confirmHide, confirmRestore, confirmIllegal);
       boxRight.append(actionButtons);
-
+    
       /* Moderated box */
       const moderatedBox = moderationModule.helpers.createEl("div", {
         className: `moderated_by_box ${statusVal == "waiting for review" ? "none" : ""}`
       });
 
+      // Populate moderated box
       moderatedBox.innerHTML = `
         <div class="moderated_info">
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
@@ -596,48 +649,14 @@ moderationModule.view = {
     });
   },
 
-
-
-
-  //temp code
-
-  [actionHideBox, actionRestoreBox, actionIllegalBox].forEach((box) => {
-  
-  // close (No)
-  box.querySelector(".btn_no").addEventListener("click", (e) => {
-    e.preventDefault();
-    box.classList.add("none");
-  });
-
-  // confirm (Yes)
-  box.querySelector(".btn_yes").addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    const action = box.classList.contains("action_hide") ? "hidden"
-                 : box.classList.contains("action_restore") ? "restored"
-                 : "illegal";
-
-    await moderationModule.service.performModeration(item.moderationId, action);
-
-    box.classList.add("none");
-  });
-});
-
-
-
-
-
-
-
   toggleRow(itemEl, contentBox) {
-    // Close any other open rows first
     const container = moderationModule.helpers.getElement(".content_load");
     const allBoxes = container.querySelectorAll(".content_item .content_box");
 
     allBoxes.forEach((box) => {
       if (box !== contentBox && !box.classList.contains("none")) {
         box.classList.add("none");
-        box.parentElement.classList.remove("active"); // optional styling hook
+        box.parentElement.classList.remove("active");
       }
     });
 
@@ -645,10 +664,10 @@ moderationModule.view = {
     const isOpen = !contentBox.classList.contains("none");
     if (isOpen) {
       contentBox.classList.add("none");
-      itemEl.classList.remove("active"); // optional styling hook
+      itemEl.classList.remove("active");
     } else {
       contentBox.classList.remove("none");
-      itemEl.classList.add("active"); // optional styling hook
+      itemEl.classList.add("active");
     }
   }
 };
