@@ -5,6 +5,7 @@ moderationModule.fetcher = {
   async normalizeItems(items) {
     const mapped = items.map(async (x) => {
       const self = this;
+      console.log("Normalizing item:", x.targettype);
       let item = {
         kind: x.targettype,
         moderationId: x.moderationTicketId,
@@ -33,6 +34,7 @@ moderationModule.fetcher = {
         item.description = post.description || "";
         item.hashtags = post.tags || [];   
         item.contentType = post.contenttype;
+        item.postid = post.id;
 
         switch (post.contenttype) {
           case "image":
