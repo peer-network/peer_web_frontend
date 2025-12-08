@@ -299,7 +299,7 @@ moderationModule.view = {
               </span>
             </div>
             <div class="fullpost_link">
-              <a class="button btn-transparent" href="#">See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
+              <a class="button btn-transparent" href="../dashboard.php?postid=${item?.postid}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
             </div>
           </div>
           <div class="post_detail">
