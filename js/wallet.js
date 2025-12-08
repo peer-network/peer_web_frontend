@@ -271,7 +271,6 @@ function renderRows(rows) {
                         <span class="price txt-color-gray">${entry.fees.inviter}</span>
                       </div>`
                     : ''}
-
                   ${fullmessage_html}
 
                 </div>
