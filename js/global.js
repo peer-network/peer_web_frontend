@@ -656,6 +656,8 @@ function postdetail(objekt, CurrentUserID) {
     }
   );
 
+  userProfileVisibilty(UserID,objekt.user,profile_header_left);
+
   /*--------END: Card profile Header  -------*/
 
   /*--------Card Post Title and Text  -------*/
@@ -1654,7 +1656,7 @@ function commentToDom(c, append = true) {
 
   // Username + Profile ID + Time
   const usernameSpan = document.createElement("span");
-  usernameSpan.classList.add("cmt_userName", "md_font_size", "bold");
+  usernameSpan.classList.add("cmt_userName","post-userName", "md_font_size", "bold");
   usernameSpan.textContent = c.user.username;
 
   const profileIdSpan = document.createElement("span");
@@ -1668,6 +1670,9 @@ function commentToDom(c, append = true) {
   const commenterInfoDiv = document.createElement("div");
   commenterInfoDiv.classList.add("commenter_info");
   commenterInfoDiv.append(usernameSpan, profileIdSpan, timeAgoSpan);
+
+
+   
 
   // Comment Text
   const commentTextDiv = document.createElement("div");
@@ -1864,16 +1869,17 @@ function commentToDom(c, append = true) {
     replyContainer
   );
 
+  
   /*-- for testing Comment report and  visibility----*/
         
     const urlParams = new URLSearchParams(window.location.search);
     const testcommentid = urlParams.get("commentid");
     const testcommentvisibility = urlParams.get("visibility");
 
-        if(testcommentid==c.commentid){
-                
-            c.visibilityStatus = testcommentvisibility;
-          }
+    if(testcommentid==c.commentid){
+            
+        c.visibilityStatus = testcommentvisibility;
+      }
 
   /*-- End : testing comment report and visibility----*/
   if(c.visibilityStatus){
@@ -2016,6 +2022,26 @@ function commentToDom(c, append = true) {
       name: c.user.username,
     });
   }
+
+      /*-- for testing  users visibility----*/
+        const urlParams2 = new URLSearchParams(window.location.search);
+       
+
+        const testUserid = urlParams2.get("testuserid");
+        const testUserVisibility = urlParams2.get("uservisibility");
+        
+         
+       
+        if(testUserid==c.user.id){
+          if(testUserVisibility) {
+            c.user.visibilityStatus = testUserVisibility;
+          }
+        }
+      /*-- End : for testing users visibility----*/
+
+
+  userProfileVisibilty(userID,c.user,commenterInfoDiv,'comment');
+
 }
 
 function getPostIdFromURL() {
@@ -3029,4 +3055,55 @@ function addIllegalBadge() {
     reportButton.disabled = true;
     reportButton.textContent = "Reported by you";
     reportButton.classList.add('disabled');
+  }
+
+  function userProfileVisibilty(curentUserID,objectUser,container, type=''){
+    /*---reset for detail view --*/
+      container.classList.remove("illegal_user_profile");
+      container.classList.remove("hidden_user_profile");
+      container.querySelector(".hidden_userfeed_frame")?.remove(); 
+      container.querySelector(".peer-icon")?.remove(); 
+    /*---end reset for detail view --*/
+    const hiddenUserHTML = `
+      <div class="hidden_userfeed_frame">
+        <div class="hidden_content">
+        <i class="peer-icon peer-icon-eye-close md_font_size"></i>
+          <div class="hidden_header">
+            <div class="hidden_title bold">Sensitive content</div>
+            <div class="hidden_description">Click to see</div>
+          </div>
+          
+        </div>
+      </div>
+    `;
+
+      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden'){
+      if(objectUser.id != curentUserID ){
+        container.classList.add("hidden_user_profile");
+        container.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+        
+        container.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+          frame.addEventListener("click", (e) => {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            frame.remove(); 
+            container.classList.remove('hidden_user_profile');
+          }, { capture: true });
+        });
+      }
+    }
+
+     if(objectUser.visibilityStatus === 'ILLEGAL' || objectUser.visibilityStatus === 'illegal'){
+        container.classList.add("illegal_user_profile");
+        if(type==='comment'){
+          container.closest('.comment_item').querySelector(".commenter-pic").classList.add("illegal_user_profile");
+            container.closest('.comment_item').querySelector(".commenter-pic").insertAdjacentHTML("afterbegin",`<i class="peer-icon peer-icon-illegal"></i>`);
+            
+          }else{
+            container.insertAdjacentHTML("afterbegin",`<i class="peer-icon peer-icon-illegal"></i>`);
+          }
+          container.querySelector(".post-userName").innerHTML='@removed';
+
+      }
   }

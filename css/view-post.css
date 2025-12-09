@@ -584,7 +584,7 @@
   margin-bottom: 30px;
 }
 
-.viewpost .profile-header.hidden_user_profile .hidden_userfeed_frame {
+.viewpost .profile-header .hidden_user_profile .hidden_userfeed_frame {
   position: absolute;
   height: fit-content;
   z-index: 10;
@@ -612,6 +612,34 @@
   gap: 20px;
   cursor: pointer;
 }
+/*--------- Start : Illegal account frame -----------*/
+.viewpost .profile-header-left.illegal_user_profile .post-userImg.profile-picture {
+	display: none;
+}
+
+.viewpost .profile-header-left.illegal_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	width: 8rem;
+	height: 8rem;
+	flex-direction: column;
+	background: var(--black-dark);
+	font-size: 50px;
+}
+
+.viewpost .profile-header-left.illegal_user_profile .username-slug .profile_id {
+	background-color: var(--black-dark);
+	font-size: 0;
+	display: block;
+	border-radius: 50px;
+	opacity: 1;
+	padding: 30px;
+	margin-top: 10px;
+	min-width: 350px;
+}
+/*--------- End : Illegal account frame -----------*/
 
 .viewpost .profile-header-left .username-slug span {
   display: block;
@@ -1600,7 +1628,35 @@
     }
 
 /*-- end hidden Comment content */
+/*--------- Start : Illegal account frame  for comment -----------*/
+.comment_list .comment_item .commenter-pic.illegal_user_profile .profile-picture {
+	display: none;
+}
 
+.comment_list .comment_item .commenter-pic.illegal_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	width: 8rem;
+	height: 8rem;
+	flex-direction: column;
+	background: var(--black-dark);
+	font-size: 50px;
+}
+
+.comment_list .comment_item .commenter_info.illegal_user_profile .cmt_profile_id {
+	background-color: var(--black-dark);
+	font-size: 0;
+	display: inline-block;
+	border-radius: 50px;
+	opacity: 1;
+	padding: 21px;
+	min-width: 150px;
+	margin-left: 10px;
+	vertical-align: top;
+}
+/*--------- End : Illegal account frame for comment -----------*/
 
 /* comment report action END */
 .post_comment {
