@@ -1,46 +1,11 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.view = {
-  // initFilters() {
-  //   const list = document.querySelectorAll(".item_filters li");
-
-  //   list.forEach((li) => {
-  //     li.addEventListener("click", async (e) => {
-  //       e.preventDefault();
-
-  //       // remove active
-  //       document .querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
-
-  //       li.querySelector("a").classList.add("active");
-
-  //       // Determine schema type + contentType
-  //       let type = "LIST_ITEMS";
-  //       let contentType = null;
-
-  //       if (li.classList.contains("post")) {
-  //         type = "LIST_POST";
-  //         contentType = "post";
-
-  //       } else if (li.classList.contains("comments")) {
-  //         type = "LIST_COMMENT";
-  //         contentType = "comment";
-
-  //       } else if (li.classList.contains("accounts")) {
-  //         type = "LIST_USER";
-  //         contentType = "user";
-  //       }
-
-  //       // Load items
-  //       await moderationModule.fetcher.loadItems(type, { offset: 0, limit: 20, contentType });
-  //     });
-  //   });
-  // },
-
   initFilters() {
     const list = document.querySelectorAll(".item_filters li");
     const reviewChk = document.getElementById("review_chk");
 
-    // normalize kind from type/contentType
+    // type/contentType
     const kindFrom = (type, contentType) => {
       if (contentType) return contentType;
       if (type === "LIST_POST") return "post";
@@ -49,13 +14,11 @@ moderationModule.view = {
       return null;
     };
 
-    // robust status check (handles nested post.status etc)
     const statusIsWaiting = (item) => {
       const s = ((item.status || item.post ?.status || item.targetstatus || "") + "").toLowerCase().trim();
       return s.includes("waiting");
     };
 
-    // apply filter by kind + waiting status and render
     const applyAndRender = (items, kind = null) => {
       let arr = Array.isArray(items) ? items.slice() : [];
       if (kind) arr = arr.filter(i => (i.kind || "").toString() === kind);
@@ -68,7 +31,6 @@ moderationModule.view = {
       }
     };
 
-    // load from server; if server returns nothing and we have cached items, fallback to cache
     const loadAndRender = async (type, contentType) => {
       const opts = {
         offset: 0,
@@ -81,7 +43,6 @@ moderationModule.view = {
       const kind = kindFrom(type, contentType);
 
       if ((!items || items.length === 0) && Array.isArray(moderationModule.store ?.items) && moderationModule.store.items.length) {
-        // fallback: try cached items for the same kind
         const cached = moderationModule.store.items.filter(i => !kind || (i.kind === kind));
         applyAndRender(cached, kind);
         return;
@@ -121,14 +82,13 @@ moderationModule.view = {
 
     if (reviewChk) {
       reviewChk.addEventListener("change", async () => {
-        // prefer client-side cached items for the current kind to avoid disappearing list
         const kind = kindFrom(lastType, lastContentType);
         const cached = Array.isArray(moderationModule.store ?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
         if (cached.length) {
           applyAndRender(cached, kind);
           return;
         }
-        // else request server for the last selected filter
+
         await loadAndRender(lastType, lastContentType);
       });
     }
@@ -149,12 +109,12 @@ moderationModule.view = {
     });
   },
 
-  renderItems(items) {
+  renderItems() {
     const container = moderationModule.helpers.getElement(".content_load");
     if (!container) return;
 
     container.innerHTML = "";
-
+    const items = moderationModule.store.filteredItems;
     if (!items || !items.length) {
       container.textContent = "No items found";
       return;
@@ -179,35 +139,26 @@ moderationModule.view = {
 
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-        //if (item.kind == "user") {
-          imgEl.onerror = function () { this.src = "../svg/noname.svg"; };
-        //}
-        imgWrapper.append(imgEl);
-        if (item.kind === "post") {
-          imgWrapper.append(moderationModule.helpers.createEl("i", {
-            className: item.icon
-          }));
+          (item.kind == "user") ? imgEl.onerror = function () { this.src = "../svg/noname.svg"; }: imgEl.onerror = function () { this.remove(); };
+          imgWrapper.append(imgEl);
         }
-      } else {
-        imgWrapper.append(moderationModule.helpers.createEl("i", {
+      
+       imgWrapper.append(moderationModule.helpers.createEl("i", {
           className: item.icon
         }));
-      }
 
       const detailEl = moderationModule.helpers.createEl("span", {
         className: "content_detail"
       });
-      const userNameClass =
-        item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
-
+      const userNameClass =  item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
       detailEl.append(
         moderationModule.helpers.createEl("span", {
           className: userNameClass,
-          textContent: item.username,
+          textContent: '@' + item.username,
         })
       );
 
-      if (item.kind === "post" || item.kind === "comment") {
+      if (item.kind === "post") {
         detailEl.append(
           moderationModule.helpers.createEl("span", {
             className: "post_title xl_font_size bold",
@@ -216,7 +167,7 @@ moderationModule.view = {
         );
       }
 
-      if (item.kind === "user" || item.kind === "comment") {
+      if (item.kind === "user") {
         detailEl.append(
           moderationModule.helpers.createEl("span", {
             className: "user_slug txt-color-gray",
@@ -225,11 +176,25 @@ moderationModule.view = {
         );
       }
 
-      contentEl.append(imgWrapper, detailEl);
+      if (item.kind === "comment") {
+        detailEl.append(
+            moderationModule.helpers.createEl("span", {
+              className: "post_title xl_font_size bold",
+              textContent: item.post?.title,
+            })
+        );
+         detailEl.append(
+            moderationModule.helpers.createEl("span", {
+              className: "user_slug txt-color-gray",
+              textContent: item.commentid,
+            })
+        );
+      }
 
+      contentEl.append(imgWrapper, detailEl);
       const modId = moderationModule.helpers.createEl("div", {
         className: "moderation_id xl_font_size txt-color-gray",
-        textContent: item.moderationId,
+        textContent: '#' + item.moderationId,
       });
 
       const modDate = moderationModule.helpers.createEl("div", {
@@ -244,11 +209,12 @@ moderationModule.view = {
         className: "xl_font_size txt-color-gray",
         innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
       });
+      
+      const statusVal = (item.status || "").toLowerCase();
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: item.visible === false ?
-          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed` :
-          "",
+        innerHTML: statusVal == "restored" ? "" : 
+          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
       });
       reportsEl.append(reportCount, visibility);
 
@@ -256,7 +222,7 @@ moderationModule.view = {
         className: "status"
       });
       let statusClass = "";
-      const statusVal = (item.status || "").toLowerCase();
+
       if (statusVal === "hidden" || statusVal === "illegal") {
         statusClass = "hidden-tx xl_font_size red-text";
       } else if (statusVal === "restored") {
@@ -308,7 +274,7 @@ moderationModule.view = {
               <span class="timeagao txt-color-gray">2h</span>
             </div>
             <div class="post_text">${item.description || ""}</div>
-            <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
+            <div class="hashtags txt-color-blue">#${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
           </div>
         `;
         boxLeft.append(postBlock);
@@ -425,9 +391,7 @@ moderationModule.view = {
       }
 
       /* RIGHT SIDE: status, reported by actions */
-      const contenStatus = moderationModule.helpers.createEl("div", {
-        className: "conten_status"
-      });
+      const contenStatus = moderationModule.helpers.createEl("div", { className: "conten_status" });
       const rightStatusClass =
         statusVal === "hidden" || statusVal === "illegal" ? "hidden-tx xl_font_size red-text" :
         statusVal === "restored" ? "restored xl_font_size green-text" :
@@ -456,9 +420,10 @@ moderationModule.view = {
       const profilesContainer = reportedBy.querySelector(".reported_by_profiles");
       if (Array.isArray(item.reporters)) {
         item.reporters.forEach(rep => {
-          const r = document.createElement("div");
+          const r = moderationModule.helpers.createEl("div", {
+            className: "profile_item"
+          });
           r.innerHTML = ` 
-              <div class="profile_item">
                 <div class="profile">
                     <span class="profile_image">
                         <img src="${rep.img}" alt="user image" onerror="this.src='../svg/noname.svg'" />
@@ -471,8 +436,7 @@ moderationModule.view = {
                 </div>
                 <div class="report_time xl_font_size txt-color-gray">
                     ${rep.updatedat}
-                </div>
-              </div>`;
+                </div>`;
 
           profilesContainer.appendChild(r);
         });
@@ -484,49 +448,148 @@ moderationModule.view = {
         className: `action_buttons ${statusVal == "waiting for review" ? "" : "none"}`
       });
 
-      // console.log("Creating action buttons for item:", actionButtons.className);
+      const applyModerationUI = () => {
+        actionButtons.classList.add("none");
+        moderatedBox.classList.remove("none");
+      };
 
+      // Hide confirmation box
+      const confirmHide = moderationModule.helpers.createEl("div", {
+        className: "action_box action_hide none"
+      });
+      confirmHide.innerHTML = `
+        <div class="action_info">
+            <h3 class="xl_font_size bold">Are you sure you want to hide this content?</h3>
+            <p class="txt-color-gray">It will require additional confirmation from users to be shown.</p>
+        </div>
+        <div class="action_buttons">
+            <a class="button btn-transparent btn_cancel" href="#">No</a>
+            <a class="button btn-white btn_confirm" href="#">Yes</a>
+        </div>
+      `;
+
+      // Restore confirmation box
+      const confirmRestore = moderationModule.helpers.createEl("div", {
+        className: "action_box action_restore none"
+      });
+      confirmRestore.innerHTML = `
+        <div class="action_info">
+            <h3 class="xl_font_size bold">Are you sure you want to restore this content?</h3>
+            <p class="txt-color-gray">It will reappear in everyone’s feed.</p>
+        </div>
+        <div class="action_buttons">
+            <a class="button btn-transparent btn_cancel" href="#">No</a>
+            <a class="button btn-white btn_confirm" href="#">Yes</a>
+        </div>
+      `;
+
+      // Illegal confirmation box
+      const confirmIllegal = moderationModule.helpers.createEl("div", {
+        className: "action_box action_illegal none"
+      });
+      confirmIllegal.innerHTML = `
+        <div class="action_info">
+            <h3 class="xl_font_size bold red-text">Are you sure this content is illegal?</h3>
+            <p class="txt-color-gray">It will never be shown to anyone again.</p>
+        </div>
+        <div class="action_buttons">
+            <a class="button btn-transparent btn_cancel" href="#">No</a>
+            <a class="button btn-white btn_confirm" href="#">Yes</a>
+        </div>
+      `;
+
+      // Hide button + handlers
       const hideBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-transparent",
         textContent: "Hide",
-        href: "#"
+        href: ""
       });
-      hideBtn.addEventListener("click", async (e) => {
+      hideBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const res = await moderationModule.service.performModeration(item.moderationId, "hidden");
-        console.log("Hidden:", res);
+        confirmHide.classList.remove("none");
       });
+      confirmHide.querySelector(".btn_cancel").onclick = () => confirmHide.classList.add("none");
+      confirmHide.querySelector(".btn_confirm").onclick = async (e) => {
+       // await moderationModule.service.performModeration(item.moderationId, "hidden");
+        confirmHide.classList.add("none");
 
+        // const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        // statusSpan.textContent = "hidden";
+
+      
+      
+        const actionButtonsEl = e.target.closest(".action_buttons");
+        console.log("actionButtonsEl:", actionButtonsEl);
+        if (!actionButtonsEl) return;
+
+        const moderatedByBox = actionButtonsEl.nextElementSibling; 
+        console.log("moderatedByBox:", moderatedByBox);
+
+        if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
+        const moderatedAction = moderatedByBox.querySelector(".moderated_action");
+        if (moderatedAction) {
+          moderatedAction.textContent = "hidden";
+        }
+
+
+
+
+        applyModerationUI();
+      };
+
+      // Restore button + handlers
       const restoreBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-blue bold",
         textContent: "Restore",
-        href: "#"
+        href: ""
       });
-      restoreBtn.addEventListener("click", async (e) => {
+      restoreBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const res = await moderationModule.service.performModeration(item.moderationId, "restored");
-        console.log("Restored:", res);
+        confirmRestore.classList.remove("none");
       });
+      confirmRestore.querySelector(".btn_cancel").onclick = () => confirmRestore.classList.add("none");
+      confirmRestore.querySelector(".btn_confirm").onclick = async (e) => {
+        await moderationModule.service.performModeration(item.moderationId, "restored");
+        confirmRestore.classList.add("none");
 
+        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        statusSpan.textContent = "restored";
+
+        applyModerationUI();
+      };
+
+      // Illegal button + handlers
       const illegalBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-red-transparent",
         textContent: "Mark as illegal",
-        href: "#"
+        href: ""
       });
-      illegalBtn.addEventListener("click", async (e) => {
+      illegalBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const res = await moderationModule.service.performModeration(item.moderationId, "illegal");
-        console.log("Illegal:", res);
+        confirmIllegal.classList.remove("none");
       });
+      confirmIllegal.querySelector(".btn_cancel").onclick = () => confirmIllegal.classList.add("none");
+      confirmIllegal.querySelector(".btn_confirm").onclick = async (e) => {
+        await moderationModule.service.performModeration(item.moderationId, "illegal");
+        confirmIllegal.classList.add("none");
 
+        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        statusSpan.textContent = "illegal";
+        
+        applyModerationUI();
+      };
+
+      // Append buttons and confirmation boxes to right box       
       actionButtons.append(restoreBtn, hideBtn, illegalBtn);
+      boxRight.append(confirmHide, confirmRestore, confirmIllegal);
       boxRight.append(actionButtons);
-
+    
       /* Moderated box */
       const moderatedBox = moderationModule.helpers.createEl("div", {
-        className: `moderated_by_box  ${statusVal == "waiting for review" ? "none" : ""}`
+        className: `moderated_by_box ${statusVal == "waiting for review" ? "none" : ""}`
       });
 
+      // moderated box
       moderatedBox.innerHTML = `
         <div class="moderated_info">
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
@@ -555,34 +618,85 @@ moderationModule.view = {
       itemInner.addEventListener("click", (evt) => {
         this.toggleRow(itemEl, contentBox);
       });
-
-      // Prevent clicks inside row
+      
       contentBox.addEventListener("click", (evt) => {
         evt.stopPropagation();
+        evt.preventDefault();
       });
     });
   },
 
   toggleRow(itemEl, contentBox) {
-    // Close any other open rows first
     const container = moderationModule.helpers.getElement(".content_load");
     const allBoxes = container.querySelectorAll(".content_item .content_box");
 
     allBoxes.forEach((box) => {
       if (box !== contentBox && !box.classList.contains("none")) {
         box.classList.add("none");
-        box.parentElement.classList.remove("active"); // optional styling hook
+        box.parentElement.classList.remove("active");
       }
     });
 
-    // Toggle the clicked row
     const isOpen = !contentBox.classList.contains("none");
     if (isOpen) {
       contentBox.classList.add("none");
-      itemEl.classList.remove("active"); // optional styling hook
+      itemEl.classList.remove("active");
     } else {
       contentBox.classList.remove("none");
-      itemEl.classList.add("active"); // optional styling hook
+      itemEl.classList.add("active");
     }
+  },
+
+  initWindowInfiniteScroll() {
+    window.addEventListener("scroll", async () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+
+      if (scrollTop + clientHeight >= scrollHeight - 200) {
+        const { pagination } = moderationModule.store;
+        if (pagination.loading || pagination.noMore) return;
+
+        pagination.loading = true;
+
+        const { offset, limit, filter } = pagination;
+        const type = filter?.type || "LIST_ITEMS";
+        const contentType = filter?.contentType || null;
+
+        try {
+          const query = moderationModule.schema[type];
+          if (!query) throw new Error("GraphQL query undefined for type: " + type);
+
+          const vars = { offset, limit, contentType };
+          const response = await moderationModule.service.fetchGraphQL(query, vars);
+          const rawItems = response?.moderationItems?.affectedRows || response?.moderationItems || [];
+          if (!rawItems.length) {
+            pagination.noMore = true;
+            pagination.loading = false;
+            return;
+          }
+
+          const normalized = await moderationModule.fetcher.normalizeItems(rawItems);
+          const enriched = await moderationModule.fetcher.enrichCommentsWithPosts(normalized);
+
+          moderationModule.store.items.push(...enriched);
+
+          const reviewChk = document.getElementById("review_chk");
+          let filtered = moderationModule.store.items;
+          if (reviewChk?.checked) {
+            filtered = filtered.filter(i => (i.status || "").toLowerCase().includes("waiting"));
+          }
+          moderationModule.store.filteredItems = filtered;
+
+          moderationModule.view.renderItems();
+
+          moderationModule.store.pagination.offset += rawItems.length;
+        } catch (err) {
+          console.error("Scroll fetch error:", err);
+        }
+
+        pagination.loading = false;
+      }
+    });
   }
 };
