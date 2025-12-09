@@ -729,7 +729,8 @@ textarea {
 	grid-template-columns: 650px calc(100% - 650px);
 	grid-template-rows: auto 1fr;
 	transition: grid-template-columns 0.3s ease-in-out;
-
+	min-height: 100vh;
+	overflow: auto;
 }
 
 

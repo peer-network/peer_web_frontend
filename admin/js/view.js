@@ -1,46 +1,11 @@
 window.moderationModule = window.moderationModule || {};
 
 moderationModule.view = {
-  // initFilters() {
-  //   const list = document.querySelectorAll(".item_filters li");
-
-  //   list.forEach((li) => {
-  //     li.addEventListener("click", async (e) => {
-  //       e.preventDefault();
-
-  //       // remove active
-  //       document .querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
-
-  //       li.querySelector("a").classList.add("active");
-
-  //       // Determine schema type + contentType
-  //       let type = "LIST_ITEMS";
-  //       let contentType = null;
-
-  //       if (li.classList.contains("post")) {
-  //         type = "LIST_POST";
-  //         contentType = "post";
-
-  //       } else if (li.classList.contains("comments")) {
-  //         type = "LIST_COMMENT";
-  //         contentType = "comment";
-
-  //       } else if (li.classList.contains("accounts")) {
-  //         type = "LIST_USER";
-  //         contentType = "user";
-  //       }
-
-  //       // Load items
-  //       await moderationModule.fetcher.loadItems(type, { offset: 0, limit: 20, contentType });
-  //     });
-  //   });
-  // },
-
   initFilters() {
     const list = document.querySelectorAll(".item_filters li");
     const reviewChk = document.getElementById("review_chk");
 
-    // normalize kind from type/contentType
+    // type/contentType
     const kindFrom = (type, contentType) => {
       if (contentType) return contentType;
       if (type === "LIST_POST") return "post";
@@ -49,13 +14,11 @@ moderationModule.view = {
       return null;
     };
 
-    // robust status check (handles nested post.status etc)
     const statusIsWaiting = (item) => {
       const s = ((item.status || item.post ?.status || item.targetstatus || "") + "").toLowerCase().trim();
       return s.includes("waiting");
     };
 
-    // apply filter by kind + waiting status and render
     const applyAndRender = (items, kind = null) => {
       let arr = Array.isArray(items) ? items.slice() : [];
       if (kind) arr = arr.filter(i => (i.kind || "").toString() === kind);
@@ -68,7 +31,6 @@ moderationModule.view = {
       }
     };
 
-    // load from server; if server returns nothing and we have cached items, fallback to cache
     const loadAndRender = async (type, contentType) => {
       const opts = {
         offset: 0,
@@ -81,7 +43,6 @@ moderationModule.view = {
       const kind = kindFrom(type, contentType);
 
       if ((!items || items.length === 0) && Array.isArray(moderationModule.store ?.items) && moderationModule.store.items.length) {
-        // fallback: try cached items for the same kind
         const cached = moderationModule.store.items.filter(i => !kind || (i.kind === kind));
         applyAndRender(cached, kind);
         return;
@@ -121,14 +82,13 @@ moderationModule.view = {
 
     if (reviewChk) {
       reviewChk.addEventListener("change", async () => {
-        // prefer client-side cached items for the current kind to avoid disappearing list
         const kind = kindFrom(lastType, lastContentType);
         const cached = Array.isArray(moderationModule.store ?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
         if (cached.length) {
           applyAndRender(cached, kind);
           return;
         }
-        // else request server for the last selected filter
+
         await loadAndRender(lastType, lastContentType);
       });
     }
@@ -149,12 +109,12 @@ moderationModule.view = {
     });
   },
 
-  renderItems(items) {
+  renderItems() {
     const container = moderationModule.helpers.getElement(".content_load");
     if (!container) return;
 
     container.innerHTML = "";
-
+    const items = moderationModule.store.filteredItems;
     if (!items || !items.length) {
       container.textContent = "No items found";
       return;
@@ -232,7 +192,6 @@ moderationModule.view = {
       }
 
       contentEl.append(imgWrapper, detailEl);
-
       const modId = moderationModule.helpers.createEl("div", {
         className: "moderation_id xl_font_size txt-color-gray",
         textContent: '#' + item.moderationId,
@@ -612,7 +571,7 @@ moderationModule.view = {
         className: `moderated_by_box ${statusVal == "waiting for review" ? "none" : ""}`
       });
 
-      // Populate moderated box
+      // moderated box
       moderatedBox.innerHTML = `
         <div class="moderated_info">
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
@@ -641,8 +600,7 @@ moderationModule.view = {
       itemInner.addEventListener("click", (evt) => {
         this.toggleRow(itemEl, contentBox);
       });
-
-      // Prevent clicks inside row
+      
       contentBox.addEventListener("click", (evt) => {
         evt.stopPropagation();
       });
@@ -660,7 +618,6 @@ moderationModule.view = {
       }
     });
 
-    // Toggle the clicked row
     const isOpen = !contentBox.classList.contains("none");
     if (isOpen) {
       contentBox.classList.add("none");
@@ -669,5 +626,61 @@ moderationModule.view = {
       contentBox.classList.remove("none");
       itemEl.classList.add("active");
     }
+  },
+
+  initWindowInfiniteScroll() {
+    window.addEventListener("scroll", async () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+
+      if (scrollTop + clientHeight >= scrollHeight - 200) {
+        const { pagination } = moderationModule.store;
+        console.log("Infinite scroll triggered. Pagination state:", moderationModule.store.pagination);
+        if (pagination.loading || pagination.noMore) return;
+
+        pagination.loading = true;
+
+        const { offset, limit, filter } = pagination;
+        const type = filter?.type || "LIST_ITEMS";
+        const contentType = filter?.contentType || null;
+
+        try {
+          const query = moderationModule.schema[type];
+          if (!query) throw new Error("GraphQL query undefined for type: " + type);
+
+          const vars = { offset, limit, contentType };
+          const response = await moderationModule.service.fetchGraphQL(query, vars);
+          console.log("Infinite scroll fetch response:", response);
+          const rawItems = response?.moderationItems?.affectedRows || response?.moderationItems || [];
+          if (!rawItems.length) {
+            pagination.noMore = true;
+            pagination.loading = false;
+            return;
+          }
+
+          const normalized = await moderationModule.fetcher.normalizeItems(rawItems);
+          const enriched = await moderationModule.fetcher.enrichCommentsWithPosts(normalized);
+
+          moderationModule.store.items.push(...enriched);
+
+          const reviewChk = document.getElementById("review_chk");
+          let filtered = moderationModule.store.items;
+          if (reviewChk?.checked) {
+            filtered = filtered.filter(i => (i.status || "").toLowerCase().includes("waiting"));
+          }
+          moderationModule.store.filteredItems = filtered;
+
+          moderationModule.view.renderItems();
+
+          moderationModule.store.pagination.offset += rawItems.length;
+          console.log("Updated pagination offset to", moderationModule.store.pagination.offset);
+        } catch (err) {
+          console.error("Scroll fetch error:", err);
+        }
+
+        pagination.loading = false;
+      }
+    });
   }
 };

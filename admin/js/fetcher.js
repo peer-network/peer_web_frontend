@@ -83,7 +83,7 @@ moderationModule.fetcher = {
         if (commenterId) {
           const fullUserArray = await self.loadUserById(commenterId);
           const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
-          const userId = fullUser?.userid || fullUser?.id; // Added optional chaining
+          const userId = fullUser?.userid || fullUser?.id;
           
           if (userId) {
             item.commenterProfile = {
@@ -121,7 +121,7 @@ moderationModule.fetcher = {
         item.media = tempMedia(u.img) || "../svg/noname.svg";
         item.contentType = "user";
         item.icon = "peer-icon peer-icon-profile";
-        // Normalize biography
+        
         let bioText = "";
         try {
           const bioRaw = u.biography;
@@ -141,7 +141,6 @@ moderationModule.fetcher = {
                 const bioUrl = domain.replace("://", "://media.") + bioRaw;
                 bioText = await self.loadTextFile(bioUrl);
               } else {
-                // plain text biography
                 bioText = bioRaw;
               }
             }
@@ -194,14 +193,12 @@ moderationModule.fetcher = {
       const response = await moderationModule.service.fetchGraphQL(query, variables);
       const rawItems = response?.moderationItems?.affectedRows || [];
       const normalized = await this.normalizeItems(rawItems);
-      // console.log("After normalize:", normalized.filter(i => i.contentType === "comment"));
       const enriched = await this.enrichCommentsWithPosts(normalized);
-      // console.log("After enrich:", enriched.filter(i => i.contentType === "comment"));
       
       moderationModule.store.items = enriched;
       moderationModule.store.filteredItems = enriched;
-      moderationModule.view.renderItems(enriched);
-      
+      moderationModule.view.renderItems();
+      moderationModule.store.pagination.offset = enriched.length;
     } catch (err) {
       console.error("Error loading items:", err);
     }
@@ -252,8 +249,6 @@ moderationModule.fetcher = {
 
   async enrichCommentsWithPosts(items) {
     for (const item of items) {
-        // console.log('Fetched post for comment:', item);
-
       if (item.contentType === "comment" && item.postid) {
         const post = await this.loadPostById(item.postid);
         if (post) {
@@ -268,13 +263,10 @@ moderationModule.fetcher = {
             slug: post.user?.slug
           };
 
-          // Use safeMedia to extract a URL
           const mediaUrl = moderationModule.helpers.safeMedia(post.media);
           if (post.contenttype === "text" && mediaUrl) {
-            // For text posts: fetch the file contents and store in description
             item.post.description = await this.loadTextFile(mediaUrl);
           } else {
-            // For non-text posts: build the appropriate HTML element
             switch (post.contenttype) {
               case "video":
                 item.post.media = `<video src="${mediaUrl}" controls autoplay loop></video>`;
