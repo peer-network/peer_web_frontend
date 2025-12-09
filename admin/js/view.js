@@ -510,11 +510,29 @@ moderationModule.view = {
       });
       confirmHide.querySelector(".btn_cancel").onclick = () => confirmHide.classList.add("none");
       confirmHide.querySelector(".btn_confirm").onclick = async (e) => {
-        await moderationModule.service.performModeration(item.moderationId, "hidden");
+       // await moderationModule.service.performModeration(item.moderationId, "hidden");
         confirmHide.classList.add("none");
 
-        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
-        statusSpan.textContent = "hidden";
+        // const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
+        // statusSpan.textContent = "hidden";
+
+      
+      
+        const actionButtonsEl = e.target.closest(".action_buttons");
+        console.log("actionButtonsEl:", actionButtonsEl);
+        if (!actionButtonsEl) return;
+
+        const moderatedByBox = actionButtonsEl.nextElementSibling; 
+        console.log("moderatedByBox:", moderatedByBox);
+
+        if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
+        const moderatedAction = moderatedByBox.querySelector(".moderated_action");
+        if (moderatedAction) {
+          moderatedAction.textContent = "hidden";
+        }
+
+
+
 
         applyModerationUI();
       };
@@ -603,6 +621,7 @@ moderationModule.view = {
       
       contentBox.addEventListener("click", (evt) => {
         evt.stopPropagation();
+        evt.preventDefault();
       });
     });
   },
@@ -636,7 +655,6 @@ moderationModule.view = {
 
       if (scrollTop + clientHeight >= scrollHeight - 200) {
         const { pagination } = moderationModule.store;
-        console.log("Infinite scroll triggered. Pagination state:", moderationModule.store.pagination);
         if (pagination.loading || pagination.noMore) return;
 
         pagination.loading = true;
@@ -651,7 +669,6 @@ moderationModule.view = {
 
           const vars = { offset, limit, contentType };
           const response = await moderationModule.service.fetchGraphQL(query, vars);
-          console.log("Infinite scroll fetch response:", response);
           const rawItems = response?.moderationItems?.affectedRows || response?.moderationItems || [];
           if (!rawItems.length) {
             pagination.noMore = true;
@@ -674,7 +691,6 @@ moderationModule.view = {
           moderationModule.view.renderItems();
 
           moderationModule.store.pagination.offset += rawItems.length;
-          console.log("Updated pagination offset to", moderationModule.store.pagination.offset);
         } catch (err) {
           console.error("Scroll fetch error:", err);
         }
