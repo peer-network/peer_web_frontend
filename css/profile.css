@@ -201,6 +201,8 @@
 	background-color: #000;
 	border-radius: 100%;
 	position:relative;
+  height: auto;
+  aspect-ratio: 1 / 1;
   /* overflow: hidden; */
 	
 }
@@ -891,7 +893,7 @@
   margin-right: 20px;
 }
 
-.visibility_hidden .profile_info .hidden_account_frame {
+.profile_visibilty_hidden .profile_info .hidden_account_frame {
   position: absolute;
   top: 0;
   left: 10%;
@@ -900,28 +902,28 @@
   justify-content: space-between;
   gap: 50px;
   height: fit-content;
+  z-index: 1;
 }
 
-.visibility_hidden #profilbild2,
-.visibility_hidden #username2,
-.visibility_hidden #slug2,
-.visibility_hidden #biography2 {
+.profile_visibilty_hidden #profilbild2,
+.profile_visibilty_hidden .profile_title,
+.profile_visibilty_hidden .profile_description {
   filter: blur(8px);
   user-select: none;
   pointer-events: none;
 }
 
-.view-profile.visibility_hidden .profile_header .profile_picture .cropContainer {
+.view-profile.profile_visibilty_hidden .profile_header .profile_picture .cropContainer {
   overflow: hidden !important;
 }
 
-.visibility_hidden .hidden_account_frame .hidden_content .hidden_header {
+.profile_visibilty_hidden .hidden_account_frame .hidden_content .hidden_header {
   display: flex;
   gap: 10px;
  
 }
 
-.visibility_hidden .hidden_account_frame .hidden_content .hidden_icon {
+.profile_visibilty_hidden .hidden_account_frame .hidden_content .hidden_icon {
 	border-radius: 88.889px;
 	background: rgba(255, 255, 255, 0.20);
 	aspect-ratio: 1/1;
@@ -931,7 +933,7 @@
 	align-items: center;
 }
 
-.visibility_hidden .hidden_account_frame .hidden_content .hidden_description {
+.profile_visibilty_hidden .hidden_account_frame .hidden_content .hidden_description {
   margin-top: 10px;
 }
 
@@ -940,7 +942,7 @@
 
 /*--------- Illegal account frame -----------*/
 
-.illegal_profile .profile_info .illegal_profile_frame {
+.profile_visibilty_illegal .profile_info .illegal_profile_frame {
   position: absolute;
   width: 100%;
 }
@@ -960,26 +962,25 @@
   padding: 30px;
 }
 
-.illegal_profile .cropContainer {
+.profile_visibilty_illegal .cropContainer {
   background-color: var(--bg-filter) !important;
 }
 
-.view-profile.illegal_profile .profile-picture {
+
+
+.view-profile.profile_visibilty_illegal .profile_info .profile_title {
+	width: 70%;
+	background: var(--bg-filter);
+	border-radius: 50px;
+}
+
+.view-profile.profile_visibilty_illegal .profile_info .profile_title .username,
+.view-profile.profile_visibilty_illegal .profile_info .profile_title .slug,
+.view-profile.profile_visibilty_illegal .profile_info .profile_title span  {
   opacity: 0;
 }
 
-.view-profile.illegal_profile .profile_info .profile_title {
-  width: 100%;
-  background: var(--bg-filter);
-}
-
-.view-profile.illegal_profile .profile_info .profile_title .username,
-.view-profile.illegal_profile .profile_info .profile_title .slug,
-.view-profile.illegal_profile .profile_info .profile_title span  {
-  opacity: 0;
-}
-
-.view-profile.illegal_profile .profile_info .profile_description {
+.view-profile.profile_visibilty_illegal .profile_info .profile_description {
   opacity: 0;
 }
 

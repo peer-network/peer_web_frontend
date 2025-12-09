@@ -864,8 +864,6 @@
 			gap: 6.536px;
 			aspect-ratio: 1/1;
 			border-radius: 100%;
-			
-			color: var(--white-secondary);
 		}
 		.illegal_content_frame .icon_illegal i {
 			font-size: 100px;
