@@ -22,7 +22,6 @@ jobs:
     with:
       pull_request_json: ${{ github.event_name == 'pull_request' && toJson(github.event.pull_request) || '' }}
     secrets: inherit
-
   check_branch_sync:
     name: Check if PR Branch is Behind Base
     runs-on: ubuntu-latest
