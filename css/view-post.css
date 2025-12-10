@@ -584,7 +584,7 @@
   margin-bottom: 30px;
 }
 
-.viewpost .profile-header.hidden_user_profile .hidden_userfeed_frame {
+.viewpost .profile-header .hidden_user_profile .hidden_userfeed_frame {
   position: absolute;
   height: fit-content;
   z-index: 10;
@@ -612,6 +612,34 @@
   gap: 20px;
   cursor: pointer;
 }
+/*--------- Start : Illegal account frame -----------*/
+.viewpost .profile-header-left.illegal_user_profile .post-userImg.profile-picture {
+	display: none;
+}
+
+.viewpost .profile-header-left.illegal_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	width: 8rem;
+	height: 8rem;
+	flex-direction: column;
+	background: var(--black-dark);
+	font-size: 50px;
+}
+
+.viewpost .profile-header-left.illegal_user_profile .username-slug .profile_id {
+	background-color: var(--black-dark);
+	font-size: 0;
+	display: block;
+	border-radius: 50px;
+	opacity: 1;
+	padding: 30px;
+	margin-top: 10px;
+	min-width: 350px;
+}
+/*--------- End : Illegal account frame -----------*/
 
 .viewpost .profile-header-left .username-slug span {
   display: block;
@@ -864,8 +892,6 @@
 			gap: 6.536px;
 			aspect-ratio: 1/1;
 			border-radius: 100%;
-			
-			color: var(--white-secondary);
 		}
 		.illegal_content_frame .icon_illegal i {
 			font-size: 100px;
@@ -1602,7 +1628,91 @@
     }
 
 /*-- end hidden Comment content */
+/*--------- Start : Illegal account frame  for comment -----------*/
+.comment_list .comment_item .commenter-pic.illegal_user_profile .profile-picture {
+	display: none;
+}
 
+.comment_list .comment_item .commenter-pic.illegal_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	width: 8rem;
+	height: 8rem;
+	flex-direction: column;
+	background: var(--black-dark);
+	font-size: 50px;
+}
+
+.comment_list .comment_item .commenter_info.illegal_user_profile .cmt_profile_id {
+	background-color: var(--black-dark);
+	font-size: 0;
+	display: inline-block;
+	border-radius: 50px;
+	opacity: 1;
+	padding: 21px;
+	min-width: 150px;
+	margin-left: 10px;
+	vertical-align: top;
+}
+/*--------- End : Illegal account frame for comment -----------*/
+
+/*--------- Start : Hidden account frame  for comment -----------*/
+.comment_list .comment_item .commenter-pic.hidden_user_profile {
+	position: relative;
+}
+.comment_list .comment_item .commenter-pic.hidden_user_profile::after {
+  /*for disable click*/
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.comment_list .comment_item .commenter-pic.hidden_user_profile .profile-picture {
+	filter: blur(4px);
+ 
+}
+.comment_list .comment_item .commenter-pic.hidden_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	flex-direction: column;
+	font-size: 40px;
+	position: absolute;
+	z-index: 1;
+	background: var(--white-secondary);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	padding: 19px;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .hidden_content .peer-icon{
+  display: none;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .cmt_userName,
+.comment_list .comment_item .commenter_info.hidden_user_profile .cmt_profile_id  {
+	filter: blur(4px);
+ 
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile {
+	position: relative;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .hidden_userfeed_frame {
+	cursor: pointer;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .hidden_userfeed_frame {
+	cursor: pointer;
+	position: absolute;
+	left: 0;
+	top: -6px;
+  z-index: 1;
+}
+
+/*--------- End : Hidden account frame  for comment -----------*/
 
 /* comment report action END */
 .post_comment {

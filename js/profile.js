@@ -1,42 +1,55 @@
 document.addEventListener("DOMContentLoaded", () => {
   const CurrentUserID = getCookie("userID");
+
+  /*-- for testing profile report and visibility----*/
   const params = new URLSearchParams(window.location.search);
-  const visibilityStatus = params.get("uservisibility");
+  const testUserVisibility = params.get("uservisibility");
+
+  /*-- End : testing post report and visibility----*/
   getUser().then(profile2 => {
     const bioPath = profile2.data.getProfile.affectedRows.biography;
     const biography = document.getElementById("biography");
     biography.innerText = "Biography not available";
 
     /*-- handling profile visibility----*/
-    // const visibilityStatus = "HIDDEN";
-    // const visibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
+
+    let visibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
+
+    /*-- for testing profile report and visibility----*/
+        
+          if(testUserVisibility){
+            visibilityStatus = testUserVisibility;
+          }
+       
+      /*-- End : testing profile report and visibility----*/
+    
+  
+
     const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
+    const myProfile = document.querySelector('.my_profile_page');
+
+     if(myProfile) {
+     myProfile.classList.add("profile_visibilty_"+visibilityStatus.toLowerCase());
+    }
 
     if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
-      const myProfile = document.querySelector('.my_profile_page');
-      if(myProfile) {
-        myProfile.classList.remove("REPORTED_PROFILE");
-        myProfile.classList.remove("HIDDEN_PROFILE");
-        myProfile.classList.add("illegal_profile");
-      }
+     
+      
       addIllegalBadge();
     }
     
     else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
-      const myProfile = document.querySelector('.my_profile_page');
-      if(myProfile) {
-        myProfile.classList.remove("REPORTED_PROFILE");
-        myProfile.classList.add("HIDDEN_PROFILE");
-      }
-      removeReportedBadge();
+      
+     
+     
       addHiddenBadge();
     }
 
     else if(hasActiveReports) {
-      const myProfile = document.querySelector('.my_profile_page');
+      
       if (myProfile) {
-        myProfile.classList.remove("HIDDEN_PROFILE");
-        myProfile.classList.add('REPORTED_PROFILE');
+      
+        myProfile.classList.add('profile_has_reported');
       }
       addReportedBadge();
     }
