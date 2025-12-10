@@ -197,7 +197,7 @@ moderationModule.fetcher = {
       
       moderationModule.store.items = enriched;
       moderationModule.store.filteredItems = enriched;
-      moderationModule.view.renderItems();
+      moderationModule.view.renderItems(enriched);
       moderationModule.store.pagination.offset = enriched.length;
     } catch (err) {
       console.error("Error loading items:", err);
