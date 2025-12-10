@@ -23,37 +23,14 @@ jobs:
       pr_base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || '' }}
       pr_head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
     secrets: inherit
+  
   check_branch_sync:
     name: Check if PR Branch is Behind Base
-    runs-on: ubuntu-latest
     needs: [auto_update_branch]
-    outputs:
-      is_behind: ${{ steps.check.outputs.is_behind }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Fetch all branches
-        run: |
-          git fetch origin +refs/heads/*:refs/remotes/origin/*
-
-      - id: check
-        run: |
-          base_branch="${{ github.event.pull_request.base.ref }}"
-          pr_branch="${{ github.event.pull_request.head.ref }}"
-
-          echo "Comparing $pr_branch against $base_branch"
-          behind=$(git rev-list --left-right --count origin/${base_branch}...origin/${pr_branch} | awk '{print $1}')
-
-          if [ "$behind" -gt 0 ]; then
-            echo "Branch is behind!"
-            echo "is_behind=true" >> $GITHUB_OUTPUT
-          else
-            echo "Branch is up-to-date."
-            echo "is_behind=false" >> $GITHUB_OUTPUT
-          fi
+    uses: peer-network/.github/.github/workflows/check-branch-sync.yml@main
+    with:
+      base_branch: ${{ github.event.pull_request.base.ref }}
+      pr_branch: ${{ github.event.pull_request.head.ref }}
 
   fail_outdated_branch:
     name: Block CI Due to Outdated Branch
@@ -115,17 +92,19 @@ jobs:
     uses: peer-network/.github/.github/workflows/trivy-scan.yml@main
     with:
       scan_target: .
-
   determine_event_type:
     name: Determine Discord Event Type
     runs-on: ubuntu-latest
-    needs: [check_branch_sync, gitleaks, trivy_scan]
+    needs: [auto_update_branch, check_branch_sync, gitleaks, trivy_scan]
     outputs:
       event_type: ${{ steps.set_type.outputs.event_type }}
     steps:
       - id: set_type
         run: |
-          if [ "${{ needs.check_branch_sync.outputs.is_behind }}" == "true" ]; then
+          if [ "${{ needs.auto_update_branch.outputs.auto_update_conflict }}" == "true" ]; then
+            echo "event_type=auto_update_conflict" >> $GITHUB_OUTPUT
+
+          elif [ "${{ needs.check_branch_sync.outputs.is_behind }}" == "true" ]; then
             echo "event_type=behind" >> $GITHUB_OUTPUT
 
           elif [ "${{ needs.gitleaks.result }}" == "failure" ]; then
@@ -141,10 +120,10 @@ jobs:
   send_discord_notification:
     name: Unified Discord Notification
     needs: [
+      auto_update_branch,
       check_branch_sync,
       gitleaks,
       trivy_scan,
-      final_check,
       map_pr_to_discord,
       determine_event_type
     ]

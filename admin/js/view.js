@@ -24,7 +24,6 @@ moderationModule.view = {
       if (kind) arr = arr.filter(i => (i.kind || "").toString() === kind);
       if (reviewChk && reviewChk.checked) {
         const filtered = arr.filter(i => statusIsWaiting(i));
-        console.debug("applyAndRender: filtered waiting items", filtered.length, "of", arr.length, "kind=", kind);
         this.renderItems(filtered);
       } else {
         this.renderItems(arr);
@@ -109,12 +108,12 @@ moderationModule.view = {
     });
   },
 
-  renderItems() {
+  renderItems(items) {
     const container = moderationModule.helpers.getElement(".content_load");
     if (!container) return;
 
     container.innerHTML = "";
-    const items = moderationModule.store.filteredItems;
+    //const items = moderationModule.store.filteredItems;
     if (!items || !items.length) {
       container.textContent = "No items found";
       return;
@@ -445,7 +444,7 @@ moderationModule.view = {
       boxRight.append(reportedBy);
 
       const actionButtons = moderationModule.helpers.createEl("div", {
-        className: `action_buttons ${statusVal == "waiting for review" ? "" : "none"}`
+        className: `action_buttons default ${statusVal == "waiting for review" ? "" : "none"}`
       });
 
       const applyModerationUI = () => {
@@ -502,40 +501,44 @@ moderationModule.view = {
       const hideBtn = moderationModule.helpers.createEl("a", {
         className: "button btn-transparent",
         textContent: "Hide",
-        href: ""
+        href: "#"
       });
       hideBtn.addEventListener("click", (e) => {
         e.preventDefault();
         confirmHide.classList.remove("none");
+        actionButtons.classList.add("none");
+        return false
       });
-      confirmHide.querySelector(".btn_cancel").onclick = () => confirmHide.classList.add("none");
+      confirmHide.querySelector(".btn_cancel").onclick = () => { 
+        confirmHide.classList.add("none");   
+        actionButtons.classList.remove("none"); 
+        return false;
+      }
+
       confirmHide.querySelector(".btn_confirm").onclick = async (e) => {
-       // await moderationModule.service.performModeration(item.moderationId, "hidden");
-        confirmHide.classList.add("none");
+        e.preventDefault();
+        await moderationModule.service.performModeration(item.moderationId, "hidden");
+        confirmHide.classList.add("none");      
+        const actionBox = e.target.closest(".action_box");
+        if (!actionBox) return;
+        let el = actionBox;
 
-        // const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
-        // statusSpan.textContent = "hidden";
+        while (el = el.nextElementSibling) {
+          if (el.classList.contains("moderated_by_box"))
+            break;
+        }
 
-      
-      
-        const actionButtonsEl = e.target.closest(".action_buttons");
-        console.log("actionButtonsEl:", actionButtonsEl);
-        if (!actionButtonsEl) return;
-
-        const moderatedByBox = actionButtonsEl.nextElementSibling; 
-        console.log("moderatedByBox:", moderatedByBox);
-
+        const moderatedByBox = el;
         if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
         const moderatedAction = moderatedByBox.querySelector(".moderated_action");
         if (moderatedAction) {
           moderatedAction.textContent = "hidden";
+          moderatedAction.className = "moderated_action xl_font_size red-text";
         }
-
-
-
-
         applyModerationUI();
-      };
+        
+        return false;
+      }
 
       // Restore button + handlers
       const restoreBtn = moderationModule.helpers.createEl("a", {
@@ -546,16 +549,40 @@ moderationModule.view = {
       restoreBtn.addEventListener("click", (e) => {
         e.preventDefault();
         confirmRestore.classList.remove("none");
+        actionButtons.classList.add("none");
+        return false;
       });
-      confirmRestore.querySelector(".btn_cancel").onclick = () => confirmRestore.classList.add("none");
+      confirmRestore.querySelector(".btn_cancel").onclick = (e) => { 
+        e.preventDefault();
+        confirmRestore.classList.add("none"); 
+        actionButtons.classList.remove("none");
+        return false;
+      }
       confirmRestore.querySelector(".btn_confirm").onclick = async (e) => {
+        e.preventDefault();
         await moderationModule.service.performModeration(item.moderationId, "restored");
         confirmRestore.classList.add("none");
 
-        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
-        statusSpan.textContent = "restored";
+        const actionBox = e.target.closest(".action_box");
+        if (!actionBox) return;
+        let el = actionBox;
+
+        while (el = el.nextElementSibling) {
+          if (el.classList.contains("moderated_by_box"))
+            break;
+        }
+
+        const moderatedByBox = el;
+        
+        if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
+        const moderatedAction = moderatedByBox.querySelector(".moderated_action");
+        if (moderatedAction) {
+          moderatedAction.textContent = "Restored";
+          moderatedAction.className = "moderated_action xl_font_size green-text";
+        }
 
         applyModerationUI();
+        return false;
       };
 
       // Illegal button + handlers
@@ -567,16 +594,39 @@ moderationModule.view = {
       illegalBtn.addEventListener("click", (e) => {
         e.preventDefault();
         confirmIllegal.classList.remove("none");
+        actionButtons.classList.add("none");
+        return false
       });
-      confirmIllegal.querySelector(".btn_cancel").onclick = () => confirmIllegal.classList.add("none");
+      confirmIllegal.querySelector(".btn_cancel").onclick = (e) => { 
+        e.preventDefault();
+        confirmIllegal.classList.add("none"); 
+        actionButtons.classList.remove("none");
+        return false;
+      }
       confirmIllegal.querySelector(".btn_confirm").onclick = async (e) => {
+        e.preventDefault();
         await moderationModule.service.performModeration(item.moderationId, "illegal");
         confirmIllegal.classList.add("none");
 
-        const statusSpan = e.target.closest(".content_box_right").querySelector(".action_buttons");
-        statusSpan.textContent = "illegal";
+        const actionBox = e.target.closest(".action_box");
+        if (!actionBox) return;
+        let el = actionBox;
+
+        while (el = el.nextElementSibling) {
+          if (el.classList.contains("moderated_by_box"))
+            break;
+        }
+
+        const moderatedByBox = el;
+        if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
+        const moderatedAction = moderatedByBox.querySelector(".moderated_action");
+        if (moderatedAction) {
+          moderatedAction.textContent = "Illegal";
+          moderatedAction.className = "moderated_action xl_font_size red-text";
+        }
         
         applyModerationUI();
+        return false;
       };
 
       // Append buttons and confirmation boxes to right box       
@@ -620,8 +670,8 @@ moderationModule.view = {
       });
       
       contentBox.addEventListener("click", (evt) => {
-        evt.stopPropagation();
-        evt.preventDefault();
+        //evt.stopPropagation();
+        //evt.preventDefault();
       });
     });
   },
@@ -688,7 +738,7 @@ moderationModule.view = {
           }
           moderationModule.store.filteredItems = filtered;
 
-          moderationModule.view.renderItems();
+          moderationModule.view.renderItems(filtered);
 
           moderationModule.store.pagination.offset += rawItems.length;
         } catch (err) {
