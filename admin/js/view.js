@@ -574,6 +574,8 @@ moderationModule.view = {
         }
 
         const moderatedByBox = el;
+
+        
         if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
         const moderatedAction = moderatedByBox.querySelector(".moderated_action");
         if (moderatedAction) {
