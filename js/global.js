@@ -2085,55 +2085,60 @@ async function fetchPostByID(postID) {
                     status
                     ResponseCode
                     affectedRows {
-                        id
-                        contenttype
-                        title
-                        media
-                        cover
-                        mediadescription
-                        createdat
-                        amountlikes
-                        amountviews
-                        amountcomments
-                        amountdislikes
-                        amounttrending
-                        isliked
-                        isviewed
-                        isreported
-                        isdisliked
-                        issaved
-                        tags
-                        url
-                        user {
-                            id
-                            username
-                            slug
-                            img
-                            visibilityStatus
-                            hasActiveReports
-                            isfollowed
-                            isfollowing
-                        }
-                        comments {
-                            commentid
-                            userid
-                            postid
-                            parentid
-                            content
-                            createdat
-                            amountlikes
-                            amountreplies
-                            isliked
-                            user {
-                                id
-                                username
-                                slug
-                                img
-                                isfollowed
-                                isfollowing
-                            }
-                        }
-                    }
+                          id
+                          contenttype
+                          title
+                          media
+                          cover
+                          mediadescription
+                          createdat
+                          amountlikes
+                          amountviews
+                          amountcomments
+                          amountdislikes
+                          amounttrending
+                          hasActiveReports
+                          visibilityStatus
+                          isliked
+                          isviewed
+                          isreported
+                          isdisliked
+                          issaved
+                          tags
+                          user {
+                                  id
+                                  username
+                                  slug
+                                  img
+                                  isfollowed
+                                  isfollowing
+                                  hasActiveReports
+                                  visibilityStatus
+                                }
+                      comments {
+                                    commentid
+                                    userid
+                                    postid
+                                    parentid
+                                    content
+                                    visibilityStatus
+                                    hasActiveReports
+                                    amountlikes
+                                    amountreplies
+                                    isliked
+                                    createdat
+                                    user {
+                                            id
+                                            username
+                                            slug
+                                            img
+                                            isfollowed
+                                            isfollowing
+                                            hasActiveReports
+                                            visibilityStatus
+                                          }
+                                  }
+                      }
                 }
             }
         `;
