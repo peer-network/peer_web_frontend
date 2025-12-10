@@ -23,8 +23,8 @@ moderationModule.schema = {
   }`,
 
   LIST_ITEMS: `
-    query ModerationItems {
-    moderationItems(offset: 0, limit: 20) {
+    query ModerationItems($offset: Int!, $limit: Int!) {
+    moderationItems(offset: $offset, limit: $limit) {
         status
         ResponseCode
         affectedRows {

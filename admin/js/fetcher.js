@@ -5,7 +5,6 @@ moderationModule.fetcher = {
   async normalizeItems(items) {
     const mapped = items.map(async (x) => {
       const self = this;
-     
       let item = {
         kind: x.targettype,
         moderationId: x.moderationTicketId,
@@ -16,7 +15,7 @@ moderationModule.fetcher = {
         reporters: Array.isArray(x.reporters)
         ? x.reporters.map(r => ({
             userid: r.userid,
-            username: r.username || "@unknown",
+            username: r.username || "unknown",
             slug: "#" + (r.slug || "0000"),
             img: tempMedia(r.img) || "../svg/noname.svg",
             updatedat: moderationModule.helpers.formatDate(r.updatedat) || null,
@@ -28,15 +27,13 @@ moderationModule.fetcher = {
       if (x.targettype === "post" && x.targetcontent.post) {
         const post = x.targetcontent.post;
         const user = post.user || {};
-        item.username = user.username || "@unknown";
+        item.username = user.username || "unknown";
         item.slug = "#" + (user.slug || "0000");
         item.title = post.title || "";
         item.description = post.mediadescription || "";
         item.hashtags = post.tags || [];   
         item.contentType = post.contenttype;
         item.postid = post.id;
-       // console.log(post);
-        
         switch (post.contenttype) {
           case "image":
             item.media = moderationModule.helpers.safeMedia(post.media);
@@ -46,16 +43,11 @@ moderationModule.fetcher = {
 
           case "text":
             try {
-              
-             // const parsed = JSON.parse(post.media);
-              //if (Array.isArray(parsed) && parsed.length > 0) 
-              //item.path = parsed[0].path; 
-               const mediaUrl = moderationModule.helpers.safeMedia(post.media);
-               item.description = await self.loadTextFile(mediaUrl);
+              const mediaUrl = moderationModule.helpers.safeMedia(post.media);
+              item.description = await self.loadTextFile(mediaUrl);
               
             } catch (err) {
               console.error("Failed to parse text media:", err);
-              //item.path = null;
             }
             item.media = null;
             item.icon = "peer-icon peer-icon-text";
@@ -79,38 +71,6 @@ moderationModule.fetcher = {
       }
 
       /* -------------------- COMMENT -------------------- */
-      // if (x.targettype === "comment" && x.targetcontent.comment) {
-      //   const c = x.targetcontent.comment;
-      //   let commenterId = c.userid || null;
-      //   // item.username = c.user.username || "@unknown";
-      //   // item.slug = "#" + (c.user.slug || "0000");
-      //   item.content = c.content || "";
-      //   item.contentType = "comment";
-      //   item.timeAgo = timeAgo(c.createdat);
-      //   // item.media = tempMedia(c.user?.img) ?? '../img/profile_thumb.png';
-      //   item.icon = "peer-icon peer-icon-comment-fill";
-      //   item.postid = c.postid;
-      //   item.post = null
-
-      //   // *** NEW LOGIC TO FETCH FULL USER PROFILE FOR THE COMMENTER ***
-      //   if (commenterId) {
-      //       const fullUserArray = await self.loadUserById(commenterId);
-      //       const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
-      //       const userId = fullUser.userid || fullUser.id;
-      //       if (userId) {
-      //         item.commenterProfile = {
-      //           userid: fullUser.id,
-      //           username: fullUser.username || "@unknown",
-      //           slug: "#" + (fullUser.slug || "0000"),
-      //           img: tempMedia(fullUser.img) || "../svg/noname.svg",
-      //           posts: fullUser.amountposts || 0,
-      //           followers: fullUser.amountfollower || 0,
-      //           following: fullUser.amountfollowed || 0,
-      //         };
-      //       }
-      //   }
-      // }
-
       if (x.targettype === "comment" && x.targetcontent.comment) {
         const c = x.targetcontent.comment;
         let commenterId = c.userid || null;
@@ -121,16 +81,16 @@ moderationModule.fetcher = {
         item.icon = "peer-icon peer-icon-comment-fill";
         item.postid = c.postid;
         item.post = null;
-
+        item.commentid = c.commentid; 
         if (commenterId) {
           const fullUserArray = await self.loadUserById(commenterId);
           const fullUser = Array.isArray(fullUserArray) ? fullUserArray[0] : fullUserArray;
-          const userId = fullUser?.userid || fullUser?.id; // Added optional chaining
+          const userId = fullUser?.userid || fullUser?.id;
           
           if (userId) {
             item.commenterProfile = {
               userid: fullUser.id,
-              username: fullUser.username || "@unknown",
+              username: fullUser.username || "unknown",
               slug: "#" + (fullUser.slug || "0000"),
               img: tempMedia(fullUser.img) || "../svg/noname.svg",
               posts: fullUser.amountposts || 0,
@@ -142,7 +102,7 @@ moderationModule.fetcher = {
             item.slug = item.commenterProfile.slug;
             //item.media = item.commenterProfile.img;
           } else {
-            item.username = "@unknown";
+            item.username = "unknown";
             item.slug = "#0000";
             item.media = "../svg/noname.svg";
           }
@@ -153,7 +113,7 @@ moderationModule.fetcher = {
       if (x.targettype === "user" && x.targetcontent.user) {
         const u = x.targetcontent.user;
         item.userid = u.userid;
-        item.username = u.username || "@unknown";
+        item.username = u.username || "unknown";
         item.slug = "#" + (u.slug || "0000");
         item.biography = tempMedia(u.biography) || "";
         item.posts = u.posts || 0;
@@ -163,7 +123,7 @@ moderationModule.fetcher = {
         item.media = tempMedia(u.img) || "../svg/noname.svg";
         item.contentType = "user";
         item.icon = "peer-icon peer-icon-profile";
-        // Normalize biography
+        
         let bioText = "";
         try {
           const bioRaw = u.biography;
@@ -183,7 +143,6 @@ moderationModule.fetcher = {
                 const bioUrl = domain.replace("://", "://media.") + bioRaw;
                 bioText = await self.loadTextFile(bioUrl);
               } else {
-                // plain text biography
                 bioText = bioRaw;
               }
             }
@@ -236,14 +195,12 @@ moderationModule.fetcher = {
       const response = await moderationModule.service.fetchGraphQL(query, variables);
       const rawItems = response?.moderationItems?.affectedRows || [];
       const normalized = await this.normalizeItems(rawItems);
-      // console.log("After normalize:", normalized.filter(i => i.contentType === "comment"));
       const enriched = await this.enrichCommentsWithPosts(normalized);
-      // console.log("After enrich:", enriched.filter(i => i.contentType === "comment"));
       
       moderationModule.store.items = enriched;
       moderationModule.store.filteredItems = enriched;
-      moderationModule.view.renderItems(enriched);
-      
+      moderationModule.view.renderItems();
+      moderationModule.store.pagination.offset = enriched.length;
     } catch (err) {
       console.error("Error loading items:", err);
     }
@@ -294,8 +251,6 @@ moderationModule.fetcher = {
 
   async enrichCommentsWithPosts(items) {
     for (const item of items) {
-        // console.log('Fetched post for comment:', item);
-
       if (item.contentType === "comment" && item.postid) {
         const post = await this.loadPostById(item.postid);
         if (post) {
@@ -305,20 +260,15 @@ moderationModule.fetcher = {
             description: post.mediadescription,
             contentType: post.contenttype,
             cover: post.cover,
-            username: post.user?.username || "@unknown",
+            username: post.user?.username || "unknown",
             img: tempMedia(post.user?.img) || '../img/profile_thumb.png',
             slug: post.user?.slug
           };
 
-          // console.log(' item.post.img ', item.post.img);
-
-          // Use safeMedia to extract a URL
           const mediaUrl = moderationModule.helpers.safeMedia(post.media);
           if (post.contenttype === "text" && mediaUrl) {
-            // For text posts: fetch the file contents and store in description
             item.post.description = await this.loadTextFile(mediaUrl);
           } else {
-            // For non-text posts: build the appropriate HTML element
             switch (post.contenttype) {
               case "video":
                 item.post.media = `<video src="${mediaUrl}" controls autoplay loop></video>`;
