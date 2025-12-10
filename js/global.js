@@ -3020,7 +3020,7 @@ function removeReportedBadge() {
   
   const viewProfile = document.querySelector('.view-profile');
   if (viewProfile) {
-      viewProfile.classList.remove('REPORTED_PROFILE');
+      viewProfile.classList.remove('profile_has_reported');
   }
 }
 
@@ -3043,21 +3043,21 @@ function addIllegalBadge() {
   if (!document.querySelector('.profile_illegal_badge')) {
       const illegalBadge = document.createElement('div');
       illegalBadge.classList.add ('profile_illegal_badge', 'red-text', 'xl_font_size');
-      illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal. </span> All changes you make will not be visible for others';
+      illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span> &nbsp;All changes you make will not be visible for others';
       
       profileHeader.insertAdjacentElement("afterend", illegalBadge);
   }
 }
 
 // Disable report button and change text
-  function disableReportButton() {
+function disableReportButton() {
     const reportButton = document.querySelector('.report_profile');
     reportButton.disabled = true;
     reportButton.textContent = "Reported by you";
     reportButton.classList.add('disabled');
-  }
+}
 
-  function userProfileVisibilty(curentUserID,objectUser,container, type=''){
+function userProfileVisibilty(curentUserID,objectUser,container, type=''){
     /*---reset for detail view --*/
       container.classList.remove("illegal_user_profile");
       container.classList.remove("hidden_user_profile");
@@ -3115,6 +3115,6 @@ function addIllegalBadge() {
           container.querySelector(".post-userName").innerHTML='@removed';
 
       }
-  }
+}
 
   ///https://localhost/peer_web_frontend/dashboard.php?testuserid=6520ac47-f262-4f7e-b643-9dc5ee4cfa82&uservisibility=ILLEGAL

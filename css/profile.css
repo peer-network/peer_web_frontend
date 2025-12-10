@@ -874,9 +874,7 @@
 .profile_hidden_badge {
   color: var(--white-opacity-50);
 }
-/* .view-profile.REPORTED_PROFILE .reported_badge {
-  display: block; 
-} */
+
 
 /*--------- Hidden account frame -----------*/
 
@@ -905,9 +903,9 @@
   z-index: 1;
 }
 
-.profile_visibilty_hidden #profilbild2,
-.profile_visibilty_hidden .profile_title,
-.profile_visibilty_hidden .profile_description {
+.view-profile.profile_visibilty_hidden #profilbild2,
+.view-profile.profile_visibilty_hidden .profile_title,
+.view-profile.profile_visibilty_hidden .profile_description {
   filter: blur(8px);
   user-select: none;
   pointer-events: none;

@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const viewProfile = document.querySelector('.view-profile');
                 if (viewProfile) {
-                    viewProfile.classList.add('REPORTED_PROFILE');
+                    viewProfile.classList.add('profile_has_reported');
                     //test for hidden profiles
                     // viewProfile.classList.add('visibility_hidden');
                 }
