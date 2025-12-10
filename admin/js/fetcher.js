@@ -38,6 +38,7 @@ moderationModule.fetcher = {
           case "image":
             item.media = moderationModule.helpers.safeMedia(post.media);
             item.icon = "peer-icon peer-icon-camera";
+           
             break;
 
           case "text":
@@ -53,6 +54,7 @@ moderationModule.fetcher = {
             break;
           
           case "audio":
+            
             item.media = moderationModule.helpers.safeMedia(post.cover, "../img/audio-bg.png");
             item.icon = "peer-icon peer-icon-audio-fill";
             break;
@@ -98,7 +100,7 @@ moderationModule.fetcher = {
             
             item.username = item.commenterProfile.username;
             item.slug = item.commenterProfile.slug;
-            item.media = item.commenterProfile.img;
+            //item.media = item.commenterProfile.img;
           } else {
             item.username = "unknown";
             item.slug = "#0000";

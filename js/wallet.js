@@ -184,13 +184,14 @@ function renderRows(rows) {
     historyItem.classList.add("tarnsaction_item");
 
     const amount =
-      typeof entry.netTokenAmount === "number"
-        ? entry.netTokenAmount
-        : Number(String(entry.netTokenAmount).replace(",", "."));
-      let transaction_title,transferto,icon_html,message_html;
+      typeof entry.tokenamount === "number"
+        ? entry.tokenamount
+        : Number(String(entry.tokenamount).replace(",", "."));
+      let transaction_title,transferto,icon_html,shortmessage_html,fullmessage_html;
       transferto='';
       icon_html='';
-      message_html='';
+      shortmessage_html='';
+      fullmessage_html='';
         if(entry.transactiontype=='transferForDislike'){
           transaction_title ='Dislike';
           icon_html='<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
@@ -235,7 +236,12 @@ function renderRows(rows) {
             : messageText;
 
         if(entry.message!=''){
-          message_html=`<div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>${shortMessage}</div>`;
+          shortmessage_html=`<div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>${shortMessage}</div>`;
+
+           fullmessage_html=`<div class="message_row">
+                    <span class="message_label md_font_size txt-color-gray"><i class="peer-icon peer-icon-message"></i> Message:</span> 
+                    <span class="message_body">${messageText}</span>
+                  </div>`;
         }
     const record =`<div class="transaction_record">
                 <div class="transaction_info">
@@ -244,7 +250,7 @@ function renderRows(rows) {
                   </div>
                   <div class="transaction_content">
                     <div class="tinfo md_font_size"><span class="title bold">${transaction_title}</span> ${transferto}</div>
-                    ${message_html}
+                    ${shortmessage_html}
                   </div>
 
                 </div>
@@ -254,12 +260,19 @@ function renderRows(rows) {
               
               <div class="transaction_detail">
                 <div class="transaction_detail_inner">
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">0.000000009</span></div>
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">0.96</span></div>
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">38</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${amount}</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">${entry.netTokenAmount}</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">${entry.fees.total}</span></div>
                   <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${entry.fees.peer}</span></div>
                   <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${entry.fees.burn}</span></div>
-                  <div class="price_detail_row"><span class="price_label txt-color-gray">1% to your Inviter</span> <span class="price txt-color-gray">${entry.fees.inviter ?? 0}</span></div>
+                  ${entry.fees.inviter
+                    ? `<div class="price_detail_row">
+                        <span class="price_label txt-color-gray">1% to your Inviter</span>
+                        <span class="price txt-color-gray">${entry.fees.inviter}</span>
+                      </div>`
+                    : ''}
+                  ${fullmessage_html}
+
                 </div>
               </div>
               `;
