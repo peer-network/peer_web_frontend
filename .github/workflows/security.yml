@@ -92,7 +92,6 @@ jobs:
     uses: peer-network/.github/.github/workflows/trivy-scan.yml@main
     with:
       scan_target: .
-
   determine_event_type:
     name: Determine Discord Event Type
     runs-on: ubuntu-latest
