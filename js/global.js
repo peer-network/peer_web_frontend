@@ -2326,7 +2326,7 @@ async function getUserInfo() {
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
     isInvited = userData?.invited;
-    console.log("User Data:", userData);
+    //console.log("User Data:", userData);
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
   } catch (error) {

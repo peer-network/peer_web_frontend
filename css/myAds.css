@@ -240,10 +240,10 @@
 
 .time_badge_status {
   flex: 0.7;
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  display: flex;
   gap: 20px;
   align-items: center;
+  justify-content: space-between;
 }
 
 .ad_timeframe_box {
@@ -252,7 +252,7 @@
   align-items: center;
   gap: 15px;
   transition: 0.3s ease;
-  grid-column: 1;
+ 
 }
 
 .ad_timeframe_box div {
@@ -292,11 +292,12 @@
 .ad_status {
   display: flex;
   align-items: center;
-  /* justify-content: flex-end; */
-  /* flex: 0.2; */
   flex-direction: column;
   gap: 5px;
-  grid-column: 4;
+}
+.normal_ads_post  .ad_status {
+  margin-left: auto;
+  
 }
 
 .status_badge {
@@ -312,6 +313,7 @@
 
 .status_badge.active {
   color: #AAFF67;
+  
 }
 
 .ad_timer_count.ended {
@@ -493,6 +495,7 @@
 .detail_value em {
   font-size: 15px;
   color: var(--white-opacity-50);
+  font-style: normal;
 }
 
 .detail_item .ads_tokens_count span {
@@ -549,18 +552,16 @@ h2.xxl_font_size {
   border-radius: 40px;
 }
 
-.hidden_post_opened {
+.hidden_post_opened,.ad_illegal_badge .ads_illegal_texts  {
   display: flex;
   gap: 20px;
   padding: 20px 40px;
   border-radius: 40px;
   border: 1px solid var(--white-secondary);
+  color: var(--white-secondary);;
 }
 
-.ad_hidden_badge.small_font_size {
-  grid-column: 3;
-  transform: translateX(-450px);
-}
+
 
 .peer-icon.peer-icon-eye-close {
   color: var(--white-secondary);

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   const params = new URLSearchParams(window.location.search);
   const targetPostId = params.get("postid");
-  const visibilityStatus = params.get("postvisibility");
+  const testvisibilityStatus = params.get("postvisibility");
 
   let limit = 20; 
   let offset = 0;
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // BADGE HELPERS
   // ============================================
   
-  function addHiddenBadge(listItem) {
+  function addHiddenBadgeonAds(listItem) {
     const timeFrame = listItem.querySelector('.ad_timeframe_box');
     
     const hiddenBadge = document.createElement('div');
@@ -153,6 +153,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ============================================
   
   function createAdListing(ad) {
+      /*-------------For Testing visibility status -------------------------------------*/
+        if (targetPostId && testvisibilityStatus && targetPostId === String(ad.post.id)) {
+          ad.post.visibilityStatus=testvisibilityStatus;
+        }
+      /*-------------End Testing visibility status -------------------------------------*/
+
+
       const active = isActive(ad.timeframeEnd);
       const statusClass = active ? 'active' : 'ended';
       const statusText = active ? 'Active' : 'Ended';
@@ -167,17 +174,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isPinned = ad.type === 'PINNED';
       const postDescription = (ad.post && ad.post.mediadescription && ad.post.mediadescription.trim()) || '....';
       const isTextPost = ad.post?.contenttype?.toUpperCase() === 'TEXT';
+
+      const visibilityStatus=ad.post.visibilityStatus;
       
       const listItem = document.createElement('div');
       listItem.className = `myAds_list_item ${statusClass}${isPinned ? ' PINNED' : ''}`;
-      
-      if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
-        if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
-          listItem.classList.add("illegal_ads_post");
-        } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
-          listItem.classList.add("hidden_ads_post");
-        }
-      }
+      listItem.classList.add(visibilityStatus.toLowerCase()+"_ads_post");
+      listItem.setAttribute('data-post-id', ad.post.id);
       
       listItem.innerHTML = `
         <div class="ad_main_info">
@@ -293,8 +296,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       listItem.querySelector('#myAdsTokensSpentDropdown').textContent = ad.totalTokenCost;
       listItem.querySelector('#myAdsGemsEarnedDropdown').textContent = formatNumber(ad.gemsEarned);
 
-      if (targetPostId && ad.post?.id && targetPostId === String(ad.post.id)) {
-        if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
+      
+        if(ad.post.visibilityStatus === 'ILLEGAL' || ad.post.visibilityStatus === 'illegal'){
           const adInfo = listItem.querySelector('.ad_info'); 
           
           if (adInfo) { 
@@ -309,49 +312,45 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
             </div>`;
             adInfo.insertAdjacentHTML("afterbegin", illegalAdsPostHTML);
-            listItem.classList.add("illegal_ads_post");
+
+  
+            const illegalBadge = document.createElement('div');
+            illegalBadge.classList.add('ad_illegal_badge', 'small_font_size','none');
+            illegalBadge.innerHTML = `<span class="ads_illegal_texts">The post is removed as illegal</span>`;
+
+            const adStatus = listItem.querySelector('.ad_status');
+            adStatus.insertAdjacentElement("beforebegin", illegalBadge);
+            
+            
           }
-        } else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
-          addHiddenBadge(listItem);
+        } else if(ad.post.visibilityStatus === 'HIDDEN' || ad.post.visibilityStatus === 'hidden'){
+          addHiddenBadgeonAds(listItem);
         }
-      }
 
       listItem.addEventListener("click", () => {
         const adDropdown = listItem.querySelector('.ad_dropdown');
         const adFrameBox = listItem.querySelector('.ad_timeframe_box');
         const hiddenBadge = listItem.querySelector('.ad_hidden_badge');
-        
+        const illegalBadge = listItem.querySelector('.ad_illegal_badge');
         adDropdown.classList.toggle('open');
-        
-        if (adDropdown.classList.contains('open')) {
-          adFrameBox.classList.add("none");
+        if (illegalBadge) { 
+          illegalBadge.classList.toggle('none');
+        }
+        if (adFrameBox) {
+          adFrameBox.classList.toggle('none');
+        }
+        if (hiddenBadge) {
+          const eyeIconLarge = hiddenBadge.querySelector('.peer-icon-eye-close.xl_font_size');
+          const hiddenPostOpened = hiddenBadge.querySelector('.hidden_post_opened');
           
-          if (hiddenBadge) {
-            const eyeIconLarge = hiddenBadge.querySelector('.peer-icon-eye-close.xl_font_size');
-            const hiddenPostOpened = hiddenBadge.querySelector('.hidden_post_opened');
-            
-            if (eyeIconLarge) {
-              eyeIconLarge.classList.add('none');
-            }
-            if (hiddenPostOpened) {
-              hiddenPostOpened.classList.remove('none');
-            }
+          if (eyeIconLarge) {
+            eyeIconLarge.classList.toggle('none');
           }
-        } else {
-          adFrameBox.classList.remove("none");
-          
-          if (hiddenBadge) {
-            const eyeIconLarge = hiddenBadge.querySelector('.peer-icon-eye-close.xl_font_size');
-            const hiddenPostOpened = hiddenBadge.querySelector('.hidden_post_opened');
-            
-            if (eyeIconLarge) {
-              eyeIconLarge.classList.remove('none');
-            }
-            if (hiddenPostOpened) {
-              hiddenPostOpened.classList.add('none');
-            }
+          if (hiddenPostOpened) {
+            hiddenPostOpened.classList.toggle('none');
           }
         }
+    
       });
 
       return listItem;
