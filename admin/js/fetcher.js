@@ -261,7 +261,7 @@ moderationModule.fetcher = {
             contentType: post.contenttype,
             cover: post.cover,
             username: post.user?.username || "unknown",
-            img: tempMedia(post.user?.img) || '../img/profile_thumb.png',
+            img: tempMedia(post.user?.img) || '../img/noname.png',
             slug: post.user?.slug
           };
 

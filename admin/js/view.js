@@ -251,13 +251,13 @@ moderationModule.view = {
       });
 
       /* POST DETAILS */
-      if (item.kind === "post") {
+      if (item.kind == "post") {
         const postBlock = document.createElement("div");
         postBlock.className = "content_type_post";
         postBlock.innerHTML = `
           <div class="profile_post">
             <div class="profile">
-              <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+              <span class="profile_image"><img src="../svg/noname.svg" /></span>
               <span class="profile_detail">
                 <span class="user_name xl_font_size bold italic">${item.username}</span>
                 <span class="user_slug txt-color-gray">${item.slug}</span>
@@ -273,21 +273,20 @@ moderationModule.view = {
               <span class="timeagao txt-color-gray">2h</span>
             </div>
             <div class="post_text">${item.description || ""}</div>
-            <div class="hashtags txt-color-blue">#${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
+            <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
           </div>
         `;
         boxLeft.append(postBlock);
       }
 
       /* USER DETAILS */
-      if (item.kind === "user") {
+      if (item.kind == "user") {
         const userBlock = document.createElement("div");
         userBlock.className = "content_type_profile";
         userBlock.innerHTML = `
           <div class="profile">
               <div class="profile_image">
-                  <img src="../img/profile_thumb.png" />
-                  <img src="${item.media || "../img/profile_thumb.png"}" />
+                  <img src="${item.media || "../svg/noname.jpg"}" />
               </div>
               <div class="profile_detail">
                   <div class="user_info">
@@ -324,7 +323,7 @@ moderationModule.view = {
       }
 
       /* COMMENT DETAILS */
-      if (item.kind === "comment" && item.post) {
+      if (item.kind == "comment" && item.post) {
         const commentType = document.createElement("div");
         commentType.className = "content_type_comment";
         // Comment box
@@ -645,7 +644,7 @@ moderationModule.view = {
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
           <span class="profile">
             <span class="profile_image">
-              <img src="../img/profile_thumb.png" />
+              <img src="../svg/noname.svg" />
             </span>
             <span class="profile_detail">
               <span class="user_name xl_font_size bold italic">${item.moderatorName || "moderator"}</span>
@@ -669,10 +668,10 @@ moderationModule.view = {
         this.toggleRow(itemEl, contentBox);
       });
       
-      contentBox.addEventListener("click", (evt) => {
+      // contentBox.addEventListener("click", (evt) => {
         //evt.stopPropagation();
         //evt.preventDefault();
-      });
+      // });
     });
   },
 
