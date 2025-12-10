@@ -1658,6 +1658,62 @@
 }
 /*--------- End : Illegal account frame for comment -----------*/
 
+/*--------- Start : Hidden account frame  for comment -----------*/
+.comment_list .comment_item .commenter-pic.hidden_user_profile {
+	position: relative;
+}
+.comment_list .comment_item .commenter-pic.hidden_user_profile::after {
+  /*for disable click*/
+	content: "";
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.comment_list .comment_item .commenter-pic.hidden_user_profile .profile-picture {
+	filter: blur(4px);
+ 
+}
+.comment_list .comment_item .commenter-pic.hidden_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	flex-direction: column;
+	font-size: 40px;
+	position: absolute;
+	z-index: 1;
+	background: var(--white-secondary);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	padding: 19px;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .hidden_content .peer-icon{
+  display: none;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .cmt_userName,
+.comment_list .comment_item .commenter_info.hidden_user_profile .cmt_profile_id  {
+	filter: blur(4px);
+ 
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile {
+	position: relative;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .hidden_userfeed_frame {
+	cursor: pointer;
+}
+.comment_list .comment_item .commenter_info.hidden_user_profile .hidden_userfeed_frame {
+	cursor: pointer;
+	position: absolute;
+	left: 0;
+	top: -6px;
+  z-index: 1;
+}
+
+/*--------- End : Hidden account frame  for comment -----------*/
+
 /* comment report action END */
 .post_comment {
   margin-top: auto;

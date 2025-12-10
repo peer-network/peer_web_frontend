@@ -3081,6 +3081,11 @@ function addIllegalBadge() {
       if(objectUser.id != curentUserID ){
         container.classList.add("hidden_user_profile");
         container.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+         if(type==='comment'){
+          container.closest('.comment_item').querySelector(".commenter-pic").classList.add("hidden_user_profile");
+            container.closest('.comment_item').querySelector(".commenter-pic").insertAdjacentHTML("afterbegin",`<i class="peer-icon peer-icon-eye-close"></i>`);
+            
+          }
         
         container.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
           frame.addEventListener("click", (e) => {
@@ -3089,6 +3094,10 @@ function addIllegalBadge() {
             e.preventDefault();
             frame.remove(); 
             container.classList.remove('hidden_user_profile');
+             if(type==='comment'){
+              container.closest('.comment_item').querySelector(".commenter-pic").classList.remove("hidden_user_profile");
+              container.closest('.comment_item').querySelector(".commenter-pic .peer-icon").remove(); 
+             }
           }, { capture: true });
         });
       }
@@ -3107,3 +3116,5 @@ function addIllegalBadge() {
 
       }
   }
+
+  ///https://localhost/peer_web_frontend/dashboard.php?testuserid=6520ac47-f262-4f7e-b643-9dc5ee4cfa82&uservisibility=ILLEGAL
