@@ -24,7 +24,6 @@ moderationModule.view = {
       if (kind) arr = arr.filter(i => (i.kind || "").toString() === kind);
       if (reviewChk && reviewChk.checked) {
         const filtered = arr.filter(i => statusIsWaiting(i));
-        console.debug("applyAndRender: filtered waiting items", filtered.length, "of", arr.length, "kind=", kind);
         this.renderItems(filtered);
       } else {
         this.renderItems(arr);
@@ -109,12 +108,12 @@ moderationModule.view = {
     });
   },
 
-  renderItems() {
+  renderItems(items) {
     const container = moderationModule.helpers.getElement(".content_load");
     if (!container) return;
 
     container.innerHTML = "";
-    const items = moderationModule.store.filteredItems;
+    //const items = moderationModule.store.filteredItems;
     if (!items || !items.length) {
       container.textContent = "No items found";
       return;
@@ -574,7 +573,6 @@ moderationModule.view = {
         }
 
         const moderatedByBox = el;
-
         
         if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
         const moderatedAction = moderatedByBox.querySelector(".moderated_action");
@@ -740,7 +738,7 @@ moderationModule.view = {
           }
           moderationModule.store.filteredItems = filtered;
 
-          moderationModule.view.renderItems();
+          moderationModule.view.renderItems(filtered);
 
           moderationModule.store.pagination.offset += rawItems.length;
         } catch (err) {
