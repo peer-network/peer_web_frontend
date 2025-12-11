@@ -173,6 +173,17 @@ moderationModule.schema = {
               }
             }
           }
+          reporters {
+            userid
+            img
+            username
+            slug
+            biography
+            visibilityStatus
+            isHiddenForUsers
+            hasActiveReports
+            updatedat
+          }
         }
       }
     }
@@ -244,6 +255,17 @@ moderationModule.schema = {
               hasActiveReports
               updatedat
             }
+          }
+          reporters {
+            userid
+            img
+            username
+            slug
+            biography
+            visibilityStatus
+            isHiddenForUsers
+            hasActiveReports
+            updatedat
           }
         }
       }
