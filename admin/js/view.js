@@ -251,13 +251,15 @@ moderationModule.view = {
       });
 
       /* POST DETAILS */
-      if (item.kind === "post") {
+      if (item.kind == "post") {
         const postBlock = document.createElement("div");
         postBlock.className = "content_type_post";
         postBlock.innerHTML = `
           <div class="profile_post">
             <div class="profile">
-              <span class="profile_image"><img src="../img/profile_thumb.png" /></span>
+              <span class="profile_image">
+                <img src="../svg/noname.svg" />
+              </span>
               <span class="profile_detail">
                 <span class="user_name xl_font_size bold italic">${item.username}</span>
                 <span class="user_slug txt-color-gray">${item.slug}</span>
@@ -267,27 +269,29 @@ moderationModule.view = {
               <a class="button btn-transparent" href="../dashboard.php?postid=${item?.postid}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
             </div>
           </div>
-          <div class="post_detail">
-            <div class="post_title">
-              <h2 class="xxl_font_size bold">${item.title}</h2>
-              <span class="timeagao txt-color-gray">2h</span>
+          <div class="post_detail post_type_${item?.contentType}">
+           <div class="post_media">${item?.media}</div>
+           <div class="post_info">
+              <div class="post_title">
+                <h2 class="xxl_font_size bold">${item.title}</h2>
+                <span class="timeagao txt-color-gray">2h</span>
+              </div>
+              <div class="post_text">${item.description || ""}</div>
+              <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
             </div>
-            <div class="post_text">${item.description || ""}</div>
-            <div class="hashtags txt-color-blue">#${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
           </div>
         `;
         boxLeft.append(postBlock);
       }
 
       /* USER DETAILS */
-      if (item.kind === "user") {
+      if (item.kind == "user") {
         const userBlock = document.createElement("div");
         userBlock.className = "content_type_profile";
         userBlock.innerHTML = `
           <div class="profile">
               <div class="profile_image">
-                  <img src="../img/profile_thumb.png" />
-                  <img src="${item.media || "../img/profile_thumb.png"}" />
+                  <img src="${item.media || "../svg/noname.jpg"}" />
               </div>
               <div class="profile_detail">
                   <div class="user_info">
@@ -324,7 +328,7 @@ moderationModule.view = {
       }
 
       /* COMMENT DETAILS */
-      if (item.kind === "comment" && item.post) {
+      if (item.kind == "comment" && item.post) {
         const commentType = document.createElement("div");
         commentType.className = "content_type_comment";
         // Comment box
@@ -375,7 +379,7 @@ moderationModule.view = {
             <div class="post_info">
               <div class="post_title">
                 <h2 class="xl_font_size bold">${item?.post?.title}</h2>
-                <span class="timeagao txt-color-gray">2h</span>
+                <span class="timeagao txt-color-gray">${item.post.createdat}</span>
               </div>
               <div class="post_text">${item?.post?.description}</div>
               <div class="hashtags txt-color-blue">
@@ -645,7 +649,7 @@ moderationModule.view = {
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
           <span class="profile">
             <span class="profile_image">
-              <img src="../img/profile_thumb.png" />
+              <img src="../svg/noname.svg" />
             </span>
             <span class="profile_detail">
               <span class="user_name xl_font_size bold italic">${item.moderatorName || "moderator"}</span>
@@ -669,10 +673,10 @@ moderationModule.view = {
         this.toggleRow(itemEl, contentBox);
       });
       
-      contentBox.addEventListener("click", (evt) => {
+      // contentBox.addEventListener("click", (evt) => {
         //evt.stopPropagation();
         //evt.preventDefault();
-      });
+      // });
     });
   },
 
@@ -729,17 +733,15 @@ moderationModule.view = {
           const normalized = await moderationModule.fetcher.normalizeItems(rawItems);
           const enriched = await moderationModule.fetcher.enrichCommentsWithPosts(normalized);
 
-          moderationModule.store.items.push(...enriched);
+          moderationModule.store.filteredItems.push(...enriched);
 
           const reviewChk = document.getElementById("review_chk");
-          let filtered = moderationModule.store.items;
+          let filtered = moderationModule.store.filteredItems;
           if (reviewChk?.checked) {
             filtered = filtered.filter(i => (i.status || "").toLowerCase().includes("waiting"));
           }
-          moderationModule.store.filteredItems = filtered;
-
+          //moderationModule.store.filteredItems = filtered;
           moderationModule.view.renderItems(filtered);
-
           moderationModule.store.pagination.offset += rawItems.length;
         } catch (err) {
           console.error("Scroll fetch error:", err);
