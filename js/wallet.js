@@ -978,7 +978,10 @@ function renderTransferFormView(user) {
     const result = validateAmount(input, balanceAmount);
 
     if (result.valid) {
-        const amount = parseFloat(input.value);
+      
+       // const amount = parseFloat(input.value);
+        const amount = input.value;
+        
         const finalresult = showTotalAmountUI(input,amount,balanceAmount);   // <-- CALL UI BUILDER
 
        
@@ -1078,7 +1081,8 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
 
   
   const data = getCommissionBreakdown(amount);
-  const  total_tokens =data.totalCommission + amount;
+  console.log(data);
+  const  total_tokens =data.totalUsed;
 
   
 
@@ -1090,21 +1094,21 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
     <div class="fee-section close">
       <div class="fee-title  md_font_size txt-color-gray">
         Transfer fee 
-        <span class="fee-total bold xl_font_size">${formatNum(data.totalCommission)}</span>
+        <span class="fee-total bold xl_font_size">${(data.totalCommission)}</span>
       </div>
 
       <div class="fee-breakdowns">
         ${data.breakdown.map(item => `
           <div class="fee-item txt-color-gray">
             <span class="label">${item.label}</span>
-            <span class="value">${formatNum(item.amount)}</span>
+            <span class="value">${(item.amount)}</span>
           </div>
         `).join("")}
       </div>
 
       <div class="total_amount  md_font_size">
         Total amount 
-        <span class="final-total bold xl_font_size">${formatNum(total_tokens)}</span>
+        <span class="final-total bold xl_font_size">${(data.totalUsed)}</span>
       </div>
     </div>
   `;
@@ -1132,13 +1136,11 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
    return true;
 
 }
-function formatNum(num) {
-  return parseFloat(num.toFixed(8)).toString();
-}
 
 
 
 function renderCheckoutScreen(user, amount) {
+ 
   const dropdown = document.getElementById("transferDropdown");
   dropdown.querySelector(".modal-actions").remove();
   dropdown.querySelector(".recipient-info .edit_btn").remove();
@@ -1187,7 +1189,7 @@ function renderCheckoutScreen(user, amount) {
   }
 
   const totalAmount = calculateTotalWithFee(amount);
-  //console.log(totalAmount,balance);
+  
 
   // Actions
   const actions = document.createElement("div");
@@ -1463,7 +1465,7 @@ async function resolveTransfer(recipientId, numberOfTokens,message) {
       message: message,
     },
   });
-
+ 
   const response = await fetch(GraphGL, {
     method: "POST",
     headers,
@@ -1485,45 +1487,97 @@ function calculateTotalWithFee(amount) {
   return parseFloat(amount + fee);
 }
 
+function mul(a, b) {
+  a = a.toString();
+  b = b.toString();
+
+  const aDecimal = (a.split('.')[1] || '').length;
+  const bDecimal = (b.split('.')[1] || '').length;
+
+  const aInt = a.replace('.', '');
+  const bInt = b.replace('.', '');
+
+  const result = BigInt(aInt) * BigInt(bInt);
+  const decimalPlaces = aDecimal + bDecimal;
+
+  const resultStr = result.toString();
+  const len = resultStr.length;
+
+  if (decimalPlaces === 0) return resultStr;
+
+  // Insert decimal point
+  if (len <= decimalPlaces) {
+    return '0.' + '0'.repeat(decimalPlaces - len) + resultStr;
+  }
+
+  return resultStr.slice(0, len - decimalPlaces) + '.' + resultStr.slice(len - decimalPlaces);
+}
+
+
 function getCommissionBreakdown(transferAmount) {
-  const baseAmount = transferAmount;
-  const breakdown = [];
+  const base = transferAmount.toString(); // keep as string
 
-  // Mandatory fees (always included)
-  const platformFee = baseAmount * 0.02;
-  const liquidityFee = baseAmount * 0.01;
-  const burnFee = baseAmount * 0.01;
+  const platformFee = mul(base, "0.02");
+  const liquidityFee = mul(base, "0.01");
+  const burnFee = mul(base, "0.01");
 
-  breakdown.push({
-    label: "2% to Peer Bank (platform fee)",
-    amount: platformFee
-  }, {
-    label: "1% Burned (removed from supply)",
-    amount: liquidityFee
-  }, {
-    label: "1% is burned, ensuring deflation",
-    amount: burnFee
-  });
+  let breakdown = [
+    { label: "2% to Peer Bank (platform fee)", amount: platformFee },
+    { label: "1% Burned (removed from supply)", amount: liquidityFee },
+    { label: "1% is burned, ensuring deflation", amount: burnFee }
+  ];
 
-  let inviterFee = 0;
+  let inviterFee = "0";
   if (isInvited !== "") {
-    inviterFee = baseAmount * 0.01;
+    inviterFee = mul(base, "0.01");
     breakdown.push({
       label: "1% to your Inviter",
       amount: inviterFee
     });
   }
 
-  const totalCommission = platformFee + liquidityFee + burnFee + inviterFee;
-  const totalUsed = baseAmount + totalCommission;
+  // totalCommission = platformFee + liquidityFee + burnFee + inviterFee
+  const totalCommission = [
+    platformFee,
+    liquidityFee,
+    burnFee,
+    inviterFee,
+  ].reduce(addStrings, "0");
+
+  const totalUsed = addStrings(base, totalCommission);
 
   return {
-    sentToFriend: baseAmount,
+    sentToFriend: base,
     breakdown,
     totalCommission,
     totalUsed
   };
 }
+function addStrings(a, b) {
+  // Normalize inputs
+  a = a.toString();
+  b = b.toString();
+
+  const aDec = (a.split('.')[1] || '').length;
+  const bDec = (b.split('.')[1] || '').length;
+  const maxDec = Math.max(aDec, bDec);
+
+  const aInt = a.replace('.', '') + '0'.repeat(maxDec - aDec);
+  const bInt = b.replace('.', '') + '0'.repeat(maxDec - bDec);
+
+  const sum = (BigInt(aInt) + BigInt(bInt)).toString();
+
+  if (maxDec === 0) return sum;
+
+  const len = sum.length;
+  if (len <= maxDec) {
+    return "0." + "0".repeat(maxDec - len) + sum;
+  }
+
+  return sum.slice(0, len - maxDec) + "." + sum.slice(len - maxDec);
+}
+
+
 
 function closeTransferModal() {
   const dropdown = document.getElementById("transferDropdown");
