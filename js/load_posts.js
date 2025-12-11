@@ -915,12 +915,6 @@ async function postsLaden(postbyUserID=null) {
       /*---Hidden && Illegal User Frame */
       userProfileVisibilty(UserID,objekt.user,card_header_left);  
       /*---End Hidden && Illegal User Frame */
-
-
-
-
-
-
       
       card.addEventListener("click", function handleCardClick() {
         postClicked(objekt);
