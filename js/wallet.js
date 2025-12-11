@@ -1081,7 +1081,7 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
 
   
   const data = getCommissionBreakdown(amount);
-  console.log(data);
+  //console.log(data);
   const  total_tokens =data.totalUsed;
 
   
