@@ -35,10 +35,15 @@ moderationModule.fetcher = {
         item.contentType = post.contenttype;
         item.postid = post.id;
         switch (post.contenttype) {
-          case "image":
-            item.media = moderationModule.helpers.safeMedia(post.media);
-            item.icon = "peer-icon peer-icon-camera";
-           
+            case "image":
+              item.media = '';
+              const urls = moderationModule.helpers.safeMedia2(post.media);
+              if (urls.length === 1) {
+                item.media = urls.map((url, idx) =>
+                              `<img src="${url}" alt="post image ${idx + 1}" />`
+                            ).join("");
+              }
+              item.icon = "peer-icon peer-icon-camera";
             break;
 
           case "text":
@@ -49,18 +54,33 @@ moderationModule.fetcher = {
             } catch (err) {
               console.error("Failed to parse text media:", err);
             }
-            item.media = null;
+            item.media = '';
             item.icon = "peer-icon peer-icon-text";
             break;
           
           case "audio":
-            
-            item.media = moderationModule.helpers.safeMedia(post.cover, "../img/audio-bg.png");
+            item.media = '';
+            const audioUrl = moderationModule.helpers.safeMedia(post.media);
+            const coverUrl = moderationModule.helpers.safeMedia(post.cover);
+            if (audioUrl) {
+              if (coverUrl) {
+                item.media = `<div class="audio_cover"><img src="${coverUrl}" alt="audio cover" /></div><audio src="${audioUrl}" controls></audio>`;
+              } else {
+                item.media = `<audio src="${audioUrl}" controls></audio>`;
+              }
+            }
+           
             item.icon = "peer-icon peer-icon-audio-fill";
             break;
           
           case "video":
-            item.media = moderationModule.helpers.safeMedia(post.cover, "../img/video-bg.png");
+            item.media = '';
+            const mediaUrl = moderationModule.helpers.safeMedia2(post.media);
+            if (mediaUrl) {
+              mediaUrl.map((url) => {
+                item.media = `<video src="${url}" controls loop></video>`;
+              });
+            } 
             item.icon = "peer-icon peer-icon-play-btn";
             break;
           
@@ -251,7 +271,7 @@ moderationModule.fetcher = {
 
   async enrichCommentsWithPosts(items) {
     for (const item of items) {
-      if (item.contentType == "comment" || item.contentType == "post" && item.postid) {
+      if (item.contentType == "comment" && item.postid) {
         const post = await this.loadPostById(item.postid);
         if (post) {
           item.post = {
@@ -262,7 +282,8 @@ moderationModule.fetcher = {
             cover: post.cover,
             username: post.user?.username || "unknown",
             img: tempMedia(post.user?.img) || '../img/noname.png',
-            slug: post.user?.slug
+            slug: post.user?.slug,
+            createdat: post.createdat
           };
 
           const mediaUrl = moderationModule.helpers.safeMedia(post.media);

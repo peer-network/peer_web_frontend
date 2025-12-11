@@ -59,6 +59,17 @@ moderationModule.helpers = {
       }
   },
 
+  safeMedia2(raw, fallback = "") {
+    try {
+      const arr = JSON.parse(raw || "[]");
+      if (!Array.isArray(arr) || arr.length === 0) return [fallback];
+
+      return arr.map(m => domain.replace("://", "://media.") + m.path);
+    } catch {
+      return [fallback];
+    }
+  },
+
   formatDate(dateString) {
     const date = new Date(dateString);
     

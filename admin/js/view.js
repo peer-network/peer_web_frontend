@@ -257,7 +257,9 @@ moderationModule.view = {
         postBlock.innerHTML = `
           <div class="profile_post">
             <div class="profile">
-              <span class="profile_image"><img src="../svg/noname.svg" /></span>
+              <span class="profile_image">
+                <img src="../svg/noname.svg" />
+              </span>
               <span class="profile_detail">
                 <span class="user_name xl_font_size bold italic">${item.username}</span>
                 <span class="user_slug txt-color-gray">${item.slug}</span>
@@ -267,13 +269,16 @@ moderationModule.view = {
               <a class="button btn-transparent" href="../dashboard.php?postid=${item?.postid}" target='_blank'>See full post <i class="peer-icon peer-icon-arrow-right"></i></a>
             </div>
           </div>
-          <div class="post_detail">
-            <div class="post_title">
-              <h2 class="xxl_font_size bold">${item.title}</h2>
-              <span class="timeagao txt-color-gray">2h</span>
+          <div class="post_detail post_type_${item?.contentType}">
+           <div class="post_media">${item?.media}</div>
+           <div class="post_info">
+              <div class="post_title">
+                <h2 class="xxl_font_size bold">${item.title}</h2>
+                <span class="timeagao txt-color-gray">2h</span>
+              </div>
+              <div class="post_text">${item.description || ""}</div>
+              <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
             </div>
-            <div class="post_text">${item.description || ""}</div>
-            <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
           </div>
         `;
         boxLeft.append(postBlock);
@@ -374,7 +379,7 @@ moderationModule.view = {
             <div class="post_info">
               <div class="post_title">
                 <h2 class="xl_font_size bold">${item?.post?.title}</h2>
-                <span class="timeagao txt-color-gray">2h</span>
+                <span class="timeagao txt-color-gray">${item.post.createdat}</span>
               </div>
               <div class="post_text">${item?.post?.description}</div>
               <div class="hashtags txt-color-blue">
@@ -736,7 +741,6 @@ moderationModule.view = {
             filtered = filtered.filter(i => (i.status || "").toLowerCase().includes("waiting"));
           }
           //moderationModule.store.filteredItems = filtered;
-          console.log("Infinite scroll - rendering items:", filtered);
           moderationModule.view.renderItems(filtered);
           moderationModule.store.pagination.offset += rawItems.length;
         } catch (err) {
