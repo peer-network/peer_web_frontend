@@ -231,24 +231,27 @@ document.addEventListener("DOMContentLoaded", () => {
           status
           ResponseCode
           affectedRows {
-              id
-              username
-              status
-              slug
-              img
-              biography
-              visibilityStatus
-              hasActiveReports
-              isfollowed
-              isfollowing
-              isreported
-              amountposts
-              amounttrending
-              amountfollowed
-              amountfollower
-              amountfriends
-              amountblocked
-              amountreports
+            id
+            username
+            status
+            slug
+            img
+            biography
+            visibilityStatus
+            isHiddenForUsers
+            hasActiveReports
+            isfollowed
+            isfollowing
+            iFollowThisUser
+            thisUserFollowsMe
+            isreported
+            amountposts
+            amounttrending
+            amountfollowed
+            amountfollower
+            amountfriends
+            amountblocked
+            amountreports
           }
         }
       }
