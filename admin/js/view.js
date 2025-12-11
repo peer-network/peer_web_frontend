@@ -728,17 +728,16 @@ moderationModule.view = {
           const normalized = await moderationModule.fetcher.normalizeItems(rawItems);
           const enriched = await moderationModule.fetcher.enrichCommentsWithPosts(normalized);
 
-          moderationModule.store.items.push(...enriched);
+          moderationModule.store.filteredItems.push(...enriched);
 
           const reviewChk = document.getElementById("review_chk");
-          let filtered = moderationModule.store.items;
+          let filtered = moderationModule.store.filteredItems;
           if (reviewChk?.checked) {
             filtered = filtered.filter(i => (i.status || "").toLowerCase().includes("waiting"));
           }
-          moderationModule.store.filteredItems = filtered;
-
+          //moderationModule.store.filteredItems = filtered;
+          console.log("Infinite scroll - rendering items:", filtered);
           moderationModule.view.renderItems(filtered);
-
           moderationModule.store.pagination.offset += rawItems.length;
         } catch (err) {
           console.error("Scroll fetch error:", err);

@@ -197,8 +197,8 @@ moderationModule.fetcher = {
       const normalized = await this.normalizeItems(rawItems);
       const enriched = await this.enrichCommentsWithPosts(normalized);
       
-      // moderationModule.store.items = enriched;
-      // moderationModule.store.filteredItems = enriched;
+      moderationModule.store.items = enriched;
+      moderationModule.store.filteredItems = enriched;
       moderationModule.view.renderItems(enriched);
       moderationModule.store.pagination.offset = enriched.length;
     } catch (err) {
@@ -251,7 +251,6 @@ moderationModule.fetcher = {
 
   async enrichCommentsWithPosts(items) {
     for (const item of items) {
-      console.log("Enriching item:", item);
       if (item.contentType == "comment" || item.contentType == "post" && item.postid) {
         const post = await this.loadPostById(item.postid);
         if (post) {
