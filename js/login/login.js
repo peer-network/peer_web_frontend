@@ -1,14 +1,34 @@
 const rememberMeCheckbox = document.getElementById("rememberMe");
-const refreshToken = getCookie("refreshToken");
 
-async function autoLogin() {
-  const remember = localStorage.getItem("rememberMe") === "true";
-  // Auto-login if tokens exist
-  if (remember && refreshToken) {
-    rememberMeCheckbox.checked = true;
+const shouldRememberUser = () =>
+  localStorage.getItem("rememberMe") === "true" ||
+  getCookie("rememberMe") === "true";
+
+async function autoLogin(controller) {
+  if (!shouldRememberUser() || !controller) return;
+
+  const refreshToken = getCookie("refreshToken");
+  const savedEmail = getCookie("userEmail");
+  const savedPassword = getCookie("userPassword");
+
+  if (rememberMeCheckbox) rememberMeCheckbox.checked = true;
+
+  // Try silent refresh first
+  if (refreshToken) {
     const accessToken = await refreshAccessToken(refreshToken);
-
     if (accessToken) {
+      window.location.href = "dashboard.php";
+      return;
+    }
+  }
+
+  // If refresh fails, try silent login with stored credentials
+  if (savedEmail && savedPassword) {
+    const success = await controller.loginUser(
+      { email: savedEmail, password: savedPassword },
+      { silent: true, rememberOverride: true }
+    );
+    if (success) {
       window.location.href = "dashboard.php";
     }
   }
@@ -268,8 +288,9 @@ class AccessibleLoginForm {
     }, 3000);
   }
 
-  async loginUser(formData) {
-    // GraphQL-Mutation für die Registrierung eines Benutzers
+  async loginUser(formData, options = {}) {
+    const { silent = false, rememberOverride = null } = options;
+    // GraphQL-Mutation fuer die Registrierung eines Benutzers
     const query = `
                 mutation Login($email: String!, $password: String!) {
                   login(email: $email, password: $password) {
@@ -299,7 +320,7 @@ class AccessibleLoginForm {
         }),
       });
 
-      // Überprüfen, ob die HTTP-Antwort erfolgreich war
+      // Ueberpruefen, ob die HTTP-Antwort erfolgreich war
       if (!response.ok) {
         throw new Error(`HTTP Fehler! Status: ${response.status}`);
       }
@@ -312,25 +333,32 @@ class AccessibleLoginForm {
         result.data.login.status === "success" &&
         result.data.login.ResponseCode === "10801"
       ) {
-        // Use cookie helpers consistently
-        const rememberMeChecked = rememberMeCheckbox.checked;
+        const rememberMeChecked =
+          rememberOverride ?? rememberMeCheckbox.checked;
+        const emailValue = formData.email;
+        const passwordValue = formData.password;
         if (rememberMeChecked) {
-          setCookie("authToken", result.data.login.accessToken, 3650); // approx. 10 years
+          setCookie("authToken", result.data.login.accessToken, 7 ); // approx. 10 years
           setCookie("refreshToken", result.data.login.refreshToken, 3650); // approx. 10 years
-          setCookie("userEmail", email, 3650);
+          setCookie("userEmail", emailValue, 3650);
+          setCookie("userPassword", passwordValue, 3650);
+          setCookie("rememberMe", "true", 3650);
           localStorage.setItem("rememberMe", "true"); // adding RememberMe-flag on checked
         } else {
           setCookie("authToken", result.data.login.accessToken);
           setCookie("refreshToken", result.data.login.refreshToken);
-          setCookie("userEmail", email);
+          setCookie("userEmail", emailValue);
+          eraseCookie("userPassword");
+          eraseCookie("rememberMe");
           localStorage.removeItem("rememberMe"); // removing RememberMe-flag on unchecked
         }
-        this.showToast(
-          "Login successfully. " +
-            userfriendlymsg(result.data.login.ResponseCode),
-          "success"
-        );
-        //scheduleSilentRefresh(result.data.login.accessToken, result.data.login.refreshToken);
+        if (!silent) {
+          this.showToast(
+            "Login successfully. " +
+              userfriendlymsg(result.data.login.ResponseCode),
+            "success"
+          );
+        }
         window.location.href = "dashboard.php";
         return true;
       } else {
@@ -349,10 +377,13 @@ class AccessibleLoginForm {
             message
           );
         } else {
-          this.showToast(
-            "Login failed. " + userfriendlymsg(result.data.login.ResponseCode),
-            "error"
-          );
+          if (!silent) {
+            this.showToast(
+              "Login failed. " +
+                userfriendlymsg(result.data.login.ResponseCode),
+              "error"
+            );
+          }
           console.error("Login failed:" + result.data.login.ResponseCode);
         }
         return false;
@@ -360,6 +391,9 @@ class AccessibleLoginForm {
     } catch (error) {
       // Fehlerbehandlung bei Netzwerkfehlern oder anderen Problemen
       console.error("An Error occured:", error);
+      if (!silent) {
+        this.showToast("Login failed: " + error.message, "error");
+      }
     }
   }
 }
@@ -380,9 +414,9 @@ document.addEventListener("DOMContentLoaded", () => {
       passwordInput.focus();
     }
   }
-  autoLogin();
+  const loginController = new AccessibleLoginForm();
+  autoLogin(loginController);
   fetchEndpoints();
-  new AccessibleLoginForm();
 });
 // Additional utility for cookie handling (keeping your original function)
 
@@ -400,15 +434,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // updated setCookie function
 function setCookie(name, value, days) {
+  const maxAgeSeconds = days ? days * 24 * 60 * 60 + 3600: null;//
   let cookie = `${name}=${encodeURIComponent(value || "")}; path=/; Secure; SameSite=Strict`;
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    cookie += `; expires=${date.toUTCString()}`;
-    localStorage.setItem(name + "_expiry", date.toUTCString());
+  if (maxAgeSeconds) {
+    cookie += `; Max-Age=${maxAgeSeconds}`;
+    // Cookie-Expires muss laut Spezifikation in UTC stehen; eine scheinbare 1h-Differenz ist nur die lokale Zeitzone (Sommer/Winterzeit).
+    const expiry = new Date(Date.now() + maxAgeSeconds * 1000).toUTCString();
+    localStorage.setItem(`${name}_expiry`, expiry);
   }
   document.cookie = cookie;
 }
+
 
 // Update value but keep expiry
 function updateCookieValue(name, value) {
@@ -431,4 +467,9 @@ function getCookie(name) {
       return decodeURIComponent(c.substring(nameEQ.length));
   }
   return null;
+}
+
+function eraseCookie(name) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; Secure; SameSite=Strict`;
+  localStorage.removeItem(name + "_expiry");
 }

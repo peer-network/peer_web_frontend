@@ -20,25 +20,191 @@ function decodeJwtPayload(string $token): ?array {
     return is_array($data) ? $data : null;
 }
 
-function checkAuth($redirectMessage = "unauthorized") {
-    $token = $_COOKIE['authToken'] ?? '';
-    if ($token === '') {
-        header("Location: login.php?message=$redirectMessage");
-        exit();
+/**
+ * Build a shared GraphQL request payload.
+ */
+function graphqlRequest(string $domain, string $protocol, string $query, array $variables = [], array $headers = []): ?array {
+    $normalizedDomain = preg_replace('#^https?://#i', '', trim($domain));
+    $endpoint = $protocol . '://' . $normalizedDomain . '/graphql';
+
+    $payload = json_encode([
+        'query' => $query,
+        'variables' => $variables ?: new stdClass(),
+    ]);
+
+    $headerString = "Content-Type: application/json\r\n";
+    foreach ($headers as $name => $value) {
+        $headerString .= $name . ': ' . $value . "\r\n";
     }
 
-    $payload = decodeJwtPayload($token);
-    $isExpired = !is_array($payload) || !isset($payload['exp']) || (int) $payload['exp'] < time();
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => $headerString,
+            'content' => $payload,
+            'timeout' => 8,
+            'ignore_errors' => true,
+        ],
+    ]);
 
-    if ($isExpired) {
-        // Clear potentially stale cookies to force fresh login
-        setcookie('authToken', '', time() - 3600, '/', '', true, true);
-        setcookie('refreshToken', '', time() - 3600, '/', '', true, true);
-        header("Location: login.php?message=sessionExpired");
-        exit();
+    $body = @file_get_contents($endpoint, false, $context);
+    if ($body === false) {
+        return null;
+    }
+
+    return json_decode($body, true);
+}
+
+/**
+ * Store auth and helper cookies with optional long-term expiry.
+ */
+function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe, ?string $email = null, ?string $password = null): void {
+    $expiry = $rememberMe ? time() + (60) : 0; // approx. 10 years 3650 * 24 * 60 * 
+    $options = [
+        'expires' => $expiry,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'Strict',
+    ];
+
+    setcookie('authToken', $accessToken, $options);
+    setcookie('refreshToken', $refreshToken, $options);
+    setcookie('rememberMe', $rememberMe ? 'true' : 'false', $options);
+
+    if ($email !== null) {
+        setcookie('userEmail', $email, $options);
+    }
+
+    if ($password !== null) {
+        setcookie('userPassword', $password, $options);
     }
 }
-fetchHelloData($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
+
+/**
+ * Remove all auth related cookies.
+ */
+function clearAuthCookies(): void {
+    $names = ['authToken', 'refreshToken', 'rememberMe', 'userEmail', 'userPassword'];
+    $options = [
+        'expires' => time() - 3600,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'Strict',
+    ];
+    foreach ($names as $name) {
+        setcookie($name, '', $options);
+    }
+}
+
+/**
+ * Try to refresh tokens using the refreshToken cookie.
+ */
+function attemptTokenRefresh(string $refreshToken, string $domain, string $protocol = 'https'): ?array {
+    $query = <<<'GRAPHQL'
+mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+        status
+        ResponseCode
+        accessToken
+        refreshToken
+    }
+}
+GRAPHQL;
+
+    $data = graphqlRequest($domain, $protocol, $query, ['refreshToken' => $refreshToken]);
+    if (!is_array($data)) {
+        return null;
+    }
+
+    $result = $data['data']['refreshToken'] ?? null;
+
+    if (!is_array($result) || $result['status'] !== 'success' || empty($result['accessToken']) || empty($result['refreshToken'])) {
+        return null;
+    }
+
+    return [
+        'authToken' => $result['accessToken'],
+        'refreshToken' => $result['refreshToken'],
+    ];
+}
+
+/**
+ * Fallback login using stored email/password cookies.
+ */
+function attemptPasswordLogin(string $email, string $password, string $domain, string $protocol = 'https'): ?array {
+    if ($email === '' || $password === '') {
+        return null;
+    }
+
+    $query = <<<'GRAPHQL'
+mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+        status
+        ResponseCode
+        accessToken
+        refreshToken
+    }
+}
+GRAPHQL;
+
+    $data = graphqlRequest($domain, $protocol, $query, ['email' => $email, 'password' => $password]);
+    if (!is_array($data)) {
+        return null;
+    }
+
+    $result = $data['data']['login'] ?? null;
+
+    if (!is_array($result) || $result['status'] !== 'success' || empty($result['accessToken']) || empty($result['refreshToken'])) {
+        return null;
+    }
+
+    return [
+        'authToken' => $result['accessToken'],
+        'refreshToken' => $result['refreshToken'],
+    ];
+}
+
+function checkAuth($redirectMessage = "unauthorized") {
+    global $domain, $protocol;
+
+    $token = $_COOKIE['authToken'] ?? '';
+    $payload = $token !== '' ? decodeJwtPayload($token) : null;
+    $isExpired = !is_array($payload) || !isset($payload['exp']) || (int) $payload['exp'] < time();
+    $temP = (int) $payload['exp'] - time();
+    // Token still valid - proceed.
+    if ($token !== '' && !$isExpired) {
+        return;
+    }
+
+    $refreshToken = $_COOKIE['refreshToken'] ?? '';
+    $rememberMe = ($_COOKIE['rememberMe'] ?? '') === 'true';
+    $email = $_COOKIE['userEmail'] ?? '';
+    $password = $_COOKIE['userPassword'] ?? '';
+
+    // Attempt silent refresh first.
+    if ($refreshToken !== '') {
+        $refreshed = attemptTokenRefresh($refreshToken, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''), $protocol ?? 'https');
+        if ($refreshed !== null) {
+            setAuthCookies($refreshed['authToken'], $refreshed['refreshToken'], $rememberMe, $email, $password !== '' ? $password : null);
+            return;
+        }
+    }
+
+    // Fallback to stored credentials when available.
+    if ($rememberMe && $email !== '' && $password !== '') {
+        $login = attemptPasswordLogin($email, $password, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''), $protocol ?? 'https');
+        if ($login !== null) {
+            setAuthCookies($login['authToken'], $login['refreshToken'], true, $email, $password);
+            return;
+        }
+    }
+
+    clearAuthCookies();
+    header("Location: login.php?message=$redirectMessage");
+    exit();
+}
      
 
 /**
@@ -72,7 +238,7 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
     ]);
     
 
-    $attempt = function (string $scheme, string $path) use ($domain, $payload, $token): array {
+    $attempt = function (string $scheme, string $path) use ($domain, $payload, $token): ?array {
         $endpoint = $scheme . '://' . $domain . $path;
         $context = stream_context_create([
             'http' => [
@@ -91,25 +257,7 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
 
         // Check if API returned { "error": "Invalid Access Token" }
         if (!empty($data['error']) && $data['error'] === 'Invalid Access Token') {
-
-            // ---- CLEAR SESSION ----
-            session_start();
-            $_SESSION = [];             // empty session array
-            session_destroy();          // destroy session
-
-            // ---- CLEAR ALL COOKIES ----
-            if (isset($_SERVER['HTTP_COOKIE'])) {
-                $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                foreach ($cookies as $cookie) {
-                    $parts = explode('=', $cookie);
-                    $name = trim($parts[0]);
-                    setcookie($name, '', time() - 3600, '/'); // expire cookie
-                }
-            }
-
-            // Optionally redirect user
-            header("Location: login.php");
-            exit;
+            return null;
         }
 
 
@@ -132,7 +280,7 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
     foreach ($schemes as $scheme) {
         foreach ($paths as $path) {
             $response = $attempt($scheme, $path);
-            if ($response['status'] === 200 && $response['body'] !== false) {
+            if ($response !== null && $response['status'] === 200 && $response['body'] !== false) {
                 $data = json_decode($response['body'], true);
                 return $data['data']['hello'] ?? null;
             }
