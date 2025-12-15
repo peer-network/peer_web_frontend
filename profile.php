@@ -78,7 +78,7 @@ checkAuth("unauthorized");
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       <div class="profile_edit_box">
-        <a class="button btn-white edit-profile bold" href="profileSettings.php"><i class="peer-icon peer-icon-edit-pencil"></i>Edit</a>
+        <a id="profileEditBtn" class="button btn-white edit-profile bold none" href="profileSettings.php"><i class="peer-icon peer-icon-edit-pencil"></i>Edit</a>
         <div class="ads_container_wrap">
           <div class="button boost_adsStats_container" role="button" aria-expanded="false" aria-controls="boostDropdown" tabindex="0">Ads</div>
           <div class="boost_dropdown_wrapper" hidden>

@@ -177,8 +177,7 @@ function enforceAllowedUser(array $allowedUserIds, string $domain, string $proto
  * Deny access unless the current user role string is ADMIN.
  */
 function enforceAdminRole(string $domain, string $protocol = 'https'): void {
-    $role = fetchUserRoleString($domain, $protocol);
- 
+    $role = fetchUserRoleString($domain, $protocol); 
     if ($role !== 'MODERATOR') {
         http_response_code(403);
         exit('Access denied');

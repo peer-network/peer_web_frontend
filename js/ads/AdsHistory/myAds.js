@@ -298,6 +298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       
         if(ad.post.visibilityStatus === 'ILLEGAL' || ad.post.visibilityStatus === 'illegal'){
+          console.log(ad.post);
           const adInfo = listItem.querySelector('.ad_info'); 
           
           if (adInfo) { 

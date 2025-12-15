@@ -29,7 +29,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accessToken = getCookie("authToken");
   if (accessToken) {
     hello();
-    getUser();
+    getUser().then(profile2 => {
+      const ProfilevisibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
+      const ProfileWidget = document.querySelector(".widget-profile");
+      if(ProfileWidget) {
+       ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+      }
+      if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
+        addIllegalBadge();
+      }
+      
+
+    });
     dailyfree();
     currentliquidity();
     const userData = await getUserInfo();
@@ -45,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     //console.log(userData.userPreferences.onboardingsWereShown);
-
+    
     if (userData) {
       const onboardings = userData.userPreferences.onboardingsWereShown || [];
       // Example: check if INTROONBOARDING is already shown
