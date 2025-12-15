@@ -102,16 +102,15 @@ function clearAuthCookies(): void {
  * Try to refresh tokens using the refreshToken cookie.
  */
 function attemptTokenRefresh(string $refreshToken, string $domain, string $protocol = 'https'): ?array {
-    $query = <<<'GRAPHQL'
-mutation RefreshToken($refreshToken: String!) {
-    refreshToken(refreshToken: $refreshToken) {
-        status
-        ResponseCode
-        accessToken
-        refreshToken
-    }
-}
-GRAPHQL;
+    $query = '
+        mutation RefreshToken($refreshToken: String!) {
+            refreshToken(refreshToken: $refreshToken) {
+                status
+                ResponseCode
+                accessToken
+                refreshToken
+            }
+        }';
 
     $data = graphqlRequest($domain, $protocol, $query, ['refreshToken' => $refreshToken]);
     if (!is_array($data)) {
