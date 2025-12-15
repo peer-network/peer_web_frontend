@@ -39,7 +39,13 @@ document.addEventListener("DOMContentLoaded", async () => {
        ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
       }
       if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
-        addIllegalBadge();
+       
+        const illegalBadge = document.createElement('div');
+        illegalBadge.classList.add ('profile_illegal_badge');
+        illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
+        
+        profileHeader.insertAdjacentElement("afterend", illegalBadge);
+            
       }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
 
          

@@ -1283,10 +1283,13 @@ footer {
     width: 100%;
     max-width: 340px;
     margin: 0 auto 20px;
-	color: #fff;
+    color: #fff;
+    padding: 0;
+    flex-wrap: nowrap;
 }
 .widget .widget-profile.profile_visibilty_illegal .profile_illegal_badge .peer-icon {
     font-size: 50px;
+	margin: 0;
 }
 .widget .widget-profile.profile_visibilty_illegal .profile_illegal_badge .sub_msg {
 	display: none;
