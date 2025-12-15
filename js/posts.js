@@ -180,8 +180,17 @@
   }
 
   async function getAdvertisementPosts(userID, offset, limit) {
+    const savedUserData = localStorage.getItem("userData");
+    let contentFilterBy = null;
+
+    if (savedUserData) {
+      const parsedData = JSON.parse(savedUserData);
+      contentFilterBy =
+        parsedData.userPreferences?.contentFilteringSeverityLevel || null;
+    }
+
     const query = `query ListAdvertisementPosts {
-    listAdvertisementPosts(${userID !== null ? `, userid: "${userID}"` : ""}, offset: ${offset}, limit: ${limit}) {
+    listAdvertisementPosts(${userID !== null ? `, userid: "${userID}"` : ""}, offset: ${offset}, limit: ${limit},contentFilterBy: ${contentFilterBy}) {
         status
         ResponseCode
         counter
