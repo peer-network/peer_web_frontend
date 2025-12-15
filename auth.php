@@ -138,16 +138,15 @@ function attemptPasswordLogin(string $email, string $password, string $domain, s
         return null;
     }
 
-    $query = <<<'GRAPHQL'
-mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-        status
-        ResponseCode
-        accessToken
-        refreshToken
-    }
-}
-GRAPHQL;
+    $query =
+        'mutation Login($email: String!, $password: String!) {
+            login(email: $email, password: $password) {
+                status
+                ResponseCode
+                accessToken
+                refreshToken
+            }
+        }';
 
     $data = graphqlRequest($domain, $protocol, $query, ['email' => $email, 'password' => $password]);
     if (!is_array($data)) {
@@ -268,8 +267,6 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
 
         return ['body' => $body, 'status' => $status];
     };
-    //echo "<pre>"; print_r($body); exit;
-        //var_dump($attempt );exit;
 
     $paths = ['/graphql', '/api/graphql'];
     $schemes = [$protocol];
@@ -286,9 +283,7 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
             }
         }
     }
-
     
-
     return null;
 }
 
