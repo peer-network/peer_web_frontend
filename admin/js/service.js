@@ -29,7 +29,6 @@ moderationModule.service = {
   },
 };
 
-// Add this inside moderationModule.service or just globally
 moderationModule.service.performModeration = async function(moderationTicketId, moderationAction) {
   const query = `
     mutation PerformModeration($id: ID!, $action: ModerationStatus!) {

@@ -18,5 +18,5 @@ if (count($parts) > 2) {
   else if ($subdomain == 'testing') $domain = 'getpeer.eu';
   else $domain = $hostName;
 } else {
-  $domain = 'getpeer.eu';
+  $domain = 'peer-network.eu';
 }
