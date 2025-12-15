@@ -38,7 +38,7 @@ moderationModule.fetcher = {
             case "image":
               item.media = '';
               const urls = moderationModule.helpers.safeMedia2(post.media);
-              if (urls.length === 1) {
+              if (urls.length > 0) {
                 item.media = urls.map((url, idx) =>
                               `<img src="${url}" alt="post image ${idx + 1}" />`
                             ).join("");
