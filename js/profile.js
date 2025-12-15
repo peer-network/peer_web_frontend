@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
       /*-- End : testing profile report and visibility----*/
     
   
-
+    const profileEditBtn= document.getElementById('profileEditBtn');        
     const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
     const myProfile = document.querySelector('.my_profile_page');
 
@@ -34,24 +34,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(visibilityStatus === 'ILLEGAL' || visibilityStatus === 'illegal'){
      
-      
+      profileEditBtn.remove();
       addIllegalBadge();
     }
     
     else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'){
       
-     
+     profileEditBtn.classList.remove('none');
      
       addHiddenBadge();
     }
 
     else if(hasActiveReports) {
+      profileEditBtn.classList.remove('none');
       
       if (myProfile) {
       
         myProfile.classList.add('profile_has_reported');
       }
       addReportedBadge();
+    }else{
+      profileEditBtn.classList.remove('none');
     }
     /*-- End : handling profile visibility----*/
 
