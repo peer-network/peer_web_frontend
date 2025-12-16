@@ -971,7 +971,7 @@
         </div>
 
         <div class="modal-message">
-          <div>Like cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+          <div>${msg[action]} cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
         </div>`,
         //(dontShowOption = true)
       );
