@@ -281,6 +281,14 @@ moderationModule.view = {
             </div>
           </div>
         `;
+
+        const mediaContainer = postBlock.querySelector(".post_media");
+
+        if (item.media instanceof HTMLElement) {
+          mediaContainer.innerHTML="";
+          mediaContainer.appendChild(item.media);
+        }
+
         boxLeft.append(postBlock);
       }
 
