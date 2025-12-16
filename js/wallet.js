@@ -214,25 +214,39 @@ function renderRows(rows) {
           if(transction_type=='trans_out'){
                 transaction_title ='Transfer to';
                 trans_user_data=entry.recipient;
+               
           }else{
                 transaction_title ='Transfer from';
                 trans_user_data=entry.sender;
           }
 
-          
-          transferto=`<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
-          icon_html = `<img class="userimg" src="${trans_user_data.img
+          icon_html = `<span class="wrap_img"><img class="userimg" src="${trans_user_data.img
                           ? tempMedia(trans_user_data.img.replace("media/", ""))
                           : "svg/noname.svg"
-                        }" onerror="this.src='svg/noname.svg'">`;
+                        }" onerror="this.src='svg/noname.svg'"></span>`;
+         
+          if(trans_user_data.visibilityStatus=='ILLEGAL' || trans_user_data.visibilityStatus=='illegal'){
+            trans_user_data.username='removed';
+            trans_user_data.slug='';
+            icon_html='<i class="peer-icon peer-icon-illegal"></i>';
+          }
 
-        }
+          if(trans_user_data.visibilityStatus=='HIDDEN' || trans_user_data.visibilityStatus=='hidden'){
+            trans_user_data.username='hidden';
+            trans_user_data.slug='';
+            icon_html=icon_html+'<i class="peer-icon peer-icon-eye-close"></i>';
+          }
 
-        
-        else{
+          
+          transferto=`<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
+          
+
+        }else{
           transaction_title =entry.transactiontype;
           transferto='';
         }
+
+
         let messageText = entry.message || "";
         let shortMessage =
           messageText.length > 60
@@ -248,7 +262,7 @@ function renderRows(rows) {
                   </div>`;
         }
     const record =`<div class="transaction_record">
-                <div class="transaction_info">
+                <div class="transaction_info profile_status_${trans_user_data?.visibilityStatus?.toLowerCase()||''}">
                   <div class="transaction_media">
                     ${icon_html}
                   </div>
