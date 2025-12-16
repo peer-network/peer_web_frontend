@@ -886,7 +886,9 @@
   background: var(--bg-filter);
   margin-top: 40px;
 }
-
+.profile_illegal_badge span.bold {
+    padding-right: 7px;
+}
 .profile_illegal_badge .peer-icon-illegal{
   margin-right: 20px;
 }
