@@ -216,7 +216,7 @@ function renderRows(rows) {
                 trans_user_data=entry.recipient;
                
           }else{
-                transaction_title ='Transfer from';
+                transaction_title ='Received from';
                 trans_user_data=entry.sender;
           }
 
