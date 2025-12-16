@@ -1221,16 +1221,16 @@ footer {
 
 
 /*-----------Profile Widget-------------*/
-.widget .widget-profile .profile-header {
+.widget .widget-profile .profile_header {
 	position: relative;
 	text-align: center;
 }
 
-.widget .widget-profile .profile-header .cropContainer {
+.widget .widget-profile .profile_header .cropContainer {
 	position: relative;
 }
 
-.widget .widget-profile .profile-header .cropContainer .online_status {
+.widget .widget-profile .profile_header .cropContainer .online_status {
 	position: absolute;
 	right: 87px;
 	top: 23px;
@@ -1262,20 +1262,90 @@ footer {
 	transform: scale(1.01);
 }
 
-.widget .widget-profile .profile-header .user-profile-name {
+.widget .widget-profile .profile_eader .user-profile-name {
 	margin-top: 0.8rem;
 	font-weight: 700;
 	font-style: italic;
 }
 
-.widget .widget-profile .profile-header .username {
+.widget .widget-profile .profile_eader .username {
 	color: var(--stat-p);
 
 	margin-top: 0.8rem;
 }
+/*--Illegal Widget Profile---*/
+.widget .widget-profile.profile_visibilty_illegal .profile_illegal_badge {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto 20px;
+    color: #fff;
+    padding: 0;
+    flex-wrap: nowrap;
+}
+.widget .widget-profile.profile_visibilty_illegal .profile_illegal_badge .peer-icon {
+    font-size: 50px;
+	margin: 0;
+}
+.widget .widget-profile.profile_visibilty_illegal .profile_illegal_badge .sub_msg {
+	display: none;
+
+}
+.widget .widget-profile.profile_visibilty_illegal .pro-name {
+    line-height: 55px;
+    font-size: 0;
+    margin-top: 20px;
+    border-radius: 60px;
+    background: var(--black-dark, #252525);
+}
+.widget .widget-profile.profile_visibilty_illegal .profile_header .cropContainer::after {
+    content: "";
+    width: 80%;
+    position: absolute;
+    left: 10%;
+    top: 0;
+    background-color: var(--black-dark);
+    aspect-ratio: 1;
+    border-radius: 100%;
+}
+.widget .widget-profile.profile_visibilty_illegal .profile_header .cropContainer img{
+	opacity: 0;
+}
+.widget .widget-profile.profile_visibilty_illegal .profile_header .cropContainer .online_status{
+	display: none;
+}
+/*--End Illegal Widget Profile---*/
+.widget .widget-profile.profile_visibilty_hidden .profile_hidden_badge {
+    border-radius: 70px;
+    border: 2px solid var(--white-secondary, rgba(255, 255, 255, 0.50));
+    display: flex;
+    padding: 21px 40px;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    align-self: stretch;
+    margin-bottom: 2rem;
+}
+/*--End Hidden Widget Profile---*/
+.widget .widget-profile .profile_reported_badge {
+    border-radius: 70px;
+    border: 2px solid var(--red-accent);
+	color:var(--red-accent);
+    display: flex;
+    padding: 21px 40px;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    align-self: stretch;
+    margin-bottom: 2rem;
+}
 
 
-
+/*--End Reported Widget Profile---*/
 .widget .widget-profile .stats {
 	display: flex;
 	justify-content: space-around;

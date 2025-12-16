@@ -3,7 +3,7 @@
     	<a href="profile.php" class="widget-inner widget-type-box profile_link widget-profile">
         
         	<!-- Profil-Bild und Name -->
-                <div class="profile-header">
+                <div class="profile-header profile_header">
                     <div id="cropContainer" class="cropContainer">
                     <span class="online_status"></span>
                         <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profilbild profile-picture" />

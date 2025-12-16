@@ -298,7 +298,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       
         if(ad.post.visibilityStatus === 'ILLEGAL' || ad.post.visibilityStatus === 'illegal'){
+         
           const adInfo = listItem.querySelector('.ad_info'); 
+          adInfo.querySelector('.ad_deescription').innerHTML="";
           
           if (adInfo) { 
             const illegalAdsPostHTML = `
@@ -394,6 +396,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     });
+
+    const savedUserData = localStorage.getItem("userData");
+    let contentFilterBy = null;
+
+    if (savedUserData) {
+      const parsedData = JSON.parse(savedUserData);
+      contentFilterBy =
+        parsedData.userPreferences?.contentFilteringSeverityLevel || null;
+    }
+
+    //, contentFilterBy: ${contentFilterBy}
 
     const graphql = JSON.stringify({
       query: `query AdvertisementHistory {
