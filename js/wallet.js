@@ -157,22 +157,7 @@ if (!historySentinel) {
   historyContainer?.appendChild(historySentinel);
 }
 
-// ====== Hilfsfunktionen ======
-const actionLabel = (entry) => {
-  // const a = Number(entry.transferaction ?? entry.transactiontype);
-  switch (entry.transferaction) {
-    case "BURN_FEE":  return "Burn fee";
-    case "PEER_FEE":  return "Peer fee";
-    case "POOL_FEE":  return "Pool fee";
-    case "CREDIT":    return "Fucking Backend";
-    default:
-      return (
-        (typeof entry.transferaction === "string" && entry.transferaction) ||
-        (typeof entry.transactiontype === "string" && entry.transactiontype) ||
-        "unknown"
-      );
-  }
-};
+
 
 function renderRows(rows) {
   rows.forEach((entry) => {
@@ -183,11 +168,22 @@ function renderRows(rows) {
     const historyItem = document.createElement("div");
     historyItem.classList.add("tarnsaction_item");
 
-    const amount =
+    let amount =
       typeof entry.tokenamount === "number"
         ? entry.tokenamount
-        : Number(String(entry.tokenamount).replace(",", "."));
-      let transaction_title,transferto,icon_html,shortmessage_html,fullmessage_html;
+        : (String(entry.tokenamount).replace(",", "."));
+
+      const transction_type = amount < 0 ? "trans_out" : "trans_in";
+      historyItem.classList.add(transction_type);
+      if(transction_type=='trans_in'){
+        amount =
+        typeof entry.netTokenAmount === "number"
+        ? entry.netTokenAmount
+        : (String(entry.netTokenAmount).replace(",", "."));
+        amount="+"+amount;
+      }
+
+      let transaction_title,transferto,icon_html,shortmessage_html,fullmessage_html,trans_user_data;
       transferto='';
       icon_html='';
       shortmessage_html='';
@@ -215,10 +211,18 @@ function renderRows(rows) {
         }
         else if(entry.transactiontype=='transferSenderToRecipient'){
 
-          transaction_title ='Transfer to';
-          transferto=`<span class="user_name bold italic">@${entry.recipient.username}</span> <span class="user_slug txt-color-gray">#${entry.recipient.slug}</span>`;
-          icon_html = `<img class="userimg" src="${entry.recipient.img
-                          ? tempMedia(entry.recipient.img.replace("media/", ""))
+          if(transction_type=='trans_out'){
+                transaction_title ='Transfer to';
+                trans_user_data=entry.recipient;
+          }else{
+                transaction_title ='Transfer from';
+                trans_user_data=entry.sender;
+          }
+
+          
+          transferto=`<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
+          icon_html = `<img class="userimg" src="${trans_user_data.img
+                          ? tempMedia(trans_user_data.img.replace("media/", ""))
                           : "svg/noname.svg"
                         }" onerror="this.src='svg/noname.svg'">`;
 
@@ -255,20 +259,20 @@ function renderRows(rows) {
 
                 </div>
                 <div class="transaction_date md_font_size txt-color-gray">${adjustForDSTAndFormat(entry.createdat)}</div>
-                <div class="transaction_price xl_font_size bold">${amount}</div>
+                <div class="transaction_price xl_font_size bold">${formatAmount(amount)}</div>
               </div>
               
               <div class="transaction_detail">
                 <div class="transaction_detail_inner">
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${amount}</span></div>
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">${entry.netTokenAmount}</span></div>
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">${entry.fees.total}</span></div>
-                  <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${entry.fees.peer}</span></div>
-                  <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${entry.fees.burn}</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">${formatAmount(entry.netTokenAmount)}</span></div>
+                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">${formatAmount(entry.fees.total)}</span></div>
+                  <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.peer)}</span></div>
+                  <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.burn)}</span></div>
                   ${entry.fees.inviter
                     ? `<div class="price_detail_row">
                         <span class="price_label txt-color-gray">1% to your Inviter</span>
-                        <span class="price txt-color-gray">${entry.fees.inviter}</span>
+                        <span class="price txt-color-gray">${formatAmount(entry.fees.inviter)}</span>
                       </div>`
                     : ''}
                   ${fullmessage_html}
@@ -287,6 +291,21 @@ function renderRows(rows) {
 
     historyContainer?.insertBefore(historyItem, historySentinel);
   });
+}
+
+function formatAmount(value) {
+  const str = String(value);
+
+  // If there's no decimal point, return as-is
+  if (!str.includes(".")) return str;
+
+  // Remove trailing zeros
+  let trimmed = str.replace(/0+$/, "");
+
+  // If decimal point is now last char, remove it
+  trimmed = trimmed.replace(/\.$/, "");
+
+  return trimmed;
 }
 
 // ====== Core-Loader (lädt 20, nutzt globalen Offset) ======
@@ -1519,12 +1538,12 @@ function getCommissionBreakdown(transferAmount) {
 
   const platformFee = mul(base, "0.02");
   const liquidityFee = mul(base, "0.01");
-  const burnFee = mul(base, "0.01");
+  //const burnFee = mul(base, "0.01");
 
   let breakdown = [
     { label: "2% to Peer Bank (platform fee)", amount: platformFee },
     { label: "1% Burned (removed from supply)", amount: liquidityFee },
-    { label: "1% is burned, ensuring deflation", amount: burnFee }
+    //{ label: "1% is burned, ensuring deflation", amount: burnFee }
   ];
 
   let inviterFee = "0";
@@ -1540,7 +1559,7 @@ function getCommissionBreakdown(transferAmount) {
   const totalCommission = [
     platformFee,
     liquidityFee,
-    burnFee,
+    //burnFee,
     inviterFee,
   ].reduce(addStrings, "0");
 

@@ -179,7 +179,7 @@
 	object-fit: cover;
 }
 .transaction_info .transaction_media::after {
-	content: '\e83a';
+	content: '\e83b';
 	width: 52px;
 	height: 52px;
 	aspect-ratio: 1/1;
@@ -196,7 +196,7 @@
 	font-size: 16px;
 }
 .trans_out .transaction_info .transaction_media::after {
-  content: '\e83b';
+  content: '\e83a';
 }
 
 .transaction_info .transaction_content {
@@ -212,6 +212,9 @@
 	gap: 10px;
 	border-radius: 40px;
 	background: var(--black-dark, #252525);
+}
+.tarnsaction_item.open .transaction_info .transaction_content .message {
+	display: none;
 }
 
 .transaction_info .transaction_media .peer-icon {
