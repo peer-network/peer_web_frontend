@@ -34,35 +34,37 @@ document.addEventListener("DOMContentLoaded", async () => {
       const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
      
       const ProfileWidget = document.querySelector(".widget-profile");
-      const profileHeader = ProfileWidget.querySelector('.profile_header');
-      if(ProfileWidget) {
-       ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
-      }
-      if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
-       
-        const illegalBadge = document.createElement('div');
-        illegalBadge.classList.add ('profile_illegal_badge');
-        illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
-        
-        profileHeader.insertAdjacentElement("afterend", illegalBadge);
+        if(ProfileWidget){
+            const profileHeader = ProfileWidget.querySelector('.profile_header');
+            if(ProfileWidget) {
+            ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+            }
+            if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
             
-      }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
+              const illegalBadge = document.createElement('div');
+              illegalBadge.classList.add ('profile_illegal_badge');
+              illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
+              
+              profileHeader.insertAdjacentElement("afterend", illegalBadge);
+                  
+            }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
 
-         
-          const hiddenBadge = document.createElement('span');
-          hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
-          hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
-          profileHeader.insertAdjacentElement("afterend", hiddenBadge);
-      } else if(hasActiveReports) {
+              
+                const hiddenBadge = document.createElement('span');
+                hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
+                hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+                profileHeader.insertAdjacentElement("afterend", hiddenBadge);
+            } else if(hasActiveReports) {
 
-        
-          const reportedBadge = document.createElement('span');
-          reportedBadge.classList.add ('profile_reported_badge', 'small_font_size');
-          reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
-          profileHeader.insertAdjacentElement("afterend", reportedBadge);
-       
+              
+                const reportedBadge = document.createElement('span');
+                reportedBadge.classList.add ('profile_reported_badge', 'small_font_size');
+                reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
+                profileHeader.insertAdjacentElement("afterend", reportedBadge);
+            
 
-      }
+            }
+        }
       
 
     });
