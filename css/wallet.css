@@ -110,7 +110,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 98%;
   padding: 0.5rem 1rem;
 }
 .history-item {
@@ -123,6 +123,17 @@
   width: 1rem;
   height: auto;
   display: inline-block;
+}
+.history-item div {
+  min-width: 6em;  
+  text-align: left;
+}
+.history-item div:last-child {
+  text-align: right;
+}
+#history-container {
+	height: 70vh;
+	overflow: auto;
 }
 .kurs {
   display: flex;
@@ -186,6 +197,7 @@
   background-size: 190%;
   background-position: -29rem -7rem;
   padding: 2rem;
+  background-attachment: fixed;
 }
 
 /* wallet-to-wallet transfer */
@@ -211,7 +223,7 @@
     
     overflow-y: auto;
     background: #1f1f1f;
-    border-radius: 12px;
+    border-radius: 70px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     margin-top: 8px;
     z-index: 999;
@@ -225,7 +237,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 155px;
+  max-height: 400px;
+  min-height: 400px;
   overflow: auto;
 }
 
@@ -244,10 +257,10 @@
 }
 
 .site-main-wallet .user-list .user-item img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
+	width: 70px;
+	height: 70px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
 .site-main-wallet .user-list .user-item .info {
@@ -257,12 +270,12 @@
 
 .site-main-wallet .user-list .user-item .info strong {
   color: white;
-  font-size: 14px;
+  
 }
 
 .site-main-wallet .user-list .user-item .info span {
   color: #aaa;
-  font-size: 12px;
+  
 }
 
 /* Shared Utility */
@@ -275,8 +288,8 @@
 
 .site-main-wallet .transfer-dropdown .transfer-form-screen {
   background: #1f1f1f;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 10px;
+  padding: 80px;
   color: white;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -302,6 +315,8 @@
   height: 50px;
   line-height: 50px;
   font-size: 30px;
+  max-width: unset;
+  min-width: unset;
 }
 
 .site-main-wallet .transfer-form-screen .recipient-info {
@@ -387,6 +402,7 @@
   min-width: 520px;
   min-height: 520px;
   text-align: left;
+  width: 33vw;
 }
 
 /* Backdrop when modal is active */
@@ -534,12 +550,11 @@
 }
 
 .site-main-wallet .search-user-input {
-  width: 100%;
- 
-  border-radius: 30px;
-  background: #2a2a2a;
-  color: white;
-  border: none;
-  margin-bottom: 12px;
- 
+	width: 100%;
+	border-radius: 70px;
+	background: #2a2a2a;
+	color: white;
+	border: none;
+	margin-bottom: 60px;
+	padding: 30px 40px;
 }
