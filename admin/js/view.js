@@ -212,8 +212,8 @@ moderationModule.view = {
       const statusVal = (item.status || "").toLowerCase();
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: statusVal == "restored" ? "" : 
-          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`
+        innerHTML: statusVal == "illegal" ?  
+                  `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed` : ""
       });
       reportsEl.append(reportCount, visibility);
 
