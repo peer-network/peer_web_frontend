@@ -1461,7 +1461,7 @@ function renderFollowButton(objekt, currentUserId) {
  */
 function updateFollowButtonState(button, isfollowing, isfollowed) {
   button.classList.remove(
-    "Peer",
+    //"Peer",
     "btn-blue",
     "following",
     "btn-white",
@@ -1494,10 +1494,11 @@ async function handleFollowButtonClick(button, user) {
 
   try {
     const newStatus = await toggleFollowStatus(user.id);
-
+    
     if (newStatus !== null) {
       user.isfollowing = newStatus;
       updateAllFollowButtonsForUser(user.id, user.isfollowing, user.isfollowed);
+      updateFollowButtonState(button, user.isfollowing, user.isfollowed);
       updateFollowingCount(newStatus);
     } else {
       showError("Failed to update follow status. Please try again.");
