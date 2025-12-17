@@ -102,16 +102,15 @@ function clearAuthCookies(): void {
  * Try to refresh tokens using the refreshToken cookie.
  */
 function attemptTokenRefresh(string $refreshToken, string $domain, string $protocol = 'https'): ?array {
-    $query = <<<'GRAPHQL'
-mutation RefreshToken($refreshToken: String!) {
-    refreshToken(refreshToken: $refreshToken) {
-        status
-        ResponseCode
-        accessToken
-        refreshToken
-    }
-}
-GRAPHQL;
+    $query = '
+        mutation RefreshToken($refreshToken: String!) {
+            refreshToken(refreshToken: $refreshToken) {
+                status
+                ResponseCode
+                accessToken
+                refreshToken
+            }
+        }';
 
     $data = graphqlRequest($domain, $protocol, $query, ['refreshToken' => $refreshToken]);
     if (!is_array($data)) {
@@ -138,16 +137,15 @@ function attemptPasswordLogin(string $email, string $password, string $domain, s
         return null;
     }
 
-    $query = <<<'GRAPHQL'
-mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-        status
-        ResponseCode
-        accessToken
-        refreshToken
-    }
-}
-GRAPHQL;
+    $query =
+        'mutation Login($email: String!, $password: String!) {
+            login(email: $email, password: $password) {
+                status
+                ResponseCode
+                accessToken
+                refreshToken
+            }
+        }';
 
     $data = graphqlRequest($domain, $protocol, $query, ['email' => $email, 'password' => $password]);
     if (!is_array($data)) {
@@ -268,8 +266,6 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
 
         return ['body' => $body, 'status' => $status];
     };
-    //echo "<pre>"; print_r($body); exit;
-        //var_dump($attempt );exit;
 
     $paths = ['/graphql', '/api/graphql'];
     $schemes = [$protocol];
@@ -286,9 +282,7 @@ function fetchHelloData(string $domain, string $protocol = 'https'): ?array {
             }
         }
     }
-
     
-
     return null;
 }
 
