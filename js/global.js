@@ -621,7 +621,7 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
   } else {
     reportpost_btn.querySelector("span").textContent = "Report post";
-    reportpost_btn.classList.remove("reported");
+    reportpost_btn.classList.remove("reported", "none");
     // add listener only if not reported
     reportpost_btn.addEventListener(
       "click",
