@@ -1,7 +1,7 @@
 // likeCost, dislikeCost, commentCost and postCost are global variables and updated in getActionPrices();
 let likeCost = 0.3,
-  dislikeCost = 0.5,
-  commentCost = 0.05,
+  dislikeCost = 0.3,
+  commentCost = 0.1,
   postCost = 2;
 
 let baseUrl;
@@ -29,7 +29,45 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accessToken = getCookie("authToken");
   if (accessToken) {
     hello();
-    getUser();
+    getUser().then(profile2 => {
+      const ProfilevisibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
+      const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
+     
+      const ProfileWidget = document.querySelector(".widget-profile");
+        if(ProfileWidget){
+            const profileHeader = ProfileWidget.querySelector('.profile_header');
+            if(ProfileWidget) {
+            ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+            }
+            if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
+            
+              const illegalBadge = document.createElement('div');
+              illegalBadge.classList.add ('profile_illegal_badge');
+              illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
+              
+              profileHeader.insertAdjacentElement("afterend", illegalBadge);
+                  
+            }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
+
+              
+                const hiddenBadge = document.createElement('span');
+                hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
+                hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+                profileHeader.insertAdjacentElement("afterend", hiddenBadge);
+            } else if(hasActiveReports) {
+
+              
+                const reportedBadge = document.createElement('span');
+                reportedBadge.classList.add ('profile_reported_badge', 'small_font_size');
+                reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
+                profileHeader.insertAdjacentElement("afterend", reportedBadge);
+            
+
+            }
+        }
+      
+
+    });
     dailyfree();
     currentliquidity();
     const userData = await getUserInfo();
@@ -45,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     //console.log(userData.userPreferences.onboardingsWereShown);
-
+    
     if (userData) {
       const onboardings = userData.userPreferences.onboardingsWereShown || [];
       // Example: check if INTROONBOARDING is already shown
@@ -66,11 +104,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 function applyZoom() {
-  const BASE_WIDTH = 3840;
+  const BASE_WIDTH = 3800;
   const layout = document.querySelector(".site_layout");
   const left_sidebar = layout.querySelector(".left-sidebar");
   const right_sidebar = layout.querySelector(".right-sidebar");
   const cardClickedDiv= document.getElementById("cardClicked");
+
 
   function applyScale() {
     const vw = window.visualViewport.width;
@@ -86,12 +125,14 @@ function applyZoom() {
       right_sidebar.style.height = vh / scale + "px";
       if(cardClickedDiv) cardClickedDiv.style.height = vh / scale + "px";
 
+      
     } else {
       // reset zoom, let layout flow naturally
       layout.style.zoom = "";
       left_sidebar.style.height = "";
       right_sidebar.style.height = "";
       if(cardClickedDiv) cardClickedDiv.style.height = "";
+      
     }
   }
 
@@ -582,7 +623,7 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
   } else {
     reportpost_btn.querySelector("span").textContent = "Report post";
-    reportpost_btn.classList.remove("reported");
+    reportpost_btn.classList.remove("reported", "none");
     // add listener only if not reported
     reportpost_btn.addEventListener(
       "click",
@@ -652,6 +693,8 @@ function postdetail(objekt, CurrentUserID) {
       }
     }
   );
+
+  userProfileVisibilty(UserID,objekt.user,profile_header_left);
 
   /*--------END: Card profile Header  -------*/
 
@@ -969,7 +1012,7 @@ function postdetail(objekt, CurrentUserID) {
 
       const zoomElement = document.createElement("span");
       zoomElement.className = "zoom";
-      zoomElement.innerHTML = `<i class="peer-icon peer-icon-plus"></i>`;
+      zoomElement.innerHTML = `<i class="peer-icon peer-icon-expand"></i>`;
       image_item.appendChild(zoomElement);
 
       sliderTrack.appendChild(image_item);
@@ -1651,13 +1694,25 @@ function commentToDom(c, append = true) {
 
   // Username + Profile ID + Time
   const usernameSpan = document.createElement("span");
-  usernameSpan.classList.add("cmt_userName", "md_font_size", "bold");
+  usernameSpan.classList.add("cmt_userName","post-userName", "md_font_size", "bold");
   usernameSpan.textContent = c.user.username;
+  usernameSpan.addEventListener("click", function handledisLikeClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (userID && userID !== "") 
+      redirectToProfile(c.userid);
+  });
 
   const profileIdSpan = document.createElement("span");
   profileIdSpan.classList.add("cmt_profile_id", "txt-color-gray");
   profileIdSpan.textContent = "#" + c.user.slug;
-
+  profileIdSpan.addEventListener("click", function handledisLikeClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (userID && userID !== "") 
+      redirectToProfile(c.userid);
+    
+  });
   const timeAgoSpan = document.createElement("span");
   timeAgoSpan.classList.add("timeagao", "txt-color-gray");
   timeAgoSpan.textContent = calctimeAgo(c.createdat);
@@ -1665,6 +1720,9 @@ function commentToDom(c, append = true) {
   const commenterInfoDiv = document.createElement("div");
   commenterInfoDiv.classList.add("commenter_info");
   commenterInfoDiv.append(usernameSpan, profileIdSpan, timeAgoSpan);
+
+
+   
 
   // Comment Text
   const commentTextDiv = document.createElement("div");
@@ -1861,16 +1919,17 @@ function commentToDom(c, append = true) {
     replyContainer
   );
 
+  
   /*-- for testing Comment report and  visibility----*/
         
     const urlParams = new URLSearchParams(window.location.search);
     const testcommentid = urlParams.get("commentid");
     const testcommentvisibility = urlParams.get("visibility");
 
-        if(testcommentid==c.commentid){
-                
-            c.visibilityStatus = testcommentvisibility;
-          }
+    if(testcommentid==c.commentid){
+            
+        c.visibilityStatus = testcommentvisibility;
+      }
 
   /*-- End : testing comment report and visibility----*/
   if(c.visibilityStatus){
@@ -2013,6 +2072,26 @@ function commentToDom(c, append = true) {
       name: c.user.username,
     });
   }
+
+      /*-- for testing  users visibility----*/
+        const urlParams2 = new URLSearchParams(window.location.search);
+       
+
+        const testUserid = urlParams2.get("testuserid");
+        const testUserVisibility = urlParams2.get("uservisibility");
+        
+         
+       
+        if(testUserid==c.user.id){
+          if(testUserVisibility) {
+            c.user.visibilityStatus = testUserVisibility;
+          }
+        }
+      /*-- End : for testing users visibility----*/
+
+
+  userProfileVisibilty(userID,c.user,commenterInfoDiv,'comment');
+
 }
 
 function getPostIdFromURL() {
@@ -2056,55 +2135,60 @@ async function fetchPostByID(postID) {
                     status
                     ResponseCode
                     affectedRows {
-                        id
-                        contenttype
-                        title
-                        media
-                        cover
-                        mediadescription
-                        createdat
-                        amountlikes
-                        amountviews
-                        amountcomments
-                        amountdislikes
-                        amounttrending
-                        isliked
-                        isviewed
-                        isreported
-                        isdisliked
-                        issaved
-                        tags
-                        url
-                        user {
-                            id
-                            username
-                            slug
-                            img
-                            visibilityStatus
-                            hasActiveReports
-                            isfollowed
-                            isfollowing
-                        }
-                        comments {
-                            commentid
-                            userid
-                            postid
-                            parentid
-                            content
-                            createdat
-                            amountlikes
-                            amountreplies
-                            isliked
-                            user {
-                                id
-                                username
-                                slug
-                                img
-                                isfollowed
-                                isfollowing
-                            }
-                        }
-                    }
+                          id
+                          contenttype
+                          title
+                          media
+                          cover
+                          mediadescription
+                          createdat
+                          amountlikes
+                          amountviews
+                          amountcomments
+                          amountdislikes
+                          amounttrending
+                          hasActiveReports
+                          visibilityStatus
+                          isliked
+                          isviewed
+                          isreported
+                          isdisliked
+                          issaved
+                          tags
+                          user {
+                                  id
+                                  username
+                                  slug
+                                  img
+                                  isfollowed
+                                  isfollowing
+                                  hasActiveReports
+                                  visibilityStatus
+                                }
+                      comments {
+                                    commentid
+                                    userid
+                                    postid
+                                    parentid
+                                    content
+                                    visibilityStatus
+                                    hasActiveReports
+                                    amountlikes
+                                    amountreplies
+                                    isliked
+                                    createdat
+                                    user {
+                                            id
+                                            username
+                                            slug
+                                            img
+                                            isfollowed
+                                            isfollowing
+                                            hasActiveReports
+                                            visibilityStatus
+                                          }
+                                  }
+                      }
                 }
             }
         `;
@@ -2297,6 +2381,7 @@ async function getUserInfo() {
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
     isInvited = userData?.invited;
+    //console.log("User Data:", userData);
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
   } catch (error) {
@@ -2802,6 +2887,8 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
   }
 }
 
+
+
 async function refreshAccessToken(refreshToken) {
   const headers = new Headers({
     "Content-Type": "application/json",
@@ -2988,7 +3075,7 @@ function removeReportedBadge() {
   
   const viewProfile = document.querySelector('.view-profile');
   if (viewProfile) {
-      viewProfile.classList.remove('REPORTED_PROFILE');
+      viewProfile.classList.remove('profile_has_reported');
   }
 }
 
@@ -3011,16 +3098,78 @@ function addIllegalBadge() {
   if (!document.querySelector('.profile_illegal_badge')) {
       const illegalBadge = document.createElement('div');
       illegalBadge.classList.add ('profile_illegal_badge', 'red-text', 'xl_font_size');
-      illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal. </span> All changes you make will not be visible for others';
+      illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span> <span class="sub_msg">All changes you make will not be visible for others</span>';
       
       profileHeader.insertAdjacentElement("afterend", illegalBadge);
   }
 }
 
 // Disable report button and change text
-  function disableReportButton() {
+function disableReportButton() {
     const reportButton = document.querySelector('.report_profile');
     reportButton.disabled = true;
     reportButton.textContent = "Reported by you";
     reportButton.classList.add('disabled');
-  }
+}
+
+function userProfileVisibilty(curentUserID,objectUser,container, type=''){
+    /*---reset for detail view --*/
+      container.classList.remove("illegal_user_profile");
+      container.classList.remove("hidden_user_profile");
+      container.querySelector(".hidden_userfeed_frame")?.remove(); 
+      container.querySelector(".peer-icon")?.remove(); 
+    /*---end reset for detail view --*/
+    const hiddenUserHTML = `
+      <div class="hidden_userfeed_frame">
+        <div class="hidden_content">
+        <i class="peer-icon peer-icon-eye-close md_font_size"></i>
+          <div class="hidden_header">
+            <div class="hidden_title bold">Sensitive content</div>
+            <div class="hidden_description">Click to see</div>
+          </div>
+          
+        </div>
+      </div>
+    `;
+
+      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden'){
+      if(objectUser.id != curentUserID ){
+        container.classList.add("hidden_user_profile");
+        container.insertAdjacentHTML("afterbegin", hiddenUserHTML);
+         if(type==='comment'){
+          container.closest('.comment_item').querySelector(".commenter-pic").classList.add("hidden_user_profile");
+            container.closest('.comment_item').querySelector(".commenter-pic").insertAdjacentHTML("afterbegin",`<i class="peer-icon peer-icon-eye-close"></i>`);
+            
+          }
+        
+        container.querySelectorAll(".hidden_userfeed_frame").forEach(frame => {
+          frame.addEventListener("click", (e) => {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            frame.remove(); 
+            container.classList.remove('hidden_user_profile');
+             if(type==='comment'){
+              container.closest('.comment_item').querySelector(".commenter-pic").classList.remove("hidden_user_profile");
+              container.closest('.comment_item').querySelector(".commenter-pic .peer-icon").remove(); 
+             }
+          }, { capture: true });
+        });
+      }
+    }
+
+     if(objectUser.visibilityStatus === 'ILLEGAL' || objectUser.visibilityStatus === 'illegal'){
+        container.classList.add("illegal_user_profile");
+        if(type==='comment'){
+          container.closest('.comment_item').querySelector(".commenter-pic").classList.add("illegal_user_profile");
+            container.closest('.comment_item').querySelector(".commenter-pic").insertAdjacentHTML("afterbegin",`<i class="peer-icon peer-icon-illegal"></i>`);
+            
+          }else{
+            container.insertAdjacentHTML("afterbegin",`<i class="peer-icon peer-icon-illegal"></i>`);
+          }
+          container.querySelector(".post-userName").innerHTML='@removed';
+
+      }
+}
+
+  ///https://localhost/peer_web_frontend/dashboard.php?testuserid=6520ac47-f262-4f7e-b643-9dc5ee4cfa82&uservisibility=ILLEGAL

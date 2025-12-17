@@ -180,8 +180,17 @@
   }
 
   async function getAdvertisementPosts(userID, offset, limit) {
+    const savedUserData = localStorage.getItem("userData");
+    let contentFilterBy = null;
+
+    if (savedUserData) {
+      const parsedData = JSON.parse(savedUserData);
+      contentFilterBy =
+        parsedData.userPreferences?.contentFilteringSeverityLevel || null;
+    }
+
     const query = `query ListAdvertisementPosts {
-    listAdvertisementPosts(${userID !== null ? `, userid: "${userID}"` : ""}, offset: ${offset}, limit: ${limit}) {
+    listAdvertisementPosts(${userID !== null ? `, userid: "${userID}"` : ""}, offset: ${offset}, limit: ${limit},contentFilterBy: ${contentFilterBy}) {
         status
         ResponseCode
         counter
@@ -962,7 +971,7 @@
         </div>
 
         <div class="modal-message">
-          <div>Like cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
+          <div>${msg[action]} cost:</div> <div class="pricee"><span>${(postCosts * tokenPrice).toFixed(2)}</span> <img src="svg/new_peerLogo.svg" alt="Peer Token" class="peer-token"></div>
         </div>`,
         //(dontShowOption = true)
       );

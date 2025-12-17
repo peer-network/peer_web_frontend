@@ -76,3 +76,13 @@
 .peer-icon-flag { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe84a;&nbsp;'); }
 .peer-icon-illegal { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe84b;&nbsp;'); }
 .peer-icon-three-dots { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe84c;&nbsp;'); }
+.peer-icon-expand { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe84d;&nbsp;'); }
+.peer-icon-search { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe84e;&nbsp;'); }
+.peer-icon-mic { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe84f;&nbsp;'); }
+.peer-icon-pause { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe850;&nbsp;'); }
+.peer-icon-daily-mint { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe851;&nbsp;'); }
+.peer-icon-referral-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe852;&nbsp;'); }
+.peer-icon-video-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe853;&nbsp;'); }
+.peer-icon-audio-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe854;&nbsp;'); }
+.peer-icon-camera-fill { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe855;&nbsp;'); }
+.peer-icon-message { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe856;&nbsp;'); }

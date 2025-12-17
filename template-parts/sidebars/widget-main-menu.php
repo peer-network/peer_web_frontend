@@ -31,6 +31,15 @@
                     Settings
                 </a>
             </li>
+            <?php if (isModerator()): ?>
+                <li class="menu-item">
+                    <a href="/admin/index.php" target="_blank" rel="noopener">
+                        <i class="peer-icon peer-icon-warning"></i>
+                        <i class="filled peer-icon peer-icon-warning"></i>
+                        Moderation Panel
+                    </a>
+                </li>
+            <?php endif; ?>
             <li class="menu-item">
                 <a id="open-onboarding" href="#">
                      <i class="peer-icon peer-icon-help"></i>
@@ -41,8 +50,7 @@
             <li class="menu-item referralPage <?= ($currentPage === 'referralBoard.php') ? 'active' : '' ?>">
                 <a class="white_border" href="referralBoard.php">
                     <i class="peer-icon peer-icon-referral"></i>
-                     <i class="filled peer-icon peer-icon-referral"></i>
-
+                     <i class="filled peer-icon peer-icon-referral-fill"></i>
                     Invite a friend
                 </a>
             </li>

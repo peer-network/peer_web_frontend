@@ -41,6 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
   getUser().then(profile2 => {
     const pusername = document.getElementById("pusername");
     pusername.innerText = profile2.data.getProfile.affectedRows.username;
+    const userVisibility=profile2.data.getProfile.affectedRows.visibilityStatus;
+    console.log(userVisibility);
+
+    const profilesettingsContainer = document.getElementById("profile-settings");
+
+    if(userVisibility=='ILLEGAL' || userVisibility=='illegal'){
+      profilesettingsContainer.innerHTML="Illegal Account";
+      return;
+
+    }
 
     const img = document.getElementById("myprofilbild");
     img.onerror = function () {
@@ -183,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgElem.classList.add(bioResult.updateBio.status);
       msgElem.innerHTML = userfriendlymsg(bioResult.updateBio.ResponseCode);
       if (imageSuccess && bioSuccess) {
-        location.reload();
+       location.reload();
       } else {
         console.error("One or both updates failed.");
       }

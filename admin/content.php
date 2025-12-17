@@ -1,7 +1,15 @@
+<?php
+require_once '../host.php';
+require_once '../auth.php';
+
+checkAuth("unauthorized");
+enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
+?>
 <!DOCTYPE html>
 <html lang="de">
 <?php require_once ('./template-parts/head.php'); ?>
 <body>
+    <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <div id="moderation" class="site_layout">
         <?php require_once ('./template-parts/header.php'); ?>
 
@@ -292,10 +300,7 @@
                 </defs>
                 </svg>
             </div>
-
-            
         </main>
-
 
         <?php require_once ('./template-parts/footer.php'); ?>
     </div>

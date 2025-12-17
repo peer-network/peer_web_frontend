@@ -1579,6 +1579,9 @@
     cursor: pointer;
 
 }
+.micButton span.icon-mic .peer-icon {
+	font-size: 340%;
+}
 .micButton span.icon-mic svg {
 	width: 55px;
   height: auto;
@@ -1820,25 +1823,25 @@
 
 #preview-audio .record-again {
 
-    display: flex;
+  display: flex;
 
-    justify-content: space-between;
+  justify-content: space-between;
 
-    align-items: center;
+  align-items: center;
 
-    background-color: var(--blue);
+  background-color: var(--blue);
 
-    width: 100%;
+  width: 100%;
 
-    padding: 0 40px;
+  padding: 0 40px;
 
-    line-height: 100px;
+  line-height: 100px;
 
-    border-radius: 100px;
+  border-radius: 100px;
 
-    
-    margin-top: 40px;
-    cursor: pointer;
+  
+  margin-top: 40px;
+  cursor: pointer;
 
 }
 
@@ -1858,6 +1861,9 @@
 
     height: auto;
 
+}
+#preview-audio .record-again span.icon-mic .peer-icon {
+	font-size: 160%;
 }
 
 

@@ -708,6 +708,7 @@ transition: 0.6s all;
 .hidden_userfeed_frame .hidden_content {
   display: flex;
   gap: 10px; 
+  align-items: center;
 }
 
 
@@ -716,6 +717,28 @@ transition: 0.6s all;
 .hidden_user_profile .username-slug span.profile_id {
   filter: blur(4px);
 }
+.card-header-left.illegal_user_profile .post-userImg.profile-picture {
+	display: none;
+}
+.card-header-left.illegal_user_profile .peer-icon {
+	border-radius: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	width: 4.375rem;
+	height: 4.375rem;
+	flex-direction: column;
+	background: var(--black-dark);
+}
+.card-header-left.illegal_user_profile .username-slug .profile_id {
+	background-color: var(--black-dark);
+	font-size: 0;
+	display: block;
+	border-radius: 50px;
+	opacity: 1;
+	padding: 17px;
+}
+
 
 
 /*--------- End : Hidden account frame -----------*/
