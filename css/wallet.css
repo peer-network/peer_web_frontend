@@ -162,6 +162,10 @@
 	gap: 30px;
   width: 50%;
 }
+.transaction_info.profile_status_illegal .user_slug,
+.transaction_info.profile_status_hidden .user_slug {
+	display: none;
+}
 .transaction_info .transaction_media {
 	display: block;
 	border-radius: 100px;
@@ -171,15 +175,26 @@
 	position: relative;
 	background: var(--black-dark,#252525);
 }
-.transaction_info .transaction_media img {
+.transaction_info .transaction_media .wrap_img {
 	display: block;
 	width: 100%;
 	height: 100%;
   border-radius: 100px;
+  overflow: hidden;
+	
+}
+.transaction_info.profile_status_hidden .transaction_media .wrap_img img {
+	filter: blur(8px);
+
+}
+.transaction_info .transaction_media img {
+	display: block;
+	width: 100%;
+	height: 100%;
 	object-fit: cover;
 }
 .transaction_info .transaction_media::after {
-	content: '\e83a';
+	content: '\e83b';
 	width: 52px;
 	height: 52px;
 	aspect-ratio: 1/1;
@@ -196,7 +211,7 @@
 	font-size: 16px;
 }
 .trans_out .transaction_info .transaction_media::after {
-  content: '\e83b';
+  content: '\e83a';
 }
 
 .transaction_info .transaction_content {
@@ -212,6 +227,9 @@
 	gap: 10px;
 	border-radius: 40px;
 	background: var(--black-dark, #252525);
+}
+.tarnsaction_item.open .transaction_info .transaction_content .message {
+	display: none;
 }
 
 .transaction_info .transaction_media .peer-icon {
