@@ -1,7 +1,7 @@
 // likeCost, dislikeCost, commentCost and postCost are global variables and updated in getActionPrices();
 let likeCost = 0.3,
-  dislikeCost = 0.5,
-  commentCost = 0.05,
+  dislikeCost = 0.3,
+  commentCost = 0.1,
   postCost = 2;
 
 let baseUrl;
