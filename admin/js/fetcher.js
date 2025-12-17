@@ -34,16 +34,41 @@ moderationModule.fetcher = {
         item.hashtags = post.tags || [];   
         item.contentType = post.contenttype;
         item.postid = post.id;
+
+        const post_gallery = document.createElement("div");
+        post_gallery.className = "slider-wrapper";
+        post_gallery.innerHTML = `
+              <div class="slider-track"></div>
+              <span class=" nav-button prev_button"><i class="peer-icon peer-icon-arrow-left"></i></span>
+              <span class=" nav-button next_button"><i class="peer-icon peer-icon-arrow-right"></i></span>                  
+          `;
+        const sliderTrack = post_gallery.querySelector(".slider-track");
+        const nextBtn = post_gallery.querySelector(".next_button");
+        const prevBtn = post_gallery.querySelector(".prev_button");
+
         switch (post.contenttype) {
             case "image":
               item.media = '';
               const urls = moderationModule.helpers.safeMedia2(post.media);
               if (urls.length > 0) {
-                item.media = urls.map((url, idx) =>
-                              `<img src="${url}" alt="post image ${idx + 1}" />`
-                            ).join("");
+
+                urls.forEach((url, idx) => {
+                    const slide = document.createElement("div");
+                    slide.className = "slide_item";
+
+                    const img = document.createElement("img");
+                    img.src = url;
+                    img.alt = `post image ${idx + 1}`;
+
+                    slide.appendChild(img);
+                    sliderTrack.appendChild(slide);
+                  });
+               
+                    item.media = post_gallery;
               }
               item.icon = "peer-icon peer-icon-camera";
+              
+
             break;
 
           case "text":
@@ -62,12 +87,22 @@ moderationModule.fetcher = {
             item.media = '';
             const audioUrl = moderationModule.helpers.safeMedia(post.media);
             const coverUrl = moderationModule.helpers.safeMedia(post.cover);
+
             if (audioUrl) {
+              const audio_media = document.createElement("div");
+              audio_media.className = "audio_cover";
               if (coverUrl) {
-                item.media = `<div class="audio_cover"><img src="${coverUrl}" alt="audio cover" /></div><audio src="${audioUrl}" controls></audio>`;
-              } else {
-                item.media = `<audio src="${audioUrl}" controls></audio>`;
+                const audio_img = document.createElement("img");
+                audio_img.src = coverUrl;
+                audio_img.alt = `audio cover`;
+                audio_media.appendChild(audio_img);
               }
+              const audio = document.createElement("audio");
+              audio.src = audioUrl; 
+              audio.controls = true;
+              audio.preload = "metadata"; 
+              audio_media.appendChild(audio);
+              item.media=audio_media;
             }
            
             item.icon = "peer-icon peer-icon-audio-fill";
@@ -76,17 +111,74 @@ moderationModule.fetcher = {
           case "video":
             item.media = '';
             const mediaUrl = moderationModule.helpers.safeMedia2(post.media);
-            if (mediaUrl) {
-              mediaUrl.map((url) => {
-                item.media = `<video src="${url}" controls loop></video>`;
-              });
-            } 
+             if (mediaUrl.length > 0) {
+                mediaUrl.forEach((url, idx) => {
+                    const slide = document.createElement("div");
+                    slide.className = "slide_item";
+
+                    const video = document.createElement("video");
+                    video.src = url;
+                    video.controls = true;
+                    video.autoplay = 0; 
+                    video.muted = false;
+                    video.loop = true;
+                    slide.appendChild(video);
+                    sliderTrack.appendChild(slide);
+                  });
+               
+                  item.media = post_gallery;
+              }
+
             item.icon = "peer-icon peer-icon-play-btn";
             break;
           
           default:
             item.media = null;
             item.icon = "peer-icon peer-icon-file";
+        }
+
+
+        let currentIndex = 0;
+        const totalSlides = sliderTrack.children.length;
+        
+        if (totalSlides <= 1) {
+          prevBtn.remove();
+          nextBtn.remove();
+        } else {
+          function updateSlider(index) {
+            currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+
+            const targetItem = sliderTrack.children[currentIndex];
+            const offsetLeft = targetItem.offsetLeft;
+
+            sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+            prevBtn.classList.toggle("disabled", currentIndex === 0);
+            nextBtn.classList.toggle("disabled", currentIndex === totalSlides - 1);
+            sliderTrack.querySelectorAll("video").forEach((vid, i) => {
+              
+              /*if (i === index) {
+                vid.play();
+              } else {*/
+                vid.pause();
+                vid.currentTime = 0;
+              //}
+            });
+          }
+
+          updateSlider(0);
+
+          nextBtn.addEventListener("click", () => {
+            if (currentIndex < totalSlides - 1) {
+              updateSlider(currentIndex + 1);
+            }
+          });
+
+          prevBtn.addEventListener("click", () => {
+            if (currentIndex > 0) {
+              updateSlider(currentIndex - 1);
+            }
+          });
         }
       }
 
