@@ -494,37 +494,7 @@ document.querySelectorAll(".peer_count").forEach(el => {
 // }
 
 
-// Follow/unfollow toggle mutation
-async function toggleFollowStatus(userid) {
-  const accessToken = getCookie("authToken");
-  const query = `
-    mutation ToggleUserFollowStatus($userid: ID!) {
-      toggleUserFollowStatus(userid: $userid) {
-        status
-        ResponseCode
-        isfollowing
-      }
-    }
-  `;
 
-  try {
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ query, variables: { userid } }),
-    });
-
-    const result = await response.json();
-    return result.data?.toggleUserFollowStatus?.isfollowing ?? null;
-
-  } catch (error) {
-    console.error("Toggle follow error:", error);
-    return null;
-  }
-}
 
 // Helper function
 function capitalize(str) {

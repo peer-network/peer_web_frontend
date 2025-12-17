@@ -82,5 +82,51 @@ moderationModule.helpers = {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     
     return `${day} ${month} ${year}, ${hours}:${minutes}`;
+  },
+  calctimeAgo(datetime) {
+    // Clean microseconds and treat as UTC
+    const cleaned = datetime.replace(/\.\d+$/, "") + "Z";
+    const timestamp = new Date(cleaned);
+    const now = Date.now();
+
+    const elapsed = now - timestamp; // in ms
+
+    const seconds = Math.floor(elapsed / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (seconds < 60) return `${seconds} sec`;
+    if (minutes < 60) return `${minutes} min`;
+    if (hours < 24) return `${hours}h`;
+    if (days < 7) return `${days}d`;
+    if (weeks < 4) return `${weeks}w`;
+    if (months < 12) return `${months}m`;
+    return `${years} y`;
+  },
+  updateSlider(index, post_gallery_obj) {
+    const sliderTrack = post_gallery_obj.querySelector(".slider-track");
+    const nextBtn = post_gallery_obj.querySelector(".next_button");
+    const prevBtn = post_gallery_obj.querySelector(".prev_button");
+
+    const totalSlides = sliderTrack.children.length;
+    const currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+
+    const targetItem = sliderTrack.children[currentIndex];
+    const offsetLeft = targetItem.offsetLeft;
+
+    sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
+
+    prevBtn.classList.toggle("disabled", currentIndex === 0);
+    nextBtn.classList.toggle("disabled", currentIndex === totalSlides - 1);
+
+    sliderTrack.querySelectorAll("video").forEach((vid) => {
+      vid.pause();
+      vid.currentTime = 0;
+    });
+    return currentIndex;
   }
 };

@@ -34,6 +34,7 @@ moderationModule.fetcher = {
         item.hashtags = post.tags || [];   
         item.contentType = post.contenttype;
         item.postid = post.id;
+        item.timeAgo = moderationModule.helpers.calctimeAgo(post.createdat);
 
         const post_gallery = document.createElement("div");
         post_gallery.className = "slider-wrapper";
@@ -140,43 +141,28 @@ moderationModule.fetcher = {
 
         let currentIndex = 0;
         const totalSlides = sliderTrack.children.length;
-        
+
         if (totalSlides <= 1) {
           prevBtn.remove();
           nextBtn.remove();
         } else {
-          function updateSlider(index) {
-            currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
-
-            const targetItem = sliderTrack.children[currentIndex];
-            const offsetLeft = targetItem.offsetLeft;
-
-            sliderTrack.style.transform = `translateX(-${offsetLeft}px)`;
-
-            prevBtn.classList.toggle("disabled", currentIndex === 0);
-            nextBtn.classList.toggle("disabled", currentIndex === totalSlides - 1);
-            sliderTrack.querySelectorAll("video").forEach((vid, i) => {
-              
-              /*if (i === index) {
-                vid.play();
-              } else {*/
-                vid.pause();
-                vid.currentTime = 0;
-              //}
-            });
-          }
-
-          updateSlider(0);
+          currentIndex = moderationModule.helpers.updateSlider(0, post_gallery);
 
           nextBtn.addEventListener("click", () => {
             if (currentIndex < totalSlides - 1) {
-              updateSlider(currentIndex + 1);
+              currentIndex = moderationModule.helpers.updateSlider(
+                currentIndex + 1,
+                post_gallery
+              );
             }
           });
 
           prevBtn.addEventListener("click", () => {
             if (currentIndex > 0) {
-              updateSlider(currentIndex - 1);
+              currentIndex = moderationModule.helpers.updateSlider(
+                currentIndex - 1,
+                post_gallery
+              );
             }
           });
         }
@@ -371,28 +357,118 @@ moderationModule.fetcher = {
             title: post.title,
             description: post.mediadescription,
             contentType: post.contenttype,
+            hashtags : post.tags || [],
             cover: post.cover,
             username: post.user?.username || "unknown",
             img: tempMedia(post.user?.img) || '../img/noname.png',
             slug: post.user?.slug,
-            createdat: post.createdat
+            createdat: moderationModule.helpers.calctimeAgo(post.createdat)
           };
+          
 
-          const mediaUrl = moderationModule.helpers.safeMedia(post.media);
+          const mediaUrl = moderationModule.helpers.safeMedia2(post.media);
           if (post.contenttype === "text" && mediaUrl) {
             item.post.description = await this.loadTextFile(mediaUrl);
           } else {
+            const post_gallery = document.createElement("div");
+            post_gallery.className = "slider-wrapper";
+            post_gallery.innerHTML = `
+                <div class="slider-track"></div>
+                <span class=" nav-button prev_button"><i class="peer-icon peer-icon-arrow-left"></i></span>
+                <span class=" nav-button next_button"><i class="peer-icon peer-icon-arrow-right"></i></span>                  
+            `;
+            const sliderTrack = post_gallery.querySelector(".slider-track");
+            const nextBtn = post_gallery.querySelector(".next_button");
+            const prevBtn = post_gallery.querySelector(".prev_button");
+
             switch (post.contenttype) {
               case "video":
-                item.post.media = `<video src="${mediaUrl}" controls autoplay loop></video>`;
+                if (mediaUrl.length > 0) {
+                  mediaUrl.forEach((url, idx) => {
+                    const slide = document.createElement("div");
+                    slide.className = "slide_item";
+
+                    const video = document.createElement("video");
+                    video.src = url;
+                    video.controls = true;
+                    video.autoplay = 0; 
+                    video.muted = false;
+                    video.loop = true;
+                    slide.appendChild(video);
+                    sliderTrack.appendChild(slide);
+                  });  
+                }
+                item.post.media = post_gallery;
                 break;
               case "image":
-                item.post.media = `<img src="${mediaUrl}" alt="post image" />`;
+                if (mediaUrl.length > 0) {
+                  mediaUrl.forEach((url, idx) => {
+                    const slide = document.createElement("div");
+                    slide.className = "slide_item";
+
+                    const img = document.createElement("img");
+                    img.src = url;
+                    img.alt = `post image ${idx + 1}`;
+
+                    slide.appendChild(img);
+                    sliderTrack.appendChild(slide);
+                  });
+                }
+                item.post.media = post_gallery;
+
+                //item.post.media = `<img src="${mediaUrl}" alt="post image" />`;
                 break;
               case "audio":
               default:
-                item.post.media = `<audio src="${mediaUrl}" controls autoplay></audio>`;
+                  const audioUrl = moderationModule.helpers.safeMedia(post.media);
+                  const coverUrl = moderationModule.helpers.safeMedia(post.cover);
+
+                  if (audioUrl) {
+                    const audio_media = document.createElement("div");
+                    audio_media.className = "audio_cover";
+                    if (coverUrl) {
+                      const audio_img = document.createElement("img");
+                      audio_img.src = coverUrl;
+                      audio_img.alt = `audio cover`;
+                      audio_media.appendChild(audio_img);
+                    }
+                    const audio = document.createElement("audio");
+                    audio.src = audioUrl; 
+                    audio.controls = true;
+                    audio.preload = "metadata"; 
+                    audio_media.appendChild(audio);
+                    item.post.media = audio_media;
+                  }
+                
                 break;
+            }
+
+            let currentIndex = 0;
+            const totalSlides = sliderTrack.children.length;
+
+            if (totalSlides <= 1) {
+              prevBtn.remove();
+              nextBtn.remove();
+            } else {
+              currentIndex = moderationModule.helpers.updateSlider(0, post_gallery);
+
+              nextBtn.addEventListener("click", () => {
+                if (currentIndex < totalSlides - 1) {
+                  currentIndex = moderationModule.helpers.updateSlider(
+                    currentIndex + 1,
+                    post_gallery
+                  );
+                }
+              });
+
+              prevBtn.addEventListener("click", () => {
+                if (currentIndex > 0) {
+                  currentIndex = moderationModule.helpers.updateSlider(
+                    currentIndex - 1,
+                    post_gallery
+                  );
+                }
+              });
             }
           }
         }
