@@ -1059,44 +1059,6 @@ async function postsLaden(postbyUserID=null) {
 cards.forEach(post => observer.observe(post));
 }
 
-async function toggleFollowStatus(userid) {
-  const accessToken = getCookie("authToken");
-  const query = `
-          mutation ToggleUserFollowStatus($userid: ID!) {
-            toggleUserFollowStatus(userid: $userid) {
-              status
-              ResponseCode
-              isfollowing
-            }
-          }
-        `;
-
-  const variables = { userid };
-
-  try {
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    const result = await response.json();
-
-    if (result.data && result.data.toggleUserFollowStatus) {
-      return result.data.toggleUserFollowStatus.isfollowing;
-    } else {
-      console.error("GraphQL error:", result.errors);
-      return null;
-    }
-  } catch (error) {
-    console.error("Network error:", error);
-    return null;
-  }
-}
-
 
 function like_dislike_post(objekt, action, el) {
   const isLike = action === "like";
