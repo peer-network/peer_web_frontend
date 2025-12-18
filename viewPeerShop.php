@@ -34,7 +34,6 @@ checkAuth("unauthorized");
 <script src="js/comments.js?<?php echo filemtime('js/comments.js'); ?>" defer></script>
 <script src="js/load_posts.js?<?php echo filemtime('js/load_posts.js'); ?>" defer></script>
 <script src="js/list_follow.js?<?php echo filemtime('js/list_follow.js'); ?>" defer></script>
-<script src="js/reports/report_user.js?<?php echo filemtime('js/reports/report_user.js'); ?>" defer></script>
 <script src="js/viewprofile.js?<?php echo filemtime('js/viewprofile.js'); ?>" defer></script>
 <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -61,36 +60,22 @@ checkAuth("unauthorized");
    
     <div class="profile_header" id="profil-container">
       <div class="profile_picture">
-        <div class="cropContainer">
-          <img id="profilbild2" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" />
-        </div>
+        <div class="cropContainer"><img id="profilbild2" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
       </div>
       <div class="profile_info">
-        <h2 class="profile_title">
-          <span  id="username2" class="xxl_font_size bold">&nbsp;</span>
-          <span id="slug2" class="slug profile_no xl_font_size txt-color-gray">&nbsp;</span>
-        </h2>
-        <div class="profile_description md_font_size txt-color-gray" id="biography2"> </div>
-        <!--<div class="profile_stats md_font_size txt-color-gray"> 
-          <span class="post_count">
-            <em id="userPosts2" class="xxl_font_size">&nbsp;</em> Posts
-          </span> 
-          <span id="followers_count" class="followers_count">
-            <em id="followers2" class="xxl_font_size">&nbsp;</em>
-            <span class="new_count" id="recent_followers2"></span> Followers
-          </span> 
-          <span id="following_count" class="following_count">
-            <em id="following2" class="xxl_font_size">&nbsp;</em> Following
-          </span> <span id="peer_count" class="peer_count">
-            <em id="Peers2" class="xxl_font_size">0</em> Peers
-          </span>  
-        </div>-->
-        
+        <h2 class="profile_title"><span  id="username2" class="xxl_font_size bold">&nbsp;</span><span id="slug2" class="slug profile_no xl_font_size txt-color-gray">&nbsp;</span></h2>
+        <div class="profile_description md_font_size txt-color-gray" id="biography2"> </div>    
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       <!-- rendering via js code written in viewprofile.js -->
       <div class="profile_edit_box">
         <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#"></a></div>
+        <div class="">
+          <a class="button btn-transparent follow-button" id="info" href="#">
+            Info
+            <i class="peer-icon peer-icon-home-alt"></i>
+          </a>
+        </div>
       </div>
     </div>
     <!-- Load Posts Container -->

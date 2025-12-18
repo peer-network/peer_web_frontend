@@ -321,5 +321,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  button.addEventListener("click", toggleDropdown);
+  button?.addEventListener("click", toggleDropdown);
 });

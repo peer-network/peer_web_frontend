@@ -4,3 +4,13 @@
   border-radius: 70px;
   padding: 50px;
 }
+
+#info {
+    display: flex;
+    align-items: center;
+    width: 100%; /* makes full width button */
+}
+
+#info i {
+    margin-left: auto;
+}

@@ -423,11 +423,11 @@ async function postsLaden(postbyUserID=null) {
     let audio, video;
     
     /*-- for testing post report and visibility----*/  
-    const urlParams = new URLSearchParams(window.location.search);
-    const testPostid = urlParams.get("testid");
-    const testPostidvisibility = urlParams.get("visibility");
-    const testUserid = urlParams.get("testuserid");
-    const testUserVisibility = urlParams.get("uservisibility");
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const testPostid = urlParams.get("testid");
+    // const testPostidvisibility = urlParams.get("visibility");
+    // const testUserid = urlParams.get("testuserid");
+    // const testUserVisibility = urlParams.get("uservisibility");
     /*-- End : testing post report and visibility----*/
 
       
