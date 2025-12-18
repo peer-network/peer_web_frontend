@@ -16,6 +16,36 @@ on:
       - development
 
 jobs:
+  auto_label:
+    name: Auto Label PR
+    if: github.event_name == 'pull_request'
+    uses: peer-network/.github/.github/workflows/auto-label.yml@main
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      mode: soft
+      label_config: |
+        {
+          ".github/workflows/.*": "ci",
+          ".githooks/.*": "ci",
+
+          ".security/.*": "security",
+
+          "css/.*": "web",
+          "js/.*": "web",
+          "admin/.*": "web",
+          "template-parts/.*": "web",
+
+          ".*\\.php$": "web",
+
+          "img/.*": "assets",
+          "svg.*/.*": "assets",
+          "fonts/.*": "assets",
+          "json/.*": "assets",
+
+          "README.*": "documentation"
+        }
+
   auto_update_branch:
     name: Auto-Update PR Branch
     uses: peer-network/.github/.github/workflows/auto-update-pr.yml@main
