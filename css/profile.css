@@ -268,8 +268,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100dvh;
+  width: 100%;
+  height: 100%;
   z-index: 10;
   background-color: #4848487d;
   -webkit-backdrop-filter: blur(5px);
@@ -886,7 +886,9 @@
   background: var(--bg-filter);
   margin-top: 40px;
 }
-
+.profile_illegal_badge span.bold {
+    padding-right: 7px;
+}
 .profile_illegal_badge .peer-icon-illegal{
   margin-right: 20px;
 }

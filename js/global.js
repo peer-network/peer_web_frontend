@@ -34,37 +34,30 @@ document.addEventListener("DOMContentLoaded", async () => {
       const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
      
       const ProfileWidget = document.querySelector(".widget-profile");
-      const profileHeader = ProfileWidget.querySelector('.profile_header');
-      if(ProfileWidget) {
-       ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
-      }
-      if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
-       
-        const illegalBadge = document.createElement('div');
-        illegalBadge.classList.add ('profile_illegal_badge');
-        illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
-        
-        profileHeader.insertAdjacentElement("afterend", illegalBadge);
-            
-      }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
-
-         
-          const hiddenBadge = document.createElement('span');
-          hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
-          hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
-          profileHeader.insertAdjacentElement("afterend", hiddenBadge);
-      } else if(hasActiveReports) {
-
-        
-          const reportedBadge = document.createElement('span');
-          reportedBadge.classList.add ('profile_reported_badge', 'small_font_size');
-          reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
-          profileHeader.insertAdjacentElement("afterend", reportedBadge);
-       
-
-      }
-      
-
+        if(ProfileWidget){
+            const profileHeader = ProfileWidget.querySelector('.profile_header');
+            if(ProfileWidget) {
+             ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+            }
+            if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
+              const illegalBadge = document.createElement('div');
+              illegalBadge.classList.add ('profile_illegal_badge');
+              illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
+              profileHeader.insertAdjacentElement("afterend", illegalBadge);
+            }
+            else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
+                const hiddenBadge = document.createElement('span');
+                hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
+                hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
+                profileHeader.insertAdjacentElement("afterend", hiddenBadge);
+            } 
+            else if(hasActiveReports) {  
+                const reportedBadge = document.createElement('span');
+                reportedBadge.classList.add ('profile_reported_badge', 'small_font_size');
+                reportedBadge.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i> Reported';
+                profileHeader.insertAdjacentElement("afterend", reportedBadge);
+            }
+        }
     });
     dailyfree();
     currentliquidity();
@@ -620,8 +613,9 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
   } else {
+    
     reportpost_btn.querySelector("span").textContent = "Report post";
-    reportpost_btn.classList.remove("reported");
+    reportpost_btn.classList.remove("reported","none");
     // add listener only if not reported
     reportpost_btn.addEventListener(
       "click",
@@ -1492,6 +1486,7 @@ async function handleFollowButtonClick(button, user) {
 
   try {
     const newStatus = await toggleFollowStatus(user.id);
+    console.log(newStatus);
 
     if (newStatus !== null) {
       user.isfollowing = newStatus;
@@ -1522,6 +1517,44 @@ async function handleFollowButtonClick(button, user) {
       updateFollowButtonState(btn, isfollowing, isfollowed);
     });
   }
+
+  async function toggleFollowStatus(userid) {
+  const accessToken = getCookie("authToken");
+  const query = `
+          mutation ToggleUserFollowStatus($userid: ID!) {
+            toggleUserFollowStatus(userid: $userid) {
+              status
+              ResponseCode
+              isfollowing
+            }
+          }
+        `;
+
+  const variables = { userid };
+
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    const result = await response.json();
+
+    if (result.data && result.data.toggleUserFollowStatus) {
+      return result.data.toggleUserFollowStatus.isfollowing;
+    } else {
+      console.error("GraphQL error:", result.errors);
+      return null;
+    }
+  } catch (error) {
+    console.error("Network error:", error);
+    return null;
+  }
+}
 
 /**
  * Updates the following count in the UI
