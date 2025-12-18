@@ -213,7 +213,8 @@ moderationModule.view = {
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
         innerHTML: statusVal == "illegal" ?  
-                  `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed` : ""
+          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`:
+          ""
       });
       reportsEl.append(reportCount, visibility);
 
@@ -274,7 +275,7 @@ moderationModule.view = {
            <div class="post_info">
               <div class="post_title">
                 <h2 class="xxl_font_size bold">${item.title}</h2>
-                <span class="timeagao txt-color-gray">2h</span>
+                <span class="timeagao txt-color-gray">${item?.timeAgo}</span>
               </div>
               <div class="post_text">${item.description || ""}</div>
               <div class="hashtags txt-color-blue">${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}</div>
@@ -299,7 +300,7 @@ moderationModule.view = {
         userBlock.innerHTML = `
           <div class="profile">
               <div class="profile_image">
-                  <img src="${item.media || "../svg/noname.jpg"}" />
+                  <img src="${item.media}" />
               </div>
               <div class="profile_detail">
                   <div class="user_info">
@@ -331,6 +332,10 @@ moderationModule.view = {
               <a class="button btn-transparent" href="../view-profile.php?user=${item.userid}" target='_blank'>View profile <i class="peer-icon peer-icon-arrow-right"></i></a>
           </div>
         `;
+        const userimg = userBlock.querySelector(".profile_image img");
+        if (userimg) {
+          userimg.onerror = function () { this.src = "../svg/noname.svg"; }
+        }
 
         boxLeft.append(userBlock);
       }
@@ -391,11 +396,19 @@ moderationModule.view = {
               </div>
               <div class="post_text">${item?.post?.description}</div>
               <div class="hashtags txt-color-blue">
-                ${(item.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join("")}
+                ${(item?.post?.hashtags || []).map(h => `<span class="hashtag">#${h}</span>`).join("")}
               </div>
             </div>
           </div>
         `;
+
+        const mediaContainer = commentPostDetail.querySelector(".post_media");
+
+        if (item.post.media instanceof HTMLElement) {
+          mediaContainer.innerHTML="";
+          mediaContainer.appendChild(item.post.media);
+        }
+
 
         commentType.append(commentBox, commentPostDetail);
         boxLeft.append(commentType);
