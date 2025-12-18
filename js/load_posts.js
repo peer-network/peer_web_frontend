@@ -393,32 +393,10 @@ let postoffset = 0;
 let  POSTS;
 async function postsLaden(postbyUserID=null) {
     const UserID = getCookie("userID");
-    // if (postoffset === undefined) {
-    //   postoffset = 0; // Initialwert
-    // }
-    //console.log("postsLaden() was triggered", manualLoad ? "(manual)" : "(observer)");
-    //manualLoad = false;
-    //const form = document.querySelectorAll(".filterContainer");
-
     const checkboxes = document.querySelectorAll(".filterContainer .filteritem:checked");
-    //console.log(checkboxes);
-
-    // Die Werte der angehakten Checkboxen sammeln
     const values = Array.from(checkboxes).filter((checkbox) => checkbox.checked && checkbox.value !== "all").map((checkbox) => checkbox.value);
-
-    // Werte als komma-getrennte Zeichenkette zusammenfügen
-    // const result = values.join(" ");
-
-    // Ergebnis ausgeben
     const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
-    // // const textsearch = document.getElementById("searchText").value;
-    // let normalWords = [];
-    // let hashtags = [];
-    // const searchTag = document.getElementById("searchTag");
-    // if (searchTag) {
-    //   const { hashtags } = extractWords(searchTag.value.toLowerCase());
-    // }
-   
+
     let tagInput = "";
     let tags = "";
     const tagElement = document.getElementById("searchTag");
@@ -433,55 +411,45 @@ async function postsLaden(postbyUserID=null) {
       tagInput = normalWords.join(" ");
     }
     const sortby = document.querySelectorAll('.filterContainer.sortby input[type="radio"]:checked');
-    //console.log(cleanedArray);
+ 
 
     if (postbyUserID!=null){
       POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST",postbyUserID);
-    } else{
+    } else {
       POSTS = await getPosts(postoffset, 20, cleanedArray, tagInput, tags, sortby.length ? sortby[0].getAttribute("sortby") : "NEWEST");
     }
 
-    //console.log(postoffset);
-    //const debouncedMoveEnd = debounce(handleMouseMoveEnd, 300);
-    // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
-    const parentElement = document.getElementById("allpost"); // Das übergeordnete Element
+    const parentElement = document.getElementById("allpost"); 
     let audio, video;
-    // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-
-      /*-- for testing post report and visibility----*/
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const testPostid = urlParams.get("testid");
-        //const testPostidreported = urlParams.get("reported");
-        const testPostidvisibility = urlParams.get("visibility");
-
-        const testUserid = urlParams.get("testuserid");
-        const testUserVisibility = urlParams.get("uservisibility");
-        
-      /*-- End : testing post report and visibility----*/
+    
+    /*-- for testing post report and visibility----*/  
+    const urlParams = new URLSearchParams(window.location.search);
+    const testPostid = urlParams.get("testid");
+    const testPostidvisibility = urlParams.get("visibility");
+    const testUserid = urlParams.get("testuserid");
+    const testUserVisibility = urlParams.get("uservisibility");
+    /*-- End : testing post report and visibility----*/
 
       
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
-
       /*-- for testing post report and visibility----*/
-        if(testPostid==objekt.id){
-          if(testPostidvisibility){
-            objekt.visibilityStatus = testPostidvisibility;
-          }
-        }
+      // if(testPostid==objekt.id){
+      //   if(testPostidvisibility){
+      //     objekt.visibilityStatus = testPostidvisibility;
+      //   }
+      // }
       /*-- End : testing post report and visibility----*/
 
       /*-- for testing  users visibility----*/
-       
-        if(testUserid==objekt.user.id){
-          if(testUserVisibility) {
-            objekt.user.visibilityStatus = testUserVisibility;
-          }
-        }
+      // if(testUserid==objekt.user.id){
+      //   if(testUserVisibility) {
+      //     objekt.user.visibilityStatus = testUserVisibility;
+      //   }
+      // }
       /*-- End : for testing users visibility----*/
       
 
-      const userHasActiveReports = objekt.user.hasActiveReports || false;
+      //const userHasActiveReports = objekt.user.hasActiveReports || false; //unused for now
 
       // Haupt-<section> erstellen
       const card = document.createElement("section");
@@ -547,7 +515,7 @@ async function postsLaden(postbyUserID=null) {
       user_slug_span.appendChild(userprofileID);
       card_header_left.appendChild(user_slug_span);
       
-      card_header_left.addEventListener("click",function handledisLikeClick(event) {
+      card_header_left.addEventListener("click", function handledisLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
           redirectToProfile(objekt.user.id); 
@@ -1149,10 +1117,11 @@ async function viewed(object) {
 
 async function postClicked(objekt) {
   const UserID = getCookie("userID");
-  
-  if (!objekt.isviewed && objekt.user.id !== UserID) timerId = setTimeout(async () => await viewed(objekt), 1000);
-  togglePopup("cardClicked");
+  if (!objekt.isviewed && objekt.user.id !== UserID) {
+    timerId = setTimeout(async () => await viewed(objekt), 1000);
+  }
 
+  togglePopup("cardClicked");
   document.getElementById("cardClicked").setAttribute("postID", objekt.id);
   document.getElementById("cardClicked").setAttribute("content", objekt.contenttype);
 
@@ -1162,8 +1131,6 @@ async function postClicked(objekt) {
     cardEl.classList.add("PINNED");
     insertPinnedBtn(cardEl, objekt.user.username, "post");
   }
-
- 
 }
 
 function deleteFilter() {

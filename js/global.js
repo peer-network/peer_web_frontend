@@ -1583,11 +1583,19 @@ function showError(message) {
 }
 
 function redirectToProfile(userProfileID) {
-   const UserID = getCookie("userID");
-   if(UserID==userProfileID){
-     window.location.href = `profile.php`;
-     return;
-   }
+  const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
+  const userID = getCookie("userID");
+
+  if (userProfileID == PEER_SHOP_ID) {
+    window.location.href = "viewPeerShop.php";
+    return;
+  }
+
+  if (userID == userProfileID) {
+    window.location.href = "profile.php";
+    return;
+  }
+
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 

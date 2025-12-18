@@ -1,0 +1,6 @@
+#profil-container {
+  background: #0069FF;
+  background-image: radial-gradient(circle at center, #00BEFF 0%, #553CFF 100%);
+  border-radius: 70px;
+  padding: 50px;
+}

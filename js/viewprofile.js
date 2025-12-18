@@ -213,21 +213,16 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (post_loader) {
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
 
     window.addEventListener("scroll", () => {
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
         console.log("Fallback load triggered (on scroll)");
-        postsLaden(CurrentUserID);
+        postsLaden(userID);
       }
-    }, {
-      passive: true
-    });
+    }, { passive: true });
 
   } else {
     console.warn("Post Loader element not found — cannot observe.");
