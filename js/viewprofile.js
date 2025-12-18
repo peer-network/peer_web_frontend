@@ -81,9 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       followBtn.addEventListener("click", async function () {
         const user = {
           id: userID,
-          isfollowed:
-            this.classList.contains("following") ||
-            this.classList.contains("Peer"),
+          isfollowed: isfollowed,
           isfollowing: this.dataset.isfollowing === "true",
         };
 
@@ -220,8 +218,19 @@ document.addEventListener("DOMContentLoaded", () => {
       observerOptions
     );
     observer.observe(post_loader);
+
+    window.addEventListener("scroll", () => {
+      const rect = post_loader.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        console.log("Fallback load triggered (on scroll)");
+        postsLaden(CurrentUserID);
+      }
+    }, {
+      passive: true
+    });
+
   } else {
-    console.warn("⚠️ Post Loader element not found — cannot observe.");
+    console.warn("Post Loader element not found — cannot observe.");
   }
 
   async function getProfile(userID) {
