@@ -210,6 +210,7 @@
                 amounttrending
                 hasActiveReports
                 visibilityStatus
+                isHiddenForUsers
                 isliked
                 isviewed
                 isreported
@@ -312,6 +313,7 @@
                  amounttrending
                  hasActiveReports
                  visibilityStatus
+                 isHiddenForUsers
                  isliked
                  isviewed
                  isreported
