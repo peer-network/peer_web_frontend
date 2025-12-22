@@ -14,3 +14,14 @@
 #info i {
     margin-left: auto;
 }
+.profile_header .profile_picture {
+	max-width: 275px;
+
+}
+.profile_edit_box #followbtn{ 
+  margin-bottom: 0;
+}
+.profile_header .profile_edit_box .button{
+  margin-bottom: 0;
+
+}
