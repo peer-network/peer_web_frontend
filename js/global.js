@@ -3,7 +3,7 @@ let likeCost = 0.3,
   dislikeCost = 0.3,
   commentCost = 0.1,
   postCost = 2;
-
+const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
 let baseUrl;
 
 if (location.hostname === "localhost") {
@@ -501,6 +501,12 @@ function postdetail(objekt, CurrentUserID) {
   const cardClickedContainer = document.getElementById("cardClicked");
   const postContainer = document.getElementById("viewpost-container");
 
+  const elShopDetect = document.querySelector('.site_layout.view-profile');
+  const onShopProfilepage = elShopDetect?.dataset?.peershop === 'true';
+  if(onShopProfilepage || PEER_SHOP_ID==objekt.user.id){ //PEER_SHOP_ID is global variable define in global.js on top
+    cardClickedContainer.classList.add("view-shop-product");
+  }
+
   const shareLinkBox = document.getElementById("share-link-box");
   const shareUrl = baseUrl + "post/" + objekt.id;
 
@@ -704,7 +710,41 @@ function postdetail(objekt, CurrentUserID) {
   cont_post_title.innerHTML = title_text;
 
   const post_time = calctimeAgo(objekt.createdat);
-  cont_post_time.innerHTML = post_time;
+  if(cont_post_time){
+    cont_post_time.innerHTML = post_time;
+  }
+
+  if(onShopProfilepage){
+    const cont_post_title_cont = containerright.querySelector(".post_title");
+    let  product_price=containerright.querySelector('.product_price');
+    if(cont_post_time){
+      cont_post_time.remove();
+    }
+    if(product_price){
+      product_price.remove();
+    }
+    product_price = document.createElement("div");
+    product_price.classList.add("product_price","bold","xxl_font_size");
+    product_price.innerText=objekt.productprice; // this dummy price object set in load_post.js > postsLaden function on line no 516
+    const product_price_lable = document.createElement("span");
+    product_price_lable.classList.add("product_price_label","txt-color-gray","md_font_size");
+    product_price_lable.innerText='Price';
+    product_price.prepend(product_price_lable);
+    cont_post_title_cont.appendChild(product_price);
+
+    const postContent = containerright.querySelector('.post_content');
+    let  buyButton=containerright.querySelector('.buy-btn');
+    if(buyButton){
+      buyButton.remove();
+    }
+  
+    buyButton = document.createElement("button");
+    buyButton.classList.add("buy-btn","btn-blue","bold");
+    buyButton.innerText='Buy';
+
+    postContent.insertAdjacentElement('afterend', buyButton);
+    
+  }
 
   // Check if tags exist and are an array
   if (Array.isArray(objekt.tags)) {
@@ -1583,7 +1623,7 @@ function showError(message) {
 }
 
 function redirectToProfile(userProfileID) {
-  const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
+ 
   const userID = getCookie("userID");
 
   if (userProfileID == PEER_SHOP_ID) {
