@@ -927,7 +927,7 @@ async function postsLaden(postbyUserID=null) {
       }
 
       /*---Hidden Frame content */
-        if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+        if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden' || objekt.isHiddenForUsers == true){
             const hiddenContentHTML = `
             <div class="hidden_content_frame">
               <div class="hidden_content">

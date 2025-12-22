@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             
           }
-        } else if(ad.post.visibilityStatus === 'HIDDEN' || ad.post.visibilityStatus === 'hidden'){
+        } else if(ad.post.visibilityStatus === 'HIDDEN' || ad.post.visibilityStatus === 'hidden' || ad.post.isHiddenForUsers == true){
           addHiddenBadgeonAds(listItem);
         }
 

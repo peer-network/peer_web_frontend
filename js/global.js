@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     getUser().then(profile2 => {
       const ProfilevisibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
       const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
-     
+      const isHiddenForUsers = profile2.data.getProfile.affectedRows.isHiddenForUsers || false;
       const ProfileWidget = document.querySelector(".widget-profile");
         if(ProfileWidget){
             const profileHeader = ProfileWidget.querySelector('.profile_header');
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               
               profileHeader.insertAdjacentElement("afterend", illegalBadge);
                   
-            }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
+            }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden' || isHiddenForUsers == true){
 
               
                 const hiddenBadge = document.createElement('span');
@@ -1286,7 +1286,7 @@ function postdetail(objekt, CurrentUserID) {
     }
      
 
-    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden' || objekt.isHiddenForUsers == true){
         const hiddenContentHTML = `
         <div class="hidden_content_frame">
           <div class="hidden_content">
@@ -1348,14 +1348,14 @@ function postdetail(objekt, CurrentUserID) {
 
       }else{ //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
-      }
+      
 
       const postview_footer = postContainer.querySelector(".postview_footer");
 
       const hiddenBageHTML = `
         <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
         postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
-
+      }
     }
   /*---End Hidden Frame content */
 
@@ -1976,7 +1976,7 @@ function commentToDom(c, append = true) {
 
     commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", illegalContentHTML);
 
-  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
+  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden' || c.isHiddenForUsers==true){
     const hiddenContentHTML = `
               <div class="hidden_content_frame_comment">
                 <div class="hidden_content">
@@ -2014,9 +2014,7 @@ function commentToDom(c, append = true) {
         hiddedCommentBadge.classList.add("hidden_badge_comment","txt-color-gray");
         hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
         commentActionDiv.appendChild(hiddedCommentBadge);
-      }
-  
-   
+      } 
   }
   if(c.hasActiveReports==true){
     const reportflaghtml = document.createElement("span");
@@ -2176,6 +2174,7 @@ async function fetchPostByID(postID) {
                           amounttrending
                           hasActiveReports
                           visibilityStatus
+                          isHiddenForUsers
                           isliked
                           isviewed
                           isreported
@@ -2191,6 +2190,7 @@ async function fetchPostByID(postID) {
                                   isfollowing
                                   hasActiveReports
                                   visibilityStatus
+                                  isHiddenForUsers
                                 }
                       comments {
                                     commentid
@@ -2200,6 +2200,7 @@ async function fetchPostByID(postID) {
                                     content
                                     visibilityStatus
                                     hasActiveReports
+                                    isHiddenForUsers
                                     amountlikes
                                     amountreplies
                                     isliked
@@ -2213,6 +2214,7 @@ async function fetchPostByID(postID) {
                                             isfollowing
                                             hasActiveReports
                                             visibilityStatus
+                                            isHiddenForUsers
                                           }
                                   }
                       }
@@ -3149,7 +3151,7 @@ function userProfileVisibilty(curentUserID,objectUser,container, type=''){
       </div>
     `;
 
-      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden'){
+      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden' || objectUser.isHiddenForUsers == true){
       if(objectUser.id != curentUserID ){
         container.classList.add("hidden_user_profile");
         container.insertAdjacentHTML("afterbegin", hiddenUserHTML);
