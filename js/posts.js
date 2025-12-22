@@ -228,6 +228,7 @@
                     isfriend
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                 }
                 comments {
                     commentid
@@ -240,6 +241,7 @@
                     amountreplies
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                     isliked
                     user {
                         id
@@ -251,6 +253,7 @@
                         isfriend
                         hasActiveReports
                         visibilityStatus
+                        isHiddenForUsers
                     }
                 }
             }
@@ -271,6 +274,7 @@
                     isfriend
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                 }
             }
         }
@@ -329,6 +333,7 @@
                      isfollowing
                      hasActiveReports
                      visibilityStatus
+                     isHiddenForUsers
                  }
              comments {
                    commentid
@@ -338,6 +343,7 @@
                      content
                      visibilityStatus
                      hasActiveReports
+                     isHiddenForUsers
                      amountlikes
                      amountreplies
                      isliked
@@ -351,6 +357,7 @@
                          isfollowing
                          hasActiveReports
                          visibilityStatus
+                         isHiddenForUsers
                     }
                  }
              }
