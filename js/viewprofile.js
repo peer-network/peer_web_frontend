@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       userprofile.affectedRows.visibilityStatus || "NORMAL";
 
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
-
+    const isHiddenForUsers = userprofile.affectedRows.isHiddenForUsers || false;
     let isReportedByYou = userprofile.affectedRows.isreported;
 
     if (urlIsReported !== null) {
@@ -81,9 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       followBtn.addEventListener("click", async function () {
         const user = {
           id: userID,
-          isfollowed:
-            this.classList.contains("following") ||
-            this.classList.contains("Peer"),
+          isfollowed: isfollowed,
           isfollowing: this.dataset.isfollowing === "true",
         };
 
@@ -155,11 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       profileInfo.insertAdjacentHTML("afterbegin", illegalProfileHTML);
     }
-
     /*---End illegal Frame content */
 
     /*---Hidden Account Frame */
-    if (visibilityStatus === "HIDDEN" || visibilityStatus === "hidden") {
+    if (visibilityStatus === "HIDDEN" || visibilityStatus === "hidden" || isHiddenForUsers == true) {
       const hiddenAccountHTML = `
         <div class="hidden_account_frame">
           <div class="hidden_content">
@@ -215,13 +212,19 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (post_loader) {
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
+
+    window.addEventListener("scroll", () => {
+      const rect = post_loader.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+        console.log("Fallback load triggered (on scroll)");
+        postsLaden(userID);
+      }
+    }, { passive: true });
+
   } else {
-    console.warn("⚠️ Post Loader element not found — cannot observe.");
+    console.warn("Post Loader element not found — cannot observe.");
   }
 
   async function getProfile(userID) {
@@ -317,5 +320,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  button.addEventListener("click", toggleDropdown);
+  button?.addEventListener("click", toggleDropdown);
 });
