@@ -24,6 +24,7 @@ async function fetchHelloData(userid = null) {
             biography
             visibilityStatus
             hasActiveReports
+            isHiddenForUsers
             isfollowed
             isfollowing
             isreported

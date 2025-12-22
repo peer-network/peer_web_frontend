@@ -37,7 +37,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if(ProfileWidget){
             const profileHeader = ProfileWidget.querySelector('.profile_header');
             if(ProfileWidget) {
-            ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+              if(isHiddenForUsers){
+                ProfileWidget.classList.add("profile_visibilty_hidden");
+              }else{
+              ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+             }
             }
             if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
             
