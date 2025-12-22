@@ -153,12 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       profileInfo.insertAdjacentHTML("afterbegin", illegalProfileHTML);
     }
-
     /*---End illegal Frame content */
- console.log('isHiddenForUsers ', isHiddenForUsers)
+
     /*---Hidden Account Frame */
     if (visibilityStatus === "HIDDEN" || visibilityStatus === "hidden" || isHiddenForUsers == true) {
-      console.log('isHiddenForUsers ', isHiddenForUsers)
       const hiddenAccountHTML = `
         <div class="hidden_account_frame">
           <div class="hidden_content">
