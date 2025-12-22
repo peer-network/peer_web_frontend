@@ -469,6 +469,12 @@ async function postsLaden(postbyUserID=null) {
         card.setAttribute("data-visibilty", objekt.visibilityStatus);
       }
 
+      if(objekt.isHiddenForUsers){
+        card.classList.add("visibilty_hidden");
+        card.setAttribute("data-visibilty", 'HIDDEN');
+      }
+
+
       let postDiv;
       let img;
       postDiv = document.createElement("div");

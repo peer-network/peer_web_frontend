@@ -77,6 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let messageTitle,
       message = "";
 
+    if (visibilityStatus=='illegal' || visibilityStatus=='ILLEGAL') 
+      return Merror("This post is ILLEGAL and can't be boost.", "", false, '<i class="peer-icon peer-icon-warning red-text"></i>');  
+
     if (hasReported) {
       messageTitle = "Your post is currently reported";
       message =
