@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       userprofile.affectedRows.visibilityStatus || "NORMAL";
 
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
-
+    const isHiddenForUsers = userprofile.affectedRows.isHiddenForUsers || false;
     let isReportedByYou = userprofile.affectedRows.isreported;
 
     if (urlIsReported !== null) {
@@ -155,9 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /*---End illegal Frame content */
-
+ console.log('isHiddenForUsers ', isHiddenForUsers)
     /*---Hidden Account Frame */
-    if (visibilityStatus === "HIDDEN" || visibilityStatus === "hidden") {
+    if (visibilityStatus === "HIDDEN" || visibilityStatus === "hidden" || isHiddenForUsers == true) {
+      console.log('isHiddenForUsers ', isHiddenForUsers)
       const hiddenAccountHTML = `
         <div class="hidden_account_frame">
           <div class="hidden_content">

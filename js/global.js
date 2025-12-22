@@ -1982,7 +1982,7 @@ function commentToDom(c, append = true) {
     commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", illegalContentHTML);
 
   }
-  else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden') {
+  else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden' || c.isHiddenForUsers == true) {
     const hiddenContentHTML = `
               <div class="hidden_content_frame_comment">
                 <div class="hidden_content">
@@ -2019,7 +2019,7 @@ function commentToDom(c, append = true) {
         hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
         commentActionDiv.appendChild(hiddedCommentBadge);
       }
-  }
+  } // end else if
 
   if(c.hasActiveReports==true) {
     const reportflaghtml = document.createElement("span");
