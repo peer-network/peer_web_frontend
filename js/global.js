@@ -1287,7 +1287,7 @@ function postdetail(objekt, CurrentUserID) {
     }
      
 
-    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden' || objekt.isHiddenForUsers==true){
         const hiddenContentHTML = `
         <div class="hidden_content_frame">
           <div class="hidden_content">
@@ -1349,16 +1349,16 @@ function postdetail(objekt, CurrentUserID) {
         }
       
 
-      }else{ //else mean logged in user viewing own post 
+      } else { //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
-      }
+      
 
       const postview_footer = postContainer.querySelector(".postview_footer");
 
       const hiddenBageHTML = `
         <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
         postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
-
+      }
     }
   /*---End Hidden Frame content */
 
