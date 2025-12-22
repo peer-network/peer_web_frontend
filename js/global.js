@@ -32,12 +32,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     getUser().then(profile2 => {
       const ProfilevisibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
       const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
-     
+      const isHiddenForUsers = profile2.data.getProfile.affectedRows.isHiddenForUsers || false;
       const ProfileWidget = document.querySelector(".widget-profile");
         if(ProfileWidget){
             const profileHeader = ProfileWidget.querySelector('.profile_header');
             if(ProfileWidget) {
-             ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+              if(isHiddenForUsers){
+                ProfileWidget.classList.add("profile_visibilty_hidden");
+              }else{
+              ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+             }
             }
             if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
               const illegalBadge = document.createElement('div');
@@ -45,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               illegalBadge.innerHTML = '<i class="peer-icon peer-icon-illegal"></i><span class="bold"> Your profile data is removed as illegal.</span>';
               profileHeader.insertAdjacentElement("afterend", illegalBadge);
             }
-            else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
+            else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden' || isHiddenForUsers == true){
                 const hiddenBadge = document.createElement('span');
                 hiddenBadge.classList.add ('profile_hidden_badge', 'small_font_size');
                 hiddenBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
@@ -2182,6 +2186,7 @@ async function fetchPostByID(postID) {
                           amounttrending
                           hasActiveReports
                           visibilityStatus
+                          isHiddenForUsers
                           isliked
                           isviewed
                           isreported
@@ -2197,6 +2202,7 @@ async function fetchPostByID(postID) {
                                   isfollowing
                                   hasActiveReports
                                   visibilityStatus
+                                  isHiddenForUsers
                                 }
                       comments {
                                     commentid
@@ -2206,6 +2212,7 @@ async function fetchPostByID(postID) {
                                     content
                                     visibilityStatus
                                     hasActiveReports
+                                    isHiddenForUsers
                                     amountlikes
                                     amountreplies
                                     isliked
@@ -2219,6 +2226,7 @@ async function fetchPostByID(postID) {
                                             isfollowing
                                             hasActiveReports
                                             visibilityStatus
+                                            isHiddenForUsers
                                           }
                                   }
                       }
@@ -3165,7 +3173,7 @@ function userProfileVisibilty(curentUserID,objectUser,container, type=''){
       </div>
     `;
 
-      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden'){
+      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden' || objectUser.isHiddenForUsers){
       if(objectUser.id != curentUserID ){
         container.classList.add("hidden_user_profile");
         container.insertAdjacentHTML("afterbegin", hiddenUserHTML);
