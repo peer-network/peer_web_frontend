@@ -1287,7 +1287,7 @@ function postdetail(objekt, CurrentUserID) {
     }
      
 
-    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden' || objekt.isHiddenForUsers==true){
         const hiddenContentHTML = `
         <div class="hidden_content_frame">
           <div class="hidden_content">
@@ -1349,16 +1349,14 @@ function postdetail(objekt, CurrentUserID) {
         }
       
 
-      }else{ //else mean logged in user viewing own post 
+      } else { //else mean logged in user viewing own post 
+
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
-      }
-
-      const postview_footer = postContainer.querySelector(".postview_footer");
-
-      const hiddenBageHTML = `
-        <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
-        postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
-
+        const postview_footer = postContainer.querySelector(".postview_footer");
+        const hiddenBageHTML = `
+          <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
+          postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
+        }
     }
   /*---End Hidden Frame content */
 
@@ -1583,11 +1581,18 @@ function showError(message) {
 }
 
 function redirectToProfile(userProfileID) {
-   const UserID = getCookie("userID");
-   if(UserID==userProfileID){
-     window.location.href = `profile.php`;
-     return;
-   }
+  const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
+  const userID = getCookie("userID");
+
+  if (userProfileID == PEER_SHOP_ID) {
+    window.location.href = `viewPeerShop.php?user=${userProfileID}`;
+    return;
+  }
+
+  if (userID == userProfileID) {
+    window.location.href = "profile.php";
+    return;
+  }
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 
@@ -1980,7 +1985,8 @@ function commentToDom(c, append = true) {
 
     commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", illegalContentHTML);
 
-  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
+  }
+  else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden' || c.isHiddenForUsers == true) {
     const hiddenContentHTML = `
               <div class="hidden_content_frame_comment">
                 <div class="hidden_content">
@@ -1998,9 +2004,7 @@ function commentToDom(c, append = true) {
 
    
       if(c.user.id != userID ){
-         commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", hiddenContentHTML);
-       
-
+        commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", hiddenContentHTML);
         // Select all inserted hidden frames and attach "View content" listeners
         commentBody.querySelectorAll(".hidden_content_frame_comment").forEach(frame => {
           const viewBtn = frame.querySelector(".view_content a");
@@ -2012,24 +2016,21 @@ function commentToDom(c, append = true) {
             });
           }
         });
-      }else{
+      } else {
         comment.classList.remove("visibilty_"+c.visibilityStatus.toLowerCase());
         const hiddedCommentBadge = document.createElement("span");
         hiddedCommentBadge.classList.add("hidden_badge_comment","txt-color-gray");
         hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
         commentActionDiv.appendChild(hiddedCommentBadge);
       }
-  
-   
   }
-  if(c.hasActiveReports==true){
+
+  if(c.hasActiveReports==true) {
     const reportflaghtml = document.createElement("span");
     reportflaghtml.classList.add("reported-flag","red-text");
     reportflaghtml.innerHTML = '<i class="peer-icon peer-icon-flag-fill"></i>';
     commentActionDiv.appendChild(reportflaghtml);
     comment.classList.add("reported_comment");
-
-   
   }
 
   //END of display reported comment
