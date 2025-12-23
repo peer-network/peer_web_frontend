@@ -1096,8 +1096,8 @@ async function resolveTransfer(recipientId, numberOfTokens, message) {
     variables: {
       recipient: recipientId,
       numberoftokens: numberOfTokens,
-      // message: message.replace(/[\r\n]+/g, ' ').trim(),
-      message: message,
+      message: message.replace(/[\r\n]+/g, ' ').trim(),
+      // message: message,
     },
   });
  
