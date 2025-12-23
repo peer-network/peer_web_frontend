@@ -70,7 +70,7 @@ checkAuth("unauthorized");
             </div>
 
               <div class="wallet_reload">
-              <a href="#"  class="md_font_size">Reload <i class="peer-icon peer-icon-refresh-alt"></i></a>
+              <a id="reloadTransactions" href="#" class="md_font_size">Reload <i class="peer-icon peer-icon-refresh-alt"></i></a>
             </div>
 
           </div>

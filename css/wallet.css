@@ -990,6 +990,29 @@
 .site-main-wallet .search_input_box .peer-icon-search {
 	position: absolute;
 	right: 50px;
-	top: 41px;
+	top: 50%;
 	cursor: pointer;
+	transform: translateY(-50%);
+	line-height: 0;
+}
+.user_not_found {
+	text-align: center;
+	padding: 100px 30px;
+}
+.user_not_found .unot-icon {
+	border-radius: 100%;
+	background: rgba(255, 59, 59, 0.20);
+	display: flex;
+	width: 200px;
+	height: 200px;
+	padding: 40px;
+	justify-content: center;
+	align-items: center;
+	gap: 8.715px;
+	aspect-ratio: 1/1;
+	margin: 0 auto 40px;
+}
+.user_not_found .unot-icon .peer-icon {
+	font-size: 120px;
+	color: var(--red-accent);
 }
