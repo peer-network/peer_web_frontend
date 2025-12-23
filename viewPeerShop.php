@@ -78,14 +78,21 @@ checkAuth("unauthorized");
     <!-- End: Load Posts Container --> 
   </main>
   <aside class="right-sidebar right-sidebar-profile"> 
-  <div class="inner-scroll">
-    <!-- Load sidebar widgets -->
-    <?php require_once ('./template-parts/sidebars/widget-profile.php'); ?>
-    <?php require_once ('./template-parts/sidebars/widget-main-menu.php'); ?>
-    <?php require_once ('./template-parts/sidebars/widget-add-new-post.php'); ?>
-    <?php require_once ('./template-parts/sidebars/widget-web-version.php'); ?>
-  </div>
+    <div class="inner-scroll">
+      <!-- Load sidebar widgets -->
+      <?php require_once ('./template-parts/sidebars/widget-profile.php'); ?>
+      <?php require_once ('./template-parts/sidebars/widget-main-menu.php'); ?>
+      <?php require_once ('./template-parts/sidebars/widget-add-new-post.php'); ?>
+      <?php require_once ('./template-parts/sidebars/widget-web-version.php'); ?>
+    </div>
   </aside>
+ 
+  <div class="checkout-main none" id="checkoutPopup">
+    <div class="checkout-popup"> </div>
+  </div>
+    
+
+
   <?php require_once ('./template-parts/footer.php'); ?>
   <?php require_once ('./template-parts/content-parts/view-post.php'); ?>
 </div>

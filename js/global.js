@@ -737,16 +737,33 @@ function postdetail(objekt, CurrentUserID) {
     cont_post_title_cont.appendChild(product_price);
 
     const postContent = containerright.querySelector('.post_content');
-    let  buyButton=containerright.querySelector('.buy-btn');
-    if(buyButton){
-      buyButton.remove();
+    let  buyButtoncont=containerright.querySelector('.buybtn_cont');
+    if(buyButtoncont){
+      buyButtoncont.remove();
     }
-  
-    buyButton = document.createElement("button");
+    buyButtoncont=document.createElement("div");
+    buyButtoncont.classList.add("buybtn_cont");
+
+    const buyButton = document.createElement("button");
     buyButton.classList.add("buy-btn","btn-blue","bold");
     buyButton.innerText='Buy';
+    buyButtoncont.appendChild(buyButton);
+    if(balance<objekt.productprice){
+      const errorBalance=document.createElement("span");
+      errorBalance.classList.add("error");
+      errorBalance.innerHTML='Not enough tokens. Your current balance is <strong>'+balance+' Peer Tokens.</strong>';
+      buyButtoncont.appendChild(errorBalance);
+      buyButton.disabled=true;
 
-    postContent.insertAdjacentElement('afterend', buyButton);
+    }
+
+    buyButton.addEventListener("click", () => {
+      renderCheckoutProductScreen()
+    });
+
+    
+
+    postContent.insertAdjacentElement('afterend', buyButtoncont);
     
   }
 
@@ -1445,7 +1462,269 @@ function postdetail(objekt, CurrentUserID) {
     }
 
   /*---End Content isreported badge */
+}
 
+const objectDummy = {
+  id: "ef6cb634-c4bc-4f2c-bf1d-a899a2a5ec02",
+  contenttype: "image",
+  title: "Red Tanga",
+  media: [
+    {
+      path: "/image/352b8a1f-b1b3-490a-8529-7f5fc46cee5d.png",
+      options: {
+        size: "57.45 KB",
+        resolution: "194x242"
+      }
+    }
+  ],
+  cover: "",
+  mediadescription:
+    "Silky smooth.. hot as fck... your wife will like it and she wont leave you for the yoga teacher. 100% plastic.. it's plastic it's elastic",
+  createdat: "2025-12-16 11:50:41.215417",
+  amountlikes: 0,
+  amountviews: 5,
+  amountcomments: 0,
+  amountdislikes: 0,
+  amounttrending: -20,
+  hasActiveReports: false,
+  visibilityStatus: "NORMAL",
+  isHiddenForUsers: false,
+  isliked: false,
+  isviewed: true,
+  isreported: false,
+  isdisliked: false,
+  issaved: false,
+  tags: [],
+  user: {
+    id: "292bebb1-0951-47e8-ac8a-759138a2e4a9",
+    username: "PeerShop",
+    slug: 91845,
+    img: "/profile/292bebb1-0951-47e8-ac8a-759138a2e4a9.png",
+    isfollowed: false,
+    isfollowing: true,
+    hasActiveReports: false,
+    visibilityStatus: "NORMAL",
+    isHiddenForUsers: false
+  },
+  comments: [],
+  isAd: false,
+  productprice: 500
+};
+
+renderCheckoutProductScreen(objectDummy);
+function renderCheckoutProductScreen(objekt) {
+  const checkoutPopup = document.getElementById("checkoutPopup");
+  checkoutPopup.classList.remove("none");
+  const checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
+
+  checkoutDropdown.innerHTML = "";
+  
+
+  // Wrapper
+  const wrapper = document.createElement("div");
+  wrapper.className = "checkout-form-screen";
+
+  /* ================= HEADER ================= */
+  const header = document.createElement("div");
+  header.className = "checkout-header";
+
+  const h2 = document.createElement("h2");
+  h2.className = "xxl_font_size";
+  h2.textContent = "Shipping";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "close-checkout";
+  closeBtn.innerHTML = "&times;";
+  closeBtn.onclick = () => {
+    checkoutDropdown.innerHTML = "";
+    checkoutPopup.classList.add("none");
+  };
+
+  header.append(h2, closeBtn);
+  wrapper.appendChild(header);
+
+  /* ================= PRODUCT HEADER ================= */
+  const productHeader = document.createElement("div");
+  productHeader.className = "product_header";
+
+  const product_media = document.createElement("div");
+  product_media.className = "product_media";
+
+  objekt.media.forEach(item => {
+    const img = document.createElement("img");
+    img.src = tempMedia(item.path);
+    img.alt = objekt.title;
+    product_media.appendChild(img);
+  });
+
+  const productinfo = document.createElement("div");
+  productinfo.className = "productinfo";
+
+  const title = document.createElement("h3");
+  title.className = "md_font_size bold";
+  title.textContent = objekt.title;
+
+  const desc = document.createElement("p");
+  desc.className = "txt-color-gray md_font_size";
+  desc.textContent = objekt.mediadescription;
+
+  const price = document.createElement("div");
+  price.className = "product_price bold xxl_font_size";
+  price.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Price</span> ${objekt.productprice}`;
+
+  productinfo.append(title, desc, price);
+  productHeader.append(product_media, productinfo);
+
+  /* ================= SIZE SELECTION ================= */
+  const productSize = document.createElement("div");
+  productSize.className = "product_size";
+
+  const sizeLabel = document.createElement("h3");
+  sizeLabel.className = "md_font_size";
+  sizeLabel.textContent = "Select size";
+
+  const sizes = document.createElement("div");
+  sizes.className = "product_sizes";
+
+  const arraySizes = [
+    { size: "XS", inStock: true },
+    { size: "S", inStock: false },
+    { size: "M", inStock: true },
+    { size: "L", inStock: true },
+    { size: "XL", inStock: false },
+    { size: "XXL", inStock: true }
+  ];
+
+  arraySizes.forEach(({ size, inStock }) => {
+    const label = document.createElement("label");
+    label.className = "psize_label";
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "product_size";
+    input.value = size;
+    input.disabled = !inStock;
+
+    const span = document.createElement("span");
+    span.className = "md_font_size";
+    span.textContent = size;
+
+    if (!inStock) label.classList.add("out_of_stock");
+
+    label.append(input, span);
+    sizes.appendChild(label);
+  });
+
+  productSize.append(sizeLabel, sizes);
+
+  /* ================= DELIVERY INFO ================= */
+  const deliveryInfo = document.createElement("div");
+  deliveryInfo.className = "delivery_info close";
+  const deliveryLabel = document.createElement("h3");
+  deliveryLabel.className = "md_font_size dtitle";
+  deliveryLabel.textContent = "Delivery information";
+
+  const deliveryShortinfo = document.createElement("span");
+  deliveryShortinfo.className = "small_font_size txt-color-gray";
+  deliveryShortinfo.innerHTML='1-3 working days, <strong>only within Germany</strong>';
+  deliveryLabel.appendChild(deliveryShortinfo);
+
+   // Toggle on click
+  deliveryLabel.addEventListener("click", () => {
+    deliveryInfo.classList.toggle("close");
+  });
+
+  
+  const deliveryMessage = document.createElement("div");
+  deliveryMessage.className = "delivery_message txt-color-gray ";
+ 
+  deliveryMessage.innerHTML =
+    "We'll email your delivery details within 1–3 days after your payment is confirmed. Please make sure your email address is correct; they can't be changed after you place the order. Delivery is available only within Germany.";
+  deliveryInfo.append(deliveryLabel,deliveryMessage);
+
+
+
+  /* ================= FORM ================= */
+  const form = document.createElement("form");
+  form.className = "checkout-form";
+
+  const fields = [
+    { placeholder: "Full name", type: "text",class: "full_name" },
+    { placeholder: "Email address", type: "email",class: "email" },
+    { placeholder: "Address line 1", type: "text",class: "address" },
+    { placeholder: "Address line 2 (optional)", type: "text",class: "address" }
+  ];
+
+  fields.forEach(f => {
+    const input = document.createElement("input");
+    input.type = f.type;
+    input.className = f.class;
+    input.placeholder = f.placeholder;
+    const fieldWrap = document.createElement("div");
+    fieldWrap.className = "form_field field_"+f.class;
+    fieldWrap.appendChild(input);
+
+    form.appendChild(fieldWrap);
+  });
+
+  const cityZip = document.createElement("div");
+  cityZip.className = "city_zip";
+
+  const city = document.createElement("input");
+  city.type = "text";
+  city.className = "city";
+  city.placeholder = "City";
+
+  const fieldWrapC = document.createElement("div");
+  fieldWrapC.className = "form_field field_city";
+  fieldWrapC.appendChild(city);
+
+  const zip = document.createElement("input");
+  zip.type = "text";
+  zip.className = "zip";
+  zip.placeholder = "ZIP";
+
+  const fieldWrapZ = document.createElement("div");
+  fieldWrapZ.className = "form_field field_zip";
+  fieldWrapZ.appendChild(zip);
+
+  cityZip.append(fieldWrapC, fieldWrapZ);
+  form.appendChild(cityZip);
+
+  /* ================= BUTTONS ================= */
+  const actions = document.createElement("div");
+  actions.className = "checkout-actions";
+
+  const backBtn = document.createElement("button");
+  backBtn.className = "btn-back btn-transparent";
+  backBtn.type = "button";
+  backBtn.innerHTML = `<i class="peer-icon peer-icon-arrow-left"></i> Back`;
+
+  backBtn.onclick = () => {
+    checkoutDropdown.innerHTML = "";
+    checkoutPopup.classList.add("none");
+  };
+
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "btn-next btn-blue bold";
+  nextBtn.type = "submit";
+  nextBtn.disabled=true;
+  nextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
+
+  
+
+  actions.append(backBtn, nextBtn);
+
+  /* ================= APPEND ALL ================= */
+  wrapper.append(
+    productHeader,
+    productSize,
+    deliveryInfo,
+    form,
+    actions
+  );
+
+  checkoutDropdown.appendChild(wrapper);
 }
 
 function forceDownload(url) {
@@ -1530,7 +1809,6 @@ async function handleFollowButtonClick(button, user) {
 
   try {
     const newStatus = await toggleFollowStatus(user.id);
-    console.log(newStatus);
 
     if (newStatus !== null) {
       user.isfollowing = newStatus;

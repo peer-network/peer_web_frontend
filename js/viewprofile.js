@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", () => {
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        console.log("Fallback load triggered (on scroll)");
+        //console.log("Fallback load triggered (on scroll)");
         postsLaden(userID);
       }
     }, { passive: true });
