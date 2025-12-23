@@ -1355,14 +1355,11 @@ function postdetail(objekt, CurrentUserID) {
 
       } else { //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
-      
-
-      const postview_footer = postContainer.querySelector(".postview_footer");
-
-      const hiddenBageHTML = `
-        <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
-        postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
-      }
+        const postview_footer = postContainer.querySelector(".postview_footer");
+        const hiddenBageHTML = `
+          <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
+          postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
+        }
     }
   /*---End Hidden Frame content */
 
@@ -1599,7 +1596,6 @@ function redirectToProfile(userProfileID) {
     window.location.href = "profile.php";
     return;
   }
-
   window.location.href = `view-profile.php?user=${userProfileID}`;
 }
 
