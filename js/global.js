@@ -15,7 +15,7 @@ if (location.hostname === "localhost") {
 } else {
   baseUrl = `${location.origin}/`;
 }
-//console.log(baseUrl);
+
 // below variable used in wallet module
 // need to declare in global scope
 let storedUserInfo,
@@ -32,12 +32,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     getUser().then(profile2 => {
       const ProfilevisibilityStatus = profile2.data.getProfile.affectedRows.visibilityStatus || 'NORMAL';
       const hasActiveReports = profile2.data.getProfile.affectedRows.hasActiveReports || false;
-     
+      const isHiddenForUsers = profile2.data.getProfile.affectedRows.isHiddenForUsers || false;
       const ProfileWidget = document.querySelector(".widget-profile");
         if(ProfileWidget){
             const profileHeader = ProfileWidget.querySelector('.profile_header');
             if(ProfileWidget) {
-            ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+              if(isHiddenForUsers){
+                ProfileWidget.classList.add("profile_visibilty_hidden");
+              }else{
+              ProfileWidget.classList.add("profile_visibilty_"+ProfilevisibilityStatus.toLowerCase());
+             }
             }
             if(ProfilevisibilityStatus === 'ILLEGAL' || ProfilevisibilityStatus === 'illegal'){
             
@@ -47,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               
               profileHeader.insertAdjacentElement("afterend", illegalBadge);
                   
-            }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden'){
+            }else if(ProfilevisibilityStatus === 'HIDDEN' || ProfilevisibilityStatus === 'hidden' || isHiddenForUsers == true){
 
               
                 const hiddenBadge = document.createElement('span');
@@ -81,8 +85,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         showOnboardingPopup();
       });
     }
-
-    //console.log(userData.userPreferences.onboardingsWereShown);
     
     if (userData) {
       const onboardings = userData.userPreferences.onboardingsWereShown || [];
@@ -337,9 +339,6 @@ async function dailyfree() {
           }
         });
       }
-      // console.log("Entry name:", entry.name, iconContainer);
-
-      // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
 
     return result.data.getDailyFreeStatus;
@@ -599,7 +598,6 @@ function postdetail(objekt, CurrentUserID) {
   donwloadAnchor.addEventListener("click", (e) => {
     e.preventDefault();
     const downloadUrl = e.target.getAttribute("href");
-    // console.log(downloadUrl);
     if (downloadUrl != "") {
       //forceDownload(downloadUrl);
     }
@@ -622,8 +620,9 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.querySelector("span").textContent = "Reported by you";
     reportpost_btn.classList.add("reported"); // optional: add a class for styling
   } else {
+    
     reportpost_btn.querySelector("span").textContent = "Report post";
-    reportpost_btn.classList.remove("reported", "none");
+    reportpost_btn.classList.remove("reported","none");
     // add listener only if not reported
     reportpost_btn.addEventListener(
       "click",
@@ -865,7 +864,6 @@ function postdetail(objekt, CurrentUserID) {
 
       // Play the current video and pause others
       sliderTrack.querySelectorAll("video").forEach((vid, i) => {
-        //console.log(index +'--'+i);
         if (i === index) {
           vid.play();
         } else {
@@ -994,8 +992,6 @@ function postdetail(objekt, CurrentUserID) {
     array.forEach((item, index) => {
       const image_item = document.createElement("div");
       image_item.classList.add("slide_item");
-      //console.log(item)
-
       const img = document.createElement("img");
       const timg = document.createElement("img");
       const src = tempMedia(item.path);
@@ -1178,7 +1174,6 @@ function postdetail(objekt, CurrentUserID) {
     });
   /*
           mostliked.sort((a, b) => b.liked - a.liked);
-          // console.log(mostliked);
           const mostlikedcontainer = document.getElementById("mostliked");
           mostlikedcontainer.innerHTML = "";
           for (let i = 0; i < 3 && i < mostliked.length; i++) {
@@ -1295,7 +1290,7 @@ function postdetail(objekt, CurrentUserID) {
     }
      
 
-    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+    if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden' || objekt.isHiddenForUsers == true){
         const hiddenContentHTML = `
         <div class="hidden_content_frame">
           <div class="hidden_content">
@@ -1352,21 +1347,19 @@ function postdetail(objekt, CurrentUserID) {
               video_p.currentTime = 0;
             }
           }, 300);
-
-          //console.log("Video paused:", video_p.paused);
         }
       
 
       }else{ //else mean logged in user viewing own post 
         postContainer.classList.remove("visibilty_"+objekt.visibilityStatus.toLowerCase());
-      }
+      
 
       const postview_footer = postContainer.querySelector(".postview_footer");
 
       const hiddenBageHTML = `
         <div class="hidden_badge"><i class="peer-icon peer-icon-eye-close"></i> Hidden </div>`;
         postview_footer.insertAdjacentHTML("beforeend", hiddenBageHTML);
-
+      }
     }
   /*---End Hidden Frame content */
 
@@ -1461,7 +1454,7 @@ function renderFollowButton(objekt, currentUserId) {
  */
 function updateFollowButtonState(button, isfollowing, isfollowed) {
   button.classList.remove(
-    "Peer",
+    //"Peer",
     "btn-blue",
     "following",
     "btn-white",
@@ -1494,10 +1487,12 @@ async function handleFollowButtonClick(button, user) {
 
   try {
     const newStatus = await toggleFollowStatus(user.id);
+    console.log(newStatus);
 
     if (newStatus !== null) {
       user.isfollowing = newStatus;
       updateAllFollowButtonsForUser(user.id, user.isfollowing, user.isfollowed);
+      updateFollowButtonState(button, user.isfollowing, user.isfollowed);
       updateFollowingCount(newStatus);
     } else {
       showError("Failed to update follow status. Please try again.");
@@ -1524,6 +1519,44 @@ async function handleFollowButtonClick(button, user) {
       updateFollowButtonState(btn, isfollowing, isfollowed);
     });
   }
+
+  async function toggleFollowStatus(userid) {
+  const accessToken = getCookie("authToken");
+  const query = `
+          mutation ToggleUserFollowStatus($userid: ID!) {
+            toggleUserFollowStatus(userid: $userid) {
+              status
+              ResponseCode
+              isfollowing
+            }
+          }
+        `;
+
+  const variables = { userid };
+
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    const result = await response.json();
+
+    if (result.data && result.data.toggleUserFollowStatus) {
+      return result.data.toggleUserFollowStatus.isfollowing;
+    } else {
+      console.error("GraphQL error:", result.errors);
+      return null;
+    }
+  } catch (error) {
+    console.error("Network error:", error);
+    return null;
+  }
+}
 
 /**
  * Updates the following count in the UI
@@ -1903,7 +1936,6 @@ function commentToDom(c, append = true) {
 
     // hideReply.addEventListener('click', function () {
     //   this.closest('.comment_item').classList.add('none')
-    //   console.log(' heir ');
     // });
 
     replyContainer.classList.add("comment_reply_container");
@@ -1948,7 +1980,7 @@ function commentToDom(c, append = true) {
 
     commentBody.querySelector(".comment_text").insertAdjacentHTML("beforebegin", illegalContentHTML);
 
-  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden'){
+  }else if(c.visibilityStatus=='HIDDEN' || c.visibilityStatus=='hidden' || c.isHiddenForUsers==true){
     const hiddenContentHTML = `
               <div class="hidden_content_frame_comment">
                 <div class="hidden_content">
@@ -1986,9 +2018,7 @@ function commentToDom(c, append = true) {
         hiddedCommentBadge.classList.add("hidden_badge_comment","txt-color-gray");
         hiddedCommentBadge.innerHTML = '<i class="peer-icon peer-icon-eye-close"></i> Hidden';
         commentActionDiv.appendChild(hiddedCommentBadge);
-      }
-  
-   
+      } 
   }
   if(c.hasActiveReports==true){
     const reportflaghtml = document.createElement("span");
@@ -2013,7 +2043,6 @@ function commentToDom(c, append = true) {
   const spanLike = document.createElement("span");
   likeContainer.append(spanLike);
 
-  //console.log( userID);
   if (c.isliked) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID && userID !== "") {
@@ -2149,6 +2178,7 @@ async function fetchPostByID(postID) {
                           amounttrending
                           hasActiveReports
                           visibilityStatus
+                          isHiddenForUsers
                           isliked
                           isviewed
                           isreported
@@ -2164,6 +2194,7 @@ async function fetchPostByID(postID) {
                                   isfollowing
                                   hasActiveReports
                                   visibilityStatus
+                                  isHiddenForUsers
                                 }
                       comments {
                                     commentid
@@ -2173,6 +2204,7 @@ async function fetchPostByID(postID) {
                                     content
                                     visibilityStatus
                                     hasActiveReports
+                                    isHiddenForUsers
                                     amountlikes
                                     amountreplies
                                     isliked
@@ -2186,6 +2218,7 @@ async function fetchPostByID(postID) {
                                             isfollowing
                                             hasActiveReports
                                             visibilityStatus
+                                            isHiddenForUsers
                                           }
                                   }
                       }
@@ -2381,7 +2414,6 @@ async function getUserInfo() {
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
     isInvited = userData?.invited;
-    //console.log("User Data:", userData);
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
   } catch (error) {
@@ -2540,8 +2572,6 @@ function initOnboarding() {
 
   // Get Server
   const config = getHostConfig();
-  //console.log('Domain:', config.domain);
-  //console.log('Server:', config.server);
 
   // Get userid from localStorage
   let userId = null;
@@ -2555,7 +2585,6 @@ function initOnboarding() {
   // Set the user ID in GA
   if (typeof firebase !== "undefined" && config.server !== "test") {
     if (userId) {
-      //console.log(userId);
       firebase.analytics().setUserId(userId);
     }
   }
@@ -2576,7 +2605,6 @@ function initOnboarding() {
             firebase.analytics().logEvent("onboarding", {
               skipped: 1, // 1 = true
             });
-            //console.log("skipped event fire");
           }
         } catch (error) {
           console.error("Firebase analytics error:", error);
@@ -2644,7 +2672,6 @@ function initOnboarding() {
             firebase.analytics().logEvent("onboarding", {
               skipped: 0, // 0 = false
             });
-            //console.log("Complete Fired");
           }
           if (config.server == "test") {
             console.log("Firebase event not fired on " + config.server);
@@ -2787,8 +2814,6 @@ async function fetchTokenomics() {
       if (gems_return_view)
         gems_return_view.innerText =
           viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
-
-      //console.log("Tokenomics loaded:", window.tokenomicsData);
     } else {
       console.error("Failed to load tokenomics:", result);
     }
@@ -2873,13 +2898,11 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     }
 
     setTimeout(async () => {
-      console.log("Refreshing token now...");
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
         //const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
         const newRefreshToken = getCookie("refreshToken");
         scheduleSilentRefresh(newAccessToken, newRefreshToken);
-        // console.log("New AuthToken:", newAccessToken);
       }
     }, refreshIn);
   } catch (err) {
@@ -3132,7 +3155,7 @@ function userProfileVisibilty(curentUserID,objectUser,container, type=''){
       </div>
     `;
 
-      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden'){
+      if(objectUser.visibilityStatus === 'HIDDEN' || objectUser.visibilityStatus === 'hidden' || objectUser.isHiddenForUsers == true){
       if(objectUser.id != curentUserID ){
         container.classList.add("hidden_user_profile");
         container.insertAdjacentHTML("afterbegin", hiddenUserHTML);

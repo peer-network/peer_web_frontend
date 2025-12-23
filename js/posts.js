@@ -210,6 +210,7 @@
                 amounttrending
                 hasActiveReports
                 visibilityStatus
+                isHiddenForUsers
                 isliked
                 isviewed
                 isreported
@@ -227,6 +228,7 @@
                     isfriend
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                 }
                 comments {
                     commentid
@@ -239,6 +241,7 @@
                     amountreplies
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                     isliked
                     user {
                         id
@@ -250,6 +253,7 @@
                         isfriend
                         hasActiveReports
                         visibilityStatus
+                        isHiddenForUsers
                     }
                 }
             }
@@ -270,6 +274,7 @@
                     isfriend
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                 }
             }
         }
@@ -312,6 +317,7 @@
                  amounttrending
                  hasActiveReports
                  visibilityStatus
+                 isHiddenForUsers
                  isliked
                  isviewed
                  isreported
@@ -327,6 +333,7 @@
                      isfollowing
                      hasActiveReports
                      visibilityStatus
+                     isHiddenForUsers
                  }
              comments {
                    commentid
@@ -336,6 +343,7 @@
                      content
                      visibilityStatus
                      hasActiveReports
+                     isHiddenForUsers
                      amountlikes
                      amountreplies
                      isliked
@@ -349,6 +357,7 @@
                          isfollowing
                          hasActiveReports
                          visibilityStatus
+                         isHiddenForUsers
                     }
                  }
              }

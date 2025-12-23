@@ -501,6 +501,11 @@ async function postsLaden(postbyUserID=null) {
         card.setAttribute("data-visibilty", objekt.visibilityStatus);
       }
 
+      if(objekt.isHiddenForUsers){
+        card.classList.add("visibilty_hidden");
+        card.setAttribute("data-visibilty", 'HIDDEN');
+      }
+
       let postDiv;
       let img;
       postDiv = document.createElement("div");
@@ -927,7 +932,7 @@ async function postsLaden(postbyUserID=null) {
       }
 
       /*---Hidden Frame content */
-        if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden'){
+        if(objekt.visibilityStatus=='HIDDEN' || objekt.visibilityStatus=='hidden' || objekt.isHiddenForUsers == true){
             const hiddenContentHTML = `
             <div class="hidden_content_frame">
               <div class="hidden_content">
@@ -1057,44 +1062,6 @@ async function postsLaden(postbyUserID=null) {
 });
 
 cards.forEach(post => observer.observe(post));
-}
-
-async function toggleFollowStatus(userid) {
-  const accessToken = getCookie("authToken");
-  const query = `
-          mutation ToggleUserFollowStatus($userid: ID!) {
-            toggleUserFollowStatus(userid: $userid) {
-              status
-              ResponseCode
-              isfollowing
-            }
-          }
-        `;
-
-  const variables = { userid };
-
-  try {
-    const response = await fetch(GraphGL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    const result = await response.json();
-
-    if (result.data && result.data.toggleUserFollowStatus) {
-      return result.data.toggleUserFollowStatus.isfollowing;
-    } else {
-      console.error("GraphQL error:", result.errors);
-      return null;
-    }
-  } catch (error) {
-    console.error("Network error:", error);
-    return null;
-  }
 }
 
 
