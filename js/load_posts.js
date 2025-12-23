@@ -468,6 +468,10 @@ async function postsLaden(postbyUserID=null) {
         card.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
         card.setAttribute("data-visibilty", objekt.visibilityStatus);
       }
+      if(objekt.isHiddenForUsers){
+        card.classList.add("visibilty_hidden");
+        card.setAttribute("data-visibilty", 'HIDDEN');
+      }
 
       if(objekt.isHiddenForUsers){
         card.classList.add("visibilty_hidden");

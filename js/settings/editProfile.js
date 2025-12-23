@@ -42,8 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const pusername = document.getElementById("pusername");
     pusername.innerText = profile2.data.getProfile.affectedRows.username;
     const userVisibility=profile2.data.getProfile.affectedRows.visibilityStatus;
-    console.log(userVisibility);
-
     const profilesettingsContainer = document.getElementById("profile-settings");
 
     if(userVisibility=='ILLEGAL' || userVisibility=='illegal'){

@@ -3,140 +3,6 @@ let userOffset = 1;
 let isFetchingUsers = false;
 let hasMoreUsers = true;
 
-// Initialization
-function initAppData() {
-  
-  resetTransactionHistoryList();
-  
-}
-
-window.addEventListener('DOMContentLoaded', initAppData);
-
-
-
-// Holt die Transaktionshistorie und rendert sie in #history-container
-// async function getTransactionHistory() {
-//   const accessToken = getCookie("authToken");
-
-//   const headers = new Headers({
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${accessToken}`,
-//   });
-
-//   // Neue GraphQL-Query (ohne Variablen)
-//   const graphql = JSON.stringify({
-//     query: `query GetTransactionHistory {
-//       getTransactionHistory {
-//         status
-//         ResponseCode
-//         affectedRows {
-//           transactionid
-//           operationid
-//           transactiontype
-//           senderid
-//           recipientid
-//           tokenamount
-//           transferaction
-//           message
-//           createdat
-//         }
-//       }
-//     }`,
-//   });
-
-//   const requestOptions = {
-//     method: "POST",
-//     headers,
-//     body: graphql,
-//     redirect: "follow",
-//   };
-
-//   // optionale Hilfsfunktion für die Typanzeige
-//   const actionLabel = (entry) => {
-//     // Falls deine API numerische Codes liefert, hier mappen.
-//     // Vorher wurde entry.action genutzt; nun gibt es transferaction/transactiontype.
-//     const a = Number(entry.transferaction ?? entry.transactiontype);
-//     switch (a) {
-//       case 2:  return "Like";
-//       case 4:  return "Comment";
-//       case 5:  return "Post create";
-//       case 18: return "Token Transfer";
-//       default:
-//         // Fallback: zeige vorhandene Strings oder "unknown"
-//         return (
-//           (typeof entry.transferaction === "string" && entry.transferaction) ||
-//           (typeof entry.transactiontype === "string" && entry.transactiontype) ||
-//           "unknown"
-//         );
-//     }
-//   };
-
-//   try {
-//     const response = await fetch(GraphGL, requestOptions);
-//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-//     const result = await response.json();
-//     if (result.errors) throw new Error(result.errors[0].message);
-
-//     const rows = result?.data?.getTransactionHistory?.affectedRows ?? [];
-
-//     // Neu: nach Datum absteigend sortieren (wie zuvor)
-//     const sortedDescending = rows
-//       .slice()
-//       .sort(
-//         (a, b) =>
-//           new Date(b.createdat).getTime() - new Date(a.createdat).getTime()
-//       );
-
-//     const container = document.getElementById("history-container");
-//     // if (container) container.innerHTML = ""; // optional: vorher leeren
-
-//     sortedDescending.forEach((entry) => {
-//       const historyItem = document.createElement("div");
-//       historyItem.className = "history-item";
-
-//       const typeDiv = document.createElement("div");
-//       typeDiv.className = "type";
-//       typeDiv.textContent = actionLabel(entry);
-
-//       const dateDiv = document.createElement("div");
-//       dateDiv.className = "date";
-//       dateDiv.textContent = adjustForDSTAndFormat(entry.createdat);
-
-//       const centerDiv = document.createElement("div");
-//       centerDiv.className = "center";
-
-//       const amountSpan = document.createElement("span");
-//       amountSpan.className = "amount";
-//       // Neue Feldbezeichnung: tokenamount (vormals numbers)
-//       const amount =
-//         typeof entry.tokenamount === "number"
-//           ? entry.tokenamount
-//           : Number(String(entry.tokenamount).replace(",", "."));
-//       amountSpan.textContent = String(amount).replace(/,/g, ".");
-
-//       const logoImg = document.createElement("img");
-//       logoImg.src = "svg/logo_sw.svg";
-//       logoImg.alt = "";
-
-//       centerDiv.appendChild(amountSpan);
-//       centerDiv.appendChild(logoImg);
-
-//       historyItem.appendChild(typeDiv);
-//       historyItem.appendChild(dateDiv);
-//       historyItem.appendChild(centerDiv);
-
-//       document.getElementById("history-container")?.appendChild(historyItem);
-//     });
-
-//     // Korrigierter Return-Wert passend zur neuen Query
-//     return result.data.getTransactionHistory;
-//   } catch (error) {
-//     console.error("Error:", error?.message || error);
-//     throw error;
-//   }
-// }
-
 // ====== Globale Steuerung ======
 const LIMIT = 20;
 let txOffset = 0;        // globaler Offset
@@ -147,17 +13,24 @@ const seenTxIds = new Set(); // Duplikat-Schutz
 // Stelle sicher, dass der Container & Sentinel existieren
 const historyContainer = document.getElementById("history-container");
 let historySentinel = document.getElementById("history-sentinel");
-if (!historySentinel) {
-  historySentinel = document.createElement("div");
-  historySentinel.id = "history-sentinel";
-  historySentinel.style.height = "1px";
-  historySentinel.style.width = "100%";
-  historySentinel.style.pointerEvents = "none";
-  historySentinel.innerHTML = '<!-- sentinel -->';
-  historyContainer?.appendChild(historySentinel);
+
+// Initialization
+function initAppData() {
+  if (!historySentinel) {
+    historySentinel = document.createElement("div");
+    historySentinel.id = "history-sentinel";
+    historySentinel.style.height = "20px";
+    historySentinel.style.width = "100%";
+    // historySentinel.style.pointerEvents = "none";
+    // historySentinel.style.visibility = "hidden";
+    historySentinel.innerHTML = '<!-- sentinel -->';
+    historyContainer?.appendChild(historySentinel);
+  }
+
+  resetTransactionHistoryList();
 }
 
-
+window.addEventListener('DOMContentLoaded', initAppData);
 
 function renderRows(rows) {
   rows.forEach((entry) => {
@@ -295,14 +168,8 @@ function renderRows(rows) {
               </div>
               `;
     
- historyItem.insertAdjacentHTML("beforeend", record);
-
- historyItem.addEventListener("click", () => {
-      historyItem.classList.toggle('open');
-       
-    });
- 
-
+    historyItem.insertAdjacentHTML("beforeend", record);
+    historyItem.addEventListener("click", () => historyItem.classList.toggle('open'));
     historyContainer?.insertBefore(historyItem, historySentinel);
   });
 }
@@ -336,7 +203,7 @@ async function loadMoreTransactionHistory() {
 
     const graphql = JSON.stringify({
       query: `query TransactionHistory {
-        transactionHistory {
+        transactionHistory (offset: ${txOffset}, limit: ${LIMIT}) {
             affectedRows {
               operationid
               transactiontype
@@ -390,7 +257,6 @@ async function loadMoreTransactionHistory() {
 
     const response = await fetch(GraphGL, requestOptions);
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
     const result = await response.json();
     if (result.errors) throw new Error(result.errors[0].message);
 
@@ -440,6 +306,7 @@ function initHistoryInfiniteScroll() {
     },
     {
       root: historyContainer, // Container scrollt (falls der Container scrollable ist)
+      // root: null, // Container scrollt (falls der Container scrollable ist)
       rootMargin: "0px 0px 200px 0px", // früher laden, bevor ganz unten
       threshold: 0.01,
     }
@@ -465,95 +332,6 @@ function resetTransactionHistoryList() {
   // erste Ladung sofort holen
   loadMoreTransactionHistory();
 }
-
-// ====== Startpunkt aufrufen, wenn die Seite/der Tab bereit ist ======
-
-
-// async function dailyPays() {
-//   const accessToken = getCookie("authToken");
-
-//   // Create headers
-//   const headers = new Headers({
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${accessToken}`,
-//   });
-
-//   // Define the GraphQL mutation with variables
-//   const graphql = JSON.stringify({
-//     query: `query ListPaymentLogs {
-//       listPaymentLogs(day: D0) {
-//         status
-//         counter
-//         ResponseCode
-//         affectedRows {
-//             from
-//             token
-//             userid
-//             postid
-//             action
-//             numbers
-//             createdat
-//         }
-//       }
-//     }`,
-//   });
-
-//   // Define request options
-//   const requestOptions = {
-//     method: "POST",
-//     headers: headers,
-//     body: graphql,
-//     redirect: "follow",
-//   };
-
-//   try {
-//     // Send the request and handle the response
-//     const response = await fetch(GraphGL, requestOptions);
-//     const result = await response.json();
-
-//     // Check for errors in response
-//     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-//     if (result.errors) throw new Error(result.errors[0].message);
-//     result.data.listPaymentLogs.affectedRows.forEach((entry) => {
-//       const historyItem = document.createElement("div");
-//       historyItem.className = "history-item";
-
-//       const typeDiv = document.createElement("div");
-//       typeDiv.className = "type";
-//       typeDiv.textContent = "Withdraw";
-
-//       const dateDiv = document.createElement("div");
-//       dateDiv.className = "date";
-//       dateDiv.textContent = "3 Feb 00:00";
-
-//       const centerDiv = document.createElement("div");
-//       centerDiv.className = "center";
-
-//       const amountSpan = document.createElement("span");
-//       amountSpan.className = "amount";
-//       amountSpan.textContent = "-1234";
-
-//       const logoImg = document.createElement("img");
-//       logoImg.src = "svg/logo_sw.svg";
-//       logoImg.alt = "";
-
-//       centerDiv.appendChild(amountSpan);
-//       centerDiv.appendChild(logoImg);
-
-//       historyItem.appendChild(typeDiv);
-//       historyItem.appendChild(dateDiv);
-//       historyItem.appendChild(centerDiv);
-
-//       // Füge das Element z. B. zu einem Container im DOM hinzu
-//       document.getElementById("history-container").appendChild(historyItem);
-//     });
-
-//     return result.data.listPaymentLogs;
-//   } catch (error) {
-//     console.error("Error:", error.message);
-//     throw error;
-//   }
-// }
 
 /*-------------- Transnsfer Token Process------------------*/ 
 
@@ -1111,14 +889,8 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
   const oldError = inputEl.parentElement.querySelector(".amount_error");
   if (oldError) oldError.remove();
 
-
-  
   const data = getCommissionBreakdown(amount);
-  //console.log(data);
   const  total_tokens =data.totalUsed;
-
-  
-
   const panel =  document.createElement("div");
   panel.classList.add("feePanel");
   panel.innerHTML = `
@@ -1301,179 +1073,6 @@ function renderCheckoutScreen(user, amount) {
 
   dropdown.appendChild(wrapper);
 }
-/*
-function renderLoaderScreen() {
-  const dropdown = document.getElementById("transferDropdown");
-  dropdown.innerHTML = "";
-  //dropdown.classList.add("modal-mode");
-
-  if (!document.querySelector(".transfer-backdrop")) {
-    const backdrop = document.createElement("div");
-    backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeTransferModal;
-    document.body.appendChild(backdrop);
-  }
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "transfer-form-screen";
-
-  const header = document.createElement("div");
-  header.className = "transfer-header";
-
-  let loaderSvg = document.getElementById("loaderSvg");
-
-  if (!loaderSvg) {
-    loaderSvg = document.createElement("img");
-    loaderSvg.id = "loaderSvg";
-    loaderSvg.src = "./svg/loader.svg"; // adjust path as needed
-    loaderSvg.className = "loaderSvg";
-  }
-
-  header.appendChild(loaderSvg);
-  wrapper.appendChild(header);
-
-  const content = document.createElement("div");
-  content.className = "loader-screen-contents";
-
-  const p1 = document.createElement("p");
-  p1.className = "loader-screen-contents-p1";
-  p1.textContent = "Approving your transaction";
-
-  const p2 = document.createElement("p");
-  p2.className = "loader-screen-contents-p2";
-  p2.textContent = "This may take some time...";
-
-  content.appendChild(p1);
-  content.appendChild(p2);
-  wrapper.appendChild(content);
-  dropdown.appendChild(wrapper);
-}
-
-function renderFinalScreen(transferredAmount, user) {
-  const dropdown = document.getElementById("transferDropdown");
-  dropdown.innerHTML = "";
-  //dropdown.classList.add("modal-mode");
-  
-  dropdown.classList.remove("hidden");
-
-  // Backdrop
-  if (!document.querySelector(".transfer-backdrop")) {
-    const backdrop = document.createElement("div");
-    backdrop.className = "transfer-backdrop";
-    backdrop.onclick = closeTransferModal;
-    document.body.appendChild(backdrop);
-  }
-
-  // Main wrapper
-  const wrapper = document.createElement("div");
-  wrapper.className = "transfer-form-screen final-screen";
-
-  // Header with tick
-  const header = document.createElement("div");
-  header.className = "transfer-header";
-
-  const img = document.createElement("img");
-  img.className = "tick-true";
-  img.src = "./svg/tick.svg";
-  header.appendChild(img);
-  wrapper.appendChild(header);
-
-  const content = document.createElement("div");
-  content.className = "loader-screen-contents";
-
-  const transferredAmountDiv = document.createElement("div");
-  transferredAmountDiv.className = "transferred-amount";
-
-  const amountSpan = document.createElement("span");
-  amountSpan.textContent = `- ${transferredAmount} `;
-  transferredAmountDiv.appendChild(amountSpan);
-
-  const coinIcon = document.createElement("img");
-  coinIcon.src = "./svg/logo_sw.svg";
-  coinIcon.alt = "coin";
-  coinIcon.onerror = () => (coinIcon.src = "./svg/noname.svg");
-
-  transferredAmountDiv.appendChild(coinIcon);
-
-  const euro = document.createElement("small");
-  euro.textContent = ` ~ ${balance}€ `;
-  transferredAmountDiv.appendChild(euro);
-
-  content.appendChild(transferredAmountDiv);
-
-  const userInfo = document.createElement("div");
-  userInfo.className = "user-info";
-
-  const label = document.createElement("span");
-  label.className = "label";
-  label.textContent = "Where to";
-
-  const avatar = document.createElement("img");
-  avatar.className = "user-avatar";
-  avatar.src = tempMedia(user ?.img.replace("media/", ""));
-  avatar.onerror = () => {
-    this.src = "./svg/noname.svg"
-  };
-
-  const username = document.createElement("span");
-  username.innerHTML = `<strong>${user.username}</strong> #${user.slug}`;
-
-  const nameWrapper = document.createElement("div");
-  nameWrapper.style.display = "flex";
-  nameWrapper.style.alignItems = "center";
-  nameWrapper.style.gap = "10px";
-  nameWrapper.appendChild(label);
-  nameWrapper.appendChild(avatar);
-  nameWrapper.appendChild(username);
-
-  const infoWrap = document.createElement("div");
-  infoWrap.style.display = "flex";
-  infoWrap.style.flexDirection = "column";
-  infoWrap.style.alignItems = "center";
-  infoWrap.appendChild(nameWrapper);
-
-  userInfo.appendChild(infoWrap);
-  content.appendChild(userInfo);
-
-  wrapper.appendChild(content);
-
-  // Action Buttons
-  const actions = document.createElement("div");
-  actions.className = "action-buttons";
-
-  // Repeat Button
-  const repeatBtn = document.createElement("button");
-  repeatBtn.className = "repeat";
-
-  const repeatIcon = document.createElement("img");
-  repeatIcon.src = "./svg/repeat.svg";
-  repeatIcon.alt = "Repeat";
-
-  repeatBtn.textContent = "Repeat";
-  repeatBtn.appendChild(repeatIcon);
-  repeatBtn.onclick = () => renderUsers(true);
-
-  // Receipt Button
-  const receiptBtn = document.createElement("button");
-  receiptBtn.className = "receipt";
-
-  const receiptIcon = document.createElement("img");
-  receiptIcon.src = "./svg/download.svg";
-  receiptIcon.alt = "Download";
-  receiptIcon.style.height = "18px";
-  receiptIcon.style.marginLeft = "6px";
-
-  receiptBtn.textContent = "Get the receipt";
-  receiptBtn.appendChild(receiptIcon);
-  receiptBtn.onclick = () => alert("Download receipt");
-
-  // Append buttons
-  actions.appendChild(repeatBtn);
-  actions.appendChild(receiptBtn);
-  wrapper.appendChild(actions);
-
-  dropdown.appendChild(wrapper);
-}*/
 
 async function resolveTransfer(recipientId, numberOfTokens,message) {
   const accessToken = getCookie("authToken");
