@@ -119,14 +119,13 @@ function renderRows(rows) {
           transferto='';
         }
 
-
         let messageText = entry.message || "";
         let shortMessage =
           messageText.length > 60
             ? messageText.slice(0, 60) + "..."
             : messageText;
 
-        if(entry.message!=''){
+        if(entry.message!='' && entry.transactiontype=='transferSenderToRecipient'){
           shortmessage_html=`<div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>${shortMessage}</div>`;
 
            fullmessage_html=`<div class="message_row">
@@ -134,18 +133,18 @@ function renderRows(rows) {
                     <span class="message_body">${messageText}</span>
                   </div>`;
         }
-    const record =`<div class="transaction_record">
-                <div class="transaction_info profile_status_${trans_user_data?.visibilityStatus?.toLowerCase()||''}">
-                  <div class="transaction_media">
-                    ${icon_html}
-                  </div>
-                  <div class="transaction_content">
-                    <div class="tinfo md_font_size"><span class="title bold">${transaction_title}</span> ${transferto}</div>
-                    ${shortmessage_html}
-                  </div>
+            const record =`<div class="transaction_record">
+                        <div class="transaction_info profile_status_${trans_user_data?.visibilityStatus?.toLowerCase()||''}">
+                          <div class="transaction_media">
+                            ${icon_html}
+                          </div>
+                          <div class="transaction_content">
+                            <div class="tinfo md_font_size"><span class="title bold">${transaction_title}</span> ${transferto}</div>
+                            ${shortmessage_html}
+                          </div>
 
                 </div>
-                <div class="transaction_date md_font_size txt-color-gray">${adjustForDSTAndFormat(entry.createdat)}</div>
+                <div class="transaction_date md_font_size txt-color-gray">${formatDate(entry.createdat)}</div>
                 <div class="transaction_price xl_font_size bold">${formatAmount(amount)}</div>
               </div>
               
@@ -219,6 +218,7 @@ async function loadMoreTransactionHistory() {
                   biography
                   visibilityStatus
                   hasActiveReports
+                  isHiddenForUsers
                   updatedat
               }
               recipient {
@@ -229,6 +229,7 @@ async function loadMoreTransactionHistory() {
                   biography
                   visibilityStatus
                   hasActiveReports
+                  isHiddenForUsers
                   updatedat
               }
               fees {
@@ -438,7 +439,15 @@ async function renderUsers() {
     }
 
     const results = await searchUser(search);
-    if (!results.length) return;
+    if (!results.length) {
+      userList.innerHTML = `<div class='user_not_found'>
+       <span class="unot-icon"><i class="peer-icon peer-icon-warning"></i></span>
+        <h2 class="unot-title red-text xxl_font_size bold">User not found</h2>
+        <p class="unot-message xl_font_size">Please check the username and try again.</p>
+        
+      </div>`;
+      return;
+    }
 
     // need to make it empty before executing loop
     userList.innerHTML = "";
@@ -942,10 +951,7 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
 
 }
 
-
-
 function renderCheckoutScreen(user, amount) {
- 
   const dropdown = document.getElementById("transferDropdown");
   dropdown.querySelector(".modal-actions").remove();
   dropdown.querySelector(".recipient-info .edit_btn").remove();
@@ -966,9 +972,7 @@ function renderCheckoutScreen(user, amount) {
   if(message==''){
     dropdown.querySelector(".message-wrap").classList.add("none");
   }
-  dropdown.querySelector(".message-wrap .message_area").innerHTML=message;
-  
-
+  dropdown.querySelector(".message-wrap .message_area").innerHTML= message.replace(/[\r\n]+/g, ' ').trim();
   
 
   const total_tranfer_tokens=parseFloat(
@@ -994,8 +998,6 @@ function renderCheckoutScreen(user, amount) {
   }
 
   const totalAmount = calculateTotalWithFee(amount);
-  
-
   // Actions
   const actions = document.createElement("div");
   actions.className = "modal-actions";
@@ -1029,7 +1031,7 @@ function renderCheckoutScreen(user, amount) {
     try {
       //renderLoaderScreen();
       const userId = (user ?.userid === undefined) ? user ?.id : user ?.userid;
-      const res = await resolveTransfer(userId, amount,message);
+      const res = await resolveTransfer(userId, amount, message);
       if (res.status === "success") {
         closeTransferModal();
         const confirmContinue = await success("Completed","Your transfer was sent successfully.",false,'<i class="peer-icon peer-icon-good-tick-circle"></i>');
@@ -1039,8 +1041,8 @@ function renderCheckoutScreen(user, amount) {
         //renderFinalScreen(totalAmount, user);
       } else {
 
-
-        const tryagain = await warnig("Transfer failed",userfriendlymsg(res.ResponseCode),false,'<i class="peer-icon peer-icon-warning"></i>','Try again');
+        await new Promise(resolve => setTimeout(resolve, 300));
+        const tryagain = await warnig("Transfer failed", userfriendlymsg(res.ResponseCode),false,'<i class="peer-icon peer-icon-warning"></i>','Try again');
         
       
       if (tryagain === null || tryagain.button === 0) {
@@ -1074,7 +1076,7 @@ function renderCheckoutScreen(user, amount) {
   dropdown.appendChild(wrapper);
 }
 
-async function resolveTransfer(recipientId, numberOfTokens,message) {
+async function resolveTransfer(recipientId, numberOfTokens, message) {
   const accessToken = getCookie("authToken");
 
   const headers = new Headers({
@@ -1094,6 +1096,7 @@ async function resolveTransfer(recipientId, numberOfTokens,message) {
     variables: {
       recipient: recipientId,
       numberoftokens: numberOfTokens,
+      // message: message.replace(/[\r\n]+/g, ' ').trim(),
       message: message,
     },
   });
@@ -1145,7 +1148,6 @@ function mul(a, b) {
   return resultStr.slice(0, len - decimalPlaces) + '.' + resultStr.slice(len - decimalPlaces);
 }
 
-
 function getCommissionBreakdown(transferAmount) {
   const base = transferAmount.toString(); // keep as string
 
@@ -1185,6 +1187,7 @@ function getCommissionBreakdown(transferAmount) {
     totalUsed
   };
 }
+
 function addStrings(a, b) {
   // Normalize inputs
   a = a.toString();
@@ -1209,8 +1212,6 @@ function addStrings(a, b) {
   return sum.slice(0, len - maxDec) + "." + sum.slice(len - maxDec);
 }
 
-
-
 function closeTransferModal() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.classList.add("hidden");
@@ -1222,4 +1223,23 @@ function closeTransferModal() {
     modal.classList.remove("modal-hide");
 });
 }
+
+function formatDate(timestampStr) {
+  // Remove microseconds beyond milliseconds and replace space with 'T'
+  const isoStr = timestampStr.replace(" ", "T").replace(/(\.\d{3})\d+/, "$1");
+  const date = new Date(isoStr);
+
+  const options = {
+    year: "numeric",
+    month: "short", // "Jun"
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  };
+
+  return date.toLocaleString(undefined, options);
+}
+
+document.getElementById('reloadTransactions').addEventListener('click', resetTransactionHistoryList)
 /*-------------- End Transnsfer Token Process------------------*/ 
