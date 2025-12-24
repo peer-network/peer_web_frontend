@@ -95,7 +95,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 5;
+	z-index: 999;
   background: rgba(37, 37, 37, 0.50);
   backdrop-filter: blur(15px);
 }
@@ -118,11 +118,19 @@
 
 
 .view-peer-shop .checkout-popup .checkout-form-screen {
+
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+}
+
+.view-peer-shop .checkout-popup .checkout-form-screen .scroll_wrap {
 	overflow-y: scroll;
 	scrollbar-width: none;
 	display: flex;
 	flex-direction: column;
 	gap: 40px;
+  max-height: 700px;
 }
 .checkout-form-screen .checkout-header {
 	display: flex;
@@ -193,6 +201,28 @@
 	background-size: cover;
 	width: 40px;
 	height: 40px;
+}
+
+.selected_size {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 40px;
+	align-self: stretch;
+}
+.selected_size .size {
+	display: flex;
+	width: 130px;
+	padding: 15px;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	color: var(--white);
+	background: var(--blue, #0069FF);
+	font-weight: 700;
+	border-color: var(--blue, #0069FF);
+	aspect-ratio: 1;
+	border-radius: 40px;
 }
 /* Size */
   .checkout-form-screen .product_sizes {
@@ -300,6 +330,161 @@
     padding-top: 0;
   }
 /* End Delivery Info */
+/* Delivery Info Verify*/
+  .checkout-form-screen .delivery_info_verify {
+    position: relative;
+    display: flex;
+    padding: 40px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    border-radius: 70px;
+    background: var(--dark-inactive, #323232);
+  }
+  .checkout-form-screen .delivery_info_verify .dinfotitle {
+    margin: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+  .checkout-form-screen .delivery_info_verify .dinfotitle::before {
+    content: '\e804';
+    font-family: "peer-network";
+    font-weight: 400;
+    
+  }
+  .checkout-form-screen .delivery_info_verify .delivery_verify_list {
+    border-top: 1px solid var(--white-secondary);
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    align-self: stretch;
+  }
+  .checkout-form-screen .delivery_info_verify .delivery_verify_list .verify_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+  }
+/* End Delivery Info Verify*/
+
+/* Paying To*/
+  .checkout-form-screen .paying_to {
+    position: relative;
+    display: flex;
+    padding: 40px;
+    justify-content: space-between;
+    gap: 40px;
+    border-radius: 70px;
+    background: var(--dark-inactive, #323232);
+  }
+  .checkout-form-screen .paying_to .paying_to_store {
+    font-style: italic;
+    font-weight: 700;
+    display: flex;
+    gap: 10px;
+  }
+  .checkout-form-screen .paying_to .paying_to_store .store_slug {
+    font-weight: 400;
+    font-style: normal;
+  }
+/* End Paying To*/
+
+/* Amount Brakdown*/
+  .checkout-form-screen .amount_detail{
+    position: relative;
+    display: flex;
+    padding: 40px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    border-radius: 70px;
+    background: var(--dark-inactive, #323232);
+  }
+  .checkout-form-screen .amount_detail .fee-section .total_amount {
+    
+    border-radius: 100px;
+    background: var(--black-dark, #252525);
+    height: 130px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: space-between;
+    position: relative;
+  }
+  .checkout-form-screen .amount_detail .fee-section .total_amount .final-total {
+    padding-right: 55px;
+    background-image: url(../svg/logo_sw.svg);
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: right center;
+    text-align: right;
+  }
+
+  .checkout-form-screen .amount_detail .fee-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .checkout-form-screen .amount_detail .fee-section .fee-title {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: space-between;
+    position: relative;
+    padding-right: 43px;
+    cursor: pointer;
+  }
+  .checkout-form-screen .amount_detail .fee-section .fee-title::after {
+    content: '\e82f';
+    position: absolute;
+    top: 19px;
+    right: 0px;
+    font-family: "peer-network";
+    font-size: 15px;
+  }
+  .checkout-form-screen .amount_detail .fee-section.close .fee-title::after {
+    content: '\e82e';
+  }
+  .checkout-form-screen .amount_detail .fee-breakdowns {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 1;
+    max-height: 300px;
+    transition: max-height 0.4s ease;
+  }
+  .checkout-form-screen .amount_detail .fee-section.close .fee-breakdowns {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .checkout-form-screen .amount_detail .fee-section .product-price .price-item,
+  .checkout-form-screen .amount_detail .fee-section .fee-breakdowns .fee-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: space-between;
+    position: relative;
+  
+  }
+  .checkout-form-screen .amount_detail .fee-section .product-price .price-item .value,
+  .checkout-form-screen .amount_detail .fee-section .fee-breakdowns .fee-item .value {
+    padding-right: 45px;
+    background-image: url(../svg/logo_sw.svg);
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: right center;
+    text-align: right;
+    filter: brightness(50%);
+    color: var(--white);
+  }
+/* End Amount Brakdown*/
+
 /* Order form info */
   .checkout-form {
     display: flex;

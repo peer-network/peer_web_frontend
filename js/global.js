@@ -5,6 +5,7 @@ let likeCost = 0.3,
   postCost = 2;
 const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
 let baseUrl;
+let isInvited=false;
 
 if (location.hostname === "localhost") {
   baseUrl = `${location.origin}${
@@ -758,7 +759,8 @@ function postdetail(objekt, CurrentUserID) {
     }
 
     buyButton.addEventListener("click", () => {
-      renderCheckoutProductScreen()
+      
+      renderCheckoutProductScreen(objekt);
     });
 
     
@@ -1464,54 +1466,9 @@ function postdetail(objekt, CurrentUserID) {
   /*---End Content isreported badge */
 }
 
-const objectDummy = {
-  id: "ef6cb634-c4bc-4f2c-bf1d-a899a2a5ec02",
-  contenttype: "image",
-  title: "Red Tanga",
-  media: [
-    {
-      path: "/image/352b8a1f-b1b3-490a-8529-7f5fc46cee5d.png",
-      options: {
-        size: "57.45 KB",
-        resolution: "194x242"
-      }
-    }
-  ],
-  cover: "",
-  mediadescription:
-    "Silky smooth.. hot as fck... your wife will like it and she wont leave you for the yoga teacher. 100% plastic.. it's plastic it's elastic",
-  createdat: "2025-12-16 11:50:41.215417",
-  amountlikes: 0,
-  amountviews: 5,
-  amountcomments: 0,
-  amountdislikes: 0,
-  amounttrending: -20,
-  hasActiveReports: false,
-  visibilityStatus: "NORMAL",
-  isHiddenForUsers: false,
-  isliked: false,
-  isviewed: true,
-  isreported: false,
-  isdisliked: false,
-  issaved: false,
-  tags: [],
-  user: {
-    id: "292bebb1-0951-47e8-ac8a-759138a2e4a9",
-    username: "PeerShop",
-    slug: 91845,
-    img: "/profile/292bebb1-0951-47e8-ac8a-759138a2e4a9.png",
-    isfollowed: false,
-    isfollowing: true,
-    hasActiveReports: false,
-    visibilityStatus: "NORMAL",
-    isHiddenForUsers: false
-  },
-  comments: [],
-  isAd: false,
-  productprice: 500
-};
 
-renderCheckoutProductScreen(objectDummy);
+
+
 function renderCheckoutProductScreen(objekt) {
   const checkoutPopup = document.getElementById("checkoutPopup");
   checkoutPopup.classList.remove("none");
@@ -1549,8 +1506,8 @@ function renderCheckoutProductScreen(objekt) {
 
   const product_media = document.createElement("div");
   product_media.className = "product_media";
-
-  objekt.media.forEach(item => {
+  const arrayMedia = JSON.parse(objekt.media); 
+  arrayMedia.forEach(item => {
     const img = document.createElement("img");
     img.src = tempMedia(item.path);
     img.alt = objekt.title;
@@ -1572,7 +1529,11 @@ function renderCheckoutProductScreen(objekt) {
   price.className = "product_price bold xxl_font_size";
   price.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Price</span> ${objekt.productprice}`;
 
-  productinfo.append(title, desc, price);
+  const SelectedSize = document.createElement("div");
+  SelectedSize.className = "selected_size step_2 none";
+  SelectedSize.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Size</span> <span class="size"></span>`;
+
+  productinfo.append(title, desc, price,SelectedSize);
   productHeader.append(product_media, productinfo);
 
   /* ================= SIZE SELECTION ================= */
@@ -1610,6 +1571,10 @@ function renderCheckoutProductScreen(objekt) {
     span.textContent = size;
 
     if (!inStock) label.classList.add("out_of_stock");
+    input.onclick = () => {
+      SelectedSize.querySelector('.size').innerHTML = input.value;
+      
+    };
 
     label.append(input, span);
     sizes.appendChild(label);
@@ -1643,16 +1608,54 @@ function renderCheckoutProductScreen(objekt) {
   deliveryInfo.append(deliveryLabel,deliveryMessage);
 
 
+/* ================= DELIVERY INFO Verify ================= */
+  const deliveryInfoVerify = document.createElement("div");
+  deliveryInfoVerify.className = "delivery_info_verify step_2 none";
+
+  const deliveryinfoLabel = document.createElement("h3");
+  deliveryinfoLabel.className = "md_font_size bold dinfotitle";
+  deliveryinfoLabel.textContent = "Delivery information";
+
+  const verifyList = document.createElement("div");
+  verifyList.className = "delivery_verify_list";
+
+  const verifyFields = [
+    { label: "Name", class: "full_name" },
+    { label: "E-mail", class: "email" },
+    { label: "Address line 1", class: "address" },
+    { label: "Address line 2", class: "address2" },
+    { label: "City", class: "city" },
+    { label: "ZIP code", class: "zip" },
+    { label: "Country", class: "country", default: "Germany" }
+  ];
+
+  verifyFields.forEach(f => {
+    const row = document.createElement("div");
+    row.className = `verify_row verify_row_${f.class}`;
+
+    const label = document.createElement("span");
+    label.className = "verify_label txt-color-gray";
+    label.textContent = f.label;
+
+    const value = document.createElement("span");
+    value.className = `verify_value verify_${f.class}`;
+    value.textContent = f.default || "—";
+
+    row.append(label, value);
+    verifyList.appendChild(row);
+  });
+
+  deliveryInfoVerify.append(deliveryinfoLabel, verifyList);
 
   /* ================= FORM ================= */
   const form = document.createElement("form");
   form.className = "checkout-form";
 
   const fields = [
-    { placeholder: "Full name", type: "text",class: "full_name" },
-    { placeholder: "Email address", type: "email",class: "email" },
-    { placeholder: "Address line 1", type: "text",class: "address" },
-    { placeholder: "Address line 2 (optional)", type: "text",class: "address" }
+    { placeholder: "Full name", type: "text", class: "full_name" },
+    { placeholder: "Email address", type: "email", class: "email" },
+    { placeholder: "Address line 1", type: "text", class: "address" },
+    { placeholder: "Address line 2 (optional)", type: "text", class: "address2" }
   ];
 
   fields.forEach(f => {
@@ -1660,8 +1663,9 @@ function renderCheckoutProductScreen(objekt) {
     input.type = f.type;
     input.className = f.class;
     input.placeholder = f.placeholder;
+
     const fieldWrap = document.createElement("div");
-    fieldWrap.className = "form_field field_"+f.class;
+    fieldWrap.className = `form_field field_${f.class}`;
     fieldWrap.appendChild(input);
 
     form.appendChild(fieldWrap);
@@ -1675,23 +1679,134 @@ function renderCheckoutProductScreen(objekt) {
   city.className = "city";
   city.placeholder = "City";
 
-  const fieldWrapC = document.createElement("div");
-  fieldWrapC.className = "form_field field_city";
-  fieldWrapC.appendChild(city);
-
   const zip = document.createElement("input");
-  zip.type = "text";
   zip.className = "zip";
+  zip.type = "text";
   zip.placeholder = "ZIP";
 
-  const fieldWrapZ = document.createElement("div");
-  fieldWrapZ.className = "form_field field_zip";
-  fieldWrapZ.appendChild(zip);
+  cityZip.append(
+    wrapField(city, "city"),
+    wrapField(zip, "zip")
+  );
 
-  cityZip.append(fieldWrapC, fieldWrapZ);
   form.appendChild(cityZip);
 
-  /* ================= BUTTONS ================= */
+  function wrapField(input, name) {
+    const wrap = document.createElement("div");
+    wrap.className = `form_field field_${name}`;
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function bindInputToVerify(wrapper, inputClass) {
+    const input = wrapper.querySelector(`.${inputClass}`);
+    const output = wrapper.querySelector(`.verify_${inputClass}`);
+    const row = wrapper.querySelector(`.verify_row_${inputClass}`);
+
+    if (!input || !output) return;
+
+    const update = () => {
+      if (!input.value.trim()) {
+        output.textContent = "—";
+        if (inputClass === "address2" && row) row.style.display = "none";
+      } else {
+        output.textContent = input.value;
+        if (row) row.style.display = "flex";
+      }
+    };
+
+    input.addEventListener("input", update);
+    input.addEventListener("blur", update);
+
+    update(); // initial sync
+  }
+
+  wrapper.append(deliveryInfoVerify, form);
+
+  ["full_name", "email", "address", "address2", "city", "zip"]
+    .forEach(cls => bindInputToVerify(wrapper, cls));
+
+/* ================= PAYING TO ================= */
+  const paying_to = document.createElement("div");
+  paying_to.className = "paying_to step_2 none";
+
+  const paying_to_label = document.createElement("span");
+    paying_to_label.className = "paying_to_label bold";
+    paying_to_label.textContent = "Paying to";
+
+    const paying_to_store = document.createElement("span");
+    paying_to_store.className = `paying_to_store md_font_size`;
+    paying_to_store.textContent = "@Peer_Shop";
+
+    const paying_to_store_slug = document.createElement("span");
+    paying_to_store_slug.className = `store_slug txt-color-gray`;
+    paying_to_store_slug.textContent = "#12445";
+    paying_to_store.append(paying_to_store_slug);
+
+    paying_to.append(paying_to_label, paying_to_store);
+  
+/* ================= Total Amount ================= */
+  const amountBreakdown = document.createElement("div");
+  amountBreakdown.className = "amount_detail step_2 none";
+  
+  const feePanel = document.createElement("div");
+  feePanel.classList.add("feePanel");
+  let breakdown = [
+    { label: "2% to Peer Bank (platform fee)",  amount: 4 },
+    { label: "1% Burned (removed from supply)", amount: 5 },
+  ];
+  let inviterFee = "0";
+  /*if (isInvited !== "") { need to check luqman
+    inviterFee = mul(base, "0.01");
+    breakdown.push({
+      label: "1% to your Inviter",
+      amount: inviterFee
+    });
+  }*/
+
+  feePanel.innerHTML = `
+  
+    <div class="fee-section close">
+      <div class="total_amount bold  md_font_size">
+        Total amount 
+        <span class="final-total bold xl_font_size">${objekt.productprice}</span>
+      </div>
+      <div class="product-price ">
+        <div class="price-item txt-color-gray md_font_size">
+            <span class="label">Item Price</span>
+            <span class="value xl_font_size bold">${objekt.productprice}</span>
+          </div>
+      </div>
+      <div class="fee-title  md_font_size txt-color-gray">
+        Fees included
+        <span class="fee-total bold xl_font_size">${objekt.productprice}</span>
+      </div>
+      
+
+      <div class="fee-breakdowns">
+        ${breakdown.map(item => `
+          <div class="fee-item txt-color-gray">
+            <span class="label">${item.label}</span>
+            <span class="value">${(item.amount)}</span>
+          </div>
+        `).join("")}
+      </div>
+
+      
+    </div>
+  `;
+  // After setting panel.innerHTML
+  const feeSection = feePanel.querySelector(".fee-section");
+  const feeTitle = feePanel.querySelector(".fee-title");
+
+  // Toggle on click
+  feeTitle.addEventListener("click", () => {
+    feeSection.classList.toggle("close");
+  });
+  amountBreakdown.append(feePanel);
+  
+
+/* ================= BUTTONS ================= */
   const actions = document.createElement("div");
   actions.className = "checkout-actions";
 
@@ -1715,12 +1830,16 @@ function renderCheckoutProductScreen(objekt) {
 
   actions.append(backBtn, nextBtn);
 
+  const ScrollWrap = document.createElement("div");
+  ScrollWrap.className = "scroll_wrap";
+  ScrollWrap.append(form,deliveryInfoVerify,paying_to,amountBreakdown);
+
   /* ================= APPEND ALL ================= */
   wrapper.append(
     productHeader,
     productSize,
     deliveryInfo,
-    form,
+    ScrollWrap,
     actions
   );
 
