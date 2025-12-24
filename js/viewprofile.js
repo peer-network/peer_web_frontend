@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", () => {
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
-        console.log("Fallback load triggered (on scroll)");
+        //console.log("Fallback load triggered (on scroll)");
         postsLaden(userID);
       }
     }, { passive: true });
@@ -314,9 +314,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Close dropdown when clicking outside
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".moreActions_container_wrap")) {
-      button.setAttribute("aria-expanded", "false");
-      dropdown.classList.remove("open");
-      dropdown.setAttribute("hidden", "");
+      button?.setAttribute("aria-expanded", "false");
+      dropdown?.classList.remove("open");
+      dropdown?.setAttribute("hidden", "");
     }
   });
 

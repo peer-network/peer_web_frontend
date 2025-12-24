@@ -422,42 +422,22 @@ async function postsLaden(postbyUserID=null) {
     const parentElement = document.getElementById("allpost"); 
     let audio, video;
     
-    /*-- for testing post report and visibility----*/  
-    // const urlParams = new URLSearchParams(window.location.search);
-    // const testPostid = urlParams.get("testid");
-    // const testPostidvisibility = urlParams.get("visibility");
-    // const testUserid = urlParams.get("testuserid");
-    // const testUserVisibility = urlParams.get("uservisibility");
-    /*-- End : testing post report and visibility----*/
+    
 
-      
+    const elShopDetect = document.querySelector('.site_layout.view-profile');
+    const onShopProfilepage = elShopDetect?.dataset?.peershop === 'true';
     POSTS.listPosts.affectedRows.forEach((objekt,i) => {
-      /*-- for testing post report and visibility----*/
-      // if(testPostid==objekt.id){
-      //   if(testPostidvisibility){
-      //     objekt.visibilityStatus = testPostidvisibility;
-      //   }
-      // }
-      /*-- End : testing post report and visibility----*/
-
-      /*-- for testing  users visibility----*/
-      // if(testUserid==objekt.user.id){
-      //   if(testUserVisibility) {
-      //     objekt.user.visibilityStatus = testUserVisibility;
-      //   }
-      // }
-      /*-- End : for testing users visibility----*/
-      
-
-      //const userHasActiveReports = objekt.user.hasActiveReports || false; //unused for now
-
-      // Haupt-<section> erstellen
+     
       const card = document.createElement("section");
       card.id = objekt.id;
       card.classList.add("card");
       card.setAttribute("tabindex", "0");
       card.setAttribute("idno", i);
       card.setAttribute("content", objekt.contenttype);
+
+      if(onShopProfilepage || PEER_SHOP_ID==objekt.user.id){ //PEER_SHOP_ID is global variable define in global.js on top
+        card.classList.add("card-shop-product");
+      }
   
       if(objekt.hasActiveReports==true) {   
         card.classList.add("reported_post");
@@ -525,6 +505,7 @@ async function postsLaden(postbyUserID=null) {
       user_slug_span.appendChild(userprofileID);
       card_header_left.appendChild(user_slug_span);
       
+      
       card_header_left.addEventListener("click", function handledisLikeClick(event) {
           event.stopPropagation();
           event.preventDefault();
@@ -532,14 +513,24 @@ async function postsLaden(postbyUserID=null) {
 		  });
 
       card_header.appendChild(card_header_left);
+
+      const card_header_right = document.createElement("div");
+      card_header_right.classList.add("card-header-right");
       
       const followButton = renderFollowButton(objekt, UserID);
       if (followButton) {
-        const card_header_right = document.createElement("div");
-        card_header_right.classList.add("card-header-right");
         card_header_right.appendChild(followButton);
-        card_header.appendChild(card_header_right);
       }
+
+      if(onShopProfilepage){
+        objekt.productprice=500;// assume price in object
+        const product_price = document.createElement("div");
+        product_price.classList.add("product_price","bold","md_font_size");
+        product_price.innerText=objekt.productprice;
+        card_header_right.appendChild(product_price);
+       
+      }
+      card_header.appendChild(card_header_right);
 
       inhaltDiv.appendChild(card_header);
        const postaudioplayerDiv = document.createElement("div");

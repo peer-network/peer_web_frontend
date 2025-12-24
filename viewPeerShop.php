@@ -14,9 +14,7 @@ checkAuth("unauthorized");
 <link rel="stylesheet" href="fonts/font-poppins/stylesheet.css?<?php echo filemtime('fonts/font-poppins/stylesheet.css'); ?>">
 <link rel="stylesheet" href="fonts/peer-icon-font/css/peer-network.css?<?php echo filemtime('fonts/peer-icon-font/css/peer-network.css'); ?>">
 
-<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>	
-<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
-<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+
 <link rel="stylesheet" href="css/style.css?<?php echo filemtime('css/style.css'); ?>" />
 <link rel="stylesheet" href="css/profile.css?<?php echo filemtime('css/profile.css'); ?>" />
 <link rel="stylesheet" href="css/viewPeerShop.css?<?php echo filemtime('css/viewPeerShop.css'); ?>" />
@@ -42,7 +40,7 @@ checkAuth("unauthorized");
 </head>
 <body >
 <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
-<div id="profile" class="site_layout view-profile">
+<div id="profile" class="site_layout view-profile view-peer-shop" data-peershop=true>
   <header class="site-header header-profile"> <img class="logo" src="svg/Home.svg" alt="Peer Network">
     <h1 class="dashboard_h1" id="h1">Profile</h1>
   </header>
@@ -64,18 +62,13 @@ checkAuth("unauthorized");
       </div>
       <div class="profile_info">
         <h2 class="profile_title"><span  id="username2" class="xxl_font_size bold">&nbsp;</span><span id="slug2" class="slug profile_no xl_font_size txt-color-gray">&nbsp;</span></h2>
-        <div class="profile_description md_font_size txt-color-gray" id="biography2"> </div>    
+        <div class="profile_description md_font_size" id="biography2"> </div>    
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
       <!-- rendering via js code written in viewprofile.js -->
       <div class="profile_edit_box">
-        <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#"></a></div>
-        <div class="">
-          <a class="button btn-transparent follow-button" id="info" href="#">
-            Info
-            <i class="peer-icon peer-icon-home-alt"></i>
-          </a>
-        </div>
+        <a class="button btn-transparent follow-button" id="followbtn" href="#">Follow</a>
+        <a class="button btn-transparent info-button" id="info" href="#">Info<i class="peer-icon peer-icon-help"></i></a>
       </div>
     </div>
     <!-- Load Posts Container -->
@@ -85,14 +78,21 @@ checkAuth("unauthorized");
     <!-- End: Load Posts Container --> 
   </main>
   <aside class="right-sidebar right-sidebar-profile"> 
-  <div class="inner-scroll">
-    <!-- Load sidebar widgets -->
-    <?php require_once ('./template-parts/sidebars/widget-profile.php'); ?>
-    <?php require_once ('./template-parts/sidebars/widget-main-menu.php'); ?>
-    <?php require_once ('./template-parts/sidebars/widget-add-new-post.php'); ?>
-    <?php require_once ('./template-parts/sidebars/widget-web-version.php'); ?>
-  </div>
+    <div class="inner-scroll">
+      <!-- Load sidebar widgets -->
+      <?php require_once ('./template-parts/sidebars/widget-profile.php'); ?>
+      <?php require_once ('./template-parts/sidebars/widget-main-menu.php'); ?>
+      <?php require_once ('./template-parts/sidebars/widget-add-new-post.php'); ?>
+      <?php require_once ('./template-parts/sidebars/widget-web-version.php'); ?>
+    </div>
   </aside>
+ 
+  <div class="checkout-main none" id="checkoutPopup">
+    <div class="checkout-popup"> </div>
+  </div>
+    
+
+
   <?php require_once ('./template-parts/footer.php'); ?>
   <?php require_once ('./template-parts/content-parts/view-post.php'); ?>
 </div>
