@@ -741,48 +741,104 @@ function renderTransferFormView(user) {
 
   let messagevalidChk=true;
   // === Textarea Live Counter & Validation ===
+  // textarea.addEventListener("input", () => {
+  //   const limit = 500;
+  //   const currentLength = textarea.value.length;
+
+  //   // Update counter
+  //   charCounter.textContent = `${currentLength}/`;
+  //   charCounter.append(charCounter_limit);
+
+  //   // Regex to detect URLs or <a> tags
+  //   const linkRegex = /<a\s+href=("|').*?\1>|https?:\/\/\S+|www\.\S+/gi;
+
+  //   // If input contains links
+  //   if (linkRegex.test(textarea.value)) {
+  //     messageInsturction.textContent = "Links are not allowed.";
+  //     messageInsturction.classList.add("error");
+  //     nextBtn.disabled = true;
+  //     messagevalidChk=false;
+  //     return;
+  //   }
+
+  //   // If exceed limit
+  //   if (currentLength > limit) {
+  //     charCounter.classList.add("red-text");
+  //     messageInsturction.textContent = "Message exceeds 500 characters.";
+  //     messageInsturction.classList.add("error");
+  //     nextBtn.disabled = true;
+  //      messagevalidChk=false
+
+  //     // Optional: prevent further typing
+  //     //textarea.value = textarea.value.substring(0, limit);
+  //     //charCounter.textContent = `${limit}/`;
+  //     //charCounter.append(charCounter_limit);
+      
+  //     return;
+  //   }
+
+  //   // Valid state
+  //   nextBtn.disabled = false;
+  //   charCounter.classList.remove("red-text");
+  //   messageInsturction.textContent = "You can use letters, numbers, emojis, and special symbols. No links";
+  //   messageInsturction.classList.remove("error");
+  //   messagevalidChk=true;
+  // });
+
   textarea.addEventListener("input", () => {
     const limit = 500;
-    const currentLength = textarea.value.length;
 
-    // Update counter
-    charCounter.textContent = `${currentLength}/`;
-    charCounter.append(charCounter_limit);
+    // ---------- Normalize & sanitize ----------
+    function normalize(str) {
+      return str
+        .normalize("NFC")
+        .replace(/\r\n|\r/g, "\n")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "");
+    }
 
-    // Regex to detect URLs or <a> tags
+    // ---------- Count visible characters ----------
+    const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+    const graphemes = [...segmenter.segment(normalize(textarea.value))];
+    const visibleLength = graphemes.length;
+
+    // ---------- Trim to visible limit ----------
+    function trimToVisibleLimit(str, limit) {
+      const seg = [...segmenter.segment(normalize(str))];
+      return seg.slice(0, limit).map(s => s.segment).join("");
+    }
+
+    // ---------- Link detection ----------
     const linkRegex = /<a\s+href=("|').*?\1>|https?:\/\/\S+|www\.\S+/gi;
 
-    // If input contains links
     if (linkRegex.test(textarea.value)) {
       messageInsturction.textContent = "Links are not allowed.";
       messageInsturction.classList.add("error");
       nextBtn.disabled = true;
-      messagevalidChk=false;
+      messagevalidChk = false;
       return;
     }
 
-    // If exceed limit
-    if (currentLength > limit) {
-      charCounter.classList.add("red-text");
+    // ---------- Enforce visible character limit ----------
+    if (visibleLength > limit) {
+      textarea.value = trimToVisibleLimit(textarea.value, limit);
+
       messageInsturction.textContent = "Message exceeds 500 characters.";
       messageInsturction.classList.add("error");
+      charCounter.classList.add("red-text");
       nextBtn.disabled = true;
-       messagevalidChk=false
-
-      // Optional: prevent further typing
-      //textarea.value = textarea.value.substring(0, limit);
-      //charCounter.textContent = `${limit}/`;
-      //charCounter.append(charCounter_limit);
-      
-      return;
+      messagevalidChk = false;
+    } else {
+      messageInsturction.textContent =
+        "You can use letters, numbers, emojis, and special symbols. No links";
+      messageInsturction.classList.remove("error");
+      charCounter.classList.remove("red-text");
+      nextBtn.disabled = false;
+      messagevalidChk = true;
     }
 
-    // Valid state
-    nextBtn.disabled = false;
-    charCounter.classList.remove("red-text");
-    messageInsturction.textContent = "You can use letters, numbers, emojis, and special symbols. No links";
-    messageInsturction.classList.remove("error");
-    messagevalidChk=true;
+    // ---------- Update counter ----------
+    charCounter.textContent = `${visibleLength}/`;
+    charCounter.append(charCounter_limit);
   });
 
   const balanceAmount = parseFloat(
@@ -821,11 +877,7 @@ function renderTransferFormView(user) {
   if (input.value.trim() !== "") {
       input.dispatchEvent(new Event("input"));
   }
-
-
-
-
-
+  
   actions.append(nextBtn);
   wrapper.append( recipientInfo, amountWrap, messageWrap, actions);
  // dropdown.appendChild(wrapper);
@@ -972,8 +1024,8 @@ function renderCheckoutScreen(user, amount) {
   if(message==''){
     dropdown.querySelector(".message-wrap").classList.add("none");
   }
-  dropdown.querySelector(".message-wrap .message_area").innerHTML= message.replace(/[\r\n]+/g, ' ').trim();
-  
+  // dropdown.querySelector(".message-wrap .message_area").innerHTML= message.replace(/[\r\n]+/g, ' ').trim();
+  dropdown.querySelector(".message-wrap .message_area").innerHTML= message;
 
   const total_tranfer_tokens=parseFloat(
     dropdown.querySelector(".total_amount .final-total").textContent
@@ -1096,8 +1148,8 @@ async function resolveTransfer(recipientId, numberOfTokens, message) {
     variables: {
       recipient: recipientId,
       numberoftokens: numberOfTokens,
-      message: message.replace(/[\r\n]+/g, ' ').trim(),
-      // message: message,
+      // message: message.replace(/[\r\n]+/g, ' ').trim(),
+      message: message,
     },
   });
  
