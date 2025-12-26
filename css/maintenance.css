@@ -1,0 +1,205 @@
+:root {
+  color-scheme: dark;
+  --input-background: hsl(0, 0%, 85%);
+  --input-textcolor: hsl(212, 100%, 3%);
+  --input_placeholder: hsl(0, 0%, 22%);
+  --background-color: hsl(0, 0%, 15%);
+  --text-color: hsl(0, 100%, 99%);
+  --gradient1: hsl(195, 100%, 55%);
+  --gradient2: hsl(220, 72%, 56%);
+  --button-bg: hsl(218, 100%, 50%);
+  --button-color: white;
+  --button-hover: hsl(210, 100%, 75%);
+  --link-color: hsl(192, 70%, 75%);
+  --white-opacity-50: hsla(0, 0%, 100%, 0.5);
+  --black-opacity-50: hsla(0, 0%, 0%, 0.5);
+  --black: hsl(0, 0%, 0%);
+  --white: hsl(0, 0%, 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background-color);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.maintenance_container {
+    position: relative;
+    z-index: 1;
+    max-width: 1050px;
+    text-align: center;
+}
+
+.peer_logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 40px;
+    /* background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); */
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* box-shadow: 0 20px 60px rgba(99, 102, 241, 0.4); */
+    animation: float 3s ease-in-out infinite;
+}
+
+.peer_logo img {
+  width: 180px;
+}
+
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+h1 {
+    margin-bottom: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.message {
+    color: #cbd5e1;
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+
+.highlight {
+    background: linear-gradient(-45deg, var(--gradient1), var(--gradient2), var(--gradient1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.status-card {
+    background: #323232;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 60px;
+    padding: 50px;
+    margin-top: 48px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    background: #fbbf24;
+    border-radius: 50%;
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.status-text {
+    color: #fbbf24;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a855f7, #6366f1);
+    background-size: 200% 100%;
+    animation: progress 2s ease-in-out infinite;
+}
+
+@keyframes progress {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.info-text {
+    color: #64748b;
+    margin-top: 32px;
+}
+/* 
+@media (max-width: 640px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1.125rem;
+    }
+
+    .message {
+        font-size: 1rem;
+    }
+
+    .status-card {
+        padding: 24px;
+    }
+
+    .logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 32px;
+    }
+
+    .logo svg {
+        width: 40px;
+        height: 40px;
+    }
+} */
