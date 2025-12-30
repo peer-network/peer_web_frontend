@@ -205,8 +205,8 @@ moderationModule.view = {
         className: "reports"
       });
       const reportCount = moderationModule.helpers.createEl("span", {
-        className: "xl_font_size txt-color-gray",
-        innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
+        className: "xl_font_size txt-color-gray red-text",
+        innerHTML: `<i class="peer-icon peer-icon-flag red-text"></i> ${item.reports}`,
       });
       
       const statusVal = (item.status || "").toLowerCase();
@@ -259,7 +259,7 @@ moderationModule.view = {
           <div class="profile_post">
             <div class="profile">
               <span class="profile_image">
-                <img src="../svg/noname.svg" />
+                <img class="profile-picture" src="${item?.userImg}" onerror="this.src='../svg/noname.svg'" alt="user image">
               </span>
               <span class="profile_detail">
                 <span class="user_name xl_font_size bold italic">${item.username}</span>
@@ -670,11 +670,11 @@ moderationModule.view = {
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
           <span class="profile">
             <span class="profile_image">
-              <img src="../svg/noname.svg" />
+              <img class="profile-picture" src="${item?.moderatedBy?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
             </span>
             <span class="profile_detail">
-              <span class="user_name xl_font_size bold italic">${item.moderatorName || "moderator"}</span>
-              <span class="user_slug txt-color-gray">${item.moderatorSlug || "#000000"}</span>
+              <span class="user_name xl_font_size bold italic">${item.moderatedBy?.username || "moderator"}</span>
+              <span class="user_slug txt-color-gray">${item.moderatedBy?.slug || "#000000"}</span>
             </span>
           </span>
           <span class="datetime xl_font_size txt-color-gray">${item.moderatedAt || ""}</span>

@@ -8,7 +8,7 @@ moderationModule.fetcher = {
       let item = {
         kind: x.targettype,
         moderationId: x.moderationTicketId,
-        date: x.createdat,
+        date: moderationModule.helpers.formatDate(x.createdat) || "",
         reports: x.reportscount,
         status: (x.status || "").replace(/_/g, " ").toLowerCase(),
         visible: x.visible !== undefined ? x.visible : false,
@@ -20,14 +20,24 @@ moderationModule.fetcher = {
             img: tempMedia(r.img) || "../svg/noname.svg",
             updatedat: moderationModule.helpers.formatDate(r.updatedat) || null,
           }))
-        : []
+        : [],
+        moderatedBy: x.moderatedBy ? {
+          userid: x.moderatedBy.userid,
+          username: x.moderatedBy.username || "unknown",
+          slug: "#" + (x.moderatedBy.slug || "0000"),
+          img: tempMedia(x.moderatedBy.img) || "../svg/noname.svg",
+          updatedat: moderationModule.helpers.formatDate(x.moderatedBy.updatedat) || null,
+        } : null,
+
       };
 
       /* -------------------- POST -------------------- */
       if (x.targettype == "post" && x.targetcontent.post) {
         const post = x.targetcontent.post;
         const user = post.user || {};
+        console.log('user data:', user );
         item.username = user.username || "unknown";
+        item.userImg = tempMedia(user.img) || "../svg/noname.svg";
         item.slug = "#" + (user.slug || "0000");
         item.title = post.title || "";
         item.description = post.mediadescription || "";
