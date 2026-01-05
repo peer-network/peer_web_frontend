@@ -1,9 +1,12 @@
-  .site_layout {
-    
+html,
+body {
+  min-height: 100%;
+}
+
+.site_layout {
     background-image: url(../img/wallet-page-bg.png);
     background-size: cover;
     background-attachment: fixed;
-    
   }
 .left-sidebar.left-sidebar-wallet {
 	background-color: var(--background-color);
@@ -13,14 +16,21 @@
 }
 
 
-.wallet_main {
+/* .wallet_main {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 50px;
   margin-top: 180px;
   height: calc(100% - 180px);
+} */
+.wallet_main {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  margin-top: 180px;
 }
+
 .wallet_header .wallet_heading.xl_font_size {
 	margin-bottom: 0;
 }
@@ -122,13 +132,21 @@
   animation: loading 4s ease 0s infinite;
 }
 
-.wallet_transactions {
+/* .wallet_transactions {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	align-self: stretch;
   gap: 50px;
+} */
+.wallet_transactions {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
+
+
 .transaction_lists {
 	display: flex;
 	flex-direction: column;
@@ -304,8 +322,6 @@
 	word-break: break-word;
 }
 
-
-
 #wallet {
   display: grid;
   justify-content: center;
@@ -383,12 +399,18 @@
 .history-item div:last-child {
   text-align: right;
 }
-#history-container {
+/* #history-container {
 	height: calc(100% - 680px);
 	overflow: auto;
 	overflow-y: scroll;
 	scrollbar-width: none;
+} */
+#history-container {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
+
 .kurs {
   display: flex;
   justify-content: space-around;
