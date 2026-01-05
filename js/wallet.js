@@ -173,20 +173,39 @@ function renderRows(rows) {
   });
 }
 
+// function formatAmount(value) {
+//   const str = String(value);
+
+//   // If there's no decimal point, return as-is
+//   if (!str.includes(".")) return str;
+
+//   // Remove trailing zeros
+//   let trimmed = str.replace(/0+$/, "");
+
+//   // If decimal point is now last char, remove it
+//   trimmed = trimmed.replace(/\.$/, "");
+
+//   return trimmed;
+// }
+
 function formatAmount(value) {
-  const str = String(value);
+  if (value === null || value === undefined) return "";
 
-  // If there's no decimal point, return as-is
-  if (!str.includes(".")) return str;
+  let num = Number(value);
+  if (isNaN(num)) return String(value);
 
-  // Remove trailing zeros
-  let trimmed = str.replace(/0+$/, "");
+  // Convert numbers in scientific notation to decimal string
+  let str = num.toLocaleString("fullwide", { useGrouping: false, maximumFractionDigits: 20 });
 
-  // If decimal point is now last char, remove it
-  trimmed = trimmed.replace(/\.$/, "");
+  // Remove unnecessary trailing zeros after decimal
+  if (str.includes(".")) {
+    str = str.replace(/0+$/, ""); // remove trailing zeros
+    str = str.replace(/\.$/, ""); // remove decimal if nothing left
+  }
 
-  return trimmed;
+  return str;
 }
+
 
 // ====== Core-Loader (lädt 20, nutzt globalen Offset) ======
 async function loadMoreTransactionHistory() {
