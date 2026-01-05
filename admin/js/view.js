@@ -204,15 +204,19 @@ moderationModule.view = {
       const reportsEl = moderationModule.helpers.createEl("div", {
         className: "reports"
       });
+
+      const isFlagged = item.reports >= 5;
       const reportCount = moderationModule.helpers.createEl("span", {
-        className: "xl_font_size txt-color-gray red-text",
-        innerHTML: `<i class="peer-icon peer-icon-flag red-text"></i> ${item.reports}`,
+        className: `xl_font_size txt-color-gray ${isFlagged ? "red-text" : ""}`,
+        innerHTML: isFlagged
+          ? `<i class="peer-icon peer-icon-flag-fill red-text"></i> ${item.reports}`
+          : `<i class="peer-icon peer-icon-flag txt-color-gray"></i> ${item.reports}`,
       });
-      
+
       const statusVal = (item.status || "").toLowerCase();
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: statusVal == "illegal" ?  
+        innerHTML: statusVal == "illegal" || item.reports >= 5 ?  
           `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`:
           ""
       });
