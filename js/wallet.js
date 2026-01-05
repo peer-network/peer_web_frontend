@@ -173,21 +173,6 @@ function renderRows(rows) {
   });
 }
 
-// function formatAmount(value) {
-//   const str = String(value);
-
-//   // If there's no decimal point, return as-is
-//   if (!str.includes(".")) return str;
-
-//   // Remove trailing zeros
-//   let trimmed = str.replace(/0+$/, "");
-
-//   // If decimal point is now last char, remove it
-//   trimmed = trimmed.replace(/\.$/, "");
-
-//   return trimmed;
-// }
-
 function formatAmount(value) {
   if (value === null || value === undefined) return "";
 
