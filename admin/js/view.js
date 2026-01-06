@@ -74,6 +74,8 @@ moderationModule.view = {
 
         lastType = type;
         lastContentType = contentType;
+        moderationModule.store.pagination.filter.type = type;
+        moderationModule.store.pagination.filter.contentType = contentType;
 
         await loadAndRender(type, contentType);
       });
