@@ -801,7 +801,7 @@ body {
   padding: 40px;
 
 }
-.site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
+/* .site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
 	border-radius: 0;
 	padding: 20px 20px 0 0;
 	background-color: transparent;
@@ -809,6 +809,21 @@ body {
 	overflow: auto;
 	height: 160px;
 	white-space: pre-wrap;
+} */
+.site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
+  border-radius: 0;
+  padding: 20px 20px 0 0;
+  background-color: transparent;
+  border-top: 1px solid var(--white-secondary);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  height: 200px;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .site-main-wallet .transfer-form-screen .message-wrap textarea {
 	width: 100%;
