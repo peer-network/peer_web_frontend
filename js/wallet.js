@@ -310,9 +310,10 @@ function initHistoryInfiniteScroll() {
       }
     },
     {
-      root: historyContainer, // Container scrollt (falls der Container scrollable ist)
-      // root: null, // Container scrollt (falls der Container scrollable ist)
-      rootMargin: "0px 0px 200px 0px", // früher laden, bevor ganz unten
+      // root: historyContainer, // Container scrollt (falls der Container scrollable ist)
+      root: null, // Container scrollt (falls der Container scrollable ist)
+      // rootMargin: "0px 0px 200px 0px", // früher laden, bevor ganz unten
+      rootMargin: "100% 0px 100% 0px",
       threshold: 0.01,
     }
   );

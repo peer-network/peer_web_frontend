@@ -15,7 +15,6 @@ body {
 	background-color: var(--background-color);
 }
 
-
 /* .wallet_main {
 	display: flex;
 	flex-direction: column;
@@ -145,7 +144,6 @@ body {
   flex: 1;
   min-height: 0;
 }
-
 
 .transaction_lists {
 	display: flex;
@@ -409,6 +407,8 @@ body {
   flex: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: none;
+  margin-top: 40px;
 }
 
 .kurs {
