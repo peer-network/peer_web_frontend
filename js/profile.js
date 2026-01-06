@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       addIllegalBadge();
     }
     
-    else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden' || isHiddenForUsers == true){
+    else if(visibilityStatus === 'HIDDEN' || visibilityStatus === 'hidden'  || isHiddenForUsers == true){
       
      profileEditBtn.classList.remove('none');
      

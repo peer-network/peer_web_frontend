@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
          
           const adInfo = listItem.querySelector('.ad_info'); 
           adInfo.querySelector('.ad_deescription').innerHTML="";
-          
+          adInfo.querySelector('.ad_tiitle').innerHTML= "";
           if (adInfo) { 
             const illegalAdsPostHTML = `
             <div class="illegal_adsPost_frame xl_font_size">

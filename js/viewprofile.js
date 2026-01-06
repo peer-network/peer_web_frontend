@@ -219,12 +219,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const rect = post_loader.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
         console.log("Fallback load triggered (on scroll)");
-        postsLaden(userID);
+        postsLaden(CurrentUserID);
       }
     }, {
       passive: true
     });
-
 
   } else {
     console.warn("Post Loader element not found — cannot observe.");

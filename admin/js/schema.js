@@ -110,14 +110,25 @@ moderationModule.schema = {
                 }
             }
             reporters {
-                userid
-                img
-                username
-                slug
-                biography
-                visibilityStatus
-                hasActiveReports
-                updatedat
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              hasActiveReports
+              updatedat
+            }
+            moderatedBy {
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              isHiddenForUsers
+              hasActiveReports
+              updatedat
             }
       }
     }
@@ -184,6 +195,17 @@ moderationModule.schema = {
             hasActiveReports
             updatedat
           }
+          moderatedBy {
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              isHiddenForUsers
+              hasActiveReports
+              updatedat
+          }
         }
       }
     }
@@ -228,6 +250,17 @@ moderationModule.schema = {
                 hasActiveReports
                 updatedat
             }
+            moderatedBy {
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              isHiddenForUsers
+              hasActiveReports
+              updatedat
+            }
         }
     }
   }`,
@@ -267,6 +300,17 @@ moderationModule.schema = {
             hasActiveReports
             updatedat
           }
+          moderatedBy {
+              userid
+              img
+              username
+              slug
+              biography
+              visibilityStatus
+              isHiddenForUsers
+              hasActiveReports
+              updatedat
+            }
         }
       }
     }
