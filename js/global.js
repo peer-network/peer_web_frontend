@@ -15,7 +15,7 @@ if (location.hostname === "localhost") {
 } else {
   baseUrl = `${location.origin}/`;
 }
-//console.log(baseUrl);
+
 // below variable used in wallet module
 // need to declare in global scope
 let storedUserInfo,
@@ -76,8 +76,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         showOnboardingPopup();
       });
     }
-
-    //console.log(userData.userPreferences.onboardingsWereShown);
     
     if (userData) {
       const onboardings = userData.userPreferences.onboardingsWereShown || [];
@@ -332,9 +330,6 @@ async function dailyfree() {
           }
         });
       }
-      // console.log("Entry name:", entry.name, iconContainer);
-
-      // console.log(`Name: ${entry.name}, Used: ${entry.used}, Available: ${entry.available}`);
     });
 
     return result.data.getDailyFreeStatus;
@@ -594,7 +589,6 @@ function postdetail(objekt, CurrentUserID) {
   donwloadAnchor.addEventListener("click", (e) => {
     e.preventDefault();
     const downloadUrl = e.target.getAttribute("href");
-    // console.log(downloadUrl);
     if (downloadUrl != "") {
       //forceDownload(downloadUrl);
     }
@@ -861,7 +855,6 @@ function postdetail(objekt, CurrentUserID) {
 
       // Play the current video and pause others
       sliderTrack.querySelectorAll("video").forEach((vid, i) => {
-        //console.log(index +'--'+i);
         if (i === index) {
           vid.play();
         } else {
@@ -990,8 +983,6 @@ function postdetail(objekt, CurrentUserID) {
     array.forEach((item, index) => {
       const image_item = document.createElement("div");
       image_item.classList.add("slide_item");
-      //console.log(item)
-
       const img = document.createElement("img");
       const timg = document.createElement("img");
       const src = tempMedia(item.path);
@@ -1174,7 +1165,6 @@ function postdetail(objekt, CurrentUserID) {
     });
   /*
           mostliked.sort((a, b) => b.liked - a.liked);
-          // console.log(mostliked);
           const mostlikedcontainer = document.getElementById("mostliked");
           mostlikedcontainer.innerHTML = "";
           for (let i = 0; i < 3 && i < mostliked.length; i++) {
@@ -1348,8 +1338,6 @@ function postdetail(objekt, CurrentUserID) {
               video_p.currentTime = 0;
             }
           }, 300);
-
-          //console.log("Video paused:", video_p.paused);
         }
       
 
@@ -1944,7 +1932,6 @@ function commentToDom(c, append = true) {
 
     // hideReply.addEventListener('click', function () {
     //   this.closest('.comment_item').classList.add('none')
-    //   console.log(' heir ');
     // });
 
     replyContainer.classList.add("comment_reply_container");
@@ -2050,7 +2037,6 @@ function commentToDom(c, append = true) {
   const spanLike = document.createElement("span");
   likeContainer.append(spanLike);
 
-  //console.log( userID);
   if (c.isliked) {
     likeContainer.classList.add("active");
   } else if (c.user.id !== userID && userID !== "") {
@@ -2422,7 +2408,6 @@ async function getUserInfo() {
     if (result.errors) throw new Error(result.errors[0].message);
     const userData = result.data.getUserInfo.affectedRows;
     isInvited = userData?.invited;
-    //console.log("User Data:", userData);
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
   } catch (error) {
@@ -2581,8 +2566,6 @@ function initOnboarding() {
 
   // Get Server
   const config = getHostConfig();
-  //console.log('Domain:', config.domain);
-  //console.log('Server:', config.server);
 
   // Get userid from localStorage
   let userId = null;
@@ -2596,7 +2579,6 @@ function initOnboarding() {
   // Set the user ID in GA
   if (typeof firebase !== "undefined" && config.server !== "test") {
     if (userId) {
-      //console.log(userId);
       firebase.analytics().setUserId(userId);
     }
   }
@@ -2617,7 +2599,6 @@ function initOnboarding() {
             firebase.analytics().logEvent("onboarding", {
               skipped: 1, // 1 = true
             });
-            //console.log("skipped event fire");
           }
         } catch (error) {
           console.error("Firebase analytics error:", error);
@@ -2685,7 +2666,6 @@ function initOnboarding() {
             firebase.analytics().logEvent("onboarding", {
               skipped: 0, // 0 = false
             });
-            //console.log("Complete Fired");
           }
           if (config.server == "test") {
             console.log("Firebase event not fired on " + config.server);
@@ -2828,8 +2808,6 @@ async function fetchTokenomics() {
       if (gems_return_view)
         gems_return_view.innerText =
           viewReturn > 0 ? `+${viewReturn}` : `${viewReturn}`;
-
-      //console.log("Tokenomics loaded:", window.tokenomicsData);
     } else {
       console.error("Failed to load tokenomics:", result);
     }
@@ -2914,13 +2892,11 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     }
 
     setTimeout(async () => {
-      console.log("Refreshing token now...");
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
         //const newRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
         const newRefreshToken = getCookie("refreshToken");
         scheduleSilentRefresh(newAccessToken, newRefreshToken);
-        // console.log("New AuthToken:", newAccessToken);
       }
     }, refreshIn);
   } catch (err) {

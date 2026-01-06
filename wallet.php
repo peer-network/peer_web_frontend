@@ -25,7 +25,8 @@ checkAuth("unauthorized");
 
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
-  <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
+  <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
+  <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
   <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
@@ -41,14 +42,15 @@ checkAuth("unauthorized");
   </div>
   <div id="edit-profile" class="site_layout">
     <header class="site-header header-profile">
-      <h1 id="h1"><i class="peer-icon peer-icon-wallet-filled"></i> Wallet</h1>
+      <img class="logo" src="svg/Home.svg" alt="Peer Network">
+      <h1 id="h1">Wallet</h1>
     </header>
 
     <aside class="left-sidebar left-sidebar-wallet">
       <div class="inner-scroll">
         <!-- Load sidebar widgets -->
-        <?php //require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
-        <?php //require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
+        <?php require_once ('./template-parts/sidebars/widget-wallet-time-until.php'); ?>
+        <?php require_once ('./template-parts/sidebars/widget-wallet-menu.php'); ?>
 
       </div>
     </aside>
@@ -140,7 +142,38 @@ checkAuth("unauthorized");
 
       <?php require_once ('./template-parts/wallet/walletTokenTransfer.php'); ?>
 
-      
+      <div id="wallet">
+        <div class="token">
+          <h2>Total Tokens</h2>
+          <div>
+            <img src="svg/logo_sw.svg" alt="peer token" class="logo" />
+            <span id="token"></span>
+            <div class="money">
+              <span>~</span>
+              <span id="money"></span>
+              <span id="tokenpercent"></span>
+            </div>
+          </div>
+        </div>
+        <div class="kurs">
+          <div>
+            <span class="peerkurs">1 Peer Token ≈ 0.1€</span>
+            <img src="svg/steigend.svg" alt="">
+          </div>
+          <span>1 Gem ≈ 133 PeerTokens</span>
+        </div>
+      </div>
+      <div id="wallet-transaction">
+        <h2>List of transactions</h2><div class="history-header">
+            <span class="type">Type</span>
+            <span class="date">Date</span>
+            <span class="amount">Amount</span>
+          </div>
+        <div id="history-container" class="history-container">
+          
+          <!-- <div id="history-sentinel" class="history-sentinel"></div> -->
+        </div>
+      </div>
     </main>
     <aside class="right-sidebar right-sidebar-wallet">
       <div class="inner-scroll">

@@ -228,6 +228,7 @@
                     isfriend
                     hasActiveReports
                     visibilityStatus
+                    isHiddenForUsers
                 }
                 comments {
                     commentid
@@ -252,6 +253,7 @@
                         isfriend
                         hasActiveReports
                         visibilityStatus
+                        isHiddenForUsers
                     }
                 }
             }

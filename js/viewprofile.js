@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Set initial button state using the centralized function
       updateFollowButtonState(followBtn, isfollowing, isfollowed);
-
+      
       // Set up event listener
       followBtn.addEventListener("click", async function () {
         const user = {
@@ -86,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         await handleFollowButtonClick(this, user);
-
         // Update the stored state after successful toggle
         this.dataset.isfollowing = user.isfollowed;
       });
@@ -213,10 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (post_loader) {
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
     observer.observe(post_loader);
 
     window.addEventListener("scroll", () => {
@@ -246,36 +242,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const query = `
-    query GetProfile($userid: ID, $contentFilterBy: ContentFilterType) {
-      getProfile(userid: $userid, contentFilterBy: $contentFilterBy) {
-        status
-        ResponseCode
-        affectedRows {
-          id
-          username
+      query GetProfile($userid: ID, $contentFilterBy: ContentFilterType) {
+        getProfile(userid: $userid, contentFilterBy: $contentFilterBy) {
           status
-          slug
-          img
-          biography
-          visibilityStatus
-          isHiddenForUsers
-          hasActiveReports
-          isfollowed
-          isfollowing
-          iFollowThisUser
-          thisUserFollowsMe
-          isreported
-          amountposts
-          amounttrending
-          amountfollowed
-          amountfollower
-          amountfriends
-          amountblocked
-          amountreports
+          ResponseCode
+          affectedRows {
+            id
+            username
+            status
+            slug
+            img
+            biography
+            visibilityStatus
+            isHiddenForUsers
+            hasActiveReports
+            isfollowed
+            isfollowing
+            iFollowThisUser
+            thisUserFollowsMe
+            isreported
+            amountposts
+            amounttrending
+            amountfollowed
+            amountfollower
+            amountfriends
+            amountblocked
+            amountreports
+          }
         }
       }
-    }
-  `;
+    `;
 
     const variables = {
       userid: userID,
