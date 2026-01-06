@@ -121,8 +121,8 @@ function renderRows(rows) {
 
         let messageText = entry.message || "";
         let shortMessage =
-          messageText.length > 60
-            ? messageText.slice(0, 60) + "..."
+          messageText.length > 50
+            ? messageText.slice(0, 50) + "..."
             : messageText;
 
         if(entry.message!='' && entry.transactiontype=='transferSenderToRecipient'){
