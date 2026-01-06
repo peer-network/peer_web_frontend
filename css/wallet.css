@@ -1,3 +1,4 @@
+
 html,
 body {
   min-height: 100%;
@@ -366,67 +367,11 @@ body {
 }
 
 
-.label {
-  margin-bottom: 4px;
-  font-size: 14px;
-}
 
-.progress-bar {
-  background: #333;
-  border-radius: 4px;
-  height: 8px;
-  overflow: hidden;
-}
 
-.progress {
-  height: 100%;
-  background: linear-gradient(to right, #444, #5ea4ff);
-  width: var(--progress);
-  transition: width 0.3s ease;
-}
 
-.radial-progress {
-  --size: 11rem;
-  --thickness: 0.5rem;
-  --progress: 65;
-  /* in Prozent (0–100) */
 
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background: conic-gradient(#5ea4ff calc(var(--progress) * 1%), #333 calc(var(--progress) * 1%) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin: auto;
-}
 
-.radial-progress::before {
-  content: "";
-  position: absolute;
-  width: calc(var(--size) - var(--thickness) * 2);
-  height: calc(var(--size) - var(--thickness) * 2);
-  background: #262626;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-.value {
-  color: #5ea4ff;
-  font-size: 24px;
-  text-align: center;
-  z-index: 2;
-}
-
-.label {
-  font-size: 14px;
-  color: #aaa;
-}
-
-.label span {
-  color: #5ea4ff;
-}
 .history-header,
 .history-item {
   display: flex;
@@ -453,7 +398,6 @@ body {
 .history-item div:last-child {
   text-align: right;
 }
-<<<<<<< HEAD
 /* #history-container {
 	height: calc(100% - 680px);
 	overflow: auto;
@@ -466,11 +410,6 @@ body {
   overscroll-behavior: contain;
   scrollbar-width: none;
   margin-top: 40px;
-=======
-#history-container {
-	height: 70vh;
-	overflow: auto;
->>>>>>> main
 }
 
 .kurs {
@@ -530,12 +469,10 @@ body {
 
 
 .site-main-wallet {
-  background-image: url(../svg/bgWallet.svg);
-  background-repeat: no-repeat;
-  background-size: 190%;
-  background-position: -29rem -7rem;
+  
   padding: 2rem;
-  background-attachment: fixed;
+
+  
 }
 
 /* wallet-to-wallet transfer */
@@ -553,68 +490,57 @@ body {
   display: inline-block;
 }
 
-.site-main-wallet .transfer-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    
-    
-    overflow-y: auto;
-    background: #1f1f1f;
-    border-radius: 70px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    margin-top: 8px;
-    z-index: 999;
-    padding: 10px 12px;
-    overflow: hidden;
-    overscroll-behavior: contain;
-   
-}
+
 
 .site-main-wallet .user-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 400px;
+  gap: 20px;
+  max-height: 800px;
   min-height: 400px;
   overflow: auto;
+  align-self: stretch;
 }
 
 .site-main-wallet .user-list .user-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+	display: flex;
+	cursor: pointer;
+	transition: background 0.2s ease;
+	padding: 40px 40px 40px 30px;
+	align-items: center;
+	align-self: stretch;
+	border-radius: 70px;
+	background: var(--black-dark, #252525);
+  position: relative;
+}
+.site-main-wallet .user-list .user-item::after {
+	content: "\e800";
+	font-family: "peer-network";
+	position: absolute;
+	right: 40px;
+	font-size: 36px;
+	color: var(--white-secondary);
 }
 
 .site-main-wallet .user-list .user-item:hover {
-  background-color: #2a2a2a;
+  background-color: #606060;
 }
 
 .site-main-wallet .user-list .user-item img {
-	width: 70px;
-	height: 70px;
+	width: 40px;
+	height: 40px;
 	border-radius: 50%;
 	object-fit: cover;
+	border: 1px solid #ffffff2e;
+	margin-right: 12px;
 }
 
 .site-main-wallet .user-list .user-item .info {
   display: flex;
-  flex-direction: column;
+  gap: 15px;
 }
 
-.site-main-wallet .user-list .user-item .info strong {
-  color: white;
-  
-}
 
-.site-main-wallet .user-list .user-item .info span {
-  color: #aaa;
-  
-}
 
 /* Shared Utility */
 .hidden {
@@ -625,27 +551,65 @@ body {
 /* Second screen — Transfer Inline Form */
 
 .site-main-wallet .transfer-dropdown .transfer-form-screen {
-  background: #1f1f1f;
-  border-radius: 10px;
-  padding: 80px;
-  color: white;
   overflow-y: scroll;
   scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
+
+.transfer-form-screen .balance-header {
+	background-image: url(../img/balance_bg.png);
+	background-size: cover;
+	display: flex;
+	padding: 40px;
+	align-items: center;
+	gap: 40px;
+	align-self: stretch;
+	border-radius: 70px;
+	justify-content: space-between;
+}
+.transfer-form-screen .balance-header.summary-header {
+	background: rgba(255, 255, 255, 0.20);
+}
+
+.transfer-form-screen .balance-header .tbalance {
+	padding-left: 65px;
+	background-image: url(../svg/logo_sw.svg);
+	background-size: 46px;
+	background-repeat: no-repeat;
+	background-position: left center;
+	text-align: right;
+}
+
+.transfer-form-screen .search_wrapper {
+	display: flex;
+	padding: 40px;
+	flex-direction: column;
+	gap: 40px;
+	border-radius: 70px;
+	background: var(--dark-inactive, #323232);
+	
+}
+
 .site-main-wallet .transfer-dropdown .transfer-form-screen .loader-screen-contents {
-	text-align: center;
+	text-align: cente ;
 }
 .site-main-wallet .transfer-form-screen .transfer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 20px;
-  margin-bottom: 20px;
+  
+}
+.site-main-wallet .transfer-form-screen .transfer-header h2 {
+	margin: 0;
 }
 .site-main-wallet .transfer-dropdown .transfer-form-screen label {
 	padding-bottom: 10px;
 	display: block;
 	color: rgba(255,255,255,0.5);
+  
 }
 .site-main-wallet .transfer-form-screen .transfer-header .close-transfer {
   padding: 0;
@@ -655,29 +619,42 @@ body {
   font-size: 30px;
   max-width: unset;
   min-width: unset;
+  margin: 0;
 }
 
 .site-main-wallet .transfer-form-screen .recipient-info {
-  display: flex;
-  align-items: center;
-  background: #2a2a2a;
-  padding: 10px;
-  border-radius: 30px;
-  justify-content: space-between;
-  margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	padding: 20px 40px;
+	border-radius: 70px;
+	justify-content: space-between;
+	background: var(--dark-inactive, #323232);
+	min-height: 130px;
 }
-.site-main-wallet .transfer-form-screen .recipient-info .check-circle {
-	border: 1px solid;
-	width: 32px;
-	line-height: 30px;
-	border-radius: 100%;
-  text-align: center;
+
+.site-main-wallet .transfer-form-screen .recipient-info .info .edit_btn {
+	display: flex;
+	height: 90px;
+	padding: 5px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+	border-radius: 70px;
+	background: var(--black-dark, #252525);
+	aspect-ratio: 1/1;
+	cursor: pointer;
+	margin-left: 20px;
+	margin-right: -20px;
+}
+.site-main-wallet .transfer-form-screen .recipient-info .info .edit_btn:hover {
+	background: var(--white);
+	color: var(--black-dark, #252525);
 }
 .site-main-wallet .transfer-form-screen .recipient-info .info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-style: italic;
+	display: flex;
+	align-items: center;
+	gap: 14px;
 }
 
 .site-main-wallet .transfer-form-screen .recipient-info img {
@@ -686,13 +663,34 @@ body {
   border-radius: 50%;
 }
 
-.site-main-wallet .transfer-form-screen .amount-input {
-  position: relative;
-  margin-bottom: 16px;
+.site-main-wallet .transfer-form-screen .amount-input,
+.site-main-wallet .transfer-form-screen .message-wrap {
+	position: relative;
+	
+	display: flex;
+	padding: 40px;
+	flex-direction: column;
+	justify-content: center;
+	gap: 40px;
+	border-radius: 70px;
+	background: var(--dark-inactive, #323232);
+}
+.site-main-wallet .transfer-form-screen .message-wrap .label {
+	padding-left: 50px;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.site-main-wallet .transfer-form-screen .message-wrap .label::after {
+	content: '\e856';
+	position: absolute;
+	top: 0;
+  	left: 0px;
+	font-family: "peer-network";	
 }
 
 .site-main-wallet .transfer-form-screen .amount-input input {
-<<<<<<< HEAD
 	width: 100%;
 	border-radius: 70px;
 	background-color: var(--black-dark, #252525);
@@ -835,27 +833,18 @@ body {
   padding: 0;
   min-height: 180px;
 
-=======
-  width: 100%;
- 
->>>>>>> main
 }
 .site-main-wallet .transfer-form-screen .amount-input input[type="number"] {
   appearance: textfield; /* Sometimes useful for new browsers */
 }
-.site-main-wallet .transfer-form-screen .amount-input img {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 20px;
+.site-main-wallet .transfer-form-screen .message-wrap .ins_label {
+	text-align: center;
+}
+.site-main-wallet .transfer-form-screen .message-wrap.summary-message .ins_label {
+	display: none;
 }
 
-.site-main-wallet .transfer-form-screen .fee-label {
-  color: #999;
-  font-size: 12px;
-  margin-bottom: 16px;
-}
+
 
 .site-main-wallet .transfer-form-screen .modal-actions {
   display: flex;
@@ -864,36 +853,34 @@ body {
 }
 .site-main-wallet .transfer-form-screen .modal-actions button {
 	flex: 1;
-	margin-top: 20px;
-}
-.site-main-wallet .transfer-form-screen .recipient-info label {
-	font-size: 14px;
-	color: #aaa;
-	padding-bottom: 0;
-	padding-right: 20px;
+	margin: 0;
 }
 
+
 /* Only apply when .modal-mode is added */
-.transfer-dropdown.modal-mode {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 1000;
-  margin-top: 0 !important;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-  min-width: 520px;
-  min-height: 520px;
-  text-align: left;
-  width: 33vw;
+.site-main-wallet  .transfer-dropdown {
+	position: fixed !important;
+	top: 50% !important;
+	left: 50% !important;
+	transform: translate(-50%, -50%) !important;
+	z-index: 1000;
+	margin-top: 0 !important;
+	text-align: left;
+	width: 1350px;
+	padding: 80px;
+	overflow: hidden;
+	overscroll-behavior: contain;
+	border-radius: 77px;
+	background: var(--black-dark, #252525);
 }
 
 /* Backdrop when modal is active */
 .transfer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
   z-index: 999;
+  background: rgba(37, 37, 37, 0.50);
+  backdrop-filter: blur(15px);
 }
 
 .commission-breakdown {
@@ -938,7 +925,7 @@ body {
 /* Final Confirmation Screen — Safe Scoped Additions */
 
 .site-main-wallet {
-  text-align: center;
+  
   padding-top: 40px;
 }
 
@@ -1031,16 +1018,16 @@ body {
 .site-main-wallet .btn-new-user {
   margin-top: 70px;
 }
-
+.site-main-wallet .search_input_box {
+	position: relative;
+}
 .site-main-wallet .search-user-input {
 	width: 100%;
-	border-radius: 70px;
-	background: #2a2a2a;
+	background: var(--black-dark, #252525);
 	color: white;
 	border: none;
-	margin-bottom: 60px;
+	margin-bottom: 0;
 	padding: 30px 40px;
-<<<<<<< HEAD
 	border-radius: 70px;
 }
 .site-main-wallet .search_input_box .peer-icon-search {
@@ -1071,6 +1058,4 @@ body {
 .user_not_found .unot-icon .peer-icon {
 	font-size: 120px;
 	color: var(--red-accent);
-=======
->>>>>>> main
 }
