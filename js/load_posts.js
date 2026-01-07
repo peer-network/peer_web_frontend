@@ -565,17 +565,17 @@ async function postsLaden(postbyUserID=null) {
       } 
 
       const divtag = document.createElement("div");
-          divtag.className = "hashtags";
+      divtag.className = "hashtags";
 
-          // Check if tags exist and are an array
-          if (Array.isArray(objekt.tags)) {
-            objekt.tags.forEach((tag) => {
-              const span = document.createElement("span");
-              span.className = "hashtag";
-              span.textContent = `#${tag}`;
-              divtag.appendChild(span);
-            });
-          }
+      // Check if tags exist and are an array
+      if (Array.isArray(objekt.tags)) {
+        objekt.tags.forEach((tag) => {
+          const span = document.createElement("span");
+          span.className = "hashtag";
+          span.textContent = `#${tag}`;
+          divtag.appendChild(span);
+        });
+      }
       postContent.appendChild(post_text_div);
       postContent.appendChild(divtag);
       inhaltDiv.appendChild(postContent);
