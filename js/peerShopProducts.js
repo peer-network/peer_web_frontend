@@ -19,6 +19,7 @@ function getProductByPostId(postId) {
 }
 
 function renderCheckoutProductScreen(objekt) {
+  let nextBtn;
   const checkoutPopup = document.getElementById("checkoutPopup");
   checkoutPopup.classList.remove("none");
   const checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
@@ -121,6 +122,7 @@ function renderCheckoutProductScreen(objekt) {
     if (!inStock) label.classList.add("out_of_stock");
     input.onclick = () => {
       SelectedSize.querySelector(".size").innerHTML = input.value;
+      validateForm();
     };
 
     label.append(input, span);
@@ -268,6 +270,49 @@ function renderCheckoutProductScreen(objekt) {
     update(); // initial sync
   }
 
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function isValidZip(zip) {
+    return /^\d{5}$/.test(zip); // Germany ZIP
+  }
+
+  function markField(input, isValid) {
+    input.classList.toggle("field-error", !isValid);
+  }
+
+  function validateForm() {
+    const name = form.querySelector(".full_name");
+    const email = form.querySelector(".email");
+    const address = form.querySelector(".address");
+    const city = form.querySelector(".city");
+    const zip = form.querySelector(".zip");
+    const sizeChecked = wrapper.querySelector(
+      'input[name="product_size"]:checked'
+    );
+
+    const validations = [
+      name.value.trim().length >= 2,
+      isValidEmail(email.value),
+      address.value.trim().length >= 5,
+      city.value.trim().length >= 2,
+      isValidZip(zip.value),
+      !!sizeChecked,
+    ];
+
+    markField(name, validations[0]);
+    markField(email, validations[1]);
+    markField(address, validations[2]);
+    markField(city, validations[3]);
+    markField(zip, validations[4]);
+
+    const isValid = validations.every(Boolean);
+    nextBtn.disabled = !isValid;
+
+    return isValid;
+  }
+
   wrapper.append(deliveryInfoVerify, form);
 
   ["full_name", "email", "address", "address2", "city", "zip"].forEach((cls) =>
@@ -313,8 +358,7 @@ function renderCheckoutProductScreen(objekt) {
     });
   }*/
 
-  feePanel.innerHTML = 
-  `<div class="fee-section close">
+  feePanel.innerHTML = `<div class="fee-section close">
       <div class="total_amount bold  md_font_size">
         Total amount 
         <span class="final-total bold xl_font_size">${
@@ -324,16 +368,12 @@ function renderCheckoutProductScreen(objekt) {
       <div class="product-price ">
         <div class="price-item txt-color-gray md_font_size">
             <span class="label">Item Price</span>
-            <span class="value xl_font_size bold">${
-              objekt.productprice
-            }</span>
+            <span class="value xl_font_size bold">${objekt.productprice}</span>
           </div>
       </div>
       <div class="fee-title  md_font_size txt-color-gray">
         Fees included
-        <span class="fee-total bold xl_font_size">${
-          objekt.productprice
-        }</span>
+        <span class="fee-total bold xl_font_size">${objekt.productprice}</span>
       </div>
     
       <div class="fee-breakdowns">
@@ -374,13 +414,14 @@ function renderCheckoutProductScreen(objekt) {
     checkoutPopup.classList.add("none");
   };
 
-  const nextBtn = document.createElement("button");
+  nextBtn = document.createElement("button");
   nextBtn.className = "btn-next btn-blue bold";
   nextBtn.type = "submit";
   nextBtn.disabled = true;
   nextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
 
   actions.append(backBtn, nextBtn);
+  form.addEventListener("input", validateForm);
 
   const ScrollWrap = document.createElement("div");
   ScrollWrap.className = "scroll_wrap";
@@ -390,4 +431,16 @@ function renderCheckoutProductScreen(objekt) {
   wrapper.append(productHeader, productSize, deliveryInfo, ScrollWrap, actions);
 
   checkoutDropdown.appendChild(wrapper);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    // move to step 2
+    deliveryInfoVerify.classList.remove("none");
+    paying_to.classList.remove("none");
+    amountBreakdown.classList.remove("none");
+    SelectedSize.classList.remove("none");
+  });
 }

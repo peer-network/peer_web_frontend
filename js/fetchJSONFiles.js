@@ -1,15 +1,15 @@
 'use strict'
 
 async function fetchEndpoints() {
-    const ENDPOINT_URL = "https://media.peernetwork.eu/assets/endpoints.json";
+    const ENDPOINT_URL = "https://media.getpeer.eu/assets/endpoints.json";
     const DEFAULT_VERSION = "1.9.0";
     const LOCAL_KEY = "APP_VERSION";
     const VERSION = localStorage.getItem(LOCAL_KEY) || null;
 
-    if (VERSION) {
-        updateVersionElements(VERSION)
-        return;
-    }
+    // if (VERSION) {
+    //     updateVersionElements(VERSION)
+    //     return;
+    // }
 
     try {
         // trying to fetch the latest version
@@ -18,7 +18,7 @@ async function fetchEndpoints() {
 
         const releases = await response.json();
         const latestVersion = releases?.data?.web?.[0]?.version || DEFAULT_VERSION;
-
+        
         // Update localStorage
         localStorage.setItem(LOCAL_KEY, latestVersion);
 
