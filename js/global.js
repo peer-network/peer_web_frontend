@@ -136,10 +136,6 @@ function applyZoom() {
   window.visualViewport.addEventListener("resize", applyScale);
 }
 
-
-
-
-
 function getHostConfig() {
   const config = document.querySelector("#config");
 
@@ -268,7 +264,6 @@ function togglePopup(popup) {
 }
 
 // daily free actions
-
 async function dailyfree() {
   const accessToken = getCookie("authToken");
 
@@ -758,15 +753,8 @@ function postdetail(objekt, CurrentUserID) {
 
     }
 
-    buyButton.addEventListener("click", () => {
-      
-      renderCheckoutProductScreen(objekt);
-    });
-
-    
-
+    buyButton.addEventListener("click", () => renderCheckoutProductScreen(objekt));
     postContent.insertAdjacentElement('afterend', buyButtoncont);
-    
   }
 
   // Check if tags exist and are an array
@@ -1462,9 +1450,6 @@ function postdetail(objekt, CurrentUserID) {
 
   /*---End Content isreported badge */
 }
-
-
-
 
 function renderCheckoutProductScreen(objekt) {
   const checkoutPopup = document.getElementById("checkoutPopup");

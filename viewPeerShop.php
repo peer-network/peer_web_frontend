@@ -22,9 +22,19 @@ checkAuth("unauthorized");
 <link rel="stylesheet" href="css/modal.css?<?php echo filemtime('css/modal.css'); ?>" />
 <link rel="stylesheet" href="css/view-post.css?<?php echo filemtime('css/view-post.css'); ?>" />
 
+<!-- Firebase App (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+<!-- Firebase Analytics (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+<script src="js/firebase_config.js?<?php echo filemtime('js/firebase_config.js'); ?>" defer></script>
+
+<script src="js/peerShopProducts.js?<?php echo filemtime('js/peerShopProducts.js'); ?>" defer></script>
+
 <!-- <script src="sw_instal.min.js" async></script> -->
 <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
- <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
+<script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
 <script src="js/audio.js?<?php echo filemtime('js/audio.js'); ?>" async></script>
 <script src="js/posts.js?<?php echo filemtime('js/posts.js'); ?>" defer></script>
 <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>

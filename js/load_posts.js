@@ -435,7 +435,8 @@ async function postsLaden(postbyUserID=null) {
       card.setAttribute("idno", i);
       card.setAttribute("content", objekt.contenttype);
 
-      if(onShopProfilepage || PEER_SHOP_ID==objekt.user.id){ //PEER_SHOP_ID is global variable define in global.js on top
+      //PEER_SHOP_ID is global variable define in global.js on top
+      if(onShopProfilepage || PEER_SHOP_ID == objekt.user.id) {
         card.classList.add("card-shop-product");
       }
   
@@ -523,15 +524,14 @@ async function postsLaden(postbyUserID=null) {
       }
 
       if(onShopProfilepage){
-        objekt.productprice=500;// assume price in object
+        const productData = peerShopProducts[objekt.id];
+        (productData) ? objekt.productprice = productData.price : objekt.productprice = 500;
         const product_price = document.createElement("div");
         product_price.classList.add("product_price","bold","md_font_size");
         product_price.innerText=objekt.productprice;
         card_header_right.appendChild(product_price);
-       
       }
       card_header.appendChild(card_header_right);
-
       inhaltDiv.appendChild(card_header);
        const postaudioplayerDiv = document.createElement("div");
        const postvideoplayerDiv = document.createElement("div");
