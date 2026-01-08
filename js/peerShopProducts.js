@@ -157,6 +157,7 @@ function renderCheckoutProductScreen(objekt) {
   deliveryInfo.append(deliveryLabel, deliveryMessage);
 
   /* ================= DELIVERY INFO Verify ================= */
+  /**  STEP 2  */
   const deliveryInfoVerify = document.createElement("div");
   deliveryInfoVerify.className = "delivery_info_verify step_2 none";
 
