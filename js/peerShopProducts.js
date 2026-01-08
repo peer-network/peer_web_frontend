@@ -279,10 +279,13 @@ function renderCheckoutProductScreen(objekt) {
   }
 
   function markField(input, isValid) {
-    input.classList.toggle("field-error", !isValid);
+    console.log("markField", input.className, isValid);
+    input.classList.toggle("response_msg", !isValid);
+    input.classList.toggle("error", !isValid);
   }
 
   function validateForm() {
+    console.log("validateForm called");
     const name = form.querySelector(".full_name");
     const email = form.querySelector(".email");
     const address = form.querySelector(".address");
@@ -417,11 +420,11 @@ function renderCheckoutProductScreen(objekt) {
   nextBtn = document.createElement("button");
   nextBtn.className = "btn-next btn-blue bold";
   nextBtn.type = "submit";
-  nextBtn.disabled = true;
+  // nextBtn.disabled = true;
   nextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
 
   actions.append(backBtn, nextBtn);
-  form.addEventListener("input", validateForm);
+  nextBtn.addEventListener("click", validateForm);
 
   const ScrollWrap = document.createElement("div");
   ScrollWrap.className = "scroll_wrap";
