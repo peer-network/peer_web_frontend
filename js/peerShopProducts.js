@@ -21,37 +21,52 @@ function getProductByPostId(postId) {
 
 
 /**       shop popup         */
-let checkoutPopup, checkoutDropdown, wrapper, nextBtn, header, h2, closeBtn, productHeader, product_media,
-  arrayMedia = [], tempMedia, productinfo, title, desc, price, SelectedSize, productSize, sizeLabel,  sizes, 
+/* ================= GLOBAL VARIABLES ================= */
+/* Renamed nextBtn -> checkoutNextBtn, backBtn -> checkoutBackBtn to avoid collision with global.js */
+let checkoutPopup, checkoutDropdown, wrapper, checkoutNextBtn, checkoutBackBtn, header, h2, closeBtn, productHeader, product_media,
+  arrayMedia = [], productinfo, title, desc, price, SelectedSize, productSize, sizeLabel, sizes, 
   arraySizes = [],  deliveryInfo, deliveryLabel, deliveryShortinfo, deliveryMessage, deliveryInfoVerify, deliveryinfoLabel,
-  verifyList, verifyFields = [];
+  verifyList, verifyFields = [], form, paying_to, amountBreakdown;
 
 
 function renderCheckoutProductScreen(objekt) {
-  // let nextBtn;
-  //const checkoutPopup = document.getElementById("checkoutPopup");
+  initCheckoutScreen();
+  createHeader();
+  
+  createProductHeader(objekt);
+  createSizeSelection();
+  createDeliveryInfo();
+  
+  createDeliveryVerify();
+  createCheckoutForm();
+  createPayingTo();
+  createAmountBreakdown(objekt);
+  
+  const actionsElement = createActions();
+  
+  assembleScreen(actionsElement);
+}
+
+/* ================= COMPONENT FUNCTIONS ================= */
+
+function initCheckoutScreen() {
+  checkoutPopup = document.getElementById("checkoutPopup");
   checkoutPopup.classList.remove("none");
-  // const checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
   checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
-
   checkoutDropdown.innerHTML = "";
-
-  // Wrapper
-  // const wrapper = document.createElement("div");
+  
   wrapper = document.createElement("div");
   wrapper.className = "checkout-form-screen";
+}
 
-  /* ================= HEADER ================= */
-  // const header = document.createElement("div");
+function createHeader() {
   header = document.createElement("div");
   header.className = "checkout-header";
 
-  // const h2 = document.createElement("h2");
   h2 = document.createElement("h2");
   h2.className = "xxl_font_size";
   h2.textContent = "Shipping";
 
-  // const closeBtn = document.createElement("button");
   closeBtn = document.createElement("button");
   closeBtn.className = "close-checkout";
   closeBtn.innerHTML = "&times;";
@@ -62,65 +77,59 @@ function renderCheckoutProductScreen(objekt) {
 
   header.append(h2, closeBtn);
   wrapper.appendChild(header);
+}
 
-  /* ================= PRODUCT HEADER ================= */
-  // const productHeader = document.createElement("div");
+function createProductHeader(objekt) {
+  productHeader = document.createElement("div");
   productHeader.className = "product_header";
 
-  // const product_media = document.createElement("div");
   product_media = document.createElement("div");
   product_media.className = "product_media";
-  // const arrayMedia = JSON.parse(objekt.media);
-  arrayMedia = JSON.parse(objekt.media);
+  
+  if(objekt.media) {
+    arrayMedia = JSON.parse(objekt.media);
+    arrayMedia.forEach((item) => {
+      const img = document.createElement("img");
+      img.src = tempMedia(item.path);
+      img.alt = objekt.title;
+      product_media.appendChild(img);
+    });
+  }
 
-  arrayMedia.forEach((item) => {
-    const img = document.createElement("img");
-    img.src = tempMedia(item.path);
-    img.alt = objekt.title;
-    product_media.appendChild(img);
-  });
-
-  // const productinfo = document.createElement("div");
   productinfo = document.createElement("div");
   productinfo.className = "productinfo";
 
-  // const title = document.createElement("h3");
   title = document.createElement("h3");
   title.className = "md_font_size bold";
   title.textContent = objekt.title;
 
-  // const desc = document.createElement("p");
+  desc = document.createElement("p");
   desc.className = "txt-color-gray md_font_size";
   desc.textContent = objekt.mediadescription;
 
-  //const price = document.createElement("div");
   price = document.createElement("div");
   price.className = "product_price bold xxl_font_size";
   price.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Price</span> ${objekt.productprice}`;
 
-  //const SelectedSize = document.createElement("div");
   SelectedSize = document.createElement("div");
   SelectedSize.className = "selected_size step_2 none";
   SelectedSize.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Size</span> <span class="size"></span>`;
 
   productinfo.append(title, desc, price, SelectedSize);
   productHeader.append(product_media, productinfo);
+}
 
-  /* ================= SIZE SELECTION ================= */
-  //const productSize = document.createElement("div");
+function createSizeSelection() {
   productSize = document.createElement("div");
   productSize.className = "product_size";
 
-  //const sizeLabel = document.createElement("h3");
   sizeLabel = document.createElement("h3");
   sizeLabel.className = "md_font_size";
   sizeLabel.textContent = "Select size";
 
-  // const sizes = document.createElement("div");
   sizes = document.createElement("div");
   sizes.className = "product_sizes";
 
-  // const arraySizes = [
   arraySizes = [
     { size: "XS", inStock: true },
     { size: "S", inStock: false },
@@ -155,53 +164,45 @@ function renderCheckoutProductScreen(objekt) {
   });
 
   productSize.append(sizeLabel, sizes);
+}
 
-  /* ================= DELIVERY INFO ================= */
-  //const deliveryInfo = document.createElement("div");
+function createDeliveryInfo() {
   deliveryInfo = document.createElement("div");
   deliveryInfo.className = "delivery_info close";
-  //const deliveryLabel = document.createElement("h3");
   deliveryLabel = document.createElement("h3");
   deliveryLabel.className = "md_font_size dtitle";
   deliveryLabel.textContent = "Delivery information";
 
-  //const deliveryShortinfo = document.createElement("span");
   deliveryShortinfo = document.createElement("span");
   deliveryShortinfo.className = "small_font_size txt-color-gray";
   deliveryShortinfo.innerHTML =
     "1-3 working days, <strong>only within Germany</strong>";
   deliveryLabel.appendChild(deliveryShortinfo);
 
-  // Toggle on click
   deliveryLabel.addEventListener("click", () => {
     deliveryInfo.classList.toggle("close");
   });
 
-  // const deliveryMessage = document.createElement("div");
   deliveryMessage = document.createElement("div");
   deliveryMessage.className = "delivery_message txt-color-gray ";
 
   deliveryMessage.innerHTML =
     "We'll email your delivery details within 1–3 days after your payment is confirmed. Please make sure your email address is correct; they can't be changed after you place the order. Delivery is available only within Germany.";
   deliveryInfo.append(deliveryLabel, deliveryMessage);
+}
 
-  /* ================= DELIVERY INFO Verify ================= */
-  /**  STEP 2  */
-  //const deliveryInfoVerify = document.createElement("div");
+function createDeliveryVerify() {
   deliveryInfoVerify = document.createElement("div");
   deliveryInfoVerify.className = "delivery_info_verify step_2 none";
 
-  // const deliveryinfoLabel = document.createElement("h3");
   deliveryinfoLabel = document.createElement("h3");
   deliveryinfoLabel.className = "md_font_size bold dinfotitle";
   deliveryinfoLabel.textContent = "Delivery information";
 
-  // const verifyList = document.createElement("div");
   verifyList = document.createElement("div");
   verifyList.className = "delivery_verify_list";
 
-  // const verifyFields = [
-   verifyFields = [
+  verifyFields = [
     { label: "Name", class: "full_name" },
     { label: "E-mail", class: "email" },
     { label: "Address line 1", class: "address" },
@@ -228,9 +229,9 @@ function renderCheckoutProductScreen(objekt) {
   });
 
   deliveryInfoVerify.append(deliveryinfoLabel, verifyList);
+}
 
-  /* ================= FORM ================= */
-  // const form = document.createElement("form");
+function createCheckoutForm() {
   form = document.createElement("form");
   form.className = "checkout-form";
 
@@ -244,19 +245,6 @@ function renderCheckoutProductScreen(objekt) {
       class: "address2",
     },
   ];
-
-  // fields.forEach((f) => {
-  //   const input = document.createElement("input");
-  //   input.type = f.type;
-  //   input.className = f.class;
-  //   input.placeholder = f.placeholder;
-
-  //   const fieldWrap = document.createElement("div");
-  //   fieldWrap.className = `form_field field_${f.class}`;
-  //   fieldWrap.appendChild(input);
-
-  //   form.appendChild(fieldWrap);
-  // });
 
   fields.forEach((f) => {
     const input = document.createElement("input");
@@ -292,112 +280,22 @@ function renderCheckoutProductScreen(objekt) {
   cityZip.append(wrapField(city, "city"), wrapField(zip, "zip"));
 
   form.appendChild(cityZip);
+  
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  function wrapField(input, name) {
-    const wrap = document.createElement("div");
-    wrap.className = `form_field field_${name}`;
-    wrap.appendChild(input);
-    return wrap;
-  }
+    if (!validateForm()) return;
 
-  function bindInputToVerify(wrapper, inputClass) {
-    const input = wrapper.querySelector(`.${inputClass}`);
-    const output = wrapper.querySelector(`.verify_${inputClass}`);
-    const row = wrapper.querySelector(`.verify_row_${inputClass}`);
+    // move to step 2
+    deliveryInfoVerify.classList.remove("none");
+    paying_to.classList.remove("none");
+    amountBreakdown.classList.remove("none");
+    SelectedSize.classList.remove("none");
+  });
+}
 
-    if (!input || !output) return;
-
-    const update = () => {
-      if (!input.value.trim()) {
-        output.textContent = "—";
-        if (inputClass === "address2" && row) row.style.display = "none";
-      } else {
-        output.textContent = input.value;
-        if (row) row.style.display = "flex";
-      }
-    };
-
-    input.addEventListener("input", update);
-    input.addEventListener("blur", update);
-
-    update(); // initial sync
-  }
-
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  function isValidZip(zip) {
-    return /^\d{5}$/.test(zip); // Germany ZIP
-  }
-
-  // function markField(input, isValid) {
-  //   console.log("markField", input.className, isValid);
-  //   input.classList.toggle("response_msg", !isValid);
-  //   input.classList.toggle("error", !isValid);
-  // }
-
-  function markField(input, isValid, message) {
-    const errorSpan = input.parentElement.querySelector(".response_msg");
-
-    if (!errorSpan) return;
-
-    if (isValid) {
-      errorSpan.style.display = "none";
-    } else {
-      errorSpan.textContent = message;
-      errorSpan.style.display = "block";
-    }
-  }
-
-
-  function validateForm() {
-    console.log("validateForm called");
-    const name = form.querySelector(".full_name");
-    const email = form.querySelector(".email");
-    const address = form.querySelector(".address");
-    const city = form.querySelector(".city");
-    const zip = form.querySelector(".zip");
-    const sizeChecked = wrapper.querySelector(
-      'input[name="product_size"]:checked'
-    );
-
-    const validations = [
-      name.value.trim().length >= 2,
-      isValidEmail(email.value),
-      address.value.trim().length >= 5,
-      city.value.trim().length >= 2,
-      isValidZip(zip.value),
-      !!sizeChecked,
-    ];
-
-    // markField(name, validations[0]);
-    // markField(email, validations[1]);
-    // markField(address, validations[2]);
-    // markField(city, validations[3]);
-    // markField(zip, validations[4]);
-
-    markField(name, validations[0], "Name is required");
-    markField(email, validations[1], "Enter a valid email");
-    markField(address, validations[2], "Address is required");
-    markField(city, validations[3], "City is required");
-    markField(zip, validations[4], "Enter valid ZIP code");
-
-
-    const isValid = validations.every(Boolean);
-    nextBtn.disabled = !isValid;
-
-    return isValid;
-  }
-
-  wrapper.append(deliveryInfoVerify, form);
-
-  ["full_name", "email", "address", "address2", "city", "zip"].forEach((cls) =>
-    bindInputToVerify(wrapper, cls)
-  );
-
-  /* ================= PAYING TO ================= */
-  const paying_to = document.createElement("div");
+function createPayingTo() {
+  paying_to = document.createElement("div");
   paying_to.className = "paying_to step_2 none";
 
   const paying_to_label = document.createElement("span");
@@ -414,9 +312,10 @@ function renderCheckoutProductScreen(objekt) {
   paying_to_store.append(paying_to_store_slug);
 
   paying_to.append(paying_to_label, paying_to_store);
+}
 
-  /* ================= Total Amount ================= */
-  const amountBreakdown = document.createElement("div");
+function createAmountBreakdown(objekt) {
+  amountBreakdown = document.createElement("div");
   amountBreakdown.className = "amount_detail step_2 none";
 
   const feePanel = document.createElement("div");
@@ -425,15 +324,6 @@ function renderCheckoutProductScreen(objekt) {
     { label: "2% to Peer Bank (platform fee)", amount: 4 },
     { label: "1% Burned (removed from supply)", amount: 5 },
   ];
-  let inviterFee = "0";
-  /*if (isInvited !== "") { 
-  need to check luqman
-    inviterFee = mul(base, "0.01");
-    breakdown.push({
-      label: "1% to your Inviter",
-      amount: inviterFee
-    });
-  }*/
 
   feePanel.innerHTML = `<div class="fee-section close">
       <div class="total_amount bold  md_font_size">
@@ -476,48 +366,143 @@ function renderCheckoutProductScreen(objekt) {
     feeSection.classList.toggle("close");
   });
   amountBreakdown.append(feePanel);
+}
 
-  /* ================= BUTTONS ================= */
+function createActions() {
   const actions = document.createElement("div");
   actions.className = "checkout-actions";
 
-  const backBtn = document.createElement("button");
-  backBtn.className = "btn-back btn-transparent";
-  backBtn.type = "button";
-  backBtn.innerHTML = `<i class="peer-icon peer-icon-arrow-left"></i> Back`;
+  checkoutBackBtn = document.createElement("button");
+  checkoutBackBtn.className = "btn-back btn-transparent";
+  checkoutBackBtn.type = "button";
+  checkoutBackBtn.innerHTML = `<i class="peer-icon peer-icon-arrow-left"></i> Back`;
 
-  backBtn.onclick = () => {
+  checkoutBackBtn.onclick = () => {
     checkoutDropdown.innerHTML = "";
     checkoutPopup.classList.add("none");
   };
 
-  nextBtn = document.createElement("button");
-  nextBtn.className = "btn-next btn-blue bold";
-  nextBtn.type = "submit";
-  // nextBtn.disabled = true;
-  nextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
+  checkoutNextBtn = document.createElement("button");
+  checkoutNextBtn.className = "btn-next btn-blue bold";
+  checkoutNextBtn.type = "submit";
+  // checkoutNextBtn.disabled = true;
+  checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
 
-  actions.append(backBtn, nextBtn);
-  nextBtn.addEventListener("click", validateForm);
+  actions.append(checkoutBackBtn, checkoutNextBtn);
+  checkoutNextBtn.addEventListener("click", validateForm);
+  
+  return actions;
+}
 
+function assembleScreen(actionsElement) {
   const ScrollWrap = document.createElement("div");
   ScrollWrap.className = "scroll_wrap";
   ScrollWrap.append(form, deliveryInfoVerify, paying_to, amountBreakdown);
 
   /* ================= APPEND ALL ================= */
-  wrapper.append(productHeader, productSize, deliveryInfo, ScrollWrap, actions);
+  wrapper.append(productHeader, productSize, deliveryInfo, ScrollWrap, actionsElement);
 
   checkoutDropdown.appendChild(wrapper);
+  
+  // Bind inputs after they are attached to DOM
+  ["full_name", "email", "address", "address2", "city", "zip"].forEach((cls) =>
+    bindInputToVerify(wrapper, cls)
+  );
+}
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
 
-    if (!validateForm()) return;
+/* ================= HELPER FUNCTIONS ================= */
 
-    // move to step 2
-    deliveryInfoVerify.classList.remove("none");
-    paying_to.classList.remove("none");
-    amountBreakdown.classList.remove("none");
-    SelectedSize.classList.remove("none");
-  });
+function wrapField(input, name) {
+    const wrap = document.createElement("div");
+    wrap.className = `form_field field_${name}`;
+    wrap.appendChild(input);
+    
+    // Add error msg span
+    const error = document.createElement("span");
+    error.className = "response_msg error";
+    error.style.display = "none";
+    wrap.appendChild(error);
+    
+    return wrap;
+}
+
+function bindInputToVerify(wrapper, inputClass) {
+    const input = wrapper.querySelector(`.${inputClass}`);
+    const output = wrapper.querySelector(`.verify_${inputClass}`);
+    const row = wrapper.querySelector(`.verify_row_${inputClass}`);
+
+    if (!input || !output) return;
+
+    const update = () => {
+      if (!input.value.trim()) {
+        output.textContent = "—";
+        if (inputClass === "address2" && row) row.style.display = "none";
+      } else {
+        output.textContent = input.value;
+        if (row) row.style.display = "flex";
+      }
+    };
+
+    input.addEventListener("input", update);
+    input.addEventListener("blur", update);
+
+    update(); // initial sync
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidZip(zip) {
+    return /^\d{5}$/.test(zip); // Germany ZIP
+}
+
+function markField(input, isValid, message) {
+    const errorSpan = input.parentElement.querySelector(".response_msg");
+
+    if (!errorSpan) return;
+
+    if (isValid) {
+      errorSpan.style.display = "none";
+    } else {
+      errorSpan.textContent = message;
+      errorSpan.style.display = "block";
+    }
+}
+
+
+function validateForm() {
+    console.log("validateForm called");
+    if (!form) return false;
+    
+    const name = form.querySelector(".full_name");
+    const email = form.querySelector(".email");
+    const address = form.querySelector(".address");
+    const city = form.querySelector(".city");
+    const zip = form.querySelector(".zip");
+    const sizeChecked = wrapper.querySelector(
+      'input[name="product_size"]:checked'
+    );
+
+    const validations = [
+      name.value.trim().length >= 2,
+      isValidEmail(email.value),
+      address.value.trim().length >= 5,
+      city.value.trim().length >= 2,
+      isValidZip(zip.value),
+      !!sizeChecked,
+    ];
+
+    markField(name, validations[0], "Name is required");
+    markField(email, validations[1], "Enter a valid email");
+    markField(address, validations[2], "Address is required");
+    markField(city, validations[3], "City is required");
+    markField(zip, validations[4], "Enter valid ZIP code");
+
+
+    const isValid = validations.every(Boolean);
+    if(checkoutNextBtn) checkoutNextBtn.disabled = !isValid;
+
+    return isValid;
 }
