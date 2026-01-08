@@ -18,27 +18,41 @@ function getProductByPostId(postId) {
   return peerShopProducts[postId] || null;
 }
 
+
+
+/**       shop popup         */
+let checkoutPopup, checkoutDropdown, wrapper, nextBtn, header, h2, closeBtn, productHeader, product_media,
+  arrayMedia = [], tempMedia, productinfo, title, desc, price, SelectedSize, productSize, sizeLabel,  sizes, 
+  arraySizes = [],  deliveryInfo, deliveryLabel, deliveryShortinfo, deliveryMessage, deliveryInfoVerify, deliveryinfoLabel,
+  verifyList, verifyFields = [];
+
+
 function renderCheckoutProductScreen(objekt) {
-  let nextBtn;
-  const checkoutPopup = document.getElementById("checkoutPopup");
+  // let nextBtn;
+  //const checkoutPopup = document.getElementById("checkoutPopup");
   checkoutPopup.classList.remove("none");
-  const checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
+  // const checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
+  checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
 
   checkoutDropdown.innerHTML = "";
 
   // Wrapper
-  const wrapper = document.createElement("div");
+  // const wrapper = document.createElement("div");
+  wrapper = document.createElement("div");
   wrapper.className = "checkout-form-screen";
 
   /* ================= HEADER ================= */
-  const header = document.createElement("div");
+  // const header = document.createElement("div");
+  header = document.createElement("div");
   header.className = "checkout-header";
 
-  const h2 = document.createElement("h2");
+  // const h2 = document.createElement("h2");
+  h2 = document.createElement("h2");
   h2.className = "xxl_font_size";
   h2.textContent = "Shipping";
 
-  const closeBtn = document.createElement("button");
+  // const closeBtn = document.createElement("button");
+  closeBtn = document.createElement("button");
   closeBtn.className = "close-checkout";
   closeBtn.innerHTML = "&times;";
   closeBtn.onclick = () => {
@@ -50,12 +64,15 @@ function renderCheckoutProductScreen(objekt) {
   wrapper.appendChild(header);
 
   /* ================= PRODUCT HEADER ================= */
-  const productHeader = document.createElement("div");
+  // const productHeader = document.createElement("div");
   productHeader.className = "product_header";
 
-  const product_media = document.createElement("div");
+  // const product_media = document.createElement("div");
+  product_media = document.createElement("div");
   product_media.className = "product_media";
-  const arrayMedia = JSON.parse(objekt.media);
+  // const arrayMedia = JSON.parse(objekt.media);
+  arrayMedia = JSON.parse(objekt.media);
+
   arrayMedia.forEach((item) => {
     const img = document.createElement("img");
     img.src = tempMedia(item.path);
@@ -63,22 +80,26 @@ function renderCheckoutProductScreen(objekt) {
     product_media.appendChild(img);
   });
 
-  const productinfo = document.createElement("div");
+  // const productinfo = document.createElement("div");
+  productinfo = document.createElement("div");
   productinfo.className = "productinfo";
 
-  const title = document.createElement("h3");
+  // const title = document.createElement("h3");
+  title = document.createElement("h3");
   title.className = "md_font_size bold";
   title.textContent = objekt.title;
 
-  const desc = document.createElement("p");
+  // const desc = document.createElement("p");
   desc.className = "txt-color-gray md_font_size";
   desc.textContent = objekt.mediadescription;
 
-  const price = document.createElement("div");
+  //const price = document.createElement("div");
+  price = document.createElement("div");
   price.className = "product_price bold xxl_font_size";
   price.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Price</span> ${objekt.productprice}`;
 
-  const SelectedSize = document.createElement("div");
+  //const SelectedSize = document.createElement("div");
+  SelectedSize = document.createElement("div");
   SelectedSize.className = "selected_size step_2 none";
   SelectedSize.innerHTML = `<span class="product_price_label txt-color-gray md_font_size">Size</span> <span class="size"></span>`;
 
@@ -86,17 +107,21 @@ function renderCheckoutProductScreen(objekt) {
   productHeader.append(product_media, productinfo);
 
   /* ================= SIZE SELECTION ================= */
-  const productSize = document.createElement("div");
+  //const productSize = document.createElement("div");
+  productSize = document.createElement("div");
   productSize.className = "product_size";
 
-  const sizeLabel = document.createElement("h3");
+  //const sizeLabel = document.createElement("h3");
+  sizeLabel = document.createElement("h3");
   sizeLabel.className = "md_font_size";
   sizeLabel.textContent = "Select size";
 
-  const sizes = document.createElement("div");
+  // const sizes = document.createElement("div");
+  sizes = document.createElement("div");
   sizes.className = "product_sizes";
 
-  const arraySizes = [
+  // const arraySizes = [
+  arraySizes = [
     { size: "XS", inStock: true },
     { size: "S", inStock: false },
     { size: "M", inStock: true },
@@ -132,13 +157,16 @@ function renderCheckoutProductScreen(objekt) {
   productSize.append(sizeLabel, sizes);
 
   /* ================= DELIVERY INFO ================= */
-  const deliveryInfo = document.createElement("div");
+  //const deliveryInfo = document.createElement("div");
+  deliveryInfo = document.createElement("div");
   deliveryInfo.className = "delivery_info close";
-  const deliveryLabel = document.createElement("h3");
+  //const deliveryLabel = document.createElement("h3");
+  deliveryLabel = document.createElement("h3");
   deliveryLabel.className = "md_font_size dtitle";
   deliveryLabel.textContent = "Delivery information";
 
-  const deliveryShortinfo = document.createElement("span");
+  //const deliveryShortinfo = document.createElement("span");
+  deliveryShortinfo = document.createElement("span");
   deliveryShortinfo.className = "small_font_size txt-color-gray";
   deliveryShortinfo.innerHTML =
     "1-3 working days, <strong>only within Germany</strong>";
@@ -149,7 +177,8 @@ function renderCheckoutProductScreen(objekt) {
     deliveryInfo.classList.toggle("close");
   });
 
-  const deliveryMessage = document.createElement("div");
+  // const deliveryMessage = document.createElement("div");
+  deliveryMessage = document.createElement("div");
   deliveryMessage.className = "delivery_message txt-color-gray ";
 
   deliveryMessage.innerHTML =
@@ -158,17 +187,21 @@ function renderCheckoutProductScreen(objekt) {
 
   /* ================= DELIVERY INFO Verify ================= */
   /**  STEP 2  */
-  const deliveryInfoVerify = document.createElement("div");
+  //const deliveryInfoVerify = document.createElement("div");
+  deliveryInfoVerify = document.createElement("div");
   deliveryInfoVerify.className = "delivery_info_verify step_2 none";
 
-  const deliveryinfoLabel = document.createElement("h3");
+  // const deliveryinfoLabel = document.createElement("h3");
+  deliveryinfoLabel = document.createElement("h3");
   deliveryinfoLabel.className = "md_font_size bold dinfotitle";
   deliveryinfoLabel.textContent = "Delivery information";
 
-  const verifyList = document.createElement("div");
+  // const verifyList = document.createElement("div");
+  verifyList = document.createElement("div");
   verifyList.className = "delivery_verify_list";
 
-  const verifyFields = [
+  // const verifyFields = [
+   verifyFields = [
     { label: "Name", class: "full_name" },
     { label: "E-mail", class: "email" },
     { label: "Address line 1", class: "address" },
@@ -197,7 +230,8 @@ function renderCheckoutProductScreen(objekt) {
   deliveryInfoVerify.append(deliveryinfoLabel, verifyList);
 
   /* ================= FORM ================= */
-  const form = document.createElement("form");
+  // const form = document.createElement("form");
+  form = document.createElement("form");
   form.className = "checkout-form";
 
   const fields = [
