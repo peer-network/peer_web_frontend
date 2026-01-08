@@ -210,6 +210,19 @@ function renderCheckoutProductScreen(objekt) {
     },
   ];
 
+  // fields.forEach((f) => {
+  //   const input = document.createElement("input");
+  //   input.type = f.type;
+  //   input.className = f.class;
+  //   input.placeholder = f.placeholder;
+
+  //   const fieldWrap = document.createElement("div");
+  //   fieldWrap.className = `form_field field_${f.class}`;
+  //   fieldWrap.appendChild(input);
+
+  //   form.appendChild(fieldWrap);
+  // });
+
   fields.forEach((f) => {
     const input = document.createElement("input");
     input.type = f.type;
@@ -218,10 +231,15 @@ function renderCheckoutProductScreen(objekt) {
 
     const fieldWrap = document.createElement("div");
     fieldWrap.className = `form_field field_${f.class}`;
-    fieldWrap.appendChild(input);
 
+    const error = document.createElement("span");
+    error.className = "response_msg error";
+    error.style.display = "none";
+
+    fieldWrap.append(input, error);
     form.appendChild(fieldWrap);
   });
+
 
   const cityZip = document.createElement("div");
   cityZip.className = "city_zip";
@@ -278,11 +296,25 @@ function renderCheckoutProductScreen(objekt) {
     return /^\d{5}$/.test(zip); // Germany ZIP
   }
 
-  function markField(input, isValid) {
-    console.log("markField", input.className, isValid);
-    input.classList.toggle("response_msg", !isValid);
-    input.classList.toggle("error", !isValid);
+  // function markField(input, isValid) {
+  //   console.log("markField", input.className, isValid);
+  //   input.classList.toggle("response_msg", !isValid);
+  //   input.classList.toggle("error", !isValid);
+  // }
+
+  function markField(input, isValid, message) {
+    const errorSpan = input.parentElement.querySelector(".response_msg");
+
+    if (!errorSpan) return;
+
+    if (isValid) {
+      errorSpan.style.display = "none";
+    } else {
+      errorSpan.textContent = message;
+      errorSpan.style.display = "block";
+    }
   }
+
 
   function validateForm() {
     console.log("validateForm called");
@@ -304,11 +336,18 @@ function renderCheckoutProductScreen(objekt) {
       !!sizeChecked,
     ];
 
-    markField(name, validations[0]);
-    markField(email, validations[1]);
-    markField(address, validations[2]);
-    markField(city, validations[3]);
-    markField(zip, validations[4]);
+    // markField(name, validations[0]);
+    // markField(email, validations[1]);
+    // markField(address, validations[2]);
+    // markField(city, validations[3]);
+    // markField(zip, validations[4]);
+
+    markField(name, validations[0], "Name is required");
+    markField(email, validations[1], "Enter a valid email");
+    markField(address, validations[2], "Address is required");
+    markField(city, validations[3], "City is required");
+    markField(zip, validations[4], "Enter valid ZIP code");
+
 
     const isValid = validations.every(Boolean);
     nextBtn.disabled = !isValid;
