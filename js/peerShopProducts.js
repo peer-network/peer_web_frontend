@@ -20,13 +20,12 @@ function getProductByPostId(postId) {
 
 
 
-/**       shop popup         */
+/** shop popup         */
 /* ================= GLOBAL VARIABLES ================= */
-/* Renamed nextBtn -> checkoutNextBtn, backBtn -> checkoutBackBtn to avoid collision with global.js */
 let checkoutPopup, checkoutDropdown, wrapper, checkoutNextBtn, checkoutBackBtn, header, h2, closeBtn, productHeader, product_media,
   arrayMedia = [], productinfo, title, desc, price, SelectedSize, productSize, sizeLabel, sizes, 
   arraySizes = [],  deliveryInfo, deliveryLabel, deliveryShortinfo, deliveryMessage, deliveryInfoVerify, deliveryinfoLabel,
-  verifyList, verifyFields = [], form, paying_to, amountBreakdown;
+  verifyList, verifyFields = [], checkoutForm, paying_to, amountBreakdown;
 
 
 function renderCheckoutProductScreen(objekt) {
@@ -44,11 +43,10 @@ function renderCheckoutProductScreen(objekt) {
   
   const actionsElement = createActions();
   
-  assembleScreen(actionsElement);
+  createFinalScreen(actionsElement);
 }
 
 /* ================= COMPONENT FUNCTIONS ================= */
-
 function initCheckoutScreen() {
   checkoutPopup = document.getElementById("checkoutPopup");
   checkoutPopup.classList.remove("none");
@@ -121,7 +119,7 @@ function createProductHeader(objekt) {
 
 function createSizeSelection() {
   productSize = document.createElement("div");
-  productSize.className = "product_size";
+  productSize.className = "product_size step_1";
 
   sizeLabel = document.createElement("h3");
   sizeLabel.className = "md_font_size";
@@ -156,6 +154,10 @@ function createSizeSelection() {
     if (!inStock) label.classList.add("out_of_stock");
     input.onclick = () => {
       SelectedSize.querySelector(".size").innerHTML = input.value;
+      // Hide error if selected
+      const sizeError = productSize.querySelector(".response_msg");
+      if(sizeError) sizeError.style.display = "none";
+      
       validateForm();
     };
 
@@ -163,12 +165,18 @@ function createSizeSelection() {
     sizes.appendChild(label);
   });
 
-  productSize.append(sizeLabel, sizes);
+  // Add error span for size
+  const sizeError = document.createElement("span");
+  sizeError.className = "response_msg error";
+  sizeError.style.display = "none";
+  sizeError.textContent = "Please select a size";
+
+  productSize.append(sizeLabel, sizes, sizeError);
 }
 
 function createDeliveryInfo() {
   deliveryInfo = document.createElement("div");
-  deliveryInfo.className = "delivery_info close";
+  deliveryInfo.className = "delivery_info step_1 close";
   deliveryLabel = document.createElement("h3");
   deliveryLabel.className = "md_font_size dtitle";
   deliveryLabel.textContent = "Delivery information";
@@ -232,8 +240,8 @@ function createDeliveryVerify() {
 }
 
 function createCheckoutForm() {
-  form = document.createElement("form");
-  form.className = "checkout-form";
+  checkoutForm = document.createElement("form");
+  checkoutForm.className = "checkout-form step_1";
 
   const fields = [
     { placeholder: "Full name", type: "text", class: "full_name" },
@@ -251,6 +259,8 @@ function createCheckoutForm() {
     input.type = f.type;
     input.className = f.class;
     input.placeholder = f.placeholder;
+    
+    input.addEventListener("blur", () => validateInput(input));
 
     const fieldWrap = document.createElement("div");
     fieldWrap.className = `form_field field_${f.class}`;
@@ -260,7 +270,7 @@ function createCheckoutForm() {
     error.style.display = "none";
 
     fieldWrap.append(input, error);
-    form.appendChild(fieldWrap);
+    checkoutForm.appendChild(fieldWrap);
   });
 
 
@@ -271,26 +281,26 @@ function createCheckoutForm() {
   city.type = "text";
   city.className = "city";
   city.placeholder = "City";
+  city.addEventListener("blur", () => validateInput(city));
 
   const zip = document.createElement("input");
   zip.className = "zip";
   zip.type = "text";
   zip.placeholder = "ZIP";
+  zip.addEventListener("blur", () => validateInput(zip));
 
   cityZip.append(wrapField(city, "city"), wrapField(zip, "zip"));
 
-  form.appendChild(cityZip);
+  checkoutForm.appendChild(cityZip);
   
-  form.addEventListener("submit", (e) => {
+  checkoutForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
     // move to step 2
-    deliveryInfoVerify.classList.remove("none");
-    paying_to.classList.remove("none");
-    amountBreakdown.classList.remove("none");
-    SelectedSize.classList.remove("none");
+    document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
+    document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
   });
 }
 
@@ -378,8 +388,15 @@ function createActions() {
   checkoutBackBtn.innerHTML = `<i class="peer-icon peer-icon-arrow-left"></i> Back`;
 
   checkoutBackBtn.onclick = () => {
-    checkoutDropdown.innerHTML = "";
-    checkoutPopup.classList.add("none");
+    const step1Hidden = document.querySelector('.step_1.none');
+    if (step1Hidden) {
+        // Go back to step 1
+        document.querySelectorAll('.step_1').forEach(el => el.classList.remove('none'));
+        document.querySelectorAll('.step_2').forEach(el => el.classList.add('none'));
+    } else {
+        checkoutDropdown.innerHTML = "";
+        checkoutPopup.classList.add("none");
+    }
   };
 
   checkoutNextBtn = document.createElement("button");
@@ -389,15 +406,26 @@ function createActions() {
   checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
 
   actions.append(checkoutBackBtn, checkoutNextBtn);
-  checkoutNextBtn.addEventListener("click", validateForm);
+  
+  checkoutNextBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("validateForm called");
+      const formValid = validateForm();
+      console.log("formValid", formValid);
+      if (formValid) {
+          // Transition to Step 2
+          document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
+          document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
+      }
+  });
   
   return actions;
 }
 
-function assembleScreen(actionsElement) {
+function createFinalScreen(actionsElement) {
   const ScrollWrap = document.createElement("div");
   ScrollWrap.className = "scroll_wrap";
-  ScrollWrap.append(form, deliveryInfoVerify, paying_to, amountBreakdown);
+  ScrollWrap.append(checkoutForm, deliveryInfoVerify, paying_to, amountBreakdown);
 
   /* ================= APPEND ALL ================= */
   wrapper.append(productHeader, productSize, deliveryInfo, ScrollWrap, actionsElement);
@@ -459,50 +487,92 @@ function isValidZip(zip) {
 }
 
 function markField(input, isValid, message) {
-    const errorSpan = input.parentElement.querySelector(".response_msg");
+    // Find closest parent .form_field then search for .response_msg
+    const fieldWrap = input.closest('.form_field');
+    const errorSpan = fieldWrap ? fieldWrap.querySelector(".response_msg") : null;
 
     if (!errorSpan) return;
 
     if (isValid) {
       errorSpan.style.display = "none";
+      input.classList.remove("error");
     } else {
+      input.classList.add("error");
       errorSpan.textContent = message;
       errorSpan.style.display = "block";
     }
 }
 
+function validateInput(input) {
+    const val = input.value.trim();
+    let isValid = true;
+    let msg = "";
+
+    if (input.classList.contains("full_name")) {
+        isValid = val.length >= 2;
+        msg = "Name is required";
+    } else if (input.classList.contains("email")) {
+        isValid = isValidEmail(val);
+        msg = "Enter a valid email";
+    } else if (input.classList.contains("address")) {
+        isValid = val.length >= 5;
+        msg = "Address is required";
+    } else if (input.classList.contains("city")) {
+        isValid = val.length >= 2;
+        msg = "City is required";
+    } else if (input.classList.contains("zip")) {
+        isValid = isValidZip(val);
+        msg = "Enter valid ZIP code";
+    } else if (input.classList.contains("address2")) {
+        // Optional return true;
+        return true;
+    }
+
+    markField(input, isValid, msg);
+    return isValid;
+}
 
 function validateForm() {
     console.log("validateForm called");
-    if (!form) return false;
+    if (!checkoutForm) return false;
     
-    const name = form.querySelector(".full_name");
-    const email = form.querySelector(".email");
-    const address = form.querySelector(".address");
-    const city = form.querySelector(".city");
-    const zip = form.querySelector(".zip");
+    const name = checkoutForm.querySelector(".full_name");
+    const email = checkoutForm.querySelector(".email");
+    const address = checkoutForm.querySelector(".address");
+    const city = checkoutForm.querySelector(".city");
+    const zip = checkoutForm.querySelector(".zip");
     const sizeChecked = wrapper.querySelector(
       'input[name="product_size"]:checked'
     );
 
-    const validations = [
-      name.value.trim().length >= 2,
-      isValidEmail(email.value),
-      address.value.trim().length >= 5,
-      city.value.trim().length >= 2,
-      isValidZip(zip.value),
-      !!sizeChecked,
-    ];
+    const v1 = validateInput(name);
+    const v2 = validateInput(email);
+    const v3 = validateInput(address);
+    const v4 = validateInput(city);
+    const v5 = validateInput(zip);
+    const v6 = !!sizeChecked;
+    
+    console.log("Validation Details:", {
+        name: v1,
+        email: v2,
+        address: v3,
+        city: v4,
+        zip: v5,
+        size: v6
+    });
 
-    markField(name, validations[0], "Name is required");
-    markField(email, validations[1], "Enter a valid email");
-    markField(address, validations[2], "Address is required");
-    markField(city, validations[3], "City is required");
-    markField(zip, validations[4], "Enter valid ZIP code");
+    const isValid = v1 && v2 && v3 && v4 && v5 && v6;
+    
+    // Explicitly handle size error
+    const sizeError = document.querySelector(".product_size .response_msg");
+    if (sizeError) {
+        if (!sizeChecked) {
+            sizeError.style.display = "block";
+        } else {
+            sizeError.style.display = "none";
+        }
+    }
 
-
-    const isValid = validations.every(Boolean);
-    if(checkoutNextBtn) checkoutNextBtn.disabled = !isValid;
-
+    console.log("Form Valid:", isValid);
     return isValid;
 }
