@@ -97,6 +97,10 @@ checkAuth("unauthorized");
     </div>
   </aside>
  
+  <div class="checkout-main none" id="faqPopup">
+    <div class="checkout-popup faq-popup"></div>
+  </div>
+
   <div class="checkout-main none" id="checkoutPopup">
     <div class="checkout-popup"> </div>
   </div>

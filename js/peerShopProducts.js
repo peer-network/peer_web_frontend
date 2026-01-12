@@ -18,6 +18,154 @@ function getProductByPostId(postId) {
   return peerShopProducts[postId] || null;
 }
 
+// FAQ Popup functionality
+function renderFaqPopup() {
+  const faqPopup = document.getElementById('faqPopup');
+  const faqContainer = faqPopup.querySelector('.faq-popup');
+  
+  if (!faqContainer) return;
+  
+  // Clear existing content
+  faqContainer.innerHTML = '';
+  
+  // Create FAQ content wrapper
+  const faqContent = document.createElement('div');
+  faqContent.className = 'faq-content';
+  
+  // Create header
+  const faqHeader = document.createElement('div');
+  faqHeader.className = 'faq-header';
+  
+  const faqTitle = document.createElement('h2');
+  faqTitle.className = 'faq-title xxl_font_size';
+  faqTitle.textContent = "FAQ's";
+  
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'close-checkout';
+  closeBtn.innerHTML = '&times;';
+  closeBtn.onclick = () => faqPopup.classList.add('none');
+  
+  faqHeader.append(faqTitle, closeBtn);
+  
+  // Create scrollable content
+  const faqScroll = document.createElement('div');
+  faqScroll.className = 'faq-scroll';
+  
+  // FAQ sections data
+  const faqSections = [
+    {
+      title: 'Order Processing',
+      content: "Your order is processed as soon as your payment is confirmed. You'll receive a confirmation email with delivery details within 1–3 days.",
+      highlighted: false
+    },
+    {
+      title: 'Delivery information & time',
+      items: [
+        'Delivery costs are already included in the item price.',
+        "Shipping times depend on the delivery provider and your location. You'll receive full delivery details by email once your order has been dispatched."
+      ],
+      highlighted: true
+    },
+    {
+      title: 'Return policy',
+      items: [
+        "If you'd like to return an item, we can offer an exchange.",
+        'Please note: Peer Tokens cannot be refunded.'
+      ],
+      highlighted: false
+    },
+    {
+      title: 'Delivery area',
+      content: 'Delivery is currently available only within Germany.',
+      highlighted: false
+    },
+    {
+      title: 'Need help?',
+      content: 'If you have any issues with your order, delivery, or product, feel free to reach out to us:',
+      items: [
+        { type: 'email', text: 'Email: ', link: 'help.peernetwork@gmail.com' }
+      ],
+      highlighted: false
+    }
+  ];
+  
+  // Create sections
+  faqSections.forEach(section => {
+    const sectionEl = document.createElement('section');
+    sectionEl.className = section.highlighted ? 'faq-section faq-highlighted' : 'faq-section';
+    
+    const heading = document.createElement('h3');
+    heading.className = 'md_font_size bold';
+    heading.textContent = section.title;
+    sectionEl.appendChild(heading);
+    
+    if (section.content) {
+      const paragraph = document.createElement('p');
+      paragraph.className = 'md_font_size txt-color-gray';
+      paragraph.textContent = section.content;
+      sectionEl.appendChild(paragraph);
+    }
+    
+    if (section.items) {
+      const list = document.createElement('ul');
+      list.className = section.highlighted ? 'md_font_size' : 'md_font_size txt-color-gray';
+      
+      section.items.forEach(item => {
+        const listItem = document.createElement('li');
+        
+        if (typeof item === 'string') {
+          listItem.textContent = item;
+        } else if (item.type === 'email') {
+          listItem.textContent = item.text;
+          const link = document.createElement('a');
+          link.href = `mailto:${item.link}`;
+          link.className = 'faq-link';
+          link.textContent = item.link;
+          listItem.appendChild(link);
+        }
+        
+        list.appendChild(listItem);
+      });
+      
+      sectionEl.appendChild(list);
+    }
+    
+    faqScroll.appendChild(sectionEl);
+  });
+  
+  // Assemble everything
+  faqContent.append(faqHeader, faqScroll);
+  faqContainer.appendChild(faqContent);
+}
+
+// Initialize FAQ popup
+function initFaqPopup() {
+  const infoBtn = document.getElementById('info');
+  const faqPopupContainer = document.getElementById('faqPopup');
+
+  if (infoBtn && faqPopupContainer) {
+    // Render FAQ content once
+    renderFaqPopup();
+    
+    // Open FAQ popup when clicking the info button
+    infoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      faqPopupContainer.classList.remove('none');
+    });
+
+    // Close FAQ popup on overlay click
+    faqPopupContainer.addEventListener('click', (e) => {
+      if (e.target === faqPopupContainer) {
+        faqPopupContainer.classList.add('none');
+      }
+    });
+  }
+}
+
+// Initialize FAQ popup when DOM is ready
+document.addEventListener('DOMContentLoaded', initFaqPopup);
+
+
 
 
 /** shop popup */
@@ -156,7 +304,7 @@ function createSizeSelection() {
       SelectedSize.querySelector(".size").innerHTML = input.value;
       // Hide error if selected
       const sizeError = productSize.querySelector(".response_msg");
-      if(sizeError) sizeError.style.display = "none";
+      if(sizeError) sizeError.classList.add("none");
       
       validateForm();
     };
@@ -167,8 +315,7 @@ function createSizeSelection() {
 
   // Add error span for size
   const sizeError = document.createElement("span");
-  sizeError.className = "response_msg error";
-  sizeError.style.display = "none";
+  sizeError.className = "response_msg error cutom-style none";
   sizeError.textContent = "Please select a size";
 
   productSize.append(sizeLabel, sizes, sizeError);
@@ -267,7 +414,7 @@ function createCheckoutForm() {
 
     const error = document.createElement("span");
     error.className = "response_msg error";
-    error.style.display = "none";
+    error.classList.add("none");
 
     fieldWrap.append(input, error);
     checkoutForm.appendChild(fieldWrap);
@@ -466,7 +613,7 @@ function wrapField(input, name) {
     // Add error msg span
     const error = document.createElement("span");
     error.className = "response_msg error";
-    error.style.display = "none";
+    error.classList.add("none");
     wrap.appendChild(error);
     
     return wrap;
@@ -482,10 +629,10 @@ function bindInputToVerify(wrapper, inputClass) {
     const update = () => {
       if (!input.value.trim()) {
         output.textContent = "—";
-        if (inputClass === "address2" && row) row.style.display = "none";
+        if (inputClass === "address2" && row) row.classList.add("none");
       } else {
         output.textContent = input.value;
-        if (row) row.style.display = "flex";
+        if (row) row.classList.remove("none");
       }
     };
 
@@ -510,12 +657,12 @@ function markField(input, isValid, message) {
     if (!errorSpan) return;
 
     if (isValid) {
-      errorSpan.style.display = "none";
+      errorSpan.classList.add("none");
       input.classList.remove("error");
     } else {
       input.classList.add("error");
       errorSpan.textContent = message;
-      errorSpan.style.display = "block";
+      errorSpan.classList.remove("none");
     }
 }
 
@@ -549,7 +696,6 @@ function validateInput(input) {
 }
 
 function validateForm() {
-    console.log("validateForm called");
     if (!checkoutForm) return false;
     
     const name = checkoutForm.querySelector(".full_name");
@@ -574,9 +720,9 @@ function validateForm() {
     const sizeError = document.querySelector(".product_size .response_msg");
     if (sizeError) {
         if (!sizeChecked) {
-            sizeError.style.display = "block";
+            sizeError.classList.remove('none');
         } else {
-            sizeError.style.display = "none";
+            sizeError.classList.add('none');
         }
     }
 
