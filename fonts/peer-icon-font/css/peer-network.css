@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'peer-network';
-  src: url('../font/peer-network.eot?70040408');
-  src: url('../font/peer-network.eot?70040408#iefix') format('embedded-opentype'),
-       url('../font/peer-network.woff2?70040408') format('woff2'),
-       url('../font/peer-network.woff?70040408') format('woff'),
-       url('../font/peer-network.ttf?70040408') format('truetype'),
-       url('../font/peer-network.svg?70040408#peer-network') format('svg');
+  src: url('../font/peer-network.eot?43106671');
+  src: url('../font/peer-network.eot?43106671#iefix') format('embedded-opentype'),
+       url('../font/peer-network.woff2?43106671') format('woff2'),
+       url('../font/peer-network.woff?43106671') format('woff'),
+       url('../font/peer-network.ttf?43106671') format('truetype'),
+       url('../font/peer-network.svg?43106671#peer-network') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'peer-network';
-    src: url('../font/peer-network.svg?70040408#peer-network') format('svg');
+    src: url('../font/peer-network.svg?43106671#peer-network') format('svg');
   }
 }
 */
@@ -27,8 +27,8 @@
 
   display: inline-block;
   text-decoration: inherit;
-  width: auto;
-  margin-right: 0;
+  width: 1em;
+  margin-right: .2em;
   text-align: center;
   /* opacity: .8; */
 
@@ -41,7 +41,7 @@
 
   /* Animation center compensation - margins should be symmetric */
   /* remove if not needed */
-  margin-left: 0;
+  margin-left: .2em;
 
   /* you can be more comfortable with increased icons size */
   /* font-size: 120%; */
@@ -141,3 +141,4 @@
 .peer-icon-audio-fill:before { content: '\e854'; } /* '' */
 .peer-icon-camera-fill:before { content: '\e855'; } /* '' */
 .peer-icon-message:before { content: '\e856'; } /* '' */
+.peer-icon-shop:before { content: '\e8af'; } /* '' */

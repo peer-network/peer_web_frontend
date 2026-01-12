@@ -20,7 +20,7 @@ function getProductByPostId(postId) {
 
 
 
-/** shop popup         */
+/** shop popup */
 /* ================= GLOBAL VARIABLES ================= */
 let checkoutPopup, checkoutDropdown, wrapper, checkoutNextBtn, checkoutBackBtn, header, h2, closeBtn, productHeader, product_media,
   arrayMedia = [], productinfo, title, desc, price, SelectedSize, productSize, sizeLabel, sizes, 
@@ -367,7 +367,7 @@ function createAmountBreakdown(objekt) {
       </div>
     </div>`;
 
-  // After setting panel.innerHTML
+  // After setting panel-innerHTML
   const feeSection = feePanel.querySelector(".fee-section");
   const feeTitle = feePanel.querySelector(".fee-title");
 
@@ -393,6 +393,10 @@ function createActions() {
         // Go back to step 1
         document.querySelectorAll('.step_1').forEach(el => el.classList.remove('none'));
         document.querySelectorAll('.step_2').forEach(el => el.classList.add('none'));
+        
+        // Reset button to Next
+        checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
+        checkoutNextBtn.classList.remove('btn-pay'); // Optional styling class
     } else {
         checkoutDropdown.innerHTML = "";
         checkoutPopup.classList.add("none");
@@ -409,13 +413,26 @@ function createActions() {
   
   checkoutNextBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("validateForm called");
-      const formValid = validateForm();
-      console.log("formValid", formValid);
-      if (formValid) {
-          // Transition to Step 2
-          document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
-          document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
+      
+      const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
+      
+      if (isStep1Visible) {
+          console.log("validateForm called");
+          const formValid = validateForm();
+          console.log("formValid", formValid);
+          if (formValid) {
+              // Transition to Step 2
+              document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
+              document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
+              
+              // Change to Pay button
+              checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
+              checkoutNextBtn.classList.add('btn-pay');
+          }
+      } else {
+          // We are in Step 2, handle Payment
+          console.log("Processing Payment...");
+          // Add your payment logic here
       }
   });
   
@@ -487,7 +504,6 @@ function isValidZip(zip) {
 }
 
 function markField(input, isValid, message) {
-    // Find closest parent .form_field then search for .response_msg
     const fieldWrap = input.closest('.form_field');
     const errorSpan = fieldWrap ? fieldWrap.querySelector(".response_msg") : null;
 
@@ -552,17 +568,8 @@ function validateForm() {
     const v5 = validateInput(zip);
     const v6 = !!sizeChecked;
     
-    console.log("Validation Details:", {
-        name: v1,
-        email: v2,
-        address: v3,
-        city: v4,
-        zip: v5,
-        size: v6
-    });
 
-    const isValid = v1 && v2 && v3 && v4 && v5 && v6;
-    
+    const isValid = v1 && v2 && v3 && v4 && v5 && v6;    
     // Explicitly handle size error
     const sizeError = document.querySelector(".product_size .response_msg");
     if (sizeError) {
@@ -573,6 +580,5 @@ function validateForm() {
         }
     }
 
-    console.log("Form Valid:", isValid);
     return isValid;
 }
