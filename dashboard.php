@@ -30,6 +30,8 @@ checkAuth("unauthorized");
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
     <!-- Firebase Analytics (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
     <script src="js/firebase_config.js?<?php echo filemtime('js/firebase_config.js'); ?>" defer></script>
 
     <!-- <script src="sw_instal.min.js" async></script> -->
