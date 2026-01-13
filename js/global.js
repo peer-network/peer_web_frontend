@@ -16,11 +16,22 @@ if (location.hostname === "localhost") {
 } else {
   baseUrl = `${location.origin}/`;
 }
-//console.log(baseUrl);
-// below variable used in wallet module
-// need to declare in global scope
+const configEl = document.getElementById("config");
+let domain = configEl?.dataset?.host || "";
+let mediaDomain = configEl?.dataset?.mediaHost || "";
+const GraphGL = domain + "/graphql";
+
+function tempMedia(folder) {
+  if (mediaDomain) {
+    return mediaDomain + folder;
+  }
+  // Fallback if mediaDomain is not set
+  return domain.replace("://", "://media.") + folder;
+}
+
 let storedUserInfo,
   balance = null;
+
 // Global variable to hold tokenomics data
 window.tokenomicsData = null;
 
