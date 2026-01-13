@@ -16,18 +16,18 @@ if (location.hostname === "localhost") {
 } else {
   baseUrl = `${location.origin}/`;
 }
-const configEl = document.getElementById("config");
-let domain = configEl?.dataset?.host || "";
-let mediaDomain = configEl?.dataset?.mediaHost || "";
-const GraphGL = domain + "/graphql";
+const config = document.getElementById("config");
+// Use window to avoid redeclaration errors with lib.min.js
+window.tempMedia = function(e) {
+  const m = document.getElementById("config")?.dataset?.mediaHost;
+  return (m ? m : window.domain.replace("://", "://media.")) + e;
+};
 
-function tempMedia(folder) {
-  if (mediaDomain) {
-    return mediaDomain + folder;
-  }
-  // Fallback if mediaDomain is not set
-  return domain.replace("://", "://media.") + folder;
-}
+// Update global domain variable if it exists, otherwise define it.
+// We use var or window assignment to be safe.
+window.domain = config?.dataset?.host || "";
+window.mediaDomain = config?.dataset?.mediaHost || "";
+var GraphGL = window.domain + "/graphql";
 
 let storedUserInfo,
   balance = null;
