@@ -17,7 +17,7 @@ include 'host.php';
 </head>
 
 <body class="container">
-    <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+    <div id="config"  class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     Having trouble opening the app?<a id="openAppBtn"  href="#">Click Here</a> to continue manually.
 
 </body>

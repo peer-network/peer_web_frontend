@@ -46,8 +46,8 @@ checkAuth("unauthorized");
 </head>
 
 <body>
-    <div id="config" class="none"
-        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>">
+    <div id="config"  class="none"
+        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>">
     </div>
     <div id="addPost" class="site_layout">
         <header class="site-header header-profile">
