@@ -18,21 +18,17 @@ function getProductByPostId(postId) {
   return peerShopProducts[postId] || null;
 }
 
-// FAQ Popup functionality
 function renderFaqPopup() {
   const faqPopup = document.getElementById('faqPopup');
   const faqContainer = faqPopup.querySelector('.faq-popup');
   
   if (!faqContainer) return;
   
-  // Clear existing content
   faqContainer.innerHTML = '';
   
-  // Create FAQ content wrapper
   const faqContent = document.createElement('div');
   faqContent.className = 'faq-content';
   
-  // Create header
   const faqHeader = document.createElement('div');
   faqHeader.className = 'faq-header';
   
@@ -40,14 +36,13 @@ function renderFaqPopup() {
   faqTitle.className = 'faq-title xxl_font_size';
   faqTitle.textContent = "FAQ's";
   
-  const closeBtn = document.createElement('button');
+  const closeBtn = document.createElement('span');
   closeBtn.className = 'close-checkout';
   closeBtn.innerHTML = '&times;';
   closeBtn.onclick = () => faqPopup.classList.add('none');
   
   faqHeader.append(faqTitle, closeBtn);
   
-  // Create scrollable content
   const faqScroll = document.createElement('div');
   faqScroll.className = 'faq-scroll';
   
@@ -132,28 +127,23 @@ function renderFaqPopup() {
     
     faqScroll.appendChild(sectionEl);
   });
-  
-  // Assemble everything
+
   faqContent.append(faqHeader, faqScroll);
   faqContainer.appendChild(faqContent);
 }
 
-// Initialize FAQ popup
 function initFaqPopup() {
   const infoBtn = document.getElementById('info');
   const faqPopupContainer = document.getElementById('faqPopup');
 
   if (infoBtn && faqPopupContainer) {
-    // Render FAQ content once
     renderFaqPopup();
     
-    // Open FAQ popup when clicking the info button
     infoBtn.addEventListener('click', (e) => {
       e.preventDefault();
       faqPopupContainer.classList.remove('none');
     });
 
-    // Close FAQ popup on overlay click
     faqPopupContainer.addEventListener('click', (e) => {
       if (e.target === faqPopupContainer) {
         faqPopupContainer.classList.add('none');
@@ -162,10 +152,7 @@ function initFaqPopup() {
   }
 }
 
-// Initialize FAQ popup when DOM is ready
 document.addEventListener('DOMContentLoaded', initFaqPopup);
-
-
 
 
 /** shop popup */
@@ -602,9 +589,7 @@ function createFinalScreen(actionsElement) {
   );
 }
 
-
 /* ================= HELPER FUNCTIONS ================= */
-
 function wrapField(input, name) {
     const wrap = document.createElement("div");
     wrap.className = `form_field field_${name}`;

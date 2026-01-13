@@ -621,7 +621,8 @@
 
 /*---------------FAQ Popup-----------------------*/
 .faq-popup {
-  /* max-width: 700px !important;
+  max-width: 1000px;
+  /*
   width: 700px !important;
   padding: 60px !important; */
 }
@@ -638,6 +639,23 @@
   align-items: center;
 }
 
+.faq-popup .faq-header .close-checkout {
+  z-index: 2;
+  position: absolute;
+  top: 3rem;
+  right: 3rem;
+  display: flex;
+  font-size: 0;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  background-image: url(../svg/close.svg);
+  background-size: cover;
+  background-position: center center;
+}
+
 .faq-popup .faq-title {
   margin: 0;
 }
@@ -646,7 +664,7 @@
   display: flex;
   flex-direction: column;
   gap: 40px;
-  max-height: 900px;
+  max-height: 1000px;
   overflow-y: auto;
   scrollbar-width: none;
   padding-right: 10px;
