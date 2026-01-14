@@ -637,13 +637,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0px 10px;
 }
 
 .faq-popup .faq-header .close-checkout {
   z-index: 2;
   position: absolute;
-  top: 3rem;
-  right: 3rem;
+  top: 4rem;
+  right: 4rem;
   display: flex;
   font-size: 0;
   justify-content: center;
@@ -667,7 +668,7 @@
   max-height: 1000px;
   overflow-y: auto;
   scrollbar-width: none;
-  padding-right: 10px;
+  padding: 0px 10px;
 }
 
 .faq-popup .faq-scroll::-webkit-scrollbar {

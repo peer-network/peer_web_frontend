@@ -265,10 +265,10 @@ function createSizeSelection() {
 
   arraySizes = [
     { size: "XS", inStock: true },
-    { size: "S", inStock: false },
+    { size: "S", inStock: true },
     { size: "M", inStock: true },
     { size: "L", inStock: true },
-    { size: "XL", inStock: false },
+    { size: "XL", inStock: true },
     { size: "XXL", inStock: true },
   ];
 
