@@ -565,8 +565,7 @@ function createActions() {
           }
       } else {
           // We are in Step 2, handle Payment
-          console.log("Processing Payment...");
-          // Add your payment logic here
+          handlePayment(objekt);
       }
   });
   
@@ -712,4 +711,100 @@ function validateForm() {
     }
 
     return isValid;
+}
+
+async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
+  const accessToken = getCookie("authToken");
+  if (!accessToken) {
+    if (typeof Merror === 'function') Merror("Error", "You must be logged in to make a purchase.");
+    return;
+  }
+
+  const query = `
+    mutation PerformShopOrder($shopItemId: ID!, $orderDetails: OrderDetailsInput!, $tokenAmount: String!) {
+      performShopOrder(
+        shopItemId: $shopItemId,
+        orderDetails: $orderDetails,
+        tokenAmount: $tokenAmount
+      ) {
+        status
+        RequestId
+        ResponseCode
+        ResponseMessage
+      }
+    }
+  `;
+
+  const variables = {
+    shopItemId,
+    orderDetails,
+    tokenAmount: tokenAmount.toString()
+  };
+
+  try {
+    const response = await fetch(GraphGL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Payment Request Failed:", error);
+    return { errors: [{ message: "Network error occurred. Please try again." }] };
+  }
+}
+
+async function handlePayment(objekt) {
+  // 1. Gather data
+  const name = checkoutForm.querySelector(".full_name").value.trim();
+  const email = checkoutForm.querySelector(".email").value.trim();
+  const address1 = checkoutForm.querySelector(".address").value.trim();
+  const address2 = checkoutForm.querySelector(".address2").value.trim();
+  const city = checkoutForm.querySelector(".city").value.trim();
+  const zip = checkoutForm.querySelector(".zip").value.trim();
+  const sizeInput = wrapper.querySelector('input[name="product_size"]:checked');
+  const size = sizeInput ? sizeInput.value : "";
+
+  const orderDetails = {
+    shopItemSpecs: { size: size },
+    country: "GERMANY",
+    zipcode: zip,
+    city: city,
+    addressline1: address1,
+    addressline2: address2,
+    email: email,
+    name: name
+  };
+
+  // 2. Show loading state on button
+  const originalBtnContent = checkoutNextBtn.innerHTML;
+  checkoutNextBtn.disabled = true;
+  checkoutNextBtn.innerHTML = `Processing... <i class="peer-icon peer-icon-loader spin"></i>`;
+
+  // 3. Call API
+  const result = await performShopOrder(objekt.id, orderDetails, objekt.productprice);
+
+  if (result && result.data && result.data.performShopOrder) {
+    const orderData = result.data.performShopOrder;
+    if (orderData.status === "success") {
+      if (typeof success === 'function') success("Order Successful", "Your order has been placed. You will receive an email shortly.");
+      checkoutDropdown.innerHTML = "";
+      checkoutPopup.classList.add("none");
+      // Optional: Refresh balance since tokens were spent
+      if (typeof currentliquidity === 'function') currentliquidity();
+    } else {
+      if (typeof Merror === 'function') Merror("Order Failed", orderData.ResponseMessage || "Something went wrong.");
+      checkoutNextBtn.disabled = false;
+      checkoutNextBtn.innerHTML = originalBtnContent;
+    }
+  } else {
+    const errorMsg = result?.errors?.[0]?.message || "An unexpected error occurred.";
+    if (typeof Merror === 'function') Merror("Error", errorMsg);
+    checkoutNextBtn.disabled = false;
+    checkoutNextBtn.innerHTML = originalBtnContent;
+  }
 }

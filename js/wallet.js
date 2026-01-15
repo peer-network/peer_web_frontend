@@ -68,7 +68,11 @@ function renderRows(rows) {
 
           transaction_title ='Extra Like';
           icon_html='<i class="peer-icon peer-icon-like-fill red-text"></i>';
-        }else if(entry.transactiontype=='transferForComment'){
+        }else if(entry.transactiontype=='transferMintAccountToRecipient'){
+          transaction_title ='Daily Mint';
+          icon_html='<i class="peer-icon peer-icon-daily-mint"></i>';
+        }
+        else if(entry.transactiontype=='transferForComment'){
 
           transaction_title ='Extra comment';
           icon_html='<i class="peer-icon peer-icon-comment-fill"></i>';
@@ -209,6 +213,7 @@ async function loadMoreTransactionHistory() {
         transactionHistory (offset: ${txOffset}, limit: ${LIMIT}) {
             affectedRows {
               operationid
+              transactionCategory
               transactiontype
               tokenamount
               netTokenAmount
