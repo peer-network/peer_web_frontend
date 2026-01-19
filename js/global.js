@@ -16,11 +16,21 @@ if (location.hostname === "localhost") {
 } else {
   baseUrl = `${location.origin}/`;
 }
-//console.log(baseUrl);
-// below variable used in wallet module
-// need to declare in global scope
+const configEl = document.getElementById("config");
+// Use window to avoid redeclaration errors with lib.min.js
+window.tempMedia = function(e) {
+  const m = configEl?.dataset?.mediaHost;
+  // If domain is not on window, check if it's a global from lib.min.js
+  const d = window.domain || (typeof domain !== 'undefined' ? domain : "");
+  return (m ? m : (d || "").replace("://", "://media.")) + e;
+};
+
+// Assign to window to avoid 'let'/'const' redeclaration issues
+window.mediaDomain = configEl?.dataset?.mediaHost || "";
+
 let storedUserInfo,
   balance = null;
+
 // Global variable to hold tokenomics data
 window.tokenomicsData = null;
 
