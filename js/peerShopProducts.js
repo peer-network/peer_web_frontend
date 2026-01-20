@@ -21,32 +21,31 @@ function getProductByPostId(postId) {
 function renderFaqPopup() {
   const faqPopup = document.getElementById('faqPopup');
   const faqContainer = faqPopup.querySelector('.faq-popup');
-  
+
   if (!faqContainer) return;
-  
+
   faqContainer.innerHTML = '';
-  
+
   const faqContent = document.createElement('div');
   faqContent.className = 'faq-content';
-  
+
   const faqHeader = document.createElement('div');
   faqHeader.className = 'faq-header';
-  
+
   const faqTitle = document.createElement('h2');
   faqTitle.className = 'faq-title xxl_font_size';
   faqTitle.textContent = "FAQ's";
-  
+
   const closeBtn = document.createElement('span');
   closeBtn.className = 'close-checkout';
   closeBtn.innerHTML = '&times;';
   closeBtn.onclick = () => faqPopup.classList.add('none');
-  
+
   faqHeader.append(faqTitle, closeBtn);
-  
+
   const faqScroll = document.createElement('div');
   faqScroll.className = 'faq-scroll';
-  
-  // FAQ sections data
+
   const faqSections = [
     {
       title: 'Order Processing',
@@ -83,31 +82,31 @@ function renderFaqPopup() {
       highlighted: false
     }
   ];
-  
+
   // Create sections
   faqSections.forEach(section => {
     const sectionEl = document.createElement('section');
     sectionEl.className = section.highlighted ? 'faq-section faq-highlighted' : 'faq-section';
-    
+
     const heading = document.createElement('h3');
     heading.className = 'md_font_size bold';
     heading.textContent = section.title;
     sectionEl.appendChild(heading);
-    
+
     if (section.content) {
       const paragraph = document.createElement('p');
       paragraph.className = 'md_font_size txt-color-gray';
       paragraph.textContent = section.content;
       sectionEl.appendChild(paragraph);
     }
-    
+
     if (section.items) {
       const list = document.createElement('ul');
       list.className = section.highlighted ? 'md_font_size' : 'md_font_size txt-color-gray';
-      
+
       section.items.forEach(item => {
         const listItem = document.createElement('li');
-        
+
         if (typeof item === 'string') {
           listItem.textContent = item;
         } else if (item.type === 'email') {
@@ -118,13 +117,13 @@ function renderFaqPopup() {
           link.textContent = item.link;
           listItem.appendChild(link);
         }
-        
+
         list.appendChild(listItem);
       });
-      
+
       sectionEl.appendChild(list);
     }
-    
+
     faqScroll.appendChild(sectionEl);
   });
 
@@ -138,7 +137,7 @@ function initFaqPopup() {
 
   if (infoBtn && faqPopupContainer) {
     renderFaqPopup();
-    
+
     infoBtn.addEventListener('click', (e) => {
       e.preventDefault();
       faqPopupContainer.classList.remove('none');
@@ -158,26 +157,26 @@ document.addEventListener('DOMContentLoaded', initFaqPopup);
 /** shop popup */
 /* ================= GLOBAL VARIABLES ================= */
 let checkoutPopup, checkoutDropdown, wrapper, checkoutNextBtn, checkoutBackBtn, header, h2, closeBtn, productHeader, product_media,
-  arrayMedia = [], productinfo, title, desc, price, SelectedSize, productSize, sizeLabel, sizes, 
-  arraySizes = [],  deliveryInfo, deliveryLabel, deliveryShortinfo, deliveryMessage, deliveryInfoVerify, deliveryinfoLabel,
+  arrayMedia = [], productinfo, title, desc, price, SelectedSize, productSize, sizeLabel, sizes,
+  arraySizes = [], deliveryInfo, deliveryLabel, deliveryShortinfo, deliveryMessage, deliveryInfoVerify, deliveryinfoLabel,
   verifyList, verifyFields = [], checkoutForm, paying_to, amountBreakdown;
 
 
 function renderCheckoutProductScreen(objekt) {
   initCheckoutScreen();
   createHeader();
-  
+
   createProductHeader(objekt);
   createSizeSelection();
   createDeliveryInfo();
-  
+
   createDeliveryVerify();
   createCheckoutForm();
   createPayingTo();
   createAmountBreakdown(objekt);
-  
+
   const actionsElement = createActions();
-  
+
   createFinalScreen(actionsElement);
 }
 
@@ -187,7 +186,7 @@ function initCheckoutScreen() {
   checkoutPopup.classList.remove("none");
   checkoutDropdown = checkoutPopup.querySelector(".checkout-popup");
   checkoutDropdown.innerHTML = "";
-  
+
   wrapper = document.createElement("div");
   wrapper.className = "checkout-form-screen";
 }
@@ -218,8 +217,8 @@ function createProductHeader(objekt) {
 
   product_media = document.createElement("div");
   product_media.className = "product_media";
-  
-  if(objekt.media) {
+
+  if (objekt.media) {
     arrayMedia = JSON.parse(objekt.media);
     arrayMedia.forEach((item) => {
       const img = document.createElement("img");
@@ -289,10 +288,9 @@ function createSizeSelection() {
     if (!inStock) label.classList.add("out_of_stock");
     input.onclick = () => {
       SelectedSize.querySelector(".size").innerHTML = input.value;
-      // Hide error if selected
       const sizeError = productSize.querySelector(".response_msg");
-      if(sizeError) sizeError.classList.add("none");
-      
+      if (sizeError) sizeError.classList.add("none");
+
       validateForm();
     };
 
@@ -300,7 +298,6 @@ function createSizeSelection() {
     sizes.appendChild(label);
   });
 
-  // Add error span for size
   const sizeError = document.createElement("span");
   sizeError.className = "response_msg error cutom-style none";
   sizeError.textContent = "Please select a size";
@@ -393,7 +390,7 @@ function createCheckoutForm() {
     input.type = f.type;
     input.className = f.class;
     input.placeholder = f.placeholder;
-    
+
     input.addEventListener("blur", () => validateInput(input));
 
     const fieldWrap = document.createElement("div");
@@ -426,13 +423,12 @@ function createCheckoutForm() {
   cityZip.append(wrapField(city, "city"), wrapField(zip, "zip"));
 
   checkoutForm.appendChild(cityZip);
-  
+
   checkoutForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    // move to step 2
     document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
     document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
   });
@@ -472,9 +468,8 @@ function createAmountBreakdown(objekt) {
   feePanel.innerHTML = `<div class="fee-section close">
       <div class="total_amount bold  md_font_size">
         Total amount 
-        <span class="final-total bold xl_font_size">${
-          objekt.productprice
-        }</span>
+        <span class="final-total bold xl_font_size">${objekt.productprice
+    }</span>
       </div>
       <div class="product-price ">
         <div class="price-item txt-color-gray md_font_size">
@@ -489,23 +484,21 @@ function createAmountBreakdown(objekt) {
     
       <div class="fee-breakdowns">
         ${breakdown
-          .map(
-            (item) => `
+      .map(
+        (item) => `
           <div class="fee-item txt-color-gray">
             <span class="label">${item.label}</span>
             <span class="value">${item.amount}</span>
           </div>
         `
-          )
-          .join("")}
+      )
+      .join("")}
       </div>
     </div>`;
 
-  // After setting panel-innerHTML
   const feeSection = feePanel.querySelector(".fee-section");
   const feeTitle = feePanel.querySelector(".fee-title");
 
-  // Toggle on click
   feeTitle.addEventListener("click", () => {
     feeSection.classList.toggle("close");
   });
@@ -524,16 +517,14 @@ function createActions() {
   checkoutBackBtn.onclick = () => {
     const step1Hidden = document.querySelector('.step_1.none');
     if (step1Hidden) {
-        // Go back to step 1
-        document.querySelectorAll('.step_1').forEach(el => el.classList.remove('none'));
-        document.querySelectorAll('.step_2').forEach(el => el.classList.add('none'));
-        
-        // Reset button to Next
-        checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
-        checkoutNextBtn.classList.remove('btn-pay'); // Optional styling class
+      document.querySelectorAll('.step_1').forEach(el => el.classList.remove('none'));
+      document.querySelectorAll('.step_2').forEach(el => el.classList.add('none'));
+
+      checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
+      checkoutNextBtn.classList.remove('btn-pay');
     } else {
-        checkoutDropdown.innerHTML = "";
-        checkoutPopup.classList.add("none");
+      checkoutDropdown.innerHTML = "";
+      checkoutPopup.classList.add("none");
     }
   };
 
@@ -544,31 +535,28 @@ function createActions() {
   checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
 
   actions.append(checkoutBackBtn, checkoutNextBtn);
-  
+
   checkoutNextBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      
-      const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
-      
-      if (isStep1Visible) {
-          console.log("validateForm called");
-          const formValid = validateForm();
-          console.log("formValid", formValid);
-          if (formValid) {
-              // Transition to Step 2
-              document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
-              document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
-              
-              // Change to Pay button
-              checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
-              checkoutNextBtn.classList.add('btn-pay');
-          }
-      } else {
-          // We are in Step 2, handle Payment
-          handlePayment(objekt);
+    e.preventDefault();
+
+    const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
+
+    if (isStep1Visible) {
+      console.log("validateForm called");
+      const formValid = validateForm();
+      console.log("formValid", formValid);
+      if (formValid) {
+        document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
+        document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
+
+        checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
+        checkoutNextBtn.classList.add('btn-pay');
       }
+    } else {
+      handlePayment(objekt);
+    }
   });
-  
+
   return actions;
 }
 
@@ -581,8 +569,7 @@ function createFinalScreen(actionsElement) {
   wrapper.append(productHeader, productSize, deliveryInfo, ScrollWrap, actionsElement);
 
   checkoutDropdown.appendChild(wrapper);
-  
-  // Bind inputs after they are attached to DOM
+
   ["full_name", "email", "address", "address2", "city", "zip"].forEach((cls) =>
     bindInputToVerify(wrapper, cls)
   );
@@ -590,127 +577,124 @@ function createFinalScreen(actionsElement) {
 
 /* ================= HELPER FUNCTIONS ================= */
 function wrapField(input, name) {
-    const wrap = document.createElement("div");
-    wrap.className = `form_field field_${name}`;
-    wrap.appendChild(input);
-    
-    // Add error msg span
-    const error = document.createElement("span");
-    error.className = "response_msg error";
-    error.classList.add("none");
-    wrap.appendChild(error);
-    
-    return wrap;
+  const wrap = document.createElement("div");
+  wrap.className = `form_field field_${name}`;
+  wrap.appendChild(input);
+
+  const error = document.createElement("span");
+  error.className = "response_msg error";
+  error.classList.add("none");
+  wrap.appendChild(error);
+
+  return wrap;
 }
 
 function bindInputToVerify(wrapper, inputClass) {
-    const input = wrapper.querySelector(`.${inputClass}`);
-    const output = wrapper.querySelector(`.verify_${inputClass}`);
-    const row = wrapper.querySelector(`.verify_row_${inputClass}`);
+  const input = wrapper.querySelector(`.${inputClass}`);
+  const output = wrapper.querySelector(`.verify_${inputClass}`);
+  const row = wrapper.querySelector(`.verify_row_${inputClass}`);
 
-    if (!input || !output) return;
+  if (!input || !output) return;
 
-    const update = () => {
-      if (!input.value.trim()) {
-        output.textContent = "—";
-        if (inputClass === "address2" && row) row.classList.add("none");
-      } else {
-        output.textContent = input.value;
-        if (row) row.classList.remove("none");
-      }
-    };
+  const update = () => {
+    if (!input.value.trim()) {
+      output.textContent = "—";
+      if (inputClass === "address2" && row) row.classList.add("none");
+    } else {
+      output.textContent = input.value;
+      if (row) row.classList.remove("none");
+    }
+  };
 
-    input.addEventListener("input", update);
-    input.addEventListener("blur", update);
+  input.addEventListener("input", update);
+  input.addEventListener("blur", update);
 
-    update(); // initial sync
+  update();
 }
 
 function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function isValidZip(zip) {
-    return /^\d{5}$/.test(zip); // Germany ZIP
+  return /^\d{5}$/.test(zip);
 }
 
 function markField(input, isValid, message) {
-    const fieldWrap = input.closest('.form_field');
-    const errorSpan = fieldWrap ? fieldWrap.querySelector(".response_msg") : null;
+  const fieldWrap = input.closest('.form_field');
+  const errorSpan = fieldWrap ? fieldWrap.querySelector(".response_msg") : null;
 
-    if (!errorSpan) return;
+  if (!errorSpan) return;
 
-    if (isValid) {
-      errorSpan.classList.add("none");
-      input.classList.remove("error");
-    } else {
-      input.classList.add("error");
-      errorSpan.textContent = message;
-      errorSpan.classList.remove("none");
-    }
+  if (isValid) {
+    errorSpan.classList.add("none");
+    input.classList.remove("error");
+  } else {
+    input.classList.add("error");
+    errorSpan.textContent = message;
+    errorSpan.classList.remove("none");
+  }
 }
 
 function validateInput(input) {
-    const val = input.value.trim();
-    let isValid = true;
-    let msg = "";
+  const val = input.value.trim();
+  let isValid = true;
+  let msg = "";
 
-    if (input.classList.contains("full_name")) {
-        isValid = val.length >= 2;
-        msg = "Name is required";
-    } else if (input.classList.contains("email")) {
-        isValid = isValidEmail(val);
-        msg = "Enter a valid email";
-    } else if (input.classList.contains("address")) {
-        isValid = val.length >= 5;
-        msg = "Address is required";
-    } else if (input.classList.contains("city")) {
-        isValid = val.length >= 2;
-        msg = "City is required";
-    } else if (input.classList.contains("zip")) {
-        isValid = isValidZip(val);
-        msg = "Enter valid ZIP code";
-    } else if (input.classList.contains("address2")) {
-        // Optional return true;
-        return true;
-    }
+  if (input.classList.contains("full_name")) {
+    isValid = val.length >= 2;
+    msg = "Name is required";
+  } else if (input.classList.contains("email")) {
+    isValid = isValidEmail(val);
+    msg = "Enter a valid email";
+  } else if (input.classList.contains("address")) {
+    isValid = val.length >= 5;
+    msg = "Address is required";
+  } else if (input.classList.contains("city")) {
+    isValid = val.length >= 2;
+    msg = "City is required";
+  } else if (input.classList.contains("zip")) {
+    isValid = isValidZip(val);
+    msg = "Enter valid ZIP code";
+  } else if (input.classList.contains("address2")) {
+    return true;
+  }
 
-    markField(input, isValid, msg);
-    return isValid;
+  markField(input, isValid, msg);
+  return isValid;
 }
 
 function validateForm() {
-    if (!checkoutForm) return false;
-    
-    const name = checkoutForm.querySelector(".full_name");
-    const email = checkoutForm.querySelector(".email");
-    const address = checkoutForm.querySelector(".address");
-    const city = checkoutForm.querySelector(".city");
-    const zip = checkoutForm.querySelector(".zip");
-    const sizeChecked = wrapper.querySelector(
-      'input[name="product_size"]:checked'
-    );
+  if (!checkoutForm) return false;
 
-    const v1 = validateInput(name);
-    const v2 = validateInput(email);
-    const v3 = validateInput(address);
-    const v4 = validateInput(city);
-    const v5 = validateInput(zip);
-    const v6 = !!sizeChecked;
-    
+  const name = checkoutForm.querySelector(".full_name");
+  const email = checkoutForm.querySelector(".email");
+  const address = checkoutForm.querySelector(".address");
+  const city = checkoutForm.querySelector(".city");
+  const zip = checkoutForm.querySelector(".zip");
+  const sizeChecked = wrapper.querySelector(
+    'input[name="product_size"]:checked'
+  );
 
-    const isValid = v1 && v2 && v3 && v4 && v5 && v6;    
-    // Explicitly handle size error
-    const sizeError = document.querySelector(".product_size .response_msg");
-    if (sizeError) {
-        if (!sizeChecked) {
-            sizeError.classList.remove('none');
-        } else {
-            sizeError.classList.add('none');
-        }
+  const v1 = validateInput(name);
+  const v2 = validateInput(email);
+  const v3 = validateInput(address);
+  const v4 = validateInput(city);
+  const v5 = validateInput(zip);
+  const v6 = !!sizeChecked;
+
+
+  const isValid = v1 && v2 && v3 && v4 && v5 && v6;
+  const sizeError = document.querySelector(".product_size .response_msg");
+  if (sizeError) {
+    if (!sizeChecked) {
+      sizeError.classList.remove('none');
+    } else {
+      sizeError.classList.add('none');
     }
+  }
 
-    return isValid;
+  return isValid;
 }
 
 async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
@@ -721,11 +705,20 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
   }
 
   const query = `
-    mutation PerformShopOrder($shopItemId: ID!, $orderDetails: OrderDetailsInput!, $tokenAmount: String!) {
+    mutation PerformShopOrder {
       performShopOrder(
-        shopItemId: $shopItemId,
-        orderDetails: $orderDetails,
-        tokenAmount: $tokenAmount
+        tokenAmount: "${tokenAmount}"
+        shopItemId: "${shopItemId}"
+        orderDetails: {
+          name: "${orderDetails.name}"
+          email: "${orderDetails.email}"
+          addressline1: "${orderDetails.addressline1}"
+          addressline2: "${orderDetails.addressline2 || ""}"
+          city: "${orderDetails.city}"
+          zipcode: "${orderDetails.zipcode}"
+          country: GERMANY
+          shopItemSpecs: { size: "${orderDetails.shopItemSpecs.size}" }
+        }
       ) {
         status
         RequestId
@@ -735,12 +728,6 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
     }
   `;
 
-  const variables = {
-    shopItemId,
-    orderDetails,
-    tokenAmount: tokenAmount.toString()
-  };
-
   try {
     const response = await fetch(GraphGL, {
       method: "POST",
@@ -748,7 +735,7 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({ query }),
     });
 
     return await response.json();
@@ -759,7 +746,6 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
 }
 
 async function handlePayment(objekt) {
-  // 1. Gather data
   const name = checkoutForm.querySelector(".full_name").value.trim();
   const email = checkoutForm.querySelector(".email").value.trim();
   const address1 = checkoutForm.querySelector(".address").value.trim();
@@ -780,12 +766,10 @@ async function handlePayment(objekt) {
     name: name
   };
 
-  // 2. Show loading state on button
   const originalBtnContent = checkoutNextBtn.innerHTML;
   checkoutNextBtn.disabled = true;
   checkoutNextBtn.innerHTML = `Processing... <i class="peer-icon peer-icon-loader spin"></i>`;
 
-  // 3. Call API
   const result = await performShopOrder(objekt.id, orderDetails, objekt.productprice);
 
   if (result && result.data && result.data.performShopOrder) {
@@ -794,7 +778,6 @@ async function handlePayment(objekt) {
       if (typeof success === 'function') success("Order Successful", "Your order has been placed. You will receive an email shortly.");
       checkoutDropdown.innerHTML = "";
       checkoutPopup.classList.add("none");
-      // Optional: Refresh balance since tokens were spent
       if (typeof currentliquidity === 'function') currentliquidity();
     } else {
       if (typeof Merror === 'function') Merror("Order Failed", orderData.ResponseMessage || "Something went wrong.");
