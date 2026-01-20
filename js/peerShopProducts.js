@@ -10,6 +10,7 @@ function loadPeerShopProducts() {
       snapshot.forEach((doc) => {
         peerShopProducts[doc.id] = doc.data();
       });
+      console.log("Peer shop products loaded:", peerShopProducts);
     })
     .catch((err) => console.error("Error loading peer shop products:", err));
 }
@@ -175,7 +176,7 @@ function renderCheckoutProductScreen(objekt) {
   createPayingTo();
   createAmountBreakdown(objekt);
 
-  const actionsElement = createActions();
+  const actionsElement = createActions(objekt);
 
   createFinalScreen(actionsElement);
 }
@@ -505,7 +506,7 @@ function createAmountBreakdown(objekt) {
   amountBreakdown.append(feePanel);
 }
 
-function createActions() {
+function createActions(objekt) {
   const actions = document.createElement("div");
   actions.className = "checkout-actions";
 
@@ -704,6 +705,10 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
     return;
   }
 
+  const addressLine2Part = orderDetails.addressline2
+    ? `addressline2: "${orderDetails.addressline2}"`
+    : `addressline2: null`;
+
   const query = `
     mutation PerformShopOrder {
       performShopOrder(
@@ -713,7 +718,7 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
           name: "${orderDetails.name}"
           email: "${orderDetails.email}"
           addressline1: "${orderDetails.addressline1}"
-          addressline2: "${orderDetails.addressline2 || ""}"
+          ${addressLine2Part}
           city: "${orderDetails.city}"
           zipcode: "${orderDetails.zipcode}"
           country: GERMANY
