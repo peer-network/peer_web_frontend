@@ -1,0 +1,3 @@
+# Vite Development Mode Flag
+# Delete this file to switch to production mode (load from dist/)
+# When this file exists, PHP will load scripts from Vite dev server (localhost:5173)

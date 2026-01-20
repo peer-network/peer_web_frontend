@@ -13,3 +13,6 @@ sw_instal.min.js
 sw-db.js
 sw.js
 sw.min.js
+node_modules/
+npm-debug.log
+.env
