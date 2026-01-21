@@ -34,7 +34,6 @@ window.addEventListener('DOMContentLoaded', initAppData);
 
 function renderRows(rows) {
   rows.forEach((entry) => {
-    // Duplikate vermeiden (z. B. bei schnellem mehrfachen Triggern)
     if (entry.operationid && seenTxIds.has(entry.operationid)) return;
     if (entry.operationid) seenTxIds.add(entry.operationid);
 
@@ -80,6 +79,8 @@ function renderRows(rows) {
       case 'SHOP_PURCHASE':
         transaction_title = 'Peer Shop';
         icon_html = '<i class="peer-icon peer-icon-shop"></i>';
+        historyItem.dataset.isShopPurchase = 'true';
+        historyItem.dataset.operationId = entry.operationid;
         break;
 
       case 'COMMENT':
@@ -150,6 +151,40 @@ function renderRows(rows) {
                     <span class="message_body">${messageText}</span>
                   </div>`;
     }
+
+    // Check if current user is shop account for SHOP_PURCHASE transactions
+    const currentUserId = getCookie("userID");
+    const isShopAccount = currentUserId === PEER_SHOP_ID;
+    const isShopPurchase = entry.transactionCategory === 'SHOP_PURCHASE';
+
+    // Build detail section based on user type
+    let detailInnerHtml;
+    if (isShopPurchase && isShopAccount) {
+      // Shop account sees delivery info (lazy loaded)
+      detailInnerHtml = `
+        <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
+        <div class="delivery_info_container">
+          <div class="price_detail_row md_font_size txt-color-gray">Loading delivery info...</div>
+        </div>
+      `;
+    } else {
+      // Regular users see fee breakdown
+      detailInnerHtml = `
+        <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
+        <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">${formatAmount(entry.netTokenAmount)}</span></div>
+        <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">${formatAmount(entry.fees.total)}</span></div>
+        <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.peer)}</span></div>
+        <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.burn)}</span></div>
+        ${entry.fees.inviter
+          ? `<div class="price_detail_row">
+              <span class="price_label txt-color-gray">1% to your Inviter</span>
+              <span class="price txt-color-gray">${formatAmount(entry.fees.inviter)}</span>
+            </div>`
+          : ''}
+        ${fullmessage_html}
+      `;
+    }
+
     const record = `<div class="transaction_record">
                         <div class="transaction_info profile_status_${trans_user_data?.visibilityStatus?.toLowerCase() || ''}">
                           <div class="transaction_media">
@@ -167,25 +202,72 @@ function renderRows(rows) {
               
               <div class="transaction_detail">
                 <div class="transaction_detail_inner">
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">${formatAmount(entry.netTokenAmount)}</span></div>
-                  <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Fees included</span> <span class="price bold">${formatAmount(entry.fees.total)}</span></div>
-                  <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.peer)}</span></div>
-                  <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.burn)}</span></div>
-                  ${entry.fees.inviter
-        ? `<div class="price_detail_row">
-                        <span class="price_label txt-color-gray">1% to your Inviter</span>
-                        <span class="price txt-color-gray">${formatAmount(entry.fees.inviter)}</span>
-                      </div>`
-        : ''}
-                  ${fullmessage_html}
-
+                  ${detailInnerHtml}
                 </div>
               </div>
               `;
 
     historyItem.insertAdjacentHTML("beforeend", record);
-    historyItem.addEventListener("click", () => historyItem.classList.toggle('open'));
+    historyItem.addEventListener("click", async () => {
+      const isOpening = !historyItem.classList.contains('open');
+      historyItem.classList.toggle('open');
+
+      // Lazy load
+      if (isOpening && isShopPurchase && isShopAccount && !historyItem.dataset.deliveryLoaded) {
+        const deliveryContainer = historyItem.querySelector('.delivery_info_container');
+        if (deliveryContainer) {
+          try {
+            const orderDetails = await fetchShopOrderDetails(entry.operationid);
+            if (orderDetails) {
+              const delivery = orderDetails.deliveryDetails;
+              const size = orderDetails.shopItemSpecs?.size || '';
+              const shopItemId = orderDetails.shopItemId;
+
+              // Get product name from Firebase peerShopProducts
+              const product = peerShopProducts[shopItemId];
+              const itemName = product?.title || 'Shop Item';
+              const itemDisplay = size ? `${itemName}, size ${size}` : itemName;
+
+              const fullAddress = [
+                delivery.addressline1,
+                delivery.addressline2,
+                delivery.city,
+                delivery.zipcode,
+                delivery.country
+              ].filter(Boolean).join(', ');
+
+              deliveryContainer.innerHTML = `
+                <div class="price_detail_row md_font_size bold">
+                  <i class="peer-icon peer-icon-shop"></i> Delivery information
+                </div>
+                <div class="price_detail_row md_font_size">
+                  <span class="price_label txt-color-gray">Item</span>
+                  <span class="price">${itemDisplay}</span>
+                </div>
+                <div class="price_detail_row md_font_size">
+                  <span class="price_label txt-color-gray">Name</span>
+                  <span class="price bold">${delivery.name || 'N/A'}</span>
+                </div>
+                <div class="price_detail_row md_font_size">
+                  <span class="price_label txt-color-gray">Email</span>
+                  <span class="price">${delivery.email || 'N/A'}</span>
+                </div>
+                <div class="price_detail_row md_font_size">
+                  <span class="price_label txt-color-gray">Address</span>
+                  <span class="price">${fullAddress || 'N/A'}</span>
+                </div>
+              `;
+              historyItem.dataset.deliveryLoaded = 'true';
+            } else {
+              deliveryContainer.innerHTML = `<div class="price_detail_row md_font_size txt-color-gray">Unable to load delivery info</div>`;
+            }
+          } catch (error) {
+            deliveryContainer.innerHTML = `<div class="price_detail_row md_font_size txt-color-gray">Error loading delivery info</div>`;
+          }
+        }
+      }
+    });
+
     historyContainer?.insertBefore(historyItem, historySentinel);
   });
 }
@@ -1317,4 +1399,43 @@ function formatDate(timestampStr) {
 }
 
 document.getElementById('reloadTransactions').addEventListener('click', resetTransactionHistoryList)
-/*-------------- End Transnsfer Token Process------------------*/ 
+/*-------------- End Transnsfer Token Process------------------*/
+
+async function fetchShopOrderDetails(operationId) {
+  const accessToken = getCookie("authToken");
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+
+  const graphql = JSON.stringify({
+    query: `query ShopOrderDetails {
+      shopOrderDetails(transactionOperationId: "${operationId}") {
+        affectedRows {
+          shopOrderId
+          shopItemId
+          shopItemSpecs { size }
+          deliveryDetails {
+            name
+            email
+            addressline1
+            addressline2
+            city
+            zipcode
+            country
+          }
+        }
+      }
+    }`
+  });
+
+  try {
+    const response = await fetch(GraphGL, { method: "POST", headers, body: graphql });
+    const result = await response.json();
+    if (result.errors) throw new Error(result.errors[0].message);
+    return result?.data?.shopOrderDetails?.affectedRows?.[0] || null;
+  } catch (error) {
+    console.error("Error fetching shop order details:", error.message);
+    return null;
+  }
+}
