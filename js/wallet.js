@@ -61,75 +61,79 @@ function renderRows(rows) {
     icon_html = '';
     shortmessage_html = '';
     fullmessage_html = '';
-    if (entry.transactionCategory == 'DISLIKE') {
-      transaction_title = 'Dislike';
-      icon_html = '<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
-    } else if (entry.transactionCategory == 'LIKE') {
+    switch (entry.transactionCategory) {
+      case 'DISLIKE':
+        transaction_title = 'Dislike';
+        icon_html = '<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
+        break;
 
-      transaction_title = 'Extra Like';
-      icon_html = '<i class="peer-icon peer-icon-like-fill red-text"></i>';
-    } else if (entry.transactionCategory == 'TOKEN_MINT') {
-      transaction_title = 'Daily Mint';
-      icon_html = '<i class="peer-icon peer-icon-daily-mint"></i>';
-    }
-    else if (entry.transactionCategory == 'SHOP_PURCHASE') {
-      transaction_title = 'Peer Shop';
-      icon_html = '<i class="peer-icon peer-icon-shop"></i>';
-    }
+      case 'LIKE':
+        transaction_title = 'Extra Like';
+        icon_html = '<i class="peer-icon peer-icon-like-fill red-text"></i>';
+        break;
 
-    else if (entry.transactionCategory == 'COMMENT') {
+      case 'TOKEN_MINT':
+        transaction_title = 'Daily Mint';
+        icon_html = '<i class="peer-icon peer-icon-daily-mint"></i>';
+        break;
 
-      transaction_title = 'Extra comment';
-      icon_html = '<i class="peer-icon peer-icon-comment-fill"></i>';
+      case 'SHOP_PURCHASE':
+        transaction_title = 'Peer Shop';
+        icon_html = '<i class="peer-icon peer-icon-shop"></i>';
+        break;
 
-    } else if (entry.transactionCategory == 'POST_CREATE') {
+      case 'COMMENT':
+        transaction_title = 'Extra comment';
+        icon_html = '<i class="peer-icon peer-icon-comment-fill"></i>';
+        break;
 
-      transaction_title = 'Extra post';
-      icon_html = '<i class="peer-icon peer-icon-camera-fill"></i>';
-    } else if (entry.transactionCategory == 'AD_PINNED') {
+      case 'POST_CREATE':
+        transaction_title = 'Extra post';
+        icon_html = '<i class="peer-icon peer-icon-camera-fill"></i>';
+        break;
 
-      transaction_title = 'Pinned post promo ';
-      icon_html = '<i class="peer-icon peer-icon-pinpost"></i>';
-    }
-    else if (entry.transactionCategory == 'FEE') {
-      transaction_title = 'Fee';
-      icon_html = '<i class="peer-icon peer-icon-fee"></i>';
-    }
-    else if (entry.transactionCategory == 'P2P_TRANSFER') {
+      case 'AD_PINNED':
+        transaction_title = 'Pinned post promo';
+        icon_html = '<i class="peer-icon peer-icon-pinpost"></i>';
+        break;
 
-      if (transction_type == 'trans_out') {
-        transaction_title = 'Transfer to';
-        trans_user_data = entry.recipient;
+      case 'FEE':
+        transaction_title = 'Fee';
+        icon_html = '<i class="peer-icon peer-icon-fee"></i>';
+        break;
 
-      } else {
-        transaction_title = 'Received from';
-        trans_user_data = entry.sender;
-      }
+      case 'P2P_TRANSFER':
+        if (transction_type == 'trans_out') {
+          transaction_title = 'Transfer to';
+          trans_user_data = entry.recipient;
+        } else {
+          transaction_title = 'Received from';
+          trans_user_data = entry.sender;
+        }
 
-      icon_html = `<span class="wrap_img"><img class="userimg" src="${trans_user_data.img
-        ? tempMedia(trans_user_data.img.replace("media/", ""))
-        : "svg/noname.svg"
-        }" onerror="this.src='svg/noname.svg'"></span>`;
+        icon_html = `<span class="wrap_img"><img class="userimg" src="${trans_user_data.img
+          ? tempMedia(trans_user_data.img.replace("media/", ""))
+          : "svg/noname.svg"
+          }" onerror="this.src='svg/noname.svg'"></span>`;
 
-      if (trans_user_data.visibilityStatus == 'ILLEGAL' || trans_user_data.visibilityStatus == 'illegal') {
-        trans_user_data.username = 'removed';
-        trans_user_data.slug = '';
-        icon_html = '<i class="peer-icon peer-icon-illegal"></i>';
-      }
+        if (trans_user_data.visibilityStatus == 'ILLEGAL' || trans_user_data.visibilityStatus == 'illegal') {
+          trans_user_data.username = 'removed';
+          trans_user_data.slug = '';
+          icon_html = '<i class="peer-icon peer-icon-illegal"></i>';
+        }
 
-      if (trans_user_data.visibilityStatus == 'HIDDEN' || trans_user_data.visibilityStatus == 'hidden') {
-        trans_user_data.username = 'hidden';
-        trans_user_data.slug = '';
-        icon_html = icon_html + '<i class="peer-icon peer-icon-eye-close"></i>';
-      }
+        if (trans_user_data.visibilityStatus == 'HIDDEN' || trans_user_data.visibilityStatus == 'hidden') {
+          trans_user_data.username = 'hidden';
+          trans_user_data.slug = '';
+          icon_html = icon_html + '<i class="peer-icon peer-icon-eye-close"></i>';
+        }
 
+        transferto = `<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
+        break;
 
-      transferto = `<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
-
-
-    } else {
-      transaction_title = entry.transactionCategory;
-      transferto = '';
+      default:
+        transaction_title = entry.transactionCategory;
+        transferto = '';
     }
 
     let messageText = entry.message || "";
