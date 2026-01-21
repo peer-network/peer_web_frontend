@@ -779,7 +779,7 @@ async function handlePayment(objekt) {
   if (result && result.data && result.data.performShopOrder) {
     const orderData = result.data.performShopOrder;
     if (orderData.status === "success") {
-      if (typeof success === 'function') success("Order Successful", "Your order has been placed. You will receive an email shortly.");
+      if (typeof success === 'function') success("Order successfully placed!", "Your order has been confirmed. You’ll receive an email with delivery details within 1–3 days.");
       checkoutDropdown.innerHTML = "";
       checkoutPopup.classList.add("none");
       if (typeof currentliquidity === 'function') currentliquidity();

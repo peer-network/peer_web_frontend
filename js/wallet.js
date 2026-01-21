@@ -40,7 +40,7 @@ function renderRows(rows) {
 
     const historyItem = document.createElement("div");
     historyItem.classList.add("tarnsaction_item");
-
+    
     let amount =
       typeof entry.tokenamount === "number"
         ? entry.tokenamount
@@ -61,6 +61,7 @@ function renderRows(rows) {
       icon_html='';
       shortmessage_html='';
       fullmessage_html='';
+      console.log(entry.transactiontype);
         if(entry.transactiontype=='transferForDislike'){
           transaction_title ='Dislike';
           icon_html='<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
