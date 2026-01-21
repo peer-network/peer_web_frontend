@@ -542,9 +542,7 @@ function createActions(objekt) {
     const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
 
     if (isStep1Visible) {
-      console.log("validateForm called");
       const formValid = validateForm();
-      console.log("formValid", formValid);
       if (formValid) {
         document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
         document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
