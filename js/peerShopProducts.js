@@ -10,7 +10,6 @@ function loadPeerShopProducts() {
       snapshot.forEach((doc) => {
         peerShopProducts[doc.id] = doc.data();
       });
-      console.log("Peer shop products loaded:", peerShopProducts);
     })
     .catch((err) => console.error("Error loading peer shop products:", err));
 }
