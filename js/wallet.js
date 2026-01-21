@@ -61,7 +61,6 @@ function renderRows(rows) {
       icon_html='';
       shortmessage_html='';
       fullmessage_html='';
-      console.log(entry.transactiontype);
         if(entry.transactiontype=='transferForDislike'){
           transaction_title ='Dislike';
           icon_html='<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
@@ -73,6 +72,11 @@ function renderRows(rows) {
           transaction_title ='Daily Mint';
           icon_html='<i class="peer-icon peer-icon-daily-mint"></i>';
         }
+        else if(entry.transactiontype=='transferForShopPurchase'){
+          transaction_title ='Peer Shop';
+          icon_html='<i class="peer-icon peer-icon-shop"></i>';
+        }
+        
         else if(entry.transactiontype=='transferForComment'){
 
           transaction_title ='Extra comment';
