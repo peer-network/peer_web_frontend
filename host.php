@@ -47,6 +47,7 @@ if (count($parts) > 2) {
   } else {
     //  $domain = 'getpeer.eu';
     $domain = 'backend.peerapp.eu';
+    // $mediaDomain = 'media.getpeer.eu';
     $mediaDomain = 'media.peerapp.eu';
   }
 }
