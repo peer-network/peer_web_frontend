@@ -40,110 +40,114 @@ function renderRows(rows) {
 
     const historyItem = document.createElement("div");
     historyItem.classList.add("tarnsaction_item");
-    
+
     let amount =
       typeof entry.tokenamount === "number"
         ? entry.tokenamount
         : (String(entry.tokenamount).replace(",", "."));
 
-      const transction_type = amount < 0 ? "trans_out" : "trans_in";
-      historyItem.classList.add(transction_type);
-      if(transction_type=='trans_in'){
-        amount =
+    const transction_type = amount < 0 ? "trans_out" : "trans_in";
+    historyItem.classList.add(transction_type);
+    if (transction_type == 'trans_in') {
+      amount =
         typeof entry.netTokenAmount === "number"
-        ? entry.netTokenAmount
-        : (String(entry.netTokenAmount).replace(",", "."));
-        amount="+"+amount;
+          ? entry.netTokenAmount
+          : (String(entry.netTokenAmount).replace(",", "."));
+      amount = "+" + amount;
+    }
+
+    let transaction_title, transferto, icon_html, shortmessage_html, fullmessage_html, trans_user_data;
+    transferto = '';
+    icon_html = '';
+    shortmessage_html = '';
+    fullmessage_html = '';
+    if (entry.transactionCategory == 'DISLIKE') {
+      transaction_title = 'Dislike';
+      icon_html = '<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
+    } else if (entry.transactionCategory == 'LIKE') {
+
+      transaction_title = 'Extra Like';
+      icon_html = '<i class="peer-icon peer-icon-like-fill red-text"></i>';
+    } else if (entry.transactionCategory == 'TOKEN_MINT') {
+      transaction_title = 'Daily Mint';
+      icon_html = '<i class="peer-icon peer-icon-daily-mint"></i>';
+    }
+    else if (entry.transactionCategory == 'SHOP_PURCHASE') {
+      transaction_title = 'Peer Shop';
+      icon_html = '<i class="peer-icon peer-icon-shop"></i>';
+    }
+
+    else if (entry.transactionCategory == 'COMMENT') {
+
+      transaction_title = 'Extra comment';
+      icon_html = '<i class="peer-icon peer-icon-comment-fill"></i>';
+
+    } else if (entry.transactionCategory == 'POST_CREATE') {
+
+      transaction_title = 'Extra post';
+      icon_html = '<i class="peer-icon peer-icon-camera-fill"></i>';
+    } else if (entry.transactionCategory == 'AD_PINNED') {
+
+      transaction_title = 'Pinned post promo ';
+      icon_html = '<i class="peer-icon peer-icon-pinpost"></i>';
+    }
+    else if (entry.transactionCategory == 'FEE') {
+      transaction_title = 'Fee';
+      icon_html = '<i class="peer-icon peer-icon-fee"></i>';
+    }
+    else if (entry.transactionCategory == 'P2P_TRANSFER') {
+
+      if (transction_type == 'trans_out') {
+        transaction_title = 'Transfer to';
+        trans_user_data = entry.recipient;
+
+      } else {
+        transaction_title = 'Received from';
+        trans_user_data = entry.sender;
       }
 
-      let transaction_title,transferto,icon_html,shortmessage_html,fullmessage_html,trans_user_data;
-      transferto='';
-      icon_html='';
-      shortmessage_html='';
-      fullmessage_html='';
-        if(entry.transactiontype=='transferForDislike'){
-          transaction_title ='Dislike';
-          icon_html='<i class="peer-icon peer-icon-dislike-fill red-text"></i>';
-        }else if(entry.transactiontype=='transferForLike'){
+      icon_html = `<span class="wrap_img"><img class="userimg" src="${trans_user_data.img
+        ? tempMedia(trans_user_data.img.replace("media/", ""))
+        : "svg/noname.svg"
+        }" onerror="this.src='svg/noname.svg'"></span>`;
 
-          transaction_title ='Extra Like';
-          icon_html='<i class="peer-icon peer-icon-like-fill red-text"></i>';
-        }else if(entry.transactiontype=='transferMintAccountToRecipient'){
-          transaction_title ='Daily Mint';
-          icon_html='<i class="peer-icon peer-icon-daily-mint"></i>';
-        }
-        else if(entry.transactiontype=='transferForShopPurchase'){
-          transaction_title ='Peer Shop';
-          icon_html='<i class="peer-icon peer-icon-shop"></i>';
-        }
-        
-        else if(entry.transactiontype=='transferForComment'){
+      if (trans_user_data.visibilityStatus == 'ILLEGAL' || trans_user_data.visibilityStatus == 'illegal') {
+        trans_user_data.username = 'removed';
+        trans_user_data.slug = '';
+        icon_html = '<i class="peer-icon peer-icon-illegal"></i>';
+      }
 
-          transaction_title ='Extra comment';
-          icon_html='<i class="peer-icon peer-icon-comment-fill"></i>';
-          
-        }else if(entry.transactiontype=='transferForPost'){
+      if (trans_user_data.visibilityStatus == 'HIDDEN' || trans_user_data.visibilityStatus == 'hidden') {
+        trans_user_data.username = 'hidden';
+        trans_user_data.slug = '';
+        icon_html = icon_html + '<i class="peer-icon peer-icon-eye-close"></i>';
+      }
 
-          transaction_title ='Extra post';
-          icon_html='<i class="peer-icon peer-icon-camera-fill"></i>';
-        }else if(entry.transactiontype=='transferForAds'){
 
-          transaction_title ='Pinned post promo ';
-          icon_html='<i class="peer-icon peer-icon-pinpost"></i>';
-        }
-        else if(entry.transactiontype=='transferSenderToRecipient'){
+      transferto = `<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
 
-          if(transction_type=='trans_out'){
-                transaction_title ='Transfer to';
-                trans_user_data=entry.recipient;
-               
-          }else{
-                transaction_title ='Received from';
-                trans_user_data=entry.sender;
-          }
 
-          icon_html = `<span class="wrap_img"><img class="userimg" src="${trans_user_data.img
-                          ? tempMedia(trans_user_data.img.replace("media/", ""))
-                          : "svg/noname.svg"
-                        }" onerror="this.src='svg/noname.svg'"></span>`;
-         
-          if(trans_user_data.visibilityStatus=='ILLEGAL' || trans_user_data.visibilityStatus=='illegal'){
-            trans_user_data.username='removed';
-            trans_user_data.slug='';
-            icon_html='<i class="peer-icon peer-icon-illegal"></i>';
-          }
+    } else {
+      transaction_title = entry.transactionCategory;
+      transferto = '';
+    }
 
-          if(trans_user_data.visibilityStatus=='HIDDEN' || trans_user_data.visibilityStatus=='hidden'){
-            trans_user_data.username='hidden';
-            trans_user_data.slug='';
-            icon_html=icon_html+'<i class="peer-icon peer-icon-eye-close"></i>';
-          }
+    let messageText = entry.message || "";
+    let shortMessage =
+      messageText.length > 50
+        ? messageText.slice(0, 50) + "..."
+        : messageText;
 
-          
-          transferto=`<span class="user_name bold italic">@${trans_user_data.username}</span> <span class="user_slug txt-color-gray">#${trans_user_data.slug}</span>`;
-          
+    if (entry.message != '' && entry.transactionCategory == 'P2P_TRANSFER') {
+      shortmessage_html = `<div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>${shortMessage}</div>`;
 
-        }else{
-          transaction_title =entry.transactiontype;
-          transferto='';
-        }
-
-        let messageText = entry.message || "";
-        let shortMessage =
-          messageText.length > 50
-            ? messageText.slice(0, 50) + "..."
-            : messageText;
-
-        if(entry.message!='' && entry.transactiontype=='transferSenderToRecipient'){
-          shortmessage_html=`<div class="message txt-color-gray"><i class="peer-icon peer-icon-message"></i>${shortMessage}</div>`;
-
-           fullmessage_html=`<div class="message_row">
+      fullmessage_html = `<div class="message_row">
                     <span class="message_label md_font_size txt-color-gray"><i class="peer-icon peer-icon-message"></i> Message:</span> 
                     <span class="message_body">${messageText}</span>
                   </div>`;
-        }
-            const record =`<div class="transaction_record">
-                        <div class="transaction_info profile_status_${trans_user_data?.visibilityStatus?.toLowerCase()||''}">
+    }
+    const record = `<div class="transaction_record">
+                        <div class="transaction_info profile_status_${trans_user_data?.visibilityStatus?.toLowerCase() || ''}">
                           <div class="transaction_media">
                             ${icon_html}
                           </div>
@@ -165,17 +169,17 @@ function renderRows(rows) {
                   <div class="price_detail_row"><span class="price_label txt-color-gray">2% to Peer Bank (platform fee)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.peer)}</span></div>
                   <div class="price_detail_row"><span class="price_label txt-color-gray">1% Burned (removed from supply)</span> <span class="price txt-color-gray">${formatAmount(entry.fees.burn)}</span></div>
                   ${entry.fees.inviter
-                    ? `<div class="price_detail_row">
+        ? `<div class="price_detail_row">
                         <span class="price_label txt-color-gray">1% to your Inviter</span>
                         <span class="price txt-color-gray">${formatAmount(entry.fees.inviter)}</span>
                       </div>`
-                    : ''}
+        : ''}
                   ${fullmessage_html}
 
                 </div>
               </div>
               `;
-    
+
     historyItem.insertAdjacentHTML("beforeend", record);
     historyItem.addEventListener("click", () => historyItem.classList.toggle('open'));
     historyContainer?.insertBefore(historyItem, historySentinel);
@@ -306,7 +310,7 @@ function initHistoryInfiniteScroll() {
 
   // Falls schon vorhanden, erst abklemmen
   if (infiniteObserver) {
-    try { infiniteObserver.unobserve(historySentinel); } catch {}
+    try { infiniteObserver.unobserve(historySentinel); } catch { }
     infiniteObserver.disconnect();
   }
 
@@ -349,7 +353,7 @@ function resetTransactionHistoryList() {
   loadMoreTransactionHistory();
 }
 
-/*-------------- Transnsfer Token Process------------------*/ 
+/*-------------- Transnsfer Token Process------------------*/
 
 document.getElementById("openTransferDropdown").addEventListener("click", async () => {
   renderUsers()
@@ -394,16 +398,16 @@ async function renderUsers() {
   balance_header.className = "balance-header";
 
   const sp_bal = document.createElement("span");
-  sp_bal.classList.add("md_font_size","txt-color-gray","bal_label");
+  sp_bal.classList.add("md_font_size", "txt-color-gray", "bal_label");
   sp_bal.textContent = "Your Balance";
 
   const sp_bal_amt = document.createElement("span");
-  sp_bal_amt.classList.add("xl_font_size","bold","tbalance");
+  sp_bal_amt.classList.add("xl_font_size", "bold", "tbalance");
   const token_bal = await getLiquiudity();
   sp_bal_amt.textContent = token_bal;
 
 
-  balance_header.append(sp_bal,sp_bal_amt);
+  balance_header.append(sp_bal, sp_bal_amt);
 
   wrapper.appendChild(balance_header);
 
@@ -427,9 +431,9 @@ async function renderUsers() {
   const s_input_box = document.createElement("div");
   s_input_box.classList.add("search_input_box");
   const search_icon = document.createElement("i");
-  search_icon.classList.add("peer-icon","peer-icon-search");
-  
-  s_input_box.append(searchInput,search_icon);
+  search_icon.classList.add("peer-icon", "peer-icon-search");
+
+  s_input_box.append(searchInput, search_icon);
   search_wrapper.appendChild(s_input_box);
 
   // User results container
@@ -476,7 +480,7 @@ async function renderUsers() {
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
 
       const info = document.createElement("div");
-      info.classList.add("md_font_size","info");
+      info.classList.add("md_font_size", "info");
 
       const name = document.createElement("strong");
       name.classList.add("italic");
@@ -511,17 +515,17 @@ async function renderFriendListUI(container) {
       avatar.onerror = () => (avatar.src = "./svg/noname.svg");
 
       const info = document.createElement("div");
-      info.classList.add("md_font_size","info");
+      info.classList.add("md_font_size", "info");
 
-  
-     
+
+
 
       const name = document.createElement("strong");
-       name.classList.add("italic");
+      name.classList.add("italic");
       name.textContent = user.username;
 
       const slug = document.createElement("span");
-       slug.classList.add("txt-color-gray");
+      slug.classList.add("txt-color-gray");
       slug.textContent = `#${user.slug}`;
 
       info.append(name, slug);
@@ -613,7 +617,7 @@ async function searchUser(username = null) {
     });
 
     const json = await res.json();
-    return json ?.data ?.searchUser ?.affectedRows || [];
+    return json?.data?.searchUser?.affectedRows || [];
   } catch (err) {
     console.error("searchUser() failed:", err);
     return [];
@@ -622,18 +626,18 @@ async function searchUser(username = null) {
 
 function renderTransferFormView(user) {
   const dropdown = document.getElementById("transferDropdown");
- /*---- This code is when user press back button form checkout scree---*/
-    dropdown.querySelector(".search_wrapper")?.remove();
-    dropdown.querySelector(".modal-actions")?.remove();
-    dropdown.querySelector(".transfer-header h2").innerHTML="Transfer";
-    dropdown.querySelector(".balance-header")?.classList.remove("none");
-    dropdown.querySelector(".balance-header.summary-header")?.remove();
-    
-    dropdown.querySelector(".recipient-info")?.remove();
-    const oldtransferamopunt = dropdown.querySelector(".amount-input input")?.value?.trim() || "";
-    dropdown.querySelector(".amount-input")?.remove();
-    const message = dropdown.querySelector(".message-wrap .message_area")?.textContent?.trim() || "";
-    dropdown.querySelector(".message-wrap")?.remove();
+  /*---- This code is when user press back button form checkout scree---*/
+  dropdown.querySelector(".search_wrapper")?.remove();
+  dropdown.querySelector(".modal-actions")?.remove();
+  dropdown.querySelector(".transfer-header h2").innerHTML = "Transfer";
+  dropdown.querySelector(".balance-header")?.classList.remove("none");
+  dropdown.querySelector(".balance-header.summary-header")?.remove();
+
+  dropdown.querySelector(".recipient-info")?.remove();
+  const oldtransferamopunt = dropdown.querySelector(".amount-input input")?.value?.trim() || "";
+  dropdown.querySelector(".amount-input")?.remove();
+  const message = dropdown.querySelector(".message-wrap .message_area")?.textContent?.trim() || "";
+  dropdown.querySelector(".message-wrap")?.remove();
   /*---- End This code is when user press back button form checkout scree---*/
   const wrapper = dropdown.querySelector(".transfer-form-screen");
   // Enable modal mode
@@ -648,35 +652,35 @@ function renderTransferFormView(user) {
     document.body.appendChild(backdrop);
   }
 
- /* const wrapper = document.createElement("div");
-  wrapper.className = "transfer-form-screen";
-
-  const header = document.createElement("div");
-  header.className = "transfer-header";
-  const h2 = document.createElement("h2");
-  h2.className = "xl_font_size";
-  h2.textContent = "Transfer";
+  /* const wrapper = document.createElement("div");
+   wrapper.className = "transfer-form-screen";
  
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "close-transfer";
-  closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = closeTransferModal;
-  header.append(h2, closeBtn);*/
+   const header = document.createElement("div");
+   header.className = "transfer-header";
+   const h2 = document.createElement("h2");
+   h2.className = "xl_font_size";
+   h2.textContent = "Transfer";
+  
+   const closeBtn = document.createElement("button");
+   closeBtn.className = "close-transfer";
+   closeBtn.innerHTML = "&times;";
+   closeBtn.onclick = closeTransferModal;
+   header.append(h2, closeBtn);*/
   const recipientInfo = document.createElement("div");
   recipientInfo.className = "recipient-info";
 
   const infoWrap = document.createElement("div");
-  infoWrap.classList.add("md_font_size","info");
-  
+  infoWrap.classList.add("md_font_size", "info");
+
   const recipientLabel = document.createElement("div");
-  recipientLabel.classList.add("md_font_size","label");
+  recipientLabel.classList.add("md_font_size", "label");
   recipientLabel.textContent = "Sending to";
 
   const avatar = document.createElement("img");
   avatar.src = tempMedia(user.img.replace("media/", ""));
   avatar.onerror = () => (avatar.src = "./svg/noname.svg");
 
-  
+
 
   const name = document.createElement("strong");
   name.classList.add("italic");
@@ -690,17 +694,17 @@ function renderTransferFormView(user) {
   edit_btn.classList.add("edit_btn");
   edit_btn.innerHTML = `<i class="peer-icon peer-icon-edit-pencil"></i>`;
 
-   edit_btn.onclick = () => {
+  edit_btn.onclick = () => {
     closeTransferModal();
     document.getElementById("openTransferDropdown").click();
   };
 
-  infoWrap.append(avatar,name, slug,edit_btn);
-  recipientInfo.append(recipientLabel,infoWrap);
-  
+  infoWrap.append(avatar, name, slug, edit_btn);
+  recipientInfo.append(recipientLabel, infoWrap);
+
 
   const amountLabel = document.createElement("div");
-  amountLabel.classList.add("md_font_size","label" ,"amtlabel");
+  amountLabel.classList.add("md_font_size", "label", "amtlabel");
   amountLabel.textContent = "Enter amount";
 
   const amountWrap = document.createElement("div");
@@ -709,16 +713,16 @@ function renderTransferFormView(user) {
   input.type = "number";
   input.placeholder = "min: 0.00000001";
   input.id = "transferAmount";
-  input.value=oldtransferamopunt;
+  input.value = oldtransferamopunt;
   input.className = "bold";
-  amountWrap.append(amountLabel,input);
+  amountWrap.append(amountLabel, input);
 
   const messageLabel = document.createElement("div");
-  messageLabel.classList.add("md_font_size","label");
+  messageLabel.classList.add("md_font_size", "label");
   messageLabel.textContent = "Add a message (optional)";
 
   const charCounter = document.createElement("span");
-  charCounter.classList.add("txt-color-gray","charCounter", "small_font_size");
+  charCounter.classList.add("txt-color-gray", "charCounter", "small_font_size");
   charCounter.textContent = "0/";
 
   const charCounter_limit = document.createElement("span");
@@ -734,19 +738,19 @@ function renderTransferFormView(user) {
   const textareaCon = document.createElement("div");
   textareaCon.classList.add("message_area");
   const textarea = document.createElement("textarea");
- 
+
   textarea.placeholder = "e.g., Thanks for the coffee! ☕";
   textarea.id = "transferMessage";
-  textarea.value=message;
+  textarea.value = message;
   textareaCon.append(textarea);
- 
-   const messageInsturction = document.createElement("div");
-  messageInsturction.classList.add("txt-color-gray","ins_label");
+
+  const messageInsturction = document.createElement("div");
+  messageInsturction.classList.add("txt-color-gray", "ins_label");
   messageInsturction.textContent = "You can use letters, numbers, emojis, and special symbols. No links";
-  messageWrap.append(messageLabel,textareaCon,messageInsturction);
+  messageWrap.append(messageLabel, textareaCon, messageInsturction);
   const actions = document.createElement("div");
   actions.className = "modal-actions";
-  
+
   const nextBtn = document.createElement("button");
   nextBtn.className = "btn-next btn-white bold";
   nextBtn.textContent = "Continue";
@@ -754,7 +758,7 @@ function renderTransferFormView(user) {
 
 
 
-  let messagevalidChk=true;
+  let messagevalidChk = true;
   // === Textarea Live Counter & Validation ===
   // textarea.addEventListener("input", () => {
   //   const limit = 500;
@@ -788,7 +792,7 @@ function renderTransferFormView(user) {
   //     //textarea.value = textarea.value.substring(0, limit);
   //     //charCounter.textContent = `${limit}/`;
   //     //charCounter.append(charCounter_limit);
-      
+
   //     return;
   //   }
 
@@ -869,33 +873,33 @@ function renderTransferFormView(user) {
     const result = validateAmount(input, balanceAmount);
 
     if (result.valid) {
-      
-       // const amount = parseFloat(input.value);
-        const amount = input.value;
-        
-        const finalresult = showTotalAmountUI(input,amount,balanceAmount);   // <-- CALL UI BUILDER
 
-       
+      // const amount = parseFloat(input.value);
+      const amount = input.value;
+
+      const finalresult = showTotalAmountUI(input, amount, balanceAmount);   // <-- CALL UI BUILDER
+
+
       if (finalresult) {
         nextBtn.disabled = false;
-        nextBtn.onclick = () => { 
-          if(messagevalidChk){ 
+        nextBtn.onclick = () => {
+          if (messagevalidChk) {
             renderCheckoutScreen(user, amount);
           }
         }
       }
-        
+
     }
-    
+
   });
   // If value is not empty → trigger blur
   if (input.value.trim() !== "") {
-      input.dispatchEvent(new Event("input"));
+    input.dispatchEvent(new Event("input"));
   }
-  
+
   actions.append(nextBtn);
-  wrapper.append( recipientInfo, amountWrap, messageWrap, actions);
- // dropdown.appendChild(wrapper);
+  wrapper.append(recipientInfo, amountWrap, messageWrap, actions);
+  // dropdown.appendChild(wrapper);
 }
 
 function validateAmount(inputEl, balanceAmount) {
@@ -905,7 +909,7 @@ function validateAmount(inputEl, balanceAmount) {
   const oldError = inputEl.parentElement.querySelector(".amount_error");
   if (oldError) oldError.remove();
 
- // Remove previous fee panel  (if any)
+  // Remove previous fee panel  (if any)
   const oldfeePanel = inputEl.parentElement.querySelector(".feePanel");
   if (oldfeePanel) oldfeePanel.remove();
 
@@ -920,7 +924,7 @@ function validateAmount(inputEl, balanceAmount) {
   else if (isNaN(parseFloat(value))) {
     message = "Please enter a valid number";
   }
-   // Minimum amount check
+  // Minimum amount check
   else if (parseFloat(value) < 0.00000001) {
     message = "Enter at least 0.00000001 Peer Tokens to continue.";
   }
@@ -933,11 +937,11 @@ function validateAmount(inputEl, balanceAmount) {
     }
   }
 
- 
+
   // Balance check
- // else if (parseFloat(value) > balanceAmount) {
- //   message = "Amount cannot exceed your balance: " + balanceAmount;
- // }
+  // else if (parseFloat(value) > balanceAmount) {
+  //   message = "Amount cannot exceed your balance: " + balanceAmount;
+  // }
 
   // If message exists → show error + return false
   if (message) {
@@ -955,19 +959,19 @@ function validateAmount(inputEl, balanceAmount) {
   return { valid: true };
 }
 
-function showTotalAmountUI(inputEl,amount,balanceAmount) {
+function showTotalAmountUI(inputEl, amount, balanceAmount) {
 
   // Remove previous fee panel  (if any)
   const oldfeePanel = inputEl.parentElement.querySelector(".feePanel");
   if (oldfeePanel) oldfeePanel.remove();
 
-   // Remove previous error message (if any)
+  // Remove previous error message (if any)
   const oldError = inputEl.parentElement.querySelector(".amount_error");
   if (oldError) oldError.remove();
 
   const data = getCommissionBreakdown(amount);
-  const  total_tokens =data.totalUsed;
-  const panel =  document.createElement("div");
+  const total_tokens = data.totalUsed;
+  const panel = document.createElement("div");
   panel.classList.add("feePanel");
   panel.innerHTML = `
     
@@ -1005,16 +1009,16 @@ function showTotalAmountUI(inputEl,amount,balanceAmount) {
   // Insert error message below input
   inputEl.insertAdjacentElement("afterend", panel);
 
-  if(total_tokens > balanceAmount ){
+  if (total_tokens > balanceAmount) {
     const amount_error = document.createElement("span");
     amount_error.classList.add("amount_error", "red-text");
     amount_error.innerHTML = 'Insufficient tokens.';
     // Insert error message below input
     inputEl.insertAdjacentElement("afterend", amount_error);
-     return false;
+    return false;
   }
 
-   return true;
+  return true;
 
 }
 
@@ -1022,27 +1026,27 @@ function renderCheckoutScreen(user, amount) {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.querySelector(".modal-actions").remove();
   dropdown.querySelector(".recipient-info .edit_btn").remove();
-  dropdown.querySelector(".transfer-header h2").innerHTML="Summary";
-  const clonebalance_header=dropdown.querySelector(".balance-header").cloneNode(true);
+  dropdown.querySelector(".transfer-header h2").innerHTML = "Summary";
+  const clonebalance_header = dropdown.querySelector(".balance-header").cloneNode(true);
   dropdown.querySelector(".balance-header").classList.add("none");
 
   clonebalance_header.classList.add("summary-header");
-  clonebalance_header.querySelector(".bal_label").innerHTML="Remaining balance";
+  clonebalance_header.querySelector(".bal_label").innerHTML = "Remaining balance";
 
- 
+
   dropdown.querySelector(".amount-input").classList.add("summary-amount");
 
   dropdown.querySelector(".message-wrap").classList.add("summary-message");
-  dropdown.querySelector(".message-wrap .label").innerHTML="Message";
-  const message=dropdown.querySelector(".message-wrap .message_area textarea").value;
+  dropdown.querySelector(".message-wrap .label").innerHTML = "Message";
+  const message = dropdown.querySelector(".message-wrap .message_area textarea").value;
 
-  if(message==''){
+  if (message == '') {
     dropdown.querySelector(".message-wrap").classList.add("none");
   }
   // dropdown.querySelector(".message-wrap .message_area").innerHTML= message.replace(/[\r\n]+/g, ' ').trim();
-  dropdown.querySelector(".message-wrap .message_area").innerHTML= message;
+  dropdown.querySelector(".message-wrap .message_area").innerHTML = message;
 
-  const total_tranfer_tokens=parseFloat(
+  const total_tranfer_tokens = parseFloat(
     dropdown.querySelector(".total_amount .final-total").textContent
   );
 
@@ -1050,12 +1054,12 @@ function renderCheckoutScreen(user, amount) {
     dropdown.querySelector(".balance-header .tbalance").textContent
   );
 
-  const balance_tokens =old_balance_tokens - total_tranfer_tokens;
-  clonebalance_header.querySelector(".tbalance").textContent=balance_tokens;
+  const balance_tokens = old_balance_tokens - total_tranfer_tokens;
+  clonebalance_header.querySelector(".tbalance").textContent = balance_tokens;
 
   dropdown.querySelector(".balance-header").insertAdjacentElement("afterend", clonebalance_header);
-  
-   const wrapper = dropdown.querySelector(".transfer-form-screen");
+
+  const wrapper = dropdown.querySelector(".transfer-form-screen");
 
   if (!document.querySelector(".transfer-backdrop")) {
     const backdrop = document.createElement("div");
@@ -1081,7 +1085,7 @@ function renderCheckoutScreen(user, amount) {
   transferBtn.onclick = async () => {
 
     if (balance < totalAmount) {
-      const confirmContinue = await warnig("Insufficient balance","You don't have enough balance. Do you still want to try?",false,'<i class="peer-icon peer-icon-warning"></i>');
+      const confirmContinue = await warnig("Insufficient balance", "You don't have enough balance. Do you still want to try?", false, '<i class="peer-icon peer-icon-warning"></i>');
       if (confirmContinue === null || confirmContinue.button === 0) {
         return false;
       }
@@ -1097,11 +1101,11 @@ function renderCheckoutScreen(user, amount) {
 
     try {
       //renderLoaderScreen();
-      const userId = (user ?.userid === undefined) ? user ?.id : user ?.userid;
+      const userId = (user?.userid === undefined) ? user?.id : user?.userid;
       const res = await resolveTransfer(userId, amount, message);
       if (res.status === "success") {
         closeTransferModal();
-        const confirmContinue = await success("Completed","Your transfer was sent successfully.",false,'<i class="peer-icon peer-icon-good-tick-circle"></i>');
+        const confirmContinue = await success("Completed", "Your transfer was sent successfully.", false, '<i class="peer-icon peer-icon-good-tick-circle"></i>');
         if (confirmContinue === null || confirmContinue.button === 0) {
           return false;
         }
@@ -1109,28 +1113,28 @@ function renderCheckoutScreen(user, amount) {
       } else {
 
         await new Promise(resolve => setTimeout(resolve, 300));
-        const tryagain = await warnig("Transfer failed", userfriendlymsg(res.ResponseCode),false,'<i class="peer-icon peer-icon-warning"></i>','Try again');
-        
-      
-      if (tryagain === null || tryagain.button === 0) {
-       
+        const tryagain = await warnig("Transfer failed", userfriendlymsg(res.ResponseCode), false, '<i class="peer-icon peer-icon-warning"></i>', 'Try again');
+
+
+        if (tryagain === null || tryagain.button === 0) {
+
           closeTransferModal();
           return false;
         }
-       
+
       }
-    } catch (err) { 
-      const tryagain = await warnig("Something went wrong","We were not able to make your transfer. Please try again later.",false,'<i class="peer-icon peer-icon-warning"></i>','Try again');
-        
-      
+    } catch (err) {
+      const tryagain = await warnig("Something went wrong", "We were not able to make your transfer. Please try again later.", false, '<i class="peer-icon peer-icon-warning"></i>', 'Try again');
+
+
       if (tryagain === null || tryagain.button === 0) {
-       
-          closeTransferModal();
-          return false;
-        }
+
+        closeTransferModal();
+        return false;
+      }
       //alert("Transfer error occurred.");
       console.error(err);
-      
+
     }
   };
 
@@ -1167,7 +1171,7 @@ async function resolveTransfer(recipientId, numberOfTokens, message) {
       message: message,
     },
   });
- 
+
   const response = await fetch(GraphGL, {
     method: "POST",
     headers,
@@ -1283,12 +1287,12 @@ function closeTransferModal() {
   const dropdown = document.getElementById("transferDropdown");
   dropdown.classList.add("hidden");
   const backdrop = document.querySelector(".transfer-backdrop");
-  if (backdrop) backdrop.remove();  
+  if (backdrop) backdrop.remove();
   //addition
   document.querySelectorAll(".modal-container").forEach(modal => {
     modal.classList.remove("modal-show");
     modal.classList.remove("modal-hide");
-});
+  });
 }
 
 function formatDate(timestampStr) {
