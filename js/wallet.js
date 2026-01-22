@@ -1011,8 +1011,8 @@ function validateAmount(inputEl, balanceAmount) {
     message = "Please enter a valid number";
   }
   // Minimum amount check
-  else if (parseFloat(value) < 0.00000001) {
-    message = "Enter at least 0.00000001 Peer Tokens to continue.";
+  else if (parseFloat(value) < 0.000001) {
+    message = "Enter at least 0.000001 Peer Tokens to continue.";
   }
 
   // Decimal places check (max 8 allowed)
