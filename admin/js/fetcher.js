@@ -1,17 +1,14 @@
 window.moderationModule = window.moderationModule || {};
+// const configEl = document.getElementById("config");
+// const mediaDomain = configEl?.dataset?.mediaHost || "";
+// const domain = configEl?.dataset?.host || "";
 
-// Define tempMedia helper for media URLs
-const configEl = document.getElementById("config");
-const mediaDomain = configEl?.dataset?.mediaHost || "";
-const domain = configEl?.dataset?.host || "";
-
-function tempMedia(path) {
-  if (!path) return null;
-  return mediaDomain + path.replace("media/", "");
-}
+// function tempMedia(path) {
+//   if (!path) return null;
+//   return mediaDomain + path.replace("media/", "");
+// }
 
 moderationModule.fetcher = {
-  /* -------------/* ---------------------- NORMALIZER ---------------------- */
   async normalizeItems(items) {
     const mapped = items.map(async (x) => {
       const self = this;

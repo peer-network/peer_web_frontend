@@ -1,7 +1,7 @@
 window.moderationModule = window.moderationModule || {};
 
-// Define GraphGL endpoint from config
-const GraphGL = document.getElementById("config")?.dataset?.host + "/graphql";
+// // Define GraphGL endpoint from config
+// const GraphGL = document.getElementById("config")?.dataset?.host + "/graphql";
 
 moderationModule.service = {
   async fetchGraphQL(query, variables = {}) {
