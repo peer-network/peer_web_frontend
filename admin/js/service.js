@@ -1,11 +1,14 @@
 window.moderationModule = window.moderationModule || {};
 
+// Define GraphGL endpoint from config
+const GraphGL = document.getElementById("config")?.dataset?.host + "/graphql";
+
 moderationModule.service = {
   async fetchGraphQL(query, variables = {}) {
     const accessToken = getCookie("authToken");
     const headers = new Headers({
       "Content-Type": "application/json",
-       Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
     });
 
     const response = await fetch(GraphGL, {
@@ -29,7 +32,7 @@ moderationModule.service = {
   },
 };
 
-moderationModule.service.performModeration = async function(moderationTicketId, moderationAction) {
+moderationModule.service.performModeration = async function (moderationTicketId, moderationAction) {
   const query = `
     mutation PerformModeration($id: ID!, $action: ModerationStatus!) {
       performModeration(
