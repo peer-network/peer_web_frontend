@@ -596,6 +596,11 @@
   padding-left: 100px;
 }
 
+.checkout-form .response_msg.error {
+    margin-left: 40px;
+    padding-top: 10px;
+    display: block;
+}
 /* End order form info */
 
 .checkout-actions {
