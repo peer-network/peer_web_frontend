@@ -34,8 +34,8 @@ window.addEventListener('DOMContentLoaded', initAppData);
 
 function renderRows(rows) {
   rows.forEach((entry) => {
-    if (entry.operationid && seenTxIds.has(entry.operationid)) return;
-    if (entry.operationid) seenTxIds.add(entry.operationid);
+    if (entry.transactionId && seenTxIds.has(entry.transactionId)) return;
+    if (entry.transactionId) seenTxIds.add(entry.transactionId);
 
     const historyItem = document.createElement("div");
     historyItem.classList.add("tarnsaction_item");
@@ -80,7 +80,7 @@ function renderRows(rows) {
         transaction_title = 'Peer Shop';
         icon_html = '<i class="peer-icon peer-icon-shop"></i>';
         historyItem.dataset.isShopPurchase = 'true';
-        historyItem.dataset.operationId = entry.operationid;
+        historyItem.dataset.transactionId = entry.transactionId;
         break;
 
       case 'COMMENT':
@@ -152,15 +152,13 @@ function renderRows(rows) {
                   </div>`;
     }
 
-    // Check if current user is shop account for SHOP_PURCHASE transactions
     const currentUserId = getCookie("userID");
     const isShopAccount = currentUserId === PEER_SHOP_ID;
     const isShopPurchase = entry.transactionCategory === 'SHOP_PURCHASE';
 
-    // Build detail section based on user type
     let detailInnerHtml;
     if (isShopPurchase && isShopAccount) {
-      // Shop account sees delivery info (lazy loaded)
+      console.log('Rendering shop purchase for shop account, hiding fee breakdown.');
       detailInnerHtml = `
         <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
         <div class="delivery_info_container">
@@ -168,7 +166,6 @@ function renderRows(rows) {
         </div>
       `;
     } else {
-      // Regular users see fee breakdown
       detailInnerHtml = `
         <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
         <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Base amount</span> <span class="price bold">${formatAmount(entry.netTokenAmount)}</span></div>
@@ -217,14 +214,14 @@ function renderRows(rows) {
         const deliveryContainer = historyItem.querySelector('.delivery_info_container');
         if (deliveryContainer) {
           try {
-            const orderDetails = await fetchShopOrderDetails(entry.operationid);
+            const orderDetails = await fetchShopOrderDetails(entry.transactionId);
+            console.log('Fetched order details:', orderDetails);
             if (orderDetails) {
               const delivery = orderDetails.deliveryDetails;
               const size = orderDetails.shopItemSpecs?.size || '';
               const shopItemId = orderDetails.shopItemId;
 
-              // Get product name from Firebase peerShopProducts
-              const product = peerShopProducts[shopItemId];
+              const product = (typeof peerShopProducts !== 'undefined') ? peerShopProducts[shopItemId] : null;
               const itemName = product?.title || 'Shop Item';
               const itemDisplay = size ? `${itemName}, size ${size}` : itemName;
 
@@ -307,7 +304,7 @@ async function loadMoreTransactionHistory() {
       query: `query TransactionHistory {
         transactionHistory (offset: ${txOffset}, limit: ${LIMIT}) {
             affectedRows {
-              operationid
+              transactionId
               transactionCategory
               transactiontype
               tokenamount
@@ -1401,7 +1398,7 @@ function formatDate(timestampStr) {
 document.getElementById('reloadTransactions').addEventListener('click', resetTransactionHistoryList)
 /*-------------- End Transnsfer Token Process------------------*/
 
-async function fetchShopOrderDetails(operationId) {
+async function fetchShopOrderDetails(transactionId) {
   const accessToken = getCookie("authToken");
   const headers = new Headers({
     "Content-Type": "application/json",
@@ -1410,7 +1407,7 @@ async function fetchShopOrderDetails(operationId) {
 
   const graphql = JSON.stringify({
     query: `query ShopOrderDetails {
-      shopOrderDetails(transactionOperationId: "${operationId}") {
+      shopOrderDetails(transactionId: "${transactionId}") {
         affectedRows {
           shopOrderId
           shopItemId
@@ -1433,7 +1430,9 @@ async function fetchShopOrderDetails(operationId) {
     const response = await fetch(GraphGL, { method: "POST", headers, body: graphql });
     const result = await response.json();
     if (result.errors) throw new Error(result.errors[0].message);
-    return result?.data?.shopOrderDetails?.affectedRows?.[0] || null;
+    console.log("Shop order details fetched:", result);
+    const affectedRows = result?.data?.shopOrderDetails?.affectedRows;
+    return Array.isArray(affectedRows) ? affectedRows[0] : (affectedRows || null);
   } catch (error) {
     console.error("Error fetching shop order details:", error.message);
     return null;

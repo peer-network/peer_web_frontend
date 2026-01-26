@@ -23,11 +23,19 @@ checkAuth("unauthorized");
 
 
 
+  <!-- Firebase App (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js" defer></script>
+  <!-- Firebase Analytics (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js" defer></script>
+  <script src="js/firebase_config.js?<?php echo filemtime('js/firebase_config.js'); ?>" defer></script>
+
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
   <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
   <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
+  <script src="js/peerShopProducts.js?<?php echo filemtime('js/peerShopProducts.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
 
   <?php
