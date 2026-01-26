@@ -176,7 +176,7 @@
 
 .checkout-form-screen .product_media {
   max-width: 300px;
-
+  max-height: 300px;
   border-radius: 20px;
   overflow: hidden;
 }
