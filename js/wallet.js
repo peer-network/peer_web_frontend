@@ -158,7 +158,6 @@ function renderRows(rows) {
 
     let detailInnerHtml;
     if (isShopPurchase && isShopAccount) {
-      console.log('Rendering shop purchase for shop account, hiding fee breakdown.');
       detailInnerHtml = `
         <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
         <div class="delivery_info_container">
@@ -219,11 +218,9 @@ function renderRows(rows) {
               const delivery = orderDetails.deliveryDetails;
               const size = orderDetails.shopItemSpecs?.size || '';
               const shopItemId = orderDetails.shopItemId;
-
               const product = (typeof peerShopProducts !== 'undefined') ? peerShopProducts[shopItemId] : null;
-              const itemName = product?.title || 'Shop Item';
+              const itemName = product?.name || 'Shop Item';
               const itemDisplay = size ? `${itemName}, size ${size}` : itemName;
-
               const fullAddress = [
                 delivery.addressline1,
                 delivery.addressline2,
