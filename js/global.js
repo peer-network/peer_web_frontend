@@ -538,6 +538,10 @@ function postdetail(objekt, CurrentUserID) {
   if(objekt.visibilityStatus){
     postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
   }
+  if(objekt.isHiddenForUsers){
+    postContainer.classList.add("visibilty_hidden");
+    cardClickedContainer.setAttribute("data-visibilty", 'HIDDEN');
+  }
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -2025,6 +2029,12 @@ function commentToDom(c, append = true) {
   if(c.visibilityStatus){
     comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
   }
+
+  if(c.isHiddenForUsers){
+    comment.classList.add("visibilty_hidden");
+    
+  }
+
   if(c.visibilityStatus=='ILLEGAL' || c.visibilityStatus=='illegal'){
 
     const illegalContentHTML = `

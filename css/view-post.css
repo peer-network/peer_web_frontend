@@ -918,6 +918,7 @@
     
 		.viewpost .visibilty_illegal .post_content .post_title h2{
       height: 100px;
+      width: 60%;
     }
     .viewpost .visibilty_illegal .post_content .post_text{
       height: 220px;
