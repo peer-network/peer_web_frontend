@@ -50,6 +50,12 @@
 .site_layout_nonuser .viewpost .inner-container .btClose{
 	display: none;
 }
+.site_layout_nonuser .viewpost .postview_footer .more {
+    display: none;
+}
+.site_layout_nonuser .comment_list .comment_item .comment_body .comment_action span.dots{
+  display: none;
+}
 
 .site_layout_nonuser .viewpost .inner-container {
 	width: 100%;
