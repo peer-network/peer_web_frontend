@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const userID = params.get("user") || params.get("testid");
-  const testvisibilityStatus = params.get("uservisibility");
-  const urlIsReported = params.get("isreported");
-
+  
   getProfile(userID).then((userprofile) => {
     const viewProfile = document.querySelector(".view-profile");
     if (userprofile.ResponseCode == "30201" && userprofile.status == "error") {
@@ -15,25 +13,23 @@ document.addEventListener("DOMContentLoaded", () => {
     /*-- handling profile visibility----*/
     let visibilityStatus =
       userprofile.affectedRows.visibilityStatus || "NORMAL";
+     
+      if(userprofile.affectedRows.isHiddenForUsers){
+        visibilityStatus="hidden";
+        
+      }
 
     const hasActiveReports = userprofile.affectedRows.hasActiveReports || false;
     const isHiddenForUsers = userprofile.affectedRows.isHiddenForUsers || false;
     let isReportedByYou = userprofile.affectedRows.isreported;
 
-    if (urlIsReported !== null) {
-      isReportedByYou = urlIsReported.toLowerCase() === "true";
-    }
+ 
 
     if (isReportedByYou === true) {
       disableReportButton();
     }
 
-    /*-- for testing profile report and visibility----*/
-    if (testvisibilityStatus) {
-      visibilityStatus = testvisibilityStatus;
-    }
-
-    /*-- End : testing profile report and visibility----*/
+    
     if (viewProfile) {
       viewProfile.classList.add(
         "profile_visibilty_" + visibilityStatus.toLowerCase()

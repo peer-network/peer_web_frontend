@@ -45,10 +45,16 @@
 }
 .site_layout_nonuser .viewpost .viewpost-right {
 	
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 .site_layout_nonuser .viewpost .inner-container .btClose{
 	display: none;
+}
+.site_layout_nonuser .viewpost .postview_footer .more {
+    display: none;
+}
+.site_layout_nonuser .comment_list .comment_item .comment_body .comment_action span.dots{
+  display: none;
 }
 
 .site_layout_nonuser .viewpost .inner-container {
@@ -124,7 +130,15 @@
 .viewpost .postview_footer .more ul.sublist li.reportpostli{
 	display: none !important;
 }
-
+.hidden_userfeed_frame .hidden_content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.hidden_user_profile .post-userImg, .hidden_user_profile .username-slug .post-userName,
+ .hidden_user_profile .username-slug span.profile_id {
+  filter: blur(4px);
+}
 /*--------------- Start Copy media form style.css---------------*/
 
   /*--------------------------------------------------------------
