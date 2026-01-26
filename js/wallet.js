@@ -215,7 +215,6 @@ function renderRows(rows) {
         if (deliveryContainer) {
           try {
             const orderDetails = await fetchShopOrderDetails(entry.transactionId);
-            console.log('Fetched order details:', orderDetails);
             if (orderDetails) {
               const delivery = orderDetails.deliveryDetails;
               const size = orderDetails.shopItemSpecs?.size || '';
@@ -489,14 +488,9 @@ async function renderUsers() {
   const token_bal = await getLiquiudity();
   sp_bal_amt.textContent = token_bal;
 
-
   balance_header.append(sp_bal, sp_bal_amt);
 
   wrapper.appendChild(balance_header);
-
-
-
-
 
   // Always-visible Search Input
   const search_wrapper = document.createElement("div");
@@ -531,7 +525,6 @@ async function renderUsers() {
   // Search logic on input
   searchInput.addEventListener("input", async () => {
     const search = searchInput.value.trim();
-
 
     if (!search) {
       //load/render friends-list
@@ -599,9 +592,6 @@ async function renderFriendListUI(container) {
 
       const info = document.createElement("div");
       info.classList.add("md_font_size", "info");
-
-
-
 
       const name = document.createElement("strong");
       name.classList.add("italic");
