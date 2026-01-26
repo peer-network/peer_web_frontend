@@ -1,6 +1,6 @@
 'use strict';
 
-let isInvited, contentFilteringSeverityLevel = "";
+let contentFilteringSeverityLevel = "";
 const toggleCheckBox = document.getElementById("toggle");
 const contentRestored = document.getElementById("contentRestored");
 const returnToLogin = document.getElementById("returnToLogin");

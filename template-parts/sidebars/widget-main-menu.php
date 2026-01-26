@@ -24,7 +24,7 @@
                 </a>
             </li>
             <li class="menu-item <?= ($currentPage === 'viewPeerShop.php') ? 'active' : '' ?>">
-                <a href="viewPeerShop.php?user=292bebb1-0951-47e8-ac8a-759138a2e4a9">
+                <a href="viewPeerShop.php?user=9adaad3b-b75f-4045-b48a-33d4ec8d06b8">
                     <i class="peer-icon peer-icon-shop"></i>
                     <i class="filled peer-icon peer-icon-shop"></i>
                     Shop
