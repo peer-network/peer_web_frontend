@@ -213,7 +213,7 @@ function confirm(title, text = "", dontShowOption = false, typeKey = null, svg =
     buttons: [{ text: "No", className: "btn-white" }, { text: "Yes", className: "btn-blue" }],
     type: "warning",
     dontShowOption: dontShowOption,
-    typeKey: typeKey, // Pass down to createModal
+    typeKey: typeKey,
     svg: svg
   });
 }
