@@ -192,6 +192,20 @@ function success(title, text = "", dontShowOption = false, svg = null) {
      svg: svg
   });
 }
+
+function ordersuccess(title, text = "", dontShowOption = false, svg = null) {
+  return createModal({
+    title: title,
+    message: userfriendlymsg(text),
+    buttons: [
+      { text: "Close", className: "btn-transparent" },
+      { text: "To wallet", className: "btn-white bold" }
+    ],
+    type: "success",
+    dontShowOption: dontShowOption,
+    svg: svg
+  });
+}
 function confirm(title, text = "", dontShowOption = false, typeKey = null, svg = null) {
   return createModal({
     title: title,

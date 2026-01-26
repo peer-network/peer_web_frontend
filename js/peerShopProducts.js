@@ -223,7 +223,7 @@ function createProductHeader(objekt) {
     arrayMedia.forEach((item) => {
       const img = document.createElement("img");
       img.src = tempMedia(item.path);
-      img.alt = objekt.title;
+      img.alt = objekt.name;
       product_media.appendChild(img);
     });
   }
@@ -233,7 +233,7 @@ function createProductHeader(objekt) {
 
   title = document.createElement("h3");
   title.className = "md_font_size bold";
-  title.textContent = objekt.title;
+  title.textContent = objekt.name;
 
   desc = document.createElement("p");
   desc.className = "txt-color-gray md_font_size";
@@ -777,12 +777,21 @@ async function handlePayment(objekt) {
   if (result && result.data && result.data.performShopOrder) {
     const orderData = result.data.performShopOrder;
     if (orderData.status === "success") {
-      if (typeof success === 'function') success("Order successfully placed!", "Your order has been confirmed. You’ll receive an email with delivery details within 1–3 days.");
       checkoutDropdown.innerHTML = "";
       checkoutPopup.classList.add("none");
+
+      if (typeof ordersuccess === 'function') {
+        ordersuccess("Order successfully placed!", "Your order has been confirmed. You’ll receive an email with delivery details within 1–3 days.", false, '<i class="peer-icon peer-icon-order-success"></i>')
+          .then(res => {
+            if (res.button === 1) {
+              window.location.href = 'wallet.php';
+            }
+          });
+      }
       if (typeof currentliquidity === 'function') currentliquidity();
     } else {
-      if (typeof Merror === 'function') Merror("Order Failed", orderData.ResponseMessage || "Something went wrong.");
+      //if (typeof Merror === 'function') Merror("Order Failed", orderData.ResponseMessage || "Something went wrong.");
+      await warnig("Order Failed", "Something went wrong. Please try again in a moment.", false, '<i class="peer-icon peer-icon-order-failed"></i>', 'Try again');
       checkoutNextBtn.disabled = false;
       checkoutNextBtn.innerHTML = originalBtnContent;
     }
