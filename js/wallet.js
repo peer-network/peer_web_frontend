@@ -234,7 +234,7 @@ function renderRows(rows) {
 
               deliveryContainer.innerHTML = `
                 <div class="delivery_label md_font_size bold">
-                  <i class="peer-icon peer-icon-shop"></i> Delivery information
+                  <i class="peer-icon peer-icon-delivery-info"></i> Delivery information
                 </div>
                 <div class="price_detail_row md_font_size">
                   <span class="price_label txt-color-gray">Item</span>

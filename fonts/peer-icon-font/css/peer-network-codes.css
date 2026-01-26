@@ -86,4 +86,7 @@
 .peer-icon-audio-fill:before { content: '\e854'; } /* '' */
 .peer-icon-camera-fill:before { content: '\e855'; } /* '' */
 .peer-icon-message:before { content: '\e856'; } /* '' */
+.peer-icon-delivery-info:before { content: '\e85a'; } /* '' */
 .peer-icon-shop:before { content: '\e8af'; } /* '' */
+.peer-icon-order-success:before { content: '\e8b1'; } /* '' */
+.peer-icon-order-failed:before { content: '\e8b2'; } /* '' */
