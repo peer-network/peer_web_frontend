@@ -233,12 +233,12 @@ function renderRows(rows) {
               ].filter(Boolean).join(', ');
 
               deliveryContainer.innerHTML = `
-                <div class="price_detail_row md_font_size bold">
+                <div class="delivery_label md_font_size bold">
                   <i class="peer-icon peer-icon-shop"></i> Delivery information
                 </div>
                 <div class="price_detail_row md_font_size">
                   <span class="price_label txt-color-gray">Item</span>
-                  <span class="price">${itemDisplay}</span>
+                  <span class="price bold">${itemDisplay}</span>
                 </div>
                 <div class="price_detail_row md_font_size">
                   <span class="price_label txt-color-gray">Name</span>
@@ -246,11 +246,11 @@ function renderRows(rows) {
                 </div>
                 <div class="price_detail_row md_font_size">
                   <span class="price_label txt-color-gray">Email</span>
-                  <span class="price">${delivery.email || 'N/A'}</span>
+                  <span class="price bold">${delivery.email || 'N/A'}</span>
                 </div>
                 <div class="price_detail_row md_font_size">
                   <span class="price_label txt-color-gray">Address</span>
-                  <span class="price">${fullAddress || 'N/A'}</span>
+                  <span class="price bold">${fullAddress || 'N/A'}</span>
                 </div>
               `;
               historyItem.dataset.deliveryLoaded = 'true';
