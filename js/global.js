@@ -111,14 +111,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 function applyZoom() {
-  const BASE_WIDTH = 3800;
+  
   const layout = document.querySelector(".site_layout");
-  const left_sidebar = layout.querySelector(".left-sidebar");
-  const right_sidebar = layout.querySelector(".right-sidebar");
-  const cardClickedDiv= document.getElementById("cardClicked");
 
-
-  function applyScale() {
+  if(layout){
+    applyScale(layout);
+    window.visualViewport.addEventListener("resize", () => applyScale(layout));
+  
+  }
+}   
+  function applyScale(layout) {
+    const BASE_WIDTH = 3800;
+    const left_sidebar = layout.querySelector(".left-sidebar");
+    const right_sidebar = layout.querySelector(".right-sidebar");
+    const cardClickedDiv= document.getElementById("cardClicked");
     const vw = window.visualViewport.width;
     const vh = window.visualViewport.height;
 
@@ -142,10 +148,8 @@ function applyZoom() {
       
     }
   }
+  
 
-  applyScale();
-  window.visualViewport.addEventListener("resize", applyScale);
-}
 
 function getHostConfig() {
   const config = document.querySelector("#config");
