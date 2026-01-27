@@ -3276,4 +3276,108 @@ function userProfileVisibilty(curentUserID,objectUser,container, type=''){
       }
 }
 
+function mul(a, b) {
+  a = a.toString();
+  b = b.toString();
+
+  const aDecimal = (a.split('.')[1] || '').length;
+  const bDecimal = (b.split('.')[1] || '').length;
+
+  const aInt = a.replace('.', '');
+  const bInt = b.replace('.', '');
+
+  const result = BigInt(aInt) * BigInt(bInt);
+  const decimalPlaces = aDecimal + bDecimal;
+
+  const resultStr = result.toString();
+  const len = resultStr.length;
+
+  if (decimalPlaces === 0) return resultStr;
+
+  // Insert decimal point
+  if (len <= decimalPlaces) {
+    return '0.' + '0'.repeat(decimalPlaces - len) + resultStr;
+  }
+
+  return resultStr.slice(0, len - decimalPlaces) + '.' + resultStr.slice(len - decimalPlaces);
+}
+
+function addStrings(a, b) {
+  // Normalize inputs
+  a = a.toString();
+  b = b.toString();
+
+  const aDec = (a.split('.')[1] || '').length;
+  const bDec = (b.split('.')[1] || '').length;
+  const maxDec = Math.max(aDec, bDec);
+
+  const aInt = a.replace('.', '') + '0'.repeat(maxDec - aDec);
+  const bInt = b.replace('.', '') + '0'.repeat(maxDec - bDec);
+
+  const sum = (BigInt(aInt) + BigInt(bInt)).toString();
+
+  if (maxDec === 0) return sum;
+
+  const len = sum.length;
+  if (len <= maxDec) {
+    return "0." + "0".repeat(maxDec - len) + sum;
+  }
+
+  return sum.slice(0, len - maxDec) + "." + sum.slice(len - maxDec);
+}
+
+function formatAmount(value) {
+  if (value === null || value === undefined) return "";
+
+  let num = Number(value);
+  if (isNaN(num)) return String(value);
+
+  // Convert numbers in scientific notation to decimal string
+  let str = num.toLocaleString("fullwide", { useGrouping: false, maximumFractionDigits: 20 });
+
+  // Remove unnecessary trailing zeros after decimal
+  if (str.includes(".")) {
+    str = str.replace(/0+$/, ""); // remove trailing zeros
+    str = str.replace(/\.$/, ""); // remove decimal if nothing left
+  }
+
+  return str;
+}
+
+function getCommissionBreakdown(transferAmount) {
+  const base = transferAmount.toString(); // keep as string
+
+  const platformFee = mul(base, "0.02");
+  const liquidityFee = mul(base, "0.01");
+
+  let breakdown = [
+    { label: "2% to Peer Bank (platform fee)", amount: platformFee },
+    { label: "1% Burned (removed from supply)", amount: liquidityFee }
+  ];
+
+  let inviterFee = "0";
+  if (typeof isInvited !== 'undefined' && isInvited !== "" && isInvited !== false) {
+    inviterFee = mul(base, "0.01");
+    breakdown.push({
+      label: "1% to your Inviter",
+      amount: inviterFee
+    });
+  }
+
+  const totalCommission = [
+    platformFee,
+    liquidityFee,
+    inviterFee,
+  ].reduce(addStrings, "0");
+
+  const totalUsed = addStrings(base, totalCommission);
+
+  return {
+    sentToFriend: base,
+    breakdown,
+    totalCommission,
+    totalUsed
+  };
+}
+
   ///https://localhost/peer_web_frontend/dashboard.php?testuserid=6520ac47-f262-4f7e-b643-9dc5ee4cfa82&uservisibility=ILLEGAL

@@ -233,7 +233,7 @@ function createProductHeader(objekt) {
 
   title = document.createElement("h3");
   title.className = "md_font_size bold";
-  title.textContent = objekt.name;
+  title.textContent = objekt.title;
 
   desc = document.createElement("p");
   desc.className = "txt-color-gray md_font_size";
@@ -263,12 +263,14 @@ function createSizeSelection(objekt) {
   sizes.className = "product_sizes";
 
   let arraySizes = [];
+  let hasFirebaseSizeData = false;
 
   if (objekt.sizes && typeof objekt.sizes === 'object' && !Array.isArray(objekt.sizes)) {
     arraySizes = Object.entries(objekt.sizes).map(([size, stock]) => ({
       size: size,
       inStock: stock > 0
     }));
+    hasFirebaseSizeData = true;
   } 
 
   else if (objekt.one_size_stock !== undefined && objekt.one_size_stock !== null) {
@@ -276,6 +278,7 @@ function createSizeSelection(objekt) {
       size: "One Size", 
       inStock: Number(objekt.one_size_stock) > 0 
     }];
+    hasFirebaseSizeData = true;
   }
 
   else if (Array.isArray(objekt.sizes) && objekt.sizes.length > 0) {
@@ -283,17 +286,13 @@ function createSizeSelection(objekt) {
       if (typeof s === 'string') return { size: s, inStock: true };
       return s;
     });
+    hasFirebaseSizeData = true;
   } 
  
-  else {
-    arraySizes = [
-      { size: "XS", inStock: true },
-      { size: "S", inStock: true },
-      { size: "M", inStock: true },
-      { size: "L", inStock: true },
-      { size: "XL", inStock: true },
-      { size: "XXL", inStock: true },
-    ];
+  if (!hasFirebaseSizeData) {
+    productSize.classList.add('none');
+    productSize.dataset.sizeOptional = 'true';
+    return;
   }
 
   arraySizes.forEach(({ size, inStock }) => {
@@ -492,37 +491,35 @@ function createAmountBreakdown(objekt) {
   amountBreakdown = document.createElement("div");
   amountBreakdown.className = "amount_detail step_2 none";
 
+  const total = parseFloat(objekt.productprice);
+  const data = getCommissionBreakdown(total);
+
   const feePanel = document.createElement("div");
   feePanel.classList.add("feePanel");
-  let breakdown = [
-    { label: "2% to Peer Bank (platform fee)", amount: 4 },
-    { label: "1% Burned (removed from supply)", amount: 5 },
-  ];
 
   feePanel.innerHTML = `<div class="fee-section close">
       <div class="total_amount bold  md_font_size">
         Total amount 
-        <span class="final-total bold xl_font_size">${objekt.productprice
-    }</span>
+        <span class="final-total bold xl_font_size">${formatAmount(data.totalUsed)}</span>
       </div>
       <div class="product-price ">
         <div class="price-item txt-color-gray md_font_size">
             <span class="label">Item Price</span>
-            <span class="value xl_font_size bold">${objekt.productprice}</span>
+            <span class="value xl_font_size bold">${formatAmount(data.sentToFriend)}</span>
           </div>
       </div>
       <div class="fee-title  md_font_size txt-color-gray">
         Fees included
-        <span class="fee-total bold xl_font_size">${objekt.productprice}</span>
+        <span class="fee-total bold xl_font_size">${formatAmount(data.totalCommission)}</span>
       </div>
     
       <div class="fee-breakdowns">
-        ${breakdown
+        ${data.breakdown
       .map(
         (item) => `
           <div class="fee-item txt-color-gray">
             <span class="label">${item.label}</span>
-            <span class="value">${item.amount}</span>
+            <span class="value">${formatAmount(item.amount)}</span>
           </div>
         `
       )
@@ -573,9 +570,10 @@ function createActions(objekt) {
   checkoutNextBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
+    // Check if delivery info (always in step 1) is visible
+    const isStep1Visible = deliveryInfo && !deliveryInfo.classList.contains('none');
 
-    //if (isStep1Visible) {
+    if (isStep1Visible) {
       const formValid = validateForm();
       if (formValid) {
         document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
@@ -584,9 +582,9 @@ function createActions(objekt) {
         checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
         checkoutNextBtn.classList.add('btn-pay');
       }
-    // } else {
-    //   handlePayment(objekt);
-    // }
+    } else {
+      handlePayment(objekt);
+    }
   });
 
   return actions;
@@ -710,12 +708,14 @@ function validateForm() {
   const v3 = validateInput(address);
   const v4 = validateInput(city);
   const v5 = validateInput(zip);
-  const v6 = !!sizeChecked;
+  
 
+  const isSizeOptional = productSize?.dataset?.sizeOptional === 'true';
+  const v6 = isSizeOptional ? true : !!sizeChecked;
 
   const isValid = v1 && v2 && v3 && v4 && v5 && v6;
   const sizeError = document.querySelector(".product_size .response_msg");
-  if (sizeError) {
+  if (sizeError && !isSizeOptional) {
     if (!sizeChecked) {
       sizeError.classList.remove('none');
     } else {
