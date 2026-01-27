@@ -263,12 +263,14 @@ function createSizeSelection(objekt) {
   sizes.className = "product_sizes";
 
   let arraySizes = [];
+  let hasFirebaseSizeData = false;
 
   if (objekt.sizes && typeof objekt.sizes === 'object' && !Array.isArray(objekt.sizes)) {
     arraySizes = Object.entries(objekt.sizes).map(([size, stock]) => ({
       size: size,
       inStock: stock > 0
     }));
+    hasFirebaseSizeData = true;
   } 
 
   else if (objekt.one_size_stock !== undefined && objekt.one_size_stock !== null) {
@@ -276,6 +278,7 @@ function createSizeSelection(objekt) {
       size: "One Size", 
       inStock: Number(objekt.one_size_stock) > 0 
     }];
+    hasFirebaseSizeData = true;
   }
 
   else if (Array.isArray(objekt.sizes) && objekt.sizes.length > 0) {
@@ -283,17 +286,13 @@ function createSizeSelection(objekt) {
       if (typeof s === 'string') return { size: s, inStock: true };
       return s;
     });
+    hasFirebaseSizeData = true;
   } 
  
-  else {
-    arraySizes = [
-      { size: "XS", inStock: true },
-      { size: "S", inStock: true },
-      { size: "M", inStock: true },
-      { size: "L", inStock: true },
-      { size: "XL", inStock: true },
-      { size: "XXL", inStock: true },
-    ];
+  if (!hasFirebaseSizeData) {
+    productSize.classList.add('none');
+    productSize.dataset.sizeOptional = 'true';
+    return;
   }
 
   arraySizes.forEach(({ size, inStock }) => {
@@ -571,7 +570,8 @@ function createActions(objekt) {
   checkoutNextBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
+    // Check if delivery info (always in step 1) is visible
+    const isStep1Visible = deliveryInfo && !deliveryInfo.classList.contains('none');
 
     if (isStep1Visible) {
       const formValid = validateForm();
@@ -708,12 +708,14 @@ function validateForm() {
   const v3 = validateInput(address);
   const v4 = validateInput(city);
   const v5 = validateInput(zip);
-  const v6 = !!sizeChecked;
+  
 
+  const isSizeOptional = productSize?.dataset?.sizeOptional === 'true';
+  const v6 = isSizeOptional ? true : !!sizeChecked;
 
   const isValid = v1 && v2 && v3 && v4 && v5 && v6;
   const sizeError = document.querySelector(".product_size .response_msg");
-  if (sizeError) {
+  if (sizeError && !isSizeOptional) {
     if (!sizeChecked) {
       sizeError.classList.remove('none');
     } else {
