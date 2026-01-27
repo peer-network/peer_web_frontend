@@ -1,11 +1,11 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyBRrV8AuxJlS_9DQ2jZKqTHT8m70AhGxiU",
-  authDomain: "peer-de113.firebaseapp.com",
-  projectId: "peer-de113",
-  storageBucket: "peer-de113.firebasestorage.app",
-  messagingSenderId: "1088506353097",
-  appId: "1:1088506353097:web:e74867ffd43d0fad440418",
-  measurementId: "G-RYR3LKVF4L",
+  apiKey: typeof FIREBASE_API_KEY !== 'undefined' ? FIREBASE_API_KEY : "",
+  authDomain: typeof authDomain !== 'undefined' ? authDomain : "",
+  projectId: typeof projectId !== 'undefined' ? projectId : "",
+  storageBucket: typeof storageBucket !== 'undefined' ? storageBucket : "",
+  messagingSenderId: typeof messagingSenderId !== 'undefined' ? messagingSenderId : "",
+  appId: typeof FIREBASE_APP_ID !== 'undefined' ? FIREBASE_APP_ID : "",
+  measurementId: typeof measurementId !== 'undefined' ? measurementId : "",
 };
 //  This works with compat
 firebase.initializeApp(firebaseConfig);
