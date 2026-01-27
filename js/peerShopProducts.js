@@ -492,37 +492,35 @@ function createAmountBreakdown(objekt) {
   amountBreakdown = document.createElement("div");
   amountBreakdown.className = "amount_detail step_2 none";
 
+  const total = parseFloat(objekt.productprice);
+  const data = getCommissionBreakdown(total);
+
   const feePanel = document.createElement("div");
   feePanel.classList.add("feePanel");
-  let breakdown = [
-    { label: "2% to Peer Bank (platform fee)", amount: 4 },
-    { label: "1% Burned (removed from supply)", amount: 5 },
-  ];
 
   feePanel.innerHTML = `<div class="fee-section close">
       <div class="total_amount bold  md_font_size">
         Total amount 
-        <span class="final-total bold xl_font_size">${objekt.productprice
-    }</span>
+        <span class="final-total bold xl_font_size">${formatAmount(data.totalUsed)}</span>
       </div>
       <div class="product-price ">
         <div class="price-item txt-color-gray md_font_size">
             <span class="label">Item Price</span>
-            <span class="value xl_font_size bold">${objekt.productprice}</span>
+            <span class="value xl_font_size bold">${formatAmount(data.sentToFriend)}</span>
           </div>
       </div>
       <div class="fee-title  md_font_size txt-color-gray">
         Fees included
-        <span class="fee-total bold xl_font_size">${objekt.productprice}</span>
+        <span class="fee-total bold xl_font_size">${formatAmount(data.totalCommission)}</span>
       </div>
     
       <div class="fee-breakdowns">
-        ${breakdown
+        ${data.breakdown
       .map(
         (item) => `
           <div class="fee-item txt-color-gray">
             <span class="label">${item.label}</span>
-            <span class="value">${item.amount}</span>
+            <span class="value">${formatAmount(item.amount)}</span>
           </div>
         `
       )
