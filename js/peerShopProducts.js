@@ -573,7 +573,7 @@ function createActions(objekt) {
 
     const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
 
-    //if (isStep1Visible) {
+    if (isStep1Visible) {
       const formValid = validateForm();
       if (formValid) {
         document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
@@ -582,9 +582,9 @@ function createActions(objekt) {
         checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
         checkoutNextBtn.classList.add('btn-pay');
       }
-    // } else {
-    //   handlePayment(objekt);
-    // }
+    } else {
+      handlePayment(objekt);
+    }
   });
 
   return actions;
