@@ -167,7 +167,7 @@ function renderCheckoutProductScreen(objekt) {
   createHeader();
 
   createProductHeader(objekt);
-  createSizeSelection();
+  createSizeSelection(objekt);
   createDeliveryInfo();
 
   createDeliveryVerify();
@@ -251,7 +251,7 @@ function createProductHeader(objekt) {
   productHeader.append(product_media, productinfo);
 }
 
-function createSizeSelection() {
+function createSizeSelection(objekt) {
   productSize = document.createElement("div");
   productSize.className = "product_size step_1";
 
@@ -262,14 +262,39 @@ function createSizeSelection() {
   sizes = document.createElement("div");
   sizes.className = "product_sizes";
 
-  arraySizes = [
-    { size: "XS", inStock: true },
-    { size: "S", inStock: true },
-    { size: "M", inStock: true },
-    { size: "L", inStock: true },
-    { size: "XL", inStock: true },
-    { size: "XXL", inStock: true },
-  ];
+  let arraySizes = [];
+
+  if (objekt.sizes && typeof objekt.sizes === 'object' && !Array.isArray(objekt.sizes)) {
+    arraySizes = Object.entries(objekt.sizes).map(([size, stock]) => ({
+      size: size,
+      inStock: stock > 0
+    }));
+  } 
+
+  else if (objekt.one_size_stock !== undefined && objekt.one_size_stock !== null) {
+    arraySizes = [{ 
+      size: "One Size", 
+      inStock: Number(objekt.one_size_stock) > 0 
+    }];
+  }
+
+  else if (Array.isArray(objekt.sizes) && objekt.sizes.length > 0) {
+    arraySizes = objekt.sizes.map(s => {
+      if (typeof s === 'string') return { size: s, inStock: true };
+      return s;
+    });
+  } 
+ 
+  else {
+    arraySizes = [
+      { size: "XS", inStock: true },
+      { size: "S", inStock: true },
+      { size: "M", inStock: true },
+      { size: "L", inStock: true },
+      { size: "XL", inStock: true },
+      { size: "XXL", inStock: true },
+    ];
+  }
 
   arraySizes.forEach(({ size, inStock }) => {
     const label = document.createElement("label");
@@ -280,6 +305,11 @@ function createSizeSelection() {
     input.name = "product_size";
     input.value = size;
     input.disabled = !inStock;
+
+    if (arraySizes.length === 1 && inStock) {
+      input.checked = true;
+      SelectedSize.querySelector(".size").innerHTML = size;
+    }
 
     const span = document.createElement("span");
     span.className = "md_font_size";
@@ -297,6 +327,10 @@ function createSizeSelection() {
     label.append(input, span);
     sizes.appendChild(label);
   });
+
+  if (arraySizes.length === 1) {
+    productSize.classList.add('none');
+  }
 
   const sizeError = document.createElement("span");
   sizeError.className = "response_msg error cutom-style none";
@@ -541,7 +575,7 @@ function createActions(objekt) {
 
     const isStep1Visible = !document.querySelector('.step_1').classList.contains('none');
 
-    if (isStep1Visible) {
+    //if (isStep1Visible) {
       const formValid = validateForm();
       if (formValid) {
         document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
@@ -550,9 +584,9 @@ function createActions(objekt) {
         checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
         checkoutNextBtn.classList.add('btn-pay');
       }
-    } else {
-      handlePayment(objekt);
-    }
+    // } else {
+    //   handlePayment(objekt);
+    // }
   });
 
   return actions;
@@ -562,10 +596,7 @@ function createFinalScreen(actionsElement) {
   const ScrollWrap = document.createElement("div");
   ScrollWrap.className = "scroll_wrap";
   ScrollWrap.append(checkoutForm, deliveryInfoVerify, paying_to, amountBreakdown);
-
-  /* ================= APPEND ALL ================= */
   wrapper.append(productHeader, productSize, deliveryInfo, ScrollWrap, actionsElement);
-
   checkoutDropdown.appendChild(wrapper);
 
   ["full_name", "email", "address", "address2", "city", "zip"].forEach((cls) =>
