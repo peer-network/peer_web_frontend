@@ -522,11 +522,26 @@ async function postsLaden(postbyUserID=null) {
 
       if(onShopProfilepage){
         const productData = peerShopProducts[objekt.id];
-        (productData) ? objekt.productprice = productData.price : objekt.productprice = 500;
+        if (productData) {
+          objekt.productprice = productData.price;
+          objekt.sizes = productData.sizes;
+          objekt.one_size_stock = productData.one_size_stock;
+          objekt.mediadescription = productData.description || objekt.mediadescription;
+          objekt.title = productData.name || objekt.title;
+        } else {
+          objekt.productprice = 500;
+          objekt.sizes = [];
+        }
         const product_price = document.createElement("div");
         product_price.classList.add("product_price","bold","md_font_size");
         product_price.innerText=objekt.productprice;
         card_header_right.appendChild(product_price);
+
+        objekt.mediadescription = (productData) ? productData.description : objekt.mediadescription;
+          console.log(objekt, productData);
+        objekt.title = (productData) ? productData.name : objekt.title;
+      title.textContent = objekt.title;
+
       }
       card_header.appendChild(card_header_right);
       inhaltDiv.appendChild(card_header);
