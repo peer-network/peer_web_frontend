@@ -233,7 +233,7 @@ function createProductHeader(objekt) {
 
   title = document.createElement("h3");
   title.className = "md_font_size bold";
-  title.textContent = objekt.name;
+  title.textContent = objekt.title;
 
   desc = document.createElement("p");
   desc.className = "txt-color-gray md_font_size";
