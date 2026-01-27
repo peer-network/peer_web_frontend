@@ -28,10 +28,10 @@
                         <ul>
                             <li><a href="#" class="morebtn"><span class="textval">More</span> <span class="dots"></span></a></li>
                             <ul class="sublist">
-                                <li><a href="#" class="reportpost"><i class="fi fi-rr-triangle-warning"></i> Report post</a></li>
-                                <li><a href="#" class="download"><i class="fi fi-rr-down-to-line"></i> Download</a></li>
-                                <li><a href="#" class="share"><i class="fi fi-rr-share-square"></i> Share</a></li>
-                                <li><a href="#" class="save"><i class="fi fi-rr-bookmark"></i> Save</a></li>
+                                <li><a href="#" class="reportpost"><i class="peer-icon peer-icon-flag-fill"></i> Report post</a></li>
+                                <li><a href="#" class="download"><i class="peer-icon peer-icon-download"></i> Download</a></li>
+                                <li><a href="#" class="share"><i class="peer-icon peer-icon-share-link"></i> Share</a></li>
+                               
                             </ul>
                         </ul>
                     </div>
@@ -106,7 +106,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like md_font_size">
-                                    <i class="fi fi-rr-heart"></i>
+                                    <i class="peer-icon peer-icon-like"></i>
                                     <span>7</span>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like md_font_size">
-                                    <i class="fi fi-rr-heart"></i>
+                                    <i class="peer-icon peer-icon-like"></i>
                                     <span>7</span>
                                 </div>
                             </div>
@@ -158,7 +158,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like md_font_size">
-                                    <i class="fi fi-rr-heart"></i>
+                                    <i class="peer-icon peer-icon-like"></i>
                                     <span>7</span>
                                 </div>
                             </div>
@@ -184,7 +184,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like md_font_size">
-                                    <i class="fi fi-rr-heart"></i>
+                                    <i class="peer-icon peer-icon-like></i>
                                     <span>7</span>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like md_font_size">
-                                    <i class="fi fi-rr-heart"></i>
+                                    <i class="peer-icon peer-icon-like"></i>
                                     <span>7</span>
                                 </div>
                             </div>
@@ -236,7 +236,7 @@
                                     </div>
                                 </div>
                                 <div class="comment_like md_font_size">
-                                    <i class="fi fi-rr-heart"></i>
+                                    <i class="peer-icon peer-icon-like"></i>
                                     <span>7</span>
                                 </div>
                             </div>
@@ -247,7 +247,7 @@
                 </div>
                 <div id="post_comment" class="disabled post_comment">
                         <textarea placeholder="Share your thoughts ..." autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
-                        <button><i class="fi fi-ts-arrow-small-right"></i></button>
+                        <button><i class="peer-icon peer-icon-arrow-right"></i></button>
                 </div>
 
                 
