@@ -9,7 +9,7 @@ enforceAdminRole($domain ?? ($_SERVER['HTTP_HOST'] ?? ''), 'https');
 <html lang="de">
 <?php require_once ('./template-parts/head.php'); ?>
 <body>
-    <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+    <div id="config"  class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <div id="moderation" class="site_layout">
         <?php require_once ('./template-parts/header.php'); ?>
 

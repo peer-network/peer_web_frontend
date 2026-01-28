@@ -36,8 +36,8 @@ checkAuth("unauthorized");
 </head>
 
 <body>
-    <div id="config" class="none"
-        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+    <div id="config"  class="none"
+        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <div id="edit-profile" class="site_layout">
         <header class="site-header header-profile">
             <img class="logo" src="svg/logo_sw.svg" alt="Peer Network">

@@ -38,7 +38,7 @@ if (isset($_GET['message'])) {
 </head>
 
 <body>
-    <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+    <div id="config"  class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>"></div>
 
     <div class="container large_font">
         <div class="container_left">

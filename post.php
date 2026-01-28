@@ -32,8 +32,8 @@ include 'host.php';
 </head>
 
 <body>
-    <div id="config" class="none"
-        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>">
+    <div id="config"  class="none"
+        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>">
     </div>
     <div id="nonuser-viewpost" class="site_layout_nonuser">
        
@@ -65,8 +65,8 @@ include 'host.php';
         
         </main>
        
-        <?php require_once('./template-parts/footer.php'); ?>
-        
+        <?php //require_once('./template-parts/footer.php'); ?>
+        <footer></footer>
     </div>
 </body>
 

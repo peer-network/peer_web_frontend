@@ -12,6 +12,7 @@ $baseUrl = rtrim(dirname($scriptName), '/');
 $parts = explode('.', $hostName);
 
 // Hauptdomain und Subdomain bestimmen
+/*
 if (count($parts) > 2) {
   $subdomain = implode('.', array_slice($parts, 0, count($parts) - 2));
   if ($subdomain == 'frontend') $domain = 'peernetwork.eu';
@@ -19,4 +20,34 @@ if (count($parts) > 2) {
   else $domain = $hostName;
 } else {
   $domain = 'getpeer.eu';
+}
+*/
+
+$mediaDomain = '';
+if (count($parts) > 2) {
+  $subdomain = implode('.', array_slice($parts, 0, count($parts) - 2));
+  
+  if (strpos($hostName, 'peerapp.eu') !== false) {
+    $domain = 'backend.peerapp.eu';
+    $mediaDomain = 'media.peerapp.eu';
+  } else if ($subdomain == 'frontend') {
+    $domain = 'peernetwork.eu';
+    $mediaDomain = 'media.peernetwork.eu';
+  } else if ($subdomain == 'testing') {
+    $domain = 'getpeer.eu';
+    $mediaDomain = 'media.getpeer.eu';
+  } else {
+    $domain = $hostName;
+    $mediaDomain = 'media.' . $domain;
+  }
+} else {
+  if (strpos($hostName, 'peerapp.eu') !== false) {
+     $domain = 'backend.peerapp.eu';
+     $mediaDomain = 'media.peerapp.eu';
+  } else {
+     $domain = 'getpeer.eu';
+    // $domain = 'backend.peerapp.eu';
+    $mediaDomain = 'media.getpeer.eu';
+    // $mediaDomain = 'media.peerapp.eu';
+  }
 }

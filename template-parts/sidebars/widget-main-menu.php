@@ -23,6 +23,13 @@
                     Wallet
                 </a>
             </li>
+            <li class="menu-item <?= ($currentPage === 'viewPeerShop.php') ? 'active' : '' ?>">
+                <a href="viewPeerShop.php?user=292bebb1-0951-47e8-ac8a-759138a2e4a9">
+                    <i class="peer-icon peer-icon-shop"></i>
+                    <i class="filled peer-icon peer-icon-shop"></i>
+                    Shop
+                </a>
+            </li>
             <li
                 class="menu-item <?= ($currentPage === 'setting.php' ||  $currentPage === 'profileSettings.php') ? 'active' : '' ?>">
                 <a href="profileSettings.php">
