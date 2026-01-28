@@ -303,6 +303,22 @@ body {
 	background-position: right center;
 }
 
+.tarnsaction_item .transaction_detail .delivery_info_container {
+	display: flex;
+	padding: 40px;
+	flex-direction: column;
+	gap: 20px;
+	align-self: stretch;
+	border-radius: 70px;
+	background: var(--black-dark, #252525);
+	margin-top: 20px
+}
+
+.tarnsaction_item .transaction_detail .delivery_info_container .price_detail_row .price {
+	padding-right: 0px;
+	background: none;
+}
+
 .tarnsaction_item .transaction_detail .message_row {
 	display: flex;
 	flex-direction: column;

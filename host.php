@@ -26,20 +26,28 @@ if (count($parts) > 2) {
 $mediaDomain = '';
 if (count($parts) > 2) {
   $subdomain = implode('.', array_slice($parts, 0, count($parts) - 2));
-  if ($subdomain == 'frontend') {
+  
+  if (strpos($hostName, 'peerapp.eu') !== false) {
+    $domain = 'backend.peerapp.eu';
+    $mediaDomain = 'media.peerapp.eu';
+  } else if ($subdomain == 'frontend') {
     $domain = 'peernetwork.eu';
     $mediaDomain = 'media.peernetwork.eu';
   } else if ($subdomain == 'testing') {
     $domain = 'getpeer.eu';
     $mediaDomain = 'media.getpeer.eu';
-  } else if ($subdomain == 'app') {
-    $domain = 'backend.peerapp.eu';
-    $mediaDomain = 'peerapp.eu';
   } else {
     $domain = $hostName;
     $mediaDomain = 'media.' . $domain;
   }
 } else {
-  $domain = 'getpeer.eu';
-  $mediaDomain = 'media.getpeer.eu';
+  if (strpos($hostName, 'peerapp.eu') !== false) {
+     $domain = 'backend.peerapp.eu';
+     $mediaDomain = 'media.peerapp.eu';
+  } else {
+     $domain = 'getpeer.eu';
+    // $domain = 'backend.peerapp.eu';
+    $mediaDomain = 'media.getpeer.eu';
+    // $mediaDomain = 'media.peerapp.eu';
+  }
 }

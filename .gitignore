@@ -16,3 +16,4 @@ sw.min.js
 node_modules/
 npm-debug.log
 .env
+js/env.js

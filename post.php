@@ -65,8 +65,8 @@ include 'host.php';
         
         </main>
        
-        <?php require_once('./template-parts/footer.php'); ?>
-        
+        <?php //require_once('./template-parts/footer.php'); ?>
+        <footer></footer>
     </div>
 </body>
 

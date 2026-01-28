@@ -4,6 +4,7 @@ let likeCost = 0.3,
   commentCost = 0.1,
   postCost = 2;
 const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
+// const PEER_SHOP_ID = '9adaad3b-b75f-4045-b48a-33d4ec8d06b8'; //test
 let baseUrl;
 let isInvited=false;
 
@@ -16,11 +17,21 @@ if (location.hostname === "localhost") {
 } else {
   baseUrl = `${location.origin}/`;
 }
-//console.log(baseUrl);
-// below variable used in wallet module
-// need to declare in global scope
+const configEl = document.getElementById("config");
+// Use window to avoid redeclaration errors with lib.min.js
+window.tempMedia = function(e) {
+  const m = configEl?.dataset?.mediaHost;
+  // If domain is not on window, check if it's a global from lib.min.js
+  const d = window.domain || (typeof domain !== 'undefined' ? domain : "");
+  return (m ? m : (d || "").replace("://", "://media.")) + e;
+};
+
+// Assign to window to avoid 'let'/'const' redeclaration issues
+window.mediaDomain = configEl?.dataset?.mediaHost || "";
+
 let storedUserInfo,
   balance = null;
+
 // Global variable to hold tokenomics data
 window.tokenomicsData = null;
 
@@ -100,14 +111,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 function applyZoom() {
-  const BASE_WIDTH = 3800;
+  
   const layout = document.querySelector(".site_layout");
-  const left_sidebar = layout.querySelector(".left-sidebar");
-  const right_sidebar = layout.querySelector(".right-sidebar");
-  const cardClickedDiv= document.getElementById("cardClicked");
 
-
-  function applyScale() {
+  if(layout){
+    applyScale(layout);
+    window.visualViewport.addEventListener("resize", () => applyScale(layout));
+  
+  }
+}   
+  function applyScale(layout) {
+    const BASE_WIDTH = 3800;
+    const left_sidebar = layout.querySelector(".left-sidebar");
+    const right_sidebar = layout.querySelector(".right-sidebar");
+    const cardClickedDiv= document.getElementById("cardClicked");
     const vw = window.visualViewport.width;
     const vh = window.visualViewport.height;
 
@@ -131,10 +148,8 @@ function applyZoom() {
       
     }
   }
+  
 
-  applyScale();
-  window.visualViewport.addEventListener("resize", applyScale);
-}
 
 function getHostConfig() {
   const config = document.querySelector("#config");
@@ -527,6 +542,10 @@ function postdetail(objekt, CurrentUserID) {
   if(objekt.visibilityStatus){
     postContainer.classList.add("visibilty_"+objekt.visibilityStatus.toLowerCase());
   }
+  if(objekt.isHiddenForUsers){
+    postContainer.classList.add("visibilty_hidden");
+    cardClickedContainer.setAttribute("data-visibilty", 'HIDDEN');
+  }
 
   const shareLinkInput = shareLinkBox.querySelector(".share-link-input");
   if (shareLinkInput) shareLinkInput.value = shareUrl;
@@ -623,16 +642,30 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.querySelector("span").textContent = "Report post";
     reportpost_btn.classList.remove("reported","none");
     // add listener only if not reported
-    reportpost_btn.addEventListener(
-      "click",
-      (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        reportPost(objekt, postContainer);
-      },
-      { capture: true }
-    );
+   reportpost_btn.addEventListener(
+        "click",
+        handleReportPostClick,
+        { capture: true }
+      );
   }
+
+  function handleReportPostClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    reportPost(objekt, postContainer);
+  }
+
+
+
+   if( PEER_SHOP_ID == objekt.user.id) { // PEER_SHOP_ID is global variable define in global.js on top
+      reportpost_btn.classList.add("none"); // Shop post not reportable
+      reportpost_btn.removeEventListener(
+        "click",
+        handleReportPostClick,
+        { capture: true }
+      );
+    }
+  
 
   const containerleft = postContainer.querySelector(".viewpost-left");
   const containerright = postContainer.querySelector(".viewpost-right");
@@ -701,6 +734,7 @@ function postdetail(objekt, CurrentUserID) {
   const cont_post_title = containerright.querySelector(".post_title h2");
   const cont_post_time = containerright.querySelector(".timeagao");
   const cont_post_tags = containerright.querySelector(".hashtags");
+  cont_post_tags.innerHTML = "";
 
   const card_post_text = objekt.mediadescription;
   cont_post_text.innerHTML = card_post_text;
@@ -2014,6 +2048,12 @@ function commentToDom(c, append = true) {
   if(c.visibilityStatus){
     comment.classList.add("visibilty_" + c.visibilityStatus.toLowerCase());
   }
+
+  if(c.isHiddenForUsers){
+    comment.classList.add("visibilty_hidden");
+    
+  }
+
   if(c.visibilityStatus=='ILLEGAL' || c.visibilityStatus=='illegal'){
 
     const illegalContentHTML = `
@@ -3249,6 +3289,110 @@ function userProfileVisibilty(curentUserID,objectUser,container, type=''){
           container.querySelector(".post-userName").innerHTML='@removed';
 
       }
+}
+
+function mul(a, b) {
+  a = a.toString();
+  b = b.toString();
+
+  const aDecimal = (a.split('.')[1] || '').length;
+  const bDecimal = (b.split('.')[1] || '').length;
+
+  const aInt = a.replace('.', '');
+  const bInt = b.replace('.', '');
+
+  const result = BigInt(aInt) * BigInt(bInt);
+  const decimalPlaces = aDecimal + bDecimal;
+
+  const resultStr = result.toString();
+  const len = resultStr.length;
+
+  if (decimalPlaces === 0) return resultStr;
+
+  // Insert decimal point
+  if (len <= decimalPlaces) {
+    return '0.' + '0'.repeat(decimalPlaces - len) + resultStr;
+  }
+
+  return resultStr.slice(0, len - decimalPlaces) + '.' + resultStr.slice(len - decimalPlaces);
+}
+
+function addStrings(a, b) {
+  // Normalize inputs
+  a = a.toString();
+  b = b.toString();
+
+  const aDec = (a.split('.')[1] || '').length;
+  const bDec = (b.split('.')[1] || '').length;
+  const maxDec = Math.max(aDec, bDec);
+
+  const aInt = a.replace('.', '') + '0'.repeat(maxDec - aDec);
+  const bInt = b.replace('.', '') + '0'.repeat(maxDec - bDec);
+
+  const sum = (BigInt(aInt) + BigInt(bInt)).toString();
+
+  if (maxDec === 0) return sum;
+
+  const len = sum.length;
+  if (len <= maxDec) {
+    return "0." + "0".repeat(maxDec - len) + sum;
+  }
+
+  return sum.slice(0, len - maxDec) + "." + sum.slice(len - maxDec);
+}
+
+function formatAmount(value) {
+  if (value === null || value === undefined) return "";
+
+  let num = Number(value);
+  if (isNaN(num)) return String(value);
+
+  // Convert numbers in scientific notation to decimal string
+  let str = num.toLocaleString("fullwide", { useGrouping: false, maximumFractionDigits: 20 });
+
+  // Remove unnecessary trailing zeros after decimal
+  if (str.includes(".")) {
+    str = str.replace(/0+$/, ""); // remove trailing zeros
+    str = str.replace(/\.$/, ""); // remove decimal if nothing left
+  }
+
+  return str;
+}
+
+function getCommissionBreakdown(transferAmount) {
+  const base = transferAmount.toString(); // keep as string
+
+  const platformFee = mul(base, "0.02");
+  const liquidityFee = mul(base, "0.01");
+
+  let breakdown = [
+    { label: "2% to Peer Bank (platform fee)", amount: platformFee },
+    { label: "1% Burned (removed from supply)", amount: liquidityFee }
+  ];
+
+  let inviterFee = "0";
+  if (typeof isInvited !== 'undefined' && isInvited !== "" && isInvited !== false) {
+    inviterFee = mul(base, "0.01");
+    breakdown.push({
+      label: "1% to your Inviter",
+      amount: inviterFee
+    });
+  }
+
+  const totalCommission = [
+    platformFee,
+    liquidityFee,
+    inviterFee,
+  ].reduce(addStrings, "0");
+
+  const totalUsed = addStrings(base, totalCommission);
+
+  return {
+    sentToFriend: base,
+    breakdown,
+    totalCommission,
+    totalUsed
+  };
 }
 
   ///https://localhost/peer_web_frontend/dashboard.php?testuserid=6520ac47-f262-4f7e-b643-9dc5ee4cfa82&uservisibility=ILLEGAL

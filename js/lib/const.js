@@ -1,4 +1,2 @@
-const configEl = document.getElementById("config");
-let domain = configEl.dataset.host;
-let mediaDomain = configEl.dataset.mediaHost;
+let domain = document.getElementById("config").dataset.host;
 const GraphGL = domain + "/graphql";

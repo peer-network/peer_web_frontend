@@ -176,7 +176,7 @@
 
 .checkout-form-screen .product_media {
   max-width: 300px;
-
+  max-height: 300px;
   border-radius: 20px;
   overflow: hidden;
 }
@@ -252,8 +252,8 @@
 /* Size */
 .checkout-form-screen .product_sizes {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  /* justify-content: space-between; */
+  gap: 20px;
   margin-top: 10px;
 }
 
@@ -596,6 +596,11 @@
   padding-left: 100px;
 }
 
+.checkout-form .response_msg.error {
+    margin-left: 40px;
+    padding-top: 10px;
+    display: block;
+}
 /* End order form info */
 
 .checkout-actions {

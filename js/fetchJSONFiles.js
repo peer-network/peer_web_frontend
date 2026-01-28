@@ -2,6 +2,7 @@
 
 async function fetchEndpoints() {
     const ENDPOINT_URL = "https://media.getpeer.eu/assets/endpoints.json";
+    // const ENDPOINT_URL = "https://media.peerapp.eu/assets/endpoints.json";
     const DEFAULT_VERSION = "1.9.0";
     const LOCAL_KEY = "APP_VERSION";
     const VERSION = localStorage.getItem(LOCAL_KEY) || null;
