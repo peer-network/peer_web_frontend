@@ -538,10 +538,8 @@ async function postsLaden(postbyUserID=null) {
         card_header_right.appendChild(product_price);
 
         objekt.mediadescription = (productData) ? productData.description : objekt.mediadescription;
-          console.log(objekt, productData);
         objekt.title = (productData) ? productData.name : objekt.title;
-      title.textContent = objekt.title;
-
+        title.textContent = objekt.title;
       }
       card_header.appendChild(card_header_right);
       inhaltDiv.appendChild(card_header);
