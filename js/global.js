@@ -642,16 +642,30 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.querySelector("span").textContent = "Report post";
     reportpost_btn.classList.remove("reported","none");
     // add listener only if not reported
-    reportpost_btn.addEventListener(
-      "click",
-      (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        reportPost(objekt, postContainer);
-      },
-      { capture: true }
-    );
+   reportpost_btn.addEventListener(
+        "click",
+        handleReportPostClick,
+        { capture: true }
+      );
   }
+
+  function handleReportPostClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    reportPost(objekt, postContainer);
+  }
+
+
+
+   if( PEER_SHOP_ID == objekt.user.id) { // PEER_SHOP_ID is global variable define in global.js on top
+      reportpost_btn.classList.add("none"); // Shop post not reportable
+      reportpost_btn.removeEventListener(
+        "click",
+        handleReportPostClick,
+        { capture: true }
+      );
+    }
+  
 
   const containerleft = postContainer.querySelector(".viewpost-left");
   const containerright = postContainer.querySelector(".viewpost-right");
@@ -720,6 +734,7 @@ function postdetail(objekt, CurrentUserID) {
   const cont_post_title = containerright.querySelector(".post_title h2");
   const cont_post_time = containerright.querySelector(".timeagao");
   const cont_post_tags = containerright.querySelector(".hashtags");
+  cont_post_tags.innerHTML = "";
 
   const card_post_text = objekt.mediadescription;
   cont_post_text.innerHTML = card_post_text;
