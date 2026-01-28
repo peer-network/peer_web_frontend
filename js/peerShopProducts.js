@@ -278,7 +278,7 @@ function createSizeSelection(objekt) {
       size: "One Size", 
       inStock: Number(objekt.one_size_stock) > 0 
     }];
-    hasFirebaseSizeData = true;
+    hasFirebaseSizeData = false;
   }
 
   else if (Array.isArray(objekt.sizes) && objekt.sizes.length > 0) {
@@ -500,7 +500,7 @@ function createAmountBreakdown(objekt) {
   feePanel.innerHTML = `<div class="fee-section close">
       <div class="total_amount bold  md_font_size">
         Total amount 
-        <span class="final-total bold xl_font_size">${formatAmount(data.totalUsed)}</span>
+        <span class="final-total bold xl_font_size">${formatAmount(data.sentToFriend)}</span>
       </div>
       <div class="product-price ">
         <div class="price-item txt-color-gray md_font_size">
