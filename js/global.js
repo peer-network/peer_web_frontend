@@ -3,8 +3,8 @@ let likeCost = 0.3,
   dislikeCost = 0.3,
   commentCost = 0.1,
   postCost = 2;
-// const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
-const PEER_SHOP_ID = '9adaad3b-b75f-4045-b48a-33d4ec8d06b8'; //test
+const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
+// const PEER_SHOP_ID = '9adaad3b-b75f-4045-b48a-33d4ec8d06b8'; //test
 let baseUrl;
 let isInvited=false;
 
@@ -111,14 +111,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 function applyZoom() {
-  const BASE_WIDTH = 3800;
+  
   const layout = document.querySelector(".site_layout");
-  const left_sidebar = layout.querySelector(".left-sidebar");
-  const right_sidebar = layout.querySelector(".right-sidebar");
-  const cardClickedDiv= document.getElementById("cardClicked");
 
-
-  function applyScale() {
+  if(layout){
+    applyScale(layout);
+    window.visualViewport.addEventListener("resize", () => applyScale(layout));
+  
+  }
+}   
+  function applyScale(layout) {
+    const BASE_WIDTH = 3800;
+    const left_sidebar = layout.querySelector(".left-sidebar");
+    const right_sidebar = layout.querySelector(".right-sidebar");
+    const cardClickedDiv= document.getElementById("cardClicked");
     const vw = window.visualViewport.width;
     const vh = window.visualViewport.height;
 
@@ -142,10 +148,8 @@ function applyZoom() {
       
     }
   }
+  
 
-  applyScale();
-  window.visualViewport.addEventListener("resize", applyScale);
-}
 
 function getHostConfig() {
   const config = document.querySelector("#config");
@@ -638,16 +642,30 @@ function postdetail(objekt, CurrentUserID) {
     reportpost_btn.querySelector("span").textContent = "Report post";
     reportpost_btn.classList.remove("reported","none");
     // add listener only if not reported
-    reportpost_btn.addEventListener(
-      "click",
-      (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        reportPost(objekt, postContainer);
-      },
-      { capture: true }
-    );
+   reportpost_btn.addEventListener(
+        "click",
+        handleReportPostClick,
+        { capture: true }
+      );
   }
+
+  function handleReportPostClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    reportPost(objekt, postContainer);
+  }
+
+
+
+   if( PEER_SHOP_ID == objekt.user.id) { // PEER_SHOP_ID is global variable define in global.js on top
+      reportpost_btn.classList.add("none"); // Shop post not reportable
+      reportpost_btn.removeEventListener(
+        "click",
+        handleReportPostClick,
+        { capture: true }
+      );
+    }
+  
 
   const containerleft = postContainer.querySelector(".viewpost-left");
   const containerright = postContainer.querySelector(".viewpost-right");
@@ -716,6 +734,7 @@ function postdetail(objekt, CurrentUserID) {
   const cont_post_title = containerright.querySelector(".post_title h2");
   const cont_post_time = containerright.querySelector(".timeagao");
   const cont_post_tags = containerright.querySelector(".hashtags");
+  cont_post_tags.innerHTML = "";
 
   const card_post_text = objekt.mediadescription;
   cont_post_text.innerHTML = card_post_text;

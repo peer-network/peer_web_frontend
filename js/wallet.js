@@ -1264,19 +1264,22 @@ function closeTransferModal() {
 
 function formatDate(timestampStr) {
   // Remove microseconds beyond milliseconds and replace space with 'T'
-  const isoStr = timestampStr.replace(" ", "T").replace(/(\.\d{3})\d+/, "$1");
+  // Append 'Z' to indicate UTC timezone
+  const isoStr = timestampStr.replace(" ", "T").replace(/(\.\d{3})\d+/, "$1") + "Z";
   const date = new Date(isoStr);
 
   const options = {
     year: "numeric",
-    month: "short", // "Jun"
+    month: "short",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false
+    second: "2-digit",
+    hour12: false,
+  
   };
 
-  return date.toLocaleString(undefined, options);
+  return date.toLocaleString("de-DE", options);
 }
 
 document.getElementById('reloadTransactions').addEventListener('click', resetTransactionHistoryList)
