@@ -1243,8 +1243,9 @@ async function resolveTransfer(recipientId, numberOfTokens, message) {
 
 function calculateTotalWithFee(amount) {
   const feePercent = isInvited === "" ? 0.04 : 0.05;
-  const fee = amount * feePercent;
-  return parseFloat(amount + fee);
+  const numAmount = parseFloat(amount);
+  const fee = numAmount * feePercent;
+  return numAmount + fee;
 }
 
 
@@ -1276,7 +1277,7 @@ function formatDate(timestampStr) {
     minute: "2-digit",
     second: "2-digit",
     hour12: false,
-  
+
   };
 
   return date.toLocaleString("de-DE", options);
