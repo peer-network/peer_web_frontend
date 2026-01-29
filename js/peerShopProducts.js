@@ -271,14 +271,15 @@ function createSizeSelection(objekt) {
       inStock: stock > 0
     }));
     hasFirebaseSizeData = true;
-  } 
+  }
 
   else if (objekt.one_size_stock !== undefined && objekt.one_size_stock !== null) {
-    arraySizes = [{ 
-      size: "One Size", 
-      inStock: Number(objekt.one_size_stock) > 0 
-    }];
-    hasFirebaseSizeData = false;
+    // One size products - hide size selection, auto-select internally
+    productSize.classList.add('none');
+    productSize.dataset.sizeOptional = 'true';
+    productSize.dataset.autoSize = 'One Size';
+    SelectedSize.classList.add('none');  // Keep hidden in step 2
+    return;
   }
 
   else if (Array.isArray(objekt.sizes) && objekt.sizes.length > 0) {
@@ -287,11 +288,12 @@ function createSizeSelection(objekt) {
       return s;
     });
     hasFirebaseSizeData = true;
-  } 
- 
+  }
+
   if (!hasFirebaseSizeData) {
     productSize.classList.add('none');
     productSize.dataset.sizeOptional = 'true';
+    SelectedSize.classList.add('none');  // Keep hidden in step 2
     return;
   }
 
@@ -562,7 +564,6 @@ function createActions(objekt) {
   checkoutNextBtn = document.createElement("button");
   checkoutNextBtn.className = "btn-next btn-blue bold";
   checkoutNextBtn.type = "submit";
-  // checkoutNextBtn.disabled = true;
   checkoutNextBtn.innerHTML = `Next <i class="peer-icon peer-icon-arrow-right"></i>`;
 
   actions.append(checkoutBackBtn, checkoutNextBtn);
@@ -570,14 +571,18 @@ function createActions(objekt) {
   checkoutNextBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    // Check if delivery info (always in step 1) is visible
     const isStep1Visible = deliveryInfo && !deliveryInfo.classList.contains('none');
 
     if (isStep1Visible) {
       const formValid = validateForm();
       if (formValid) {
         document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
-        document.querySelectorAll('.step_2').forEach(el => el.classList.remove('none'));
+        document.querySelectorAll('.step_2').forEach(el => {
+          if (el.classList.contains('selected_size') && productSize?.dataset?.sizeOptional === 'true') {
+            return;
+          }
+          el.classList.remove('none');
+        });
 
         checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
         checkoutNextBtn.classList.add('btn-pay');
@@ -708,7 +713,7 @@ function validateForm() {
   const v3 = validateInput(address);
   const v4 = validateInput(city);
   const v5 = validateInput(zip);
-  
+
 
   const isSizeOptional = productSize?.dataset?.sizeOptional === 'true';
   const v6 = isSizeOptional ? true : !!sizeChecked;
@@ -737,6 +742,11 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
     ? `addressline2: "${orderDetails.addressline2}"`
     : `addressline2: null`;
 
+  const sizeValue = orderDetails.shopItemSpecs.size;
+  const shopItemSpecsPart = sizeValue
+    ? `shopItemSpecs: { size: "${sizeValue}" }`
+    : `shopItemSpecs: null`;
+
   const query = `
     mutation PerformShopOrder {
       performShopOrder(
@@ -750,7 +760,7 @@ async function performShopOrder(shopItemId, orderDetails, tokenAmount) {
           city: "${orderDetails.city}"
           zipcode: "${orderDetails.zipcode}"
           country: GERMANY
-          shopItemSpecs: { size: "${orderDetails.shopItemSpecs.size}" }
+          ${shopItemSpecsPart}
         }
       ) {
         status
@@ -786,7 +796,8 @@ async function handlePayment(objekt) {
   const city = checkoutForm.querySelector(".city").value.trim();
   const zip = checkoutForm.querySelector(".zip").value.trim();
   const sizeInput = wrapper.querySelector('input[name="product_size"]:checked');
-  const size = sizeInput ? sizeInput.value : "";
+  const autoSize = productSize?.dataset?.autoSize || "";
+  const size = sizeInput ? sizeInput.value : autoSize;
 
   const orderDetails = {
     shopItemSpecs: { size: size },
