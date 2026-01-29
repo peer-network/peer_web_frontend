@@ -244,8 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (query.length < 2 || query.length > 53 || !/^[a-zA-Z]+$/.test(query)) {
 
         item.innerHTML = `Tag must be 2-53 chars with letters only.`; // matches regex
-
-        //console.log('i m in if');
       } else {
         searchTags(query);
       }
@@ -257,9 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
-    //console.log("Tag search result:", tagName);
-
-
     const query = `
       query searchTags ($tagName: String!) {
         searchTags(tagName: $tagName, limit: 10) {
