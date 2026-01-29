@@ -40,6 +40,7 @@
   flex-direction: column;
   min-width: 400px;
   position: relative;
+  gap: 30px;
 }
 
 .profile_header .profile_edit_box .btn-white,

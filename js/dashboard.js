@@ -59,10 +59,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+  let searchDebounceTimer = null;
+
   function validateTitle() {
     const searchTitle = titleInput.value.trim();
-     if (searchTitle.length >= 2 && searchTitle.length <= 63) {
-      handleSearch();
+
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer);
+    }
+
+    if (searchTitle.length === 0 || (searchTitle.length >= 2 && searchTitle.length <= 63)) {
+      searchDebounceTimer = setTimeout(() => {
+        handleSearch();
+      }, 300);
     }
   }
 
@@ -151,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       const json = await response.json();
-      const users = json ?.data ?.searchUser ?.affectedRows || [];
+      const users = json?.data?.searchUser?.affectedRows || [];
 
       const dropdown = document.getElementById("userDropdown");
       dropdown.innerHTML = "";
@@ -215,30 +224,28 @@ document.addEventListener("DOMContentLoaded", () => {
       if (query.startsWith("#")) {
         query = query.slice(1);
       }
-      
+
       // if (query.length > 0) {
       //   searchTags(query);
       // }
-      
+
       // else{
-        //handleSearch();
+      //handleSearch();
       // }
-      
+
       //implement validations
-    
+
       const dropdown = document.getElementById("tagDropdown");
       dropdown.innerHTML = "";
       dropdown.classList.add("active");
       const item = document.createElement("div");
       item.className = "dropdown-item";
-      
+
       if (query.length < 2 || query.length > 53 || !/^[a-zA-Z]+$/.test(query)) {
-         
-          item.innerHTML = `Tag must be 2-53 chars with letters only.`; // matches regex
-          
-          //console.log('i m in if');
+
+        item.innerHTML = `Tag must be 2-53 chars with letters only.`; // matches regex
       } else {
-          searchTags(query);
+        searchTags(query);
       }
 
       dropdown.appendChild(item);
@@ -248,9 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function searchTags(tagName) {
     const accessToken = getCookie("authToken");
-    //console.log("Tag search result:", tagName);
-
-
     const query = `
       query searchTags ($tagName: String!) {
         searchTags(tagName: $tagName, limit: 10) {
@@ -282,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const json = await response.json();
-      const tags = json ?.data ?.searchTags ?.affectedRows || [];
+      const tags = json?.data?.searchTags?.affectedRows || [];
       displayTags(tags);
     } catch (error) {
       console.error("Error searching tags:", error);
@@ -296,10 +300,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!Array.isArray(tags) || tags.length === 0) {
       tagDropdown.classList.add("active");
-       const item = document.createElement("div");
-        item.className = "dropdown-item";
-        item.innerHTML = 'No tag found. Try different search terms.';
-        tagDropdown.appendChild(item);
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
+      item.innerHTML = 'No tag found. Try different search terms.';
+      tagDropdown.appendChild(item);
       return;
     } else {
       tagDropdown.classList.add("active");

@@ -1,4 +1,64 @@
 [
+    {
+    "id": "v12",
+    "version": "Version 1.12.0",
+    "date": "06 Jan 2026",
+    "changes": [
+      {
+        "title": "A clear Transaction History",
+        "description": [
+          "Your wallet now gives you a complete, transparent view of every transaction - making it easier to track how your Peer Tokens move."
+        ]
+      },
+      {
+        "title": "Each transaction includes:",
+        "description": [
+          "Total Peer Token amount (including fees)",
+          "Fee breakdown (Peer Bank, Burns, Inviter)",
+          "Date and time stamp",
+          "Message (if added)",
+          "You can expand any transaction to see full details, or collapse it to keep things clean.",
+          "This is the first iteration of Transaction History. Some transaction types (such as Daily Mint) are not included yet and will be added in a future update.",
+          "For now, most transactions shown are from the last month. Older transactions will be migrated and made visible in the next iteration.",
+          "Everything you earn or spend is now easier to track, understand and trust."
+
+        ]
+      },
+      {
+        "title": "Send Peer Tokens with a Personal Touch",
+        "description": [
+          "Transferring Peer Tokens just got more expressive",
+          "You can now add an optional message when sending Peer Tokens to another user, whether it’s a thank-you, a shoutout, or just an emoji."
+        ]
+      },
+      {
+        "title": "What’s new in the transfer flow:",
+        "description": [
+          "Add a note up to 500 characters (letters, numbers, emojis & most symbols allowed)",
+          "Clear transaction summary before sending",
+          "Improved error messages that guide you to the next step",
+          "Messages appear in both users’ Transaction History",
+          "Safe, transparent, and now more personal"
+        ]
+      },
+      {
+        "title": "Updated EULA",
+        "description": [
+          "Our terms now reflect the new moderation and safety rules"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Web Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki/Webapp"
+      },
+      {
+        "label": "Backend Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki"
+      }
+    ]
+  },
   {
     "id": "v11",
     "version": "Version 1.11.0",

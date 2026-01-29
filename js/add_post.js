@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const thumb = document.createElement("div");
         thumb.className = "timg";
-        thumb.innerHTML = `<i class="fi fi-sr-play">`;
+        thumb.innerHTML = `<i class="peer-icon peer-icon-play-btn">`;
         sliderThumbs.appendChild(thumb);
         thumb.appendChild(img);
 
