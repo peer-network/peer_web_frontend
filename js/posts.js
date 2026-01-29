@@ -130,9 +130,9 @@
     const accessToken = getCookie("authToken");
     const headers = getHeaders(accessToken);
 
-   
+console.log("Title:", title);
     // Fetch advertisement posts
-    const adsQuery = await getAdvertisementPosts(userID, offset, limit);
+    const adsQuery = await getAdvertisementPosts(userID, offset, limit, title , tag );
     let result = await fetchGraphQL(adsQuery, headers);
     if (result.listAdvertisementPosts.status == "error") {
       throw new Error(userfriendlymsg(result.listAdvertisementPosts.ResponseCode));
@@ -179,7 +179,8 @@
     };
   }
 
-  async function getAdvertisementPosts(userID, offset, limit) {
+  async function getAdvertisementPosts(userID, offset, limit, title, tag) {
+    
     const savedUserData = localStorage.getItem("userData");
     let contentFilterBy = null;
 
@@ -190,7 +191,15 @@
     }
 
     const query = `query ListAdvertisementPosts {
-    listAdvertisementPosts(${userID !== null ? `, userid: "${userID}"` : ""}, offset: ${offset}, limit: ${limit},contentFilterBy: ${contentFilterBy}) {
+    listAdvertisementPosts(
+          offset: ${offset}, 
+          limit: ${limit},
+          contentFilterBy: ${contentFilterBy}
+          ${userID !== null ? `, userid: "${userID}"` : ""}   
+          ${tag && tag.length >= 2 ? `, tag: "${tag}"` : ""}
+          ${title && title.length >= 1 ? `, title: "${title}"` : ""}  
+          
+        ) {  
         status
         ResponseCode
         counter
