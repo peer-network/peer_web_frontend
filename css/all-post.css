@@ -241,6 +241,15 @@ line-height: 40px;
 	display: inline-block;
 	padding-bottom: 7px;
 }
+.card .post-inhalt .button-buy-container {
+	text-align: center;
+}
+.card .post-inhalt  .button-buy-container button {
+	display: block;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 0;
+}
 
 .card .social {
 	display: flex;

@@ -586,8 +586,35 @@ async function postsLaden(postbyUserID=null) {
           divtag.appendChild(span);
         });
       }
+
       postContent.appendChild(post_text_div);
       postContent.appendChild(divtag);
+
+    if(onShopProfilepage){
+      const divbuybutton = document.createElement("div");
+      divbuybutton.className = "button-buy-container";
+      const buyButton = document.createElement("button");
+      buyButton.className = "buy-btn btn-blue bold";
+      buyButton.textContent = "Buy";
+      divbuybutton.appendChild(buyButton);
+
+      if(balance<objekt.productprice){
+        const errorBalance=document.createElement("span");
+        errorBalance.classList.add("error");
+        errorBalance.innerHTML='Not enough tokens.';
+        divbuybutton.appendChild(errorBalance);
+        buyButton.disabled=true;
+      }else{
+        buyButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          renderCheckoutProductScreen(objekt);
+        });
+      }    
+      postContent.appendChild(divbuybutton);
+    }
+
+
       inhaltDiv.appendChild(postContent);
 
       const array = JSON.parse(objekt.media);

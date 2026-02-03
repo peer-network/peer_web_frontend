@@ -784,10 +784,11 @@ function postdetail(objekt, CurrentUserID) {
       errorBalance.innerHTML='Not enough tokens. Your current balance is <strong>'+balance+' Peer Tokens.</strong>';
       buyButtoncont.appendChild(errorBalance);
       buyButton.disabled=true;
-
+    }else{
+      buyButton.addEventListener("click", () => renderCheckoutProductScreen(objekt));
     }
 
-    buyButton.addEventListener("click", () => renderCheckoutProductScreen(objekt));
+    
     postContent.insertAdjacentElement('afterend', buyButtoncont);
   }
 
