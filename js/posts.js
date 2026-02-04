@@ -130,7 +130,7 @@
     const accessToken = getCookie("authToken");
     const headers = getHeaders(accessToken);
 
-console.log("Title:", title);
+    //console.log("Title:", title);
     // Fetch advertisement posts
     const adsQuery = await getAdvertisementPosts(userID, offset, limit, title , tag );
     let result = await fetchGraphQL(adsQuery, headers);

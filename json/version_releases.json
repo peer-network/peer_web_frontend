@@ -1,5 +1,64 @@
 [
     {
+    "id": "v13",
+    "version": "Version 1.13.0",
+    "date": "04 Feb 2026",
+    "changes": [
+      {
+        "title": "Explore the Peer Shop",
+        "description": [
+          "The Peer Shop is here! Discover official Peer merch and exchange your Peer Tokens for physical items - all within the app."
+        ]
+      },
+      {
+        "title": "How it works:",
+        "description": [
+          "- Access the Shop via the navigation panel or by tapping a Shop post in your feed",
+          "- Browse items with images, descriptions, and prices in Peer Tokens",
+          "- Exchange Peer Tokens for items: select size, add shipping info (delivery is only within Germany for now)",
+          "- Review your order and confirm - the Peer Tokens are exchanged for the item",
+          "- Your order transaction appears in your Transaction History"
+        ]
+      },
+      {
+        "title": "",
+        "description": [
+          "Enjoy shopping and turning your Peer Tokens into real-world goodies!"
+        ]
+      },
+      {
+        "title": "Improved Search & Feed",
+        "description": [
+          "- Search button moved to the top for easier access, now with filter options for quick discovery",
+          "- Filter your feed by peers: see only content from users you follow and who follow you back"
+        ]
+      },
+      {
+        "title": "",
+        "description": [
+          "Explore, exchange, and focus on the content that matters most to you!"
+        ]
+      },
+     
+      {
+        "title": "Updated EULA",
+        "description": [
+          "Our terms now reflect the new moderation and safety rules"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Web Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki/Webapp"
+      },
+      {
+        "label": "Backend Wiki",
+        "href": "https://github.com/peer-network/peer_backend/wiki"
+      }
+    ]
+  },
+  {
     "id": "v12",
     "version": "Version 1.12.0",
     "date": "06 Jan 2026",
