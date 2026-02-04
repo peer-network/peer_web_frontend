@@ -322,7 +322,7 @@ function createSizeSelection(objekt) {
       const sizeError = productSize.querySelector(".response_msg");
       if (sizeError) sizeError.classList.add("none");
 
-      validateForm();
+      //validateForm();
     };
 
     label.append(input, span);
