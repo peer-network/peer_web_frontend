@@ -15,7 +15,7 @@ moderationModule.view = {
     };
 
     const statusIsWaiting = (item) => {
-      const s = ((item.status || item.post ?.status || item.targetstatus || "") + "").toLowerCase().trim();
+      const s = ((item.status || item.post?.status || item.targetstatus || "") + "").toLowerCase().trim();
       return s.includes("waiting");
     };
 
@@ -38,10 +38,10 @@ moderationModule.view = {
       };
       if (reviewChk && reviewChk.checked) opts.status = "waiting for review";
       const result = await moderationModule.fetcher.loadItems(type, opts);
-      const items = Array.isArray(result) ? result : (moderationModule.store ?.items || []);
+      const items = Array.isArray(result) ? result : (moderationModule.store?.items || []);
       const kind = kindFrom(type, contentType);
 
-      if ((!items || items.length === 0) && Array.isArray(moderationModule.store ?.items) && moderationModule.store.items.length) {
+      if ((!items || items.length === 0) && Array.isArray(moderationModule.store?.items) && moderationModule.store.items.length) {
         const cached = moderationModule.store.items.filter(i => !kind || (i.kind === kind));
         applyAndRender(cached, kind);
         return;
@@ -57,7 +57,7 @@ moderationModule.view = {
       li.addEventListener("click", async (e) => {
         e.preventDefault();
         document.querySelectorAll(".item_filters li a").forEach((a) => a.classList.remove("active"));
-        li.querySelector("a") ?.classList.add("active");
+        li.querySelector("a")?.classList.add("active");
 
         let type = "LIST_ITEMS";
         let contentType = null;
@@ -74,6 +74,8 @@ moderationModule.view = {
 
         lastType = type;
         lastContentType = contentType;
+        moderationModule.store.pagination.filter.type = type;
+        moderationModule.store.pagination.filter.contentType = contentType;
 
         await loadAndRender(type, contentType);
       });
@@ -82,7 +84,7 @@ moderationModule.view = {
     if (reviewChk) {
       reviewChk.addEventListener("change", async () => {
         const kind = kindFrom(lastType, lastContentType);
-        const cached = Array.isArray(moderationModule.store ?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
+        const cached = Array.isArray(moderationModule.store?.items) ? moderationModule.store.items.filter(i => !kind || i.kind === kind) : [];
         if (cached.length) {
           applyAndRender(cached, kind);
           return;
@@ -138,18 +140,18 @@ moderationModule.view = {
 
       if (item.media) {
         const imgEl = moderationModule.helpers.createEl("img", { src: item.media });
-          (item.kind == "user") ? imgEl.onerror = function () { this.src = "../svg/noname.svg"; }: imgEl.onerror = function () { this.remove(); };
-          imgWrapper.append(imgEl);
-        }
-      
-       imgWrapper.append(moderationModule.helpers.createEl("i", {
-          className: item.icon
-        }));
+        (item.kind == "user") ? imgEl.onerror = function () { this.src = "../svg/noname.svg"; } : imgEl.onerror = function () { this.remove(); };
+        imgWrapper.append(imgEl);
+      }
+
+      imgWrapper.append(moderationModule.helpers.createEl("i", {
+        className: item.icon
+      }));
 
       const detailEl = moderationModule.helpers.createEl("span", {
         className: "content_detail"
       });
-      const userNameClass =  item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
+      const userNameClass = item.kind === "user" ? "user_name xl_font_size bold italic" : "user_name bold italic";
       detailEl.append(
         moderationModule.helpers.createEl("span", {
           className: userNameClass,
@@ -177,16 +179,16 @@ moderationModule.view = {
 
       if (item.kind === "comment") {
         detailEl.append(
-            moderationModule.helpers.createEl("span", {
-              className: "post_title xl_font_size bold",
-              textContent: item.post?.title,
-            })
+          moderationModule.helpers.createEl("span", {
+            className: "post_title xl_font_size bold",
+            textContent: item.post?.title,
+          })
         );
-         detailEl.append(
-            moderationModule.helpers.createEl("span", {
-              className: "user_slug txt-color-gray",
-              textContent: item.commentid,
-            })
+        detailEl.append(
+          moderationModule.helpers.createEl("span", {
+            className: "user_slug txt-color-gray",
+            textContent: item.commentid,
+          })
         );
       }
 
@@ -204,16 +206,20 @@ moderationModule.view = {
       const reportsEl = moderationModule.helpers.createEl("div", {
         className: "reports"
       });
+
+      const isFlagged = item.reports >= 5;
       const reportCount = moderationModule.helpers.createEl("span", {
-        className: "xl_font_size txt-color-gray",
-        innerHTML: `<i class="peer-icon peer-icon-copy-alt"></i> ${item.reports}`,
+        className: `xl_font_size txt-color-gray ${isFlagged ? "red-text" : ""}`,
+        innerHTML: isFlagged
+          ? `<i class="peer-icon peer-icon-flag-fill red-text"></i> ${item.reports}`
+          : `<i class="peer-icon peer-icon-flag txt-color-gray"></i> ${item.reports}`,
       });
-      
+
       const statusVal = (item.status || "").toLowerCase();
       const visibility = moderationModule.helpers.createEl("span", {
         className: "visible txt-color-gray",
-        innerHTML: statusVal == "illegal" ?  
-          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed`:
+        innerHTML: statusVal == "illegal" || item.reports >= 5 ?
+          `<i class="peer-icon peer-icon-eye-close"></i> Not visible in the feed` :
           ""
       });
       reportsEl.append(reportCount, visibility);
@@ -259,7 +265,7 @@ moderationModule.view = {
           <div class="profile_post">
             <div class="profile">
               <span class="profile_image">
-                <img src="../svg/noname.svg" />
+                <img class="profile-picture" src="${item?.userImg}" onerror="this.src='../svg/noname.svg'" alt="user image">
               </span>
               <span class="profile_detail">
                 <span class="user_name xl_font_size bold italic">${item.username}</span>
@@ -286,7 +292,7 @@ moderationModule.view = {
         const mediaContainer = postBlock.querySelector(".post_media");
 
         if (item.media instanceof HTMLElement) {
-          mediaContainer.innerHTML="";
+          mediaContainer.innerHTML = "";
           mediaContainer.appendChild(item.media);
         }
 
@@ -405,7 +411,7 @@ moderationModule.view = {
         const mediaContainer = commentPostDetail.querySelector(".post_media");
 
         if (item.post.media instanceof HTMLElement) {
-          mediaContainer.innerHTML="";
+          mediaContainer.innerHTML = "";
           mediaContainer.appendChild(item.post.media);
         }
 
@@ -418,8 +424,8 @@ moderationModule.view = {
       const contenStatus = moderationModule.helpers.createEl("div", { className: "conten_status" });
       const rightStatusClass =
         statusVal === "hidden" || statusVal === "illegal" ? "hidden-tx xl_font_size red-text" :
-        statusVal === "restored" ? "restored xl_font_size green-text" :
-        "review xl_font_size yellow-text";
+          statusVal === "restored" ? "restored xl_font_size green-text" :
+            "review xl_font_size yellow-text";
 
       contenStatus.innerHTML = `
         <span class="label xl_font_size txt-color-gray">Status</span>
@@ -434,7 +440,7 @@ moderationModule.view = {
         <div class="head">
           <span class="label xl_font_size">Reported by</span>
           <span class="flag xl_font_size red-text">
-            <i class="peer-icon peer-icon-copy-alt"></i>
+            <i class="peer-icon peer-icon-flag-fill red-text"></i>
             ${item.reports}
           </span>
         </div>
@@ -534,16 +540,16 @@ moderationModule.view = {
         actionButtons.classList.add("none");
         return false
       });
-      confirmHide.querySelector(".btn_cancel").onclick = () => { 
-        confirmHide.classList.add("none");   
-        actionButtons.classList.remove("none"); 
+      confirmHide.querySelector(".btn_cancel").onclick = () => {
+        confirmHide.classList.add("none");
+        actionButtons.classList.remove("none");
         return false;
       }
 
       confirmHide.querySelector(".btn_confirm").onclick = async (e) => {
         e.preventDefault();
         await moderationModule.service.performModeration(item.moderationId, "hidden");
-        confirmHide.classList.add("none");      
+        confirmHide.classList.add("none");
         const actionBox = e.target.closest(".action_box");
         if (!actionBox) return;
         let el = actionBox;
@@ -561,7 +567,7 @@ moderationModule.view = {
           moderatedAction.className = "moderated_action xl_font_size red-text";
         }
         applyModerationUI();
-        
+
         return false;
       }
 
@@ -577,9 +583,9 @@ moderationModule.view = {
         actionButtons.classList.add("none");
         return false;
       });
-      confirmRestore.querySelector(".btn_cancel").onclick = (e) => { 
+      confirmRestore.querySelector(".btn_cancel").onclick = (e) => {
         e.preventDefault();
-        confirmRestore.classList.add("none"); 
+        confirmRestore.classList.add("none");
         actionButtons.classList.remove("none");
         return false;
       }
@@ -598,7 +604,7 @@ moderationModule.view = {
         }
 
         const moderatedByBox = el;
-        
+
         if (!moderatedByBox || !moderatedByBox.classList.contains("moderated_by_box")) return;
         const moderatedAction = moderatedByBox.querySelector(".moderated_action");
         if (moderatedAction) {
@@ -622,9 +628,9 @@ moderationModule.view = {
         actionButtons.classList.add("none");
         return false
       });
-      confirmIllegal.querySelector(".btn_cancel").onclick = (e) => { 
+      confirmIllegal.querySelector(".btn_cancel").onclick = (e) => {
         e.preventDefault();
-        confirmIllegal.classList.add("none"); 
+        confirmIllegal.classList.add("none");
         actionButtons.classList.remove("none");
         return false;
       }
@@ -649,7 +655,7 @@ moderationModule.view = {
           moderatedAction.textContent = "Illegal";
           moderatedAction.className = "moderated_action xl_font_size red-text";
         }
-        
+
         applyModerationUI();
         return false;
       };
@@ -658,7 +664,7 @@ moderationModule.view = {
       actionButtons.append(restoreBtn, hideBtn, illegalBtn);
       boxRight.append(confirmHide, confirmRestore, confirmIllegal);
       boxRight.append(actionButtons);
-    
+
       /* Moderated box */
       const moderatedBox = moderationModule.helpers.createEl("div", {
         className: `moderated_by_box ${statusVal == "waiting for review" ? "none" : ""}`
@@ -670,11 +676,11 @@ moderationModule.view = {
           <span class="label xl_font_size txt-color-gray">Moderated by</span>
           <span class="profile">
             <span class="profile_image">
-              <img src="../svg/noname.svg" />
+              <img class="profile-picture" src="${item?.moderatedBy?.img}" onerror="this.src='../svg/noname.svg'" alt="user image">
             </span>
             <span class="profile_detail">
-              <span class="user_name xl_font_size bold italic">${item.moderatorName || "moderator"}</span>
-              <span class="user_slug txt-color-gray">${item.moderatorSlug || "#000000"}</span>
+              <span class="user_name xl_font_size bold italic">${item.moderatedBy?.username || "moderator"}</span>
+              <span class="user_slug txt-color-gray">${item.moderatedBy?.slug || "#000000"}</span>
             </span>
           </span>
           <span class="datetime xl_font_size txt-color-gray">${item.moderatedAt || ""}</span>
@@ -693,10 +699,10 @@ moderationModule.view = {
       itemInner.addEventListener("click", (evt) => {
         this.toggleRow(itemEl, contentBox);
       });
-      
+
       // contentBox.addEventListener("click", (evt) => {
-        //evt.stopPropagation();
-        //evt.preventDefault();
+      //evt.stopPropagation();
+      //evt.preventDefault();
       // });
     });
   },

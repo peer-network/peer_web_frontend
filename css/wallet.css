@@ -1,9 +1,12 @@
-  .site_layout {
-    
+html,
+body {
+  min-height: 100%;
+}
+
+.site_layout {
     background-image: url(../img/wallet-page-bg.png);
     background-size: cover;
     background-attachment: fixed;
-    
   }
 .left-sidebar.left-sidebar-wallet {
 	background-color: var(--background-color);
@@ -12,15 +15,21 @@
 	background-color: var(--background-color);
 }
 
-
-.wallet_main {
+/* .wallet_main {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 50px;
   margin-top: 180px;
   height: calc(100% - 180px);
+} */
+.wallet_main {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  margin-top: 180px;
 }
+
 .wallet_header .wallet_heading.xl_font_size {
 	margin-bottom: 0;
 }
@@ -122,13 +131,20 @@
   animation: loading 4s ease 0s infinite;
 }
 
-.wallet_transactions {
+/* .wallet_transactions {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	align-self: stretch;
   gap: 50px;
+} */
+.wallet_transactions {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
+
 .transaction_lists {
 	display: flex;
 	flex-direction: column;
@@ -287,6 +303,22 @@
 	background-position: right center;
 }
 
+.tarnsaction_item .transaction_detail .delivery_info_container {
+	display: flex;
+	padding: 40px;
+	flex-direction: column;
+	gap: 20px;
+	align-self: stretch;
+	border-radius: 70px;
+	background: var(--black-dark, #252525);
+	margin-top: 20px
+}
+
+.tarnsaction_item .transaction_detail .delivery_info_container .price_detail_row .price {
+	padding-right: 0px;
+	background: none;
+}
+
 .tarnsaction_item .transaction_detail .message_row {
 	display: flex;
 	flex-direction: column;
@@ -298,9 +330,11 @@
 	padding: 20px;
 	border-radius: 40px;
 	background: var(--black-dark, #252525);
+	white-space: pre-wrap;
+	max-height: 500px;
+    overflow: auto;
+	word-break: break-word;
 }
-
-
 
 #wallet {
   display: grid;
@@ -379,12 +413,20 @@
 .history-item div:last-child {
   text-align: right;
 }
-#history-container {
+/* #history-container {
 	height: calc(100% - 680px);
 	overflow: auto;
 	overflow-y: scroll;
 	scrollbar-width: none;
+} */
+#history-container {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  margin-top: 40px;
 }
+
 .kurs {
   display: flex;
   justify-content: space-around;
@@ -775,13 +817,29 @@
   padding: 40px;
 
 }
-.site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
+/* .site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
 	border-radius: 0;
 	padding: 20px 20px 0 0;
 	background-color: transparent;
 	border-top: 1px solid var(--white-secondary);
 	overflow: auto;
 	height: 160px;
+	white-space: pre-wrap;
+} */
+.site-main-wallet .transfer-form-screen .message-wrap.summary-message .message_area {
+  border-radius: 0;
+  padding: 20px 20px 0 0;
+  background-color: transparent;
+  border-top: 1px solid var(--white-secondary);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  height: 200px;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .site-main-wallet .transfer-form-screen .message-wrap textarea {
 	width: 100%;
@@ -990,6 +1048,29 @@
 .site-main-wallet .search_input_box .peer-icon-search {
 	position: absolute;
 	right: 50px;
-	top: 41px;
+	top: 50%;
 	cursor: pointer;
+	transform: translateY(-50%);
+	line-height: 0;
+}
+.user_not_found {
+	text-align: center;
+	padding: 100px 30px;
+}
+.user_not_found .unot-icon {
+	border-radius: 100%;
+	background: rgba(255, 59, 59, 0.20);
+	display: flex;
+	width: 200px;
+	height: 200px;
+	padding: 40px;
+	justify-content: center;
+	align-items: center;
+	gap: 8.715px;
+	aspect-ratio: 1/1;
+	margin: 0 auto 40px;
+}
+.user_not_found .unot-icon .peer-icon {
+	font-size: 120px;
+	color: var(--red-accent);
 }

@@ -41,7 +41,7 @@ checkAuth("unauthorized");
     ?>
 </head>
 <body >
-<div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+<div id="config"  class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>"></div>
 <div id="profile" class="site_layout view-profile">
   <header class="site-header header-profile"> <img class="logo" src="svg/Home.svg" alt="Peer Network">
     <h1 class="dashboard_h1" id="h1">Profile</h1>
@@ -71,7 +71,7 @@ checkAuth("unauthorized");
       </div>
       <!-- rendering via js code written in viewprofile.js -->
       <div class="profile_edit_box">
-        <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#"></a></div>
+        <div class=""><a class="button btn-transparent follow-button" id="followbtn" href="#">Follow</a></div>
         <div class="moreActions_container_wrap">
           <div class="button moreActions_container" role="button" aria-expanded="false" aria-controls="moreActions" tabindex="0">More</div>
           <div class="moreActions_wrapper" hidden>

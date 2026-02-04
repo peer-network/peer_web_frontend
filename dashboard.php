@@ -31,22 +31,9 @@ checkAuth("unauthorized");
     <!-- Firebase Analytics (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js"></script>
 
-    <script>
-        // Your Firebase config
-        const firebaseConfig = {
-            apiKey: "AIzaSyBRrV8AuxJlS_9DQ2jZKqTHT8m70AhGxiU",
-            authDomain: "peer-de113.firebaseapp.com",
-            projectId: "peer-de113",
-            storageBucket: "peer-de113.firebasestorage.app",
-            messagingSenderId: "1088506353097",
-            appId: "1:1088506353097:web:e74867ffd43d0fad440418",
-            measurementId: "G-RYR3LKVF4L"
-        };
-        //  This works with compat
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-    </script>
-
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+    <script src="js/env.js?<?php echo @filemtime('js/env.js'); ?>"></script>
+    <script src="js/firebase_config.js?<?php echo filemtime('js/firebase_config.js'); ?>" defer></script>
 
     <!-- <script src="sw_instal.min.js" async></script> -->
     <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
@@ -72,7 +59,7 @@ checkAuth("unauthorized");
 
 <body>
     <div id="config" class="none"
-        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>"></div>
+        data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>"></div>
     <div id="dashboard" class="site_layout">
         <header class="site-header header-dashboard">
             <img class="logo" src="svg/Home.svg" alt="Peer Network">

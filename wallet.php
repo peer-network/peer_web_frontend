@@ -23,11 +23,20 @@ checkAuth("unauthorized");
 
 
 
+  <!-- Firebase App (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js" defer></script>
+  <!-- Firebase Analytics (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js" defer></script>
+  <script src="js/env.js?<?php echo @filemtime('js/env.js'); ?>"></script>
+  <script src="js/firebase_config.js?<?php echo filemtime('js/firebase_config.js'); ?>" defer></script>
+
   <!-- <script src="sw_instal.min.js" async></script> -->
   <script src="js/lib.min.js?<?php echo filemtime('js/lib.min.js'); ?>" defer></script>
   <script src="js/lib/modal.js?<?php echo filemtime('js/lib/modal.js'); ?>" async></script>
   <script src="js/fetchJSONFiles.js?<?php echo filemtime('js/fetchJSONFiles.js'); ?>" defer></script>
   <script src="js/global.js?<?php echo filemtime('js/global.js'); ?>" defer></script>
+  <script src="js/peerShopProducts.js?<?php echo filemtime('js/peerShopProducts.js'); ?>" defer></script>
   <script src="js/wallet.js?<?php echo filemtime('js/wallet.js'); ?>" defer></script>
 
   <?php
@@ -37,7 +46,7 @@ checkAuth("unauthorized");
 </head>
 
 <body>
-  <div id="config" class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>">
+  <div id="config"  class="none" data-host="<?php echo htmlspecialchars('https://' . $domain, ENT_QUOTES, 'UTF-8'); ?>" data-media-host="<?php echo htmlspecialchars('https://' . $mediaDomain, ENT_QUOTES, 'UTF-8'); ?>">
   </div>
   <div id="edit-profile" class="site_layout">
     <header class="site-header header-profile">
@@ -70,7 +79,7 @@ checkAuth("unauthorized");
             </div>
 
               <div class="wallet_reload">
-              <a href="#"  class="md_font_size">Reload <i class="peer-icon peer-icon-refresh-alt"></i></a>
+              <a id="reloadTransactions" href="#" class="md_font_size">Reload <i class="peer-icon peer-icon-refresh-alt"></i></a>
             </div>
 
           </div>
