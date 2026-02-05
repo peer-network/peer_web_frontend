@@ -72,7 +72,7 @@ checkAuth("unauthorized");
         <div class="cropContainer"><img id="profilbild2" class="profile-picture" src="svg/noname.svg" alt="Profile Picture" /></div>
       </div>
       <div class="profile_info">
-        <h2 class="profile_title"><span  id="username2" class="xxl_font_size bold">&nbsp;</span><span id="slug2" class="slug profile_no xl_font_size txt-color-gray">&nbsp;</span></h2>
+        <h2 class="profile_title"><span  id="username2" class="xxl_font_size bold">&nbsp;</span><span id="slug2" class="profile_no xl_font_size txt-color-gray">&nbsp;</span></h2>
         <div class="profile_description md_font_size" id="biography2"> </div>    
         <div id="modal_Overlay" class="modalOverlay none"></div>
       </div>
