@@ -1,17 +1,61 @@
 let peerShopProducts = {};
+let peerShopProductsLoaded = false;
+let peerShopProductsPromise = null;
 
-// Preload peer shop products from Firestore
-loadPeerShopProducts();
+// Preload peer shop products from Firebase
+peerShopProductsPromise = loadPeerShopProducts();
 
+/**
+ * Load shop products from Firebase Firestore
+ */
 function loadPeerShopProducts() {
-  db.collection("shop")
-    .get()
-    .then((snapshot) => {
-      snapshot.forEach((doc) => {
-        peerShopProducts[doc.id] = doc.data();
+  return new Promise((resolve) => {
+    // Check if Firebase db is available
+    if (typeof db === 'undefined' || !db) {
+      console.warn("Firebase db not available");
+      peerShopProductsLoaded = true;
+      resolve(false);
+      return;
+    }
+
+    // Set a timeout for Firebase - if it takes too long, consider it failed
+    const timeoutId = setTimeout(() => {
+      console.warn("Firebase timeout - connection took too long");
+      peerShopProductsLoaded = true;
+      resolve(false);
+    }, 5000);
+
+    db.collection("shop")
+      .get()
+      .then((snapshot) => {
+        clearTimeout(timeoutId);
+        snapshot.forEach((doc) => {
+          peerShopProducts[doc.id] = doc.data();
+        });
+        peerShopProductsLoaded = true;
+        console.log("Peer shop products loaded:", Object.keys(peerShopProducts).length);
+        resolve(true);
+      })
+      .catch((err) => {
+        clearTimeout(timeoutId);
+        console.error("Firebase Firestore error:", err);
+        peerShopProductsLoaded = true;
+        resolve(false);
       });
-    })
-    .catch((err) => console.error("Error loading peer shop products:", err));
+  });
+}
+
+/**
+ * Wait for products to be loaded before using them
+ */
+function waitForPeerShopProducts() {
+  if (peerShopProductsLoaded) {
+    return Promise.resolve(peerShopProducts);
+  }
+  if (peerShopProductsPromise) {
+    return peerShopProductsPromise.then(() => peerShopProducts);
+  }
+  return Promise.resolve(peerShopProducts);
 }
 
 function getProductByPostId(postId) {

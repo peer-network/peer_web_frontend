@@ -7,8 +7,13 @@ const firebaseConfig = {
   appId: typeof FIREBASE_APP_ID !== 'undefined' ? FIREBASE_APP_ID : "",
   measurementId: typeof measurementId !== 'undefined' ? measurementId : "",
 };
-//  This works with compat
+
 firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+
+try {
+  firebase.analytics();
+} catch (e) {
+  console.warn("Firebase analytics not available (may be in private mode):", e.message);
+}
 
 const db = firebase.firestore();
