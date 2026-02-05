@@ -164,6 +164,10 @@ function renderRows(rows) {
           <div class="price_detail_row md_font_size txt-color-gray">Loading delivery info...</div>
         </div>
       `;
+    } else if (entry.transactionCategory === 'TOKEN_MINT') {
+      detailInnerHtml = `
+        <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
+      `;
     } else {
       detailInnerHtml = `
         <div class="price_detail_row md_font_size"><span class="price_label txt-color-gray">Transaction amount</span> <span class="price bold">${formatAmount(entry.tokenamount)}</span></div>
