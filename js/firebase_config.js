@@ -13,6 +13,7 @@ firebase.initializeApp(firebaseConfig);
 try {
   firebase.analytics();
 } catch (e) {
+  console.warn("Firebase analytics not available (may be in private mode):", e.message);
 }
 
 const db = firebase.firestore();
