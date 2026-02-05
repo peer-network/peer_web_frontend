@@ -427,7 +427,6 @@ async function postsLaden(postbyUserID = null) {
   const elShopDetect = document.querySelector('.site_layout.view-profile');
   const onShopProfilepage = elShopDetect?.dataset?.peershop === 'true';
 
-  // Wait for Firebase shop products to load before rendering on shop page
   if (onShopProfilepage && typeof waitForPeerShopProducts === 'function') {
     await waitForPeerShopProducts();
   }

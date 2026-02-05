@@ -2,15 +2,10 @@ let peerShopProducts = {};
 let peerShopProductsLoaded = false;
 let peerShopProductsPromise = null;
 
-// Preload peer shop products from Firebase
 peerShopProductsPromise = loadPeerShopProducts();
 
-/**
- * Load shop products from Firebase Firestore
- */
 function loadPeerShopProducts() {
   return new Promise((resolve) => {
-    // Check if Firebase db is available
     if (typeof db === 'undefined' || !db) {
       console.warn("Firebase db not available");
       peerShopProductsLoaded = true;
@@ -18,7 +13,6 @@ function loadPeerShopProducts() {
       return;
     }
 
-    // Set a timeout for Firebase - if it takes too long, consider it failed
     const timeoutId = setTimeout(() => {
       console.warn("Firebase timeout - connection took too long");
       peerShopProductsLoaded = true;
@@ -45,9 +39,6 @@ function loadPeerShopProducts() {
   });
 }
 
-/**
- * Wait for products to be loaded before using them
- */
 function waitForPeerShopProducts() {
   if (peerShopProductsLoaded) {
     return Promise.resolve(peerShopProducts);
