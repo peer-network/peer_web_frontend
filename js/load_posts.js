@@ -528,13 +528,14 @@ async function postsLaden(postbyUserID = null) {
     if (onShopProfilepage) {
       const productData = peerShopProducts[objekt.id];
       if (productData) {
+        console.log('productData:', productData)
         objekt.productprice = productData.price;
         objekt.sizes = productData.sizes;
         objekt.one_size_stock = productData.one_size_stock;
         objekt.mediadescription = productData.description || objekt.mediadescription;
         objekt.title = productData.name || objekt.title;
       } else {
-        objekt.productprice = 100;
+        objekt.productprice = 1000;
         objekt.sizes = [];
       }
       const product_price = document.createElement("div");
