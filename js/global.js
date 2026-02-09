@@ -757,14 +757,16 @@ function postdetail(objekt, CurrentUserID) {
     if(product_price){
       product_price.remove();
     }
-    product_price = document.createElement("div");
-    product_price.classList.add("product_price","bold","xxl_font_size");
-    product_price.innerText=objekt.productprice; // this dummy price object set in load_post.js > postsLaden function on line no 516
-    const product_price_lable = document.createElement("span");
-    product_price_lable.classList.add("product_price_label","txt-color-gray","md_font_size");
-    product_price_lable.innerText='Price';
-    product_price.prepend(product_price_lable);
-    cont_post_title_cont.appendChild(product_price);
+    if(!objekt.ProductOutOfStock){
+      product_price = document.createElement("div");
+      product_price.classList.add("product_price","bold","xxl_font_size");
+      product_price.innerText=objekt.productprice; // this dummy price object set in load_post.js > postsLaden function on line no 516
+      const product_price_lable = document.createElement("span");
+      product_price_lable.classList.add("product_price_label","txt-color-gray","md_font_size");
+      product_price_lable.innerText='Price';
+      product_price.prepend(product_price_lable);
+      cont_post_title_cont.appendChild(product_price);
+    }
 
     const postContent = containerright.querySelector('.post_content');
     let  buyButtoncont=containerright.querySelector('.buybtn_cont');
@@ -778,14 +780,22 @@ function postdetail(objekt, CurrentUserID) {
     buyButton.classList.add("buy-btn","btn-blue","bold");
     buyButton.innerText='Buy';
     buyButtoncont.appendChild(buyButton);
-    if(balance<objekt.productprice){
-      const errorBalance=document.createElement("span");
-      errorBalance.classList.add("error");
-      errorBalance.innerHTML='Not enough tokens. Your current balance is <strong>'+balance+' Peer Tokens.</strong>';
-      buyButtoncont.appendChild(errorBalance);
-      buyButton.disabled=true;
+
+     if(!objekt.ProductOutOfStock){    
+      if(balance<objekt.productprice){
+        const errorBalance=document.createElement("span");
+        errorBalance.classList.add("error");
+        errorBalance.innerHTML='Not enough tokens. Your current balance is <strong>'+balance+' Peer Tokens.</strong>';
+        buyButtoncont.appendChild(errorBalance);
+        buyButton.disabled=true;
+      }else{
+        buyButton.addEventListener("click", () => renderCheckoutProductScreen(objekt));
+      }
     }else{
-      buyButton.addEventListener("click", () => renderCheckoutProductScreen(objekt));
+      buyButton.innerText='Out of Stock';
+      buyButton.disabled=true;
+      buyButton.classList.add("buy-out-of-stock");
+      buyButtoncont.classList.remove("btn-blue");    
     }
 
     

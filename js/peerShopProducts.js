@@ -50,7 +50,6 @@ function waitForPeerShopProducts() {
 }
 
 function getProductByPostId(postId) {
-  var_dump(peerShopProducts[ '02249a7b-aa0b-4a45-948b-732385f04786']);
   return peerShopProducts[postId] || null;
 }
 
@@ -300,7 +299,7 @@ function createSizeSelection(objekt) {
 
   let arraySizes = [];
   let hasFirebaseSizeData = false;
-
+  let anySizeInStock = false;
   if (objekt.sizes && typeof objekt.sizes === 'object' && !Array.isArray(objekt.sizes)) {
     arraySizes = Object.entries(objekt.sizes).map(([size, stock]) => ({
       size: size,
@@ -352,14 +351,16 @@ function createSizeSelection(objekt) {
     span.className = "md_font_size";
     span.textContent = size;
 
-    if (!inStock) label.classList.add("out_of_stock");
-    input.onclick = () => {
-      SelectedSize.querySelector(".size").innerHTML = input.value;
-      const sizeError = productSize.querySelector(".response_msg");
-      if (sizeError) sizeError.classList.add("none");
-
-      //validateForm();
-    };
+    if (!inStock) {
+      label.classList.add("out_of_stock");
+    }else {
+      anySizeInStock = true;
+      input.onclick = () => {
+        SelectedSize.querySelector(".size").innerHTML = input.value;
+        const sizeError = productSize.querySelector(".response_msg");
+        if (sizeError) sizeError.classList.add("none");
+      };
+    }
 
     label.append(input, span);
     sizes.appendChild(label);
@@ -372,6 +373,10 @@ function createSizeSelection(objekt) {
   const sizeError = document.createElement("span");
   sizeError.className = "response_msg error cutom-style none";
   sizeError.textContent = "Please select a size";
+  if (!anySizeInStock) {
+    sizeError.textContent = "This product is currently out of stock";
+    sizeError.classList.remove("none");
+  }
 
   productSize.append(sizeLabel, sizes, sizeError);
 }
@@ -608,24 +613,36 @@ function createActions(objekt) {
     e.preventDefault();
 
     const isStep1Visible = deliveryInfo && !deliveryInfo.classList.contains('none');
-
-    if (isStep1Visible) {
-      const formValid = validateForm();
-      if (formValid) {
-        document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
-        document.querySelectorAll('.step_2').forEach(el => {
-          if (el.classList.contains('selected_size') && productSize?.dataset?.sizeOptional === 'true') {
-            return;
-          }
-          el.classList.remove('none');
-        });
-
-        checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
-        checkoutNextBtn.classList.add('btn-pay');
+    const originalBtnContent = checkoutNextBtn.innerHTML;
+    
+   
+      if (isStep1Visible) {
+        const formValid = validateForm();
+        if (formValid) {
+          checkoutNextBtn.disabled = true;
+          checkoutNextBtn.innerHTML = `Processing... <i class="peer-icon peer-icon-loader spin"></i>`;
+          setTimeout(() => {
+            document.querySelectorAll('.step_1').forEach(el => el.classList.add('none'));
+            document.querySelectorAll('.step_2').forEach(el => {
+              if (el.classList.contains('selected_size') && productSize?.dataset?.sizeOptional === 'true') {
+                return;
+              }
+              el.classList.remove('none');
+            });
+            checkoutNextBtn.disabled = false;
+            checkoutNextBtn.innerHTML = `Pay <i class="peer-icon peer-icon-arrow-right"></i>`;
+            checkoutNextBtn.classList.add('btn-pay');
+          }, 1000);
+        }else {
+          checkoutNextBtn.disabled = false;
+          checkoutNextBtn.innerHTML = originalBtnContent;
+        }
+      } else {
+        handlePayment(objekt);
       }
-    } else {
-      handlePayment(objekt);
-    }
+      
+    
+      
   });
 
   return actions;
@@ -644,6 +661,28 @@ function createFinalScreen(actionsElement) {
 }
 
 /* ================= HELPER FUNCTIONS ================= */
+function isProductOutOfStock(productData) {
+
+  if (!productData) return true;
+
+  // 1️⃣ One-size product check
+  if (typeof productData.one_size_stock === "number") {
+    return productData.one_size_stock === 0;
+  }
+
+  const sizes = productData.sizes;
+
+  // If sizes missing or empty → treat as out of stock
+  if (!sizes) return true;
+
+  // Case 1: sizes is an array
+  if (Array.isArray(sizes)) {
+    return sizes.every(item => item?.inStock === 0);
+  }
+
+  // Case 2: sizes is an object
+  return Object.values(sizes).every(stock => stock === 0);
+}
 function wrapField(input, name) {
   const wrap = document.createElement("div");
   wrap.className = `form_field field_${name}`;
@@ -704,23 +743,60 @@ function markField(input, isValid, message) {
   }
 }
 
+
 function validateInput(input) {
   const val = input.value.trim();
   let isValid = true;
   let msg = "";
 
   if (input.classList.contains("full_name")) {
-    isValid = val.length >= 2;
-    msg = "Name is required";
+    isValid = false;
+    if(val==''){
+      msg = "Name is required";
+    }else if(val.length < 2){
+      msg = "Name must be at least 2 characters";
+    }else if(val.length > 100){
+      msg = "Name must be less than 100 characters";
+    }else if( /[^a-zA-Z\s]/.test(val)){
+      msg = "Name can only contain letters and spaces";
+    }else {
+      isValid = true;
+    }   
+    
   } else if (input.classList.contains("email")) {
     isValid = isValidEmail(val);
     msg = "Enter a valid email";
   } else if (input.classList.contains("address")) {
-    isValid = val.length >= 5;
-    msg = "Address is required";
+    isValid = false;
+
+    if(val==''){
+      msg = "Address is required";
+    }else if(val.length < 6){
+      msg = "Address must be at least 6 characters";
+    }else if(val.length > 100){
+      msg = "Address must be less than 100 characters";
+    }else if (!/^[a-zA-Z0-9\s.,\-/#]+$/.test(val)) {
+      msg = "Address can only contain letters, numbers, spaces, periods, hyphens, commas, and forward slashes";
+    }else if (!/[a-zA-Z]/.test(val)) {
+      msg = "Address must include street or location name";
+    }else {
+      isValid = true;
+    }   
+   
   } else if (input.classList.contains("city")) {
-    isValid = val.length >= 2;
-    msg = "City is required";
+
+    isValid = false;
+    if(val==''){
+      msg = "City is required";
+    }else if(val.length < 2){
+      msg = "City must be at least 2 characters";
+    }else if(val.length > 100){
+      msg = "City must be less than 100 characters";
+    }else if( /[^a-zA-Z\s-]/.test(val)){
+      msg = "City can only contain letters, spaces and hyphens";
+    }else {
+      isValid = true;
+    }
   } else if (input.classList.contains("zip")) {
     isValid = isValidZip(val);
     msg = "Enter valid ZIP code";
@@ -869,9 +945,11 @@ async function handlePayment(objekt) {
       if (typeof currentliquidity === 'function') currentliquidity();
     } else {
       //if (typeof Merror === 'function') Merror("Order Failed", orderData.ResponseMessage || "Something went wrong.");
-      await warnig("Order Failed", "Something went wrong. Please try again in a moment.", false, '<i class="peer-icon peer-icon-order-failed"></i>', 'Try again');
       checkoutNextBtn.disabled = false;
       checkoutNextBtn.innerHTML = originalBtnContent;
+      await warnig("Order Failed", "Something went wrong. Please try again in a moment.", false, '<i class="peer-icon peer-icon-order-failed"></i>', 'Try again');
+      
+      
     }
   } else {
     const errorMsg = result?.errors?.[0]?.message || "An unexpected error occurred.";

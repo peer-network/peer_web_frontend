@@ -524,6 +524,8 @@ async function postsLaden(postbyUserID = null) {
     if (followButton) {
       card_header_right.appendChild(followButton);
     }
+    const product_price = document.createElement("div");
+    product_price.classList.add("product_price", "bold", "md_font_size");
 
     if (onShopProfilepage) {
       const productData = peerShopProducts[objekt.id];
@@ -533,12 +535,20 @@ async function postsLaden(postbyUserID = null) {
         objekt.one_size_stock = productData.one_size_stock;
         objekt.mediadescription = productData.description || objekt.mediadescription;
         objekt.title = productData.name || objekt.title;
+        objekt.ProductOutOfStock = false;
+        const ProductOutOfStock = isProductOutOfStock(productData);
+        if(ProductOutOfStock){
+          objekt.ProductOutOfStock = true;
+          objekt.productprice = "Out of Stock";
+          product_price.classList.add("txt-color-gray","out-of-stock");
+        }
+        
+
       } else {
         objekt.productprice = 100;
         objekt.sizes = [];
       }
-      const product_price = document.createElement("div");
-      product_price.classList.add("product_price", "bold", "md_font_size");
+     
       product_price.innerText = objekt.productprice;
       card_header_right.appendChild(product_price);
 
@@ -596,27 +606,29 @@ async function postsLaden(postbyUserID = null) {
     postContent.appendChild(divtag);
 
     if (onShopProfilepage) {
-      const divbuybutton = document.createElement("div");
-      divbuybutton.className = "button-buy-container";
-      const buyButton = document.createElement("button");
-      buyButton.className = "buy-btn btn-blue bold";
-      buyButton.textContent = "Buy";
-      divbuybutton.appendChild(buyButton);
+      if(!objekt.ProductOutOfStock){
+        const divbuybutton = document.createElement("div");
+        divbuybutton.className = "button-buy-container";
+        const buyButton = document.createElement("button");
+        buyButton.className = "buy-btn btn-blue bold";
+        buyButton.textContent = "Buy";
+        divbuybutton.appendChild(buyButton);
 
-      if (balance < objekt.productprice) {
-        const errorBalance = document.createElement("span");
-        errorBalance.classList.add("error");
-        errorBalance.innerHTML = 'Not enough tokens.';
-        divbuybutton.appendChild(errorBalance);
-        buyButton.disabled = true;
-      } else {
-        buyButton.addEventListener("click", (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-          renderCheckoutProductScreen(objekt);
-        });
+        if (balance < objekt.productprice) {
+          const errorBalance = document.createElement("span");
+          errorBalance.classList.add("error");
+          errorBalance.innerHTML = 'Not enough tokens.';
+          divbuybutton.appendChild(errorBalance);
+          buyButton.disabled = true;
+        } else {
+          buyButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            renderCheckoutProductScreen(objekt);
+          });
+        }
+        postContent.appendChild(divbuybutton);
       }
-      postContent.appendChild(divbuybutton);
     }
 
 
