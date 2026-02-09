@@ -715,20 +715,20 @@
   margin-bottom: 10px;
   line-height: 1.6;
 }
-
+/*
 .faq-popup .faq-section.faq-highlighted {
-  /* padding: 30px;
+   padding: 30px;
   border-radius: 20px;
   border: 2px solid var(--blue, #0069FF);
-  background: rgba(0, 105, 255, 0.05); */
+  background: rgba(0, 105, 255, 0.05); 
 }
 
 .faq-popup .faq-section.faq-highlighted h3,
 .faq-popup .faq-section.faq-highlighted ul,
 .faq-popup .faq-section.faq-highlighted li {
-  /* color: var(--white); */
+   color: var(--white); 
 }
-
+*/
 .faq-popup .faq-link {
   color: var(--white);
   text-decoration: underline;
