@@ -15,6 +15,7 @@ function loadPeerShopProducts() {
 }
 
 function getProductByPostId(postId) {
+  var_dump(peerShopProducts[ '02249a7b-aa0b-4a45-948b-732385f04786']);
   return peerShopProducts[postId] || null;
 }
 
