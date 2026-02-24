@@ -26,14 +26,38 @@ async function autoLogin(controller) {
 }
 
 function isAccessTokenValid(token) {
+  const expiryMs = getJwtExpiryMs(token);
+  return expiryMs ? expiryMs > Date.now() : false;
+}
+
+function getJwtExpiryMs(token) {
+  if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    if (!payload?.exp) return false;
-    return payload.exp * 1000 > Date.now();
+    if (payload && typeof payload.exp === "number") {
+      return payload.exp * 1000;
+    }
   } catch (err) {
-    console.error("Failed to parse access token", err);
-    return false;
+    console.error("Failed to parse token expiry", err);
   }
+  return null;
+}
+
+function setTokenCookie(name, token, persist) {
+  let cookie = `${name}=${encodeURIComponent(token || "")}; path=/; Secure; SameSite=Strict`;
+  if (persist) {
+    const expiryMs = getJwtExpiryMs(token);
+    if (expiryMs) {
+      const expires = new Date(expiryMs).toUTCString();
+      cookie += `; expires=${expires}`;
+      localStorage.setItem(name + "_expiry", expires);
+    } else {
+      localStorage.removeItem(name + "_expiry");
+    }
+  } else {
+    localStorage.removeItem(name + "_expiry");
+  }
+  document.cookie = cookie;
 }
 
 async function refreshAccessToken(refreshToken) {
@@ -77,10 +101,9 @@ async function refreshAccessToken(refreshToken) {
       ) {
         throw new Error("Refresh failed with code: " + ResponseCode);
       }
-      // Store updated tokens
-      // Save updated tokens back into cookies
-      updateCookieValue("authToken", accessToken); // keep same lifetime
-      updateCookieValue("refreshToken", newRefreshToken);
+      const persistTokens = shouldRememberUser();
+      setTokenCookie("authToken", accessToken, persistTokens);
+      setTokenCookie("refreshToken", newRefreshToken, persistTokens);
       return accessToken;
     } else {
       throw new Error("Invalid response from refresh mutation");
@@ -337,9 +360,8 @@ class AccessibleLoginForm {
       ) {
         const rememberMeChecked =
           rememberOverride ?? rememberMeCheckbox.checked;
-        const cookieLifetimeDays = rememberMeChecked ? 7 : null;
-        setCookie("authToken", result.data.login.accessToken, cookieLifetimeDays);
-        setCookie("refreshToken", result.data.login.refreshToken, cookieLifetimeDays);
+        setTokenCookie("authToken", result.data.login.accessToken, rememberMeChecked);
+        setTokenCookie("refreshToken", result.data.login.refreshToken, rememberMeChecked);
 
         if (rememberMeChecked) {
           setCookie("rememberMe", "true", 3650);

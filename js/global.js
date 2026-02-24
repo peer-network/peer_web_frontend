@@ -2873,10 +2873,12 @@ function scheduleSilentRefresh(accessToken, refreshToken) {
     return;
   }
   try {
-    const payload = JSON.parse(atob(accessToken.split(".")[1]));
-    let exp = payload.exp * 1000;
+    const expiryMs = getJwtExpiryMs(accessToken);
+    if (!expiryMs) {
+      return;
+    }
     const buffer = 5 * 60 * 1000;
-    let refreshIn = exp - buffer - Date.now();
+    let refreshIn = expiryMs - buffer - Date.now();
     if (refreshIn < 0) refreshIn = 0;
 
     setTimeout(async () => {
@@ -2935,10 +2937,9 @@ async function refreshAccessToken(refreshToken) {
       ) {
         throw new Error("Refresh failed with code: " + ResponseCode);
       }
-      // Store updated tokens
-      // Save updated tokens back into cookies
-      updateCookieValue("authToken", accessToken); // keep same lifetime
-      updateCookieValue("refreshToken", newRefreshToken);
+      const persistTokens = getCookie("rememberMe") === "true";
+      setTokenCookie("authToken", accessToken, persistTokens);
+      setTokenCookie("refreshToken", newRefreshToken, persistTokens);
       return accessToken;
     } else {
       throw new Error("Invalid response from refresh mutation");
@@ -2964,6 +2965,38 @@ function setCookie(name, value, days) {
   if (days) {
     localStorage.setItem(name + "_expiry", expires);
   }
+}
+
+function getJwtExpiryMs(token) {
+  if (!token) {
+    return null;
+  }
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (payload && typeof payload.exp === "number") {
+      return payload.exp * 1000;
+    }
+  } catch (err) {
+    console.error("Failed to parse token expiry:", err);
+  }
+  return null;
+}
+
+function setTokenCookie(name, token, persist) {
+  let cookie = `${name}=${encodeURIComponent(token || "")}; path=/; Secure; SameSite=Strict`;
+  if (persist) {
+    const expiryMs = getJwtExpiryMs(token);
+    if (expiryMs) {
+      const expires = new Date(expiryMs).toUTCString();
+      cookie += `; expires=${expires}`;
+      localStorage.setItem(name + "_expiry", expires);
+    } else {
+      localStorage.removeItem(name + "_expiry");
+    }
+  } else {
+    localStorage.removeItem(name + "_expiry");
+  }
+  document.cookie = cookie;
 }
 
 function getCookie(name) {
