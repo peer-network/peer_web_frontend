@@ -58,8 +58,8 @@ function graphqlRequest(string $domain, string $protocol, string $query, array $
 /**
  * Store auth and helper cookies with optional long-term expiry.
  */
-function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe, ?string $email = null, ?string $password = null): void {
-    $expiry = $rememberMe ? time() + (60) : 0; // approx. 10 years 3650 * 24 * 60 * 
+function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe): void {
+    $expiry = $rememberMe ? time() + (7 * 24 * 60 * 60) : 0;
     $options = [
         'expires' => $expiry,
         'path' => '/',
@@ -71,21 +71,13 @@ function setAuthCookies(string $accessToken, string $refreshToken, bool $remembe
     setcookie('authToken', $accessToken, $options);
     setcookie('refreshToken', $refreshToken, $options);
     setcookie('rememberMe', $rememberMe ? 'true' : 'false', $options);
-
-    if ($email !== null) {
-        setcookie('userEmail', $email, $options);
-    }
-
-    if ($password !== null) {
-        setcookie('userPassword', $password, $options);
-    }
 }
 
 /**
  * Remove all auth related cookies.
  */
 function clearAuthCookies(): void {
-    $names = ['authToken', 'refreshToken', 'rememberMe', 'userEmail', 'userPassword'];
+    $names = ['authToken', 'refreshToken', 'rememberMe'];
     $options = [
         'expires' => time() - 3600,
         'path' => '/',
@@ -169,32 +161,25 @@ function checkAuth($redirectMessage = "unauthorized") {
 
     $token = $_COOKIE['authToken'] ?? '';
     $payload = $token !== '' ? decodeJwtPayload($token) : null;
-    $isExpired = !is_array($payload) || !isset($payload['exp']) || (int) $payload['exp'] < time();
-    $temP = (int) $payload['exp'] - time();
-    // Token still valid - proceed.
-    if ($token !== '' && !$isExpired) {
+    $expiresAt = is_array($payload) && isset($payload['exp']) ? (int) $payload['exp'] : null;
+    $timeLeft = $expiresAt !== null ? $expiresAt - time() : -1;
+    $isExpired = $expiresAt === null || $timeLeft <= 0;
+
+    if ($token !== '' && !$isExpired && $timeLeft > 300) {
         return;
     }
 
     $refreshToken = $_COOKIE['refreshToken'] ?? '';
     $rememberMe = ($_COOKIE['rememberMe'] ?? '') === 'true';
-    $email = $_COOKIE['userEmail'] ?? '';
-    $password = $_COOKIE['userPassword'] ?? '';
 
-    // Attempt silent refresh first.
     if ($refreshToken !== '') {
         $refreshed = attemptTokenRefresh($refreshToken, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''), $protocol ?? 'https');
         if ($refreshed !== null) {
-            setAuthCookies($refreshed['authToken'], $refreshed['refreshToken'], $rememberMe, $email, $password !== '' ? $password : null);
+            setAuthCookies($refreshed['authToken'], $refreshed['refreshToken'], $rememberMe);
             return;
         }
-    }
 
-    // Fallback to stored credentials when available.
-    if ($rememberMe && $email !== '' && $password !== '') {
-        $login = attemptPasswordLogin($email, $password, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''), $protocol ?? 'https');
-        if ($login !== null) {
-            setAuthCookies($login['authToken'], $login['refreshToken'], true, $email, $password);
+        if ($token !== '' && !$isExpired) {
             return;
         }
     }
