@@ -21,6 +21,19 @@ function decodeJwtPayload(string $token): ?array {
 }
 
 /**
+ * Extract the exp timestamp from a JWT if available.
+ */
+function getJwtExpiryTimestamp(string $token): ?int {
+    $payload = decodeJwtPayload($token);
+    if (!is_array($payload) || !isset($payload['exp']) || !is_numeric($payload['exp'])) {
+        return null;
+    }
+
+    $expiry = (int) $payload['exp'];
+    return $expiry > 0 ? $expiry : null;
+}
+
+/**
  * Build a shared GraphQL request payload.
  */
 function graphqlRequest(string $domain, string $protocol, string $query, array $variables = [], array $headers = []): ?array {
@@ -59,18 +72,34 @@ function graphqlRequest(string $domain, string $protocol, string $query, array $
  * Store auth and helper cookies with optional long-term expiry.
  */
 function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe): void {
-    $expiry = $rememberMe ? time() + (7 * 24 * 60 * 60) : 0;
-    $options = [
-        'expires' => $expiry,
+    $baseOptions = [
         'path' => '/',
         'secure' => true,
         'httponly' => false,
         'samesite' => 'Strict',
     ];
 
-    setcookie('authToken', $accessToken, $options);
-    setcookie('refreshToken', $refreshToken, $options);
-    setcookie('rememberMe', $rememberMe ? 'true' : 'false', $options);
+    $persistentFallback = time() + (7 * 24 * 60 * 60);
+    $accessExpiry = getJwtExpiryTimestamp($accessToken);
+    $refreshExpiry = getJwtExpiryTimestamp($refreshToken);
+
+    $authOptions = $baseOptions;
+    $refreshOptions = $baseOptions;
+    $rememberOptions = $baseOptions;
+
+    if ($rememberMe) {
+        $authOptions['expires'] = $accessExpiry ?? $persistentFallback;
+        $refreshOptions['expires'] = $refreshExpiry ?? $persistentFallback;
+        $rememberOptions['expires'] = $refreshOptions['expires'];
+    } else {
+        $authOptions['expires'] = 0;
+        $refreshOptions['expires'] = 0;
+        $rememberOptions['expires'] = 0;
+    }
+
+    setcookie('authToken', $accessToken, $authOptions);
+    setcookie('refreshToken', $refreshToken, $refreshOptions);
+    setcookie('rememberMe', $rememberMe ? 'true' : 'false', $rememberOptions);
 }
 
 /**
