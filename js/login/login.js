@@ -5,32 +5,34 @@ const shouldRememberUser = () =>
   getCookie("rememberMe") === "true";
 
 async function autoLogin(controller) {
-  if (!shouldRememberUser() || !controller) return;
+  if (!controller) return;
 
-  const refreshToken = getCookie("refreshToken");
-  const savedEmail = getCookie("userEmail");
-  const savedPassword = getCookie("userPassword");
+  const isRemembered = shouldRememberUser();
+  if (rememberMeCheckbox) rememberMeCheckbox.checked = isRemembered;
 
-  if (rememberMeCheckbox) rememberMeCheckbox.checked = true;
-
-  // Try silent refresh first
-  if (refreshToken) {
-    const accessToken = await refreshAccessToken(refreshToken);
-    if (accessToken) {
-      window.location.href = "dashboard.php";
-      return;
-    }
+  const existingAccessToken = getCookie("authToken");
+  if (existingAccessToken && isAccessTokenValid(existingAccessToken)) {
+    window.location.href = "dashboard.php";
+    return;
   }
 
-  // If refresh fails, try silent login with stored credentials
-  if (savedEmail && savedPassword) {
-    const success = await controller.loginUser(
-      { email: savedEmail, password: savedPassword },
-      { silent: true, rememberOverride: true }
-    );
-    if (success) {
-      window.location.href = "dashboard.php";
-    }
+  const refreshToken = getCookie("refreshToken");
+  if (!refreshToken) return;
+
+  const accessToken = await refreshAccessToken(refreshToken);
+  if (accessToken) {
+    window.location.href = "dashboard.php";
+  }
+}
+
+function isAccessTokenValid(token) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (!payload?.exp) return false;
+    return payload.exp * 1000 > Date.now();
+  } catch (err) {
+    console.error("Failed to parse access token", err);
+    return false;
   }
 }
 
@@ -335,22 +337,16 @@ class AccessibleLoginForm {
       ) {
         const rememberMeChecked =
           rememberOverride ?? rememberMeCheckbox.checked;
-        const emailValue = formData.email;
-        const passwordValue = formData.password;
+        const cookieLifetimeDays = rememberMeChecked ? 7 : null;
+        setCookie("authToken", result.data.login.accessToken, cookieLifetimeDays);
+        setCookie("refreshToken", result.data.login.refreshToken, cookieLifetimeDays);
+
         if (rememberMeChecked) {
-          setCookie("authToken", result.data.login.accessToken, 7 ); // approx. 10 years
-          setCookie("refreshToken", result.data.login.refreshToken, 3650); // approx. 10 years
-          setCookie("userEmail", emailValue, 3650);
-          setCookie("userPassword", passwordValue, 3650);
           setCookie("rememberMe", "true", 3650);
-          localStorage.setItem("rememberMe", "true"); // adding RememberMe-flag on checked
+          localStorage.setItem("rememberMe", "true");
         } else {
-          setCookie("authToken", result.data.login.accessToken);
-          setCookie("refreshToken", result.data.login.refreshToken);
-          setCookie("userEmail", emailValue);
-          eraseCookie("userPassword");
           eraseCookie("rememberMe");
-          localStorage.removeItem("rememberMe"); // removing RememberMe-flag on unchecked
+          localStorage.removeItem("rememberMe");
         }
         if (!silent) {
           this.showToast(

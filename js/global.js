@@ -2968,29 +2968,17 @@ async function updateUserPreferences() {
 
 const accessToken = getCookie("authToken");
 const refreshToken = getCookie("refreshToken");
-const storedEmail = getCookie("userEmail");
 
 function scheduleSilentRefresh(accessToken, refreshToken) {
-  if (!refreshToken) {
+  if (!refreshToken || !accessToken) {
     return;
   }
   try {
     const payload = JSON.parse(atob(accessToken.split(".")[1]));
-    // Original expiry time (from backend)
     let exp = payload.exp * 1000;
-    // const buffer = 0.5 * 60 * 1000; // refresh 3 minutes before expiry
-    // Override for testing (refresh in 2 minutes instead of 45)
-    // const isTesting = false;
-    // if (isTesting) {
-    //   exp = Date.now() + buffer; // 30 seconds from now
-    //   console.warn(" TEST MODE: Overriding token expiry to 30 seconds from now");
-    // }
-
-    const refreshIn = exp - Date.now();
-    if (refreshIn <= 0) {
-      console.warn(" refreshIn is <= 0 — skipping setTimeout");
-      return;
-    }
+    const buffer = 5 * 60 * 1000;
+    let refreshIn = exp - buffer - Date.now();
+    if (refreshIn < 0) refreshIn = 0;
 
     setTimeout(async () => {
       console.log("Refreshing token now...");
