@@ -59,12 +59,29 @@ function graphqlRequest(string $domain, string $protocol, string $query, array $
  * Store auth and helper cookies with optional long-term expiry.
  */
 function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe, ?string $email = null, ?string $password = null): void {
-    $expiry = $rememberMe ? time() + (60) : 0; // approx. 10 years 3650 * 24 * 60 * 
+    // M12 (Plan v2): three changes from the previous Phase-1 cookie code.
+    //
+    //   1. `httponly = true` — JS no longer reads `authToken`. Closes the
+    //      XSS-takeover path; previously a single XSS exfiltrated the
+    //      session token.
+    //   2. Remember-me expiry math fixed. Previous `time() + (60)` was
+    //      60 SECONDS, not 10 years (the comment admitted the operand
+    //      tail was missing). Now `time() + (60*60*24*365)` = 1 year.
+    //   3. The plaintext `userPassword` cookie is no longer written
+    //      under any circumstance. Remember-me used to round-trip the
+    //      password by replaying the Login mutation; that's now the
+    //      `attemptTokenRefresh` path only — refresh tokens are the
+    //      durable credential.
+    //
+    // The `$password` parameter is intentionally ignored; the signature
+    // is preserved so existing call-sites compile, but every caller
+    // should drop it on a follow-up cleanup.
+    $expiry = $rememberMe ? time() + (60 * 60 * 24 * 365) : 0;
     $options = [
         'expires' => $expiry,
         'path' => '/',
         'secure' => true,
-        'httponly' => false,
+        'httponly' => true,
         'samesite' => 'Strict',
     ];
 
@@ -75,22 +92,24 @@ function setAuthCookies(string $accessToken, string $refreshToken, bool $remembe
     if ($email !== null) {
         setcookie('userEmail', $email, $options);
     }
-
-    if ($password !== null) {
-        setcookie('userPassword', $password, $options);
-    }
+    // Note: `userPassword` cookie write is intentionally removed.
+    // See the comment block at the top of this function.
+    unset($password); // Silence unused-param tooling.
 }
 
 /**
  * Remove all auth related cookies.
  */
 function clearAuthCookies(): void {
+    // Includes `userPassword` in the kill-list to scrub stale plaintext
+    // cookies left over from before M12 — anyone who was logged in with
+    // remember-me prior to this commit will have one in their browser.
     $names = ['authToken', 'refreshToken', 'rememberMe', 'userEmail', 'userPassword'];
     $options = [
         'expires' => time() - 3600,
         'path' => '/',
         'secure' => true,
-        'httponly' => false,
+        'httponly' => true,
         'samesite' => 'Strict',
     ];
     foreach ($names as $name) {
@@ -319,8 +338,15 @@ function enforceAllowedUser(array $allowedUserIds, string $domain, string $proto
  * Deny access unless the current user role string is ADMIN.
  */
 function enforceAdminRole(string $domain, string $protocol = 'https'): void {
-    $role = fetchUserRoleString($domain, $protocol); 
-    if ($role !== 'MODERATOR') {
+    // M12 (Plan v2): widened to also admit ADMIN / SUPER_ADMIN /
+    // SUPER_MODERATOR. The previous `!== 'MODERATOR'` check let only
+    // moderators through despite the function being named `enforceAdminRole`,
+    // which means real admins were locked out of the moderation panel.
+    // Peergamma's `is_admin()` and `is_moderator()` both grant access to
+    // moderation endpoints; mirroring that union here.
+    $role = strtoupper((string)fetchUserRoleString($domain, $protocol));
+    $allowed = ['MODERATOR', 'SUPER_MODERATOR', 'ADMIN', 'SUPER_ADMIN'];
+    if (!in_array($role, $allowed, true)) {
         http_response_code(403);
         exit('Access denied');
     }
