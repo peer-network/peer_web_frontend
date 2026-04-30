@@ -21,6 +21,19 @@ function decodeJwtPayload(string $token): ?array {
 }
 
 /**
+ * Extract the exp timestamp from a JWT if available.
+ */
+function getJwtExpiryTimestamp(string $token): ?int {
+    $payload = decodeJwtPayload($token);
+    if (!is_array($payload) || !isset($payload['exp']) || !is_numeric($payload['exp'])) {
+        return null;
+    }
+
+    $expiry = (int) $payload['exp'];
+    return $expiry > 0 ? $expiry : null;
+}
+
+/**
  * Build a shared GraphQL request payload.
  */
 function graphqlRequest(string $domain, string $protocol, string $query, array $variables = [], array $headers = []): ?array {
@@ -58,34 +71,42 @@ function graphqlRequest(string $domain, string $protocol, string $query, array $
 /**
  * Store auth and helper cookies with optional long-term expiry.
  */
-function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe, ?string $email = null, ?string $password = null): void {
-    $expiry = $rememberMe ? time() + (60) : 0; // approx. 10 years 3650 * 24 * 60 * 
-    $options = [
-        'expires' => $expiry,
+function setAuthCookies(string $accessToken, string $refreshToken, bool $rememberMe): void {
+    $baseOptions = [
         'path' => '/',
         'secure' => true,
         'httponly' => false,
         'samesite' => 'Strict',
     ];
 
-    setcookie('authToken', $accessToken, $options);
-    setcookie('refreshToken', $refreshToken, $options);
-    setcookie('rememberMe', $rememberMe ? 'true' : 'false', $options);
+    $persistentFallback = time() + (7 * 24 * 60 * 60);
+    $accessExpiry = getJwtExpiryTimestamp($accessToken);
+    $refreshExpiry = getJwtExpiryTimestamp($refreshToken);
 
-    if ($email !== null) {
-        setcookie('userEmail', $email, $options);
+    $authOptions = $baseOptions;
+    $refreshOptions = $baseOptions;
+    $rememberOptions = $baseOptions;
+
+    if ($rememberMe) {
+        $authOptions['expires'] = $accessExpiry ?? $persistentFallback;
+        $refreshOptions['expires'] = $refreshExpiry ?? $persistentFallback;
+        $rememberOptions['expires'] = $refreshOptions['expires'];
+    } else {
+        $authOptions['expires'] = 0;
+        $refreshOptions['expires'] = 0;
+        $rememberOptions['expires'] = 0;
     }
 
-    if ($password !== null) {
-        setcookie('userPassword', $password, $options);
-    }
+    setcookie('authToken', $accessToken, $authOptions);
+    setcookie('refreshToken', $refreshToken, $refreshOptions);
+    setcookie('rememberMe', $rememberMe ? 'true' : 'false', $rememberOptions);
 }
 
 /**
  * Remove all auth related cookies.
  */
 function clearAuthCookies(): void {
-    $names = ['authToken', 'refreshToken', 'rememberMe', 'userEmail', 'userPassword'];
+    $names = ['authToken', 'refreshToken', 'rememberMe'];
     $options = [
         'expires' => time() - 3600,
         'path' => '/',
@@ -169,32 +190,25 @@ function checkAuth($redirectMessage = "unauthorized") {
 
     $token = $_COOKIE['authToken'] ?? '';
     $payload = $token !== '' ? decodeJwtPayload($token) : null;
-    $isExpired = !is_array($payload) || !isset($payload['exp']) || (int) $payload['exp'] < time();
-    $temP = (int) $payload['exp'] - time();
-    // Token still valid - proceed.
-    if ($token !== '' && !$isExpired) {
+    $expiresAt = is_array($payload) && isset($payload['exp']) ? (int) $payload['exp'] : null;
+    $timeLeft = $expiresAt !== null ? $expiresAt - time() : -1;
+    $isExpired = $expiresAt === null || $timeLeft <= 0;
+
+    if ($token !== '' && !$isExpired && $timeLeft > 300) {
         return;
     }
 
     $refreshToken = $_COOKIE['refreshToken'] ?? '';
     $rememberMe = ($_COOKIE['rememberMe'] ?? '') === 'true';
-    $email = $_COOKIE['userEmail'] ?? '';
-    $password = $_COOKIE['userPassword'] ?? '';
 
-    // Attempt silent refresh first.
     if ($refreshToken !== '') {
         $refreshed = attemptTokenRefresh($refreshToken, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''), $protocol ?? 'https');
         if ($refreshed !== null) {
-            setAuthCookies($refreshed['authToken'], $refreshed['refreshToken'], $rememberMe, $email, $password !== '' ? $password : null);
+            setAuthCookies($refreshed['authToken'], $refreshed['refreshToken'], $rememberMe);
             return;
         }
-    }
 
-    // Fallback to stored credentials when available.
-    if ($rememberMe && $email !== '' && $password !== '') {
-        $login = attemptPasswordLogin($email, $password, $domain ?? ($_SERVER['HTTP_HOST'] ?? ''), $protocol ?? 'https');
-        if ($login !== null) {
-            setAuthCookies($login['authToken'], $login['refreshToken'], true, $email, $password);
+        if ($token !== '' && !$isExpired) {
             return;
         }
     }

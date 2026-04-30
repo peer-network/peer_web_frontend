@@ -5,33 +5,59 @@ const shouldRememberUser = () =>
   getCookie("rememberMe") === "true";
 
 async function autoLogin(controller) {
-  if (!shouldRememberUser() || !controller) return;
+  if (!controller) return;
+
+  const isRemembered = shouldRememberUser();
+  if (rememberMeCheckbox) rememberMeCheckbox.checked = isRemembered;
+
+  const existingAccessToken = getCookie("authToken");
+  if (existingAccessToken && isAccessTokenValid(existingAccessToken)) {
+    window.location.href = "dashboard.php";
+    return;
+  }
 
   const refreshToken = getCookie("refreshToken");
-  const savedEmail = getCookie("userEmail");
-  const savedPassword = getCookie("userPassword");
+  if (!refreshToken) return;
 
-  if (rememberMeCheckbox) rememberMeCheckbox.checked = true;
-
-  // Try silent refresh first
-  if (refreshToken) {
-    const accessToken = await refreshAccessToken(refreshToken);
-    if (accessToken) {
-      window.location.href = "dashboard.php";
-      return;
-    }
+  const accessToken = await refreshAccessToken(refreshToken);
+  if (accessToken) {
+    window.location.href = "dashboard.php";
   }
+}
 
-  // If refresh fails, try silent login with stored credentials
-  if (savedEmail && savedPassword) {
-    const success = await controller.loginUser(
-      { email: savedEmail, password: savedPassword },
-      { silent: true, rememberOverride: true }
-    );
-    if (success) {
-      window.location.href = "dashboard.php";
+function isAccessTokenValid(token) {
+  const expiryMs = getJwtExpiryMs(token);
+  return expiryMs ? expiryMs > Date.now() : false;
+}
+
+function getJwtExpiryMs(token) {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (payload && typeof payload.exp === "number") {
+      return payload.exp * 1000;
     }
+  } catch (err) {
+    console.error("Failed to parse token expiry", err);
   }
+  return null;
+}
+
+function setTokenCookie(name, token, persist) {
+  let cookie = `${name}=${encodeURIComponent(token || "")}; path=/; Secure; SameSite=Strict`;
+  if (persist) {
+    const expiryMs = getJwtExpiryMs(token);
+    if (expiryMs) {
+      const expires = new Date(expiryMs).toUTCString();
+      cookie += `; expires=${expires}`;
+      localStorage.setItem(name + "_expiry", expires);
+    } else {
+      localStorage.removeItem(name + "_expiry");
+    }
+  } else {
+    localStorage.removeItem(name + "_expiry");
+  }
+  document.cookie = cookie;
 }
 
 async function refreshAccessToken(refreshToken) {
@@ -75,10 +101,9 @@ async function refreshAccessToken(refreshToken) {
       ) {
         throw new Error("Refresh failed with code: " + ResponseCode);
       }
-      // Store updated tokens
-      // Save updated tokens back into cookies
-      updateCookieValue("authToken", accessToken); // keep same lifetime
-      updateCookieValue("refreshToken", newRefreshToken);
+      const persistTokens = shouldRememberUser();
+      setTokenCookie("authToken", accessToken, persistTokens);
+      setTokenCookie("refreshToken", newRefreshToken, persistTokens);
       return accessToken;
     } else {
       throw new Error("Invalid response from refresh mutation");
@@ -335,22 +360,15 @@ class AccessibleLoginForm {
       ) {
         const rememberMeChecked =
           rememberOverride ?? rememberMeCheckbox.checked;
-        const emailValue = formData.email;
-        const passwordValue = formData.password;
+        setTokenCookie("authToken", result.data.login.accessToken, rememberMeChecked);
+        setTokenCookie("refreshToken", result.data.login.refreshToken, rememberMeChecked);
+
         if (rememberMeChecked) {
-          setCookie("authToken", result.data.login.accessToken, 7 ); // approx. 10 years
-          setCookie("refreshToken", result.data.login.refreshToken, 3650); // approx. 10 years
-          setCookie("userEmail", emailValue, 3650);
-          setCookie("userPassword", passwordValue, 3650);
           setCookie("rememberMe", "true", 3650);
-          localStorage.setItem("rememberMe", "true"); // adding RememberMe-flag on checked
+          localStorage.setItem("rememberMe", "true");
         } else {
-          setCookie("authToken", result.data.login.accessToken);
-          setCookie("refreshToken", result.data.login.refreshToken);
-          setCookie("userEmail", emailValue);
-          eraseCookie("userPassword");
           eraseCookie("rememberMe");
-          localStorage.removeItem("rememberMe"); // removing RememberMe-flag on unchecked
+          localStorage.removeItem("rememberMe");
         }
         if (!silent) {
           this.showToast(
