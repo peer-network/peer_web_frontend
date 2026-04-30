@@ -420,10 +420,6 @@ body {
 	scrollbar-width: none;
 } */
 #history-container {
-  flex: 1;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
   margin-top: 40px;
 }
 
