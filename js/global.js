@@ -3,8 +3,7 @@ let likeCost = 0.3,
   dislikeCost = 0.3,
   commentCost = 0.1,
   postCost = 2;
-const PEER_SHOP_ID = "292bebb1-0951-47e8-ac8a-759138a2e4a9";
-// const PEER_SHOP_ID = '9adaad3b-b75f-4045-b48a-33d4ec8d06b8'; //test
+const PEER_SHOP_ID = "c50e2d31-c98e-4a20-b2b6-e1103839de0a";
 let baseUrl;
 let isInvited=false;
 
