@@ -171,7 +171,7 @@ function getHostConfig() {
   let server, domain;
 
   if (cleanHost) {
-    if (cleanHost === "peernetwork.eu") {
+    if (cleanHost === "peer-network.eu") {
       domain = cleanHost;
       server = "production";
     } else if (cleanHost === "getpeer.eu") {
