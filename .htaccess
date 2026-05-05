@@ -1,6 +1,10 @@
+RewriteEngine On
+RewriteCond %{HTTP:X-Forwarded-Proto} =https
+RewriteRule ^ - [L]
+
 Options All -Indexes
 
-# ErrorDocument 404 https://peerapp.de/404.php
+# ErrorDocument 404 https://frontend.peer-network.eu/404.php
 DirectoryIndex index.php
 FileETag MTime Size
 AddDefaultCharset UTF-8
@@ -24,7 +28,7 @@ Header always set Permissions-Policy "camera=(self), geolocation=(self), microph
 Header always set Referrer-Policy "no-referrer"
 Header always edit Set-Cookie (.*) "$1; SameSite=strict"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
-# Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' https://media.getpeer.eu/ https://media.peernetwork.eu data: blob:; worker-src 'self' about:; connect-src 'self' data: blob: https://media.peernetwork.eu https://media.getpeer.eu https://getpeer.eu/graphql https://peernetwork.eu/graphql; child-src 'self' https://media.getpeer.eu https://media.peernetwork.eu; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
+# Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' https://media.getpeer.eu/ https://media.peer-network.eu data: blob:; worker-src 'self' about:; connect-src 'self' data: blob: https://media.peer-network.eu https://media.getpeer.eu https://getpeer.eu/graphql https://peer-network.eu/graphql; child-src 'self' https://media.getpeer.eu https://media.peer-network.eu; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
 
 <FilesMatch "\.(html|php)$">
 Header set Cache-Control "no-store, must-revalidate"
